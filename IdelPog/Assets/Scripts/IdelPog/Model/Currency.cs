@@ -8,5 +8,10 @@ namespace IdelPog.Model
     public class Currency
     {
         private readonly CurrencyType _currencyType;
+
+        public Currency(CurrencyType currencyType)
+        {
+            _currencyType = currencyType;
+        }
     }
 }

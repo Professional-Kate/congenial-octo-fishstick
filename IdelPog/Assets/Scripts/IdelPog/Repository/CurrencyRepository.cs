@@ -9,9 +9,9 @@ namespace IdelPog.Repository
     /// </summary>
     public class CurrencyRepository : ICurrencyRepository
     {
-        private Dictionary<CurrencyType, Currency> _repository = new();
+        protected Dictionary<CurrencyType, Currency> Repository = new();
 
-        public bool Add(CurrencyType currencyType, Currency currency)
+        public bool Add(Currency currency)
         {
             throw new System.NotImplementedException();
         }

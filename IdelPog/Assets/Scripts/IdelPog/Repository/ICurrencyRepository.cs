@@ -13,10 +13,12 @@ namespace IdelPog.Repository
         /// <summary>
         /// Adds a <see cref="Currency"/> model with a connected <see cref="CurrencyType"/> key into the Repository
         /// </summary>
-        /// <param name="currencyType">The <see cref="CurrencyType"/> you want this <see cref="Currency"/> to be referenced by</param>
         /// <param name="currency">The <see cref="Currency"/> model you want to add</param>
         /// <returns>if the operation was successful</returns>
-        public bool Add(CurrencyType currencyType, Currency currency);
+        /// <remarks>
+        /// The passed <see cref="Currency"/> will be linked to the <see cref="CurrencyType"/> key in the Repository
+        /// </remarks>
+        public bool Add(Currency currency);
 
         /// <summary>
         /// Removes a <see cref="Currency"/> model from the Repository by using its <see cref="CurrencyType"/>

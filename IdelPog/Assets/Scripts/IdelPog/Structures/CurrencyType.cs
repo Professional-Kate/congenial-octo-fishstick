@@ -2,6 +2,7 @@
 {
     public enum CurrencyType
     {
-        
+        NO_TYPE,
+        FOOD
     }
 }
