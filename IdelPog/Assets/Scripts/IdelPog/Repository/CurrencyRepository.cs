@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using IdelPog.Model;
 using IdelPog.Structures;
@@ -11,9 +12,22 @@ namespace IdelPog.Repository
     {
         protected Dictionary<CurrencyType, Currency> Repository = new();
 
-        public bool Add(Currency currency)
+        public bool Add( Currency currency)
         {
-            throw new System.NotImplementedException();
+            if (currency == null)
+            {
+                throw new ArgumentNullException();
+            }
+            
+            CurrencyType type = currency.CurrencyType;
+
+            if (type == CurrencyType.NO_TYPE)
+            {
+                throw new ArgumentException("Error! Passed CurrencyType is NO_TYPE, nothing has been added. This should be fixed.");
+            }
+            
+            Repository.Add(type, currency);
+            return true;
         }
 
         public bool Remove(CurrencyType currencyType)

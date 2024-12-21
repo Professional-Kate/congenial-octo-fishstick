@@ -7,11 +7,11 @@ namespace IdelPog.Model
     /// </summary>
     public class Currency
     {
-        private readonly CurrencyType _currencyType;
+        public readonly CurrencyType CurrencyType;
 
         public Currency(CurrencyType currencyType)
         {
-            _currencyType = currencyType;
+            CurrencyType = currencyType;
         }
     }
 }
