@@ -31,6 +31,11 @@ namespace Tests.Repository
         {
             _testRepository.Clear();
         }
+
+        private void AddCurrencyToTestRepository()
+        {
+            _testRepository.Add(_currencyType, _currency);
+        }
         
         [Test]
         public void Positive_Add_AddsCurrencyIntoRepository()
@@ -45,7 +50,7 @@ namespace Tests.Repository
         [Test]
         public void Positive_Add_AddsCurrencyWithCorrectTag()
         {
-            _currencyRepository.Add(_currency);
+            AddCurrencyToTestRepository();
             
             bool addedCurrency = _testRepository.ContainsKey(_currencyType);
             Assert.IsTrue(addedCurrency);
@@ -68,9 +73,44 @@ namespace Tests.Repository
         [Test]
         public void Negative_AddDuplicateCurrency_ThrowsException()
         {
-            _testRepository.Add(_currencyType, _currency);
+            AddCurrencyToTestRepository();
             
             Assert.Throws<ArgumentException>(() => _currencyRepository.Add(_currency));
+        }
+
+        [Test]
+        public void Positive_Remove_RemovesCurrencyFromRepository()
+        {
+            AddCurrencyToTestRepository();
+            
+            bool success = _currencyRepository.Remove(_currencyType);
+            Assert.IsTrue(success);
+            
+            Assert.AreEqual(_testRepository.Count, 0);
+        }
+
+        [Test]
+        public void Positive_Remove_RemovesCurrencyWithCorrectTag()
+        {
+            AddCurrencyToTestRepository();
+            Currency currency = new (CurrencyType.WOOD);
+            _testRepository.Add(CurrencyType.WOOD, currency);
+            
+            _currencyRepository.Remove(_currencyType);
+            Currency woodCurrency = _testRepository[CurrencyType.WOOD];
+            Assert.IsNotNull(woodCurrency);
+        }
+
+        [Test]
+        public void Negative_RemoveWithBadType_ThrowsException()
+        {
+            Assert.Throws<ArgumentException>(() => _currencyRepository.Remove(CurrencyType.NO_TYPE));
+        }
+
+        [Test]
+        public void Negative_RemoveNonExistingCurrency_ThrowsException()
+        {
+            Assert.Throws<ArgumentException>(() => _currencyRepository.Remove(_currencyType));
         }
     }
 }

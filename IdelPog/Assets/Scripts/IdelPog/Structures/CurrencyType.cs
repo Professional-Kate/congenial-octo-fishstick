@@ -3,6 +3,7 @@
     public enum CurrencyType
     {
         NO_TYPE,
-        FOOD
+        FOOD,
+        WOOD
     }
 }

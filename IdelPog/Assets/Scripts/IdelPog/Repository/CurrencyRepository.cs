@@ -32,7 +32,19 @@ namespace IdelPog.Repository
 
         public bool Remove(CurrencyType currencyType)
         {
-            throw new System.NotImplementedException();
+            if (currencyType == CurrencyType.NO_TYPE)
+            {
+                throw new ArgumentException("Error! Passed CurrencyType is NO_TYPE, nothing can be removed. This should be fixed.");
+            }
+            
+            bool containsKey = Repository.ContainsKey(currencyType);
+            if (containsKey == false)
+            {
+                throw new ArgumentException("Error! Passed CurrencyType is not in the Repository.");
+            }
+            
+            Repository.Remove(currencyType);
+            return true;
         }
 
         public Currency Get(CurrencyType currencyType)
