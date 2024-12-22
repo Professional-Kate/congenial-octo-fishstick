@@ -49,7 +49,14 @@ namespace IdelPog.Repository
 
         public Currency Get(CurrencyType currencyType)
         {
-            throw new System.NotImplementedException();
+            if (currencyType == CurrencyType.NO_TYPE)
+            {
+                throw new ArgumentException("Error! Passed CurrencyType is NO_TYPE, nothing can be retrieved.");
+            }
+            
+            Currency currency = Repository[currencyType];
+            
+            return currency;
         }
     }
 }

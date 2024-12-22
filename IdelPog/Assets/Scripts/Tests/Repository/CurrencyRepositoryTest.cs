@@ -112,5 +112,38 @@ namespace Tests.Repository
         {
             Assert.Throws<ArgumentException>(() => _currencyRepository.Remove(_currencyType));
         }
+
+        [Test]
+        public void Positive_Get_ReturnsCurrency()
+        {
+            AddCurrencyToTestRepository();
+            
+            Currency currency = _currencyRepository.Get(_currencyType);
+            Assert.AreEqual(_currency, currency);
+        }
+
+        [Test]
+        public void Positive_Get_ReturnsCorrectCurrency()
+        {
+            AddCurrencyToTestRepository();
+            Currency woodCurrency = new (CurrencyType.WOOD);
+            _testRepository.Add(CurrencyType.WOOD, woodCurrency);
+            
+            Currency foodCurrency = _currencyRepository.Get(_currencyType);
+            Assert.AreEqual(_currency, foodCurrency);
+            Assert.AreNotEqual(woodCurrency, foodCurrency);
+        }
+
+        [Test]
+        public void Negative_GetWithBadType_ThrowsException()
+        {
+            Assert.Throws<ArgumentException>(() => _currencyRepository.Get(CurrencyType.NO_TYPE));
+        }
+
+        [Test]
+        public void Negative_GetNonExistingCurrency_ThrowsException()
+        {
+            Assert.Throws<KeyNotFoundException>(() => _currencyRepository.Get(CurrencyType.FOOD));
+        }
     }
 }
