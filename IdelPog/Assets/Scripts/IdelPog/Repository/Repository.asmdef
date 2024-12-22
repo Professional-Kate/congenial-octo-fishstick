@@ -1,4 +1,4 @@
 ﻿{
   "name": "Repository",
-  "references":[ "GUID:8e960b4ccb2e4b89b7f3a729bd1156ed", "GUID:8264cb37ba214cb28903dbadb3bd9515" ]
+  "references":[ "GUID:8e960b4ccb2e4b89b7f3a729bd1156ed", "GUID:8264cb37ba214cb28903dbadb3bd9515", "Exception" ]
 }

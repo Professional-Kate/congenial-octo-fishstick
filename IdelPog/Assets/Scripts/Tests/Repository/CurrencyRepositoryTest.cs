@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Structures;
 using NUnit.Framework;
@@ -67,7 +68,7 @@ namespace Tests.Repository
         {
             Currency badCurrency = new(CurrencyType.NO_TYPE);
             
-            Assert.Throws<ArgumentException>(() => _currencyRepository.Add(badCurrency));
+            Assert.Throws<NoTypeException>(() => _currencyRepository.Add(badCurrency));
         }
 
         [Test]
@@ -104,7 +105,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_RemoveWithBadType_ThrowsException()
         {
-            Assert.Throws<ArgumentException>(() => _currencyRepository.Remove(CurrencyType.NO_TYPE));
+            Assert.Throws<NoTypeException>(() => _currencyRepository.Remove(CurrencyType.NO_TYPE));
         }
 
         [Test]
@@ -137,7 +138,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_GetWithBadType_ThrowsException()
         {
-            Assert.Throws<ArgumentException>(() => _currencyRepository.Get(CurrencyType.NO_TYPE));
+            Assert.Throws<NoTypeException>(() => _currencyRepository.Get(CurrencyType.NO_TYPE));
         }
 
         [Test]

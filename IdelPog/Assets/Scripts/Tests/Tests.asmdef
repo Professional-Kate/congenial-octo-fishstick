@@ -6,7 +6,8 @@
         "UnityEditor.TestRunner",
         "Repository",
         "Structures",
-        "Model"
+        "Model",
+        "Exception"
     ],
     "includePlatforms": [
         "Editor"

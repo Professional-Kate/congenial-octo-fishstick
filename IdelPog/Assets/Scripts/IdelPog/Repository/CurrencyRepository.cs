@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Structures;
 
@@ -23,7 +24,7 @@ namespace IdelPog.Repository
 
             if (type == CurrencyType.NO_TYPE)
             {
-                throw new ArgumentException("Error! Passed CurrencyType is NO_TYPE, nothing has been added. This should be fixed.");
+                throw new NoTypeException("Error! Passed CurrencyType is NO_TYPE, nothing has been added. This should be fixed.");
             }
             
             Repository.Add(type, currency);
@@ -34,7 +35,7 @@ namespace IdelPog.Repository
         {
             if (currencyType == CurrencyType.NO_TYPE)
             {
-                throw new ArgumentException("Error! Passed CurrencyType is NO_TYPE, nothing can be removed. This should be fixed.");
+                throw new NoTypeException("Error! Passed CurrencyType is NO_TYPE, nothing can be removed. This should be fixed.");
             }
             
             bool containsKey = Repository.ContainsKey(currencyType);
@@ -51,7 +52,7 @@ namespace IdelPog.Repository
         {
             if (currencyType == CurrencyType.NO_TYPE)
             {
-                throw new ArgumentException("Error! Passed CurrencyType is NO_TYPE, nothing can be retrieved.");
+                throw new NoTypeException("Error! Passed CurrencyType is NO_TYPE, nothing can be retrieved.");
             }
             
             Currency currency = Repository[currencyType];
