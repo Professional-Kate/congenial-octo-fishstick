@@ -49,6 +49,14 @@ namespace IdelPog.Repository
         /// </summary>
         /// <param name="currencyType">The type of the <see cref="Currency"/> model you want to get</param>
         /// <returns>The found <see cref="Currency"/> model</returns>
+        /// <exception cref="NoTypeException">If the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></exception>
+        /// /// <remarks>
+        /// Every implementation of this method should follow these rules :
+        /// <list type="bullet">
+        /// <item> You should throw an exception if the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></item>
+        /// <item> You should throw an exception if the passed <see cref="CurrencyType"/> is not found </item>
+        /// </list>
+        /// </remarks>
         public Currency Get(CurrencyType currencyType);
     }
 }
