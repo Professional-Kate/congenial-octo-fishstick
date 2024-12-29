@@ -23,6 +23,12 @@ namespace IdelPog.Repository
             CurrencyType type = currency.CurrencyType;
             AssertTypeIsValid(type);
             
+            bool contains = Repository.ContainsKey(type);
+            if (contains)
+            {
+                throw new ArgumentException($"Error! A Currency with CurrencyType {type} already exists.");
+            }
+            
             Repository.Add(type, currency);
             return true;
         }
@@ -30,7 +36,7 @@ namespace IdelPog.Repository
         public bool Remove(CurrencyType currencyType)
         {
             AssertTypeIsValid(currencyType);
-            AssertCurrencyExists(currencyType);
+            AssertCurrencyNotFound(currencyType);
             
             Repository.Remove(currencyType);
             return true;
@@ -39,7 +45,7 @@ namespace IdelPog.Repository
         public Currency Get(CurrencyType currencyType)
         {
             AssertTypeIsValid(currencyType);
-            AssertCurrencyExists(currencyType);
+            AssertCurrencyNotFound(currencyType);
             
             Currency currency = Repository[currencyType];
             return currency;
@@ -59,11 +65,11 @@ namespace IdelPog.Repository
         }
 
         /// <summary>
-        /// 
+        /// Asserts that the passed <see cref="CurrencyType"/> is in the Repository
         /// </summary>
-        /// <param name="currencyType"></param>
-        /// <exception cref="NotFoundException"></exception>
-        private void AssertCurrencyExists(CurrencyType currencyType)
+        /// <param name="currencyType">The <see cref="CurrencyType"/> you want to check</param>
+        /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="CurrencyType"/> is not found</exception>
+        private void AssertCurrencyNotFound(CurrencyType currencyType)
         {
             bool contains = Repository.ContainsKey(currencyType);
             if (contains == false)
