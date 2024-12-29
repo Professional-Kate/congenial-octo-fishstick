@@ -1,4 +1,5 @@
 ﻿using System;
+using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Structures;
 
@@ -15,7 +16,7 @@ namespace IdelPog.Repository
         /// <param name="currency">The <see cref="Currency"/> model you want to add</param>
         /// <returns>if the operation was successful</returns>
         /// <exception cref="ArgumentNullException">If the passed <see cref="Currency"/> model is null</exception>
-        /// <exception cref="ArgumentException">If the <see cref="Currency"/> model <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></exception>
+        /// <exception cref="NoTypeException">If the <see cref="Currency"/> model <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></exception>
         /// <exception cref="ArgumentException">If the passed <see cref="Currency"/> model already exists in the Repository</exception>
         /// <remarks>
         /// Every implementation of this method should follow these rules :
@@ -32,7 +33,7 @@ namespace IdelPog.Repository
         /// </summary>
         /// <param name="currencyType">The <see cref="Currency"/> model you want to remove should have this <see cref="CurrencyType"/></param>
         /// <returns>if the operation was successful</returns>
-        /// <exception cref="ArgumentException">If the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></exception>
+        /// <exception cref="NoTypeException">If the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></exception>
         /// <exception cref="ArgumentException">If the passed <see cref="CurrencyType"/> is not in the Repository</exception>
         /// <remarks>
         /// Every implementation of this method should follow these rules :

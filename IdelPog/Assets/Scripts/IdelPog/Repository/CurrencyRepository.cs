@@ -21,11 +21,7 @@ namespace IdelPog.Repository
             }
             
             CurrencyType type = currency.CurrencyType;
-
-            if (type == CurrencyType.NO_TYPE)
-            {
-                throw new NoTypeException("Error! Passed CurrencyType is NO_TYPE, nothing has been added. This should be fixed.");
-            }
+            AssertTypeIsValid(type);
             
             Repository.Add(type, currency);
             return true;
@@ -33,10 +29,7 @@ namespace IdelPog.Repository
 
         public bool Remove(CurrencyType currencyType)
         {
-            if (currencyType == CurrencyType.NO_TYPE)
-            {
-                throw new NoTypeException("Error! Passed CurrencyType is NO_TYPE, nothing can be removed. This should be fixed.");
-            }
+            AssertTypeIsValid(currencyType);
             
             bool containsKey = Repository.ContainsKey(currencyType);
             if (containsKey == false)
@@ -50,14 +43,24 @@ namespace IdelPog.Repository
 
         public Currency Get(CurrencyType currencyType)
         {
-            if (currencyType == CurrencyType.NO_TYPE)
-            {
-                throw new NoTypeException("Error! Passed CurrencyType is NO_TYPE, nothing can be retrieved.");
-            }
+            AssertTypeIsValid(currencyType);
             
             Currency currency = Repository[currencyType];
             
             return currency;
+        }
+        
+        /// <summary>
+        /// Asserts that the passed <see cref="CurrencyType"/> is not <see cref="CurrencyType.NO_TYPE"/>
+        /// </summary>
+        /// <param name="currencyType">The <see cref="CurrencyType"/> you want to check</param>
+        /// <exception cref="NoTypeException">Will be thrown if the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></exception>
+        private static void AssertTypeIsValid(CurrencyType currencyType)
+        {
+            if (currencyType == CurrencyType.NO_TYPE)
+            {
+                throw new NoTypeException("Error! Passed CurrencyType is NO_TYPE, nothing can be retrieved. This should be fixed.");
+            }
         }
     }
 }
