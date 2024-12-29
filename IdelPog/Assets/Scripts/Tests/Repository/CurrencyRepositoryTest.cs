@@ -111,7 +111,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_RemoveNonExistingCurrency_ThrowsException()
         {
-            Assert.Throws<ArgumentException>(() => _currencyRepository.Remove(_currencyType));
+            Assert.Throws<NotFoundException>(() => _currencyRepository.Remove(_currencyType));
         }
 
         [Test]
@@ -144,7 +144,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_GetNonExistingCurrency_ThrowsException()
         {
-            Assert.Throws<KeyNotFoundException>(() => _currencyRepository.Get(CurrencyType.FOOD));
+            Assert.Throws<NotFoundException>(() => _currencyRepository.Get(CurrencyType.FOOD));
         }
     }
 }

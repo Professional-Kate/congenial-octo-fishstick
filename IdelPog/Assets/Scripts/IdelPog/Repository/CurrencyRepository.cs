@@ -30,12 +30,7 @@ namespace IdelPog.Repository
         public bool Remove(CurrencyType currencyType)
         {
             AssertTypeIsValid(currencyType);
-            
-            bool containsKey = Repository.ContainsKey(currencyType);
-            if (containsKey == false)
-            {
-                throw new ArgumentException("Error! Passed CurrencyType is not in the Repository.");
-            }
+            AssertCurrencyExists(currencyType);
             
             Repository.Remove(currencyType);
             return true;
@@ -44,9 +39,9 @@ namespace IdelPog.Repository
         public Currency Get(CurrencyType currencyType)
         {
             AssertTypeIsValid(currencyType);
+            AssertCurrencyExists(currencyType);
             
             Currency currency = Repository[currencyType];
-            
             return currency;
         }
         
@@ -60,6 +55,20 @@ namespace IdelPog.Repository
             if (currencyType == CurrencyType.NO_TYPE)
             {
                 throw new NoTypeException("Error! Passed CurrencyType is NO_TYPE, nothing can be retrieved. This should be fixed.");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currencyType"></param>
+        /// <exception cref="NotFoundException"></exception>
+        private void AssertCurrencyExists(CurrencyType currencyType)
+        {
+            bool contains = Repository.ContainsKey(currencyType);
+            if (contains == false)
+            {
+                throw new NotFoundException($"Error! Passed CurrencyType {currencyType} is not in the Repository.");
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using IdelPog.Repository;
+﻿using IdelPog.Exceptions;
+using IdelPog.Repository;
 using IdelPog.Structures;
 
 namespace IdelPog.Service.Currency
@@ -9,7 +10,24 @@ namespace IdelPog.Service.Currency
         
         public ServiceResponse AddAmount(CurrencyType currencyType, int amount)
         {
-            throw new System.NotImplementedException();
+            if (amount <= 0)
+            {
+                return ServiceResponse.Failure($"Error! Passed amount : '{amount}' is required to be a positive number.");
+            }
+
+            try
+            {
+                Model.Currency currency = Repository.Get(currencyType);
+
+                int newAmount = currency.Amount + amount;
+                currency.SetAmount(newAmount);
+            }
+            catch (NotFoundException exception)
+            {
+                return ServiceResponse.Failure(exception.Message);
+            }
+
+            return ServiceResponse.Success();
         }
 
         public ServiceResponse RemoveAmount(CurrencyType currencyType, int amount)
