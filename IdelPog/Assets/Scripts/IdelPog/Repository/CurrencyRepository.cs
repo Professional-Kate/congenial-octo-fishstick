@@ -13,7 +13,7 @@ namespace IdelPog.Repository
     {
         protected Dictionary<CurrencyType, Currency> Repository = new();
 
-        public bool Add( Currency currency)
+        public bool Add(Currency currency)
         {
             if (currency == null)
             {
@@ -36,7 +36,7 @@ namespace IdelPog.Repository
         public bool Remove(CurrencyType currencyType)
         {
             AssertTypeIsValid(currencyType);
-            AssertCurrencyNotFound(currencyType);
+            AssertCurrencyExists(currencyType);
             
             Repository.Remove(currencyType);
             return true;
@@ -45,7 +45,7 @@ namespace IdelPog.Repository
         public Currency Get(CurrencyType currencyType)
         {
             AssertTypeIsValid(currencyType);
-            AssertCurrencyNotFound(currencyType);
+            AssertCurrencyExists(currencyType);
             
             Currency currency = Repository[currencyType];
             return currency;
@@ -65,11 +65,12 @@ namespace IdelPog.Repository
         }
 
         /// <summary>
-        /// Asserts that the passed <see cref="CurrencyType"/> is in the Repository
+        /// Asserts that the passed <see cref="CurrencyType"/> is in the Repository.
+        /// This will throw an exception if the passed <see cref="CurrencyType"/> is not found
         /// </summary>
-        /// <param name="currencyType">The <see cref="CurrencyType"/> you want to check</param>
+        /// <param name="currencyType">The <see cref="CurrencyType"/> you want to assure is in the Repository</param>
         /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="CurrencyType"/> is not found</exception>
-        private void AssertCurrencyNotFound(CurrencyType currencyType)
+        private void AssertCurrencyExists(CurrencyType currencyType)
         {
             bool contains = Repository.ContainsKey(currencyType);
             if (contains == false)
