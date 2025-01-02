@@ -1,12 +1,10 @@
-﻿using System;
-using IdelPog.Exceptions;
+﻿using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Repository;
 using IdelPog.Service;
 using IdelPog.Structures;
 using Moq;
 using NUnit.Framework;
-using UnityEngine;
 
 namespace Tests.Service
 {
@@ -80,6 +78,50 @@ namespace Tests.Service
                 .Throws<NotFoundException>();
             
             ServiceResponse serviceResponse = _currencyService.AddAmount(CurrencyType.WOOD, _amount);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.IsNotNull(serviceResponse.Message);
+        }
+
+        [Test]
+        public void Positive_RemoveAmount_RemovesAmountFromCurrency()
+        {
+            _currency.SetAmount(_amount); // Currency can't go negative, so we need this
+            
+            ServiceResponse serviceResponse = _currencyService.RemoveAmount(_currencyType, _amount);
+            
+            Assert.True(serviceResponse.IsSuccess);
+            Assert.AreEqual(0, _currency.Amount);
+        }
+
+        [Test]
+        public void Positive_RemoveAmount_CallingMultipleTimes_RemovesAmountFromCurrency()
+        {
+            _currency.SetAmount(_amount);
+            
+            for (int i = 10; i > 1; i--)
+            {
+                Assert.AreEqual(i, _currency.Amount);
+                _currencyService.RemoveAmount(_currencyType, 1);
+            }
+        }
+
+        [TestCase(-10)]
+        [TestCase(0)]
+        public void Negative_RemoveAmount_BadAmount_ReturnsBadServiceResponse(int amount)
+        {
+            ServiceResponse serviceResponse = _currencyService.RemoveAmount(_currencyType, amount);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.IsNotNull(serviceResponse.Message);
+        }
+
+        [Test]
+        public void Negative_RemoveAmount_UnknownCurrency_ReturnsBadServiceResponse()
+        {
+            _currency.SetAmount(_amount);
+            
+            ServiceResponse serviceResponse = _currencyService.RemoveAmount(CurrencyType.WOOD, _amount);
             
             Assert.False(serviceResponse.IsSuccess);
             Assert.IsNotNull(serviceResponse.Message);
