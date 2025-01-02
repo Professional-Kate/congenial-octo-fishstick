@@ -55,7 +55,7 @@ namespace IdelPog.Service.Currency
         }
 
         /// <summary>
-        /// Asserts that the passed amount is greater than and not equal to zero.
+        /// Asserts that the passed amount is greater tha n zero
         /// If the returned <see cref="ServiceResponse"/>.<see cref="ServiceResponse.IsSuccess"/> is false then it didn't pass the assertions
         /// </summary>
         /// <param name="amount">The amount you want to check</param>
