@@ -8,6 +8,9 @@ namespace IdelPog.Repository
     /// <summary>
     /// The purpose of this interface is to give access to Adding, Removing, and finally getting a <see cref="Currency"/> from an internal data structure
     /// </summary>
+    /// <seealso cref="Add"/>
+    /// <seealso cref="Remove"/>
+    /// <seealso cref="Get"/>
     public interface ICurrencyRepository
     {
         /// <summary>

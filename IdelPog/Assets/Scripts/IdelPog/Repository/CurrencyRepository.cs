@@ -7,7 +7,7 @@ using IdelPog.Structures;
 namespace IdelPog.Repository
 {
     /// <summary>
-    /// This class stores all <see cref="Currency"/> models.
+    /// This class stores all <see cref="Currency"/> models. Please see <see cref="ICurrencyRepository"/> for documentation.
     /// </summary>
     public class CurrencyRepository : ICurrencyRepository
     {

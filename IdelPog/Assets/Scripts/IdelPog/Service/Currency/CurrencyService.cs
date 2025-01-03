@@ -4,6 +4,9 @@ using IdelPog.Structures;
 
 namespace IdelPog.Service.Currency
 {
+    /// <summary>
+    /// See <see cref="ICurrencyService"/> for documentation.
+    /// </summary>
     public class CurrencyService : ICurrencyService
     {
         protected ICurrencyRepository Repository = new CurrencyRepository();
