@@ -3,7 +3,7 @@ using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Structures;
 
-namespace IdelPog.Repository
+namespace IdelPog.Repository.Currency
 {
     /// <summary>
     /// The purpose of this interface is to give access to Adding, Removing, and finally getting a <see cref="Currency"/> from an internal data structure
@@ -29,7 +29,7 @@ namespace IdelPog.Repository
         /// <item> Always ensure that this method will throw an exception if the passed <see cref="Currency"/> model already exists in the Repository </item>
         /// </list>
         /// </remarks>
-        public bool Add(Currency currency);
+        public bool Add(Model.Currency currency);
 
         /// <summary>
         /// Removes a <see cref="Currency"/> model from the Repository by using its <see cref="CurrencyType"/>
@@ -60,6 +60,6 @@ namespace IdelPog.Repository
         /// <item> You should throw an exception if the passed <see cref="CurrencyType"/> is not found </item>
         /// </list>
         /// </remarks>
-        public Currency Get(CurrencyType currencyType);
+        public Model.Currency Get(CurrencyType currencyType);
     }
 }

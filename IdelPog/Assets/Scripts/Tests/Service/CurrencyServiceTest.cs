@@ -1,6 +1,6 @@
 ﻿using IdelPog.Exceptions;
 using IdelPog.Model;
-using IdelPog.Repository;
+using IdelPog.Repository.Currency;
 using IdelPog.Service;
 using IdelPog.Structures;
 using Moq;

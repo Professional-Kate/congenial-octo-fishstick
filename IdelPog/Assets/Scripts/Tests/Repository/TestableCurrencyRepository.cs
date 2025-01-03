@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using IdelPog.Model;
 using IdelPog.Repository;
+using IdelPog.Repository.Currency;
 using IdelPog.Structures;
 
 namespace Tests.Repository

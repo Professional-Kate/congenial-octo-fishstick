@@ -1,5 +1,6 @@
 ﻿using IdelPog.Exceptions;
 using IdelPog.Repository;
+using IdelPog.Repository.Currency;
 using IdelPog.Structures;
 
 namespace IdelPog.Service.Currency

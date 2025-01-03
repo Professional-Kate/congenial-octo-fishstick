@@ -4,16 +4,16 @@ using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Structures;
 
-namespace IdelPog.Repository
+namespace IdelPog.Repository.Currency
 {
     /// <summary>
     /// This class stores all <see cref="Currency"/> models. Please see <see cref="ICurrencyRepository"/> for documentation.
     /// </summary>
     public class CurrencyRepository : ICurrencyRepository
     {
-        protected Dictionary<CurrencyType, Currency> Repository = new();
+        protected Dictionary<CurrencyType, Model.Currency> Repository = new();
 
-        public bool Add(Currency currency)
+        public bool Add(Model.Currency currency)
         {
             if (currency == null)
             {
@@ -42,12 +42,12 @@ namespace IdelPog.Repository
             return true;
         }
 
-        public Currency Get(CurrencyType currencyType)
+        public Model.Currency Get(CurrencyType currencyType)
         {
             AssertTypeIsValid(currencyType);
             AssertCurrencyExists(currencyType);
             
-            Currency currency = Repository[currencyType];
+            Model.Currency currency = Repository[currencyType];
             return currency;
         }
         
