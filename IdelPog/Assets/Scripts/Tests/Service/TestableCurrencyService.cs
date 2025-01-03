@@ -1,5 +1,4 @@
-﻿using IdelPog.Repository;
-using IdelPog.Repository.Currency;
+﻿using IdelPog.Repository.Currency;
 using IdelPog.Service.Currency;
 
 namespace Tests.Service

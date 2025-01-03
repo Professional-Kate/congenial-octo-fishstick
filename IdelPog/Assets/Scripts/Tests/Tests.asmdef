@@ -8,7 +8,8 @@
         "Structures",
         "Model",
         "Exception",
-        "Service"
+        "Service",
+        "Controller"
     ],
     "includePlatforms": [
         "Editor"
