@@ -23,20 +23,26 @@ namespace Tests.Service
             _currencyType = CurrencyType.FOOD;
             _amount = amount;
         }
-      
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            _currencyRepositoryMock = new Mock<ICurrencyRepository>();
-            _currencyService = new TestableCurrencyService(_currencyRepositoryMock.Object);
-            _currency = new Currency(_currencyType);
-        }
         
         [SetUp]
         public void Setup()
         {
             _currency = new Currency(_currencyType);
+            SetupMock();
+        }
+
+        private void SetupMock()
+        {
+            _currencyRepositoryMock = new Mock<ICurrencyRepository>();
+            _currencyService = new TestableCurrencyService(_currencyRepositoryMock.Object);
+
             _currencyRepositoryMock.Setup(library => library.Get(_currencyType)).Returns(_currency);
+            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Throws<NotFoundException>();
+        }
+
+        private void VerifyTotalGetCalls(int amount)
+        {
+            _currencyRepositoryMock.Verify(library => library.Get(_currencyType), Times.Exactly(amount));
         }
 
 
@@ -47,6 +53,7 @@ namespace Tests.Service
             
             Assert.True(serviceResponse.IsSuccess);
             Assert.AreEqual(_amount, _currency.Amount);
+            VerifyTotalGetCalls(1);
         }
 
         [Test]
@@ -56,6 +63,7 @@ namespace Tests.Service
             {
                 _currencyService.AddAmount(_currencyType, _amount);
                 Assert.AreEqual(_amount * i, _currency.Amount);
+                VerifyTotalGetCalls(i);
             }
         }
 
@@ -69,29 +77,29 @@ namespace Tests.Service
             Assert.IsNotNull(serviceResponse.Message);
             
             Assert.AreNotEqual(_amount, _currency.Amount);
+            VerifyTotalGetCalls(0);
         }
 
         [Test]
         public void Negative_AddAmount_UnknownCurrency_ReturnsBadServiceResponse()
         {
-            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.WOOD))
-                .Throws<NotFoundException>();
-            
             ServiceResponse serviceResponse = _currencyService.AddAmount(CurrencyType.WOOD, _amount);
             
             Assert.False(serviceResponse.IsSuccess);
             Assert.IsNotNull(serviceResponse.Message);
+            VerifyTotalGetCalls(0);
         }
 
         [Test]
         public void Positive_RemoveAmount_RemovesAmountFromCurrency()
         {
-            _currency.SetAmount(_amount); // Currency can't go negative, so we need this
+            _currency.SetAmount(_amount + 1); // Currency can't go negative, so we need this
             
             ServiceResponse serviceResponse = _currencyService.RemoveAmount(_currencyType, _amount);
             
             Assert.True(serviceResponse.IsSuccess);
-            Assert.AreEqual(0, _currency.Amount);
+            Assert.AreEqual(1, _currency.Amount);
+            VerifyTotalGetCalls(1);
         }
 
         [Test]
@@ -104,6 +112,8 @@ namespace Tests.Service
                 Assert.AreEqual(i, _currency.Amount);
                 _currencyService.RemoveAmount(_currencyType, 1);
             }
+            
+            _currencyRepositoryMock.Verify(library => library.Get(_currencyType), Times.AtMost(9));
         }
 
         [TestCase(-10)]
@@ -114,6 +124,8 @@ namespace Tests.Service
             
             Assert.False(serviceResponse.IsSuccess);
             Assert.IsNotNull(serviceResponse.Message);
+            
+            VerifyTotalGetCalls(0);
         }
 
         [Test]
@@ -125,6 +137,29 @@ namespace Tests.Service
             
             Assert.False(serviceResponse.IsSuccess);
             Assert.IsNotNull(serviceResponse.Message);
+            VerifyTotalGetCalls(0);
+        }
+
+        [Test]
+        public void Negative_RemoveAmount_InsufficientAmount_ReturnsBadServiceResponse()
+        {
+            ServiceResponse serviceResponse = _currencyService.RemoveAmount(CurrencyType.FOOD, _amount);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.IsNotNull(serviceResponse.Message);
+            VerifyTotalGetCalls(1);
+        }
+
+        [Test]
+        public void Negative_RemoveAmount_AmountExactlyZero_ReturnsBadServiceResponse()
+        {
+            _currency.SetAmount(_amount);
+            
+            ServiceResponse serviceResponse = _currencyService.RemoveAmount(_currencyType, _amount);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.IsNotNull(serviceResponse.Message);
+            VerifyTotalGetCalls(1);
         }
     }
 }

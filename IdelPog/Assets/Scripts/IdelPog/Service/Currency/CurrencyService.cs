@@ -42,8 +42,13 @@ namespace IdelPog.Service.Currency
             try
             {
                 Model.Currency currency = Repository.Get(currencyType);
-
                 int newAmount = currency.Amount - amount;
+
+                if (newAmount <= 0)
+                {
+                    return ServiceResponse.Failure($"Error! Cannot remove amount : {amount} from CurrencyType {currencyType}. This operation would cause Amount to become a negative number.");
+                }
+                
                 currency.SetAmount(newAmount);
             }
             catch (NotFoundException exception)

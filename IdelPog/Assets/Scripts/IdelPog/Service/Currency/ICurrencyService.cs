@@ -26,6 +26,7 @@ namespace IdelPog.Service.Currency
         /// <item> This class should only ever return a <see cref="ServiceResponse"/>, catch errors and wrap them in the <see cref="ServiceResponse"/> object so the controller doesn't need to </item>
         /// <item> You should return a failed <see cref="ServiceResponse"/> if the passed amount if not greater than zero</item>
         /// <item> You should also return a failed <see cref="ServiceResponse"/> if the passed <see cref="CurrencyType"/> is not found in the Repository </item>
+        /// <item> Return a failed <see cref="ServiceResponse"/> if the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/> </item>
         /// </list>
         /// </remarks>
         public ServiceResponse AddAmount(CurrencyType currencyType, int amount);
@@ -47,6 +48,7 @@ namespace IdelPog.Service.Currency
         /// <item> This class should only ever return a <see cref="ServiceResponse"/>, catch errors and wrap them in the <see cref="ServiceResponse"/> object so the controller doesn't need to </item>
         /// <item> You should return a failed <see cref="ServiceResponse"/> if the passed amount if not greater than zero</item>
         /// <item> You should also return a failed <see cref="ServiceResponse"/> if the passed <see cref="CurrencyType"/> is not found in the Repository </item>
+        /// <item> Return a failed <see cref="ServiceResponse"/> if the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/> </item>
         /// </list>
         /// </remarks>
         public ServiceResponse RemoveAmount(CurrencyType currencyType, int amount);
