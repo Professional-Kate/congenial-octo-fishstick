@@ -113,7 +113,7 @@ namespace Tests.Service
                 _currencyService.RemoveAmount(_currencyType, 1);
             }
             
-            _currencyRepositoryMock.Verify(library => library.Get(_currencyType), Times.AtMost(9));
+            _currencyRepositoryMock.Verify(library => library.Get(_currencyType), Times.Exactly(9));
         }
 
         [TestCase(-10)]
