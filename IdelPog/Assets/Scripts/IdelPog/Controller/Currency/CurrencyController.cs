@@ -13,6 +13,7 @@ namespace IdelPog.Controller.Currency
             {
                 switch (currencyTrade.Action)
                 {
+                    // TODO: add logging. 
                     case ActionType.ADD:
                         CurrencyService.AddAmount(currencyTrade.Currency, currencyTrade.Amount);
                         break;
