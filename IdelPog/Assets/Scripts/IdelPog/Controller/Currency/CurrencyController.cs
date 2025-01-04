@@ -7,9 +7,20 @@ namespace IdelPog.Controller.Currency
     {
         protected ICurrencyService CurrencyService = new CurrencyService();
         
-        public void ProcessCurrencyUpdate(CurrencyTrade[] trades)
+        public void ProcessCurrencyUpdate(params CurrencyTrade[] trades)
         {
-            throw new System.NotImplementedException();
+            foreach (CurrencyTrade currencyTrade in trades)
+            {
+                switch (currencyTrade.Action)
+                {
+                    case ActionType.ADD:
+                        CurrencyService.AddAmount(currencyTrade.Currency, currencyTrade.Amount);
+                        break;
+                    case ActionType.REMOVE:
+                        CurrencyService.RemoveAmount(currencyTrade.Currency, currencyTrade.Amount);
+                        break;
+                }
+            }
         }
     }
-}
+} 
