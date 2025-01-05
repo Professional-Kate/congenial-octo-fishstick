@@ -7,7 +7,7 @@ namespace IdelPog.Controller.Currency
 {
     public class CurrencyController : ICurrencyController
     {
-        protected ICurrencyServicePersistence CurrencyService = new CurrencyService();
+        protected ICurrencyMediator CurrencyService = new CurrencyService();
         
         public void ProcessCurrencyUpdate(params CurrencyTrade[] trades)
         {

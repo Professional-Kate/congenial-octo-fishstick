@@ -9,7 +9,7 @@ namespace IdelPog.Service.Currency
     /// <summary>
     /// See <see cref="ICurrencyService"/> for documentation.
     /// </summary>
-    public class CurrencyService : ICurrencyService, ICurrencyServicePersistence
+    public class CurrencyService : ICurrencyService, ICurrencyMediator
     {
         protected ICurrencyRepository Repository = new CurrencyRepository();
         

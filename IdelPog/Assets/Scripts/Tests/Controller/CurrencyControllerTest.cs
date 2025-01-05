@@ -14,7 +14,7 @@ namespace Tests.Controller
         // TODO: when I implement a logging framework, ensure this class logs the ServiceResponse output.
         // TODO: most of these tests maybe aren't needed. Functionality is now mainly handed by the CurrencyService.
         private TestableCurrencyController _currencyController { get; set; }
-        private Mock<ICurrencyServicePersistence> _currencyServiceMock { get; set; }
+        private Mock<ICurrencyMediator> _currencyServiceMock { get; set; }
         private Currency _foodCurrency { get; set; }
         private Currency _woodCurrency { get; set; }
 
@@ -48,7 +48,7 @@ namespace Tests.Controller
         {
             _foodCurrency.SetAmount(0);
             _woodCurrency.SetAmount(0);
-            _currencyServiceMock = new Mock<ICurrencyServicePersistence>();
+            _currencyServiceMock = new Mock<ICurrencyMediator>();
             _currencyController = new TestableCurrencyController(_currencyServiceMock.Object);
         }
 

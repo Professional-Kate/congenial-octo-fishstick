@@ -6,7 +6,7 @@ namespace IdelPog.Service.Currency
     /// 
     /// </summary>
     /// <seealso cref="ProcessCurrencyUpdate"/>
-    public interface ICurrencyServicePersistence
+    public interface ICurrencyMediator
     {
         /// <summary>
         /// Uses a passed <see cref="CurrencyTrade"/> array to modify a <see cref="Model.Currency"/> model
