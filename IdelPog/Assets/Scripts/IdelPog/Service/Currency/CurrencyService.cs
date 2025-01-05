@@ -8,9 +8,14 @@ namespace IdelPog.Service.Currency
     /// <summary>
     /// See <see cref="ICurrencyService"/> for documentation.
     /// </summary>
-    public class CurrencyService : ICurrencyService
+    public class CurrencyService : ICurrencyService, ICurrencyServicePersistence
     {
         protected ICurrencyRepository Repository = new CurrencyRepository();
+        
+        public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
+        {
+            throw new System.NotImplementedException();
+        }
         
         public ServiceResponse AddAmount(CurrencyType currencyType, int amount)
         {
