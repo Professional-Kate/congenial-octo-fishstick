@@ -12,6 +12,7 @@ namespace Tests.Controller
     public class CurrencyControllerTest
     {
         // TODO: when I implement a logging framework, ensure this class logs the ServiceResponse output.
+        // TODO: most of these tests maybe aren't needed. Functionality is now mainly handed by the CurrencyService.
         private TestableCurrencyController _currencyController { get; set; }
         private Mock<ICurrencyServicePersistence> _currencyServiceMock { get; set; }
         private Currency _foodCurrency { get; set; }
@@ -36,10 +37,10 @@ namespace Tests.Controller
         {
             _foodCurrency = new Currency(_currencyType);
             _woodCurrency = new Currency(CurrencyType.WOOD);
-            _addFoodTrade = CreateTrade(_amount, _currencyType, ActionType.ADD);
-            _removeFoodTrade = CreateTrade(_amount, _currencyType, ActionType.REMOVE);
-            _addWoodTrade = CreateTrade(10, CurrencyType.WOOD, ActionType.ADD);
-            _removeWoodTrade = CreateTrade(10, CurrencyType.WOOD, ActionType.REMOVE);
+            _addFoodTrade = TestUtils.CreateTrade(_amount, _currencyType, ActionType.ADD);
+            _removeFoodTrade = TestUtils.CreateTrade(_amount, _currencyType, ActionType.REMOVE);
+            _addWoodTrade = TestUtils.CreateTrade(10, CurrencyType.WOOD, ActionType.ADD);
+            _removeWoodTrade = TestUtils.CreateTrade(10, CurrencyType.WOOD, ActionType.REMOVE);
         }
 
         [SetUp]
@@ -75,11 +76,6 @@ namespace Tests.Controller
                 .Returns(ServiceResponse.Success);
         }
 
-        private CurrencyTrade CreateTrade(int amount, CurrencyType type, ActionType action)
-        {
-            return new CurrencyTrade(amount, type, action);
-        }
-        
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(5)]
@@ -129,7 +125,7 @@ namespace Tests.Controller
         [TestCase(-100)]
         public void Negative_ProcessCurrencyUpdate_BadAmounts_NoUpdates(int badAmount)
         {
-            CurrencyTrade trade = CreateTrade(badAmount, _currencyType, ActionType.ADD);
+            CurrencyTrade trade = TestUtils.CreateTrade(badAmount, _currencyType, ActionType.ADD);
 
             _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trade))
                 .Returns(ServiceResponse.Failure(""));

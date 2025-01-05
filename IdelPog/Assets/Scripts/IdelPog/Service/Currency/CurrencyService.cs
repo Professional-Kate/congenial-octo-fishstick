@@ -1,5 +1,6 @@
-﻿using IdelPog.Exceptions;
-using IdelPog.Repository;
+﻿using System.Collections.Generic;
+using System.Linq;
+using IdelPog.Exceptions;
 using IdelPog.Repository.Currency;
 using IdelPog.Structures;
 
@@ -14,7 +15,70 @@ namespace IdelPog.Service.Currency
         
         public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
         {
-            throw new System.NotImplementedException();
+            ServiceResponse serviceResponse = ValidateTrades(trades);
+            if (serviceResponse.IsSuccess == false)
+            {
+                return serviceResponse;
+            }
+            
+            Dictionary<CurrencyType, Model.Currency> stagingGround = new();
+            
+            ServiceResponse returnResponse = ServiceResponse.Success();
+
+            try
+            {
+                foreach (CurrencyTrade currencyTrade in trades)
+                {
+                    Model.Currency globalCurrency = Repository.Get(currencyTrade.Currency);
+                    stagingGround.TryAdd(currencyTrade.Currency, globalCurrency.Clone() as Model.Currency);
+
+                    Model.Currency localCurrency = stagingGround[currencyTrade.Currency];
+
+                    switch (currencyTrade.Action)
+                    {
+                        case ActionType.ADD:
+                            int newAmount = localCurrency.Amount + currencyTrade.Amount;
+                            localCurrency.SetAmount(newAmount);
+                            break;
+                        case ActionType.REMOVE:
+                            newAmount = localCurrency.Amount - currencyTrade.Amount;
+                            localCurrency.SetAmount(newAmount);
+                            break;
+                    }
+                }
+            }
+            catch (NotFoundException exception)
+            {
+                return ServiceResponse.Failure(exception.Message);
+            }
+
+            foreach (Model.Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
+            {
+                serviceResponse = AssertAmountGreaterThanZero(stagedCurrency.Amount);
+                if (serviceResponse.IsSuccess == false)
+                {
+                    return serviceResponse;
+                }
+            }
+            
+            foreach (Model.Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
+            {
+                Model.Currency globalCurrency = Repository.Get(stagedCurrency.CurrencyType);
+
+                int difference = stagedCurrency.Amount - globalCurrency.Amount;
+                switch (difference)
+                {
+                    case > 0:
+                        AddAmount(globalCurrency.CurrencyType, difference);
+                        break;
+                    case < 0:
+                        RemoveAmount(globalCurrency.CurrencyType, -difference);
+                        break;
+
+                }
+            }
+
+            return returnResponse;
         }
         
         public ServiceResponse AddAmount(CurrencyType currencyType, int amount)
@@ -43,7 +107,7 @@ namespace IdelPog.Service.Currency
         public ServiceResponse RemoveAmount(CurrencyType currencyType, int amount)
         {
             ServiceResponse serviceResponse = AssertAmountGreaterThanZero(amount);
-            if (serviceResponse.IsSuccess == false)
+                        if (serviceResponse.IsSuccess == false)
             {
                 return serviceResponse;
             }
@@ -68,6 +132,25 @@ namespace IdelPog.Service.Currency
             return ServiceResponse.Success();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="trades"></param>
+        /// <returns></returns>
+        private ServiceResponse ValidateTrades(params CurrencyTrade[] trades)
+        {
+            foreach (CurrencyTrade currencyTrade in trades)
+            {
+                ServiceResponse serviceResponse = AssertAmountGreaterThanZero(currencyTrade.Amount);
+                if (serviceResponse.IsSuccess == false)
+                {
+                    return serviceResponse;
+                }
+            }
+
+            return ServiceResponse.Success();
+        }
+        
         /// <summary>
         /// Asserts that the passed amount is greater tha n zero
         /// If the returned <see cref="ServiceResponse"/>.<see cref="ServiceResponse.IsSuccess"/> is false then it didn't pass the assertions
