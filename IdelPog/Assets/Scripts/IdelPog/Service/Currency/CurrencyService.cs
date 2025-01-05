@@ -27,6 +27,7 @@ namespace IdelPog.Service.Currency
 
             try
             {
+                // Clone Repository Currency into the stagingGround
                 foreach (CurrencyTrade currencyTrade in trades)
                 {
                     Model.Currency globalCurrency = Repository.Get(currencyTrade.Currency);
@@ -34,6 +35,7 @@ namespace IdelPog.Service.Currency
 
                     Model.Currency localCurrency = stagingGround[currencyTrade.Currency];
 
+                    // Apply CurrencyTrade actions to the stagingGround Currency
                     switch (currencyTrade.Action)
                     {
                         case ActionType.ADD:
@@ -52,6 +54,7 @@ namespace IdelPog.Service.Currency
                 return ServiceResponse.Failure(exception.Message);
             }
 
+            // Assert if all the passed CurrencyTrades won't leave a Currency with 0 or less Amount
             foreach (Model.Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
             {
                 serviceResponse = AssertAmountGreaterThanZero(stagedCurrency.Amount);
@@ -61,10 +64,12 @@ namespace IdelPog.Service.Currency
                 }
             }
             
+            // Apply the stagingGround changes to the Repository Currency
             foreach (Model.Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
             {
                 Model.Currency globalCurrency = Repository.Get(stagedCurrency.CurrencyType);
 
+                // Calculating if we need to Remove or Add Amount
                 int difference = stagedCurrency.Amount - globalCurrency.Amount;
                 switch (difference)
                 {
@@ -74,7 +79,6 @@ namespace IdelPog.Service.Currency
                     case < 0:
                         RemoveAmount(globalCurrency.CurrencyType, -difference);
                         break;
-
                 }
             }
 
@@ -133,11 +137,11 @@ namespace IdelPog.Service.Currency
         }
 
         /// <summary>
-        /// 
+        /// Validates an entire passed array of <see cref="CurrencyTrade"/>s. Will only validate if the <see cref="CurrencyTrade.Amount"/> is above zero
         /// </summary>
-        /// <param name="trades"></param>
-        /// <returns></returns>
-        private ServiceResponse ValidateTrades(params CurrencyTrade[] trades)
+        /// <param name="trades">The <see cref="CurrencyTrade"/> array you want to verify</param>
+        /// <returns>A <see cref="ServiceResponse"/> object that will tell you if the operation was successful</returns>
+        private static ServiceResponse ValidateTrades(params CurrencyTrade[] trades)
         {
             foreach (CurrencyTrade currencyTrade in trades)
             {
