@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Repository.Currency;
 using IdelPog.Service;
@@ -11,7 +12,7 @@ using UnityEngine;
 namespace Tests.Service
 {
     [TestFixture(CurrencyType.FOOD, CurrencyType.WOOD, 10)]
-    public class CurrencyServicePersistenceTest
+    public class CurrencyMediatorTest
     {
         private TestableCurrencyService _currencyService { get; set; }
         private Mock<ICurrencyRepository> _currencyRepositoryMock { get; set; }
@@ -27,7 +28,7 @@ namespace Tests.Service
         private static CurrencyTrade _addWoodTrade { get; set; } 
         private static CurrencyTrade _removeWoodTrade { get; set; }
         
-        public CurrencyServicePersistenceTest(CurrencyType foodType, CurrencyType woodType, int amount)
+        public CurrencyMediatorTest(CurrencyType foodType, CurrencyType woodType, int amount)
         {
             _foodType = CurrencyType.FOOD;
             _woodType = woodType;
@@ -100,6 +101,35 @@ namespace Tests.Service
             ServiceResponse serviceResponse = _currencyService.ProcessCurrencyUpdate(trades);
             
             Assert.True(serviceResponse.IsSuccess);
+        }
+
+        [Test]
+        public void Negative_ProcessCurrencyUpdate_CurrencyNotFound_ReturnsFailure()
+        {
+            _currencyRepositoryMock.Setup(library => library.Get(_foodType))
+                .Throws<NotFoundException>();
+            
+            ServiceResponse serviceResponse = _currencyService.ProcessCurrencyUpdate(_addFoodTrade);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.IsNotNull(serviceResponse.Message);
+            Assert.AreEqual(0, _foodCurrency.Amount);
+        }
+
+        [Test]
+        public void Negative_ProcessCurrencyUpdate_OneCurrencyNotFound_ReturnsFailure()
+        {
+            _currencyRepositoryMock.Setup(library => library.Get(_foodType))
+                .Throws<NotFoundException>();
+            
+            CurrencyTrade[] trades = { _addFoodTrade, _addWoodTrade };
+            
+            ServiceResponse serviceResponse = _currencyService.ProcessCurrencyUpdate(trades);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.IsNotNull(serviceResponse.Message);
+            Assert.AreEqual(0, _foodCurrency.Amount);
+            Assert.AreEqual(0, _woodCurrency.Amount);
         }
 
         [Test]

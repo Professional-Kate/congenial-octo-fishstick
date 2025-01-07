@@ -74,10 +74,10 @@ namespace IdelPog.Service.Currency
                 switch (difference)
                 {
                     case > 0:
-                        AddAmount(globalCurrency.CurrencyType, difference);
+                        returnResponse = AddAmount(globalCurrency.CurrencyType, difference);
                         break;
                     case < 0:
-                        RemoveAmount(globalCurrency.CurrencyType, -difference);
+                        returnResponse = RemoveAmount(globalCurrency.CurrencyType, -difference);
                         break;
                 }
             }
