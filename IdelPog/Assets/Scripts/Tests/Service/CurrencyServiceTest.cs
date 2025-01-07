@@ -39,8 +39,17 @@ namespace Tests.Service
             _currencyRepositoryMock.Setup(library => library.Get(_currencyType)).Returns(_currency);
             _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Throws<NotFoundException>();
         }
-
-       
+        
+        /// <summary>
+        /// Verify the total amount of <see cref="CurrencyRepository"/>.Get calls
+        /// </summary>
+        /// <param name="expected">The expected amount of calls</param>
+        /// <param name="type">What <see cref="CurrencyType"/> was got</param>
+        /// <param name="currencyRepositoryMock">The <see cref="CurrencyRepository"/> mock</param>
+        internal static void VerifyTotalGetCalls(int expected, CurrencyType type, Mock<ICurrencyRepository> currencyRepositoryMock)
+        {
+            currencyRepositoryMock.Verify(library => library.Get(type), Times.Exactly(expected));
+        }
 
         [Test]
         public void Positive_AddAmount_AddsAmountToCurrency()
@@ -49,7 +58,7 @@ namespace Tests.Service
             
             Assert.True(serviceResponse.IsSuccess);
             Assert.AreEqual(_amount, _currency.Amount);
-            TestUtils.VerifyTotalGetCalls(1, _currencyType, _currencyRepositoryMock);
+            VerifyTotalGetCalls(1, _currencyType, _currencyRepositoryMock);
         }
 
         [Test]
@@ -59,7 +68,7 @@ namespace Tests.Service
             {
                 _currencyService.AddAmount(_currencyType, _amount);
                 Assert.AreEqual(_amount * i, _currency.Amount);
-                TestUtils.VerifyTotalGetCalls(i, _currencyType, _currencyRepositoryMock);
+                VerifyTotalGetCalls(i, _currencyType, _currencyRepositoryMock);
             }
         }
 
@@ -73,7 +82,7 @@ namespace Tests.Service
             Assert.IsNotNull(serviceResponse.Message);
             
             Assert.AreNotEqual(_amount, _currency.Amount);
-            TestUtils.VerifyTotalGetCalls(0, _currencyType, _currencyRepositoryMock);
+            VerifyTotalGetCalls(0, _currencyType, _currencyRepositoryMock);
         }
 
         [Test]
@@ -83,7 +92,7 @@ namespace Tests.Service
             
             Assert.False(serviceResponse.IsSuccess);
             Assert.IsNotNull(serviceResponse.Message);
-            TestUtils.VerifyTotalGetCalls(0, _currencyType, _currencyRepositoryMock);
+            VerifyTotalGetCalls(0, _currencyType, _currencyRepositoryMock);
         }
 
         [Test]
@@ -95,7 +104,7 @@ namespace Tests.Service
             
             Assert.True(serviceResponse.IsSuccess);
             Assert.AreEqual(1, _currency.Amount);
-            TestUtils.VerifyTotalGetCalls(1, _currencyType, _currencyRepositoryMock);
+            VerifyTotalGetCalls(1, _currencyType, _currencyRepositoryMock);
         }
 
         [Test]
@@ -121,7 +130,7 @@ namespace Tests.Service
             Assert.False(serviceResponse.IsSuccess);
             Assert.IsNotNull(serviceResponse.Message);
             
-            TestUtils.VerifyTotalGetCalls(0, _currencyType, _currencyRepositoryMock);
+            VerifyTotalGetCalls(0, _currencyType, _currencyRepositoryMock);
         }
 
         [Test]
@@ -133,7 +142,7 @@ namespace Tests.Service
             
             Assert.False(serviceResponse.IsSuccess);
             Assert.IsNotNull(serviceResponse.Message);
-            TestUtils.VerifyTotalGetCalls(0, _currencyType, _currencyRepositoryMock);
+            VerifyTotalGetCalls(0, _currencyType, _currencyRepositoryMock);
         }
 
         [Test]
@@ -143,7 +152,7 @@ namespace Tests.Service
             
             Assert.False(serviceResponse.IsSuccess);
             Assert.IsNotNull(serviceResponse.Message);
-            TestUtils.VerifyTotalGetCalls(1, _currencyType, _currencyRepositoryMock);
+            VerifyTotalGetCalls(1, _currencyType, _currencyRepositoryMock);
         }
 
         [Test]
@@ -155,7 +164,7 @@ namespace Tests.Service
             
             Assert.False(serviceResponse.IsSuccess);
             Assert.IsNotNull(serviceResponse.Message);
-            TestUtils.VerifyTotalGetCalls(1, _currencyType, _currencyRepositoryMock);
+            VerifyTotalGetCalls(1, _currencyType, _currencyRepositoryMock);
         }
     }
 }
