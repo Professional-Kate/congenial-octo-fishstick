@@ -46,7 +46,7 @@ namespace Tests.Service
         /// <param name="expected">The expected amount of calls</param>
         /// <param name="type">What <see cref="CurrencyType"/> was got</param>
         /// <param name="currencyRepositoryMock">The <see cref="CurrencyRepository"/> mock</param>
-        internal static void VerifyTotalGetCalls(int expected, CurrencyType type, Mock<ICurrencyRepository> currencyRepositoryMock)
+        private static void VerifyTotalGetCalls(int expected, CurrencyType type, Mock<ICurrencyRepository> currencyRepositoryMock)
         {
             currencyRepositoryMock.Verify(library => library.Get(type), Times.Exactly(expected));
         }

@@ -9,7 +9,8 @@
         "Model",
         "Exception",
         "Service",
-        "Controller"
+        "Controller",
+        "Orchestration"
     ],
     "includePlatforms": [
         "Editor"

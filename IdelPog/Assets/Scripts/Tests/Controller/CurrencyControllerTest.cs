@@ -87,7 +87,7 @@ namespace Tests.Controller
             CurrencyTrade[] trades = Enumerable.Repeat(_addFoodTrade, tradeCount).ToArray();
             SetupMock(trades);
            
-            _currencyController.ProcessCurrencyUpdate(trades);
+            _currencyController.UpdateCurrency(trades);
             
             Assert.AreEqual(tradeCount * _amount, _foodCurrency.Amount);
         }
@@ -103,7 +103,7 @@ namespace Tests.Controller
             CurrencyTrade[] trades = Enumerable.Repeat(_removeFoodTrade, tradeCount).ToArray();
             SetupMock(trades);
             
-            _currencyController.ProcessCurrencyUpdate(trades);
+            _currencyController.UpdateCurrency(trades);
             
             Assert.AreEqual(0, _foodCurrency.Amount);
         }
@@ -114,7 +114,7 @@ namespace Tests.Controller
             CurrencyTrade[] trades = { _addWoodTrade, _addFoodTrade, _removeFoodTrade, _addFoodTrade, _addWoodTrade, _removeFoodTrade, _removeWoodTrade, _removeWoodTrade, _addFoodTrade };
             SetupMock(trades);
             
-            _currencyController.ProcessCurrencyUpdate(trades);
+            _currencyController.UpdateCurrency(trades);
             
             Assert.AreEqual(0, _woodCurrency.Amount);
             Assert.AreEqual(10, _foodCurrency.Amount); // this is 10 because I add an extra _addFoodTrade call just to ensure correctness
@@ -130,7 +130,7 @@ namespace Tests.Controller
             _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trade))
                 .Returns(ServiceResponse.Failure(""));
 
-            _currencyController.ProcessCurrencyUpdate(trade);
+            _currencyController.UpdateCurrency(trade);
             
             Assert.AreEqual(0, _foodCurrency.Amount);
         }
@@ -147,7 +147,7 @@ namespace Tests.Controller
             _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trades))
                 .Returns(ServiceResponse.Success);
             
-            _currencyController.ProcessCurrencyUpdate(trades);
+            _currencyController.UpdateCurrency(trades);
             
             Assert.AreEqual(0, _foodCurrency.Amount);
             Assert.AreEqual(0, _woodCurrency.Amount);
