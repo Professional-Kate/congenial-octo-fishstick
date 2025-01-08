@@ -1,8 +1,6 @@
-﻿using IdelPog.Repository.Currency;
-using IdelPog.Structures;
-using Moq;
+﻿using IdelPog.Structures;
 
-namespace Tests
+namespace Tests.Utils
 {
     /// <summary>
     /// Commonly used helper test methods. 

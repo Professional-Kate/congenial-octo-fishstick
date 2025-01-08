@@ -13,7 +13,7 @@ namespace IdelPog.Service.Currency
         /// <summary>
         /// Adds a passed amount to a <see cref="Model.Currency"/> model by using its linked <see cref="CurrencyType"/>
         /// </summary>
-        /// <param name="currencyType">
+        /// <param name="currency">
         /// The <see cref="Model.Currency"/> you want to add an amount to.
         /// The <see cref="Model.Currency"/> will contain this passed <see cref="CurrencyType"/>
         /// </param>
@@ -29,12 +29,12 @@ namespace IdelPog.Service.Currency
         /// <item> Return a failed <see cref="ServiceResponse"/> if the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/> </item>
         /// </list>
         /// </remarks>
-        public ServiceResponse AddAmount(CurrencyType currencyType, int amount);
-        
+        public void AddAmount(Model.Currency currency, int amount);
+
         /// <summary>
         /// Removes a passed amount from a <see cref="Model.Currency"/> model by using its linked <see cref="CurrencyType"/>
         /// </summary>
-        /// <param name="currencyType">
+        /// <param name="currency">
         /// The <see cref="Model.Currency"/> you want to remove amount from.
         /// The <see cref="Model.Currency"/> will contain this passed <see cref="CurrencyType"/>
         /// </param>
@@ -51,6 +51,6 @@ namespace IdelPog.Service.Currency
         /// <item> Return a failed <see cref="ServiceResponse"/> if the passed amount would cause the <see cref="Model.Currency"/> to have a 0 or negative amount </item>
         /// </list>
         /// </remarks>
-        public ServiceResponse RemoveAmount(CurrencyType currencyType, int amount);
+        public void RemoveAmount(Model.Currency currency, int amount);
     }
 } 

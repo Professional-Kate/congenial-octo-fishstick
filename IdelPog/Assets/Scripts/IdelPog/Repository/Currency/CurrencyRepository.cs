@@ -11,7 +11,7 @@ namespace IdelPog.Repository.Currency
     /// </summary>
     public class CurrencyRepository : ICurrencyRepository
     {
-        protected Dictionary<CurrencyType, Model.Currency> Repository = new();
+        private readonly Dictionary<CurrencyType, Model.Currency> _repository = new();
 
         public bool Add(Model.Currency currency)
         {
@@ -23,13 +23,13 @@ namespace IdelPog.Repository.Currency
             CurrencyType type = currency.CurrencyType;
             AssertTypeIsValid(type);
             
-            bool contains = Repository.ContainsKey(type);
+            bool contains = _repository.ContainsKey(type);
             if (contains)
             {
                 throw new ArgumentException($"Error! A Currency with CurrencyType {type} already exists.");
             }
             
-            Repository.Add(type, currency);
+            _repository.Add(type, currency);
             return true;
         }
 
@@ -38,7 +38,7 @@ namespace IdelPog.Repository.Currency
             AssertTypeIsValid(currencyType);
             AssertCurrencyExists(currencyType);
             
-            Repository.Remove(currencyType);
+            _repository.Remove(currencyType);
             return true;
         }
 
@@ -47,7 +47,7 @@ namespace IdelPog.Repository.Currency
             AssertTypeIsValid(currencyType);
             AssertCurrencyExists(currencyType);
             
-            Model.Currency currency = Repository[currencyType];
+            Model.Currency currency = _repository[currencyType];
             return currency;
         }
         
@@ -72,7 +72,7 @@ namespace IdelPog.Repository.Currency
         /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="CurrencyType"/> is not found</exception>
         private void AssertCurrencyExists(CurrencyType currencyType)
         {
-            bool contains = Repository.ContainsKey(currencyType);
+            bool contains = _repository.ContainsKey(currencyType);
             if (contains == false)
             {
                 throw new NotFoundException($"Error! Passed CurrencyType {currencyType} is not in the Repository.");

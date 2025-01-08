@@ -1,6 +1,6 @@
 ﻿using IdelPog.Orchestration;
+using IdelPog.Orchestration.currency;
 using IdelPog.Service;
-using IdelPog.Service.Currency;
 using IdelPog.Structures;
 using UnityEngine;
 
@@ -12,7 +12,7 @@ namespace IdelPog.Controller.Currency
     /// <seealso cref="UpdateCurrency"/>
     public class CurrencyController : Singleton<CurrencyController>, ICurrencyController
     {
-        protected ICurrencyMediator CurrencyService = new CurrencyService();
+        protected ICurrencyMediator CurrencyService = new CurrencyMediator();
         
         public void UpdateCurrency(params CurrencyTrade[] trades)
         {

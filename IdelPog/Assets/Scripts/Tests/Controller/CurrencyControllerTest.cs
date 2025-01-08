@@ -1,10 +1,11 @@
 ﻿using System.Linq;
 using IdelPog.Model;
+using IdelPog.Orchestration;
 using IdelPog.Service;
-using IdelPog.Service.Currency;
 using IdelPog.Structures;
 using Moq;
 using NUnit.Framework;
+using Tests.Utils;
 
 namespace Tests.Controller
 {

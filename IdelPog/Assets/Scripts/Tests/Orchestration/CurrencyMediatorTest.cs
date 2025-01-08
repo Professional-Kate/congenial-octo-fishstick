@@ -2,58 +2,64 @@
 using System.Linq;
 using IdelPog.Exceptions;
 using IdelPog.Model;
+using IdelPog.Orchestration;
+using IdelPog.Orchestration.currency;
 using IdelPog.Repository.Currency;
 using IdelPog.Service;
+using IdelPog.Service.Currency;
 using IdelPog.Structures;
 using Moq;
 using NUnit.Framework;
+using Tests.Utils;
 using UnityEngine;
 
-namespace Tests.Service
+namespace Tests.Orchestration
 {
-    [TestFixture(CurrencyType.FOOD, CurrencyType.WOOD, 10)]
+    [TestFixture]
     public class CurrencyMediatorTest
     {
-        private TestableCurrencyService _currencyService { get; set; }
+        private ICurrencyMediator _currencyService { get; set; }
         private Mock<ICurrencyRepository> _currencyRepositoryMock { get; set; }
         private Currency _foodCurrency { get; set; }
         private Currency _woodCurrency { get; set; }
-        
-        private readonly CurrencyType _foodType;
-        private readonly CurrencyType _woodType;
-        private readonly int _amount;
-        
+
+        private const int Amount = 10;
+
         private static CurrencyTrade _addFoodTrade { get; set; }
         private static CurrencyTrade _removeFoodTrade { get; set; }
         private static CurrencyTrade _addWoodTrade { get; set; } 
         private static CurrencyTrade _removeWoodTrade { get; set; }
-        
-        public CurrencyMediatorTest(CurrencyType foodType, CurrencyType woodType, int amount)
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
-            _foodType = CurrencyType.FOOD;
-            _woodType = woodType;
-            _amount = amount;
+            CreateTrades();
         }
         
         [SetUp]
-        public void Setup()
+        public void TearDown()
         {
-            _foodCurrency = new Currency(_foodType);
-            _woodCurrency = new Currency(_woodType);
-            _addFoodTrade = TestUtils.CreateTrade(_amount, _foodType, ActionType.ADD);
-            _removeFoodTrade = TestUtils.CreateTrade(_amount, _foodType, ActionType.REMOVE);
-            _addWoodTrade = TestUtils.CreateTrade(_amount, _woodType, ActionType.ADD);
-            _removeWoodTrade = TestUtils.CreateTrade(_amount, _woodType, ActionType.REMOVE);
+            _foodCurrency = CurrencyFactory.CreateFood();
+            _woodCurrency = CurrencyFactory.CreateWood();
+            
             SetupMock();
         }
 
         private void SetupMock()
         {
             _currencyRepositoryMock = new Mock<ICurrencyRepository>();
-            _currencyService = new TestableCurrencyService(_currencyRepositoryMock.Object);
+            _currencyService = new CurrencyMediator(new CurrencyService(), _currencyRepositoryMock.Object);
             
-            _currencyRepositoryMock.Setup(library => library.Get(_foodType)).Returns(_foodCurrency);
-            _currencyRepositoryMock.Setup(library => library.Get(_woodType)).Returns(_woodCurrency);
+            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns(_foodCurrency);
+            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns(_woodCurrency);
+        }
+
+        private void CreateTrades()
+        {
+            _addFoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.FOOD, ActionType.ADD);
+            _removeFoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.FOOD, ActionType.REMOVE);
+            _addWoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.WOOD, ActionType.ADD);
+            _removeWoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.WOOD, ActionType.REMOVE);
         }
         
         
@@ -69,8 +75,10 @@ namespace Tests.Service
 
             ServiceResponse serviceResponse = _currencyService.ProcessCurrencyUpdate(trades);
             
+            Debug.Log(serviceResponse.Message);
+            
             Assert.True(serviceResponse.IsSuccess);
-            Assert.AreEqual(tradeCount * _amount, _foodCurrency.Amount);
+            Assert.AreEqual(tradeCount * Amount, _foodCurrency.Amount);
         }
         
         [TestCase(0)]
@@ -81,7 +89,7 @@ namespace Tests.Service
         [TestCase(20)]
         public void Positive_ProcessCurrencyUpdate_MultipleRemoveUpdates_UpdatesAmount(int tradeCount)
         {
-            _foodCurrency.SetAmount(tradeCount * _amount + 10); // Not allowed to go negative or to zero, which is why the +10 is there.
+            _foodCurrency.SetAmount(tradeCount * Amount + 10); // Not allowed to go negative or to zero, which is why the +10 is there.
             
             CurrencyTrade[] trades = Enumerable.Repeat(_removeFoodTrade, tradeCount).ToArray();
             
@@ -106,7 +114,7 @@ namespace Tests.Service
         [Test]
         public void Negative_ProcessCurrencyUpdate_CurrencyNotFound_ReturnsFailure()
         {
-            _currencyRepositoryMock.Setup(library => library.Get(_foodType))
+            _currencyRepositoryMock.Setup(library => library.Get(_foodCurrency.CurrencyType))
                 .Throws<NotFoundException>();
             
             ServiceResponse serviceResponse = _currencyService.ProcessCurrencyUpdate(_addFoodTrade);
@@ -119,7 +127,7 @@ namespace Tests.Service
         [Test]
         public void Negative_ProcessCurrencyUpdate_OneCurrencyNotFound_ReturnsFailure()
         {
-            _currencyRepositoryMock.Setup(library => library.Get(_foodType))
+            _currencyRepositoryMock.Setup(library => library.Get(_foodCurrency.CurrencyType))
                 .Throws<NotFoundException>();
             
             CurrencyTrade[] trades = { _addFoodTrade, _addWoodTrade };
@@ -165,7 +173,7 @@ namespace Tests.Service
         [TestCase(-100, ActionType.REMOVE)]
         public void Negative_ProcessCurrencyUpdate_BadAmounts_NoUpdates(int badAmount, ActionType action)
         {
-            CurrencyTrade trade = TestUtils.CreateTrade(badAmount, _foodType, action);
+            CurrencyTrade trade = TestUtils.CreateTrade(badAmount, _foodCurrency.CurrencyType, action);
 
             ServiceResponse serviceResponse = _currencyService.ProcessCurrencyUpdate(trade);
             

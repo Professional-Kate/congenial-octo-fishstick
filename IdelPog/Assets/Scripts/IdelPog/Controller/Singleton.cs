@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IdelPog.Orchestration
+namespace IdelPog.Controller
 {
     /// <summary>
     /// 
