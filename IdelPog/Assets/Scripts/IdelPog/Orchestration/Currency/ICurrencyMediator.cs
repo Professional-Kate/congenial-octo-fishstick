@@ -1,7 +1,7 @@
 ﻿using IdelPog.Service;
 using IdelPog.Structures;
 
-namespace IdelPog.Orchestration
+namespace IdelPog.Orchestration.Currency
 {
     /// <summary>
     /// 

@@ -2,8 +2,7 @@
 using System.Linq;
 using IdelPog.Exceptions;
 using IdelPog.Model;
-using IdelPog.Orchestration;
-using IdelPog.Orchestration.currency;
+using IdelPog.Orchestration.Currency;
 using IdelPog.Repository.Currency;
 using IdelPog.Service;
 using IdelPog.Service.Currency;

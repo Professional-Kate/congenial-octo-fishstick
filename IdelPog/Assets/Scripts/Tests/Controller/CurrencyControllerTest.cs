@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using IdelPog.Model;
-using IdelPog.Orchestration;
+using IdelPog.Orchestration.Currency;
 using IdelPog.Service;
 using IdelPog.Structures;
 using Moq;
@@ -13,7 +13,7 @@ namespace Tests.Controller
     public class CurrencyControllerTest
     {
         // TODO: when I implement a logging framework, ensure this class logs the ServiceResponse output.
-        // TODO: most of these tests maybe aren't needed. Functionality is now mainly handed by the CurrencyService.
+        // TODO: most of these tests maybe aren't needed. Functionality is now mainly handed by the ICurrencyMediator.
         private TestableCurrencyController _currencyController { get; set; }
         private Mock<ICurrencyMediator> _currencyServiceMock { get; set; }
         private Currency _foodCurrency { get; set; }

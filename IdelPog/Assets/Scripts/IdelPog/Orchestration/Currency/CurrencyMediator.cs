@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using IdelPog.Exceptions;
-using IdelPog.Model;
 using IdelPog.Repository.Currency;
 using IdelPog.Service;
 using IdelPog.Service.Currency;
 using IdelPog.Structures;
 
-namespace IdelPog.Orchestration.currency
+namespace IdelPog.Orchestration.Currency
 {
     public class CurrencyMediator : ICurrencyMediator
     {
@@ -34,17 +33,17 @@ namespace IdelPog.Orchestration.currency
                 return validateTradesResponse;
             }
             
-            Dictionary<CurrencyType, Currency> stagingGround = new();
+            Dictionary<CurrencyType, Model.Currency> stagingGround = new();
 
             try
             {
                 // Clone Repository Currency into the stagingGround
                 foreach (CurrencyTrade currencyTrade in trades)
                 {
-                    Currency globalCurrency = _repository.Get(currencyTrade.Currency);
-                    stagingGround.TryAdd(currencyTrade.Currency, globalCurrency.Clone() as Currency);
+                    Model.Currency globalCurrency = _repository.Get(currencyTrade.Currency);
+                    stagingGround.TryAdd(currencyTrade.Currency, globalCurrency.Clone() as Model.Currency);
 
-                    Currency localCurrency = stagingGround[currencyTrade.Currency];
+                    Model.Currency localCurrency = stagingGround[currencyTrade.Currency];
 
                     // Apply CurrencyTrade actions to the stagingGround Currency
                     switch (currencyTrade.Action)
@@ -66,7 +65,7 @@ namespace IdelPog.Orchestration.currency
             }
 
             // Assert if all the passed CurrencyTrades won't leave a Currency with 0 or less Amount
-            foreach (Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
+            foreach (Model.Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
             {
                 ServiceResponse finalAmountsValidResponse = AssertAmountGreaterThanZero(stagedCurrency.Amount);
                 if (finalAmountsValidResponse.IsSuccess == false)
@@ -76,9 +75,9 @@ namespace IdelPog.Orchestration.currency
             }
             
             // Apply the stagingGround changes to the Repository Currency
-            foreach (Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
+            foreach (Model.Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
             {
-                Currency globalCurrency = _repository.Get(stagedCurrency.CurrencyType);
+                Model.Currency globalCurrency = _repository.Get(stagedCurrency.CurrencyType);
 
                 // Calculating if we need to Remove or Add Amount
                 int difference = stagedCurrency.Amount - globalCurrency.Amount;
