@@ -1,4 +1,4 @@
 ﻿{
   "name": "Controller",
-  "references":[ "GUID:8264cb37ba214cb28903dbadb3bd9515", "GUID:89c0e57c1f56410ea2dbb4b24d3360c4", "GUID:fe8557206362b624d88caa15e0d554e0" ]
+  "references":[ "GUID:fe8557206362b624d88caa15e0d554e0", "GUID:8264cb37ba214cb28903dbadb3bd9515" ]
 }

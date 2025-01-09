@@ -2,9 +2,9 @@
 using System.Linq;
 using IdelPog.Exceptions;
 using IdelPog.Repository.Currency;
-using IdelPog.Service;
 using IdelPog.Service.Currency;
 using IdelPog.Structures;
+using IdelPog.Structures.Enums;
 
 namespace IdelPog.Orchestration.Currency
 {

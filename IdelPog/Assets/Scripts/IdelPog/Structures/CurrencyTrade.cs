@@ -1,4 +1,6 @@
-﻿namespace IdelPog.Structures
+﻿using IdelPog.Structures.Enums;
+
+namespace IdelPog.Structures
 {
     /// <summary>
     /// This structure is used to update a Currency model. 

@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Structures
+﻿namespace IdelPog.Structures.Enums
 {
     /// <summary>
     /// These Actions wills be used to dictate how to modify an object

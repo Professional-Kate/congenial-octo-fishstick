@@ -1,5 +1,4 @@
 ﻿using IdelPog.Orchestration.Currency;
-using IdelPog.Service;
 using IdelPog.Structures;
 using UnityEngine;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using IdelPog.Exceptions;
 using IdelPog.Model;
-using IdelPog.Structures;
+using IdelPog.Structures.Enums;
 
 namespace IdelPog.Repository.Currency
 {
@@ -16,8 +16,8 @@ namespace IdelPog.Repository.Currency
         /// <summary>
         /// Adds a <see cref="Currency"/> model with a connected <see cref="CurrencyType"/> key into the Repository
         /// </summary>
-        /// <param name="currency">The <see cref="Currency"/> model you want to add</param>
-        /// <returns>if the operation was successful</returns>
+        /// <param name="key">The <see cref="CurrencyType"/> of the <see cref="Currency"/> you want to add</param>
+        /// <param name="value">The <see cref="Currency"/> model you want to add</param>
         /// <exception cref="ArgumentNullException">If the passed <see cref="Currency"/> model is null</exception>
         /// <exception cref="NoTypeException">If the <see cref="Currency"/> model <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></exception>
         /// <exception cref="ArgumentException">If the passed <see cref="Currency"/> model already exists in the Repository</exception>
@@ -25,19 +25,19 @@ namespace IdelPog.Repository.Currency
         /// Every implementation of this method should follow these rules :
         /// <list type="bullet">
         /// <item> You should throw an exception if the passed <see cref="Currency"/> model <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></item>
+        /// <item> You should throw an exception if the passed <see cref="Currency"/> model is already in the repository. <see cref="Currency"/> should be unique. </item>
         /// <item> The passed <see cref="Currency"/> will be linked to the <see cref="CurrencyType"/> key in the Repository </item>
         /// <item> Always ensure that this method will throw an exception if the passed <see cref="Currency"/> model already exists in the Repository </item>
         /// </list>
         /// </remarks>
-        public bool Add(Model.Currency currency);
+        public void Add(CurrencyType key, Model.Currency value);
 
         /// <summary>
         /// Removes a <see cref="Currency"/> model from the Repository by using its <see cref="CurrencyType"/>
         /// </summary>
         /// <param name="currencyType">The <see cref="Currency"/> model you want to remove should have this <see cref="CurrencyType"/></param>
-        /// <returns>if the operation was successful</returns>
         /// <exception cref="NoTypeException">If the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></exception>
-        /// <exception cref="ArgumentException">If the passed <see cref="CurrencyType"/> is not in the Repository</exception>
+        /// <exception cref="NotFoundException">If the passed <see cref="CurrencyType"/> is not in the Repository</exception>
         /// <remarks>
         /// Every implementation of this method should follow these rules :
         /// <list type="bullet">
@@ -45,7 +45,7 @@ namespace IdelPog.Repository.Currency
         /// <item> An exception should be thrown if the <see cref="Currency"/> is not found in the Repository</item>
         /// </list>
         /// </remarks>
-        public bool Remove(CurrencyType currencyType);
+        public void Remove(CurrencyType currencyType);
 
         /// <summary>
         /// Returns an item from the Repository using a <see cref="CurrencyType"/> tag

@@ -1,4 +1,4 @@
 ﻿{
   "name": "Service",
-  "references":[ "GUID:8264cb37ba214cb28903dbadb3bd9515", "GUID:0c9fe7ab183e46e98a5ece413be7b33f", "GUID:8e960b4ccb2e4b89b7f3a729bd1156ed", "GUID:56f7405073fd4ec286bee92d3c46044a" ]
+  "references":[ "GUID:8e960b4ccb2e4b89b7f3a729bd1156ed" ]
 }

@@ -1,4 +1,5 @@
 ﻿using IdelPog.Structures;
+using IdelPog.Structures.Enums;
 
 namespace Tests.Utils
 {

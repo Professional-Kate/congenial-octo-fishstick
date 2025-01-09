@@ -1,54 +1,32 @@
-using System;
-using System.Collections.Generic;
 using IdelPog.Exceptions;
-using IdelPog.Model;
-using IdelPog.Structures;
+using IdelPog.Structures.Enums;
 
 namespace IdelPog.Repository.Currency
 {
     /// <summary>
-    /// This class stores all <see cref="Currency"/> models. Please see <see cref="ICurrencyRepository"/> for documentation.
+    /// This class provides access to Remove, Add, or Get a <see cref="Model.Currency"/> object. Please see <see cref="ICurrencyRepository"/> for documentation.
     /// </summary>
-    public class CurrencyRepository : ICurrencyRepository
+    public class CurrencyRepository : Repository<CurrencyType, Model.Currency>, ICurrencyRepository
     {
-        private readonly Dictionary<CurrencyType, Model.Currency> _repository = new();
-
-        public bool Add(Model.Currency currency)
+        public override void Add(CurrencyType key, Model.Currency value)
         {
-            if (currency == null)
-            {
-                throw new ArgumentNullException();
-            }
+            AssertTypeIsValid(key);
             
-            CurrencyType type = currency.CurrencyType;
-            AssertTypeIsValid(type);
-            
-            bool contains = _repository.ContainsKey(type);
-            if (contains)
-            {
-                throw new ArgumentException($"Error! A Currency with CurrencyType {type} already exists.");
-            }
-            
-            _repository.Add(type, currency);
-            return true;
+            base.Add(key, value);;
         }
 
-        public bool Remove(CurrencyType currencyType)
+        public override void Remove(CurrencyType currencyType)
         {
             AssertTypeIsValid(currencyType);
-            AssertCurrencyExists(currencyType);
             
-            _repository.Remove(currencyType);
-            return true;
+            base.Remove(currencyType);
         }
 
-        public Model.Currency Get(CurrencyType currencyType)
+        public override Model.Currency Get(CurrencyType currencyType)
         {
             AssertTypeIsValid(currencyType);
-            AssertCurrencyExists(currencyType);
             
-            Model.Currency currency = _repository[currencyType];
-            return currency;
+            return base.Get(currencyType);
         }
         
         /// <summary>
@@ -64,19 +42,6 @@ namespace IdelPog.Repository.Currency
             }
         }
 
-        /// <summary>
-        /// Asserts that the passed <see cref="CurrencyType"/> is in the Repository.
-        /// This will throw an exception if the passed <see cref="CurrencyType"/> is not found
-        /// </summary>
-        /// <param name="currencyType">The <see cref="CurrencyType"/> you want to assure is in the Repository</param>
-        /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="CurrencyType"/> is not found</exception>
-        private void AssertCurrencyExists(CurrencyType currencyType)
-        {
-            bool contains = _repository.ContainsKey(currencyType);
-            if (contains == false)
-            {
-                throw new NotFoundException($"Error! Passed CurrencyType {currencyType} is not in the Repository.");
-            }
-        }
+       
     }
 }

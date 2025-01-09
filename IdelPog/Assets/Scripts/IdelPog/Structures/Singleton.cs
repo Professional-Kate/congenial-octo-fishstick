@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IdelPog.Controller
+namespace IdelPog.Structures
 {
     /// <summary>
     /// 
