@@ -3,9 +3,10 @@
 namespace IdelPog.Structures
 {
     /// <summary>
-    /// 
+    /// Inherit from this class to create a Singleton from the inheriting class. Calling <see cref="GetInstance"/> will always return the instance of that class.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The inheriting class</typeparam>
+    /// <seealso cref="GetInstance"/>
     public class Singleton<T> where T : class
     {
         private static T _instance;

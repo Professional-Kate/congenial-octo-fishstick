@@ -1,16 +1,12 @@
-﻿using IdelPog.Service;
-using IdelPog.Structures;
+﻿using IdelPog.Structures;
 
 namespace IdelPog.Orchestration.Currency
 {
-    /// <summary>
-    /// 
-    /// </summary>
     /// <seealso cref="ProcessCurrencyUpdate"/>
     public interface ICurrencyMediator
     {
         /// <summary>
-        /// Uses a passed <see cref="CurrencyTrade"/> array to modify a <see cref="Model.Currency"/> model
+        /// Uses a passed <see cref="CurrencyTrade"/> array, or a singular <see cref="CurrencyTrade"/> to modify a <see cref="Model.Currency"/> model
         /// </summary>
         /// <param name="trades">An array of <see cref="CurrencyTrade"/>s will dictate what <see cref="Model.Currency"/> to update with how much amount and what action</param>
         /// <returns>A <see cref="ServiceResponse"/> object that will tell you if the operation was successful</returns>

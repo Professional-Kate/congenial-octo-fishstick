@@ -16,17 +16,17 @@ namespace IdelPog.Structures
         /// <summary>
         /// The amount that should be Removed/Added to the <see cref="CurrencyType"/>
         /// </summary>
-        public int Amount { get; private set; }
+        public int Amount { get; }
 
         /// <summary>
         /// What <see cref="CurrencyType"/> the action should perform on
         /// </summary>
-        public CurrencyType Currency { get; private set; }
+        public CurrencyType Currency { get; }
         
         /// <summary>
         /// <inheritdoc cref="ActionType"/>
         /// </summary>
-        public ActionType Action { get; private set; }
+        public ActionType Action { get; }
 
         public CurrencyTrade(int amount, CurrencyType currency, ActionType action)
         {

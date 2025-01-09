@@ -4,7 +4,7 @@ using IdelPog.Exceptions;
 namespace IdelPog.Repository
 {
     /// <summary>
-    /// Generic Interface, the implementing class is expected tp create its own data structure for each method to use.
+    /// Generic Interface, the implementing class is expected to create its own data structure for each method to use
     /// </summary>
     /// <typeparam name="TID">The key to link to the value</typeparam>
     /// <typeparam name="T">The value to link with the key</typeparam>
