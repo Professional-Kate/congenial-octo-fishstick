@@ -71,5 +71,29 @@ namespace Tests.Repository
         {
             Assert.Throws<NotFoundException>(() => _repository.Get(Key));
         }
+
+        [Test]
+        public void Positive_Update_UpdatesItem()
+        {
+            _repository.Add(Key, Value);
+            const string newValue = "CHANGED";
+            
+            _repository.Update(Key, newValue);
+            
+            string returnedString = _repository.Get(Key);
+            Assert.AreEqual(newValue, returnedString);
+        }
+
+        [Test]
+        public void Negative_Update_NonExisting_Throws()
+        {
+            Assert.Throws<NotFoundException>(() => _repository.Update(Key, Value));
+        }
+
+        [Test]
+        public void Negative_Update_NullValue_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => _repository.Update(Key, null));
+        }
     }
 }

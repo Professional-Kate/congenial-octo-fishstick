@@ -32,9 +32,22 @@ namespace IdelPog.Repository
             AssertKeyExists(key);
             
             T entity = _repository[key];
+            
             return entity;
         }
-        
+
+        public virtual void Update(TID key, T value)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException();
+            }
+            
+            AssertKeyExists(key);
+            
+            _repository[key] = value;
+        }
+
         /// <summary>
         /// Asserts that the passed key is inside the Repository
         /// </summary>

@@ -33,7 +33,8 @@ namespace Tests.Repository
             _currencyRepositoryWrite.Add(_currencyType, _foodCurrency);
 
             Currency currency = _currencyRepositoryWrite.Get(_currencyType);
-            Assert.AreEqual(_foodCurrency, currency);
+            Assert.AreEqual(_foodCurrency.CurrencyType, currency.CurrencyType);
+            Assert.AreEqual(_foodCurrency.Amount, currency.Amount);
         }
         
         [Test]
@@ -99,9 +100,21 @@ namespace Tests.Repository
             _currencyRepositoryWrite.Add(_currencyType, _foodCurrency);
             
             Currency currency = _currencyRepositoryWrite.Get(_currencyType);
-            Assert.AreEqual(_foodCurrency, currency);
+            Assert.AreEqual(_foodCurrency.CurrencyType, currency.CurrencyType);
+            Assert.AreEqual(_foodCurrency.Amount, currency.Amount);
         }
 
+        [Test]
+        public void Positive_Get_ReturnsClone()
+        {
+            _currencyRepositoryWrite.Add(_currencyType, _foodCurrency);
+            Currency currency = _currencyRepositoryWrite.Get(_currencyType);
+
+            Assert.AreEqual(_foodCurrency.CurrencyType, currency.CurrencyType);
+            Assert.AreNotEqual(_foodCurrency, currency);
+        }
+        
+        
         [Test]
         public void Positive_Get_ReturnsCorrectCurrency()
         {
@@ -111,7 +124,8 @@ namespace Tests.Repository
             _currencyRepositoryWrite.Add(CurrencyType.WOOD, woodCurrency);
             
             Currency foodCurrency = _currencyRepositoryWrite.Get(_currencyType);
-            Assert.AreEqual(_foodCurrency, foodCurrency);
+            Assert.AreEqual(_foodCurrency.CurrencyType, foodCurrency.CurrencyType);
+            Assert.AreEqual(_foodCurrency.Amount, foodCurrency.Amount);
             Assert.AreNotEqual(woodCurrency, foodCurrency);
         }
 
