@@ -2,9 +2,9 @@
 using System.Linq;
 using IdelPog.Exceptions;
 using IdelPog.Model;
-using IdelPog.Orchestration.Currency;
-using IdelPog.Repository.Currency;
-using IdelPog.Service.Currency;
+using IdelPog.Orchestration;
+using IdelPog.Repository;
+using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using Moq;
@@ -18,7 +18,7 @@ namespace Tests.Orchestration
     public class CurrencyMediatorTest
     {
         private ICurrencyMediator _currencyService { get; set; }
-        private Mock<ICurrencyRepository> _currencyRepositoryMock { get; set; }
+        private Mock<ICurrencyRepositoryRead> _currencyRepositoryMock { get; set; }
         private Currency _foodCurrency { get; set; }
         private Currency _woodCurrency { get; set; }
 
@@ -46,7 +46,7 @@ namespace Tests.Orchestration
 
         private void SetupMock()
         {
-            _currencyRepositoryMock = new Mock<ICurrencyRepository>();
+            _currencyRepositoryMock = new Mock<ICurrencyRepositoryRead>();
             _currencyService = new CurrencyMediator(new CurrencyService(), _currencyRepositoryMock.Object);
             
             _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns(_foodCurrency);

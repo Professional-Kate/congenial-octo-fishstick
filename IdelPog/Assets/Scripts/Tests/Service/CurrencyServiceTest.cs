@@ -1,5 +1,5 @@
 ﻿using IdelPog.Model;
-using IdelPog.Service.Currency;
+using IdelPog.Service;
 using NUnit.Framework;
 using Tests.Utils;
 

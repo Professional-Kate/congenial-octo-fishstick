@@ -1,5 +1,5 @@
-﻿using IdelPog.Controller.Currency;
-using IdelPog.Orchestration.Currency;
+﻿using IdelPog.Controller;
+using IdelPog.Orchestration;
 
 namespace Tests.Controller
 {

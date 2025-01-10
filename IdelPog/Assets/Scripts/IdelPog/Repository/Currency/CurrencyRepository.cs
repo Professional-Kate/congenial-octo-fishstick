@@ -1,14 +1,17 @@
 using IdelPog.Exceptions;
+using IdelPog.Model;
 using IdelPog.Structures.Enums;
 
-namespace IdelPog.Repository.Currency
+namespace IdelPog.Repository
 {
     /// <summary>
-    /// This class provides access to Remove, Add, or Get a <see cref="Model.Currency"/> object. Please see <see cref="ICurrencyRepository"/> for documentation.
+    /// This class provides access to Remove, Add, or Get a <see cref="Currency"/> object. 
     /// </summary>
-    public class CurrencyRepository : Repository<CurrencyType, Model.Currency>, ICurrencyRepository
+    /// <seealso cref="ICurrencyRepositoryRead"/>
+    /// <seealso cref="ICurrencyRepositoryWrite"/>
+    public class CurrencyRepository : Repository<CurrencyType, Currency>, ICurrencyRepositoryWrite, ICurrencyRepositoryRead
     {
-        public override void Add(CurrencyType key, Model.Currency value)
+        public override void Add(CurrencyType key, Currency value)
         {
             AssertTypeIsValid(key);
             
@@ -22,7 +25,7 @@ namespace IdelPog.Repository.Currency
             base.Remove(currencyType);
         }
 
-        public override Model.Currency Get(CurrencyType currencyType)
+        public override Currency Get(CurrencyType currencyType)
         {
             AssertTypeIsValid(currencyType);
             

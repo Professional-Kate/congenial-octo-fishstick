@@ -1,7 +1,7 @@
 using System;
 using IdelPog.Exceptions;
 using IdelPog.Model;
-using IdelPog.Repository.Currency;
+using IdelPog.Repository;
 using IdelPog.Structures.Enums;
 using NUnit.Framework;
 using Tests.Utils;
@@ -11,7 +11,7 @@ namespace Tests.Repository
     [TestFixture(CurrencyType.FOOD)]
     public class CurrencyRepositoryTest
     {
-        private ICurrencyRepository _currencyRepository { get; set; }
+        private CurrencyRepository _currencyRepositoryWrite { get; set; }
         private Currency _foodCurrency  { get; set; }
         private CurrencyType _currencyType { get; }
 
@@ -23,23 +23,23 @@ namespace Tests.Repository
         [SetUp]
         public void Setup()
         {
-            _currencyRepository = new CurrencyRepository();
+            _currencyRepositoryWrite = new CurrencyRepository();
             _foodCurrency = new Currency(_currencyType);
         }
         
         [Test]
         public void Positive_Add_AddsCurrencyIntoRepository()
         {
-            _currencyRepository.Add(_currencyType, _foodCurrency);
+            _currencyRepositoryWrite.Add(_currencyType, _foodCurrency);
 
-            Currency currency = _currencyRepository.Get(_currencyType);
+            Currency currency = _currencyRepositoryWrite.Get(_currencyType);
             Assert.AreEqual(_foodCurrency, currency);
         }
         
         [Test]
         public void Negative_AddWithNullCurrency_ThrowsException()
         {
-            Assert.Throws<ArgumentNullException>(() => _currencyRepository.Add(_currencyType, null));
+            Assert.Throws<ArgumentNullException>(() => _currencyRepositoryWrite.Add(_currencyType, null));
         }
 
         [Test]
@@ -47,70 +47,70 @@ namespace Tests.Repository
         {
             Currency badCurrency = new(CurrencyType.NO_TYPE);
             
-            Assert.Throws<NoTypeException>(() => _currencyRepository.Add(CurrencyType.NO_TYPE, badCurrency));
+            Assert.Throws<NoTypeException>(() => _currencyRepositoryWrite.Add(CurrencyType.NO_TYPE, badCurrency));
         }
 
         [Test]
         public void Negative_AddDuplicateCurrency_ThrowsException()
         {
-            _currencyRepository.Add(_currencyType, _foodCurrency);
+            _currencyRepositoryWrite.Add(_currencyType, _foodCurrency);
             
-            Assert.Throws<ArgumentException>(() => _currencyRepository.Add(_currencyType, _foodCurrency));
+            Assert.Throws<ArgumentException>(() => _currencyRepositoryWrite.Add(_currencyType, _foodCurrency));
         }
 
         [Test]
         public void Positive_Remove_RemovesCurrencyFromRepository()
         {
-            _currencyRepository.Add(_currencyType, _foodCurrency);
-            _currencyRepository.Remove(_currencyType);
+            _currencyRepositoryWrite.Add(_currencyType, _foodCurrency);
+            _currencyRepositoryWrite.Remove(_currencyType);
             
-            Assert.Throws<NotFoundException>(() => _currencyRepository.Get(_currencyType));
+            Assert.Throws<NotFoundException>(() => _currencyRepositoryWrite.Get(_currencyType));
         }
 
         [Test]
         public void Positive_Remove_RemovesCurrencyWithCorrectTag()
         {
-            _currencyRepository.Add(_currencyType, _foodCurrency);
+            _currencyRepositoryWrite.Add(_currencyType, _foodCurrency);
             
             Currency currency = CurrencyFactory.CreateWood();
-            _currencyRepository.Add(CurrencyType.WOOD, currency);
+            _currencyRepositoryWrite.Add(CurrencyType.WOOD, currency);
 
             
-            _currencyRepository.Remove(_currencyType);
-            Currency woodCurrency = _currencyRepository.Get(currency.CurrencyType);
+            _currencyRepositoryWrite.Remove(_currencyType);
+            Currency woodCurrency = _currencyRepositoryWrite.Get(currency.CurrencyType);
             Assert.IsNotNull(woodCurrency);
         }
 
         [Test]
         public void Negative_RemoveWithBadType_ThrowsException()
         {
-            Assert.Throws<NoTypeException>(() => _currencyRepository.Remove(CurrencyType.NO_TYPE));
+            Assert.Throws<NoTypeException>(() => _currencyRepositoryWrite.Remove(CurrencyType.NO_TYPE));
         }
 
         [Test]
         public void Negative_RemoveNonExistingCurrency_ThrowsException()
         {
-            Assert.Throws<NotFoundException>(() => _currencyRepository.Remove(_currencyType));
+            Assert.Throws<NotFoundException>(() => _currencyRepositoryWrite.Remove(_currencyType));
         }
 
         [Test]
         public void Positive_Get_ReturnsCurrency()
         {
-            _currencyRepository.Add(_currencyType, _foodCurrency);
+            _currencyRepositoryWrite.Add(_currencyType, _foodCurrency);
             
-            Currency currency = _currencyRepository.Get(_currencyType);
+            Currency currency = _currencyRepositoryWrite.Get(_currencyType);
             Assert.AreEqual(_foodCurrency, currency);
         }
 
         [Test]
         public void Positive_Get_ReturnsCorrectCurrency()
         {
-            _currencyRepository.Add(_currencyType, _foodCurrency);
+            _currencyRepositoryWrite.Add(_currencyType, _foodCurrency);
             
             Currency woodCurrency = CurrencyFactory.CreateWood();
-            _currencyRepository.Add(CurrencyType.WOOD, woodCurrency);
+            _currencyRepositoryWrite.Add(CurrencyType.WOOD, woodCurrency);
             
-            Currency foodCurrency = _currencyRepository.Get(_currencyType);
+            Currency foodCurrency = _currencyRepositoryWrite.Get(_currencyType);
             Assert.AreEqual(_foodCurrency, foodCurrency);
             Assert.AreNotEqual(woodCurrency, foodCurrency);
         }
@@ -118,13 +118,13 @@ namespace Tests.Repository
         [Test]
         public void Negative_GetWithBadType_ThrowsException()
         {
-            Assert.Throws<NoTypeException>(() => _currencyRepository.Get(CurrencyType.NO_TYPE));
+            Assert.Throws<NoTypeException>(() => _currencyRepositoryWrite.Get(CurrencyType.NO_TYPE));
         }
 
         [Test]
         public void Negative_GetNonExistingCurrency_ThrowsException()
         {
-            Assert.Throws<NotFoundException>(() => _currencyRepository.Get(CurrencyType.FOOD));
+            Assert.Throws<NotFoundException>(() => _currencyRepositoryWrite.Get(CurrencyType.FOOD));
         }
     }
 }

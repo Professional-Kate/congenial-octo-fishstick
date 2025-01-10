@@ -1,8 +1,8 @@
-﻿using IdelPog.Orchestration.Currency;
+﻿using IdelPog.Orchestration;
 using IdelPog.Structures;
 using UnityEngine;
 
-namespace IdelPog.Controller.Currency
+namespace IdelPog.Controller
 {
     /// <summary>
     /// The main control object for Currency. Using this class you can Update any Currency.

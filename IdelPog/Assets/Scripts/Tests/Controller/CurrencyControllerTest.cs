@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using IdelPog.Model;
-using IdelPog.Orchestration.Currency;
+using IdelPog.Orchestration;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using Moq;
