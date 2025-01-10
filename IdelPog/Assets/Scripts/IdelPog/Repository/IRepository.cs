@@ -4,7 +4,7 @@ using IdelPog.Exceptions;
 namespace IdelPog.Repository
 {
     /// <summary>
-    /// Generic Repository, the implementing class is expected to create its own data structure for each method to use
+    /// Generic Repository, the implementing class is expected to create its own data structure for each method to use. This interface gives basic CRUD access to data
     /// </summary>
     /// <typeparam name="TID">The key to link to the value</typeparam>
     /// <typeparam name="T">The value to link with the key</typeparam>

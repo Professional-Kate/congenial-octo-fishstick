@@ -5,11 +5,12 @@ using IdelPog.Structures.Enums;
 namespace IdelPog.Repository
 {
     /// <summary>
-    /// This class provides access to Remove, Add, or Get a <see cref="Currency"/> object. 
+    /// This class provides CRUD access to <see cref="Currency"/> models
     /// </summary>
     /// <seealso cref="ICurrencyRepositoryRead"/>
     /// <seealso cref="ICurrencyRepositoryWrite"/>
-    public class CurrencyRepository : Repository<CurrencyType, Currency>, ICurrencyRepositoryWrite, ICurrencyRepositoryRead
+    /// <seealso cref="ICurrencyRepositoryUpdate"/>
+    public class CurrencyRepository : Repository<CurrencyType, Currency>, ICurrencyRepositoryWrite, ICurrencyRepositoryRead, ICurrencyRepositoryUpdate
     {
         /// <inheritdoc cref="ICurrencyRepositoryWrite.Add"/>
         public override void Add(CurrencyType key, Currency value)
@@ -36,7 +37,15 @@ namespace IdelPog.Repository
 
             return foundCurrency.Clone() as Currency;
         }
-        
+
+        /// <inheritdoc cref="ICurrencyRepositoryUpdate.Update"/>
+        public override void Update(CurrencyType key, Currency value)
+        {
+            AssertTypeIsValid(key);
+            
+            base.Update(key, value);
+        }
+
         /// <summary>
         /// Asserts that the passed <see cref="CurrencyType"/> is not <see cref="CurrencyType.NO_TYPE"/>
         /// </summary>

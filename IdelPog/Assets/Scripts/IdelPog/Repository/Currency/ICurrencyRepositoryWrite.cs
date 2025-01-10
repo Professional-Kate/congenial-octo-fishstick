@@ -21,13 +21,7 @@ namespace IdelPog.Repository
         /// <exception cref="NoTypeException">If the <see cref="Currency"/> model <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></exception>
         /// <exception cref="ArgumentException">If the passed <see cref="Currency"/> model already exists in the Repository</exception>
         /// <remarks>
-        /// Every implementation of this method should follow these rules :
-        /// <list type="bullet">
-        /// <item> You should throw an exception if the passed <see cref="Currency"/> model <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></item>
-        /// <item> You should throw an exception if the passed <see cref="Currency"/> model is already in the repository. <see cref="Currency"/> should be unique. </item>
-        /// <item> The passed <see cref="Currency"/> will be linked to the <see cref="CurrencyType"/> key in the Repository </item>
-        /// <item> Always ensure that this method will throw an exception if the passed <see cref="Currency"/> model already exists in the Repository </item>
-        /// </list>
+        /// The passed <see cref="Currency"/> will be linked to the <see cref="CurrencyType"/> key in the Repository
         /// </remarks>
         public void Add(CurrencyType key, Currency value);
 
@@ -37,13 +31,6 @@ namespace IdelPog.Repository
         /// <param name="currencyType">The <see cref="Currency"/> model you want to remove should have this <see cref="CurrencyType"/></param>
         /// <exception cref="NoTypeException">If the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></exception>
         /// <exception cref="NotFoundException">If the passed <see cref="CurrencyType"/> is not in the Repository</exception>
-        /// <remarks>
-        /// Every implementation of this method should follow these rules :
-        /// <list type="bullet">
-        /// <item> You should throw an exception if the passed <see cref="CurrencyType"/> is <see cref="CurrencyType.NO_TYPE"/></item>
-        /// <item> An exception should be thrown if the <see cref="Currency"/> is not found in the Repository</item>
-        /// </list>
-        /// </remarks>
         public void Remove(CurrencyType currencyType);
     }
 }
