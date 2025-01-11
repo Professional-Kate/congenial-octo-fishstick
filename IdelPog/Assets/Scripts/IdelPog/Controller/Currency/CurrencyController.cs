@@ -10,7 +10,7 @@ namespace IdelPog.Controller
     /// <seealso cref="UpdateCurrency"/>
     public class CurrencyController : Singleton<CurrencyController>, ICurrencyController
     {
-        protected ICurrencyMediator CurrencyService = new CurrencyMediator();
+        protected ICurrencyMediator CurrencyService = CurrencyMediator.CreateDefault();
         
         public void UpdateCurrency(params CurrencyTrade[] trades)
         {

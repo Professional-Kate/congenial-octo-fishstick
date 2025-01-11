@@ -9,26 +9,33 @@ using IdelPog.Structures.Enums;
 
 namespace IdelPog.Orchestration
 {
+    /// <summary>
+    /// See <see cref="ICurrencyMediator"/> for documentation
+    /// </summary>
+    /// <seealso cref="CreateDefault"/>
     public class CurrencyMediator : ICurrencyMediator
     {
         private readonly ICurrencyService _currencyService;
         private readonly ICurrencyRepositoryRead _repositoryRead;
         private readonly ICurrencyRepositoryUpdate _repositoryUpdate;
 
-        public CurrencyMediator()
-        {
-            _currencyService = new CurrencyService();
-            
-            CurrencyRepository repository = new();
-            _repositoryRead = repository;
-            _repositoryUpdate = repository;
-        }
-        
         public CurrencyMediator(ICurrencyService currencyService, ICurrencyRepositoryRead repositoryRead, ICurrencyRepositoryUpdate repositoryUpdate)
         {
             _currencyService = currencyService;
             _repositoryRead = repositoryRead;
             _repositoryUpdate = repositoryUpdate;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="ICurrencyMediator"/> with all required dependencies
+        /// </summary>
+        /// <returns>A new <see cref="ICurrencyMediator"/> class with all dependencies resolved</returns>
+        public static ICurrencyMediator CreateDefault()
+        {
+            ICurrencyService service = new CurrencyService();
+            CurrencyRepository repository = new();
+
+            return new CurrencyMediator(service, repository, repository);
         }
         
         public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
