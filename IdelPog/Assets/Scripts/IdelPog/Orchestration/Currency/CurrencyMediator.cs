@@ -46,19 +46,29 @@ namespace IdelPog.Orchestration
                 return validateTradesResponse;
             }
             
-            Dictionary<CurrencyType, Currency> stagingGround = new();
+            Dictionary<CurrencyType, Currency> stagingGround = new(); 
+            Dictionary<CurrencyType, Currency> originalCurrencies = new(); 
 
             try
             {
                 // Clone Repository Currency into the stagingGround
                 foreach (CurrencyTrade currencyTrade in trades)
                 {
-                    Currency globalCurrency = _repositoryRead.Get(currencyTrade.Currency);
-                    stagingGround.TryAdd(currencyTrade.Currency, globalCurrency);
-
-                    Currency localCurrency = stagingGround[currencyTrade.Currency];
+                    if (!originalCurrencies.TryGetValue(currencyTrade.Currency, out Currency originalCurrency))
+                    {
+                        originalCurrency = _repositoryRead.Get(currencyTrade.Currency);
+                        originalCurrencies.Add(currencyTrade.Currency, originalCurrency);
+                    }
+    
+                    // Clone and stage
+                    if (!stagingGround.ContainsKey(currencyTrade.Currency))
+                    {
+                        stagingGround.Add(currencyTrade.Currency, new Currency(originalCurrency.CurrencyType, originalCurrency.Amount));
+                    }
                     
                     // Apply CurrencyTrade actions to the stagingGround Currency
+                    Currency localCurrency = stagingGround[currencyTrade.Currency];
+                    
                     switch (currencyTrade.Action)
                     {
                         case ActionType.ADD:
@@ -88,21 +98,21 @@ namespace IdelPog.Orchestration
             // Apply the stagingGround changes to the Repository Currency
             foreach (Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
             {
-                Currency currencyClone = _repositoryRead.Get(stagedCurrency.CurrencyType);
-
+                Currency globalCurrency = originalCurrencies[stagedCurrency.CurrencyType];
+                
                 // Calculating if we need to Remove or Add Amount
-                int difference = stagedCurrency.Amount - currencyClone.Amount;
+                int difference = stagedCurrency.Amount - globalCurrency.Amount;
                 switch (difference)
                 {
                     case > 0:
-                        _currencyService.AddAmount(currencyClone, difference);
+                        _currencyService.AddAmount(globalCurrency, difference);
                         break;
                     case < 0:
-                        _currencyService.RemoveAmount(currencyClone, -difference);
+                        _currencyService.RemoveAmount(globalCurrency, -difference);
                         break;
                 }
 
-                _repositoryUpdate.Update(currencyClone.CurrencyType, currencyClone);
+                _repositoryUpdate.Update(globalCurrency.CurrencyType, globalCurrency);
             }
 
             return ServiceResponse.Success();
