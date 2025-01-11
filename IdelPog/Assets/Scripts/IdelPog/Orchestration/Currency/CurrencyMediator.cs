@@ -12,18 +12,23 @@ namespace IdelPog.Orchestration
     public class CurrencyMediator : ICurrencyMediator
     {
         private readonly ICurrencyService _currencyService;
-        private readonly ICurrencyRepositoryRead _repository;
+        private readonly ICurrencyRepositoryRead _repositoryRead;
+        private readonly ICurrencyRepositoryUpdate _repositoryUpdate;
 
         public CurrencyMediator()
         {
             _currencyService = new CurrencyService();
-            _repository = new CurrencyRepository();
+            
+            CurrencyRepository repository = new();
+            _repositoryRead = repository;
+            _repositoryUpdate = repository;
         }
-
-        public CurrencyMediator(ICurrencyService currencyService, ICurrencyRepositoryRead repository)
+        
+        public CurrencyMediator(ICurrencyService currencyService, ICurrencyRepositoryRead repositoryRead, ICurrencyRepositoryUpdate repositoryUpdate)
         {
             _currencyService = currencyService;
-            _repository = repository;
+            _repositoryRead = repositoryRead;
+            _repositoryUpdate = repositoryUpdate;
         }
         
         public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
@@ -41,21 +46,19 @@ namespace IdelPog.Orchestration
                 // Clone Repository Currency into the stagingGround
                 foreach (CurrencyTrade currencyTrade in trades)
                 {
-                    Currency globalCurrency = _repository.Get(currencyTrade.Currency);
-                    stagingGround.TryAdd(currencyTrade.Currency, globalCurrency.Clone() as Currency);
+                    Currency globalCurrency = _repositoryRead.Get(currencyTrade.Currency);
+                    stagingGround.TryAdd(currencyTrade.Currency, globalCurrency);
 
                     Currency localCurrency = stagingGround[currencyTrade.Currency];
-
+                    
                     // Apply CurrencyTrade actions to the stagingGround Currency
                     switch (currencyTrade.Action)
                     {
                         case ActionType.ADD:
-                            int newAmount = localCurrency.Amount + currencyTrade.Amount;
-                            localCurrency.SetAmount(newAmount);
+                            _currencyService.AddAmount(localCurrency, currencyTrade.Amount);
                             break;
                         case ActionType.REMOVE:
-                            newAmount = localCurrency.Amount - currencyTrade.Amount;
-                            localCurrency.SetAmount(newAmount);
+                            _currencyService.RemoveAmount(localCurrency, currencyTrade.Amount);
                             break;
                     }
                 }
@@ -78,19 +81,21 @@ namespace IdelPog.Orchestration
             // Apply the stagingGround changes to the Repository Currency
             foreach (Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
             {
-                Currency globalCurrency = _repository.Get(stagedCurrency.CurrencyType);
+                Currency currencyClone = _repositoryRead.Get(stagedCurrency.CurrencyType);
 
                 // Calculating if we need to Remove or Add Amount
-                int difference = stagedCurrency.Amount - globalCurrency.Amount;
+                int difference = stagedCurrency.Amount - currencyClone.Amount;
                 switch (difference)
                 {
                     case > 0:
-                        _currencyService.AddAmount(globalCurrency, difference);
+                        _currencyService.AddAmount(currencyClone, difference);
                         break;
                     case < 0:
-                        _currencyService.RemoveAmount(globalCurrency, -difference);
+                        _currencyService.RemoveAmount(currencyClone, -difference);
                         break;
                 }
+
+                _repositoryUpdate.Update(currencyClone.CurrencyType, currencyClone);
             }
 
             return ServiceResponse.Success();
