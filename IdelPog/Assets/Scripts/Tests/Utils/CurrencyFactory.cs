@@ -3,7 +3,7 @@ using IdelPog.Structures.Enums;
 
 namespace Tests.Utils
 {
-    internal class CurrencyFactory
+    internal static class CurrencyFactory
     {
         internal static Currency CreateWood()
         {

@@ -15,7 +15,7 @@ namespace Tests.Utils
         /// <param name="amount">The amount to modify</param>
         /// <param name="type">The <see cref="CurrencyType"/> you want to modify</param>
         /// <param name="action">The <see cref="ActionType"/></param>
-        /// <returns></returns>
+        /// <returns>The created <see cref="CurrencyTrade"/></returns>
         internal static CurrencyTrade CreateTrade(int amount, CurrencyType type, ActionType action)
         {
             return new CurrencyTrade(amount, type, action);

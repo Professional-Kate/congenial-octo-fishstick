@@ -51,55 +51,104 @@ namespace IdelPog.Orchestration
 
             try
             {
-                // Clone Repository Currency into the stagingGround
-                foreach (CurrencyTrade currencyTrade in trades)
-                {
-                    if (!originalCurrencies.TryGetValue(currencyTrade.Currency, out Currency originalCurrency))
-                    {
-                        originalCurrency = _repositoryRead.Get(currencyTrade.Currency);
-                        originalCurrencies.Add(currencyTrade.Currency, originalCurrency);
-                    }
-    
-                    // Clone and stage
-                    if (!stagingGround.ContainsKey(currencyTrade.Currency))
-                    {
-                        stagingGround.Add(currencyTrade.Currency, new Currency(originalCurrency.CurrencyType, originalCurrency.Amount));
-                    }
-                    
-                    // Apply CurrencyTrade actions to the stagingGround Currency
-                    Currency localCurrency = stagingGround[currencyTrade.Currency];
-                    
-                    switch (currencyTrade.Action)
-                    {
-                        case ActionType.ADD:
-                            _currencyService.AddAmount(localCurrency, currencyTrade.Amount);
-                            break;
-                        case ActionType.REMOVE:
-                            _currencyService.RemoveAmount(localCurrency, currencyTrade.Amount);
-                            break;
-                    }
-                }
+                CloneCurrency(trades, originalCurrencies, stagingGround);
+                MutateClonedCurrency(trades, stagingGround);
             }
             catch (NotFoundException exception)
             {
                 return ServiceResponse.Failure(exception.Message);
             }
 
-            // Assert if all the passed CurrencyTrades won't leave a Currency with 0 or less Amount
-            foreach (Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
+            ServiceResponse validateFinalAmountsResponse = ValidateFinalAmounts(stagingGround);
+            if (validateFinalAmountsResponse.IsSuccess == false)
             {
-                ServiceResponse finalAmountsValidResponse = AssertAmountGreaterThanZero(stagedCurrency.Amount);
-                if (finalAmountsValidResponse.IsSuccess == false)
-                {
-                    return finalAmountsValidResponse;
-                }
+                return validateFinalAmountsResponse;
             }
             
-            // Apply the stagingGround changes to the Repository Currency
+            ApplyChanges(stagingGround, originalCurrencies);
+
+            return ServiceResponse.Success();
+        }
+
+        /// <summary>
+        /// Gets each separate <see cref="Currency"/> from the <see cref="CurrencyRepository"/>, this is passed into originalCurrencies.
+        /// Then, clones these <see cref="Currency"/> retrieved from the <see cref="CurrencyRepository"/> into the passed stagingGround Dictionary.
+        /// </summary>
+        /// <param name="currencyTrades">Uses the internal <see cref="CurrencyTrade"/>.<see cref="CurrencyTrade.Currency"/> to Get each <see cref="Currency"/> from the Repository</param>
+        /// <param name="originalCurrencies">All the <see cref="Currency"/> returned from Get will first be placed into this Dictionary</param>
+        /// <param name="stagingGround">All the <see cref="Currency"/> added into the originalCurrencies Dictionary will be cloned into this</param>
+        private void CloneCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Currency> originalCurrencies, Dictionary<CurrencyType, Currency> stagingGround)
+        {
+            foreach (CurrencyTrade currencyTrade in currencyTrades)
+            {
+                if (!originalCurrencies.TryGetValue(currencyTrade.Currency, out Currency originalCurrency))
+                {
+                    originalCurrency = _repositoryRead.Get(currencyTrade.Currency);
+                    originalCurrencies.Add(currencyTrade.Currency, originalCurrency);
+                }
+
+                // Clone and stage
+                if (!stagingGround.ContainsKey(currencyTrade.Currency))
+                {
+                    stagingGround[currencyTrade.Currency] = new Currency(originalCurrency.CurrencyType, originalCurrency.Amount);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Uses the passed <see cref="CurrencyTrade"/> array properties <see cref="CurrencyTrade.Amount"/> and <see cref="CurrencyTrade.Action"/> to dictate how to update each <see cref="Currency"/>
+        /// </summary>
+        /// <param name="currencyTrades"><see cref="CurrencyTrade"/></param>
+        /// <param name="stagingGround">This Dictionary will now contain each cloned <see cref="Currency"/> from the <see cref="CurrencyRepository"/></param>
+        private void MutateClonedCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Currency> stagingGround)
+        {
+            foreach (CurrencyTrade currencyTrade in currencyTrades)
+            {
+                // Apply CurrencyTrade actions to the stagingGround Currency
+                Currency localCurrency = stagingGround[currencyTrade.Currency];
+
+                switch (currencyTrade.Action)
+                {
+                    case ActionType.ADD:
+                        _currencyService.AddAmount(localCurrency, currencyTrade.Amount);
+                        break;
+                    case ActionType.REMOVE:
+                        _currencyService.RemoveAmount(localCurrency, currencyTrade.Amount);
+                        break;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// After each required to update <see cref="Currency"/> has been mutated it is passed into this.
+        /// This will check each <see cref="Currency"/> in the passed stagingGround to ensure their <see cref="Currency.Amount"/> is above zero.
+        /// Any <see cref="Currency"/> that has a below 0 amount will fail validation thus failing the entire input array
+        /// </summary>
+        /// <param name="stagingGround">This should now contain each cloned <see cref="Currency"/> from the Repository, but, has had its internal amount updated </param>
+        /// <returns>A <see cref="ServiceResponse"/> who's <see cref="ServiceResponse.IsSuccess"/> will tell if you all the passed trades pass validation</returns>
+        private static ServiceResponse ValidateFinalAmounts(Dictionary<CurrencyType, Currency> stagingGround)
+        {
+            ServiceResponse finalAmountsValidResponse = AssertAmountGreaterThanZero(stagingGround.Select(entry => entry.Value.Amount));
+            if (finalAmountsValidResponse.IsSuccess == false)
+            {
+                return finalAmountsValidResponse;
+            }
+        
+            return ServiceResponse.Success();
+        }
+
+        /// <summary>
+        /// After we pass validation we now Update the <see cref="Currency"/> in the Repository to the new state.
+        /// By this point, all data should be validated so nothing is checked.
+        /// </summary>
+        /// <param name="stagingGround">These <see cref="Currency"/> should now be different from the ones retrieved from the Repository</param>
+        /// <param name="originalCurrencies">This contains the original retrieved <see cref="Currency"/> that has not been changed</param>
+        private void ApplyChanges(Dictionary<CurrencyType, Currency> stagingGround, Dictionary<CurrencyType, Currency> originalCurrencies)
+        {
             foreach (Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
             {
                 Currency globalCurrency = originalCurrencies[stagedCurrency.CurrencyType];
-                
+
                 // Calculating if we need to Remove or Add Amount
                 int difference = stagedCurrency.Amount - globalCurrency.Amount;
                 switch (difference)
@@ -110,29 +159,32 @@ namespace IdelPog.Orchestration
                     case < 0:
                         _currencyService.RemoveAmount(globalCurrency, -difference);
                         break;
+                    case 0:
+                        // no change needed, obviously.
+                        break;
                 }
 
                 _repositoryUpdate.Update(globalCurrency.CurrencyType, globalCurrency);
             }
-
-            return ServiceResponse.Success();
         }
         
         /// <summary>
-        /// Asserts that the passed amount is greater tha n zero
-        /// If the returned <see cref="ServiceResponse"/>.<see cref="ServiceResponse.IsSuccess"/> is false then it didn't pass the assertions
+        /// Asserts that every passed int is greater than 0.
         /// </summary>
-        /// <param name="amount">The amount you want to check</param>
+        /// <param name="amounts">The amounts you want to check</param>
         /// <returns>
-        /// A <see cref="ServiceResponse"/> object that will contain a boolean <see cref="ServiceResponse.IsSuccess"/> and a possible string <see cref="ServiceResponse.Message"/>
+        /// <returns>A <see cref="ServiceResponse"/> who's <see cref="ServiceResponse.IsSuccess"/> will tell if you all the passed numbers passed validation</returns>
         /// </returns>
-        private static ServiceResponse AssertAmountGreaterThanZero(int amount)
+        private static ServiceResponse AssertAmountGreaterThanZero(IEnumerable<int> amounts)
         {
-            if (amount <= 0)
+            foreach (int amount in amounts)
             {
-                return ServiceResponse.Failure($"Error! Passed amount : '{amount}' is required to be a positive number.");
+                if (amount <= 0)
+                {
+                    return ServiceResponse.Failure($"Error! Passed amount : '{amount}' is required to be a positive number.");
+                }
             }
-            
+
             return ServiceResponse.Success();
         }
         
@@ -143,13 +195,10 @@ namespace IdelPog.Orchestration
         /// <returns>A <see cref="ServiceResponse"/> object that will tell you if the operation was successful</returns>
         private static ServiceResponse ValidateTrades(params CurrencyTrade[] trades)
         {
-            foreach (CurrencyTrade currencyTrade in trades)
+            ServiceResponse serviceResponse = AssertAmountGreaterThanZero(trades.Select(entry => entry.Amount));
+            if (serviceResponse.IsSuccess == false)
             {
-                ServiceResponse serviceResponse = AssertAmountGreaterThanZero(currencyTrade.Amount);
-                if (serviceResponse.IsSuccess == false)
-                {
-                    return serviceResponse;
-                }
+                return serviceResponse;
             }
 
             return ServiceResponse.Success();
