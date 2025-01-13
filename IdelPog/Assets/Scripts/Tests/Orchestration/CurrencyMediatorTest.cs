@@ -1,0 +1,248 @@
+﻿using System;
+using System.Linq;
+using IdelPog.Exceptions;
+using IdelPog.Model;
+using IdelPog.Orchestration;
+using IdelPog.Repository;
+using IdelPog.Service;
+using IdelPog.Structures;
+using IdelPog.Structures.Enums;
+using Moq;
+using NUnit.Framework;
+using Tests.Utils;
+using UnityEngine;
+
+namespace Tests.Orchestration
+{
+    [TestFixture]
+    public class CurrencyMediatorTest
+    {
+        private ICurrencyMediator _currencyMediator { get; set; }
+        private Mock<CurrencyRepository> _currencyRepositoryMock { get; set; }
+        private Mock<ICurrencyService> _currencyServiceMock { get; set; }
+        private Currency _foodCurrency { get; set; }
+        private Currency _woodCurrency { get; set; }
+
+        private const int Amount = 10;
+
+        private static CurrencyTrade _addFoodTrade { get; set; }
+        private static CurrencyTrade _removeFoodTrade { get; set; }
+        private static CurrencyTrade _addWoodTrade { get; set; } 
+        private static CurrencyTrade _removeWoodTrade { get; set; }
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            CreateTrades();
+        }
+        
+        [SetUp]
+        public void Setup()
+        {
+            _foodCurrency = CurrencyFactory.CreateFood();
+            _woodCurrency = CurrencyFactory.CreateWood();
+            
+            SetupMock();
+        }
+
+        private void SetupMock()
+        {
+            _currencyRepositoryMock = new Mock<CurrencyRepository>();
+            _currencyServiceMock = new Mock<ICurrencyService>();
+            _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _currencyRepositoryMock.Object, _currencyRepositoryMock.Object);
+            
+            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns(new Currency(CurrencyType.FOOD, _foodCurrency.Amount));
+            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns(new Currency(CurrencyType.WOOD, _woodCurrency.Amount));
+
+            _currencyServiceMock.Setup(library => library.AddAmount(It.IsAny<Currency>(), It.IsAny<int>()))
+                .Callback<Currency, int>((currency, amount) =>
+                {
+                    int newAmount = currency.Amount + amount;
+                    currency.SetAmount(newAmount);
+                });
+            
+            _currencyServiceMock.Setup(library => library.RemoveAmount(It.IsAny<Currency>(), It.IsAny<int>()))
+                .Callback<Currency, int>((currency, amount) =>
+                {
+                    int newAmount = currency.Amount - amount;
+                    currency.SetAmount(newAmount);
+                });
+
+            _currencyRepositoryMock.Setup(library => library.Update(It.IsAny<CurrencyType>(), It.IsAny<Currency>()))
+                .Callback<CurrencyType, Currency>((type, currency) =>
+                {
+                    switch (type)
+                    {
+                        case CurrencyType.FOOD:
+                            _foodCurrency = currency;
+                            break;
+                        case CurrencyType.WOOD:
+                            _woodCurrency = currency;
+                            break;
+                    }
+                });
+        }
+
+        private static void CreateTrades()
+        {
+            _addFoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.FOOD, ActionType.ADD);
+            _removeFoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.FOOD, ActionType.REMOVE);
+            _addWoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.WOOD, ActionType.ADD);
+            _removeWoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.WOOD, ActionType.REMOVE);
+        }
+
+        private void VerifyUpdateCall(int amount)
+        {
+            _currencyRepositoryMock.Verify(library => library.Update(It.IsAny<CurrencyType>(), It.IsAny<Currency>()), Times.Exactly(amount));
+        }
+        
+        
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(5)]
+        [TestCase(10)]
+        [TestCase(15)]
+        [TestCase(20)]
+        public void Positive_ProcessCurrencyUpdate_MultipleAddUpdates_UpdatesAmount(int tradeCount)
+        {
+            CurrencyTrade[] trades = Enumerable.Repeat(_addFoodTrade, tradeCount).ToArray();
+
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
+            
+            Debug.Log(serviceResponse.Message);
+            
+            Assert.True(serviceResponse.IsSuccess);
+            Assert.AreEqual(tradeCount * Amount, _foodCurrency.Amount);
+        }
+        
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(5)]
+        [TestCase(10)]
+        [TestCase(15)]
+        [TestCase(20)]
+        public void Positive_ProcessCurrencyUpdate_MultipleRemoveUpdates_UpdatesAmount(int tradeCount)
+        {
+            CurrencyTrade[] removeTrades = Enumerable.Repeat(_removeFoodTrade, tradeCount).ToArray();
+            CurrencyTrade[] addTrades = Enumerable.Repeat(_addFoodTrade, tradeCount + 1).ToArray();
+            
+            _currencyMediator.ProcessCurrencyUpdate(addTrades);
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(removeTrades);
+            
+            Debug.Log(serviceResponse.Message);
+            
+            Assert.True(serviceResponse.IsSuccess);
+            Assert.AreEqual(10, _foodCurrency.Amount);
+        }
+
+        [Test]
+        public void Positive_ProcessCurrencyUpdate_NoPassedTrades_ReturnsSuccess()
+        {
+            CurrencyTrade[] trades = Array.Empty<CurrencyTrade>();
+            
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
+            
+            Assert.True(serviceResponse.IsSuccess);
+            
+            VerifyUpdateCall(0);
+        }
+
+        [Test]
+        public void Negative_ProcessCurrencyUpdate_CurrencyNotFound_ReturnsFailure()
+        {
+            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Throws<NotFoundException>();
+            
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(_addFoodTrade);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.IsNotNull(serviceResponse.Message);
+            Assert.AreEqual(0, _foodCurrency.Amount);
+            
+            VerifyUpdateCall(0);
+        }
+
+        [Test]
+        public void Negative_ProcessCurrencyUpdate_OneCurrencyNotFound_ReturnsFailure()
+        {
+            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Throws<NotFoundException>();
+
+            CurrencyTrade[] trades = { _addFoodTrade, _addWoodTrade };
+            
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.IsNotNull(serviceResponse.Message);
+            Assert.AreEqual(0, _foodCurrency.Amount);
+            Assert.AreEqual(0, _woodCurrency.Amount);
+            
+            VerifyUpdateCall(0);
+        }
+
+        [Test]
+        public void Negative_ProcessCurrencyUpdate_PassedTradesResultInZeroAmount_ReturnsFail()
+        {
+            CurrencyTrade[] trades = { _addWoodTrade, _addFoodTrade, _removeWoodTrade };
+            
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.AreEqual(0, _woodCurrency.Amount);
+            Assert.AreEqual(0, _foodCurrency.Amount);
+            
+            VerifyUpdateCall(0);
+        }
+        
+        [Test]
+        public void Positive_ProcessCurrencyUpdate_MultipleTypeUpdates_UpdatesAmount()
+        {
+            // certain upgrades will cost multiple currency / give multiple currency for buying. This test is to prove it works.
+            CurrencyTrade[] trades = { _removeFoodTrade, _removeWoodTrade, _addFoodTrade, _addWoodTrade, _addFoodTrade, _addWoodTrade };
+            
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
+            
+            Assert.True(serviceResponse.IsSuccess);
+            Assert.AreEqual(10, _woodCurrency.Amount);
+            Assert.AreEqual(10, _foodCurrency.Amount); 
+            
+            VerifyUpdateCall(2); // two currency = 2 update calls
+
+        }
+        
+        [TestCase(0, ActionType.ADD)]
+        [TestCase(-10, ActionType.ADD)]
+        [TestCase(-100, ActionType.ADD)]
+        [TestCase(0, ActionType.REMOVE)]
+        [TestCase(-10, ActionType.REMOVE)]
+        [TestCase(-100, ActionType.REMOVE)]
+        public void Negative_ProcessCurrencyUpdate_BadAmounts_NoUpdates(int badAmount, ActionType action)
+        {
+            CurrencyTrade trade = TestUtils.CreateTrade(badAmount, _foodCurrency.CurrencyType, action);
+
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trade);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.NotNull(serviceResponse.Message);
+            Assert.AreEqual(0, _foodCurrency.Amount);
+            
+            VerifyUpdateCall(0);
+
+        }
+        
+        [Test]
+        public void Negative_ProcessCurrencyUpdate_ArrayFails_NoUpdates()
+        {
+            // First action is okay, 2nd action should stop processing for all actions 
+            CurrencyTrade[] trades = { _addFoodTrade, _removeWoodTrade, _addFoodTrade };
+            
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
+            
+            Assert.False(serviceResponse.IsSuccess);
+            Assert.NotNull(serviceResponse.Message);
+            Assert.AreEqual(0, _foodCurrency.Amount);
+            Assert.AreEqual(0, _woodCurrency.Amount);
+            
+            VerifyUpdateCall(0);
+
+        }
+    }
+}
