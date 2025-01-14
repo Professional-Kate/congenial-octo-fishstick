@@ -16,14 +16,12 @@ namespace IdelPog.Orchestration
     public class CurrencyMediator : ICurrencyMediator
     {
         private readonly ICurrencyService _currencyService;
-        private readonly ICurrencyRepositoryRead _repositoryRead;
-        private readonly ICurrencyRepositoryUpdate _repositoryUpdate;
+        private readonly IRepository<CurrencyType, Currency> _repository;
 
-        public CurrencyMediator(ICurrencyService currencyService, ICurrencyRepositoryRead repositoryRead, ICurrencyRepositoryUpdate repositoryUpdate)
+        public CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Currency> repository)
         {
             _currencyService = currencyService;
-            _repositoryRead = repositoryRead;
-            _repositoryUpdate = repositoryUpdate;
+            _repository = repository;
         }
 
         /// <summary>
@@ -33,9 +31,9 @@ namespace IdelPog.Orchestration
         public static ICurrencyMediator CreateDefault()
         {
             ICurrencyService service = new CurrencyService();
-            CurrencyRepository repository = new();
+            IRepository<CurrencyType, Currency> repository = new Repository<CurrencyType, Currency>();
 
-            return new CurrencyMediator(service, repository, repository);
+            return new CurrencyMediator(service, repository);
         }
         
         public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
@@ -83,7 +81,7 @@ namespace IdelPog.Orchestration
             {
                 if (!originalCurrencies.TryGetValue(currencyTrade.Currency, out Currency originalCurrency))
                 {
-                    originalCurrency = _repositoryRead.Get(currencyTrade.Currency);
+                    originalCurrency = _repository.Get(currencyTrade.Currency);
                     originalCurrencies.Add(currencyTrade.Currency, originalCurrency);
                 }
 
@@ -164,7 +162,7 @@ namespace IdelPog.Orchestration
                         break;
                 }
 
-                _repositoryUpdate.Update(globalCurrency.CurrencyType, globalCurrency);
+                _repository.Update(globalCurrency.CurrencyType, globalCurrency);
             }
         }
         

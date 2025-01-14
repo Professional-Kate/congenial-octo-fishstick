@@ -9,12 +9,12 @@ namespace Tests.Utils
     {
         internal static Job CreateMining()
         {
-            return new Job(JobType.MINING, new Information(JobConstants.MINING_NAME, JobConstants.MINING_DESC));
+            return new Job(JobType.MINING, Information.Create(JobConstants.MINING_NAME, JobConstants.MINING_DESC));
         }
         
         internal static Job CreateFarming()
         {
-            return new Job(JobType.FARMING, new Information(JobConstants.FARM_NAME, JobConstants.FARM_DESC));
+            return new Job(JobType.FARMING, Information.Create(JobConstants.FARM_NAME, JobConstants.FARM_DESC));
         }
     }
 }

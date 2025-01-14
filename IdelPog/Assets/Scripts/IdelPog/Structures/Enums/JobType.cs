@@ -2,7 +2,7 @@
 {
     public enum JobType : byte
     {
-        NO_TYPE,
+        NO_TYPE = 0,
         WOOD_CUTTING,
         MINING,
         FARMING

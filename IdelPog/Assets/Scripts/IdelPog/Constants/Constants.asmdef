@@ -1,3 +1,4 @@
 ﻿{
-  "name": "Constants"
+  "name": "Constants",
+  "references":[ "GUID:8264cb37ba214cb28903dbadb3bd9515" ]
 }
