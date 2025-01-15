@@ -5,14 +5,14 @@
         public byte Level { get; private set; }
 
         public int Experience { get; private set; } 
-        public int ExperienceToNextLevel { get; private set; } = 10;
+        public int NextLevelExperience { get; private set; } = 10;
         public int ExperiencePerAction { get; private set; } = 1;
 
-        public void Setup(byte level, int experience, int experienceToNextLevel, int experiencePerAction)
+        public void Setup(byte level, int experience, int nextLevelExperience, int experiencePerAction)
         {
             Level = level;
             Experience = experience;
-            ExperienceToNextLevel = experienceToNextLevel;
+            NextLevelExperience = nextLevelExperience;
             ExperiencePerAction = experiencePerAction;
         }
 
@@ -26,10 +26,10 @@
             ExperiencePerAction = experiencePerAction;
         }
 
-        public void LevelUp(int experienceToNextLevel)
+        public void LevelUp(int nextLevelExperience)
         {
             Level++;
-            ExperienceToNextLevel = experienceToNextLevel;
+            NextLevelExperience = nextLevelExperience;
         }
     }
 }

@@ -18,9 +18,8 @@ namespace Tests.Orchestration
         private IJobMediator _jobMediator { get; set; }
         private Mock<IExperienceService> _experienceServiceMock { get; set; }
         private Mock<IRepository<JobType, Job>> _repositoryMock { get; set; }
+        private Mock<ILevelService> _levelServiceMock { get; set; }
         private Job _miningJob { get; set; }
-
-        private readonly int _experience = 1;
 
         [SetUp]
         public void SetUp()
@@ -29,23 +28,24 @@ namespace Tests.Orchestration
             
             _experienceServiceMock = new Mock<IExperienceService>();
             _repositoryMock = new Mock<IRepository<JobType, Job>>();
-            _jobMediator = new JobMediator(_experienceServiceMock.Object, _repositoryMock.Object);
+            _levelServiceMock = new Mock<ILevelService>();
+            _jobMediator = new JobMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object);
 
             _repositoryMock.Setup(library => library.Get(_miningJob.JobType)).Returns(_miningJob);
-
         }
 
-        private void VerifyDependencyCalls(int getCalls = 0, int updateCalls = 0, int serviceCalls = 0)
+        private void VerifyDependencyCalls(int getCalls = 0, int updateCalls = 0, int serviceCalls = 0, int levelServiceCalls = 0)
         {
             _repositoryMock.Verify(library => library.Get(_miningJob.JobType), Times.Exactly(getCalls));
             _repositoryMock.Verify(library => library.Update(_miningJob.JobType, _miningJob), Times.Exactly(updateCalls));
-            _experienceServiceMock.Verify(library => library.AddExperience(_miningJob, _experience), Times.Exactly(serviceCalls));
+            _experienceServiceMock.Verify(library => library.AddExperience(_miningJob), Times.Exactly(serviceCalls));
+            _levelServiceMock.Verify(library => library.LevelUpJob(_miningJob), Times.Exactly(levelServiceCalls));
         }
 
         [Test]
-        public void Positive_ProcessJobAction_Throws()
+        public void Positive_ProcessJobAction_ReturnsSuccess()
         {
-            _experienceServiceMock.Setup(library => library.AddExperience(_miningJob, _experience));
+            _experienceServiceMock.Setup(library => library.AddExperience(_miningJob));
             
             ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
             
@@ -54,11 +54,23 @@ namespace Tests.Orchestration
             VerifyDependencyCalls(1, 1, 1);
         }
 
+        [Test]
+        public void Positive_ProcessJobAction_JobLevelsUp()
+        {
+            _experienceServiceMock.Setup(library => library.CanJobLevel(_miningJob)).Returns(true);
+
+            ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
+            
+            Assert.True(response.IsSuccess);
+            
+            VerifyDependencyCalls(1, 1, 1, 1);
+        }
+
 
         [Test]
         public void Negative_ExperienceService_ReturnsFailed()
         {
-            _experienceServiceMock.Setup(library => library.AddExperience(_miningJob, _experience))
+            _experienceServiceMock.Setup(library => library.AddExperience(_miningJob))
                 .Throws<ArgumentException>();
             
             ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);

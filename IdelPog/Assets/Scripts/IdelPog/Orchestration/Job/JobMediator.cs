@@ -10,11 +10,13 @@ namespace IdelPog.Orchestration
     public class JobMediator : IJobMediator
     {
         private readonly IExperienceService _experienceService;
+        private readonly ILevelService _levelService;
         private readonly IRepository<JobType, Job> _repository;
 
-        public JobMediator(IExperienceService experienceService, IRepository<JobType, Job> repository)
+        public JobMediator(IExperienceService experienceService, ILevelService levelService, IRepository<JobType, Job> repository)
         {
             _experienceService = experienceService;
+            _levelService = levelService;
             _repository = repository;
         }
 
@@ -25,9 +27,10 @@ namespace IdelPog.Orchestration
         public static IJobMediator CreateDefault()
         {
             IExperienceService service = new ExperienceService();
+            ILevelService levelService = new LevelService();
             IRepository<JobType, Job> repository = new Repository<JobType, Job>();
 
-            return new JobMediator(service, repository);
+            return new JobMediator(service, levelService, repository);
         }
         
         public ServiceResponse ProcessJobAction(JobType jobType)
@@ -35,7 +38,14 @@ namespace IdelPog.Orchestration
             try
             {
                 Job job = _repository.Get(jobType);
-                _experienceService.AddExperience(job, job.ExperiencePerAction);
+                
+                _experienceService.AddExperience(job);
+
+                if (_experienceService.CanJobLevel(job))
+                {
+                    _levelService.LevelUpJob(job);
+                }
+                
                 _repository.Update(jobType, job);
             }
             catch (Exception exception)

@@ -7,7 +7,7 @@ namespace IdelPog.Service
 {
     public class ExperienceService : IExperienceService
     {
-        public bool AddExperience(Job job, int experience)
+        public void AddExperience(Job job)
         {
             if (job == null)
             {
@@ -19,15 +19,13 @@ namespace IdelPog.Service
                 throw new MaxLevelException($"Error! Passed Job {job} is at max level. Cannot add Experience.");
             }
             
-            if (experience <= 0)
+            if (job.ExperiencePerAction <= 0)
             {
-                throw new ArgumentException($"Error! Passed Experience amount : {experience} is expected to be a positive number.");
+                throw new ArgumentException($"Error! Passed Experience amount : {job.ExperiencePerAction} is expected to be a positive number.");
             }
             
-            job.AddExperience(experience);
-
-            bool canJobLevel = experience >= job.ExperienceToNextLevel;
-            return canJobLevel;
+            int experienceToAdd = job.ExperiencePerAction;
+            job.AddExperience(experienceToAdd);
         }
     }
 }

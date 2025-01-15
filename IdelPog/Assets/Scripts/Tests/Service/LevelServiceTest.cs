@@ -28,11 +28,11 @@ namespace Tests.Service
         [Test]
         public void Positive_LevelUpJob_LevelsJob()
         {
-            int experienceNeededToLevelUp = _farmingJob.ExperienceToNextLevel;
+            int experienceNeededToLevelUp = _farmingJob.NextLevelExperience;
             _service.LevelUpJob(_farmingJob);
 
             Assert.AreEqual(1, _farmingJob.Level);
-            Assert.AreNotEqual(experienceNeededToLevelUp, _farmingJob.ExperienceToNextLevel);
+            Assert.AreNotEqual(experienceNeededToLevelUp, _farmingJob.NextLevelExperience);
         }
 
         [Test]
