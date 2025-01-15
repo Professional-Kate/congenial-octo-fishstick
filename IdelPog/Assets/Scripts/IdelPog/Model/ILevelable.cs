@@ -15,24 +15,24 @@
         /// <param name="experience"></param>
         /// <param name="experienceToNextLevel"></param>
         /// <param name="experiencePerAction"></param>
-        public void Setup(byte level, uint experience, uint experienceToNextLevel, uint experiencePerAction);
+        public void Setup(byte level, int experience, int experienceToNextLevel, int experiencePerAction);
         
         /// <summary>
         /// 
         /// </summary>
         /// <param name="experience"></param>
-        public void AddExperience(uint experience);
+        public void AddExperience(int experience);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="experiencePerAction"></param>
-        public void SetExperiencePerAction(uint experiencePerAction);
+        public void SetExperiencePerAction(int experiencePerAction);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="experienceToNextLevel"></param>
-        public void LevelUp(uint experienceToNextLevel);
+        public void LevelUp(int experienceToNextLevel);
     }
 }

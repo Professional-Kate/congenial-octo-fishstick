@@ -35,13 +35,7 @@ namespace IdelPog.Orchestration
             try
             {
                 Job job = _repository.Get(jobType);
-
-                ServiceResponse serviceResponse = _experienceService.AddExperience(job, job.ExperiencePerAction);
-                if (serviceResponse.IsSuccess == false)
-                {
-                    return serviceResponse;
-                }
-                
+                _experienceService.AddExperience(job, job.ExperiencePerAction);
                 _repository.Update(jobType, job);
             }
             catch (Exception exception)

@@ -20,7 +20,7 @@ namespace Tests.Orchestration
         private Mock<IRepository<JobType, Job>> _repositoryMock { get; set; }
         private Job _miningJob { get; set; }
 
-        private readonly uint _experience = 1;
+        private readonly int _experience = 1;
 
         [SetUp]
         public void SetUp()
@@ -43,10 +43,9 @@ namespace Tests.Orchestration
         }
 
         [Test]
-        public void Positive_ProcessJobAction_ReturnsSuccess()
+        public void Positive_ProcessJobAction_Throws()
         {
-            _experienceServiceMock.Setup(library => library.AddExperience(_miningJob, _experience))
-                .Returns(ServiceResponse.Success);
+            _experienceServiceMock.Setup(library => library.AddExperience(_miningJob, _experience));
             
             ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
             
@@ -60,7 +59,7 @@ namespace Tests.Orchestration
         public void Negative_ExperienceService_ReturnsFailed()
         {
             _experienceServiceMock.Setup(library => library.AddExperience(_miningJob, _experience))
-                .Returns(ServiceResponse.Failure(""));
+                .Throws<ArgumentException>();
             
             ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
             
