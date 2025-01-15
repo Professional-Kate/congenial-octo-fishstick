@@ -1,20 +1,14 @@
-﻿namespace IdelPog.Constants
+﻿using IdelPog.Structures;
+
+namespace IdelPog.Constants
 {
     
     public static class JobConstants
     {
         public const byte MAX_JOB_LEVEL = 100;
 
-        // Wood cutting
-        public const string WOOD_CUTTING_NAME = "Wood Cutting";
-        public const string WOOD_CUTTING_DESC = "Chop Trees! Get Wood!";
-
-        // Mining
-        public const string MINING_NAME = "Mining";
-        public const string MINING_DESC = "Rock and Stone! Strike the Earth!";
-        
-        // Farming
-        public const string FARM_NAME = "Farming";
-        public const string FARM_DESC = "Magical Crops!";
+        public static readonly Information WOOD_INFO = Information.Create("Wood Cutting", "Chop Trees! Get Wood!");
+        public static readonly Information MINING_INFO = Information.Create("Mining", "Rock and Stone! Strike the Earth!");
+        public static readonly Information FARMING_INFO = Information.Create("Farming", "Magical Crops!");
     }
 }
