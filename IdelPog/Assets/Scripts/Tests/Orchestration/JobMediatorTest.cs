@@ -67,13 +67,15 @@ namespace Tests.Orchestration
         }
 
 
-        [Test]
-        public void Negative_ExperienceService_ReturnsFailed()
+        [TestCase(JobType.MINING, typeof(ArgumentException))]
+        [TestCase(JobType.MINING, typeof(MaxLevelException))]
+        [TestCase(JobType.MINING, typeof(ArgumentNullException))]
+        public void Negative_ExperienceService_AddExperience_Throws(JobType jobType, Type exception)
         {
             _experienceServiceMock.Setup(library => library.AddExperience(_miningJob))
-                .Throws<ArgumentException>();
+                .Throws((Exception) Activator.CreateInstance(exception));
             
-            ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
+            ServiceResponse response = _jobMediator.ProcessJobAction(jobType);
             
             Assert.False(response.IsSuccess);
             Assert.NotNull(response.Message);

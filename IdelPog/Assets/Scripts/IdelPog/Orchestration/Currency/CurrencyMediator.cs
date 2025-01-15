@@ -69,8 +69,8 @@ namespace IdelPog.Orchestration
         }
 
         /// <summary>
-        /// Gets each separate <see cref="Currency"/> from the <see cref="CurrencyRepository"/>, this is passed into originalCurrencies.
-        /// Then, clones these <see cref="Currency"/> retrieved from the <see cref="CurrencyRepository"/> into the passed stagingGround Dictionary.
+        /// Gets each separate <see cref="Currency"/> from the <see cref="Repository"/>, this is passed into originalCurrencies.
+        /// Then, clones these <see cref="Currency"/> retrieved from the <see cref="Repository"/> into the passed stagingGround Dictionary.
         /// </summary>
         /// <param name="currencyTrades">Uses the internal <see cref="CurrencyTrade"/>.<see cref="CurrencyTrade.Currency"/> to Get each <see cref="Currency"/> from the Repository</param>
         /// <param name="originalCurrencies">All the <see cref="Currency"/> returned from Get will first be placed into this Dictionary</param>
@@ -97,7 +97,7 @@ namespace IdelPog.Orchestration
         /// Uses the passed <see cref="CurrencyTrade"/> array properties <see cref="CurrencyTrade.Amount"/> and <see cref="CurrencyTrade.Action"/> to dictate how to update each <see cref="Currency"/>
         /// </summary>
         /// <param name="currencyTrades"><see cref="CurrencyTrade"/></param>
-        /// <param name="stagingGround">This Dictionary will now contain each cloned <see cref="Currency"/> from the <see cref="CurrencyRepository"/></param>
+        /// <param name="stagingGround">This Dictionary will now contain each cloned <see cref="Currency"/> from the <see cref="Repository"/></param>
         private void MutateClonedCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Currency> stagingGround)
         {
             foreach (CurrencyTrade currencyTrade in currencyTrades)
@@ -156,9 +156,6 @@ namespace IdelPog.Orchestration
                         break;
                     case < 0:
                         _currencyService.RemoveAmount(globalCurrency, -difference);
-                        break;
-                    case 0:
-                        // no change needed, obviously.
                         break;
                 }
 
