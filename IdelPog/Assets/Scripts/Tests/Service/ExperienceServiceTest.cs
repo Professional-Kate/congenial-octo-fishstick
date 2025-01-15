@@ -40,12 +40,13 @@ namespace Tests.Service
         }
         
         [Test]
-        public void Positive_AddExperience_CausesLevelUp_ReturnsTrue()
+        public void Positive_AddExperience_WillCauseLevelUp_ReturnsTrue()
         {
             int experienceNeededToLevel = _miningJob.ExperienceToNextLevel;
             bool canLevel = _experienceService.AddExperience(_miningJob, experienceNeededToLevel);
             
             Assert.IsTrue(canLevel);
+            Assert.AreEqual(experienceNeededToLevel, _miningJob.Experience);
         }
         
         [Test]
@@ -65,6 +66,12 @@ namespace Tests.Service
         public void Negative_AddExperience_BadExperience_Throws(int experience)
         {
             Assert.Throws<ArgumentException>(() => _experienceService.AddExperience(_miningJob, experience));
+        }
+
+        [Test]
+        public void Negative_AddExperience_NullJob_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => _experienceService.AddExperience(null, 1));
         }
     }
 }

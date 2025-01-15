@@ -15,6 +15,7 @@ namespace IdelPog.Service
         /// <returns>A boolean on if the <see cref="Job"/> should level up</returns>
         /// <exception cref="ArgumentException">Will be thrown if the passed experience is below or equal to zero</exception>
         /// <exception cref="MaxLevelException">Will be thrown if the passed <see cref="Job"/> is at max level</exception>
+        /// <exception cref="ArgumentNullException">Will be thrown if the passed <see cref="Job"/> is null</exception>
         /// <remarks>
         /// The passed <see cref="Job"/> is expected to be a reference. The new state of the <see cref="Job"/> won't be returned
         /// </remarks>

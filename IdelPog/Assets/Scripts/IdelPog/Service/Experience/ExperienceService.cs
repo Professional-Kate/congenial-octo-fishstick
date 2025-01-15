@@ -9,14 +9,19 @@ namespace IdelPog.Service
     {
         public bool AddExperience(Job job, int experience)
         {
-            if (experience <= 0)
+            if (job == null)
             {
-                throw new ArgumentException($"Error! Passed Experience amount : {experience} is expected to be a positive number.");
+                throw new ArgumentNullException(nameof(job));
             }
-
+            
             if (job.Level == JobConstants.MAX_JOB_LEVEL)
             {
                 throw new MaxLevelException($"Error! Passed Job {job} is at max level. Cannot add Experience.");
+            }
+            
+            if (experience <= 0)
+            {
+                throw new ArgumentException($"Error! Passed Experience amount : {experience} is expected to be a positive number.");
             }
             
             job.AddExperience(experience);
