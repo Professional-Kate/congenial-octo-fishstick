@@ -15,11 +15,10 @@ namespace Tests.Service
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _farmingJob = JobFactory.CreateFarming();
             _service = new LevelService();
         }
 
-        [TearDown]
+        [SetUp]
         public void TearDown()
         {
             _farmingJob = JobFactory.CreateFarming();
@@ -34,6 +33,25 @@ namespace Tests.Service
             Assert.AreEqual(1, _farmingJob.Level);
             Assert.AreNotEqual(experienceNeededToLevelUp, _farmingJob.NextLevelExperience);
         }
+        
+        [Test]
+        public void Positive_CanJobLevel_ReturnsTrue()
+        {
+            _farmingJob.Setup(1, 100, 10, 1);
+
+            bool canJobLevel = _service.CanJobLevel(_farmingJob);
+            Assert.IsTrue(canJobLevel);
+        }
+        
+        [Test]
+        public void Positive_CanJobLevel_ReturnsFalse()
+        {
+            _farmingJob.Setup(1, 5, 10, 1);
+
+            bool canJobLevel = _service.CanJobLevel(_farmingJob);
+            Assert.IsFalse(canJobLevel);
+        }
+
 
         [TestCase(1, ExpectedResult = 1)]
         [TestCase(5, ExpectedResult = 5)]

@@ -28,28 +28,6 @@ namespace Tests.Service
             _miningJob.Setup(1, 0, 10000, 1);
         }
         
-        [Test]
-        public void Positive_CanJobLevel_ReturnsTrue()
-        {
-            _miningJob.SetExperiencePerAction(10000);
-            
-            _experienceService.AddExperience(_miningJob);
-            
-            bool canJobLevel = _experienceService.CanJobLevel(_miningJob);
-            Assert.IsTrue(canJobLevel);
-        }
-        
-        [Test]
-        public void Positive_CanJobLevel_ReturnsFalse()
-        {
-            _miningJob.SetExperiencePerAction(1);
-            
-            _experienceService.AddExperience(_miningJob);
-            
-            bool canJobLevel = _experienceService.CanJobLevel(_miningJob);
-            Assert.IsFalse(canJobLevel);
-        }
-
         [TestCase(10)]
         [TestCase(1)]
         [TestCase(1000)]

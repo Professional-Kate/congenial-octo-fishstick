@@ -57,7 +57,7 @@ namespace Tests.Orchestration
         [Test]
         public void Positive_ProcessJobAction_JobLevelsUp()
         {
-            _experienceServiceMock.Setup(library => library.CanJobLevel(_miningJob)).Returns(true);
+            _levelServiceMock.Setup(library => library.CanJobLevel(_miningJob)).Returns(true);
 
             ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
             

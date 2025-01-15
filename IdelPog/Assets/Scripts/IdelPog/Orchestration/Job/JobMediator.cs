@@ -41,7 +41,7 @@ namespace IdelPog.Orchestration
                 
                 _experienceService.AddExperience(job);
 
-                if (_experienceService.CanJobLevel(job))
+                if (_levelService.CanJobLevel(job))
                 {
                     _levelService.LevelUpJob(job);
                 }

@@ -4,17 +4,9 @@ using IdelPog.Model;
 
 namespace IdelPog.Service
 {
-    /// <seealso cref="CanJobLevel"/>
     /// <seealso cref="AddExperience"/>
     public interface IExperienceService
     {
-        /// <summary>
-        /// Calculate and return if the passed <see cref="Job"/> can level up
-        /// </summary>
-        /// <param name="job">The <see cref="Job"/> you want to check if it can level up</param>
-        /// <returns>If the <see cref="Job"/> can level up</returns>
-        public bool CanJobLevel(Job job) => job.Experience >= job.NextLevelExperience;
-        
         /// <summary>
         /// Adds Experience to the passed <see cref="Job"/>
         /// </summary>
