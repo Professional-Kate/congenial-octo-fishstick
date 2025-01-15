@@ -43,7 +43,7 @@ namespace Tests.Orchestration
         }
 
         [Test]
-        public void Positive_ProcessJobAction_AddsExperience()
+        public void Positive_ProcessJobAction_ReturnsSuccess()
         {
             _experienceServiceMock.Setup(library => library.AddExperience(_miningJob, _experience))
                 .Returns(ServiceResponse.Success);

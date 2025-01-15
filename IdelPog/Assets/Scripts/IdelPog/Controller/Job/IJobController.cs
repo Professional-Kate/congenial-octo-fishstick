@@ -2,8 +2,13 @@
 
 namespace IdelPog.Controller
 {
+    /// <seealso cref="CompleteJob"/>
     public interface IJobController
     {
-        public void CompleteJob(JobType job);
+        /// <summary>
+        /// Calls to complete a job action by using the passed <see cref="JobType"/>
+        /// </summary>
+        /// <param name="jobType">The <see cref="JobType"/> you want to process a job completion on</param>
+        public void CompleteJob(JobType jobType);
     }
 }

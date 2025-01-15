@@ -1,7 +1,7 @@
-﻿using System;
-using IdelPog.Orchestration;
+﻿using IdelPog.Orchestration;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
+using UnityEngine;
 
 namespace IdelPog.Controller
 {
@@ -9,9 +9,14 @@ namespace IdelPog.Controller
     {
         protected IJobMediator Mediator = JobMediator.CreateDefault();
         
-        public void CompleteJob(JobType job)
+        public void CompleteJob(JobType jobType)
         {
-            throw new NotImplementedException();
+            ServiceResponse response = Mediator.ProcessJobAction(jobType);
+            if (response.IsSuccess == false)
+            {
+                // TODO : Log to file
+                Debug.Log(response.Message);
+            }
         }
     }
 }
