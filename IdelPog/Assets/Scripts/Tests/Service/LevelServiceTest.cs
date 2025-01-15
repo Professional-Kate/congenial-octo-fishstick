@@ -35,6 +35,20 @@ namespace Tests.Service
             Assert.AreNotEqual(experienceNeededToLevelUp, _farmingJob.NextLevelExperience);
         }
 
+        [TestCase(1, ExpectedResult = 1)]
+        [TestCase(5, ExpectedResult = 5)]
+        [TestCase(20, ExpectedResult = 20)]
+        [TestCase(30, ExpectedResult = 30)]
+        public int Positive_LevelUpJob_MultipleTimes(int levels)
+        {
+            for (int i = 0; i < levels; i++)
+            {
+                _service.LevelUpJob(_farmingJob);
+            }
+
+            return _farmingJob.Level;
+        }
+
         [Test]
         public void Negative_LevelUpJob_NullJob_Throws()
         {

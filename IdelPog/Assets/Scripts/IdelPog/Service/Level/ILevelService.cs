@@ -12,7 +12,7 @@ namespace IdelPog.Service
         /// <param name="job">The <see cref="Job"/> you want to level</param>
         /// <exception cref="ArgumentNullException">Will be thrown if the passed <see cref="Job"/> is null</exception>
         /// <remarks>
-        /// This method will calculate a new <see cref="Job.ExperienceToNextLevel"/>
+        /// This method will calculate a new <see cref="Job.NextLevelExperience"/>
         /// </remarks>
         public void LevelUpJob(Job job);
     }

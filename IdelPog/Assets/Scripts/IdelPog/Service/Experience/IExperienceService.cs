@@ -4,6 +4,7 @@ using IdelPog.Model;
 
 namespace IdelPog.Service
 {
+    /// <seealso cref="CanJobLevel"/>
     /// <seealso cref="AddExperience"/>
     public interface IExperienceService
     {
