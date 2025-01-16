@@ -1,4 +1,5 @@
 ﻿using System;
+using IdelPog.Exceptions;
 using IdelPog.Model;
 
 namespace IdelPog.Service
@@ -20,6 +21,7 @@ namespace IdelPog.Service
         /// </summary>
         /// <param name="job">The <see cref="Job"/> you want to level</param>
         /// <exception cref="ArgumentNullException">Will be thrown if the passed <see cref="Job"/> is null</exception>
+        /// <exception cref="MaxLevelException">Will be thrown if the passed <see cref="Job"/> is at max level</exception>
         /// <remarks>
         /// This method will calculate a new <see cref="Job.NextLevelExperience"/>
         /// </remarks>

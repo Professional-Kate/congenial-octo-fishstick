@@ -1,4 +1,6 @@
 ﻿using System;
+using IdelPog.Constants;
+using IdelPog.Exceptions;
 using IdelPog.Model;
 
 namespace IdelPog.Service
@@ -11,10 +13,19 @@ namespace IdelPog.Service
             {
                 throw new ArgumentNullException(nameof(job));
             }
-            
-            // TODO: decide on a better XP formula.
-            int newExperienceToLevelUp = 10 * job.Level;
-            job.LevelUp(newExperienceToLevelUp);
+
+            if (job.Level == JobConstants.MAX_JOB_LEVEL)
+            {
+                throw new MaxLevelException($"Error! Passed Job {job} is at max level. No level up possible!");
+            }
+
+            int total = 0;
+            for (int i = 1; i < job.Level; i++)
+            {
+                total += Convert.ToInt32(Math.Floor(i + 83 * Math.Pow(2, i / 7.0)));
+            }
+
+            job.LevelUp(total);
         }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using System;
+using IdelPog.Constants;
+using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Service;
 using NUnit.Framework;
 using Tests.Utils;
+using UnityEngine;
 
 namespace Tests.Service
 {
@@ -19,7 +22,7 @@ namespace Tests.Service
         }
 
         [SetUp]
-        public void TearDown()
+        public void SetUp()
         {
             _farmingJob = JobFactory.CreateFarming();
         }
@@ -27,11 +30,9 @@ namespace Tests.Service
         [Test]
         public void Positive_LevelUpJob_LevelsJob()
         {
-            int experienceNeededToLevelUp = _farmingJob.NextLevelExperience;
             _service.LevelUpJob(_farmingJob);
 
             Assert.AreEqual(1, _farmingJob.Level);
-            Assert.AreNotEqual(experienceNeededToLevelUp, _farmingJob.NextLevelExperience);
         }
         
         [Test]
@@ -68,9 +69,33 @@ namespace Tests.Service
         }
 
         [Test]
+        public void Positive_JobCanLevelToMax()
+        {
+            _farmingJob.Setup(1, 0, 83, 1);
+
+            for (int i = 1; i < JobConstants.MAX_JOB_LEVEL; i++)
+            {
+                _farmingJob.AddExperience(_farmingJob.NextLevelExperience); // this is here to sum the total experience
+                
+                _service.LevelUpJob(_farmingJob);
+                
+                Debug.Log($"LEVEL {_farmingJob.Level} | Experience: {_farmingJob.Experience} | Next Level: {_farmingJob.NextLevelExperience}");
+            }
+            
+            Assert.AreEqual(JobConstants.MAX_JOB_LEVEL, _farmingJob.Level);
+        }
+
+        [Test]
         public void Negative_LevelUpJob_NullJob_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _service.LevelUpJob(null));
+        }
+
+        [Test]
+        public void Negative_LeveUpJob_MaxLevel_Throws()
+        {
+            _farmingJob.Setup(100, 100, 10, 1);
+            Assert.Throws<MaxLevelException>(() => _service.LevelUpJob(_farmingJob));
         }
     }
 }

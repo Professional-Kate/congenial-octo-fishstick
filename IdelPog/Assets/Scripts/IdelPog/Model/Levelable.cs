@@ -1,5 +1,8 @@
 ﻿namespace IdelPog.Model
 {
+    /// <summary>
+    /// See <see cref="ILevelable"/> for documentation
+    /// </summary>
     public abstract class Levelable : ILevelable
     {
         public byte Level { get; private set; }
