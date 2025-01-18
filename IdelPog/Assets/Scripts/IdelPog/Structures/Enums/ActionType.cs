@@ -7,7 +7,7 @@
     /// <seealso cref="REMOVE"/>
     public enum ActionType : byte
     {
-        ADD = 1,
-        REMOVE = 2
+        ADD,
+        REMOVE
     }
 }

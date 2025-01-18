@@ -2,7 +2,6 @@
 
 namespace IdelPog.Constants
 {
-    
     public static class JobConstants
     {
         public const byte MAX_JOB_LEVEL = 100;
