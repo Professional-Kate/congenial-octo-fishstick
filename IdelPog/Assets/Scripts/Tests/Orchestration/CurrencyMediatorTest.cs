@@ -18,7 +18,7 @@ namespace Tests.Orchestration
     public class CurrencyMediatorTest
     {
         private ICurrencyMediator _currencyMediator { get; set; }
-        private Mock<CurrencyRepository> _currencyRepositoryMock { get; set; }
+        private Mock<IRepository<CurrencyType, Currency>> _repositoryMock { get; set; }
         private Mock<ICurrencyService> _currencyServiceMock { get; set; }
         private Currency _foodCurrency { get; set; }
         private Currency _woodCurrency { get; set; }
@@ -47,12 +47,12 @@ namespace Tests.Orchestration
 
         private void SetupMock()
         {
-            _currencyRepositoryMock = new Mock<CurrencyRepository>();
+            _repositoryMock = new Mock<IRepository<CurrencyType, Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
-            _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _currencyRepositoryMock.Object, _currencyRepositoryMock.Object);
+            _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _repositoryMock.Object);
             
-            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns(new Currency(CurrencyType.FOOD, _foodCurrency.Amount));
-            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns(new Currency(CurrencyType.WOOD, _woodCurrency.Amount));
+            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns(new Currency(CurrencyType.FOOD, _foodCurrency.Amount));
+            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns(new Currency(CurrencyType.WOOD, _woodCurrency.Amount));
 
             _currencyServiceMock.Setup(library => library.AddAmount(It.IsAny<Currency>(), It.IsAny<int>()))
                 .Callback<Currency, int>((currency, amount) =>
@@ -68,7 +68,7 @@ namespace Tests.Orchestration
                     currency.SetAmount(newAmount);
                 });
 
-            _currencyRepositoryMock.Setup(library => library.Update(It.IsAny<CurrencyType>(), It.IsAny<Currency>()))
+            _repositoryMock.Setup(library => library.Update(It.IsAny<CurrencyType>(), It.IsAny<Currency>()))
                 .Callback<CurrencyType, Currency>((type, currency) =>
                 {
                     switch (type)
@@ -93,7 +93,7 @@ namespace Tests.Orchestration
 
         private void VerifyUpdateCall(int amount)
         {
-            _currencyRepositoryMock.Verify(library => library.Update(It.IsAny<CurrencyType>(), It.IsAny<Currency>()), Times.Exactly(amount));
+            _repositoryMock.Verify(library => library.Update(It.IsAny<CurrencyType>(), It.IsAny<Currency>()), Times.Exactly(amount));
         }
         
         
@@ -150,7 +150,7 @@ namespace Tests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_CurrencyNotFound_ReturnsFailure()
         {
-            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Throws<NotFoundException>();
+            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Throws<NotFoundException>();
             
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(_addFoodTrade);
             
@@ -164,7 +164,7 @@ namespace Tests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_OneCurrencyNotFound_ReturnsFailure()
         {
-            _currencyRepositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Throws<NotFoundException>();
+            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Throws<NotFoundException>();
 
             CurrencyTrade[] trades = { _addFoodTrade, _addWoodTrade };
             

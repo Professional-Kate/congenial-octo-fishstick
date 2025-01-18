@@ -5,7 +5,7 @@
     /// </summary>
     public enum CurrencyType : byte
     {
-        NO_TYPE,
+        NO_TYPE = 0,
         FOOD,
         WOOD
     }

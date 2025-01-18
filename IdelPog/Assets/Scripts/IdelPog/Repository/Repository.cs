@@ -4,12 +4,14 @@ using IdelPog.Exceptions;
 
 namespace IdelPog.Repository
 {
-    public class Repository<TID, T> : IRepository<TID, T>
+    public sealed class Repository<TID, T> : IRepository<TID, T> where T : class, ICloneable
     {
         private readonly Dictionary<TID, T> _repository = new();
 
-        public virtual void Add(TID key, T value)
+        public void Add(TID key, T value)
         {
+            AssertKeyIsValid(key);
+
             if (value == null)
             {
                 throw new ArgumentNullException();
@@ -20,24 +22,28 @@ namespace IdelPog.Repository
             _repository.Add(key, value);
         }
 
-        public virtual void Remove(TID key)
+        public void Remove(TID key)
         {
+            AssertKeyIsValid(key);
             AssertKeyExists(key);
             
             _repository.Remove(key);
         }
 
-        public virtual T Get(TID key)
+        public T Get(TID key)
         {
+            AssertKeyIsValid(key);
             AssertKeyExists(key);
             
             T entity = _repository[key];
             
-            return entity;
+            return entity.Clone() as T;
         }
 
-        public virtual void Update(TID key, T value)
+        public void Update(TID key, T value)
         {
+            AssertKeyIsValid(key);
+                
             if (value == null)
             {
                 throw new ArgumentNullException();
@@ -46,6 +52,19 @@ namespace IdelPog.Repository
             AssertKeyExists(key);
             
             _repository[key] = value;
+        }
+
+        /// <summary>
+        /// Asserts that the passed enum type hash code isn't zero
+        /// </summary>
+        /// <param name="key">The key you want to validate</param>
+        /// <exception cref="NoTypeException">Will be thrown if the passed key's hash code  is 0</exception>
+        private static void AssertKeyIsValid(TID key)
+        {
+            if (key.GetHashCode() == 0)
+            {
+                throw new NoTypeException($"Error! Passed Key : {key} is NO_TYPE, nothing can be retrieved. This should be fixed.");
+            }
         }
 
         /// <summary>

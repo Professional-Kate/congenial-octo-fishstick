@@ -10,7 +10,8 @@
         "Exception",
         "Service",
         "Controller",
-        "Orchestration"
+        "Orchestration",
+        "Constants"
     ],
     "includePlatforms": [
         "Editor"

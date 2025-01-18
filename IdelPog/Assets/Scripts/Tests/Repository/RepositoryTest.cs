@@ -1,6 +1,7 @@
 ﻿using System;
 using IdelPog.Exceptions;
 using IdelPog.Repository;
+using IdelPog.Structures.Enums;
 using NUnit.Framework;
 
 namespace Tests.Repository
@@ -94,6 +95,34 @@ namespace Tests.Repository
         public void Negative_Update_NullValue_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _repository.Update(Key, null));
+        }
+
+        [TestCase(CurrencyType.NO_TYPE)]
+        [TestCase(JobType.NO_TYPE)]
+        public void Negative_AddBadKey_Throws<T>(T type)
+        {
+            Assert.Throws<NoTypeException>(() => _repository.Add(type.GetHashCode(), "FAIL"));
+        }
+        
+        [TestCase(CurrencyType.NO_TYPE)]
+        [TestCase(JobType.NO_TYPE)]
+        public void Negative_RemoveBadKey_Throws<T>(T type)
+        {
+            Assert.Throws<NoTypeException>(() => _repository.Remove(type.GetHashCode()));
+        }
+        
+        [TestCase(CurrencyType.NO_TYPE)]
+        [TestCase(JobType.NO_TYPE)]
+        public void Negative_GetBadKey_Throws<T>(T type)
+        {
+            Assert.Throws<NoTypeException>(() => _repository.Update(type.GetHashCode(), "FAIL"));
+        }
+        
+        [TestCase(CurrencyType.NO_TYPE)]
+        [TestCase(JobType.NO_TYPE)]
+        public void Negative_UpdateBadKey_Throws<T>(T type)
+        {
+            Assert.Throws<NoTypeException>(() => _repository.Get(type.GetHashCode()));
         }
     }
 }
