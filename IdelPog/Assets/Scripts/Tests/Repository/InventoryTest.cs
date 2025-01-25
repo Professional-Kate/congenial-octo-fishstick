@@ -1,7 +1,7 @@
 ﻿using System;
-using IdelPog.Exceptions;
 using IdelPog.Repository;
 using IdelPog.Repository.Inventory;
+using IdelPog.Structures.Enums;
 using IdelPog.Structures.Item;
 using Moq;
 using NUnit.Framework;
@@ -38,6 +38,28 @@ namespace Tests.Repository
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
         }
 
+        private void ModifyAmountTestRunner(int amount, ActionType action)
+        {
+            int finalAmount = 0;
+            
+            switch (action)
+            {
+                case ActionType.ADD:
+                    finalAmount += amount;
+                    _inventory.AddAmount(_oakWoodItem.ID, amount);
+                    break;
+                case ActionType.REMOVE:
+                    finalAmount = _oakWoodItem.Amount - amount;
+                    _inventory.RemoveAmount(_oakWoodItem.ID, amount);
+                    break;
+            }
+            
+            Assert.AreEqual(finalAmount, _oakWoodItem.Amount);
+             
+            _repositoryMock.Verify(library => library.Get(_oakWoodItem.ID));
+            _repositoryMock.Verify(library => library.Update(_oakWoodItem.ID, _oakWoodItem));
+        }
+
         [TestCase(1)]
         [TestCase(10)]
         [TestCase(30)]
@@ -45,22 +67,7 @@ namespace Tests.Repository
         [TestCase(5000)]
         public void Positive_AddAmount_AddsToItem(int amount)
         {
-             _inventory.AddAmount(_oakWoodItem.ID, amount);
-             
-             Assert.AreEqual(amount, _oakWoodItem.Amount);
-             
-             _repositoryMock.Verify(library => library.Get(_oakWoodItem.ID));
-             _repositoryMock.Verify(library => library.Update(_oakWoodItem.ID, _oakWoodItem));
-        }
-
-        [Test]
-        public void Negative_AddAmount_NoType_Throws()
-        {
-            _repositoryMock.Setup(library => library.Get(InventoryID.NO_TYPE))
-                .Throws<NoTypeException>();
-            
-
-            Assert.Throws<NoTypeException>(() => _inventory.AddAmount(InventoryID.NO_TYPE, 1));
+            ModifyAmountTestRunner(amount, ActionType.ADD);
         }
 
         [TestCase(0)]
@@ -69,7 +76,23 @@ namespace Tests.Repository
         {
             Assert.Throws<ArgumentException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
         }
+
+        [TestCase(1)]
+        [TestCase(10)]
+        [TestCase(30)]
+        [TestCase(100)]
+        [TestCase(4999)]
+        public void Positive_RemoveAmount_RemovesAmount(int amount)
+        {
+            _oakWoodItem.AddAmount(amount + 1);
+            ModifyAmountTestRunner(amount, ActionType.REMOVE);
+        }
         
-        // TODO : Add tests for the repository class throwing exceptions, we want this service class to do nothing with the exceptions to allow the mediator to handle it
+        [TestCase(0)]
+        [TestCase(-10)]
+        public void Negative_RemoveAmount_BadAmount_Throws(int amount)
+        {
+            Assert.Throws<ArgumentException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
+        }
     }
 }
