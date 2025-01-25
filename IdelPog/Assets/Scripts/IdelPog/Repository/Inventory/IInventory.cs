@@ -1,6 +1,6 @@
 ﻿using IdelPog.Structures.Item;
 
-namespace IdelPog.Repository
+namespace IdelPog.Repository.Inventory
 {
     /// <summary>
     /// Using this interface you can adjust the amount of any <see cref="Item"/> in the Inventory. 
@@ -11,6 +11,12 @@ namespace IdelPog.Repository
     /// <seealso cref="Contains"/>
     public interface IInventory
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IInventory CreateDefault();
+        
         /// <summary>
         /// 
         /// </summary>
