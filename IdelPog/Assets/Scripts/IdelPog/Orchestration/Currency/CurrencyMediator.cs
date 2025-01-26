@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Repository;
 using IdelPog.Service;
@@ -44,18 +43,17 @@ namespace IdelPog.Orchestration
                 return validateTradesResponse;
             }
             
+            ServiceResponse allCurrenciesExistResponse = AllCurrenciesExist(trades);
+            if (allCurrenciesExistResponse.IsSuccess == false)
+            {
+                return allCurrenciesExistResponse;
+            }
+            
             Dictionary<CurrencyType, Currency> stagingGround = new(); 
             Dictionary<CurrencyType, Currency> originalCurrencies = new(); 
 
-            try
-            {
-                CloneCurrency(trades, originalCurrencies, stagingGround);
-                MutateClonedCurrency(trades, stagingGround);
-            }
-            catch (NotFoundException exception)
-            {
-                return ServiceResponse.Failure(exception.Message);
-            }
+            CloneCurrency(trades, originalCurrencies, stagingGround);
+            MutateClonedCurrency(trades, stagingGround);
 
             ServiceResponse validateFinalAmountsResponse = ValidateFinalAmounts(stagingGround);
             if (validateFinalAmountsResponse.IsSuccess == false)
@@ -65,6 +63,33 @@ namespace IdelPog.Orchestration
             
             ApplyChanges(stagingGround, originalCurrencies);
 
+            return ServiceResponse.Success();
+        }
+        
+        /// <summary>
+        /// Will check if all the passed <see cref="CurrencyTrade"/>.<see cref="CurrencyTrade.Currency"/>'s exist
+        /// </summary>
+        /// <param name="trades">The array you want to check</param>
+        /// <returns>A <see cref="ServiceResponse"/> which will tell you if all the <see cref="Currency"/>'s exist</returns>
+        private ServiceResponse AllCurrenciesExist(params CurrencyTrade[] trades)
+        {
+            List<CurrencyType> types = new(); 
+            
+            foreach (CurrencyTrade currencyTrade in trades)
+            {
+                if (types.Contains(currencyTrade.Currency))
+                {
+                    continue;
+                }
+                
+                if (_repository.Contains(currencyTrade.Currency) == false)
+                {
+                    return ServiceResponse.Failure($"Error! Currency type {currencyTrade.Currency} was not found.");
+                }
+                
+                types.Add(currencyTrade.Currency);
+            }
+            
             return ServiceResponse.Success();
         }
 
@@ -79,17 +104,18 @@ namespace IdelPog.Orchestration
         {
             foreach (CurrencyTrade currencyTrade in currencyTrades)
             {
-                if (!originalCurrencies.TryGetValue(currencyTrade.Currency, out Currency originalCurrency))
+                // cloning each Currency, skipping ones we already have gotten
+                if (originalCurrencies.ContainsKey(currencyTrade.Currency))
                 {
-                    originalCurrency = _repository.Get(currencyTrade.Currency);
-                    originalCurrencies.Add(currencyTrade.Currency, originalCurrency);
+                    // if we already have the Currency, no need to clone it again
+                    continue;
                 }
 
-                // Clone and stage
-                if (!stagingGround.ContainsKey(currencyTrade.Currency))
-                {
-                    stagingGround[currencyTrade.Currency] = new Currency(originalCurrency.CurrencyType, originalCurrency.Amount);
-                }
+                Currency globalCurrencyClone = _repository.Get(currencyTrade.Currency);
+                originalCurrencies.Add(currencyTrade.Currency, globalCurrencyClone);
+                    
+                // entering each cloned Currency into the stagingGround so we can update them
+                stagingGround[currencyTrade.Currency] = new Currency(globalCurrencyClone.CurrencyType, globalCurrencyClone.Amount);
             }
         }
 
