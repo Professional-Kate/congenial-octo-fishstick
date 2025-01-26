@@ -1,4 +1,4 @@
 ﻿{
   "name": "Orchestration",
-  "references":[ "GUID:89c0e57c1f56410ea2dbb4b24d3360c4", "GUID:0c9fe7ab183e46e98a5ece413be7b33f", "Structures", "GUID:56f7405073fd4ec286bee92d3c46044a" ]
+  "references":[ "GUID:89c0e57c1f56410ea2dbb4b24d3360c4", "GUID:0c9fe7ab183e46e98a5ece413be7b33f", "Structures", "GUID:56f7405073fd4ec286bee92d3c46044a", "Item" ]
 }

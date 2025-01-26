@@ -1,7 +1,6 @@
 ﻿using System;
 using IdelPog.Exceptions;
 using IdelPog.Repository;
-using IdelPog.Repository.Inventory;
 using IdelPog.Service;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Item;

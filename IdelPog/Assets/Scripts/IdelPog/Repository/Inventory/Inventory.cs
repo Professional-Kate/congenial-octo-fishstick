@@ -4,7 +4,7 @@ using IdelPog.Service;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Item;
 
-namespace IdelPog.Repository.Inventory
+namespace IdelPog.Repository
 {
     /// <summary>
     /// The container class for all <see cref="Item"/>'s. See <see cref="IInventory"/> for documentation
@@ -20,7 +20,11 @@ namespace IdelPog.Repository.Inventory
            _itemFactory = itemFactory;
        }
 
-       public IInventory CreateDefault()
+       /// <summary>
+       /// Creates a new <see cref="Inventory"/> class with all dependencies resolved
+       /// </summary>
+       /// <returns>A new <see cref="Inventory"/></returns>
+       public static IInventory CreateDefault()
        {
            IRepository<InventoryID, Item> repository = new Repository<InventoryID, Item>();
            IItemFactory itemFactory = new ItemFactory();

@@ -1,4 +1,0 @@
-﻿{
-  "name": "InventoryCollection",
-  "references": ["\"GUID:e29ee790ced04a47aa4db77a06b8b7c0\"","Item","Repository","Constants","Structures","Service","Exception"]
-}

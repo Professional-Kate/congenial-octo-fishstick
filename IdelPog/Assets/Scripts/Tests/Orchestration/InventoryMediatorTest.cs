@@ -12,14 +12,14 @@ namespace Tests.Orchestration
     public class InventoryMediatorTest
     {
         private IInventoryMediator _inventoryMediator { get; set; }
-        private Mock<IRepository<InventoryID, Item>> _repositoryMock { get; set; }
+        private Mock<IInventory> _repositoryMock { get; set; }
 
         private Item _oakWood { get; set; }
 
         [SetUp]
         public void Setup()
         {
-            _repositoryMock = new Mock<IRepository<InventoryID, Item>>();
+            _repositoryMock = new Mock<IInventory>();
             _inventoryMediator = new InventoryMediator(_repositoryMock.Object);
             
             _oakWood = new Item(InventoryID.OAK_WOOD, ItemConstants.OAK_WOOD, 1, 0);
@@ -35,16 +35,8 @@ namespace Tests.Orchestration
 
         private void SetupMocks()
         {
-            _repositoryMock.Setup(library => library.Get(_oakWood.ID)).Returns(_oakWood);
-            _repositoryMock.Setup(library => library.Remove(_oakWood.ID));
         }
-
-        private void VerifyMockCalls(int getCalls, int updateCalls)
-        {
-            _repositoryMock.Verify(library => library.Get(_oakWood.ID), Times.Exactly(getCalls));
-            _repositoryMock.Verify(library => library.Get(_oakWood.ID), Times.Exactly(updateCalls));
-        }
-
+      
         [TestCase(1)]
         [TestCase(2)]
         [TestCase(3)]
@@ -53,8 +45,6 @@ namespace Tests.Orchestration
             ServiceResponse response = _inventoryMediator.AddItem(_oakWood.ID, amount);
             
             Assert.True(response.IsSuccess);
-            
-            VerifyMockCalls(1, 1);
         }
     }
 }

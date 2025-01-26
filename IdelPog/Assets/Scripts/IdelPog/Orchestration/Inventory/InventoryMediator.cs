@@ -11,11 +11,11 @@ namespace IdelPog.Orchestration.Inventory
     /// <seealso cref="CreateDefault"/>
     public class InventoryMediator : IInventoryMediator
     {
-        private readonly IRepository<InventoryID, Item> _inventory;
+        private readonly IInventory _inventory;
         
-        public InventoryMediator(IRepository<InventoryID, Item> repository)
+        public InventoryMediator(IInventory inventory)
         {
-            _inventory = repository;
+            _inventory = inventory;
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace IdelPog.Orchestration.Inventory
         /// <returns>A new <see cref="InventoryMediator"/> class with all dependencies resolved</returns>
         public static InventoryMediator CreateDefault()
         {
-            IRepository<InventoryID, Item> repository = new Repository<InventoryID, Item>();
+            IInventory repository = Repository.Inventory.CreateDefault();
 
             return new InventoryMediator(repository);
         }
