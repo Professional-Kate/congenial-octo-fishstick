@@ -124,5 +124,31 @@ namespace Tests.Repository
         {
             Assert.Throws<NoTypeException>(() => _repository.Get(type.GetHashCode()));
         }
+        
+        [TestCase(CurrencyType.NO_TYPE)]
+        [TestCase(JobType.NO_TYPE)]
+        public void Negative_ContainsBadKey_Throws<T>(T type)
+        {
+            Assert.Throws<NoTypeException>(() => _repository.Contains(type.GetHashCode()));
+        }
+        
+
+        [Test]
+        public void Positive_Contains_ReturnsTrue()
+        {
+            _repository.Add(Key, Value);
+            
+            bool  contains = _repository.Contains(Key);
+            
+            Assert.IsTrue(contains);
+        }
+
+        [Test]
+        public void Negative_Contains_NotFound_ReturnsFalse()
+        {
+            bool  contains = _repository.Contains(Key);
+            
+            Assert.IsFalse(contains);
+        }
     }
 }

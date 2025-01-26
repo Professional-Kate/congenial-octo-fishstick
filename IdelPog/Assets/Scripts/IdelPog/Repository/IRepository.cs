@@ -12,6 +12,7 @@ namespace IdelPog.Repository
     /// <seealso cref="Remove"/>
     /// <seealso cref="Get"/>
     /// <seealso cref="Update"/>
+    /// <seealso cref="Contains"/>
     public interface IRepository<in TID, T>
     {
         /// <summary>
@@ -53,5 +54,13 @@ namespace IdelPog.Repository
         /// <exception cref="NotFoundException">Will be thrown if the key cannot be found in the Repository</exception>
         /// <exception cref="NoTypeException">Will be thrown if the passed key is NO_TYPE</exception>
         public void Update(TID key, T value);
+        
+        /// <summary>
+        /// Will check if the passed key is inside the Repository
+        /// </summary>
+        /// <param name="key">The key you want to check</param>
+        /// <returns>A boolean on if the requested key exists or not</returns>
+        /// <exception cref="NoTypeException">Will be thrown if the passed key is NO_TYPE</exception>
+        public bool Contains(TID key);
     }
 }
