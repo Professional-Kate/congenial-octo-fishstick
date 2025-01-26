@@ -61,13 +61,40 @@ namespace IdelPog.Repository.Inventory
             {
                 case ActionType.ADD:
                     clonedItem.AddAmount(amount);
+                    _repository.Update(item, clonedItem);
                     break;
                 case ActionType.REMOVE:
-                    clonedItem.RemoveAmount(amount);
+                    RemoveAmountHandler(clonedItem, amount);
                     break;
             }
+        }
+
+        /// <summary>
+        /// Handles removing an amount from an <see cref="Item"/>
+        /// </summary>
+        /// <param name="item">The <see cref="Item"/> you want to remove an amount from</param>
+        /// <param name="amount">The amount you want to remove</param>
+        /// <exception cref="ArgumentException">Will be thrown if the passed amount would cause the <see cref="Item"/>s amount to be less than zero</exception>
+        /// <remarks>
+        /// This method will handle Updating the Repository with the new state of the <see cref="Item"/>. In cases where the <see cref="Item"/> is removed, because the <see cref="Item"/>'s amount is zero, an Update will not be called
+        /// </remarks>
+        private void RemoveAmountHandler(Item item, int amount)
+        {
+            int itemAmount = item.Amount;
+
+            if (itemAmount < amount)
+            {
+                throw new ArgumentException($"Error! Cannot remove amount : '{amount}', item's amount is too low: {item.Amount}.");
+            }
+
+            if (itemAmount - amount == 0)
+            {
+                _repository.Remove(item.ID);
+                return;
+            }
             
-            _repository.Update(item, clonedItem);
+            item.RemoveAmount(amount);
+            _repository.Update(item.ID, item);
         }
     }
 }

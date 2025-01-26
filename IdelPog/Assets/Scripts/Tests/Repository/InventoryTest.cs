@@ -57,7 +57,9 @@ namespace Tests.Repository
             Assert.AreEqual(finalAmount, _oakWoodItem.Amount);
              
             _repositoryMock.Verify(library => library.Get(_oakWoodItem.ID));
+            
             _repositoryMock.Verify(library => library.Update(_oakWoodItem.ID, _oakWoodItem));
+            _repositoryMock.Verify(library => library.Remove(_oakWoodItem.ID), Times.Never());
         }
 
         [TestCase(1)]
@@ -86,6 +88,24 @@ namespace Tests.Repository
         {
             _oakWoodItem.AddAmount(amount + 1);
             ModifyAmountTestRunner(amount, ActionType.REMOVE);
+        }
+
+        [Test]
+        public void Positive_RemoveAmount_ZeroAmount_RemovesItem()
+        {
+            _oakWoodItem.AddAmount(1);
+            _inventory.RemoveAmount(_oakWoodItem.ID, 1);
+            
+            // The Item will be left with zero amount. Which means, we need to remove it from the Repository
+            _repositoryMock.Verify(library => library.Remove(_oakWoodItem.ID));
+            // Removing it from the Repository means we shouldn't Update it
+            _repositoryMock.Verify(library => library.Update(_oakWoodItem.ID, _oakWoodItem), Times.Never());
+        }
+
+        [Test]
+        public void Negative_RemoveAmount_AmountUnderZero_Throws()
+        {
+            Assert.Throws<ArgumentException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
         }
         
         [TestCase(0)]
