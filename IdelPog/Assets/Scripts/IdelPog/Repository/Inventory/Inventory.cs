@@ -1,4 +1,5 @@
 ﻿using System;
+using IdelPog.Exceptions;
 using IdelPog.Service;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Item;
@@ -72,6 +73,11 @@ namespace IdelPog.Repository.Inventory
         private void ModifyAmount(InventoryID item, int amount, ActionType actionType)
         {
             AssertAmountIsPositive(amount);
+
+            if (_repository.Contains(item) == false)
+            {
+                throw new NotFoundException($"Error! Passed ID {item} doesn't exist!");
+            }
             
             Item clonedItem = _repository.Get(item);
 

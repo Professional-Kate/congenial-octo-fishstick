@@ -42,6 +42,7 @@ namespace Tests.Repository
         {
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
             _repositoryMock.Setup(library => library.Get(InventoryID.BIRCH_WOOD)).Throws<NotFoundException>();
+            _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
         }
 
         private void ModifyAmountTestRunner(int amount, ActionType action)
@@ -66,6 +67,7 @@ namespace Tests.Repository
             
             _repositoryMock.Verify(library => library.Update(_oakWoodItem.ID, _oakWoodItem));
             _repositoryMock.Verify(library => library.Remove(_oakWoodItem.ID), Times.Never());
+            _repositoryMock.Verify(library => library.Contains(_oakWoodItem.ID));
         }
 
         [TestCase(1)]
@@ -136,14 +138,19 @@ namespace Tests.Repository
         [Test]
         public void Positive_AddItem_AddsItemToRepository()
         {
+            _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(false);
+            
             _inventory.AddItem(_oakWoodItem.ID, 1);
 
             _repositoryMock.Verify(library => library.Add(_oakWoodItem.ID, It.IsAny<Item>()));
+            _repositoryMock.Verify(library => library.Contains(_oakWoodItem.ID));
         }
 
         [Test]
         public void Positive_AddItem_ItemHasCorrectAmount()
         {
+            _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(false);
+
             const int amount = 1;
             _oakWoodItem.AddAmount(amount);
 
@@ -158,14 +165,17 @@ namespace Tests.Repository
             
             _inventory.AddItem(_oakWoodItem.ID, amount);
             _itemFactoryMock.Verify(library => library.CreateItem(_oakWoodItem.ID, amount));
+            _repositoryMock.Verify(library => library.Contains(_oakWoodItem.ID));
         }
 
         [Test]
         public void Negative_AddItem_ItemExists_Throws()
         {
-            _inventory.AddItem(_oakWoodItem.ID, 1);
+            _inventory.AddItem(InventoryID.WILLOW_WOOD, 1);
             
-            Assert.Throws<ArgumentException>(() => _inventory.AddItem(_oakWoodItem.ID, 10));
+            _repositoryMock.Setup(library => library.Contains(InventoryID.WILLOW_WOOD)).Returns(true);
+            
+            Assert.Throws<ArgumentException>(() => _inventory.AddItem(InventoryID.WILLOW_WOOD, 10));
         }
 
         [TestCase(0)]
