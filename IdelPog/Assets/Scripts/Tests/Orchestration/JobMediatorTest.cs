@@ -32,12 +32,14 @@ namespace Tests.Orchestration
             _jobMediator = new JobMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object);
 
             _repositoryMock.Setup(library => library.Get(_miningJob.JobType)).Returns(_miningJob);
+            _repositoryMock.Setup(library => library.Contains(_miningJob.JobType)).Returns(true);
         }
 
-        private void VerifyDependencyCalls(int getCalls = 0, int updateCalls = 0, int serviceCalls = 0, int levelServiceCalls = 0)
+        private void VerifyDependencyCalls(int getCalls = 0, int updateCalls = 0, int serviceCalls = 0, int levelServiceCalls = 0, int containsCalls = 0)
         {
             _repositoryMock.Verify(library => library.Get(_miningJob.JobType), Times.Exactly(getCalls));
             _repositoryMock.Verify(library => library.Update(_miningJob.JobType, _miningJob), Times.Exactly(updateCalls));
+            _repositoryMock.Verify(library => library.Contains(It.IsAny<JobType>()), Times.Exactly(containsCalls));
             _experienceServiceMock.Verify(library => library.AddExperience(_miningJob), Times.Exactly(serviceCalls));
             _levelServiceMock.Verify(library => library.LevelUpJob(_miningJob), Times.Exactly(levelServiceCalls));
         }
@@ -51,7 +53,7 @@ namespace Tests.Orchestration
             
             Assert.True(response.IsSuccess);
 
-            VerifyDependencyCalls(1, 1, 1);
+            VerifyDependencyCalls(1, 1, 1, 0, 1);
         }
 
         [Test]
@@ -63,7 +65,7 @@ namespace Tests.Orchestration
             
             Assert.True(response.IsSuccess);
             
-            VerifyDependencyCalls(1, 1, 1, 1);
+            VerifyDependencyCalls(1, 1, 1, 1, 1);
         }
 
 
@@ -80,7 +82,7 @@ namespace Tests.Orchestration
             Assert.False(response.IsSuccess);
             Assert.NotNull(response.Message);
             
-            VerifyDependencyCalls(1, 0, 1);
+            VerifyDependencyCalls(1, 0, 1, 0, 1);
         }
 
         
@@ -96,7 +98,7 @@ namespace Tests.Orchestration
             Assert.False(response.IsSuccess);
             Assert.NotNull(response.Message);
             
-            VerifyDependencyCalls();
+            VerifyDependencyCalls(0, 0, 0, 0, 1);
         }
 
         [TestCase(JobType.NO_TYPE, typeof(NoTypeException))]
@@ -111,7 +113,7 @@ namespace Tests.Orchestration
             Assert.False(response.IsSuccess);
             Assert.NotNull(response.Message);
             
-            VerifyDependencyCalls();
+            VerifyDependencyCalls(0, 0, 0, 0, 1);
         }
     }
 }
