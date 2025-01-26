@@ -54,6 +54,14 @@ namespace IdelPog.Repository
             _repository[key] = value;
         }
 
+        public bool Contains(TID key)
+        {
+            AssertKeyIsValid(key);
+
+            bool contains = _repository.ContainsKey(key);
+            return contains;
+        }
+
         /// <summary>
         /// Asserts that the passed enum type hash code isn't zero
         /// </summary>
@@ -74,7 +82,7 @@ namespace IdelPog.Repository
         /// <exception cref="NotFoundException">Will be thrown if the passed key is not in the Repository</exception>
         private void AssertKeyExists(TID key)
         {
-            bool contains = _repository.ContainsKey(key);
+            bool contains = Contains(key);
             if (contains == false)
             {
                 throw new NotFoundException($"Error! Passed key {key} is not in the Repository.");

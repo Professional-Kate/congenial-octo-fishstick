@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Orchestration;
 using IdelPog.Repository;
@@ -50,9 +49,11 @@ namespace Tests.Orchestration
             _repositoryMock = new Mock<IRepository<CurrencyType, Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
             _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _repositoryMock.Object);
+
+            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns((Currency) _foodCurrency.Clone());
+            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns((Currency) _woodCurrency.Clone());
             
-            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns(new Currency(CurrencyType.FOOD, _foodCurrency.Amount));
-            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns(new Currency(CurrencyType.WOOD, _woodCurrency.Amount));
+            _repositoryMock.Setup(library => library.Contains(It.IsAny<CurrencyType>())).Returns(true);
 
             _currencyServiceMock.Setup(library => library.AddAmount(It.IsAny<Currency>(), It.IsAny<int>()))
                 .Callback<Currency, int>((currency, amount) =>
@@ -60,7 +61,7 @@ namespace Tests.Orchestration
                     int newAmount = currency.Amount + amount;
                     currency.SetAmount(newAmount);
                 });
-            
+
             _currencyServiceMock.Setup(library => library.RemoveAmount(It.IsAny<Currency>(), It.IsAny<int>()))
                 .Callback<Currency, int>((currency, amount) =>
                 {
@@ -95,9 +96,18 @@ namespace Tests.Orchestration
         {
             _repositoryMock.Verify(library => library.Update(It.IsAny<CurrencyType>(), It.IsAny<Currency>()), Times.Exactly(amount));
         }
+
+        private void VerifyContainsCalls(int amount)
+        {
+            _repositoryMock.Verify(library => library.Contains(It.IsAny<CurrencyType>()), Times.Exactly(amount));
+        }
+
+        private void VerifyGetCalls(int amount)
+        {
+            _repositoryMock.Verify(library => library.Get(It.IsAny<CurrencyType>()), Times.Exactly(amount));
+        }
         
         
-        [TestCase(0)]
         [TestCase(1)]
         [TestCase(5)]
         [TestCase(10)]
@@ -109,13 +119,14 @@ namespace Tests.Orchestration
 
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
             
-            Debug.Log(serviceResponse.Message);
-            
             Assert.True(serviceResponse.IsSuccess);
             Assert.AreEqual(tradeCount * Amount, _foodCurrency.Amount);
+
+            VerifyContainsCalls(1);
+            VerifyGetCalls(1);
+            VerifyUpdateCall(1);
         }
         
-        [TestCase(0)]
         [TestCase(1)]
         [TestCase(5)]
         [TestCase(10)]
@@ -133,6 +144,10 @@ namespace Tests.Orchestration
             
             Assert.True(serviceResponse.IsSuccess);
             Assert.AreEqual(10, _foodCurrency.Amount);
+
+            VerifyContainsCalls(2);
+            VerifyGetCalls(2);
+            VerifyUpdateCall(2);
         }
 
         [Test]
@@ -144,27 +159,31 @@ namespace Tests.Orchestration
             
             Assert.True(serviceResponse.IsSuccess);
             
+            VerifyContainsCalls(0);
+            VerifyGetCalls(0);
             VerifyUpdateCall(0);
         }
 
         [Test]
         public void Negative_ProcessCurrencyUpdate_CurrencyNotFound_ReturnsFailure()
         {
-            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Throws<NotFoundException>();
-            
+            _repositoryMock.Setup(library => library.Contains(CurrencyType.FOOD)).Returns(false);
+
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(_addFoodTrade);
             
             Assert.False(serviceResponse.IsSuccess);
             Assert.IsNotNull(serviceResponse.Message);
             Assert.AreEqual(0, _foodCurrency.Amount);
             
+            VerifyContainsCalls(1);
+            VerifyGetCalls(0);
             VerifyUpdateCall(0);
         }
 
         [Test]
         public void Negative_ProcessCurrencyUpdate_OneCurrencyNotFound_ReturnsFailure()
         {
-            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Throws<NotFoundException>();
+            _repositoryMock.Setup(library => library.Contains(CurrencyType.WOOD)).Returns(false);
 
             CurrencyTrade[] trades = { _addFoodTrade, _addWoodTrade };
             
@@ -175,6 +194,8 @@ namespace Tests.Orchestration
             Assert.AreEqual(0, _foodCurrency.Amount);
             Assert.AreEqual(0, _woodCurrency.Amount);
             
+            VerifyContainsCalls(2);
+            VerifyGetCalls(0);
             VerifyUpdateCall(0);
         }
 
@@ -189,6 +210,8 @@ namespace Tests.Orchestration
             Assert.AreEqual(0, _woodCurrency.Amount);
             Assert.AreEqual(0, _foodCurrency.Amount);
             
+            VerifyContainsCalls(2);
+            VerifyGetCalls(2);
             VerifyUpdateCall(0);
         }
         
@@ -205,7 +228,8 @@ namespace Tests.Orchestration
             Assert.AreEqual(10, _foodCurrency.Amount); 
             
             VerifyUpdateCall(2); // two currency = 2 update calls
-
+            VerifyContainsCalls(2);
+            VerifyGetCalls(2);
         }
         
         [TestCase(0, ActionType.ADD)]
@@ -224,8 +248,9 @@ namespace Tests.Orchestration
             Assert.NotNull(serviceResponse.Message);
             Assert.AreEqual(0, _foodCurrency.Amount);
             
+            VerifyContainsCalls(0);
+            VerifyGetCalls(0);
             VerifyUpdateCall(0);
-
         }
         
         [Test]
@@ -241,8 +266,9 @@ namespace Tests.Orchestration
             Assert.AreEqual(0, _foodCurrency.Amount);
             Assert.AreEqual(0, _woodCurrency.Amount);
             
+            VerifyContainsCalls(2);
+            VerifyGetCalls(2);
             VerifyUpdateCall(0);
-
         }
     }
 }
