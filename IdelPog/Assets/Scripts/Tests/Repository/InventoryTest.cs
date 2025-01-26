@@ -1,11 +1,13 @@
 ﻿using System;
+using IdelPog.Exceptions;
 using IdelPog.Repository;
 using IdelPog.Repository.Inventory;
+using IdelPog.Service;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Item;
 using Moq;
 using NUnit.Framework;
-using Tests.Utils;
+using ItemFactory = Tests.Utils.ItemFactory;
 
 namespace Tests.Repository
 {
@@ -14,6 +16,7 @@ namespace Tests.Repository
     {
         private IInventory _inventory { get; set; }
         private Mock<IRepository<InventoryID, Item>> _repositoryMock { get; set; }
+        private Mock<IItemFactory> _itemFactoryMock { get; set; }
 
         private Item _oakWoodItem { get; set; }
 
@@ -21,7 +24,9 @@ namespace Tests.Repository
         public void OneTimeSetUp()
         {
             _repositoryMock = new Mock<IRepository<InventoryID, Item>>();
-            _inventory = new Inventory(_repositoryMock.Object);
+            _itemFactoryMock = new Mock<IItemFactory>();
+            _inventory = new Inventory(_repositoryMock.Object, _itemFactoryMock.Object);
+            
             _oakWoodItem = ItemFactory.CreateOakWood();
             SetupMock();
         }
@@ -36,6 +41,7 @@ namespace Tests.Repository
         private void SetupMock()
         {
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
+            _repositoryMock.Setup(library => library.Get(InventoryID.BIRCH_WOOD)).Throws<NotFoundException>();
         }
 
         private void ModifyAmountTestRunner(int amount, ActionType action)
@@ -72,6 +78,12 @@ namespace Tests.Repository
             ModifyAmountTestRunner(amount, ActionType.ADD);
         }
 
+        [Test]
+        public void Negative_AddAmount_NoItemFound_Throws()
+        {
+            Assert.Throws<NotFoundException>(() => _inventory.AddAmount(InventoryID.BIRCH_WOOD, 1));
+        }
+
         [TestCase(0)]
         [TestCase(-10)]
         public void Negative_AddAmount_BadAmount_Throws(int amount)
@@ -88,6 +100,12 @@ namespace Tests.Repository
         {
             _oakWoodItem.AddAmount(amount + 1);
             ModifyAmountTestRunner(amount, ActionType.REMOVE);
+        }
+        
+        [Test]
+        public void Negative_RemoveAmount_NoItemFound_Throws()
+        {
+            Assert.Throws<NotFoundException>(() => _inventory.AddAmount(InventoryID.BIRCH_WOOD, 1));
         }
 
         [Test]
@@ -113,6 +131,48 @@ namespace Tests.Repository
         public void Negative_RemoveAmount_BadAmount_Throws(int amount)
         {
             Assert.Throws<ArgumentException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
+        }
+
+        [Test]
+        public void Positive_AddItem_AddsItemToRepository()
+        {
+            _inventory.AddItem(_oakWoodItem.ID, 1);
+
+            _repositoryMock.Verify(library => library.Add(_oakWoodItem.ID, It.IsAny<Item>()));
+        }
+
+        [Test]
+        public void Positive_AddItem_ItemHasCorrectAmount()
+        {
+            const int amount = 1;
+            _oakWoodItem.AddAmount(amount);
+
+            _itemFactoryMock.Setup(library => library.CreateItem(_oakWoodItem.ID, amount)).Returns(_oakWoodItem);
+            
+            _repositoryMock.Setup(library => library.Add(_oakWoodItem.ID, It.IsAny<Item>()))
+                .Callback<InventoryID, Item>(((id, item) =>
+                {
+                    Assert.AreEqual(_oakWoodItem.ID, id);
+                    Assert.AreEqual(amount, item.Amount);
+                }));
+            
+            _inventory.AddItem(_oakWoodItem.ID, amount);
+            _itemFactoryMock.Verify(library => library.CreateItem(_oakWoodItem.ID, amount));
+        }
+
+        [Test]
+        public void Negative_AddItem_ItemExists_Throws()
+        {
+            _inventory.AddItem(_oakWoodItem.ID, 1);
+            
+            Assert.Throws<ArgumentException>(() => _inventory.AddItem(_oakWoodItem.ID, 10));
+        }
+
+        [TestCase(0)]
+        [TestCase(-10)]
+        public void Negative_AddItem_BadAmount_Throws(int amount)
+        {
+            Assert.Throws<ArgumentException>(() => _inventory.AddItem(_oakWoodItem.ID, amount));
         }
     }
 }

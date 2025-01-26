@@ -8,7 +8,6 @@ namespace IdelPog.Repository.Inventory
     /// <seealso cref="AddAmount"/>
     /// <seealso cref="RemoveAmount"/>
     /// <seealso cref="AddItem"/>
-    /// <seealso cref="Contains"/>
     public interface IInventory
     {
         /// <summary>
@@ -37,12 +36,5 @@ namespace IdelPog.Repository.Inventory
         /// <param name="item"></param>
         /// <param name="startingAmount"></param>
         public void AddItem(InventoryID item, int startingAmount);
-
-        /// <summary>
-        ///  
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public bool Contains(InventoryID item);
     }
 }
