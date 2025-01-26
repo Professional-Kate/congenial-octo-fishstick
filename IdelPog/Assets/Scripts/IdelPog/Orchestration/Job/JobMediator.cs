@@ -35,10 +35,15 @@ namespace IdelPog.Orchestration
         
         public ServiceResponse ProcessJobAction(JobType jobType)
         {
+            if (_repository.Contains(jobType) == false)
+            {
+                return ServiceResponse.Failure($"Error! Passed JobType {jobType} was not found!");
+            }
+            
+            Job job = _repository.Get(jobType);
+            
             try
             {
-                Job job = _repository.Get(jobType);
-                
                 _experienceService.AddExperience(job);
 
                 if (_levelService.CanJobLevel(job))
