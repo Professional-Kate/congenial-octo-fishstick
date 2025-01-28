@@ -1,7 +1,6 @@
 ﻿using System;
 using IdelPog.Exceptions;
 using IdelPog.Service;
-using IdelPog.Structures.Enums;
 using IdelPog.Structures.Item;
 
 namespace IdelPog.Repository
@@ -11,48 +10,87 @@ namespace IdelPog.Repository
     /// </summary>
     public sealed class Inventory : IInventory
     {
-       private readonly IRepository<InventoryID, Item> _repository;
-       private readonly IItemFactory _itemFactory; 
+        private readonly IRepository<InventoryID, Item> _repository;
+        private readonly IItemFactory _itemFactory;
 
-       public Inventory(IRepository<InventoryID, Item> repository, IItemFactory itemFactory)
-       {
-           _repository = repository;
-           _itemFactory = itemFactory;
-       }
-
-       /// <summary>
-       /// Creates a new <see cref="Inventory"/> class with all dependencies resolved
-       /// </summary>
-       /// <returns>A new <see cref="Inventory"/></returns>
-       public static IInventory CreateDefault()
-       {
-           IRepository<InventoryID, Item> repository = new Repository<InventoryID, Item>();
-           IItemFactory itemFactory = new ItemFactory();
-           
-           return new Inventory(repository, itemFactory);
-       }
-
-       public void AddAmount(InventoryID item, int amount)
-       {
-           ModifyAmount(item, amount, ActionType.ADD);
-       }
-
-        public void RemoveAmount(InventoryID item, int amount)
+        public Inventory(IRepository<InventoryID, Item> repository, IItemFactory itemFactory)
         {
-            ModifyAmount(item, amount, ActionType.REMOVE);
+            _repository = repository;
+            _itemFactory = itemFactory;
         }
 
-        public void AddItem(InventoryID item, int startingAmount)
+        /// <summary>
+        /// Creates a new <see cref="Inventory"/> class with all dependencies resolved
+        /// </summary>
+        /// <returns>A new <see cref="Inventory"/></returns>
+        public static IInventory CreateDefault()
+        {
+            IRepository<InventoryID, Item> repository = new Repository<InventoryID, Item>();
+            IItemFactory itemFactory = new ItemFactory();
+
+            return new Inventory(repository, itemFactory);
+        }
+
+        public void AddAmount(InventoryID id, int amount)
+        {
+            AssertAmountIsPositive(amount);
+
+            Item finalItem;
+
+            if (_repository.Contains(id) == false)
+            {
+                // in cases where we don't have the item, we create it
+                finalItem = _itemFactory.CreateItem(id, amount);
+                _repository.Add(finalItem.ID, finalItem);
+            }
+            else
+            {
+                finalItem = RepositoryGet(id);
+            }
+
+            finalItem.AddAmount(amount);
+            RepositoryUpdate(id, finalItem);
+        }
+
+        public void RemoveAmount(InventoryID id, int amount)
+        {
+            AssertAmountIsPositive(amount);
+
+            if (_repository.Contains(id) == false)
+            {
+                throw new NotFoundException("Error: Item does not exist");
+            }
+
+            Item item = RepositoryGet(id);
+
+            int itemAmount = item.Amount;
+
+            if (itemAmount < amount)
+            {
+                throw new ArgumentException($"Error! Cannot remove amount : '{amount}', item's amount is too low: {item.Amount}.");
+            }
+
+            if (itemAmount - amount == 0)
+            {
+                _repository.Remove(item.ID);
+                return;
+            }
+
+            item.RemoveAmount(amount);
+            RepositoryUpdate(item.ID, item);
+        }
+
+        public void AddItem(InventoryID id, int startingAmount)
         {
             AssertAmountIsPositive(startingAmount);
-            
-            if (_repository.Contains(item))
+
+            if (_repository.Contains(id))
             {
-                throw new ArgumentException($"Error! Passed ID {item} already exists! Cannot AddItem!");
+                throw new ArgumentException($"Error! Passed ID {id} already exists! Cannot AddItem!");
             }
-            
-            Item newItem = _itemFactory.CreateItem(item, startingAmount);
-            _repository.Add(item, newItem);
+
+            Item newItem = _itemFactory.CreateItem(id, startingAmount);
+            _repository.Add(id, newItem);
         }
 
         /// <summary>
@@ -67,62 +105,16 @@ namespace IdelPog.Repository
                 throw new ArgumentException($"Error! Passed amount : '{amount}' is required to be a positive number.");
             }
         }
-        
-        /// <summary>
-        /// Modifies the amount of the passed <see cref="InventoryID"/>
-        /// </summary>
-        /// <param name="item">This <see cref="InventoryID"/> will match the <see cref="InventoryID"/> of an <see cref="Item"/> in the repository</param>
-        /// <param name="amount">The amount to modify the <see cref="Item"/>s amount by</param>
-        /// <param name="actionType"><see cref="ActionType"/></param>
-        private void ModifyAmount(InventoryID item, int amount, ActionType actionType)
+
+        private Item RepositoryGet(InventoryID id)
         {
-            AssertAmountIsPositive(amount);
-
-            if (_repository.Contains(item) == false)
-            {
-                throw new NotFoundException($"Error! Passed ID {item} doesn't exist!");
-            }
-            
-            Item clonedItem = _repository.Get(item);
-
-            switch (actionType)
-            {
-                case ActionType.ADD:
-                    clonedItem.AddAmount(amount);
-                    _repository.Update(item, clonedItem);
-                    break;
-                case ActionType.REMOVE:
-                    RemoveAmountHandler(clonedItem, amount);
-                    break;
-            }
+            Item itemClone = _repository.Get(id);
+            return itemClone;
         }
 
-        /// <summary>
-        /// Handles removing an amount from an <see cref="Item"/>
-        /// </summary>
-        /// <param name="item">The <see cref="Item"/> you want to remove an amount from</param>
-        /// <param name="amount">The amount you want to remove</param>
-        /// <exception cref="ArgumentException">Will be thrown if the passed amount would cause the <see cref="Item"/>s amount to be less than zero</exception>
-        /// <remarks>
-        /// This method will handle Updating the Repository with the new state of the <see cref="Item"/>. In cases where the <see cref="Item"/> is removed, because the <see cref="Item"/>'s amount is zero, an Update will not be called
-        /// </remarks>
-        private void RemoveAmountHandler(Item item, int amount)
+        private void RepositoryUpdate(InventoryID id, Item item)
         {
-            int itemAmount = item.Amount;
-
-            if (itemAmount < amount)
-            {
-                throw new ArgumentException($"Error! Cannot remove amount : '{amount}', item's amount is too low: {item.Amount}.");
-            }
-
-            if (itemAmount - amount == 0)
-            {
-                _repository.Remove(item.ID);
-                return;
-            }
-            
-            item.RemoveAmount(amount);
-            _repository.Update(item.ID, item);
+            _repository.Update(id, item);
         }
     }
 }

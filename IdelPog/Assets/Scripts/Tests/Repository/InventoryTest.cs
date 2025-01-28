@@ -22,10 +22,6 @@ namespace Tests.Repository
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _repositoryMock = new Mock<IRepository<InventoryID, Item>>();
-            _itemFactoryMock = new Mock<IItemFactory>();
-            _inventory = new Inventory(_repositoryMock.Object, _itemFactoryMock.Object);
-            
             _oakWoodItem = ItemFactory.CreateOakWood();
             SetupMock();
         }
@@ -39,9 +35,15 @@ namespace Tests.Repository
 
         private void SetupMock()
         {
+            _repositoryMock = new Mock<IRepository<InventoryID, Item>>();
+            _itemFactoryMock = new Mock<IItemFactory>();
+            _inventory = new Inventory(_repositoryMock.Object, _itemFactoryMock.Object);
+            
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
             _repositoryMock.Setup(library => library.Get(InventoryID.BIRCH_WOOD)).Throws<NotFoundException>();
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
+            
+            _itemFactoryMock.Setup(library => library.CreateItem(It.IsAny<InventoryID>(), It.IsAny<int>())).Returns(_oakWoodItem);
         }
 
         private void ModifyAmountTestRunner(int amount, ActionType action)
@@ -78,11 +80,17 @@ namespace Tests.Repository
         {
             ModifyAmountTestRunner(amount, ActionType.ADD);
         }
-
+        
         [Test]
-        public void Negative_AddAmount_NoItemFound_Throws()
+        public void Positive_AddAmount_AddsItem()
         {
-            Assert.Throws<NotFoundException>(() => _inventory.AddAmount(InventoryID.BIRCH_WOOD, 1));
+            _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(false);
+            
+            _inventory.AddAmount(_oakWoodItem.ID, 5);
+            
+            _repositoryMock.Verify(library => library.Add(_oakWoodItem.ID, _oakWoodItem));
+            _repositoryMock.Verify(library => library.Get(_oakWoodItem.ID), Times.Never());
+            Assert.AreEqual(5, _oakWoodItem.Amount);
         }
 
         [TestCase(0)]
@@ -91,6 +99,7 @@ namespace Tests.Repository
         {
             Assert.Throws<ArgumentException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
         }
+
 
         [TestCase(1)]
         [TestCase(10)]
@@ -104,13 +113,7 @@ namespace Tests.Repository
         }
         
         [Test]
-        public void Negative_RemoveAmount_NoItemFound_Throws()
-        {
-            Assert.Throws<NotFoundException>(() => _inventory.AddAmount(InventoryID.BIRCH_WOOD, 1));
-        }
-
-        [Test]
-        public void Positive_RemoveAmount_ZeroAmount_RemovesItem()
+        public void Positive_RemoveAmount_RemovesItem()
         {
             _oakWoodItem.AddAmount(1);
             _inventory.RemoveAmount(_oakWoodItem.ID, 1);
@@ -119,6 +122,14 @@ namespace Tests.Repository
             _repositoryMock.Verify(library => library.Remove(_oakWoodItem.ID));
             // Removing it from the Repository means we shouldn't Update it
             _repositoryMock.Verify(library => library.Update(_oakWoodItem.ID, _oakWoodItem), Times.Never());
+        }
+        
+        [Test]
+        public void Negative_RemoveAmount_NoItemFound_Throws()
+        {
+            _repositoryMock.Setup(library => library.Contains(InventoryID.BIRCH_WOOD)).Returns(false);
+
+            Assert.Throws<NotFoundException>(() => _inventory.RemoveAmount(InventoryID.BIRCH_WOOD, 1));
         }
 
         [Test]
