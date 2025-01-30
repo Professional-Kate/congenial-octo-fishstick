@@ -1,5 +1,6 @@
 ﻿using System;
 using IdelPog.Repository;
+using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Item;
@@ -13,6 +14,7 @@ namespace IdelPog.Orchestration.Inventory
     public class InventoryMediator : IInventoryMediator
     {
         private readonly IInventory _inventory;
+        private readonly IItemFactory _itemFactory;
         
         public InventoryMediator(IInventory inventory)
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using IdelPog.Exceptions;
-using IdelPog.Service;
 using IdelPog.Structures.Item;
 
 namespace IdelPog.Repository
@@ -11,12 +10,10 @@ namespace IdelPog.Repository
     public sealed class Inventory : IInventory
     {
         private readonly IRepository<InventoryID, Item> _repository;
-        private readonly IItemFactory _itemFactory;
 
-        public Inventory(IRepository<InventoryID, Item> repository, IItemFactory itemFactory)
+        public Inventory(IRepository<InventoryID, Item> repository)
         {
             _repository = repository;
-            _itemFactory = itemFactory;
         }
 
         /// <summary>
@@ -26,27 +23,20 @@ namespace IdelPog.Repository
         public static IInventory CreateDefault()
         {
             IRepository<InventoryID, Item> repository = new Repository<InventoryID, Item>();
-            IItemFactory itemFactory = new ItemFactory();
 
-            return new Inventory(repository, itemFactory);
+            return new Inventory(repository);
         }
 
         public void AddAmount(InventoryID id, int amount)
         {
             AssertAmountIsPositive(amount);
 
-            Item finalItem;
-
             if (_repository.Contains(id) == false)
             {
-                // in cases where we don't have the item, we create it
-                finalItem = _itemFactory.CreateItem(id, amount);
-                _repository.Add(finalItem.ID, finalItem);
+                throw new NotFoundException("Error: Item does not exist");
             }
-            else
-            {
-                finalItem = RepositoryGet(id);
-            }
+
+            Item finalItem = RepositoryGet(id);
 
             finalItem.AddAmount(amount);
             RepositoryUpdate(id, finalItem);
@@ -80,17 +70,21 @@ namespace IdelPog.Repository
             RepositoryUpdate(item.ID, item);
         }
 
-        public void AddItem(InventoryID id, int startingAmount)
+        public void AddItem(Item item)
         {
-            AssertAmountIsPositive(startingAmount);
+            AssertAmountIsPositive(item.Amount);
 
-            if (_repository.Contains(id))
+            if (_repository.Contains(item.ID))
             {
-                throw new ArgumentException($"Error! Passed ID {id} already exists! Cannot AddItem!");
+                throw new ArgumentException($"Error! Passed ID {item.ID} already exists! Cannot AddItem!");
             }
 
-            Item newItem = _itemFactory.CreateItem(id, startingAmount);
-            _repository.Add(id, newItem);
+            _repository.Add(item.ID, item);
+        }
+
+        public bool Contains(InventoryID item)
+        {
+            return _repository.Contains(item);
         }
 
         /// <summary>

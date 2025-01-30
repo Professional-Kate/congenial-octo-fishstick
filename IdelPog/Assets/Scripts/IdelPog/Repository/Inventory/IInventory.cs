@@ -10,6 +10,7 @@ namespace IdelPog.Repository
     /// <seealso cref="AddAmount"/>
     /// <seealso cref="RemoveAmount"/>
     /// <seealso cref="AddItem"/>
+    /// <seealso cref="Contains"/>
     public interface IInventory
     {
         /// <summary>
@@ -19,7 +20,7 @@ namespace IdelPog.Repository
         /// <param name="amount">The amount you want to add</param>
         /// <exception cref="ArgumentException">Will be thrown if the passed or amount is 0 or less</exception>
         /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="Item"/> is not in the Inventory</exception>
-        /// <remarks>This method will also create a new <see cref="Item"/> in the case it doesn't exist</remarks>
+        /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="Item"/> is not in the Inventory</exception>
         public void AddAmount(InventoryID id, int amount);
         
         /// <summary>
@@ -33,12 +34,17 @@ namespace IdelPog.Repository
         public void RemoveAmount(InventoryID id, int amount);
 
         /// <summary>
-        /// Adds a new <see cref="Item"/> into the Inventory
+        /// Adds a passed <see cref="Item"/> into the Inventory
         /// </summary>
-        /// <param name="id">The <see cref="Item"/> you want to add will have this <see cref="InventoryID"/></param>
-        /// <param name="startingAmount">The amount the item should start with</param>
-        /// <exception cref="ArgumentException">Will be thrown if the passed or amount is 0 or less</exception>
+        /// <param name="item">The <see cref="Item"/> you want to add</param>
+        /// <exception cref="ArgumentException">Will be thrown if the passed <see cref="Item"/>'s amount is 0 or less</exception>
         /// <exception cref="ArgumentException">Will be thrown if the passed <see cref="InventoryID"/> already exists</exception>
-        public void AddItem(InventoryID id, int startingAmount);
+        public void AddItem(Item item);
+        
+        /// <summary>
+        /// Uses the passed <see cref="InventoryID"/> to see if an <see cref="Item"/> is within the Repository
+        /// </summary>
+        /// <param name="item">The <see cref="InventoryID"/> you want to ensure exists</param>
+        public bool Contains(InventoryID item);
     }
 }
