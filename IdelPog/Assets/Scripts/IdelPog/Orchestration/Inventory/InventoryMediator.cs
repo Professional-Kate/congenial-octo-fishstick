@@ -2,7 +2,6 @@
 using IdelPog.Repository;
 using IdelPog.Service;
 using IdelPog.Structures;
-using IdelPog.Structures.Enums;
 using IdelPog.Structures.Item;
 
 namespace IdelPog.Orchestration.Inventory
@@ -16,9 +15,10 @@ namespace IdelPog.Orchestration.Inventory
         private readonly IInventory _inventory;
         private readonly IItemFactory _itemFactory;
         
-        public InventoryMediator(IInventory inventory)
+        public InventoryMediator(IInventory inventory, IItemFactory itemFactory)
         {
             _inventory = inventory;
+            _itemFactory = itemFactory;
         }
 
         /// <summary>
@@ -28,41 +28,48 @@ namespace IdelPog.Orchestration.Inventory
         public static InventoryMediator CreateDefault()
         {
             IInventory repository = Repository.Inventory.CreateDefault();
+            IItemFactory itemFactory = new ItemFactory();
 
-            return new InventoryMediator(repository);
+            return new InventoryMediator(repository, itemFactory);
         }
         
         public ServiceResponse AddAmount(InventoryID inventoryID, int amount)
         {
-           return HandleItemModification(inventoryID, amount, ActionType.ADD);
-        }
-
-        public ServiceResponse RemoveAmount(InventoryID inventoryID, int amount)
-        {
-            return HandleItemModification(inventoryID, amount, ActionType.REMOVE);
-        }
-
-        private ServiceResponse HandleItemModification(InventoryID inventoryID, int amount, ActionType action)
-        {
             try
             {
-                _inventory.RemoveAmount(inventoryID, amount);
-
-                switch (action)
+                if (_inventory.Contains(inventoryID) == false)
                 {
-                    case ActionType.ADD:
-                        _inventory.AddAmount(inventoryID, amount);
-                        break;
-                    case ActionType.REMOVE:
-                        _inventory.RemoveAmount(inventoryID, amount);
-                        break;
+                    // if an Item doesn't exist then we create one, and add it in
+                    Item item = _itemFactory.CreateItem(inventoryID, amount);
+                    _inventory.AddItem(item);
                 }
+                
+                _inventory.AddAmount(inventoryID, amount);
             }
             catch (Exception exception)
             {
                 return ServiceResponse.Failure(exception.Message);
             }
 
+            return ServiceResponse.Success();
+        }
+
+        public ServiceResponse RemoveAmount(InventoryID inventoryID, int amount)
+        {
+            if (_inventory.Contains(inventoryID) == false)
+            {
+                return ServiceResponse.Failure($"Error! Passed {inventoryID} does not exist!");
+            }
+            
+            try
+            {
+                _inventory.RemoveAmount(inventoryID, amount);
+            }
+            catch (Exception exception)
+            {
+                return ServiceResponse.Failure(exception.Message);
+            }
+            
             return ServiceResponse.Success();
         }
     }
