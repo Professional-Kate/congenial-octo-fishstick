@@ -1,6 +1,7 @@
 ﻿using System;
 using IdelPog.Repository;
 using IdelPog.Structures;
+using IdelPog.Structures.Enums;
 using IdelPog.Structures.Item;
 
 namespace IdelPog.Orchestration.Inventory
@@ -29,14 +30,38 @@ namespace IdelPog.Orchestration.Inventory
             return new InventoryMediator(repository);
         }
         
-        public ServiceResponse AddItem(InventoryID inventoryID, int amount)
+        public ServiceResponse AddAmount(InventoryID inventoryID, int amount)
         {
-            throw new NotImplementedException();
+           return HandleItemModification(inventoryID, amount, ActionType.ADD);
         }
 
-        public ServiceResponse RemoveItem(InventoryID inventoryID, int amount)
+        public ServiceResponse RemoveAmount(InventoryID inventoryID, int amount)
         {
-            throw new NotImplementedException();
+            return HandleItemModification(inventoryID, amount, ActionType.REMOVE);
+        }
+
+        private ServiceResponse HandleItemModification(InventoryID inventoryID, int amount, ActionType action)
+        {
+            try
+            {
+                _inventory.RemoveAmount(inventoryID, amount);
+
+                switch (action)
+                {
+                    case ActionType.ADD:
+                        _inventory.AddAmount(inventoryID, amount);
+                        break;
+                    case ActionType.REMOVE:
+                        _inventory.RemoveAmount(inventoryID, amount);
+                        break;
+                }
+            }
+            catch (Exception exception)
+            {
+                return ServiceResponse.Failure(exception.Message);
+            }
+
+            return ServiceResponse.Success();
         }
     }
 }
