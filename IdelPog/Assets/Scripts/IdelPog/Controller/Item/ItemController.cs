@@ -11,7 +11,7 @@ namespace IdelPog.Controller
     /// <seealso cref="ModifyItem"/>
     public class ItemController : Singleton<ItemController>, IItemController
     {
-        protected IInventoryMediator InventoryMediator = Orchestration.InventoryMediator.CreateDefault();
+        protected IInventoryMediator InventoryMediator = new InventoryMediator();
         
         public void ModifyItem(InventoryID id, int amount, ActionType action)
         {

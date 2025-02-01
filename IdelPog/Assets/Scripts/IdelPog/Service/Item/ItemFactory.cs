@@ -1,28 +1,71 @@
-﻿using IdelPog.Constants;
+﻿using System;
+using IdelPog.Exceptions;
+using IdelPog.Structures;
 using IdelPog.Structures.Item;
 
 namespace IdelPog.Service
 {
-    public class ItemFactory : IItemFactory, ICreateDefault
+    /// <inheritdoc cref="IItemFactory"/>
+    public class ItemFactory : IItemFactory
     {
-        private readonly IMapper<InventoryID> _itemMapper;
-
-        public ItemFactory(IMapper<InventoryID> itemMapper)
+        public Item CreateItem(InventoryID id, Information information, int sellPrice, int startingAmount)
         {
-            _itemMapper = itemMapper;
-        }
-
-        public static IItemFactory CreateDefault()
-        {
-            IMapper<InventoryID> itemMapper = new Mapper<InventoryID>();
+            AssertInventoryIdIsValid(id);
+            AssertNumberIsGreaterThanZero(sellPrice);
+            AssertNumberIsGreaterThanZero(startingAmount);
+            AssertInformationIsValid(information);
             
-            return new ItemFactory(itemMapper);
+            return new Item(id, information, sellPrice, startingAmount);
+        }
+        
+        /// <summary>
+        /// Asserts that the passed <see cref="InventoryID"/> isn't NO_TYPE
+        /// </summary>
+        /// <param name="inventoryID">The key you want to validate</param>
+        /// <exception cref="NoTypeException">Will be thrown if the passed key's hash code  is 0</exception>
+        private static void AssertInventoryIdIsValid(InventoryID inventoryID)
+        {
+            if (inventoryID == InventoryID.NO_TYPE)
+            {
+                throw new NoTypeException($"Error! Passed InventoryID : {inventoryID} is NO_TYPE, cannot create Item. This should be fixed.");
+            }
         }
 
-        public Item CreateItem(InventoryID id, int startingAmount)
+        /// <summary>
+        /// Asserts that the passed number is greater than 0
+        /// </summary>
+        /// <param name="number">The number you want to check</param>
+        /// <exception cref="ArgumentException">Will be thrown if the passed number is equal to or less than zero</exception>
+        private static void AssertNumberIsGreaterThanZero(int number)
         {
-            // TODO: This class will need to be able to find the relevant Information object and sell price for the item. For now, they will be placeholders
-            return new Item(id, ItemConstants.PLACE_HOLDER, 1, startingAmount);
+            if (number <= 0)
+            {
+                throw new ArgumentException("Error! Passed amount {number} is expected to be greater than zero.");
+            }
+        }
+
+        /// <summary>
+        /// Asserts that the passed Name and Description string on the passed <see cref="Information"/> are valid
+        /// </summary>
+        /// <param name="information"><see cref="Information"/></param>
+        private static void AssertInformationIsValid(Information information)
+        {
+            AssertStringIsValid(information.Name);
+            AssertStringIsValid(information.Description);
+
+        }
+
+        /// <summary>
+        /// Asserts that the passed string is not null, or empty
+        /// </summary>
+        /// <param name="text">The string you want to check</param>
+        /// <exception cref="ArgumentException">Will be thrown if the passed string is not valid</exception>
+        private static void AssertStringIsValid(string text)
+        {
+            if (text == null || text.Trim().Length == 0)
+            {
+                throw new ArgumentException("Error! Passed text is empty.");
+            }
         }
     }
 }

@@ -9,30 +9,26 @@ namespace IdelPog.Orchestration
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation
     /// </summary>
-    /// <seealso cref="CreateDefault"/>
     public class InventoryMediator : IInventoryMediator
     {
         private readonly IInventory _inventory;
         private readonly IItemFactory _itemFactory;
+        private readonly IMapper<InventoryID> _mapper;
         
-        public InventoryMediator(IInventory inventory, IItemFactory itemFactory)
+        public InventoryMediator()
+        {
+            _inventory = Inventory.CreateDefault();
+            _itemFactory = new ItemFactory();
+            _mapper = new Mapper<InventoryID>();
+        }
+        
+        public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IMapper<InventoryID> mapper)
         {
             _inventory = inventory;
             _itemFactory = itemFactory;
+            _mapper = mapper;
         }
 
-        /// <summary>
-        /// Creates a <see cref="InventoryMediator"/> with all required dependencies
-        /// </summary>
-        /// <returns>A new <see cref="InventoryMediator"/> class with all dependencies resolved</returns>
-        public static IInventoryMediator CreateDefault()
-        {
-            IInventory repository = Inventory.CreateDefault();
-            IItemFactory itemFactory = ItemFactory.CreateDefault();
-
-            return new InventoryMediator(repository, itemFactory);
-        }
-        
         public ServiceResponse AddAmount(InventoryID inventoryID, int amount)
         {
             try
@@ -40,7 +36,9 @@ namespace IdelPog.Orchestration
                 if (_inventory.Contains(inventoryID) == false)
                 {
                     // if an Item doesn't exist then we create one, and add it in
-                    Item item = _itemFactory.CreateItem(inventoryID, amount);
+                    Information itemInformation = _mapper.GetInformation(inventoryID);
+                    // TODO: for now, sell price is set to 1. This is a placeholder for all items.
+                    Item item = _itemFactory.CreateItem(inventoryID, itemInformation, 1, amount);
                     _inventory.AddItem(item);
                 }
                 
