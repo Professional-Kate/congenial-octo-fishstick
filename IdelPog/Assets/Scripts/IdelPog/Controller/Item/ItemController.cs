@@ -1,5 +1,4 @@
-﻿using System;
-using IdelPog.Orchestration;
+﻿using IdelPog.Orchestration;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Item;
@@ -14,9 +13,17 @@ namespace IdelPog.Controller
     {
         protected IInventoryMediator InventoryMediator = Orchestration.InventoryMediator.CreateDefault();
         
-        public void ModifyItem(InventoryID id, ActionType action)
+        public void ModifyItem(InventoryID id, int amount, ActionType action)
         {
-            throw new NotImplementedException();
+            switch (action)
+            {
+                case ActionType.ADD:
+                    InventoryMediator.AddAmount(id, amount);
+                    break;
+                case ActionType.REMOVE:
+                    InventoryMediator.RemoveAmount(id, amount);
+                    break;
+            }
         }
     }
 }
