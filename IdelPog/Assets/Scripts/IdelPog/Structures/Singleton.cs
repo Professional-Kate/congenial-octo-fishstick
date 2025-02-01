@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace IdelPog.Structures
 {
@@ -20,11 +21,18 @@ namespace IdelPog.Structures
         /// </remarks>
         public static T GetInstance()
         {
-            if (_instance == null)
+            if (_instance != null)
             {
-                _instance = (T)Activator.CreateInstance(typeof(T));
+                return _instance;
             }
             
+            ConstructorInfo constructor = typeof(T).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
+            if (constructor == null)
+            {
+                throw new MissingMethodException($"The passed type {typeof(T)} does not have a private constructor.");
+            }
+                
+            _instance = (T) constructor.Invoke(null);
             return _instance;
         }
     }
