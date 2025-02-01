@@ -15,5 +15,12 @@ namespace IdelPog.Service
         /// <param name="key"></param>
         /// <returns></returns>
         public Information GetInformation(T key);
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="information"></param>
+        public void AddInformation(T key, Information information);
     }
 }

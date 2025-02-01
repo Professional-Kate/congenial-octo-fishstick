@@ -35,7 +35,7 @@ namespace IdelPog.Orchestration
             {
                 if (_inventory.Contains(inventoryID) == false)
                 {
-                    // if an Item doesn't exist then we create one, and add it in
+                    // if an Item doesn't exist then we create one, and then add it
                     Information itemInformation = _mapper.GetInformation(inventoryID);
                     // TODO: for now, sell price is set to 1. This is a placeholder for all items.
                     Item item = _itemFactory.CreateItem(inventoryID, itemInformation, 1, amount);
