@@ -86,7 +86,7 @@ namespace Tests.Orchestration
         }
         
         [TestCase(InventoryID.WILLOW_WOOD, typeof(NotFoundException))]
-        [TestCase(InventoryID.WILLOW_WOOD, typeof(ArgumentException))]
+        [TestCase(InventoryID.OAK_WOOD, typeof(ArgumentException))]
         public void Negative_RemoveAmount_Catches_Exception(InventoryID inventoryID, Type exception)
         {
             _repositoryMock.Setup(repo => repo.RemoveAmount(inventoryID, Amount))
