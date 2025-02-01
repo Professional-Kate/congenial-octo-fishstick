@@ -16,6 +16,7 @@ namespace IdelPog.Orchestration.Inventory
         /// <param name="inventoryID">The <see cref="Item"/> you want to add will have this <see cref="InventoryID"/></param>
         /// <param name="amount">The amount you want to add</param>
         /// <returns>A <see cref="ServiceResponse"/> object that tells you how the operation went</returns>
+        /// <remarks>If the <see cref="Item"/> with the passed <see cref="InventoryID"/> is not found, it will be created</remarks>
         public ServiceResponse AddAmount(InventoryID inventoryID, int amount);
         
         /// <summary>
@@ -24,6 +25,7 @@ namespace IdelPog.Orchestration.Inventory
         /// <param name="inventoryID">The <see cref="Item"/> you want to remove amount from will have this <see cref="InventoryID"/></param>
         /// <param name="amount">The amount you want to remove</param>
         /// <returns>A <see cref="ServiceResponse"/> object that tells you how the operation went</returns>
+        /// <remarks>If the amount on the <see cref="Item"/> is exactly 0, after removing the passed amount, it will be removed from the Inventory</remarks>
         public ServiceResponse RemoveAmount(InventoryID inventoryID, int amount);
     }
 }
