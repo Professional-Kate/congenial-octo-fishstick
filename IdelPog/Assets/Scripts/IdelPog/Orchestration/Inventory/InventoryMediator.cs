@@ -35,7 +35,7 @@ namespace IdelPog.Orchestration
             {
                 if (_inventory.Contains(inventoryID) == false)
                 {
-                    // if an Item doesn't exist then we create one, and then add it
+                    // if an Item doesn't exist then we create one
                     CreateItem(inventoryID, amount);
                 }
                 
@@ -68,6 +68,11 @@ namespace IdelPog.Orchestration
             return ServiceResponse.Success();
         }
 
+        /// <summary>
+        /// creates an <see cref="Item"/> using the passed <see cref="InventoryID"/> and amount
+        /// </summary>
+        /// <param name="inventoryID">The <see cref="InventoryID"/> of the <see cref="Item"/> you want to create</param>
+        /// <param name="amount">The amount you want the <see cref="Item"/> to have</param>
         private void CreateItem(InventoryID inventoryID, int amount)
         {
             Information itemInformation = _mapper.GetInformation(inventoryID);
