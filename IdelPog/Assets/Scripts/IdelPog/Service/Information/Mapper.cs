@@ -4,7 +4,7 @@ using IdelPog.Structures;
 
 namespace IdelPog.Service
 {
-    public abstract class Mapper<T> : IMapper<T>
+    public class Mapper<T> : IMapper<T>
     {
         protected Dictionary<T, Information> Informations = new();
         

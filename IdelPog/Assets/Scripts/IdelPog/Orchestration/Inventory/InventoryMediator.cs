@@ -28,7 +28,7 @@ namespace IdelPog.Orchestration
         public static IInventoryMediator CreateDefault()
         {
             IInventory repository = Inventory.CreateDefault();
-            IItemFactory itemFactory = new ItemFactory();
+            IItemFactory itemFactory = ItemFactory.CreateDefault();
 
             return new InventoryMediator(repository, itemFactory);
         }
