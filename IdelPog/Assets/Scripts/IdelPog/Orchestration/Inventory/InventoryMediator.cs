@@ -4,7 +4,7 @@ using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Item;
 
-namespace IdelPog.Orchestration.Inventory
+namespace IdelPog.Orchestration
 {
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation
@@ -25,9 +25,9 @@ namespace IdelPog.Orchestration.Inventory
         /// Creates a <see cref="InventoryMediator"/> with all required dependencies
         /// </summary>
         /// <returns>A new <see cref="InventoryMediator"/> class with all dependencies resolved</returns>
-        public static InventoryMediator CreateDefault()
+        public static IInventoryMediator CreateDefault()
         {
-            IInventory repository = Repository.Inventory.CreateDefault();
+            IInventory repository = Inventory.CreateDefault();
             IItemFactory itemFactory = new ItemFactory();
 
             return new InventoryMediator(repository, itemFactory);

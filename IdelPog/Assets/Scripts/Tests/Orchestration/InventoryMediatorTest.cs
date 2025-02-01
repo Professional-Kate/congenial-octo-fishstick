@@ -1,6 +1,6 @@
 ﻿using System;
 using IdelPog.Exceptions;
-using IdelPog.Orchestration.Inventory;
+using IdelPog.Orchestration;
 using IdelPog.Repository;
 using IdelPog.Service;
 using IdelPog.Structures;
