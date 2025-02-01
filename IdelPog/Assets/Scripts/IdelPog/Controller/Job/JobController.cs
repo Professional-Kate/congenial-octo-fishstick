@@ -7,7 +7,7 @@ namespace IdelPog.Controller
 {
     public class JobController : Singleton<JobController>, IJobController
     {
-        protected IJobMediator Mediator = JobMediator.CreateDefault();
+        protected IJobMediator Mediator = new JobMediator();
         
         public void CompleteJob(JobType jobType)
         {

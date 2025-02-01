@@ -11,28 +11,21 @@ namespace IdelPog.Orchestration
     /// <summary>
     /// See <see cref="ICurrencyMediator"/> for documentation
     /// </summary>
-    /// <seealso cref="CreateDefault"/>
     public class CurrencyMediator : ICurrencyMediator
     {
         private readonly ICurrencyService _currencyService;
         private readonly IRepository<CurrencyType, Currency> _repository;
 
+        public CurrencyMediator()
+        {
+            _currencyService = new CurrencyService();
+            _repository = new Repository<CurrencyType, Currency>();
+        }
+        
         public CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Currency> repository)
         {
             _currencyService = currencyService;
             _repository = repository;
-        }
-
-        /// <summary>
-        /// Creates a <see cref="ICurrencyMediator"/> with all required dependencies
-        /// </summary>
-        /// <returns>A new <see cref="ICurrencyMediator"/> class with all dependencies resolved</returns>
-        public static ICurrencyMediator CreateDefault()
-        {
-            ICurrencyService service = new CurrencyService();
-            IRepository<CurrencyType, Currency> repository = new Repository<CurrencyType, Currency>();
-
-            return new CurrencyMediator(service, repository);
         }
         
         public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
