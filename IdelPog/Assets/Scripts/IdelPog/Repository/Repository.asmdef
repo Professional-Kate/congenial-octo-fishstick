@@ -1,4 +1,4 @@
 ﻿{
   "name": "Repository",
-  "references":[ "GUID:56f7405073fd4ec286bee92d3c46044a" ]
+  "references":[ "GUID:56f7405073fd4ec286bee92d3c46044a", "Item", "GUID:89c0e57c1f56410ea2dbb4b24d3360c4", "GUID:8264cb37ba214cb28903dbadb3bd9515" ]
 }

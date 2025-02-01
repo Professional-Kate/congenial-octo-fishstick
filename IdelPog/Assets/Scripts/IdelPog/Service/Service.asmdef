@@ -1,4 +1,4 @@
 ﻿{
   "name": "Service",
-  "references":[ "Structures", "GUID:56f7405073fd4ec286bee92d3c46044a", "Constants" ]
+  "references":[ "Structures", "GUID:56f7405073fd4ec286bee92d3c46044a", "Constants", "GUID:e29ee790ced04a47aa4db77a06b8b7c0" ]
 }
