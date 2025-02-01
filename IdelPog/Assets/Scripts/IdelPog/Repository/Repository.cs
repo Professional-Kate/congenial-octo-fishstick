@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using IdelPog.Exceptions;
+using IdelPog.Structures.Enums;
 
 namespace IdelPog.Repository
 {
     public sealed class Repository<TID, T> : IRepository<TID, T> where T : class, ICloneable
     {
         private readonly Dictionary<TID, T> _repository = new();
+        
+        public event Action<RepositoryOperation, TID, T> OnRepositoryChange;
+        public event Action<RepositoryOperation, TID, bool> OnContains;
 
         public void Add(TID key, T value)
         {
@@ -20,6 +24,7 @@ namespace IdelPog.Repository
             AssertKeyDoesNotExist(key);
             
             _repository.Add(key, value);
+            OnRepositoryChange?.Invoke(RepositoryOperation.ADD, key, value);
         }
 
         public void Remove(TID key)
@@ -27,7 +32,10 @@ namespace IdelPog.Repository
             AssertKeyIsValid(key);
             AssertKeyExists(key);
             
+            T item = _repository[key];
+            
             _repository.Remove(key);
+            OnRepositoryChange?.Invoke(RepositoryOperation.REMOVE, key, item);
         }
 
         public T Get(TID key)
@@ -35,9 +43,10 @@ namespace IdelPog.Repository
             AssertKeyIsValid(key);
             AssertKeyExists(key);
             
-            T entity = _repository[key];
+            T entity = _repository[key].Clone() as T;
             
-            return entity.Clone() as T;
+            OnRepositoryChange?.Invoke(RepositoryOperation.GET, key, entity);
+            return entity;
         }
 
         public void Update(TID key, T value)
@@ -52,6 +61,7 @@ namespace IdelPog.Repository
             AssertKeyExists(key);
             
             _repository[key] = value;
+            OnRepositoryChange?.Invoke(RepositoryOperation.UPDATE, key, value);
         }
 
         public bool Contains(TID key)
@@ -59,6 +69,9 @@ namespace IdelPog.Repository
             AssertKeyIsValid(key);
 
             bool contains = _repository.ContainsKey(key);
+            
+            OnContains?.Invoke(RepositoryOperation.CONTAINS, key, contains);
+            
             return contains;
         }
 
