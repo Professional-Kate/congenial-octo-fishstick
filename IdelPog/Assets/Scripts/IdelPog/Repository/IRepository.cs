@@ -1,6 +1,5 @@
 ﻿using System;
 using IdelPog.Exceptions;
-using IdelPog.Structures.Enums;
 
 namespace IdelPog.Repository
 {
@@ -16,8 +15,11 @@ namespace IdelPog.Repository
     /// <seealso cref="Contains"/>
     public interface IRepository<TID, T>
     {
-        public event Action<RepositoryOperation, TID, T> OnRepositoryChange;
-        public event Action<RepositoryOperation, TID, bool> OnContains;
+        public event Action<TID, T> OnAdd;
+        public event Action<TID, T> OnRemove;
+        public event Action<TID, T> OnGet;
+        public event Action<T, T> OnUpdate;
+        public event Action<TID, bool> OnContains;
         
         /// <summary>
         /// Adds a new Key Value pair into the Repository

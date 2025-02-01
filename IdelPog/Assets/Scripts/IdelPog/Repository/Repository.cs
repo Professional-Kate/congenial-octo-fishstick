@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using IdelPog.Exceptions;
-using IdelPog.Structures.Enums;
 
 namespace IdelPog.Repository
 {
@@ -9,8 +8,11 @@ namespace IdelPog.Repository
     {
         private readonly Dictionary<TID, T> _repository = new();
         
-        public event Action<RepositoryOperation, TID, T> OnRepositoryChange;
-        public event Action<RepositoryOperation, TID, bool> OnContains;
+        public event Action<TID, T> OnAdd;
+        public event Action<TID, T> OnRemove;
+        public event Action<TID, T> OnGet;
+        public event Action<T, T> OnUpdate;
+        public event Action<TID, bool> OnContains;
 
         public void Add(TID key, T value)
         {
@@ -24,7 +26,7 @@ namespace IdelPog.Repository
             AssertKeyDoesNotExist(key);
             
             _repository.Add(key, value);
-            OnRepositoryChange?.Invoke(RepositoryOperation.ADD, key, value);
+            OnAdd?.Invoke(key, value);
         }
 
         public void Remove(TID key)
@@ -35,7 +37,7 @@ namespace IdelPog.Repository
             T item = _repository[key];
             
             _repository.Remove(key);
-            OnRepositoryChange?.Invoke(RepositoryOperation.REMOVE, key, item);
+            OnRemove?.Invoke(key, item);
         }
 
         public T Get(TID key)
@@ -45,7 +47,7 @@ namespace IdelPog.Repository
             
             T entity = _repository[key].Clone() as T;
             
-            OnRepositoryChange?.Invoke(RepositoryOperation.GET, key, entity);
+            OnGet?.Invoke(key, entity);
             return entity;
         }
 
@@ -59,9 +61,10 @@ namespace IdelPog.Repository
             }
             
             AssertKeyExists(key);
+            T original  = _repository[key];
             
             _repository[key] = value;
-            OnRepositoryChange?.Invoke(RepositoryOperation.UPDATE, key, value);
+            OnUpdate?.Invoke(original, value);
         }
 
         public bool Contains(TID key)
@@ -70,7 +73,7 @@ namespace IdelPog.Repository
 
             bool contains = _repository.ContainsKey(key);
             
-            OnContains?.Invoke(RepositoryOperation.CONTAINS, key, contains);
+            OnContains?.Invoke(key, contains);
             
             return contains;
         }
@@ -95,7 +98,7 @@ namespace IdelPog.Repository
         /// <exception cref="NotFoundException">Will be thrown if the passed key is not in the Repository</exception>
         private void AssertKeyExists(TID key)
         {
-            bool contains = Contains(key);
+            bool contains = _repository.ContainsKey(key);
             if (contains == false)
             {
                 throw new NotFoundException($"Error! Passed key {key} is not in the Repository.");
