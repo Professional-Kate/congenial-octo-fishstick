@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Structures.Item
+﻿namespace IdelPog.Structures.Models.Item
 {
     /// <summary>
     /// Each item should have an entry here, these are how we store the item 

@@ -1,7 +1,7 @@
 ﻿using System;
 using IdelPog.Exceptions;
 using IdelPog.Structures;
-using IdelPog.Structures.Item;
+using IdelPog.Structures.Models.Item;
 
 namespace IdelPog.Service
 {

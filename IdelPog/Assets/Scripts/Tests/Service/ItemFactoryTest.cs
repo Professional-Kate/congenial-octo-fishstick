@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using IdelPog.Exceptions;
 using IdelPog.Service;
 using IdelPog.Structures;
-using IdelPog.Structures.Item;
+using IdelPog.Structures.Models.Item;
 using NUnit.Framework;
 
 namespace Tests.Service

@@ -3,7 +3,7 @@ using IdelPog.Exceptions;
 using IdelPog.Repository;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
-using IdelPog.Structures.Item;
+using IdelPog.Structures.Models.Item;
 using Moq;
 using NUnit.Framework;
 using ItemFactory = Tests.Utils.ItemFactory;

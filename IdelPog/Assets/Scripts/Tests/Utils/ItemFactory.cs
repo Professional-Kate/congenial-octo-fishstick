@@ -1,5 +1,5 @@
 ﻿using IdelPog.Constants;
-using IdelPog.Structures.Item;
+using IdelPog.Structures.Models.Item;
 
 namespace Tests.Utils
 {

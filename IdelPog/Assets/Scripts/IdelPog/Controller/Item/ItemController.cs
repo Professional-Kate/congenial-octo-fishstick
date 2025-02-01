@@ -1,7 +1,7 @@
 ﻿using IdelPog.Orchestration;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
-using IdelPog.Structures.Item;
+using IdelPog.Structures.Models.Item;
 
 namespace IdelPog.Controller
 {

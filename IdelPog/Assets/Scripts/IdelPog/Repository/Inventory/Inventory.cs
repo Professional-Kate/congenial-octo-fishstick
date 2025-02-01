@@ -1,6 +1,6 @@
 ﻿using System;
 using IdelPog.Exceptions;
-using IdelPog.Structures.Item;
+using IdelPog.Structures.Models.Item;
 
 namespace IdelPog.Repository
 {
@@ -10,21 +10,15 @@ namespace IdelPog.Repository
     public sealed class Inventory : IInventory
     {
         private readonly IRepository<InventoryID, Item> _repository;
+        
+        public Inventory()
+        {
+            _repository = new Repository<InventoryID, Item>();
+        }
 
         public Inventory(IRepository<InventoryID, Item> repository)
         {
             _repository = repository;
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="Inventory"/> class with all dependencies resolved
-        /// </summary>
-        /// <returns>A new <see cref="Inventory"/></returns>
-        public static IInventory CreateDefault()
-        {
-            IRepository<InventoryID, Item> repository = new Repository<InventoryID, Item>();
-
-            return new Inventory(repository);
         }
 
         public void AddAmount(InventoryID id, int amount)

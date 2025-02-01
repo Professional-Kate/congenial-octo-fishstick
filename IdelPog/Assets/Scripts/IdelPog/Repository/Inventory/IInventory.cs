@@ -1,6 +1,6 @@
 ﻿using System;
 using IdelPog.Exceptions;
-using IdelPog.Structures.Item;
+using IdelPog.Structures.Models.Item;
 
 namespace IdelPog.Repository
 {
@@ -19,7 +19,6 @@ namespace IdelPog.Repository
         /// <param name="id">The <see cref="Item"/> you want to add to will have this <see cref="InventoryID"/></param>
         /// <param name="amount">The amount you want to add</param>
         /// <exception cref="ArgumentException">Will be thrown if the passed or amount is 0 or less</exception>
-        /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="Item"/> is not in the Inventory</exception>
         /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="Item"/> is not in the Inventory</exception>
         public void AddAmount(InventoryID id, int amount);
         

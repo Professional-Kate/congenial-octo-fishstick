@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using IdelPog.Exceptions;
 using IdelPog.Structures;
 
@@ -11,13 +12,25 @@ namespace IdelPog.Service
         public Information GetInformation(T key)
         {
             AssertKeyIsValid(key);
-
-            return _information[key];
+            
+            bool contains = _information.TryGetValue(key, out Information information);
+            if (contains == false)
+            {
+                throw new NotFoundException($"Error! Key {key} was not found in the Dictionary!");
+            }
+            
+            return information;
         }
 
         public void AddInformation(T key, Information information)
         {
             AssertKeyIsValid(key);
+
+            bool contains = _information.ContainsKey(key);
+            if (contains)
+            {
+                throw new ArgumentException($"Error! Passed Key {key} is already in the Dictionary!");
+            }
             
             _information.Add(key, information);
         }

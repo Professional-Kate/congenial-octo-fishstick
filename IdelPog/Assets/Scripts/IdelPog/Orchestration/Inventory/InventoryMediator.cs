@@ -2,7 +2,7 @@
 using IdelPog.Repository;
 using IdelPog.Service;
 using IdelPog.Structures;
-using IdelPog.Structures.Item;
+using IdelPog.Structures.Models.Item;
 
 namespace IdelPog.Orchestration
 {
@@ -17,7 +17,7 @@ namespace IdelPog.Orchestration
         
         public InventoryMediator()
         {
-            _inventory = Inventory.CreateDefault();
+            _inventory = new Inventory();
             _itemFactory = new ItemFactory();
             _mapper = new Mapper<InventoryID>();
         }

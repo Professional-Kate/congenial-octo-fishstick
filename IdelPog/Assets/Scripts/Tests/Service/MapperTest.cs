@@ -39,6 +39,12 @@ namespace Tests.Service
         }
 
         [Test]
+        public void Negative_GetInformation_NotFound_Throws()
+        {
+            Assert.Throws<NotFoundException>(() => _informationMapper.GetInformation(-1));
+        }
+
+        [Test]
         public void Positive_AddInformation_Adds_Information()
         {
             Information newInformation = Information.Create("AAAAA", "AAA");

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IdelPog.Structures.Item
+namespace IdelPog.Structures.Models.Item
 {
     /// <summary>
     /// The Item model
