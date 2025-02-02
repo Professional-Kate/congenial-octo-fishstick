@@ -7,13 +7,13 @@ namespace IdelPog.Repository
     public sealed class Repository<TID, T> : IRepository<TID, T> where T : class, ICloneable
     {
         private readonly Dictionary<TID, T> _repository = new();
-        
-        public event Action<TID, T> OnAdd;
-        public event Action<TID, T> OnRemove;
-        public event Action<TID, T> OnGet;
+       
+        public event Action<int, T> OnAdd;
+        public event Action<int, T> OnRemove;
+        public event Action<int, T> OnGet;
         public event Action<T, T> OnUpdate;
-        public event Action<TID, bool> OnContains;
-
+        public event Action<int, bool> OnContains;
+        
         public void Add(TID key, T value)
         {
             AssertKeyIsValid(key);
@@ -26,7 +26,7 @@ namespace IdelPog.Repository
             AssertKeyDoesNotExist(key);
             
             _repository.Add(key, value);
-            OnAdd?.Invoke(key, value);
+            OnAdd?.Invoke(key.GetHashCode(), value);
         }
 
         public void Remove(TID key)
@@ -37,7 +37,7 @@ namespace IdelPog.Repository
             T item = _repository[key];
             
             _repository.Remove(key);
-            OnRemove?.Invoke(key, item);
+            OnRemove?.Invoke(key.GetHashCode(), item);
         }
 
         public T Get(TID key)
@@ -47,7 +47,7 @@ namespace IdelPog.Repository
             
             T entity = _repository[key].Clone() as T;
             
-            OnGet?.Invoke(key, entity);
+            OnGet?.Invoke(key.GetHashCode(), entity);
             return entity;
         }
 
@@ -73,7 +73,7 @@ namespace IdelPog.Repository
 
             bool contains = _repository.ContainsKey(key);
             
-            OnContains?.Invoke(key, contains);
+            OnContains?.Invoke(key.GetHashCode(), contains);
             
             return contains;
         }

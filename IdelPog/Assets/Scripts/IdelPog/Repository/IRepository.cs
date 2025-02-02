@@ -13,14 +13,8 @@ namespace IdelPog.Repository
     /// <seealso cref="Get"/>
     /// <seealso cref="Update"/>
     /// <seealso cref="Contains"/>
-    public interface IRepository<TID, T>
+    public interface IRepository<in TID, T>  : IRepositoryHooks<T>
     {
-        public event Action<TID, T> OnAdd;
-        public event Action<TID, T> OnRemove;
-        public event Action<TID, T> OnGet;
-        public event Action<T, T> OnUpdate;
-        public event Action<TID, bool> OnContains;
-        
         /// <summary>
         /// Adds a new Key Value pair into the Repository
         /// </summary>
