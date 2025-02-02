@@ -13,6 +13,6 @@ namespace IdelPog.Controller
         /// <remarks>
         /// Every implementation of this method is required to take a single, or an array of <see cref="CurrencyTrade"/>s
         /// </remarks>
-        public void UpdateCurrency(params CurrencyTrade[] trades);
+        public ServiceResponse UpdateCurrency(params CurrencyTrade[] trades);
     }
 }

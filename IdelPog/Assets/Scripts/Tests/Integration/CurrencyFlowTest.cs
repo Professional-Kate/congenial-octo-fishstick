@@ -46,34 +46,69 @@ namespace Tests.Integration
             _repository.Add(_goldCurrency.CurrencyType, _goldCurrency);
         }
 
+        private void UpdateCurrencyTestRunner(bool success, params CurrencyTrade[] trades)
+        {
+            ServiceResponse response = _currencyController.UpdateCurrency(trades);
+
+            if (success)
+            {
+                AssertSuccessResponse(response);
+            }
+            else
+            {
+                AssertFailureResponse(response);
+            }
+        }
+
+        private static void AssertFailureResponse(ServiceResponse serviceResponse)
+        {
+            Assert.IsFalse(serviceResponse.IsSuccess);
+            Assert.NotNull(serviceResponse.Message);
+        }
+        
+        private static void AssertSuccessResponse(ServiceResponse serviceResponse)
+        {
+            Assert.IsTrue(serviceResponse.IsSuccess);
+            Assert.IsNull(serviceResponse.Message);
+        }
+
+        private void AssertAmount(int expectedAmount, CurrencyType currency)
+        {
+            Currency repositoryCurrency = _repository.Get(currency);
+            Assert.AreEqual(expectedAmount, repositoryCurrency.Amount);
+        }
+
        [Test]
         public void Positive_UpdateCurrency_AddAmount_UpdatesCurrency()
         {
-            _currencyController.UpdateCurrency(_addPeopleTrade);
+            UpdateCurrencyTestRunner( true, _addPeopleTrade);
             
-            Currency repositoryCurrency = _repository.Get(_peopleCurrency.CurrencyType);
-            Assert.AreEqual(AMOUNT, repositoryCurrency.Amount);
+            AssertAmount(AMOUNT, _peopleCurrency.CurrencyType);
         }
 
         [Test]
         public void Positive_UpdateCurrency_RemoveAmount_UpdatesCurrency()
         {
-            _currencyController.UpdateCurrency(_removeGoldTrade, _addGoldTrade, _addGoldTrade);
+            UpdateCurrencyTestRunner( true, _removeGoldTrade, _addGoldTrade, _addGoldTrade);
             
-            Currency repositoryCurrency = _repository.Get(_goldCurrency.CurrencyType);
-            Assert.AreEqual(10, repositoryCurrency.Amount);
+            AssertAmount(AMOUNT, _goldCurrency.CurrencyType);
         }
 
         [Test]
         public void Positive_UpdateCurrency_MultipleTrades_UpdatesCurrency()
         {
-            _currencyController.UpdateCurrency(_removeGoldTrade, _addGoldTrade, _addGoldTrade, _addPeopleTrade, _addPeopleTrade, _addPeopleTrade, _removePeopleTrade);
+            UpdateCurrencyTestRunner(true, _removeGoldTrade, _addGoldTrade, _addGoldTrade, _addPeopleTrade, _addPeopleTrade, _addPeopleTrade, _removePeopleTrade);
             
-            Currency repositoryGold = _repository.Get(_goldCurrency.CurrencyType);
-            Currency repositoryPeople = _repository.Get(_peopleCurrency.CurrencyType);
+            AssertAmount(AMOUNT, _goldCurrency.CurrencyType);
+            AssertAmount(20, _peopleCurrency.CurrencyType);
+        }
+
+        [Test]
+        public void Negative_UpdateCurrency_ZeroAmount_ReturnsFalse()
+        {
+            UpdateCurrencyTestRunner(false, _removeGoldTrade);
             
-            Assert.AreEqual(10, repositoryGold.Amount);
-            Assert.AreEqual(20, repositoryPeople.Amount);
+            AssertAmount(0, _goldCurrency.CurrencyType);
         }
     }
 }

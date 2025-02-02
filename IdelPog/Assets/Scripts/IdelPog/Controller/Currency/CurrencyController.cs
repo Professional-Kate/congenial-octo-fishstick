@@ -14,12 +14,12 @@ namespace IdelPog.Controller
 
         private CurrencyController() { }
 
-        protected CurrencyController(ICurrencyMediator currencyMediator)
+        public CurrencyController(ICurrencyMediator mediator)
         {
-            CurrencyMediator = currencyMediator;
+            CurrencyMediator = mediator;
         }
 
-        public void UpdateCurrency(params CurrencyTrade[] trades)
+        public ServiceResponse UpdateCurrency(params CurrencyTrade[] trades)
         {
             ServiceResponse serviceResponse = CurrencyMediator.ProcessCurrencyUpdate(trades);
             if (serviceResponse.IsSuccess == false)
@@ -27,6 +27,8 @@ namespace IdelPog.Controller
                 // TODO: logger log. 
                 Debug.Log(serviceResponse.Message);
             }
+            
+            return serviceResponse;
         }
     }
 } 
