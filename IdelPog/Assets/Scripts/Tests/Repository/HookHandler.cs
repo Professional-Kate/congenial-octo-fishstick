@@ -16,7 +16,8 @@ namespace Tests.Repository
         [SetUp]
         public void SetUp()
         { 
-            TestRepository = new Repository<int, string>();
+            TestRepository = Repository<int, string>.GetInstance();
+            TestRepository.Clear();
             
             AddEventTriggered = false;
             RemoveEventTriggered = false;

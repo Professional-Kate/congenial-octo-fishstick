@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using IdelPog.Exceptions;
+using IdelPog.Structures;
 
 namespace IdelPog.Repository
 {
-    public sealed class Repository<TID, T> : IRepository<TID, T> where T : class, ICloneable
+    public sealed class Repository<TID, T> : Singleton<Repository<TID, T>>, IRepository<TID, T> where T : class, ICloneable
     {
         private readonly Dictionary<TID, T> _repository = new();
+        
+        private Repository() { }
        
         public event Action<int, T> OnAdd;
         public event Action<int, T> OnRemove;
@@ -76,6 +79,11 @@ namespace IdelPog.Repository
             OnContains?.Invoke(key.GetHashCode(), contains);
             
             return contains;
+        }
+
+        public void Clear()
+        {
+            _repository.Clear();
         }
 
         /// <summary>

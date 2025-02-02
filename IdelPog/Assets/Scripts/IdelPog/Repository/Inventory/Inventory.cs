@@ -13,7 +13,7 @@ namespace IdelPog.Repository
         
         public Inventory()
         {
-            _repository = new Repository<InventoryID, Item>();
+            _repository = Repository<InventoryID, Item>.GetInstance();
         }
 
         public Inventory(IRepository<InventoryID, Item> repository)

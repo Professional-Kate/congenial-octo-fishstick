@@ -17,7 +17,7 @@ namespace IdelPog.Orchestration
         {
             _experienceService = new ExperienceService();
             _levelService = new LevelService();
-            _repository = new Repository<JobType, Job>();
+            _repository = Repository<JobType, Job>.GetInstance();
         }
         
         public JobMediator(IExperienceService experienceService, ILevelService levelService, IRepository<JobType, Job> repository)

@@ -19,7 +19,7 @@ namespace IdelPog.Orchestration
         public CurrencyMediator()
         {
             _currencyService = new CurrencyService();
-            _repository = new Repository<CurrencyType, Currency>();
+            _repository = Repository<CurrencyType, Currency>.GetInstance();
         }
         
         public CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Currency> repository)

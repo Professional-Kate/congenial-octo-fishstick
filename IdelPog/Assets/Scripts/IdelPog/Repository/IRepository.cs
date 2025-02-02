@@ -62,5 +62,10 @@ namespace IdelPog.Repository
         /// <returns>A boolean on if the requested key exists or not</returns>
         /// <exception cref="NoTypeException">Will be thrown if the passed key is NO_TYPE</exception>
         public bool Contains(TID key);
+
+        /// <summary>
+        /// Clear the entire Repository, deleting all items inside
+        /// </summary>
+        public void Clear();
     }
 }

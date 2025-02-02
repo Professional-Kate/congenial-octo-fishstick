@@ -17,7 +17,8 @@ namespace Tests.Repository
         [SetUp]
         public void Setup()
         {
-            _repository = new Repository<int, string>();
+            _repository = Repository<int, string>.GetInstance();
+            _repository.Clear();
         }
 
         [Test]
@@ -148,6 +149,17 @@ namespace Tests.Repository
         {
             bool  contains = _repository.Contains(Key);
             
+            Assert.IsFalse(contains);
+        }
+
+        [Test]
+        public void Positive_Clear_Clears_Repository()
+        {
+            _repository.Add(Key, Value);
+            
+            _repository.Clear();
+            
+            bool contains = _repository.Contains(Key);
             Assert.IsFalse(contains);
         }
     }
