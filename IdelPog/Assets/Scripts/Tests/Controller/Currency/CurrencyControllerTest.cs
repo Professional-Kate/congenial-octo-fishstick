@@ -9,7 +9,7 @@ using Tests.Utils;
 
 namespace Tests.Controller
 {
-    [TestFixture(CurrencyType.FOOD, 10)]
+    [TestFixture(CurrencyType.PEOPLE, 10)]
     public class CurrencyControllerTest
     {
         // TODO: when I implement a logging framework, ensure this class logs the ServiceResponse output.
@@ -37,11 +37,11 @@ namespace Tests.Controller
         public void OneTimeSetUp()
         {
             _foodCurrency = new Currency(_currencyType);
-            _woodCurrency = new Currency(CurrencyType.WOOD);
+            _woodCurrency = new Currency(CurrencyType.GOLD);
             _addFoodTrade = TestUtils.CreateTrade(_amount, _currencyType, ActionType.ADD);
             _removeFoodTrade = TestUtils.CreateTrade(_amount, _currencyType, ActionType.REMOVE);
-            _addWoodTrade = TestUtils.CreateTrade(10, CurrencyType.WOOD, ActionType.ADD);
-            _removeWoodTrade = TestUtils.CreateTrade(10, CurrencyType.WOOD, ActionType.REMOVE);
+            _addWoodTrade = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
+            _removeWoodTrade = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.REMOVE);
         }
 
         [SetUp]

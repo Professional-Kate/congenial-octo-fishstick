@@ -10,11 +10,18 @@ namespace IdelPog.Controller
     /// <seealso cref="UpdateCurrency"/>
     public class CurrencyController : Singleton<CurrencyController>, ICurrencyController
     {
-        protected ICurrencyMediator CurrencyService = new CurrencyMediator();
-        
+        protected ICurrencyMediator CurrencyMediator = new CurrencyMediator();
+
+        private CurrencyController() { }
+
+        protected CurrencyController(ICurrencyMediator currencyMediator)
+        {
+            CurrencyMediator = currencyMediator;
+        }
+
         public void UpdateCurrency(params CurrencyTrade[] trades)
         {
-            ServiceResponse serviceResponse = CurrencyService.ProcessCurrencyUpdate(trades);
+            ServiceResponse serviceResponse = CurrencyMediator.ProcessCurrencyUpdate(trades);
             if (serviceResponse.IsSuccess == false)
             {
                 // TODO: logger log. 

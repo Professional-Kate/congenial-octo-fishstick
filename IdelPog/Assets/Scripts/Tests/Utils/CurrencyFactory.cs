@@ -5,14 +5,14 @@ namespace Tests.Utils
 {
     internal static class CurrencyFactory
     {
-        internal static Currency CreateWood()
+        internal static Currency CreateGold()
         {
-            return new Currency(CurrencyType.WOOD);
+            return new Currency(CurrencyType.GOLD);
         }
 
-        internal static Currency CreateFood()
+        internal static Currency CreatePeople()
         {
-            return new Currency(CurrencyType.FOOD);
+            return new Currency(CurrencyType.PEOPLE);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Tests.Service
         [SetUp]
         public void Setup()
         {
-            _foodCurrency = CurrencyFactory.CreateFood();
+            _foodCurrency = CurrencyFactory.CreatePeople();
         }
         
         [Test]

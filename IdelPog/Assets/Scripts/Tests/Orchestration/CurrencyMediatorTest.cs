@@ -38,8 +38,8 @@ namespace Tests.Orchestration
         [SetUp]
         public void Setup()
         {
-            _foodCurrency = CurrencyFactory.CreateFood();
-            _woodCurrency = CurrencyFactory.CreateWood();
+            _foodCurrency = CurrencyFactory.CreatePeople();
+            _woodCurrency = CurrencyFactory.CreateGold();
             
             SetupMock();
         }
@@ -50,8 +50,8 @@ namespace Tests.Orchestration
             _currencyServiceMock = new Mock<ICurrencyService>();
             _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _repositoryMock.Object);
 
-            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns((Currency) _foodCurrency.Clone());
-            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns((Currency) _woodCurrency.Clone());
+            _repositoryMock.Setup(library => library.Get(CurrencyType.PEOPLE)).Returns((Currency) _foodCurrency.Clone());
+            _repositoryMock.Setup(library => library.Get(CurrencyType.GOLD)).Returns((Currency) _woodCurrency.Clone());
             
             _repositoryMock.Setup(library => library.Contains(It.IsAny<CurrencyType>())).Returns(true);
 
@@ -74,10 +74,10 @@ namespace Tests.Orchestration
                 {
                     switch (type)
                     {
-                        case CurrencyType.FOOD:
+                        case CurrencyType.PEOPLE:
                             _foodCurrency = currency;
                             break;
-                        case CurrencyType.WOOD:
+                        case CurrencyType.GOLD:
                             _woodCurrency = currency;
                             break;
                     }
@@ -86,10 +86,10 @@ namespace Tests.Orchestration
 
         private static void CreateTrades()
         {
-            _addFoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.FOOD, ActionType.ADD);
-            _removeFoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.FOOD, ActionType.REMOVE);
-            _addWoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.WOOD, ActionType.ADD);
-            _removeWoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.WOOD, ActionType.REMOVE);
+            _addFoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.PEOPLE, ActionType.ADD);
+            _removeFoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.PEOPLE, ActionType.REMOVE);
+            _addWoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.GOLD, ActionType.ADD);
+            _removeWoodTrade = TestUtils.CreateTrade(Amount, CurrencyType.GOLD, ActionType.REMOVE);
         }
 
         private void VerifyUpdateCall(int amount)
@@ -167,7 +167,7 @@ namespace Tests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_CurrencyNotFound_ReturnsFailure()
         {
-            _repositoryMock.Setup(library => library.Contains(CurrencyType.FOOD)).Returns(false);
+            _repositoryMock.Setup(library => library.Contains(CurrencyType.PEOPLE)).Returns(false);
 
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(_addFoodTrade);
             
@@ -183,7 +183,7 @@ namespace Tests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_OneCurrencyNotFound_ReturnsFailure()
         {
-            _repositoryMock.Setup(library => library.Contains(CurrencyType.WOOD)).Returns(false);
+            _repositoryMock.Setup(library => library.Contains(CurrencyType.GOLD)).Returns(false);
 
             CurrencyTrade[] trades = { _addFoodTrade, _addWoodTrade };
             

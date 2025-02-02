@@ -8,9 +8,9 @@ namespace Tests.Controller
     /// </summary>
     internal class TestableCurrencyController : CurrencyController
     {
-        internal TestableCurrencyController(ICurrencyMediator currencyService)
+        internal TestableCurrencyController(ICurrencyMediator currencyMediator) : base(currencyMediator)
         {
-            CurrencyService = currencyService;
+            CurrencyMediator = currencyMediator;
         }   
     }
 }
