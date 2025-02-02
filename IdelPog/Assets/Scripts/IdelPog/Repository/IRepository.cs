@@ -13,7 +13,7 @@ namespace IdelPog.Repository
     /// <seealso cref="Get"/>
     /// <seealso cref="Update"/>
     /// <seealso cref="Contains"/>
-    public interface IRepository<in TID, T>
+    public interface IRepository<in TID, T>  : IRepositoryHooks<T>
     {
         /// <summary>
         /// Adds a new Key Value pair into the Repository
