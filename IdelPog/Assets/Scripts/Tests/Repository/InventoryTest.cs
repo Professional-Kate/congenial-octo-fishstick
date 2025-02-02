@@ -91,7 +91,7 @@ namespace Tests.Repository
         [TestCase(-10)]
         public void Negative_AddAmount_BadAmount_Throws(int amount)
         {
-            Assert.Throws<ArgumentException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
+            Assert.Throws<BadNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
         }
 
 
@@ -135,7 +135,7 @@ namespace Tests.Repository
         [TestCase(-10)]
         public void Negative_RemoveAmount_BadAmount_Throws(int amount)
         {
-            Assert.Throws<ArgumentException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
+            Assert.Throws<BadNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
         }
 
         [Test]
@@ -183,7 +183,7 @@ namespace Tests.Repository
         {
             Item itemWithBadAmount = new(InventoryID.WILLOW_WOOD, Information.Create("", ""), 1, amount);
             
-            Assert.Throws<ArgumentException>(() => _inventory.AddItem(itemWithBadAmount));
+            Assert.Throws<BadNumberException>(() => _inventory.AddItem(itemWithBadAmount));
         }
 
         [Test]

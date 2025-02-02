@@ -44,7 +44,7 @@ namespace IdelPog.Service
         {
             if (key.GetHashCode() == 0)
             {
-                throw new NoTypeException("Error! Passed key is NO_TYPE, nothing can be added.");
+                throw new NoTypeException();
             }
         }
     }

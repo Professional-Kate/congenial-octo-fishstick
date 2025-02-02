@@ -1,4 +1,6 @@
-﻿using IdelPog.Controller;
+﻿using IdelPog.Constants;
+using IdelPog.Controller;
+using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Repository;
 using IdelPog.Structures;
@@ -109,6 +111,32 @@ namespace Tests.Integration
             UpdateCurrencyTestRunner(false, _removeGoldTrade);
             
             AssertAmount(0, _goldCurrency.CurrencyType);
+        }
+
+        [Test]
+        public void Negative_UpdateCurrency_NoType_Throws()
+        {
+            CurrencyTrade currencyTrade = TestUtils.CreateTrade(AMOUNT, CurrencyType.NO_TYPE, ActionType.ADD);
+            
+            Assert.Throws<NoTypeException>(() =>
+            {
+                ServiceResponse serviceResponse = _currencyController.UpdateCurrency(currencyTrade);
+                
+                Assert.IsFalse(serviceResponse.IsSuccess);
+                Assert.AreEqual(ErrorConstants.NO_TYPE_MESSAGE, serviceResponse.Message);
+            });
+        }
+
+        [TestCase(-1)]
+        [TestCase(0)]
+        public void Negative_UpdateCurrency_BadAmount_ReturnsFalse(int amount)
+        {
+            CurrencyTrade currencyTrade = TestUtils.CreateTrade(amount, _goldCurrency.CurrencyType, ActionType.ADD);
+            
+            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(currencyTrade);
+            
+            Assert.IsFalse(serviceResponse.IsSuccess);
+            Assert.AreEqual(ErrorConstants.BAD_NUMBER_MESSAGE, serviceResponse.Message);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace IdelPog.Service
         {
             if (inventoryID == InventoryID.NO_TYPE)
             {
-                throw new NoTypeException($"Error! Passed InventoryID : {inventoryID} is NO_TYPE, cannot create Item. This should be fixed.");
+                throw new NoTypeException();
             }
         }
 
@@ -40,7 +40,7 @@ namespace IdelPog.Service
         {
             if (number <= 0)
             {
-                throw new ArgumentException("Error! Passed amount {number} is expected to be greater than zero.");
+                throw new BadNumberException();
             }
         }
 

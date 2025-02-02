@@ -95,7 +95,7 @@ namespace IdelPog.Repository
         {
             if (key.GetHashCode() == 0)
             {
-                throw new NoTypeException($"Error! Passed Key : {key} is NO_TYPE, nothing can be retrieved. This should be fixed.");
+                throw new NoTypeException();
             }
         }
 

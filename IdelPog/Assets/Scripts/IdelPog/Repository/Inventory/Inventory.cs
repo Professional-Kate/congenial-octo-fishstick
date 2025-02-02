@@ -90,7 +90,7 @@ namespace IdelPog.Repository
         {
             if (amount <= 0)
             {
-                throw new ArgumentException($"Error! Passed amount : '{amount}' is required to be a positive number.");
+                throw new BadNumberException();
             }
         }
 

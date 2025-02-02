@@ -1,3 +1,4 @@
 ﻿{
-  "name": "Exception"
+  "name": "Exception",
+  "references":[ "GUID:9647bbd2f39e408eb134021e62c0282b" ]
 }

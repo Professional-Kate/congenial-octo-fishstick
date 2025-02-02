@@ -69,14 +69,14 @@ namespace Tests.Service
         [TestCase(-1)]
         public void Negative_CreateItem_BadSellPrice_Throws(int sellPrice)
         {
-            Assert.Throws<ArgumentException>(() => _itemFactory.CreateItem(ID, INFORMATION, sellPrice, AMOUNT));
+            Assert.Throws<BadNumberException>(() => _itemFactory.CreateItem(ID, INFORMATION, sellPrice, AMOUNT));
         }
         
         [TestCase(0)]
         [TestCase(-1)]
         public void Negative_CreateItem_BadStartingAmount_Throws(int amount)
         {
-            Assert.Throws<ArgumentException>(() => _itemFactory.CreateItem(ID, INFORMATION, SELL_PRICE, amount));
+            Assert.Throws<BadNumberException>(() => _itemFactory.CreateItem(ID, INFORMATION, SELL_PRICE, amount));
         }
     }
 }

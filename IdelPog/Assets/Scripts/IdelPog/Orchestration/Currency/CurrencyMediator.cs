@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using IdelPog.Constants;
 using IdelPog.Model;
 using IdelPog.Repository;
 using IdelPog.Service;
@@ -195,7 +196,7 @@ namespace IdelPog.Orchestration
             {
                 if (amount <= 0)
                 {
-                    return ServiceResponse.Failure($"Error! Passed amount : '{amount}' is required to be a positive number.");
+                    return ServiceResponse.Failure(ErrorConstants.BAD_NUMBER_MESSAGE);
                 }
             }
 
