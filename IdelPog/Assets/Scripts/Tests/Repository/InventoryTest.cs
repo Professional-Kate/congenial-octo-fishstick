@@ -1,9 +1,9 @@
 ﻿using System;
-using IdelPog.Exceptions;
 using IdelPog.Repository;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Models.Item;
+using IdelPog.Validation;
 using Moq;
 using NUnit.Framework;
 using ItemFactory = Tests.Utils.ItemFactory;
@@ -40,8 +40,10 @@ namespace Tests.Repository
             _inventory = new Inventory(_repositoryMock.Object);
             
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
-            _repositoryMock.Setup(library => library.Get(InventoryID.BIRCH_WOOD)).Throws<NotFoundException>();
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
+
+            _repositoryMock.Setup(library => library.Get(InventoryID.BIRCH_WOOD))
+                .Throws(new NotFoundException(InventoryID.BIRCH_WOOD, typeof(Inventory)));
         }
 
         private void ModifyAmountTestRunner(int amount, ActionType action)

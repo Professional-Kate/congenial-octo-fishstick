@@ -1,6 +1,6 @@
 ﻿using System;
-using IdelPog.Exceptions;
 using IdelPog.Structures.Models.Item;
+using IdelPog.Validation;
 
 namespace IdelPog.Repository
 {
@@ -27,7 +27,7 @@ namespace IdelPog.Repository
 
             if (_repository.Contains(id) == false)
             {
-                throw new NotFoundException("Error: Item does not exist");
+                throw new NotFoundException(id, GetType());
             }
 
             Item finalItem = RepositoryGet(id);
@@ -42,7 +42,7 @@ namespace IdelPog.Repository
 
             if (_repository.Contains(id) == false)
             {
-                throw new NotFoundException("Error: Item does not exist");
+                throw new NotFoundException(id, GetType());
             }
 
             Item item = RepositoryGet(id);

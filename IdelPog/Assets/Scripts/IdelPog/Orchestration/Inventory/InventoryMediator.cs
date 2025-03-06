@@ -51,11 +51,6 @@ namespace IdelPog.Orchestration
 
         public ServiceResponse RemoveAmount(InventoryID inventoryID, int amount)
         {
-            if (_inventory.Contains(inventoryID) == false)
-            {
-                return ServiceResponse.Failure($"Error! Passed {inventoryID} does not exist!");
-            }
-            
             try
             {
                 _inventory.RemoveAmount(inventoryID, amount);

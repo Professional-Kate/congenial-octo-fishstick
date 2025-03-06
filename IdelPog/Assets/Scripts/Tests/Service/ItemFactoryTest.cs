@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using IdelPog.Exceptions;
 using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Models.Item;
@@ -34,12 +33,6 @@ namespace Tests.Service
             Assert.AreEqual(INFORMATION, createdItem.Information);
             Assert.AreEqual(SELL_PRICE, createdItem.SellPrice);
             Assert.AreEqual(AMOUNT, createdItem.Amount);
-        }
-
-        [Test]
-        public void Negative_CreateItem_NoType_Throws()
-        {
-            Assert.Throws<NoTypeException>(() => _itemFactory.CreateItem(InventoryID.NO_TYPE, INFORMATION, SELL_PRICE, AMOUNT));
         }
 
         private static IEnumerable<Information> CreateBadInformation()

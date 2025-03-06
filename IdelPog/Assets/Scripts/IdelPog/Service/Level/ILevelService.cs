@@ -1,6 +1,6 @@
 ﻿using System;
-using IdelPog.Exceptions;
 using IdelPog.Model;
+using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.Service
 {

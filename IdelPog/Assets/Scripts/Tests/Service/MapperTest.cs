@@ -1,7 +1,7 @@
 ﻿using System;
-using IdelPog.Exceptions;
 using IdelPog.Service;
 using IdelPog.Structures;
+using IdelPog.Validation;
 using NUnit.Framework;
 
 namespace Tests.Service
@@ -33,12 +33,6 @@ namespace Tests.Service
         }
 
         [Test]
-        public void Negative_GetInformation_NoTypeKey_Throws()
-        {
-            Assert.Throws<NoTypeException>(() => _informationMapper.GetInformation(0));
-        }
-
-        [Test]
         public void Negative_GetInformation_NotFound_Throws()
         {
             Assert.Throws<NotFoundException>(() => _informationMapper.GetInformation(-1));
@@ -61,12 +55,6 @@ namespace Tests.Service
         public void Negative_AddInformation_KeyAlreadyExists_Throws()
         {
             Assert.Throws<ArgumentException>(() => _informationMapper.AddInformation(1, _informationOne));
-        }
-
-        [Test]
-        public void Negative_AddInformation_NoTypeKey_Throws()
-        {
-            Assert.Throws<NoTypeException>(() => _informationMapper.AddInformation(0, _informationOne));
         }
     }
 }

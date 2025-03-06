@@ -1,8 +1,8 @@
 ﻿using System;
 using IdelPog.Constants;
-using IdelPog.Exceptions;
 using IdelPog.Model;
 using IdelPog.Service;
+using IdelPog.Validation.Exceptions;
 using NUnit.Framework;
 using Tests.Utils;
 using UnityEngine;

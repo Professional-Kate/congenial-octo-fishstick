@@ -1,7 +1,7 @@
 ﻿using System;
 using IdelPog.Constants;
-using IdelPog.Exceptions;
 using IdelPog.Model;
+using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.Service
 {
@@ -16,7 +16,7 @@ namespace IdelPog.Service
             
             if (job.Level == JobConstants.MAX_JOB_LEVEL)
             {
-                throw new MaxLevelException($"Error! Passed Job {job} is at max level. Adding experience is not possible!");
+                throw new MaxLevelException(job, GetType());
             }
             
             if (job.ExperiencePerAction <= 0)
