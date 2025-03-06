@@ -1,7 +1,7 @@
 ﻿using System;
 using IdelPog.Constants;
 using IdelPog.Model;
-using IdelPog.Validation.Exceptions;
+using IdelPog.Validation;
 
 namespace IdelPog.Service
 {

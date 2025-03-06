@@ -2,7 +2,7 @@
 using IdelPog.Constants;
 using IdelPog.Model;
 using IdelPog.Service;
-using IdelPog.Validation.Exceptions;
+using IdelPog.Validation;
 using NUnit.Framework;
 using Tests.Utils;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using IdelPog.Validation.Constants;
 
-namespace IdelPog.Validation.Exceptions
+namespace IdelPog.Validation
 {
     public class MaxLevelException : Exception
     {
