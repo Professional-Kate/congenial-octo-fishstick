@@ -5,6 +5,8 @@ using IdelPog.Repository;
 using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
+using IdelPog.Validation;
+using IdelPog.Validation.Interfaces;
 
 namespace IdelPog.Orchestration
 {
@@ -15,6 +17,7 @@ namespace IdelPog.Orchestration
     {
         private readonly ICurrencyService _currencyService;
         private readonly IRepository<CurrencyType, Currency> _repository;
+        private readonly IAssertPositive _assert;
 
         public CurrencyMediator()
         {
@@ -22,10 +25,11 @@ namespace IdelPog.Orchestration
             _repository = new Repository<CurrencyType, Currency>();
         }
         
-        public CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Currency> repository)
+        public CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Currency> repository, IAssertPositive assert)
         {
             _currencyService = currencyService;
             _repository = repository;
+            _assert = assert;
         }
         
         public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
@@ -143,15 +147,11 @@ namespace IdelPog.Orchestration
         /// </summary>
         /// <param name="stagingGround">This should now contain each cloned <see cref="Currency"/> from the Repository, but, has had its internal amount updated </param>
         /// <returns>A <see cref="ServiceResponse"/> who's <see cref="ServiceResponse.IsSuccess"/> will tell if you all the passed trades pass validation</returns>
-        private static ServiceResponse ValidateFinalAmounts(Dictionary<CurrencyType, Currency> stagingGround)
+        private ServiceResponse ValidateFinalAmounts(Dictionary<CurrencyType, Currency> stagingGround)
         {
-            ServiceResponse finalAmountsValidResponse = AssertAmountGreaterThanZero(stagingGround.Select(entry => entry.Value.Amount));
-            if (finalAmountsValidResponse.IsSuccess == false)
-            {
-                return finalAmountsValidResponse;
-            }
-        
-            return ServiceResponse.Success();
+            ServiceResponse serviceResponse = AssertArrayIsPositive(stagingGround.Select(entry => entry.Value.Amount).ToArray());
+            
+            return serviceResponse;
         }
 
         /// <summary>
@@ -183,39 +183,33 @@ namespace IdelPog.Orchestration
         }
         
         /// <summary>
-        /// Asserts that every passed int is greater than 0.
-        /// </summary>
-        /// <param name="amounts">The amounts you want to check</param>
-        /// <returns>
-        /// <returns>A <see cref="ServiceResponse"/> who's <see cref="ServiceResponse.IsSuccess"/> will tell if you all the passed numbers passed validation</returns>
-        /// </returns>
-        private static ServiceResponse AssertAmountGreaterThanZero(IEnumerable<int> amounts)
-        {
-            foreach (int amount in amounts)
-            {
-                if (amount <= 0)
-                {
-                    return ServiceResponse.Failure($"Error! Passed amount : '{amount}' is required to be a positive number.");
-                }
-            }
-
-            return ServiceResponse.Success();
-        }
-        
-        /// <summary>
         /// Validates an entire passed array of <see cref="CurrencyTrade"/>s. Will only validate if the <see cref="CurrencyTrade.Amount"/> is above zero
         /// </summary>
         /// <param name="trades">The <see cref="CurrencyTrade"/> array you want to verify</param>
         /// <returns>A <see cref="ServiceResponse"/> object that will tell you if the operation was successful</returns>
-        private static ServiceResponse ValidateTrades(params CurrencyTrade[] trades)
+        private ServiceResponse ValidateTrades(params CurrencyTrade[] trades)
         {
-            ServiceResponse serviceResponse = AssertAmountGreaterThanZero(trades.Select(entry => entry.Amount));
-            if (serviceResponse.IsSuccess == false)
+            ServiceResponse serviceResponse = AssertArrayIsPositive(trades.Select(entry => entry.Amount).ToArray());
+            
+            return serviceResponse;
+        }
+        
+        /// <summary>
+        /// Asserts that every number is positive
+        /// </summary>
+        /// <param name="numbers">The numbers you want to validate</param>
+        /// <returns>A <see cref="ServiceResponse"/> object on the state of the assertion</returns>
+        private ServiceResponse AssertArrayIsPositive(int[] numbers)
+        {
+            try
             {
-                return serviceResponse;
+                _assert.AssertNumberIsPositive(numbers);
+                return ServiceResponse.Success();
             }
-
-            return ServiceResponse.Success();
+            catch (NegativeNumberException exception)
+            {
+                return ServiceResponse.Failure(exception.Message);
+            }
         }
     }
 }

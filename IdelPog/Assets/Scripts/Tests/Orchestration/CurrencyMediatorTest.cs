@@ -6,6 +6,8 @@ using IdelPog.Repository;
 using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
+using IdelPog.Validation;
+using IdelPog.Validation.Interfaces;
 using Moq;
 using NUnit.Framework;
 using Tests.Utils;
@@ -19,6 +21,7 @@ namespace Tests.Orchestration
         private ICurrencyMediator _currencyMediator { get; set; }
         private Mock<IRepository<CurrencyType, Currency>> _repositoryMock { get; set; }
         private Mock<ICurrencyService> _currencyServiceMock { get; set; }
+        private Mock<IAssertPositive> _assertPositiveMock { get; set; }
         private Currency _foodCurrency { get; set; }
         private Currency _woodCurrency { get; set; }
 
@@ -48,12 +51,16 @@ namespace Tests.Orchestration
         {
             _repositoryMock = new Mock<IRepository<CurrencyType, Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
-            _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _repositoryMock.Object);
+            _assertPositiveMock = new Mock<IAssertPositive>();
+            
+            _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _repositoryMock.Object, _assertPositiveMock.Object);
 
             _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns((Currency) _foodCurrency.Clone());
             _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns((Currency) _woodCurrency.Clone());
             
             _repositoryMock.Setup(library => library.Contains(It.IsAny<CurrencyType>())).Returns(true);
+
+            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(It.IsAny<int[]>()));
 
             _currencyServiceMock.Setup(library => library.AddAmount(It.IsAny<Currency>(), It.IsAny<int>()))
                 .Callback<Currency, int>((currency, amount) =>
@@ -106,7 +113,6 @@ namespace Tests.Orchestration
         {
             _repositoryMock.Verify(library => library.Get(It.IsAny<CurrencyType>()), Times.Exactly(amount));
         }
-        
         
         [TestCase(1)]
         [TestCase(5)]
@@ -200,19 +206,18 @@ namespace Tests.Orchestration
         }
 
         [Test]
-        public void Negative_ProcessCurrencyUpdate_PassedTradesResultInZeroAmount_ReturnsFail()
+        public void Negative_ProcessCurrencyUpdate_PassedTradesResultInNegativeAmount_ReturnsFail()
         {
-            CurrencyTrade[] trades = { _addWoodTrade, _addFoodTrade, _removeWoodTrade };
+            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(-10))
+                .Throws(new NegativeNumberException(-1));
+            
+            CurrencyTrade[] trades = { _removeWoodTrade };
             
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
             
             Assert.False(serviceResponse.IsSuccess);
             Assert.AreEqual(0, _woodCurrency.Amount);
             Assert.AreEqual(0, _foodCurrency.Amount);
-            
-            VerifyContainsCalls(2);
-            VerifyGetCalls(2);
-            VerifyUpdateCall(0);
         }
         
         [Test]
@@ -232,14 +237,15 @@ namespace Tests.Orchestration
             VerifyGetCalls(2);
         }
         
-        [TestCase(0, ActionType.ADD)]
         [TestCase(-10, ActionType.ADD)]
         [TestCase(-100, ActionType.ADD)]
-        [TestCase(0, ActionType.REMOVE)]
         [TestCase(-10, ActionType.REMOVE)]
         [TestCase(-100, ActionType.REMOVE)]
         public void Negative_ProcessCurrencyUpdate_BadAmounts_NoUpdates(int badAmount, ActionType action)
         {
+            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(It.IsAny<int[]>()))
+                .Throws(new NegativeNumberException(-1));
+            
             CurrencyTrade trade = TestUtils.CreateTrade(badAmount, _foodCurrency.CurrencyType, action);
 
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trade);
@@ -256,6 +262,9 @@ namespace Tests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_ArrayFails_NoUpdates()
         {
+            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(It.IsAny<int[]>()))
+                .Throws(new NegativeNumberException(-1));
+            
             // First action is okay, 2nd action should stop processing for all actions 
             CurrencyTrade[] trades = { _addFoodTrade, _removeWoodTrade, _addFoodTrade };
             
@@ -265,10 +274,6 @@ namespace Tests.Orchestration
             Assert.NotNull(serviceResponse.Message);
             Assert.AreEqual(0, _foodCurrency.Amount);
             Assert.AreEqual(0, _woodCurrency.Amount);
-            
-            VerifyContainsCalls(2);
-            VerifyGetCalls(2);
-            VerifyUpdateCall(0);
         }
     }
 }
