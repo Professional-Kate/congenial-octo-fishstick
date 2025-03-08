@@ -8,6 +8,7 @@ using IdelPog.Validation;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Handlers;
+using IdelPog.Validation.Handlers.Interfaces;
 using IdelPog.Validation.Interfaces;
 
 namespace IdelPog.Orchestration
@@ -20,8 +21,12 @@ namespace IdelPog.Orchestration
 
         public JobMediator()
         {
-            IAssertUnderMaxLevel assertUnderMaxLevel = new AssertUnderMaxLevel(new ThrowHandler());
-            _experienceService = new ExperienceService(assertUnderMaxLevel);
+            IHandler handler = new ThrowHandler();
+            IAssertUnderMaxLevel assertUnderMaxLevel = new AssertUnderMaxLevel(handler);
+            IAssertPositive assertPositive = new AssertPositive(handler);
+            IAssertNotNull assertNotNull = new AssertNotNull(handler);
+            
+            _experienceService = new ExperienceService(assertUnderMaxLevel, assertNotNull, assertPositive);
             _levelService = new LevelService(assertUnderMaxLevel);
             
             IAssertFound assertFound = new AssertFound(new ThrowHandler());
