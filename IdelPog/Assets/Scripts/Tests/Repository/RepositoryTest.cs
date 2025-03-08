@@ -65,7 +65,7 @@ namespace Tests.Repository
         public void Negative_Remove_NonExisting_Throws()
         {
             _assertNotFound.Setup(library => library.AssertItemIsFound(false, KEY))
-                .Throws(new NotFoundException(KEY, GetType()));
+                .Throws(new NotFoundException(KEY));
             
             Assert.Throws<NotFoundException>(() => _repository.Remove(KEY));
             VerifyAssertFoundCalled(false);
@@ -84,7 +84,7 @@ namespace Tests.Repository
         public void Negative_Get_NonExisting_Throws()
         {
             _assertNotFound.Setup(library => library.AssertItemIsFound(false, KEY))
-                .Throws(new NotFoundException(KEY, GetType()));
+                .Throws(new NotFoundException(KEY));
             
             Assert.Throws<NotFoundException>(() => _repository.Get(KEY));
             VerifyAssertFoundCalled(false);
@@ -106,7 +106,7 @@ namespace Tests.Repository
         public void Negative_Update_NonExisting_Throws()
         {
             _assertNotFound.Setup(library => library.AssertItemIsFound(false, KEY))
-                .Throws(new NotFoundException(KEY, GetType()));
+                .Throws(new NotFoundException(KEY));
             
             Assert.Throws<NotFoundException>(() => _repository.Update(KEY, VALUE));
             VerifyAssertFoundCalled(false);

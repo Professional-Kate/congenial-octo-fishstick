@@ -13,7 +13,7 @@ namespace IdelPog.Validation
             {
                 if (itemIsFound == false)
                 {
-                    throw new NotFoundException(key, GetType());
+                    throw new NotFoundException(key);
                 }
             });
         }

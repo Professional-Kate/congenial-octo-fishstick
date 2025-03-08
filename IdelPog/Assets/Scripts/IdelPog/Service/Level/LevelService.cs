@@ -1,12 +1,18 @@
 ﻿using System;
-using IdelPog.Constants;
 using IdelPog.Model;
-using IdelPog.Validation;
+using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Service
 {
     public class LevelService : ILevelService   
     {
+        private readonly IAssertUnderMaxLevel _assertUnderMaxLevel;
+
+        public LevelService(IAssertUnderMaxLevel assertUnderMaxLevel)
+        {
+            _assertUnderMaxLevel = assertUnderMaxLevel;
+        }
+        
         public void LevelUpJob(Job job)
         {
             if (job == null)
@@ -14,10 +20,7 @@ namespace IdelPog.Service
                 throw new ArgumentNullException(nameof(job));
             }
 
-            if (job.Level == JobConstants.MAX_JOB_LEVEL)
-            {
-                throw new MaxLevelException(job, GetType());
-            }
+            _assertUnderMaxLevel.AssertLevelIsUnderMax(job);
 
             int total = 0;
             for (int i = 1; i < job.Level; i++)

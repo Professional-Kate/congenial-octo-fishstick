@@ -3,6 +3,8 @@ using IdelPog.Constants;
 using IdelPog.Model;
 using IdelPog.Service;
 using IdelPog.Validation;
+using IdelPog.Validation.Assertions.Interfaces;
+using Moq;
 using NUnit.Framework;
 using Tests.Utils;
 
@@ -12,13 +14,17 @@ namespace Tests.Service
     public class ExperienceServiceTest
     {
         private IExperienceService _experienceService { get; set; }
+        private Mock<IAssertUnderMaxLevel> _assertUnderMaxLevel { get; set; }
+        
         private Job _miningJob { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            _assertUnderMaxLevel = new Mock<IAssertUnderMaxLevel>();
+            
             _miningJob = JobFactory.CreateMining();
-            _experienceService = new ExperienceService();
+            _experienceService = new ExperienceService(_assertUnderMaxLevel.Object);
         }
 
         [SetUp]
@@ -54,6 +60,9 @@ namespace Tests.Service
         [Test]
         public void Negative_AddExperience_MaxLevel_Throws()
         {
+            _assertUnderMaxLevel.Setup(library => library.AssertLevelIsUnderMax(_miningJob))
+                .Throws(new MaxLevelException(_miningJob));
+            
             const int experience = 100;
             const int experiencePerAction = 1;
             

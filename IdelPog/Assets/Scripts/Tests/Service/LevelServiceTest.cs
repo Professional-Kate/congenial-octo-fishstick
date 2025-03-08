@@ -3,6 +3,8 @@ using IdelPog.Constants;
 using IdelPog.Model;
 using IdelPog.Service;
 using IdelPog.Validation;
+using IdelPog.Validation.Assertions.Interfaces;
+using Moq;
 using NUnit.Framework;
 using Tests.Utils;
 using UnityEngine;
@@ -13,12 +15,16 @@ namespace Tests.Service
     public class LevelServiceTest
     {
         private ILevelService _service { get; set; }
+        private Mock<IAssertUnderMaxLevel> _assertUnderMaxLevel { get; set; }
+
         private Job _farmingJob { get; set; }
         
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _service = new LevelService();
+            _assertUnderMaxLevel = new Mock<IAssertUnderMaxLevel>();
+            
+            _service = new LevelService(_assertUnderMaxLevel.Object);
         }
 
         [SetUp]
@@ -94,6 +100,9 @@ namespace Tests.Service
         [Test]
         public void Negative_LeveUpJob_MaxLevel_Throws()
         {
+            _assertUnderMaxLevel.Setup(library => library.AssertLevelIsUnderMax(_farmingJob))
+                .Throws(new MaxLevelException(_farmingJob.Level));
+            
             _farmingJob.Setup(100, 100, 10, 1);
             Assert.Throws<MaxLevelException>(() => _service.LevelUpJob(_farmingJob));
         }

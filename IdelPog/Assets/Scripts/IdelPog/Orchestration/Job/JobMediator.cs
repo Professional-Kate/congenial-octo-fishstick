@@ -5,6 +5,8 @@ using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Validation;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Handlers;
 using IdelPog.Validation.Interfaces;
 
@@ -18,8 +20,10 @@ namespace IdelPog.Orchestration
 
         public JobMediator()
         {
-            _experienceService = new ExperienceService();
-            _levelService = new LevelService();
+            IAssertUnderMaxLevel assertUnderMaxLevel = new AssertUnderMaxLevel(new ThrowHandler());
+            _experienceService = new ExperienceService(assertUnderMaxLevel);
+            _levelService = new LevelService(assertUnderMaxLevel);
+            
             IAssertFound assertFound = new AssertFound(new ThrowHandler());
             _repository = new Repository<JobType, Job>(assertFound);
         }

@@ -49,7 +49,7 @@ namespace Tests.Repository
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
 
             _repositoryMock.Setup(library => library.Get(InventoryID.BIRCH_WOOD))
-                .Throws(new NotFoundException(InventoryID.BIRCH_WOOD, typeof(Inventory)));
+                .Throws(new NotFoundException(InventoryID.BIRCH_WOOD));
         }
 
         private void ModifyAmountTestRunner(int amount, ActionType action)

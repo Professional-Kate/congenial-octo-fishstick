@@ -14,7 +14,7 @@ namespace IdelPog.Service
             bool contains = _information.TryGetValue(key, out Information information);
             if (contains == false)
             {
-                throw new NotFoundException(key, GetType());
+                throw new NotFoundException(key);
             }
             
             return information;

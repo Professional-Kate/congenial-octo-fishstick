@@ -7,8 +7,8 @@ namespace IdelPog.Validation
     {
         private static readonly string _baseMessage = ExceptionConstants.MAX_LEVEL_MESSAGE;
         
-        public MaxLevelException(object id, Type callingClass) 
-            : base(string.Format(_baseMessage, id, callingClass.Name))
+        public MaxLevelException(object id) 
+            : base(string.Format(_baseMessage, id))
         {
             // TODO: This needs to be logged to file.
         }
