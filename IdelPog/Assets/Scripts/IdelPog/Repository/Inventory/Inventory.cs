@@ -1,6 +1,8 @@
 ﻿using System;
 using IdelPog.Structures.Models.Item;
 using IdelPog.Validation;
+using IdelPog.Validation.Handlers;
+using IdelPog.Validation.Interfaces;
 
 namespace IdelPog.Repository
 {
@@ -10,25 +12,26 @@ namespace IdelPog.Repository
     public sealed class Inventory : IInventory
     {
         private readonly IRepository<InventoryID, Item> _repository;
+        private readonly IAssertFound _assertFound;
+        private readonly IAssertPositive _assertPositive;
         
         public Inventory()
         {
-            _repository = new Repository<InventoryID, Item>();
+            IAssertFound assertFound = new AssertFound(new ThrowHandler());
+            _repository = new Repository<InventoryID, Item>(assertFound);
         }
 
-        public Inventory(IRepository<InventoryID, Item> repository)
+        public Inventory(IRepository<InventoryID, Item> repository, IAssertFound assertFound, IAssertPositive assertPositive)
         {
             _repository = repository;
+            _assertFound = assertFound;
+            _assertPositive = assertPositive;
         }
 
         public void AddAmount(InventoryID id, int amount)
         {
             AssertAmountIsPositive(amount);
-
-            if (_repository.Contains(id) == false)
-            {
-                throw new NotFoundException(id, GetType());
-            }
+            AssertItemExists(id);
 
             Item finalItem = RepositoryGet(id);
 
@@ -39,11 +42,7 @@ namespace IdelPog.Repository
         public void RemoveAmount(InventoryID id, int amount)
         {
             AssertAmountIsPositive(amount);
-
-            if (_repository.Contains(id) == false)
-            {
-                throw new NotFoundException(id, GetType());
-            }
+            AssertItemExists(id);
 
             Item item = RepositoryGet(id);
 
@@ -85,14 +84,19 @@ namespace IdelPog.Repository
         /// Asserts that the passed amount is greater than zero
         /// </summary>
         /// <param name="amount">The amount you want to verify</param>
-        /// <exception cref="ArgumentException">Will be thrown if the passed amount is 0 or less</exception>
-        private static void AssertAmountIsPositive(int amount)
+        private void AssertAmountIsPositive(int amount)
         {
-            if (amount <= 0)
-            {
-                throw new ArgumentException($"Error! Passed amount : '{amount}' is required to be a positive number.");
-            }
+            _assertPositive.AssertNumberIsPositive(amount);
         }
+
+        /// <summary>
+        /// Asserts that the passed id exists in the inventory
+        /// </summary>
+        /// <param name="id">The id you want to check</param>
+        private void AssertItemExists(InventoryID id)
+        {
+            _assertFound.AssertItemIsFound(Contains(id), id);
+        } 
 
         private Item RepositoryGet(InventoryID id)
         {

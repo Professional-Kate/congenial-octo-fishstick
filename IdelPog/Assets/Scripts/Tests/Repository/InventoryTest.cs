@@ -4,6 +4,7 @@ using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Models.Item;
 using IdelPog.Validation;
+using IdelPog.Validation.Interfaces;
 using Moq;
 using NUnit.Framework;
 using ItemFactory = Tests.Utils.ItemFactory;
@@ -15,6 +16,8 @@ namespace Tests.Repository
     {
         private IInventory _inventory { get; set; }
         private Mock<IRepository<InventoryID, Item>> _repositoryMock { get; set; }
+        private Mock<IAssertPositive> _assertPositiveMock { get; set; }
+        private Mock<IAssertFound> _assertFoundMock { get; set; }
 
         private Item _oakWoodItem { get; set; }
 
@@ -37,7 +40,10 @@ namespace Tests.Repository
         private void SetupMock()
         {
             _repositoryMock = new Mock<IRepository<InventoryID, Item>>();
-            _inventory = new Inventory(_repositoryMock.Object);
+            
+            _assertPositiveMock = new Mock<IAssertPositive>();
+            _assertFoundMock = new Mock<IAssertFound>();
+            _inventory = new Inventory(_repositoryMock.Object, _assertFoundMock.Object,_assertPositiveMock.Object);
             
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
@@ -84,16 +90,19 @@ namespace Tests.Repository
         [Test]
         public void Negative_AddAmount_NoItem_Throws()
         {
-            _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(false);
+            _repositoryMock.Setup(library => library.Contains(InventoryID.BIRCH_WOOD)).Returns(false);
             
-            Assert.Throws<NotFoundException>(() => _inventory.AddAmount(_oakWoodItem.ID, 5));
+            Assert.Throws<NotFoundException>(() => _inventory.AddAmount(InventoryID.BIRCH_WOOD, 5));
         }
 
-        [TestCase(0)]
+        [TestCase(-1)]        
         [TestCase(-10)]
-        public void Negative_AddAmount_BadAmount_Throws(int amount)
+        public void Negative_AddAmount_NegativeAmount_Throws(int amount)
         {
-            Assert.Throws<ArgumentException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
+            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(amount))
+                .Throws(new NegativeNumberException(amount));
+            
+            Assert.Throws<NegativeNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
         }
 
 
@@ -133,11 +142,14 @@ namespace Tests.Repository
             Assert.Throws<ArgumentException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
         }
         
-        [TestCase(0)]
+        [TestCase(-1)]
         [TestCase(-10)]
-        public void Negative_RemoveAmount_BadAmount_Throws(int amount)
+        public void Negative_RemoveAmount_NegativeAmount_Throws(int amount)
         {
-            Assert.Throws<ArgumentException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
+            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(amount))
+                .Throws(new NegativeNumberException(amount));
+            
+            Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
         }
 
         [Test]
@@ -179,13 +191,16 @@ namespace Tests.Repository
             Assert.Throws<ArgumentException>(() => _inventory.AddItem(_oakWoodItem));
         }
 
-        [TestCase(0)]
+        [TestCase(-1)]
         [TestCase(-10)]
-        public void Negative_AddItem_BadAmount_Throws(int amount)
+        public void Negative_AddItem_NegativeAmount_Throws(int amount)
         {
             Item itemWithBadAmount = new(InventoryID.WILLOW_WOOD, Information.Create("", ""), 1, amount);
+
+            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(amount))
+                .Throws(new NegativeNumberException(amount));
             
-            Assert.Throws<ArgumentException>(() => _inventory.AddItem(itemWithBadAmount));
+            Assert.Throws<NegativeNumberException>(() => _inventory.AddItem(itemWithBadAmount));
         }
 
         [Test]

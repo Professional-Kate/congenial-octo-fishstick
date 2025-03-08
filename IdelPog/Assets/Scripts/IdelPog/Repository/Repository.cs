@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using IdelPog.Validation;
+using IdelPog.Validation.Interfaces;
 
 namespace IdelPog.Repository
 {
     public sealed class Repository<TID, T> : IRepository<TID, T> where T : class, ICloneable
     {
         private readonly Dictionary<TID, T> _repository = new();
+        private readonly IAssertFound _assertFound;
        
         public event Action<int, T> OnAdd;
         public event Action<int, T> OnRemove;
         public event Action<int, T> OnGet;
         public event Action<T, T> OnUpdate;
         public event Action<int, bool> OnContains;
+
+        public Repository(IAssertFound assertFound)
+        {
+            _assertFound = assertFound;
+        }
         
         public void Add(TID key, T value)
         {
@@ -76,11 +82,7 @@ namespace IdelPog.Repository
         /// <param name="key">The key you want to check if it's in the Repository</param>
         private void AssertKeyExists(TID key)
         {
-            bool contains = _repository.ContainsKey(key);
-            if (contains == false)
-            {
-                throw new NotFoundException(key, GetType());
-            }
+            _assertFound.AssertItemIsFound(_repository.ContainsKey(key), key);
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
 ﻿using IdelPog.Repository;
+using IdelPog.Validation;
+using IdelPog.Validation.Handlers;
 using NUnit.Framework;
 
 namespace Tests.Repository
@@ -16,7 +18,7 @@ namespace Tests.Repository
         [SetUp]
         public void SetUp()
         { 
-            TestRepository = new Repository<int, string>();
+            TestRepository = new Repository<int, string>(new AssertFound(new ThrowHandler()));
             
             AddEventTriggered = false;
             RemoveEventTriggered = false;
