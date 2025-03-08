@@ -4,7 +4,6 @@ using IdelPog.Model;
 using IdelPog.Service;
 using IdelPog.Validation;
 using IdelPog.Validation.Assertions.Interfaces;
-using IdelPog.Validation.Interfaces;
 using Moq;
 using NUnit.Framework;
 using Tests.Utils;
@@ -15,21 +14,17 @@ namespace Tests.Service
     public class ExperienceServiceTest
     {
         private IExperienceService _experienceService { get; set; }
-        private Mock<IAssertUnderMaxLevel> _assertUnderMaxLevel { get; set; }
-        private Mock<IAssertNotNull> _assertNotNull { get; set; }
-        private Mock<IAssertPositive> _assertPositive { get; set; }
-        
+        private Mock<ILevelableAsserter> _levelableAsserterMock { get; set; }
+
         private Job _miningJob { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _assertUnderMaxLevel = new Mock<IAssertUnderMaxLevel>();
-            _assertNotNull = new Mock<IAssertNotNull>();
-            _assertPositive = new Mock<IAssertPositive>();
+            _levelableAsserterMock = new Mock<ILevelableAsserter>(); 
             
             _miningJob = JobFactory.CreateMining();
-            _experienceService = new ExperienceService(_assertUnderMaxLevel.Object, _assertNotNull.Object, _assertPositive.Object);
+            _experienceService = new ExperienceService(_levelableAsserterMock.Object);
         }
 
         [SetUp]
@@ -65,7 +60,7 @@ namespace Tests.Service
         [Test]
         public void Negative_AddExperience_MaxLevel_Throws()
         {
-            _assertUnderMaxLevel.Setup(library => library.AssertLevelIsUnderMax(_miningJob))
+            _levelableAsserterMock.Setup(library => library.AssertLevelable(_miningJob))
                 .Throws(new MaxLevelException(_miningJob));
             
             const int experience = 100;
@@ -76,12 +71,12 @@ namespace Tests.Service
             Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(_miningJob));
         }
 
-        [TestCase(0)]
+        [TestCase(-1)]
         [TestCase(-10)]
         [TestCase(-1000)]
         public void Negative_AddExperience_BadExperiencePerAction_Throws(int experiencePerAction)
         {
-            _assertPositive.Setup(library => library.AssertNumberIsPositive(experiencePerAction))
+            _levelableAsserterMock.Setup(library => library.AssertLevelable(_miningJob))
                 .Throws(new NegativeNumberException(experiencePerAction));
             
             _miningJob.SetExperiencePerAction(experiencePerAction);
@@ -92,7 +87,7 @@ namespace Tests.Service
         [Test]
         public void Negative_AddExperience_NullJob_Throws()
         {
-            _assertNotNull.Setup(library => library.AssertObjectNotNull(null))
+            _levelableAsserterMock.Setup(library => library.AssertLevelable(null))
                 .Throws(new ArgumentNullException());
             
             Assert.Throws<ArgumentNullException>(() => _experienceService.AddExperience(null));

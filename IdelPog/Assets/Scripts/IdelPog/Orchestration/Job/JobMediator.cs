@@ -25,8 +25,10 @@ namespace IdelPog.Orchestration
             IAssertUnderMaxLevel assertUnderMaxLevel = new AssertUnderMaxLevel(handler);
             IAssertPositive assertPositive = new AssertPositive(handler);
             IAssertNotNull assertNotNull = new AssertNotNull(handler);
+
+            ILevelableAsserter levelableAsserter = new LevelableAsserter(assertUnderMaxLevel, assertNotNull, assertPositive);
             
-            _experienceService = new ExperienceService(assertUnderMaxLevel, assertNotNull, assertPositive);
+            _experienceService = new ExperienceService(levelableAsserter);
             _levelService = new LevelService(assertUnderMaxLevel);
             
             IAssertFound assertFound = new AssertFound(new ThrowHandler());
