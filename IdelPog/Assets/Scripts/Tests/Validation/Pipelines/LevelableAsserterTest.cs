@@ -10,7 +10,7 @@ using IdelPog.Validation.Pipelines.Interfaces;
 using NUnit.Framework;
 using Tests.Utils;
 
-namespace Tests.Validation
+namespace Tests.Validation.Pipelines
 {
     [TestFixture]
     public class LevelableAsserterTest
