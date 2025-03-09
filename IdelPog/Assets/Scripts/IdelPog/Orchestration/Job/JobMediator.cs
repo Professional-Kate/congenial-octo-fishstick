@@ -4,12 +4,10 @@ using IdelPog.Repository;
 using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
-using IdelPog.Validation;
 using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Assertions.Interfaces;
-using IdelPog.Validation.Handlers;
-using IdelPog.Validation.Handlers.Interfaces;
-using IdelPog.Validation.Interfaces;
 using IdelPog.Validation.Pipelines;
 using IdelPog.Validation.Pipelines.Interfaces;
 

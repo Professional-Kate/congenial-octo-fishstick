@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Validation.Interfaces
+﻿namespace IdelPog.Validation.Assertions.Interfaces
 {
     /// <seealso cref="AssertNumberIsPositive"/>
     public interface IAssertPositive

@@ -1,7 +1,7 @@
-﻿using IdelPog.Validation.Handlers.Interfaces;
-using IdelPog.Validation.Interfaces;
+﻿using IdelPog.Validation.Assertions.Handlers.Interfaces;
+using IdelPog.Validation.Assertions.Interfaces;
 
-namespace IdelPog.Validation
+namespace IdelPog.Validation.Assertions
 {
     public class AssertPositive : BaseAssertion, IAssertPositive
     {

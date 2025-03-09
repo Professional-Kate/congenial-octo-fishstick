@@ -1,7 +1,7 @@
 ﻿using System;
-using IdelPog.Validation.Handlers.Interfaces;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
-namespace IdelPog.Validation.Handlers
+namespace IdelPog.Validation.Assertions.Handlers
 {
     /// <summary>
     /// This handler will throw any passed exception

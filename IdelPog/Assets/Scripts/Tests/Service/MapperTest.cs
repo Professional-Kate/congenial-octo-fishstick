@@ -4,7 +4,6 @@ using IdelPog.Structures;
 using IdelPog.Validation;
 using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
-using IdelPog.Validation.Interfaces;
 using Moq;
 using NUnit.Framework;
 

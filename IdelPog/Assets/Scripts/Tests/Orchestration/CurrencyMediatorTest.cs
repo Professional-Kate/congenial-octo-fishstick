@@ -7,7 +7,7 @@ using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Validation;
-using IdelPog.Validation.Interfaces;
+using IdelPog.Validation.Assertions.Interfaces;
 using Moq;
 using NUnit.Framework;
 using Tests.Utils;

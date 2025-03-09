@@ -1,8 +1,7 @@
 ﻿using IdelPog.Repository;
-using IdelPog.Validation;
 using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Handlers;
-using IdelPog.Validation.Handlers.Interfaces;
+using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Pipelines;
 using IdelPog.Validation.Pipelines.Interfaces;
 using NUnit.Framework;

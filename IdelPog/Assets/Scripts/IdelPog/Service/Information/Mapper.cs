@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using IdelPog.Structures;
 using IdelPog.Validation.Assertions.Interfaces;
-using IdelPog.Validation.Interfaces;
 
 namespace IdelPog.Service
 {

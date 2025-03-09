@@ -1,6 +1,6 @@
 ﻿using System;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Assertions.Interfaces;
-using IdelPog.Validation.Handlers.Interfaces;
 
 namespace IdelPog.Validation.Assertions
 {

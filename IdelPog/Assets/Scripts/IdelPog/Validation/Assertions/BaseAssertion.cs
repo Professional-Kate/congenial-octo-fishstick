@@ -1,7 +1,7 @@
 ﻿using System;
-using IdelPog.Validation.Handlers.Interfaces;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
-namespace IdelPog.Validation
+namespace IdelPog.Validation.Assertions
 {
     /// <summary>
     /// Base assertion class. This class contains a method for handling thrown exceptions using a passed <see cref="IHandler"/>

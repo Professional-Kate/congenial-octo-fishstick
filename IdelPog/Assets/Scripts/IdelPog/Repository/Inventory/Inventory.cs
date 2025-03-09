@@ -1,6 +1,5 @@
 ﻿using IdelPog.Structures.Models.Item;
 using IdelPog.Validation.Assertions.Interfaces;
-using IdelPog.Validation.Interfaces;
 
 namespace IdelPog.Repository
 {

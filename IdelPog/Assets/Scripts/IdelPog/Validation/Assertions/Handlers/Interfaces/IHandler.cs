@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IdelPog.Validation.Handlers.Interfaces
+namespace IdelPog.Validation.Assertions.Handlers.Interfaces
 {
     public interface IHandler
     {

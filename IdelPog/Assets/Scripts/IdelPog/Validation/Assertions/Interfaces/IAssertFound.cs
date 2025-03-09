@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IdelPog.Validation.Interfaces
+namespace IdelPog.Validation.Assertions.Interfaces
 {
     public interface IAssertFound
     {

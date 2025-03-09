@@ -6,7 +6,6 @@ using IdelPog.Structures.Models.Item;
 using IdelPog.Validation;
 using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
-using IdelPog.Validation.Interfaces;
 using Moq;
 using NUnit.Framework;
 using ItemFactory = Tests.Utils.ItemFactory;

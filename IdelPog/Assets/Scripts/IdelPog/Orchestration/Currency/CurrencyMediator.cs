@@ -7,8 +7,8 @@ using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Validation;
 using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Handlers;
-using IdelPog.Validation.Interfaces;
+using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Orchestration
 {
