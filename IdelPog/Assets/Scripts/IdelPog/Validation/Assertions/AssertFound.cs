@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Validation.Assertions
 {
-    public class AssertFound : BaseAssertion, IAssertFound
+    public class AssertFound : BaseAssertion<NotFoundException>, IAssertFound
     {
         public AssertFound(IHandler handler) : base(handler) { }
         

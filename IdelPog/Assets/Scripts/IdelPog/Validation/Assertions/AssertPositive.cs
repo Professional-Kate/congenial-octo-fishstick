@@ -3,7 +3,7 @@ using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Validation.Assertions
 {
-    public class AssertPositive : BaseAssertion, IAssertPositive
+    public class AssertPositive : BaseAssertion<NegativeNumberException>, IAssertPositive
     {
         public AssertPositive(IHandler handler) : base(handler) { } 
         

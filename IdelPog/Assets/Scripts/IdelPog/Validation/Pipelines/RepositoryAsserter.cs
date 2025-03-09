@@ -17,20 +17,17 @@ namespace IdelPog.Validation.Pipelines
             _assertNotNull = assertNotNull;
             _assertUniqueItem = assertUniqueItem;
         }
-        
-        public void AssertObjectNotNull(object objectToAssert)
+
+        public void AssertUnique(object context, Func<bool> alreadyExists)
         {
-            _assertNotNull.AssertObjectNotNull(objectToAssert);
+            _assertNotNull.AssertObjectNotNull(context);
+            _assertUniqueItem.AssertUnique(context, alreadyExists);
         }
 
-        public void AssertUnique(object context, Func<bool> alreadyContains)
+        public void AssertFound(object context, Func<bool> notFound)
         {
-            _assertUniqueItem.AssertUnique(context, alreadyContains);
-        }
-
-        public void AssertItemIsFound(object key, Func<bool> itemNotFound)
-        {
-            _assertFound.AssertItemIsFound(key, itemNotFound);
+            _assertNotNull.AssertObjectNotNull(context);
+            _assertFound.AssertItemIsFound(context, notFound);
         }
     }
 }

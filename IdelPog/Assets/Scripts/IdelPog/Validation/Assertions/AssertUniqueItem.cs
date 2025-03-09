@@ -5,7 +5,7 @@ using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.Validation.Assertions
 {
-    public class AssertUniqueItem : BaseAssertion, IAssertUniqueItem
+    public class AssertUniqueItem : BaseAssertion<DuplicateItemException>, IAssertUniqueItem
     {
         public AssertUniqueItem(IHandler handler) : base(handler) { }
 

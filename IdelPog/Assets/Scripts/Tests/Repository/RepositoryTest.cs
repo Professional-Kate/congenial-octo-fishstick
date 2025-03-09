@@ -1,6 +1,7 @@
 ﻿using System;
 using IdelPog.Repository;
 using IdelPog.Validation;
+using IdelPog.Validation.Exceptions;
 using IdelPog.Validation.Pipelines.Interfaces;
 using Moq;
 using NUnit.Framework;
@@ -35,15 +36,16 @@ namespace Tests.Repository
         [Test]
         public void Negative_Add_DuplicateKey_Throws()
         {
-            _repository.Add(KEY, VALUE);
+            _repositoryAsserterMock.Setup(library => library.AssertUnique(VALUE, It.IsAny<Func<bool>>()))
+                .Throws(new DuplicateItemException(KEY));
             
-            Assert.Throws<ArgumentException>(() => _repository.Add(KEY, VALUE));
+            Assert.Throws<DuplicateItemException>(() => _repository.Add(KEY, VALUE));
         }
 
         [Test]
         public void Negative_Add_NullValue_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertObjectNotNull(null))
+            _repositoryAsserterMock.Setup(library => library.AssertUnique(null, It.IsAny<Func<bool>>()))
                 .Throws<ArgumentNullException>();
             
             Assert.Throws<ArgumentNullException>(() => _repository.Add(KEY, null));
@@ -62,7 +64,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_Remove_NonExisting_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertItemIsFound(KEY, It.IsAny<Func<bool>>()))
+            _repositoryAsserterMock.Setup(library => library.AssertFound(KEY, It.IsAny<Func<bool>>()))
                 .Throws(new NotFoundException(KEY));
             
             Assert.Throws<NotFoundException>(() => _repository.Remove(KEY));
@@ -80,7 +82,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_Get_NonExisting_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertItemIsFound(KEY, It.IsAny<Func<bool>>()))
+            _repositoryAsserterMock.Setup(library => library.AssertFound(KEY, It.IsAny<Func<bool>>()))
                 .Throws(new NotFoundException(KEY));
             
             Assert.Throws<NotFoundException>(() => _repository.Get(KEY));
@@ -101,7 +103,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_Update_NonExisting_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertItemIsFound(KEY, It.IsAny<Func<bool>>()))
+            _repositoryAsserterMock.Setup(library => library.AssertFound(KEY, It.IsAny<Func<bool>>()))
                 .Throws(new NotFoundException(KEY));
             
             Assert.Throws<NotFoundException>(() => _repository.Update(KEY, VALUE));
@@ -110,7 +112,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_Update_NullValue_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertObjectNotNull(null))
+            _repositoryAsserterMock.Setup(library => library.AssertFound(KEY, It.IsAny<Func<bool>>()))
                 .Throws<ArgumentNullException>();
             
             Assert.Throws<ArgumentNullException>(() => _repository.Update(KEY, null));

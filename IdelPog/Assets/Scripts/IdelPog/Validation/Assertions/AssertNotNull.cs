@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Validation.Assertions
 {
-    public class AssertNotNull : BaseAssertion, IAssertNotNull
+    public class AssertNotNull : BaseAssertion<ArgumentNullException>, IAssertNotNull
     {
         public AssertNotNull(IHandler handler) : base(handler) { }
 

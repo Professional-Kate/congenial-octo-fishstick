@@ -5,7 +5,7 @@ using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Validation.Assertions
 {
-    public class AssertUnderMaxLevel : BaseAssertion, IAssertUnderMaxLevel
+    public class AssertUnderMaxLevel : BaseAssertion<MaxLevelException>, IAssertUnderMaxLevel
     {
         public AssertUnderMaxLevel(IHandler handler) : base(handler) { }
 

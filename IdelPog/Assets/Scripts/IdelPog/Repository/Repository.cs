@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using IdelPog.Validation.Pipelines.Interfaces;
+using UnityEngine;
 
 namespace IdelPog.Repository
 {
@@ -22,8 +23,9 @@ namespace IdelPog.Repository
         
         public void Add(TID key, T value)
         {
-            _repositoryAsserter.AssertObjectNotNull(value);
+            Debug.Log("BEFRE THROW");
             _repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
+            Debug.Log("AFTER THROW");
             
             _repository.Add(key, value);
             OnAdd?.Invoke(key.GetHashCode(), value);
@@ -51,7 +53,6 @@ namespace IdelPog.Repository
 
         public void Update(TID key, T value)
         {
-            _repositoryAsserter.AssertObjectNotNull(value);
             AssertKeyExists(key);
             
             T original  = _repository[key];
@@ -75,7 +76,7 @@ namespace IdelPog.Repository
         /// <param name="key">The key you want to check if it's in the Repository</param>
         private void AssertKeyExists(TID key)
         {
-            _repositoryAsserter.AssertItemIsFound(key, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
         }
     }
 }
