@@ -2,7 +2,7 @@
 using IdelPog.Constants;
 using IdelPog.Model;
 
-namespace IdelPog.Validation.Assertions.Interfaces
+namespace IdelPog.Validation.Pipelines.Interfaces
 {
     /// <seealso cref="AssertLevelable"/>
     public interface ILevelableAsserter

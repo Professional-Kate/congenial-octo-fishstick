@@ -10,6 +10,8 @@ using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Handlers;
 using IdelPog.Validation.Handlers.Interfaces;
 using IdelPog.Validation.Interfaces;
+using IdelPog.Validation.Pipelines;
+using IdelPog.Validation.Pipelines.Interfaces;
 
 namespace IdelPog.Orchestration
 {
@@ -25,14 +27,16 @@ namespace IdelPog.Orchestration
             IAssertUnderMaxLevel assertUnderMaxLevel = new AssertUnderMaxLevel(handler);
             IAssertPositive assertPositive = new AssertPositive(handler);
             IAssertNotNull assertNotNull = new AssertNotNull(handler);
+            IAssertFound assertFound = new AssertFound(handler);
+            IAssertUniqueItem assertUniqueItem = new AssertUniqueItem(handler);
 
             ILevelableAsserter levelableAsserter = new LevelableAsserter(assertUnderMaxLevel, assertNotNull, assertPositive);
             
             _experienceService = new ExperienceService(levelableAsserter);
             _levelService = new LevelService(assertUnderMaxLevel);
-            
-            IAssertFound assertFound = new AssertFound(handler);
-            _repository = new Repository<JobType, Job>(assertFound, assertNotNull);
+
+            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertUniqueItem);
+            _repository = new Repository<JobType, Job>(repositoryAsserter);
         }
         
         public JobMediator(IExperienceService experienceService, ILevelService levelService, IRepository<JobType, Job> repository)

@@ -3,7 +3,7 @@ using IdelPog.Constants;
 using IdelPog.Model;
 using IdelPog.Service;
 using IdelPog.Validation;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Pipelines.Interfaces;
 using Moq;
 using NUnit.Framework;
 using Tests.Utils;

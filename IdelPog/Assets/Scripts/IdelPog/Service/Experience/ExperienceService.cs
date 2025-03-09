@@ -1,5 +1,5 @@
 ﻿using IdelPog.Model;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Pipelines.Interfaces;
 
 namespace IdelPog.Service
 {
