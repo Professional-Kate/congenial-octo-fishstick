@@ -25,7 +25,7 @@ namespace IdelPog.Orchestration
             _currencyService = new CurrencyService();
 
             IAssertFound assertFound = new AssertFound(new ThrowHandler());
-            _repository = new Repository<CurrencyType, Currency>(assertFound);
+            // _repository = new Repository<CurrencyType, Currency>(assertFound);
         }
         
         public CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Currency> repository, IAssertPositive assert)

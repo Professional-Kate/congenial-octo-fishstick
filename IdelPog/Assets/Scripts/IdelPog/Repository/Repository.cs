@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Interfaces;
 
 namespace IdelPog.Repository
@@ -8,6 +9,7 @@ namespace IdelPog.Repository
     {
         private readonly Dictionary<TID, T> _repository = new();
         private readonly IAssertFound _assertFound;
+        private readonly IAssertNotNull _assertNotNull;
        
         public event Action<int, T> OnAdd;
         public event Action<int, T> OnRemove;
@@ -15,18 +17,15 @@ namespace IdelPog.Repository
         public event Action<T, T> OnUpdate;
         public event Action<int, bool> OnContains;
 
-        public Repository(IAssertFound assertFound)
+        public Repository(IAssertFound assertFound, IAssertNotNull assertNotNull)
         {
             _assertFound = assertFound;
+            _assertNotNull = assertNotNull;
         }
         
         public void Add(TID key, T value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException();
-            }
-            
+            _assertNotNull.AssertObjectNotNull(value);
             AssertKeyDoesNotExist(key);
             
             _repository.Add(key, value);
@@ -55,12 +54,9 @@ namespace IdelPog.Repository
 
         public void Update(TID key, T value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException();
-            }
-            
+            _assertNotNull.AssertObjectNotNull(value);
             AssertKeyExists(key);
+            
             T original  = _repository[key];
             
             _repository[key] = value;

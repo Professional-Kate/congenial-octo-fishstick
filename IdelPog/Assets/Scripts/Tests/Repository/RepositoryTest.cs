@@ -1,6 +1,7 @@
 ﻿using System;
 using IdelPog.Repository;
 using IdelPog.Validation;
+using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Interfaces;
 using Moq;
 using NUnit.Framework;
@@ -12,6 +13,7 @@ namespace Tests.Repository
     {
         private IRepository<int, string> _repository;
         private Mock<IAssertFound> _assertNotFound;
+        private Mock<IAssertNotNull> _assertNotNull;
 
         private const string VALUE = "TEST STRING";
         private const int KEY = 1;
@@ -20,7 +22,9 @@ namespace Tests.Repository
         public void Setup()
         {
             _assertNotFound = new Mock<IAssertFound>();
-            _repository = new Repository<int, string>(_assertNotFound.Object);
+            _assertNotNull = new Mock<IAssertNotNull>();
+            
+            _repository = new Repository<int, string>(_assertNotFound.Object, _assertNotNull.Object);
         }
 
         private void VerifyAssertFoundCalled(bool itemFound)
@@ -48,6 +52,9 @@ namespace Tests.Repository
         [Test]
         public void Negative_Add_NullValue_Throws()
         {
+            _assertNotNull.Setup(library => library.AssertObjectNotNull(null))
+                .Throws<ArgumentNullException>();
+            
             Assert.Throws<ArgumentNullException>(() => _repository.Add(KEY, null));
         }
 
@@ -115,6 +122,9 @@ namespace Tests.Repository
         [Test]
         public void Negative_Update_NullValue_Throws()
         {
+            _assertNotNull.Setup(library => library.AssertObjectNotNull(null))
+                .Throws<ArgumentNullException>();
+            
             Assert.Throws<ArgumentNullException>(() => _repository.Update(KEY, null));
         }
 

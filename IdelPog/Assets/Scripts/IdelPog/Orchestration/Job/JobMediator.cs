@@ -31,8 +31,8 @@ namespace IdelPog.Orchestration
             _experienceService = new ExperienceService(levelableAsserter);
             _levelService = new LevelService(assertUnderMaxLevel);
             
-            IAssertFound assertFound = new AssertFound(new ThrowHandler());
-            _repository = new Repository<JobType, Job>(assertFound);
+            IAssertFound assertFound = new AssertFound(handler);
+            _repository = new Repository<JobType, Job>(assertFound, assertNotNull);
         }
         
         public JobMediator(IExperienceService experienceService, ILevelService levelService, IRepository<JobType, Job> repository)

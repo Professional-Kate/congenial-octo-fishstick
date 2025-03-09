@@ -18,7 +18,7 @@ namespace IdelPog.Repository
         public Inventory()
         {
             IAssertFound assertFound = new AssertFound(new ThrowHandler());
-            _repository = new Repository<InventoryID, Item>(assertFound);
+            // _repository = new Repository<InventoryID, Item>(assertFound);
         }
 
         public Inventory(IRepository<InventoryID, Item> repository, IAssertFound assertFound, IAssertPositive assertPositive)
