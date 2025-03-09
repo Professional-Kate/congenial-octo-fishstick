@@ -29,9 +29,9 @@ namespace IdelPog.Validation.Pipelines
             _assertUniqueItem.AssertUnique(context, alreadyContains);
         }
 
-        public void AssertItemIsFound(bool itemIsFound, object key)
+        public void AssertItemIsFound(object key, Func<bool> itemNotFound)
         {
-            _assertFound.AssertItemIsFound(itemIsFound, key);
+            _assertFound.AssertItemIsFound(key, itemNotFound);
         }
     }
 }

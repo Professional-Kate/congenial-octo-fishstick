@@ -4,6 +4,8 @@ using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Models.Item;
 using IdelPog.Validation;
+using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Exceptions;
 using IdelPog.Validation.Interfaces;
 using Moq;
 using NUnit.Framework;
@@ -18,6 +20,7 @@ namespace Tests.Repository
         private Mock<IRepository<InventoryID, Item>> _repositoryMock { get; set; }
         private Mock<IAssertPositive> _assertPositiveMock { get; set; }
         private Mock<IAssertFound> _assertFoundMock { get; set; }
+        private Mock<IAssertUniqueItem> _assertUniqueItemMock { get; set; }
 
         private Item _oakWoodItem { get; set; }
 
@@ -25,7 +28,6 @@ namespace Tests.Repository
         public void OneTimeSetUp()
         {
             _oakWoodItem = ItemFactory.CreateOakWood();
-            _oakWoodItem.AddAmount(1);
             SetupMock();
         }
 
@@ -33,7 +35,6 @@ namespace Tests.Repository
         public void TearDown()
         {
             _oakWoodItem = ItemFactory.CreateOakWood();
-            _oakWoodItem.AddAmount(1);
             SetupMock();
         }
 
@@ -43,7 +44,8 @@ namespace Tests.Repository
             
             _assertPositiveMock = new Mock<IAssertPositive>();
             _assertFoundMock = new Mock<IAssertFound>();
-            _inventory = new Inventory(_repositoryMock.Object, _assertFoundMock.Object,_assertPositiveMock.Object);
+            _assertUniqueItemMock = new Mock<IAssertUniqueItem>();
+            _inventory = new Inventory(_repositoryMock.Object, _assertFoundMock.Object,_assertPositiveMock.Object, _assertUniqueItemMock.Object);
             
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
@@ -54,7 +56,7 @@ namespace Tests.Repository
 
         private void ModifyAmountTestRunner(int amount, ActionType action)
         {
-            int finalAmount = 1;
+            int finalAmount = 0;
             
             switch (action)
             {
@@ -74,7 +76,6 @@ namespace Tests.Repository
             
             _repositoryMock.Verify(library => library.Update(_oakWoodItem.ID, _oakWoodItem));
             _repositoryMock.Verify(library => library.Remove(_oakWoodItem.ID), Times.Never());
-            _repositoryMock.Verify(library => library.Contains(_oakWoodItem.ID));
         }
 
         [TestCase(1)]
@@ -120,6 +121,7 @@ namespace Tests.Repository
         [Test]
         public void Positive_RemoveAmount_RemovesItem()
         {
+            _oakWoodItem.AddAmount(1);
             _inventory.RemoveAmount(_oakWoodItem.ID, 1);
             
             // The Item will be left with zero amount. Which means, we need to remove it from the Repository
@@ -139,7 +141,10 @@ namespace Tests.Repository
         [Test]
         public void Negative_RemoveAmount_AmountUnderZero_Throws()
         {
-            Assert.Throws<ArgumentException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
+            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(10))
+                .Throws(new NegativeNumberException(10));
+            
+            Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
         }
         
         [TestCase(-1)]
@@ -160,7 +165,6 @@ namespace Tests.Repository
             _inventory.AddItem(_oakWoodItem);
 
             _repositoryMock.Verify(library => library.Add(_oakWoodItem.ID, It.IsAny<Item>()));
-            _repositoryMock.Verify(library => library.Contains(_oakWoodItem.ID));
         }
 
         [Test]
@@ -176,19 +180,19 @@ namespace Tests.Repository
                 .Callback<InventoryID, Item>((id, item) =>
                 {
                     Assert.AreEqual(_oakWoodItem.ID, id);
-                    Assert.AreEqual(amount + 1, item.Amount);
+                    Assert.AreEqual(amount, item.Amount);
                 });
             
             _inventory.AddItem(_oakWoodItem);
-            _repositoryMock.Verify(library => library.Contains(_oakWoodItem.ID));
         }
 
         [Test]
         public void Negative_AddItem_ItemExists_Throws()
         {
-            _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
+            _assertUniqueItemMock.Setup(library => library.AssertUnique(_oakWoodItem, It.IsAny<Func<bool>>()))
+                .Throws(new DuplicateItemException(_oakWoodItem));
             
-            Assert.Throws<ArgumentException>(() => _inventory.AddItem(_oakWoodItem));
+            Assert.Throws<DuplicateItemException>(() => _inventory.AddItem(_oakWoodItem));
         }
 
         [TestCase(-1)]

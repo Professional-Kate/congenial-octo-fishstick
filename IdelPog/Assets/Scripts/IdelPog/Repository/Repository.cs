@@ -75,7 +75,7 @@ namespace IdelPog.Repository
         /// <param name="key">The key you want to check if it's in the Repository</param>
         private void AssertKeyExists(TID key)
         {
-            _repositoryAsserter.AssertItemIsFound(_repository.ContainsKey(key), key);
+            _repositoryAsserter.AssertItemIsFound(key, () => _repository.ContainsKey(key));
         }
     }
 }

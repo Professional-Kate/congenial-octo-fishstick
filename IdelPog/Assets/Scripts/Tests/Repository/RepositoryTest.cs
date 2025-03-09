@@ -62,7 +62,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_Remove_NonExisting_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertItemIsFound(false, KEY))
+            _repositoryAsserterMock.Setup(library => library.AssertItemIsFound(KEY, It.IsAny<Func<bool>>()))
                 .Throws(new NotFoundException(KEY));
             
             Assert.Throws<NotFoundException>(() => _repository.Remove(KEY));
@@ -80,7 +80,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_Get_NonExisting_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertItemIsFound(false, KEY))
+            _repositoryAsserterMock.Setup(library => library.AssertItemIsFound(KEY, It.IsAny<Func<bool>>()))
                 .Throws(new NotFoundException(KEY));
             
             Assert.Throws<NotFoundException>(() => _repository.Get(KEY));
@@ -101,7 +101,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_Update_NonExisting_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertItemIsFound(false, KEY))
+            _repositoryAsserterMock.Setup(library => library.AssertItemIsFound(KEY, It.IsAny<Func<bool>>()))
                 .Throws(new NotFoundException(KEY));
             
             Assert.Throws<NotFoundException>(() => _repository.Update(KEY, VALUE));

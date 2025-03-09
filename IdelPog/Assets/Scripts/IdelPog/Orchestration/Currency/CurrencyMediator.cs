@@ -6,6 +6,7 @@ using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Validation;
+using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Handlers;
 using IdelPog.Validation.Interfaces;
 

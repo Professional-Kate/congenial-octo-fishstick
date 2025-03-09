@@ -1,7 +1,9 @@
-﻿namespace IdelPog.Validation.Interfaces
+﻿using System;
+
+namespace IdelPog.Validation.Interfaces
 {
     public interface IAssertFound
     {
-        public void AssertItemIsFound(bool itemIsFound, object key);
+        public void AssertItemIsFound(object key, Func<bool> itemNotFound);
     }
 }

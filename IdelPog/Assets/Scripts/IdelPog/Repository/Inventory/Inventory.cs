@@ -1,7 +1,5 @@
-﻿using System;
-using IdelPog.Structures.Models.Item;
-using IdelPog.Validation;
-using IdelPog.Validation.Handlers;
+﻿using IdelPog.Structures.Models.Item;
+using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Interfaces;
 
 namespace IdelPog.Repository
@@ -14,18 +12,20 @@ namespace IdelPog.Repository
         private readonly IRepository<InventoryID, Item> _repository;
         private readonly IAssertFound _assertFound;
         private readonly IAssertPositive _assertPositive;
+        private readonly IAssertUniqueItem _assertUniqueItem;
         
         public Inventory()
         {
-            IAssertFound assertFound = new AssertFound(new ThrowHandler());
+            // IAssertFound assertFound = new AssertFound(new ThrowHandler());
             // _repository = new Repository<InventoryID, Item>(assertFound);
         }
 
-        public Inventory(IRepository<InventoryID, Item> repository, IAssertFound assertFound, IAssertPositive assertPositive)
+        public Inventory(IRepository<InventoryID, Item> repository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertUniqueItem assertUniqueItem)
         {
             _repository = repository;
             _assertFound = assertFound;
             _assertPositive = assertPositive;
+            _assertUniqueItem = assertUniqueItem;
         }
 
         public void AddAmount(InventoryID id, int amount)
@@ -45,14 +45,9 @@ namespace IdelPog.Repository
             AssertItemExists(id);
 
             Item item = RepositoryGet(id);
-
             int itemAmount = item.Amount;
-
-            if (itemAmount < amount)
-            {
-                throw new ArgumentException($"Error! Cannot remove amount : '{amount}', item's amount is too low: {item.Amount}.");
-            }
-
+            
+           AssertAmountIsPositive(itemAmount - amount);
             if (itemAmount - amount == 0)
             {
                 _repository.Remove(item.ID);
@@ -66,11 +61,7 @@ namespace IdelPog.Repository
         public void AddItem(Item item)
         {
             AssertAmountIsPositive(item.Amount);
-
-            if (_repository.Contains(item.ID))
-            {
-                throw new ArgumentException($"Error! Passed ID {item.ID} already exists! Cannot AddItem!");
-            }
+            _assertUniqueItem.AssertUnique(item, () => Contains(item.ID));
 
             _repository.Add(item.ID, item);
         }
@@ -95,7 +86,7 @@ namespace IdelPog.Repository
         /// <param name="id">The id you want to check</param>
         private void AssertItemExists(InventoryID id)
         {
-            _assertFound.AssertItemIsFound(Contains(id), id);
+            _assertFound.AssertItemIsFound(id, () => Contains(id));
         } 
 
         private Item RepositoryGet(InventoryID id)
