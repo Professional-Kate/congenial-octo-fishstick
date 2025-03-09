@@ -2,6 +2,10 @@
 using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Validation;
+using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Exceptions;
+using IdelPog.Validation.Interfaces;
+using Moq;
 using NUnit.Framework;
 
 namespace Tests.Service
@@ -10,6 +14,8 @@ namespace Tests.Service
     public class MapperTest
     {
         private Mapper<int> _informationMapper { get; set; }
+        private Mock<IAssertFound> _assertFoundMock { get; set; }
+        private Mock<IAssertUniqueItem> _assertUniqueMock { get; set; }
 
         private readonly Information _informationOne = Information.Create("TEST", "TESTING");
         private readonly Information _informationTwo = Information.Create("HELLO", "WORLD");
@@ -17,7 +23,10 @@ namespace Tests.Service
         [SetUp]
         public void Setup()
         {
-            _informationMapper = new Mapper<int>();
+            _assertFoundMock = new Mock<IAssertFound>();
+            _assertUniqueMock = new Mock<IAssertUniqueItem>();
+            
+            _informationMapper = new Mapper<int>(_assertFoundMock.Object, _assertUniqueMock.Object);
             _informationMapper.AddInformation(1, _informationOne);
             _informationMapper.AddInformation(2, _informationTwo);
         }
@@ -35,7 +44,12 @@ namespace Tests.Service
         [Test]
         public void Negative_GetInformation_NotFound_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _informationMapper.GetInformation(-1));
+            const int badId = -1;
+            
+            _assertFoundMock.Setup(library => library.AssertItemIsFound(badId, It.IsAny<Func<bool>>()))
+                .Throws(new NotFoundException(badId));
+            
+            Assert.Throws<NotFoundException>(() => _informationMapper.GetInformation(badId));
         }
 
         [Test]
@@ -54,7 +68,10 @@ namespace Tests.Service
         [Test]
         public void Negative_AddInformation_KeyAlreadyExists_Throws()
         {
-            Assert.Throws<ArgumentException>(() => _informationMapper.AddInformation(1, _informationOne));
+            _assertUniqueMock.Setup(library => library.AssertUnique(1, It.IsAny<Func<bool>>()))
+                .Throws(new DuplicateItemException(1));
+            
+            Assert.Throws<DuplicateItemException>(() => _informationMapper.AddInformation(1, _informationOne));
         }
     }
 }

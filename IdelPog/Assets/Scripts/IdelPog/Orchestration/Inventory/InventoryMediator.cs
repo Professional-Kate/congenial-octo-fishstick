@@ -19,7 +19,7 @@ namespace IdelPog.Orchestration
         {
             _inventory = new Inventory();
             _itemFactory = new ItemFactory();
-            _mapper = new Mapper<InventoryID>();
+            // _mapper = new Mapper<InventoryID>();
         }
         
         public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IMapper<InventoryID> mapper)
