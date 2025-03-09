@@ -5,11 +5,11 @@ using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.Validation.Assertions
 {
-    public class AssertUniqueItem : BaseAssertion<DuplicateItemException>, IAssertUniqueItem
+    public class AssertNonDuplicate : BaseAssertion<DuplicateItemException>, IAssertNonDuplicate
     {
-        public AssertUniqueItem(IHandler handler) : base(handler) { }
+        public AssertNonDuplicate(IHandler handler) : base(handler) { }
 
-        public void AssertUnique(object context, Func<bool> alreadyContains)
+        public void AssertContains(object context, Func<bool> alreadyContains)
         {
             Assert(() =>
             {

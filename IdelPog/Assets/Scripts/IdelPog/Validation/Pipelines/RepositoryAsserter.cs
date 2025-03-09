@@ -9,19 +9,19 @@ namespace IdelPog.Validation.Pipelines
     {
         private readonly IAssertFound _assertFound;
         private readonly IAssertNotNull _assertNotNull;
-        private readonly IAssertUniqueItem _assertUniqueItem;
+        private readonly IAssertNonDuplicate _assertNonDuplicate;
         
-        public RepositoryAsserter(IAssertFound assertFound, IAssertNotNull assertNotNull, IAssertUniqueItem assertUniqueItem)
+        public RepositoryAsserter(IAssertFound assertFound, IAssertNotNull assertNotNull, IAssertNonDuplicate assertNonDuplicate)
         {
             _assertFound = assertFound;
             _assertNotNull = assertNotNull;
-            _assertUniqueItem = assertUniqueItem;
+            _assertNonDuplicate = assertNonDuplicate;
         }
 
         public void AssertUnique(object context, Func<bool> alreadyExists)
         {
             _assertNotNull.AssertObjectNotNull(context);
-            _assertUniqueItem.AssertUnique(context, alreadyExists);
+            _assertNonDuplicate.AssertContains(context, alreadyExists);
         }
 
         public void AssertFound(object context, Func<bool> notFound)

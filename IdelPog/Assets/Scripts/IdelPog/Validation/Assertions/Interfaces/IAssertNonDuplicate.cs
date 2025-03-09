@@ -2,14 +2,14 @@
 
 namespace IdelPog.Validation.Assertions.Interfaces
 {
-    /// <seealso cref="AssertUnique"/>
-    public interface IAssertUniqueItem
+    /// <seealso cref="AssertContains"/>
+    public interface IAssertNonDuplicate
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="context"></param>
         /// <param name="alreadyContains"></param>
-        public void AssertUnique(object context, Func<bool> alreadyContains);
+        public void AssertContains(object context, Func<bool> alreadyContains);
     }
 }

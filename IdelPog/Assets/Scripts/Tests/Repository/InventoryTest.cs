@@ -19,7 +19,7 @@ namespace Tests.Repository
         private Mock<IRepository<InventoryID, Item>> _repositoryMock { get; set; }
         private Mock<IAssertPositive> _assertPositiveMock { get; set; }
         private Mock<IAssertFound> _assertFoundMock { get; set; }
-        private Mock<IAssertUniqueItem> _assertUniqueItemMock { get; set; }
+        private Mock<IAssertNonDuplicate> _assertUniqueItemMock { get; set; }
 
         private Item _oakWoodItem { get; set; }
 
@@ -43,7 +43,7 @@ namespace Tests.Repository
             
             _assertPositiveMock = new Mock<IAssertPositive>();
             _assertFoundMock = new Mock<IAssertFound>();
-            _assertUniqueItemMock = new Mock<IAssertUniqueItem>();
+            _assertUniqueItemMock = new Mock<IAssertNonDuplicate>();
             _inventory = new Inventory(_repositoryMock.Object, _assertFoundMock.Object,_assertPositiveMock.Object, _assertUniqueItemMock.Object);
             
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
@@ -188,7 +188,7 @@ namespace Tests.Repository
         [Test]
         public void Negative_AddItem_ItemExists_Throws()
         {
-            _assertUniqueItemMock.Setup(library => library.AssertUnique(_oakWoodItem, It.IsAny<Func<bool>>()))
+            _assertUniqueItemMock.Setup(library => library.AssertContains(_oakWoodItem, It.IsAny<Func<bool>>()))
                 .Throws(new DuplicateItemException(_oakWoodItem));
             
             Assert.Throws<DuplicateItemException>(() => _inventory.AddItem(_oakWoodItem));

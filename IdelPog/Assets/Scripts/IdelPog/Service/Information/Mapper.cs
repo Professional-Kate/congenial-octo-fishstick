@@ -8,9 +8,9 @@ namespace IdelPog.Service
     {
         private readonly Dictionary<T, Information> _information = new();
         private readonly IAssertFound _assertFound;
-        private readonly IAssertUniqueItem _assertUnique;
+        private readonly IAssertNonDuplicate _assertUnique;
 
-        public Mapper(IAssertFound assertFound, IAssertUniqueItem assertUnique)
+        public Mapper(IAssertFound assertFound, IAssertNonDuplicate assertUnique)
         {
             _assertFound = assertFound;
             _assertUnique = assertUnique;
@@ -26,7 +26,7 @@ namespace IdelPog.Service
 
         public void AddInformation(T key, Information information)
         {
-            _assertUnique.AssertUnique(key, () => _information.ContainsKey(key));
+            _assertUnique.AssertContains(key, () => _information.ContainsKey(key));
             
             _information.Add(key, information);
         }

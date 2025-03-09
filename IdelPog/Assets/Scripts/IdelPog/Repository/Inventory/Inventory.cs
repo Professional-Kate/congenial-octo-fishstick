@@ -11,7 +11,7 @@ namespace IdelPog.Repository
         private readonly IRepository<InventoryID, Item> _repository;
         private readonly IAssertFound _assertFound;
         private readonly IAssertPositive _assertPositive;
-        private readonly IAssertUniqueItem _assertUniqueItem;
+        private readonly IAssertNonDuplicate _assertNonDuplicate;
         
         public Inventory()
         {
@@ -19,12 +19,12 @@ namespace IdelPog.Repository
             // _repository = new Repository<InventoryID, Item>(assertFound);
         }
 
-        public Inventory(IRepository<InventoryID, Item> repository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertUniqueItem assertUniqueItem)
+        public Inventory(IRepository<InventoryID, Item> repository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertNonDuplicate assertNonDuplicate)
         {
             _repository = repository;
             _assertFound = assertFound;
             _assertPositive = assertPositive;
-            _assertUniqueItem = assertUniqueItem;
+            _assertNonDuplicate = assertNonDuplicate;
         }
 
         public void AddAmount(InventoryID id, int amount)
@@ -60,7 +60,7 @@ namespace IdelPog.Repository
         public void AddItem(Item item)
         {
             AssertAmountIsPositive(item.Amount);
-            _assertUniqueItem.AssertUnique(item, () => Contains(item.ID));
+            _assertNonDuplicate.AssertContains(item, () => Contains(item.ID));
 
             _repository.Add(item.ID, item);
         }

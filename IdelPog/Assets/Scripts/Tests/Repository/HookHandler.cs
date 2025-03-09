@@ -22,7 +22,7 @@ namespace Tests.Repository
         public void SetUp()
         {
             IHandler handler = new ThrowHandler();
-            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new AssertFound(handler), new AssertNotNull(handler), new AssertUniqueItem(handler));
+            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new AssertFound(handler), new AssertNotNull(handler), new AssertNonDuplicate(handler));
             TestRepository = new Repository<int, string>(repositoryAsserter);
             
             AddEventTriggered = false;

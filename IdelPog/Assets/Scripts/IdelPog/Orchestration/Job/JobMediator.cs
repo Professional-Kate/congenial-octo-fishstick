@@ -32,8 +32,8 @@ namespace IdelPog.Orchestration
             _levelService = new LevelService(levelableAsserter);
 
             IAssertFound assertFound = new AssertFound(handler);
-            IAssertUniqueItem assertUniqueItem = new AssertUniqueItem(handler);
-            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertUniqueItem);
+            IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(handler);
+            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
             
             _repository = new Repository<JobType, Job>(repositoryAsserter);
         }
