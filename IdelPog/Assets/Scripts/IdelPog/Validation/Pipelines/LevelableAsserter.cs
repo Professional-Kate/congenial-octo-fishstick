@@ -2,7 +2,7 @@
 using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Pipelines.Interfaces;
 
-namespace IdelPog.Validation.Assertions
+namespace IdelPog.Validation.Pipelines
 {
     /// <inheritdoc cref="ILevelableAsserter"/>
     public class LevelableAsserter : ILevelableAsserter
