@@ -3,7 +3,7 @@ using IdelPog.Constants;
 using IdelPog.Model;
 using IdelPog.Service;
 using IdelPog.Validation;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Pipelines.Interfaces;
 using Moq;
 using NUnit.Framework;
 using Tests.Utils;
@@ -15,16 +15,16 @@ namespace Tests.Service
     public class LevelServiceTest
     {
         private ILevelService _service { get; set; }
-        private Mock<IAssertUnderMaxLevel> _assertUnderMaxLevel { get; set; }
+        private Mock<ILevelableAsserter> _levelableAsserterMock { get; set; }
 
         private Job _farmingJob { get; set; }
         
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _assertUnderMaxLevel = new Mock<IAssertUnderMaxLevel>();
+            _levelableAsserterMock = new Mock<ILevelableAsserter>(); 
             
-            _service = new LevelService(_assertUnderMaxLevel.Object);
+            _service = new LevelService(_levelableAsserterMock.Object);
         }
 
         [SetUp]
@@ -94,13 +94,16 @@ namespace Tests.Service
         [Test]
         public void Negative_LevelUpJob_NullJob_Throws()
         {
+            _levelableAsserterMock.Setup(library => library.AssertLevelable(null))
+                .Throws<ArgumentNullException>();
+            
             Assert.Throws<ArgumentNullException>(() => _service.LevelUpJob(null));
         }
 
         [Test]
         public void Negative_LeveUpJob_MaxLevel_Throws()
         {
-            _assertUnderMaxLevel.Setup(library => library.AssertLevelIsUnderMax(_farmingJob))
+            _levelableAsserterMock.Setup(library => library.AssertLevelable(_farmingJob))
                 .Throws(new MaxLevelException(_farmingJob.Level));
             
             _farmingJob.Setup(100, 100, 10, 1);

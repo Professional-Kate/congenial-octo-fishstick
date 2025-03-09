@@ -1,26 +1,21 @@
 ﻿using System;
 using IdelPog.Model;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Pipelines.Interfaces;
 
 namespace IdelPog.Service
 {
     public class LevelService : ILevelService   
     {
-        private readonly IAssertUnderMaxLevel _assertUnderMaxLevel;
-
-        public LevelService(IAssertUnderMaxLevel assertUnderMaxLevel)
+        private readonly ILevelableAsserter _levelableAsserter;
+        
+        public LevelService(ILevelableAsserter levelableAsserter)
         {
-            _assertUnderMaxLevel = assertUnderMaxLevel;
+            _levelableAsserter = levelableAsserter;
         }
         
         public void LevelUpJob(Job job)
         {
-            if (job == null)
-            {
-                throw new ArgumentNullException(nameof(job));
-            }
-
-            _assertUnderMaxLevel.AssertLevelIsUnderMax(job);
+            _levelableAsserter.AssertLevelable(job);
 
             int total = 0;
             for (int i = 1; i < job.Level; i++)

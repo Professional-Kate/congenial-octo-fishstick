@@ -24,18 +24,19 @@ namespace IdelPog.Orchestration
         public JobMediator()
         {
             IHandler handler = new ThrowHandler();
+            
             IAssertUnderMaxLevel assertUnderMaxLevel = new AssertUnderMaxLevel(handler);
-            IAssertPositive assertPositive = new AssertPositive(handler);
             IAssertNotNull assertNotNull = new AssertNotNull(handler);
-            IAssertFound assertFound = new AssertFound(handler);
-            IAssertUniqueItem assertUniqueItem = new AssertUniqueItem(handler);
-
+            IAssertPositive assertPositive = new AssertPositive(handler);
             ILevelableAsserter levelableAsserter = new LevelableAsserter(assertUnderMaxLevel, assertNotNull, assertPositive);
             
             _experienceService = new ExperienceService(levelableAsserter);
-            _levelService = new LevelService(assertUnderMaxLevel);
+            _levelService = new LevelService(levelableAsserter);
 
+            IAssertFound assertFound = new AssertFound(handler);
+            IAssertUniqueItem assertUniqueItem = new AssertUniqueItem(handler);
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertUniqueItem);
+            
             _repository = new Repository<JobType, Job>(repositoryAsserter);
         }
         
