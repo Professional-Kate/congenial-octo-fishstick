@@ -8,7 +8,7 @@ namespace IdelPog.Controller
     /// The main control object for Currency. Using this class you can Update any Currency.
     /// </summary>
     /// <seealso cref="UpdateCurrency"/>
-    public class CurrencyController : Singleton<CurrencyController>, ICurrencyController
+    public class CurrencyController : ICurrencyController
     {
         protected ICurrencyMediator CurrencyService = new CurrencyMediator();
         

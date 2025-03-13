@@ -1,5 +1,4 @@
 ﻿using IdelPog.Orchestration;
-using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Models.Item;
 
@@ -9,7 +8,7 @@ namespace IdelPog.Controller
     /// The main control object for Item models
     /// </summary>
     /// <seealso cref="ModifyItem"/>
-    public class ItemController : Singleton<ItemController>, IItemController
+    public class ItemController : IItemController
     {
         protected IInventoryMediator InventoryMediator = new InventoryMediator();
         

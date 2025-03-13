@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace IdelPog.Controller
 {
-    public class JobController : Singleton<JobController>, IJobController
+    public class JobController : IJobController
     {
         protected IJobMediator Mediator = new JobMediator();
         
