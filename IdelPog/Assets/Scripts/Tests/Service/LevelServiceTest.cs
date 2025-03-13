@@ -1,10 +1,9 @@
 ﻿using System;
 using IdelPog.Constants;
 using IdelPog.Exceptions;
-using IdelPog.Model;
-using IdelPog.Service;
+using IdelPog.Service.Level;
+using IdelPog.Structures.Models.Levelable;
 using NUnit.Framework;
-using Tests.Utils;
 using UnityEngine;
 
 namespace Tests.Service
@@ -13,7 +12,7 @@ namespace Tests.Service
     public class LevelServiceTest
     {
         private ILevelService _service { get; set; }
-        private Job _farmingJob { get; set; }
+        private ILevelable _farmingJob { get; set; }
         
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -24,7 +23,7 @@ namespace Tests.Service
         [SetUp]
         public void SetUp()
         {
-            _farmingJob = JobFactory.CreateFarming();
+            _farmingJob = new Levelable(0, 0, 10000, 0);
         }
 
         [Test]
@@ -38,7 +37,7 @@ namespace Tests.Service
         [Test]
         public void Positive_CanJobLevel_ReturnsTrue()
         {
-            _farmingJob.Setup(1, 100, 10, 1);
+            _farmingJob = new Levelable(1, 100, 10, 1);
 
             bool canJobLevel = _service.CanJobLevel(_farmingJob);
             Assert.IsTrue(canJobLevel);
@@ -47,7 +46,7 @@ namespace Tests.Service
         [Test]
         public void Positive_CanJobLevel_ReturnsFalse()
         {
-            _farmingJob.Setup(1, 5, 10, 1);
+            _farmingJob = new Levelable(1, 5, 10, 1);
 
             bool canJobLevel = _service.CanJobLevel(_farmingJob);
             Assert.IsFalse(canJobLevel);
@@ -71,11 +70,11 @@ namespace Tests.Service
         [Test]
         public void Positive_JobCanLevelToMax()
         {
-            _farmingJob.Setup(1, 0, 83, 1);
+            _farmingJob = new Levelable(1, 0, 83, 1);
 
             for (int i = 1; i < JobConstants.MAX_JOB_LEVEL; i++)
             {
-                _farmingJob.AddExperience(_farmingJob.NextLevelExperience); // this is here to sum the total experience
+                _farmingJob.SetExperience(_farmingJob.NextLevelExperience + _farmingJob.Experience); // this is here to sum the total experience
                 
                 _service.LevelUpJob(_farmingJob);
                 
@@ -94,7 +93,7 @@ namespace Tests.Service
         [Test]
         public void Negative_LeveUpJob_MaxLevel_Throws()
         {
-            _farmingJob.Setup(100, 100, 10, 1);
+            _farmingJob = new Levelable(100, 100, 10, 1);
             Assert.Throws<MaxLevelException>(() => _service.LevelUpJob(_farmingJob));
         }
     }
