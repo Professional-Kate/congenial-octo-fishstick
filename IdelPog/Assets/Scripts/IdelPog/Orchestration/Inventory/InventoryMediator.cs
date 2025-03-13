@@ -15,13 +15,6 @@ namespace IdelPog.Orchestration
         private readonly IItemFactory _itemFactory;
         private readonly IMapper<InventoryID> _mapper;
         
-        public InventoryMediator()
-        {
-            _inventory = new Inventory();
-            _itemFactory = new ItemFactory();
-            _mapper = new Mapper<InventoryID>();
-        }
-        
         public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IMapper<InventoryID> mapper)
         {
             _inventory = inventory;

@@ -15,13 +15,6 @@ namespace IdelPog.Orchestration
         private readonly ILevelService _levelService;
         private readonly IRepository<JobType, Job> _repository;
 
-        public JobMediator()
-        {
-            _experienceService = new ExperienceService();
-            _levelService = new LevelService();
-            _repository = new Repository<JobType, Job>();
-        }
-        
         public JobMediator(IExperienceService experienceService, ILevelService levelService, IRepository<JobType, Job> repository)
         {
             _experienceService = experienceService;
