@@ -10,17 +10,22 @@ namespace IdelPog.Controller
     /// <seealso cref="ModifyItem"/>
     public class ItemController : IItemController
     {
-        protected IInventoryMediator InventoryMediator = new InventoryMediator();
+        private readonly IInventoryMediator _inventoryMediator;
+
+        public ItemController(IInventoryMediator inventoryMediator)
+        {
+            _inventoryMediator = inventoryMediator;
+        }
         
         public void ModifyItem(InventoryID id, int amount, ActionType action)
         {
             switch (action)
             {
                 case ActionType.ADD:
-                    InventoryMediator.AddAmount(id, amount);
+                    _inventoryMediator.AddAmount(id, amount);
                     break;
                 case ActionType.REMOVE:
-                    InventoryMediator.RemoveAmount(id, amount);
+                    _inventoryMediator.RemoveAmount(id, amount);
                     break;
             }
         }

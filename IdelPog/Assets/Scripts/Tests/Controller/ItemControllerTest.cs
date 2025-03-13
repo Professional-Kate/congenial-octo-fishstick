@@ -1,4 +1,5 @@
-﻿using IdelPog.Orchestration;
+﻿using IdelPog.Controller;
+using IdelPog.Orchestration;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Models.Item;
@@ -10,7 +11,7 @@ namespace Tests.Controller
     [TestFixture]
     public class ItemControllerTest
     {
-        private TestableItemController _itemController { get; set; }
+        private IItemController _itemController { get; set; }
         private Mock<IInventoryMediator> _inventoryMediatorMock { get; set; }
 
         private const InventoryID ID = InventoryID.WILLOW_WOOD;
@@ -20,7 +21,7 @@ namespace Tests.Controller
         public void SetUp()
         {
             _inventoryMediatorMock = new Mock<IInventoryMediator>();
-            _itemController = new TestableItemController(_inventoryMediatorMock.Object);
+            _itemController = new ItemController(_inventoryMediatorMock.Object);
         }
 
         private void VerifyDependencyCalls(int addCalls, int removeCalls)
