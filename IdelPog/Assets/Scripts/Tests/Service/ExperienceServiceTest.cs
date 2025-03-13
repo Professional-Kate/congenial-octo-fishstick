@@ -1,10 +1,9 @@
 ﻿using System;
 using IdelPog.Constants;
 using IdelPog.Exceptions;
-using IdelPog.Model;
 using IdelPog.Service;
+using IdelPog.Structures.Models.Levelable;
 using NUnit.Framework;
-using Tests.Utils;
 
 namespace Tests.Service
 {
@@ -12,20 +11,18 @@ namespace Tests.Service
     public class ExperienceServiceTest
     {
         private IExperienceService _experienceService { get; set; }
-        private Job _miningJob { get; set; }
+        private ILevelable _levelable { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _miningJob = JobFactory.CreateMining();
             _experienceService = new ExperienceService();
         }
 
         [SetUp]
         public void SetUp()
         {
-            _miningJob = JobFactory.CreateMining();
-            _miningJob.Setup(1, 0, 10000, 1);
+            _levelable = new Levelable(1, 0, 10000, 0);
         }
         
         [TestCase(10)]
@@ -33,22 +30,22 @@ namespace Tests.Service
         [TestCase(1000)]
         public void Positive_AddExperience_AddsExperience(int experiencePerAction)
         {
-            _miningJob.SetExperiencePerAction(experiencePerAction);
+            _levelable.SetExperiencePerAction(experiencePerAction);
             
-            _experienceService.AddExperience(_miningJob);
+            _experienceService.AddExperience(_levelable);
             
-            Assert.AreEqual(experiencePerAction, _miningJob.Experience);
+            Assert.AreEqual(experiencePerAction, _levelable.Experience);
         }
         
         [Test]
         public void Positive_AddExperience_WillCauseLevelUp_ReturnsTrue()
         {
-            _miningJob.SetExperiencePerAction(10000);
+            _levelable.SetExperiencePerAction(10000);
 
-            _experienceService.AddExperience(_miningJob);
+            _experienceService.AddExperience(_levelable);
             
-            Assert.AreEqual(10000, _miningJob.Experience);
-            Assert.AreEqual(1, _miningJob.Level);
+            Assert.AreEqual(10000, _levelable.Experience);
+            Assert.AreEqual(1, _levelable.Level);
         }
         
         [Test]
@@ -57,9 +54,9 @@ namespace Tests.Service
             const int experience = 100;
             const int experiencePerAction = 1;
             
-            _miningJob.Setup(JobConstants.MAX_JOB_LEVEL, experience, 1, experiencePerAction);
+            _levelable = new Levelable(JobConstants.MAX_JOB_LEVEL, experience, 1, experiencePerAction);
             
-            Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(_miningJob));
+            Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(_levelable));
         }
 
         [TestCase(0)]
@@ -67,9 +64,9 @@ namespace Tests.Service
         [TestCase(-1000)]
         public void Negative_AddExperience_BadExperiencePerAction_Throws(int experiencePerAction)
         {
-            _miningJob.SetExperiencePerAction(experiencePerAction);
+            _levelable.SetExperiencePerAction(experiencePerAction);
             
-            Assert.Throws<ArgumentException>(() => _experienceService.AddExperience(_miningJob));
+            Assert.Throws<ArgumentException>(() => _experienceService.AddExperience(_levelable));
         }
 
         [Test]

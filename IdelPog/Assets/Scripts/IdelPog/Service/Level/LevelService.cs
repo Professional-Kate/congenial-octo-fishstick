@@ -1,31 +1,32 @@
 ﻿using System;
 using IdelPog.Constants;
 using IdelPog.Exceptions;
-using IdelPog.Model;
+using IdelPog.Structures.Models.Levelable;
 
-namespace IdelPog.Service
+namespace IdelPog.Service.Level
 {
     public class LevelService : ILevelService   
     {
-        public void LevelUpJob(Job job)
+        public void LevelUpJob(ILevelable levelable)
         {
-            if (job == null)
+            if (levelable == null)
             {
-                throw new ArgumentNullException(nameof(job));
+                throw new ArgumentNullException(nameof(levelable));
             }
 
-            if (job.Level == JobConstants.MAX_JOB_LEVEL)
+            if (levelable.Level == JobConstants.MAX_JOB_LEVEL)
             {
-                throw new MaxLevelException($"Error! Passed Job {job} is at max level. No level up possible!");
+                throw new MaxLevelException($"Error! Passed Job {levelable} is at max level. No level up possible!");
             }
 
             int total = 0;
-            for (int i = 1; i < job.Level; i++)
+            for (int i = 1; i < levelable.Level; i++)
             {
                 total += Convert.ToInt32(Math.Floor(i + 83 * Math.Pow(2, i / 7.0)));
             }
 
-            job.LevelUp(total);
+            levelable.LevelUp();
+            levelable.SetNextLevelExperience(total);
         }
     }
 }

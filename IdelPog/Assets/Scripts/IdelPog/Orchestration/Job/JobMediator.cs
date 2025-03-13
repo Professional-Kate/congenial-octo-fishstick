@@ -2,8 +2,10 @@
 using IdelPog.Model;
 using IdelPog.Repository;
 using IdelPog.Service;
+using IdelPog.Service.Level;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
+using IdelPog.Structures.Models.Levelable;
 
 namespace IdelPog.Orchestration
 {
@@ -35,14 +37,15 @@ namespace IdelPog.Orchestration
             }
             
             Job job = _repository.Get(jobType);
+            ILevelable levelable = job.Levelable;
             
             try
             {
-                _experienceService.AddExperience(job);
+                _experienceService.AddExperience(levelable);
 
-                if (_levelService.CanJobLevel(job))
+                if (_levelService.CanJobLevel(levelable))
                 {
-                    _levelService.LevelUpJob(job);
+                    _levelService.LevelUpJob(levelable);
                 }
                 
                 _repository.Update(jobType, job);

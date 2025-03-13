@@ -1,6 +1,7 @@
 ﻿using IdelPog.Constants;
 using IdelPog.Model;
 using IdelPog.Structures.Enums;
+using IdelPog.Structures.Models.Levelable;
 
 namespace Tests.Utils
 {
@@ -8,12 +9,7 @@ namespace Tests.Utils
     {
         internal static Job CreateMining()
         {
-            return new Job(JobType.MINING, JobConstants.WOOD_INFO);
-        }
-        
-        internal static Job CreateFarming()
-        {
-            return new Job(JobType.FARMING, JobConstants.FARMING_INFO);
+            return new Job(new Levelable(1, 0, 10000, 0), JobType.MINING, JobConstants.WOOD_INFO);
         }
     }
 }

@@ -1,30 +1,28 @@
-﻿namespace IdelPog.Model
+﻿namespace IdelPog.Structures.Models.Levelable
 {
-    /// <seealso cref="Setup"/>
-    /// <seealso cref="AddExperience"/>
-    /// <seealso cref="SetExperiencePerAction"/>
+    /// <summary>
+    /// This is the main progression object. 
+    /// </summary>
     /// <seealso cref="LevelUp"/>
+    /// <seealso cref="SetExperience"/>
+    /// <seealso cref="SetExperiencePerAction"/>
+    /// <seealso cref="SetNextLevelExperience"/>
     public interface ILevelable
     {
-        /// <summary>
-        /// Set up an <see cref="ILevelable"/> Object. This can be used by the base <see cref="Job"/> by update on game start
-        /// </summary>
-        /// <param name="level">The new level</param>
-        /// <param name="experience">The new experience amount</param>
-        /// <param name="experienceToNextLevel">The new experience needed to reach next level</param>
-        /// <param name="experiencePerAction">The new experience gained per action</param>
-        public void Setup(byte level, int experience, int experienceToNextLevel, int experiencePerAction);
+        public byte Level { get; }
+        public int Experience { get; } 
+        public int NextLevelExperience { get; }
+        public int ExperiencePerAction { get; }
         
-        /// <param name="experience">The amount of experience to add</param>
-        public void AddExperience(int experience);
-
-        /// <param name="experiencePerAction">The new experience gained per action</param>
-        public void SetExperiencePerAction(int experiencePerAction);
-
         /// <summary>
-        /// Increases this objects <see cref="Levelable.Level"/> and sets a new experience needed to reach the next level
+        /// Will increase the <see cref="ILevelable.Level"/> of this <see cref="ILevelable"/> by one
         /// </summary>
-        /// <param name="experienceToNextLevel">This new experience needed to reach the next level</param>
-        public void LevelUp(int experienceToNextLevel);
+        public void LevelUp();
+
+        public void SetExperience(int experience);
+        
+        public void SetExperiencePerAction(int experiencePerAction);
+        
+        public void SetNextLevelExperience(int nextLevelExperience);
     }
 }
