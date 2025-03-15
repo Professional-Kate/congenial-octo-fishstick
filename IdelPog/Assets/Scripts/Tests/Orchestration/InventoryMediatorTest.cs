@@ -1,5 +1,4 @@
 ﻿using System;
-using IdelPog.Exceptions;
 using IdelPog.Orchestration;
 using IdelPog.Repository;
 using IdelPog.Service;
@@ -7,7 +6,6 @@ using IdelPog.Structures;
 using IdelPog.Structures.Models.Item;
 using Moq;
 using NUnit.Framework;
-using UnityEngine;
 using ItemFactory = Tests.Utils.ItemFactory;
 
 namespace Tests.Orchestration
@@ -60,41 +58,34 @@ namespace Tests.Orchestration
             _repositoryMock.Verify(library => library.Contains(_oakWood.ID));
         }
 
-        [TestCase(InventoryID.WILLOW_WOOD, typeof(NotFoundException))]
-        [TestCase(InventoryID.WILLOW_WOOD, typeof(ArgumentException))]
-        public void Negative_AddAmount_Catches_Exception(InventoryID inventoryID, Type exception)
-        {
-            _repositoryMock.Setup(repo => repo.AddAmount(inventoryID, AMOUNT))
-                .Throws((Exception) Activator.CreateInstance(exception));
-            
-            ServiceResponse response = _inventoryMediator.AddAmount(inventoryID, AMOUNT);
-            
-            Assert.False(response.IsSuccess);
-            Assert.NotNull(response.Message);
-            
-            _repositoryMock.Verify(library => library.AddAmount(inventoryID, AMOUNT));
-        }
-
         [Test]
         public void Positive_RemoveAmount_RemovesAmount()
         {
             ServiceResponse response = _inventoryMediator.RemoveAmount(_oakWood.ID, AMOUNT);
             
-            Debug.Log(response.Message);
-            
             Assert.True(response.IsSuccess);
             _repositoryMock.Verify(library => library.RemoveAmount(_oakWood.ID, AMOUNT));
-            _repositoryMock.Verify(library => library.Contains(_oakWood.ID));
         }
         
-        [TestCase(InventoryID.WILLOW_WOOD, typeof(NotFoundException))]
-        [TestCase(InventoryID.OAK_WOOD, typeof(ArgumentException))]
-        public void Negative_RemoveAmount_Catches_Exception(InventoryID inventoryID, Type exception)
+        [Test]
+        public void Negative_RemoveAmount_Catches_Exception()
         {
-            _repositoryMock.Setup(repo => repo.RemoveAmount(inventoryID, AMOUNT))
-                .Throws((Exception) Activator.CreateInstance(exception));
+            _repositoryMock.Setup(repo => repo.RemoveAmount(_oakWood.ID, AMOUNT))
+                .Throws<Exception>();
             
-            ServiceResponse response = _inventoryMediator.RemoveAmount(inventoryID, AMOUNT);
+            ServiceResponse response = _inventoryMediator.RemoveAmount(_oakWood.ID, AMOUNT);
+            
+            Assert.False(response.IsSuccess);
+            Assert.NotNull(response.Message);
+        }
+        
+        [Test]
+        public void Negative_AddAmount_Catches_Exception()
+        {
+            _repositoryMock.Setup(repo => repo.AddAmount(_oakWood.ID, AMOUNT))
+                .Throws<Exception>();
+            
+            ServiceResponse response = _inventoryMediator.AddAmount(_oakWood.ID, AMOUNT);
             
             Assert.False(response.IsSuccess);
             Assert.NotNull(response.Message);

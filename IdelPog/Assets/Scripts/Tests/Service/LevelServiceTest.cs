@@ -1,8 +1,11 @@
 ﻿using System;
 using IdelPog.Constants;
-using IdelPog.Exceptions;
 using IdelPog.Service.Level;
+using IdelPog.Structures.Builders;
 using IdelPog.Structures.Models.Levelable;
+using IdelPog.Validation;
+using IdelPog.Validation.Pipelines.Interfaces;
+using Moq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -12,43 +15,47 @@ namespace Tests.Service
     public class LevelServiceTest
     {
         private ILevelService _service { get; set; }
-        private ILevelable _farmingJob { get; set; }
+        private Mock<ILevelableAsserter> _levelableAsserterMock { get; set; }
+
+        private ILevelable _levelable { get; set; }
         
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _service = new LevelService();
+            _levelableAsserterMock = new Mock<ILevelableAsserter>(); 
+            
+            _service = new LevelService(_levelableAsserterMock.Object);
         }
 
         [SetUp]
         public void SetUp()
         {
-            _farmingJob = new Levelable(0, 0, 10000, 0);
+            _levelable = new Levelable(0, 0, 10000, 0);
         }
 
         [Test]
         public void Positive_LevelUpJob_LevelsJob()
         {
-            _service.LevelUpJob(_farmingJob);
+            _service.LevelUpJob(_levelable);
 
-            Assert.AreEqual(1, _farmingJob.Level);
+            Assert.AreEqual(1, _levelable.Level);
         }
         
         [Test]
         public void Positive_CanJobLevel_ReturnsTrue()
         {
-            _farmingJob = new Levelable(1, 100, 10, 1);
+            _levelable = new Levelable(1, 100, 10, 1);
 
-            bool canJobLevel = _service.CanJobLevel(_farmingJob);
+            bool canJobLevel = _service.CanJobLevel(_levelable);
             Assert.IsTrue(canJobLevel);
         }
         
         [Test]
         public void Positive_CanJobLevel_ReturnsFalse()
         {
-            _farmingJob = new Levelable(1, 5, 10, 1);
+            _levelable = new Levelable(1, 5, 10, 1);
 
-            bool canJobLevel = _service.CanJobLevel(_farmingJob);
+            bool canJobLevel = _service.CanJobLevel(_levelable);
             Assert.IsFalse(canJobLevel);
         }
 
@@ -61,40 +68,49 @@ namespace Tests.Service
         {
             for (int i = 0; i < levels; i++)
             {
-                _service.LevelUpJob(_farmingJob);
+                _service.LevelUpJob(_levelable);
             }
 
-            return _farmingJob.Level;
+            return _levelable.Level;
         }
 
         [Test]
         public void Positive_JobCanLevelToMax()
         {
-            _farmingJob = new Levelable(1, 0, 83, 1);
+            _levelable = new Levelable(1, 0, 83, 1);
 
             for (int i = 1; i < JobConstants.MAX_JOB_LEVEL; i++)
             {
-                _farmingJob.SetExperience(_farmingJob.NextLevelExperience + _farmingJob.Experience); // this is here to sum the total experience
+                _levelable.SetExperience(_levelable.NextLevelExperience + _levelable.Experience); // this is here to sum the total experience
                 
-                _service.LevelUpJob(_farmingJob);
+                _service.LevelUpJob(_levelable);
                 
-                Debug.Log($"LEVEL {_farmingJob.Level} | Experience: {_farmingJob.Experience} | Next Level: {_farmingJob.NextLevelExperience}");
+                Debug.Log($"LEVEL {_levelable.Level} | Experience: {_levelable.Experience} | Next Level: {_levelable.NextLevelExperience}");
             }
             
-            Assert.AreEqual(JobConstants.MAX_JOB_LEVEL, _farmingJob.Level);
+            Assert.AreEqual(JobConstants.MAX_JOB_LEVEL, _levelable.Level);
         }
 
         [Test]
         public void Negative_LevelUpJob_NullJob_Throws()
         {
+            _levelableAsserterMock.Setup(library => library.AssertLevelable(null))
+                .Throws<ArgumentNullException>();
+            
             Assert.Throws<ArgumentNullException>(() => _service.LevelUpJob(null));
         }
 
         [Test]
         public void Negative_LeveUpJob_MaxLevel_Throws()
         {
-            _farmingJob = new Levelable(100, 100, 10, 1);
-            Assert.Throws<MaxLevelException>(() => _service.LevelUpJob(_farmingJob));
+            ILevelable levelable = LevelableBuilder.Builder()
+                .Level(JobConstants.MAX_JOB_LEVEL)
+                .Build();
+            
+            _levelableAsserterMock.Setup(library => library.AssertLevelable(levelable))
+                .Throws(new MaxLevelException(levelable.Level));
+            
+            Assert.Throws<MaxLevelException>(() => _service.LevelUpJob(levelable));
         }
     }
 }

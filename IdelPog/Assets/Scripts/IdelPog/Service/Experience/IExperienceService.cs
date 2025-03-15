@@ -1,6 +1,6 @@
 ﻿using System;
-using IdelPog.Exceptions;
 using IdelPog.Structures.Models.Levelable;
+using IdelPog.Validation;
 
 namespace IdelPog.Service
 {

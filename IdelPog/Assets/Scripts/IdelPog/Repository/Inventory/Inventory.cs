@@ -1,6 +1,5 @@
-﻿using System;
-using IdelPog.Exceptions;
-using IdelPog.Structures.Models.Item;
+﻿using IdelPog.Structures.Models.Item;
+using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Repository
 {
@@ -10,20 +9,22 @@ namespace IdelPog.Repository
     public sealed class Inventory : IInventory
     {
         private readonly IRepository<InventoryID, Item> _repository;
+        private readonly IAssertFound _assertFound;
+        private readonly IAssertPositive _assertPositive;
+        private readonly IAssertNonDuplicate _assertNonDuplicate;
         
-        public Inventory(IRepository<InventoryID, Item> repository)
+        public Inventory(IRepository<InventoryID, Item> repository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertNonDuplicate assertNonDuplicate)
         {
             _repository = repository;
+            _assertFound = assertFound;
+            _assertPositive = assertPositive;
+            _assertNonDuplicate = assertNonDuplicate;
         }
 
         public void AddAmount(InventoryID id, int amount)
         {
             AssertAmountIsPositive(amount);
-
-            if (_repository.Contains(id) == false)
-            {
-                throw new NotFoundException("Error: Item does not exist");
-            }
+            AssertItemExists(id);
 
             Item finalItem = RepositoryGet(id);
 
@@ -34,21 +35,12 @@ namespace IdelPog.Repository
         public void RemoveAmount(InventoryID id, int amount)
         {
             AssertAmountIsPositive(amount);
-
-            if (_repository.Contains(id) == false)
-            {
-                throw new NotFoundException("Error: Item does not exist");
-            }
+            AssertItemExists(id);
 
             Item item = RepositoryGet(id);
-
             int itemAmount = item.Amount;
-
-            if (itemAmount < amount)
-            {
-                throw new ArgumentException($"Error! Cannot remove amount : '{amount}', item's amount is too low: {item.Amount}.");
-            }
-
+            
+           AssertAmountIsPositive(itemAmount - amount);
             if (itemAmount - amount == 0)
             {
                 _repository.Remove(item.ID);
@@ -62,11 +54,7 @@ namespace IdelPog.Repository
         public void AddItem(Item item)
         {
             AssertAmountIsPositive(item.Amount);
-
-            if (_repository.Contains(item.ID))
-            {
-                throw new ArgumentException($"Error! Passed ID {item.ID} already exists! Cannot AddItem!");
-            }
+            _assertNonDuplicate.AssertContains(item, () => Contains(item.ID));
 
             _repository.Add(item.ID, item);
         }
@@ -80,14 +68,19 @@ namespace IdelPog.Repository
         /// Asserts that the passed amount is greater than zero
         /// </summary>
         /// <param name="amount">The amount you want to verify</param>
-        /// <exception cref="ArgumentException">Will be thrown if the passed amount is 0 or less</exception>
-        private static void AssertAmountIsPositive(int amount)
+        private void AssertAmountIsPositive(int amount)
         {
-            if (amount <= 0)
-            {
-                throw new ArgumentException($"Error! Passed amount : '{amount}' is required to be a positive number.");
-            }
+            _assertPositive.AssertNumberIsPositive(amount);
         }
+
+        /// <summary>
+        /// Asserts that the passed id exists in the inventory
+        /// </summary>
+        /// <param name="id">The id you want to check</param>
+        private void AssertItemExists(InventoryID id)
+        {
+            _assertFound.AssertItemIsFound(id, () => Contains(id));
+        } 
 
         private Item RepositoryGet(InventoryID id)
         {

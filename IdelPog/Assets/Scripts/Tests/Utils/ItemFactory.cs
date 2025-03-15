@@ -12,7 +12,7 @@ namespace Tests.Utils
                 .InventoryID(InventoryID.OAK_WOOD)
                 .Information(ItemConstants.OAK_WOOD)
                 .SellPrice(1)
-                .Amount(1)
+                .Amount(0)
                 .Build();
         }
     }

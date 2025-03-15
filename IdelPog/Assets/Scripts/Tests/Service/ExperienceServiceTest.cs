@@ -1,8 +1,11 @@
 ﻿using System;
 using IdelPog.Constants;
-using IdelPog.Exceptions;
 using IdelPog.Service;
+using IdelPog.Structures.Builders;
 using IdelPog.Structures.Models.Levelable;
+using IdelPog.Validation;
+using IdelPog.Validation.Pipelines.Interfaces;
+using Moq;
 using NUnit.Framework;
 
 namespace Tests.Service
@@ -11,12 +14,14 @@ namespace Tests.Service
     public class ExperienceServiceTest
     {
         private IExperienceService _experienceService { get; set; }
+        private Mock<ILevelableAsserter> _levelableAsserterMock { get; set; }
         private ILevelable _levelable { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _experienceService = new ExperienceService();
+            _levelableAsserterMock = new Mock<ILevelableAsserter>(); 
+            _experienceService = new ExperienceService(_levelableAsserterMock.Object);
         }
 
         [SetUp]
@@ -51,12 +56,16 @@ namespace Tests.Service
         [Test]
         public void Negative_AddExperience_MaxLevel_Throws()
         {
-            const int experience = 100;
-            const int experiencePerAction = 1;
+            ILevelable levelable = LevelableBuilder.Builder()
+                .Level(JobConstants.MAX_JOB_LEVEL)
+                .ExperiencePerAction(1)
+                .Experience(100)
+                .Build();
             
-            _levelable = new Levelable(JobConstants.MAX_JOB_LEVEL, experience, 1, experiencePerAction);
+            _levelableAsserterMock.Setup(library => library.AssertLevelable(levelable))
+                .Throws(new MaxLevelException(levelable));
             
-            Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(_levelable));
+            Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(levelable));
         }
 
         [TestCase(0)]
@@ -64,14 +73,20 @@ namespace Tests.Service
         [TestCase(-1000)]
         public void Negative_AddExperience_BadExperiencePerAction_Throws(int experiencePerAction)
         {
+            _levelableAsserterMock.Setup(library => library.AssertLevelable(_levelable))
+                .Throws(new NegativeNumberException(experiencePerAction));
+            
             _levelable.SetExperiencePerAction(experiencePerAction);
             
-            Assert.Throws<ArgumentException>(() => _experienceService.AddExperience(_levelable));
+            Assert.Throws<NegativeNumberException>(() => _experienceService.AddExperience(_levelable));
         }
 
         [Test]
         public void Negative_AddExperience_NullJob_Throws()
         {
+            _levelableAsserterMock.Setup(library => library.AssertLevelable(null))
+                .Throws(new ArgumentNullException());
+            
             Assert.Throws<ArgumentNullException>(() => _experienceService.AddExperience(null));
         }
     }

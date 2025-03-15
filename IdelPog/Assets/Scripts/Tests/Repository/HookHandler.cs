@@ -1,4 +1,9 @@
 ﻿using IdelPog.Repository;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
+using IdelPog.Validation.Pipelines;
+using IdelPog.Validation.Pipelines.Interfaces;
 using NUnit.Framework;
 
 namespace Tests.Repository
@@ -15,8 +20,10 @@ namespace Tests.Repository
 
         [SetUp]
         public void SetUp()
-        { 
-            TestRepository = new Repository<int, string>();
+        {
+            IHandler handler = new ThrowHandler();
+            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new AssertFound(handler), new AssertNotNull(handler), new AssertNonDuplicate(handler));
+            TestRepository = new Repository<int, string>(repositoryAsserter);
             
             AddEventTriggered = false;
             RemoveEventTriggered = false;

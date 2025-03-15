@@ -1,5 +1,6 @@
 ﻿using System;
-using IdelPog.Exceptions;
+using IdelPog.Validation;
+using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.Repository
 {
@@ -21,8 +22,7 @@ namespace IdelPog.Repository
         /// <param name="key">The key to link to the value</param>
         /// <param name="value">The value to link with the key</param>
         /// <exception cref="ArgumentNullException">Will be thrown if the passed value is null</exception>
-        /// <exception cref="ArgumentException">If the passed key value pair is already in the Repository</exception>
-        /// <exception cref="NoTypeException">Will be thrown if the passed key is NO_TYPE</exception>
+        /// <exception cref="DuplicateItemException">If the passed key value pair is already in the Repository</exception>
         public void Add(TID key, T value);
         
         /// <summary>
@@ -30,7 +30,6 @@ namespace IdelPog.Repository
         /// </summary>
         /// <param name="key">The key to remove from the Repository</param>
         /// <exception cref="NotFoundException">Will be thrown if the passed key is not in the Repository</exception>
-        /// <exception cref="NoTypeException">Will be thrown if the passed key is NO_TYPE</exception>
         public void Remove(TID key);
 
         /// <summary>
@@ -39,7 +38,6 @@ namespace IdelPog.Repository
         /// <param name="key">The value you wanted will be linked to this key</param>
         /// <returns>The found value</returns>
         /// <exception cref="NotFoundException">Will be thrown if the passed key is not in the Repository</exception>
-        /// <exception cref="NoTypeException">Will be thrown if the passed key is NO_TYPE</exception>
         /// <remarks>
         /// This will return an object by reference.  
         /// </remarks>
@@ -51,8 +49,7 @@ namespace IdelPog.Repository
         /// <param name="key">The value you want to update will be linked to this key</param>
         /// <param name="value">The new value of the object linked to the key</param>
         /// <exception cref="ArgumentNullException">Will be thrown if the passed value is null</exception>
-        /// <exception cref="NotFoundException">Will be thrown if the key cannot be found in the Repository</exception>
-        /// <exception cref="NoTypeException">Will be thrown if the passed key is NO_TYPE</exception>
+        /// <exception cref="DuplicateItemException">Will be thrown if the key cannot be found in the Repository</exception>
         public void Update(TID key, T value);
         
         /// <summary>
@@ -60,7 +57,6 @@ namespace IdelPog.Repository
         /// </summary>
         /// <param name="key">The key you want to check</param>
         /// <returns>A boolean on if the requested key exists or not</returns>
-        /// <exception cref="NoTypeException">Will be thrown if the passed key is NO_TYPE</exception>
         public bool Contains(TID key);
     }
 }

@@ -1,29 +1,21 @@
-﻿using System;
-using IdelPog.Constants;
-using IdelPog.Exceptions;
 using IdelPog.Structures.Models.Levelable;
+using IdelPog.Validation.Pipelines.Interfaces;
 
 namespace IdelPog.Service
 {
     public class ExperienceService : IExperienceService
     {
+        private readonly ILevelableAsserter _levelableAsserter;
+
+        public ExperienceService(ILevelableAsserter levelableAsserter)
+        {
+            _levelableAsserter = levelableAsserter;
+        }
+        
         public void AddExperience(ILevelable levelable)
         {
-            if (levelable == null)
-            {
-                throw new ArgumentNullException(nameof(levelable));
-            }
-            
-            if (levelable.Level == JobConstants.MAX_JOB_LEVEL)
-            {
-                throw new MaxLevelException($"Error! Passed Job {levelable} is at max level. Adding experience is not possible!");
-            }
-            
-            if (levelable.ExperiencePerAction <= 0)
-            {
-                throw new ArgumentException($"Error! Passed Experience amount : {levelable.ExperiencePerAction} is expected to be a positive number.");
-            }
-            
+            _levelableAsserter.AssertLevelable(levelable);
+
             int experienceToAdd = levelable.ExperiencePerAction + levelable.Experience;
             levelable.SetExperience(experienceToAdd);
         }
