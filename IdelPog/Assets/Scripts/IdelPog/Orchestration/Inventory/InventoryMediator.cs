@@ -13,13 +13,11 @@ namespace IdelPog.Orchestration
     public class InventoryMediator : IInventoryMediator
     {
         private readonly IInventory _inventory;
-        private readonly IItemFactory _itemFactory;
         private readonly IMapper<InventoryID> _mapper;
         
-        public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IMapper<InventoryID> mapper)
+        public InventoryMediator(IInventory inventory, IMapper<InventoryID> mapper)
         {
             _inventory = inventory;
-            _itemFactory = itemFactory;
             _mapper = mapper;
         }
 
