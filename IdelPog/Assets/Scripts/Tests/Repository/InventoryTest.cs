@@ -179,7 +179,7 @@ namespace Tests.Repository
         [TestCase(-10)]
         public void Negative_AddItem_BadAmount_Throws(int amount)
         {
-            Item itemWithBadAmount = new(InventoryID.WILLOW_WOOD, Information.Create("", ""), 1, amount);
+            Item itemWithBadAmount = new(InventoryID.WILLOW_WOOD, new Information("", ""), 1, amount);
             
             Assert.Throws<ArgumentException>(() => _inventory.AddItem(itemWithBadAmount));
         }

@@ -29,7 +29,7 @@ namespace Tests.Orchestration
             _repositoryMock = new Mock<IInventory>();
             _mapperMock = new Mock<IMapper<InventoryID>>();
             _inventoryMediator = new InventoryMediator(_repositoryMock.Object, _mapperMock.Object);
-            _information = Information.Create("", "");
+            _information = new Information("", "");
             
             _oakWood = ItemFactory.CreateOakWood();
             _oakWood.AddAmount(1);
