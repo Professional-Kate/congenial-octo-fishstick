@@ -22,7 +22,6 @@ namespace Tests.Repository
         public void OneTimeSetUp()
         {
             _oakWoodItem = ItemFactory.CreateOakWood();
-            _oakWoodItem.AddAmount(1);
             SetupMock();
         }
 
@@ -30,7 +29,6 @@ namespace Tests.Repository
         public void TearDown()
         {
             _oakWoodItem = ItemFactory.CreateOakWood();
-            _oakWoodItem.AddAmount(1);
             SetupMock();
         }
 
