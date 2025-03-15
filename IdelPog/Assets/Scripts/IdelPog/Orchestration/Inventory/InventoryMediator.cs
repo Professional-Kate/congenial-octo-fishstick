@@ -2,6 +2,7 @@
 using IdelPog.Repository;
 using IdelPog.Service;
 using IdelPog.Structures;
+using IdelPog.Structures.Builders;
 using IdelPog.Structures.Models.Item;
 
 namespace IdelPog.Orchestration
@@ -12,20 +13,11 @@ namespace IdelPog.Orchestration
     public class InventoryMediator : IInventoryMediator
     {
         private readonly IInventory _inventory;
-        private readonly IItemFactory _itemFactory;
         private readonly IMapper<InventoryID> _mapper;
         
-        public InventoryMediator()
-        {
-            _inventory = new Inventory();
-            _itemFactory = new ItemFactory();
-            _mapper = new Mapper<InventoryID>();
-        }
-        
-        public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IMapper<InventoryID> mapper)
+        public InventoryMediator(IInventory inventory, IMapper<InventoryID> mapper)
         {
             _inventory = inventory;
-            _itemFactory = itemFactory;
             _mapper = mapper;
         }
 
@@ -78,9 +70,14 @@ namespace IdelPog.Orchestration
             Information itemInformation = _mapper.GetInformation(inventoryID);
             
             // TODO: for now, sell price is set to 1. This is a placeholder for all items.
-            Item item = _itemFactory.CreateItem(inventoryID, itemInformation, 1, amount);
+            Item newItem = ItemBuilder.Builder()
+                .InventoryID(inventoryID)
+                .Information(itemInformation)
+                .SellPrice(1)
+                .Amount(amount)
+                .Build();
             
-            _inventory.AddItem(item);
+            _inventory.AddItem(newItem);
         }
     }
 }

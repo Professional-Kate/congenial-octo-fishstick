@@ -1,4 +1,5 @@
-﻿using IdelPog.Model;
+﻿using IdelPog.Controller;
+using IdelPog.Model;
 using IdelPog.Orchestration;
 using IdelPog.Structures;
 using Moq;
@@ -10,7 +11,7 @@ namespace Tests.Controller
     [TestFixture]
     public class JobControllerTest
     {
-        private TestableJobController _controller { get; set; }
+        private IJobController _controller { get; set; }
         private Mock<IJobMediator> _jobMediatorMock { get; set; }
         private Job _miningJob { get; set; }
 
@@ -19,7 +20,7 @@ namespace Tests.Controller
         {
             _miningJob = JobFactory.CreateMining();
             _jobMediatorMock = new Mock<IJobMediator>();
-            _controller = new TestableJobController(_jobMediatorMock.Object);
+            _controller = new JobController(_jobMediatorMock.Object);
         }
 
         [Test]

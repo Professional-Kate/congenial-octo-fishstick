@@ -1,4 +1,5 @@
 ﻿using IdelPog.Model;
+using IdelPog.Structures.Builders;
 using IdelPog.Structures.Enums;
 
 namespace Tests.Utils
@@ -7,12 +8,18 @@ namespace Tests.Utils
     {
         internal static Currency CreateWood()
         {
-            return new Currency(CurrencyType.WOOD);
+            return CurrencyBuilder.Builder()
+                .CurrencyType(CurrencyType.WOOD)
+                .Amount(0)
+                .Build();
         }
 
         internal static Currency CreateFood()
         {
-            return new Currency(CurrencyType.FOOD);
+            return CurrencyBuilder.Builder()
+                .CurrencyType(CurrencyType.FOOD)
+                .Amount(0)
+                .Build();
         }
     }
 }

@@ -11,11 +11,6 @@ namespace IdelPog.Repository
     {
         private readonly IRepository<InventoryID, Item> _repository;
         
-        public Inventory()
-        {
-            _repository = new Repository<InventoryID, Item>();
-        }
-
         public Inventory(IRepository<InventoryID, Item> repository)
         {
             _repository = repository;

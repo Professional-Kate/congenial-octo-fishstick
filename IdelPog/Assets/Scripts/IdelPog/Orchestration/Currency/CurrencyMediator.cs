@@ -15,12 +15,6 @@ namespace IdelPog.Orchestration
     {
         private readonly ICurrencyService _currencyService;
         private readonly IRepository<CurrencyType, Currency> _repository;
-
-        public CurrencyMediator()
-        {
-            _currencyService = new CurrencyService();
-            _repository = new Repository<CurrencyType, Currency>();
-        }
         
         public CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Currency> repository)
         {
