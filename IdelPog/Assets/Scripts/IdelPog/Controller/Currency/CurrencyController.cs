@@ -17,7 +17,7 @@ namespace IdelPog.Controller
             _currencyService = currencyService;
         }
         
-        public void UpdateCurrency(params CurrencyTrade[] trades)
+        public ServiceResponse UpdateCurrency(params CurrencyTrade[] trades)
         {
             ServiceResponse serviceResponse = _currencyService.ProcessCurrencyUpdate(trades);
             if (serviceResponse.IsSuccess == false)
@@ -25,6 +25,8 @@ namespace IdelPog.Controller
                 // TODO: logger log. 
                 Debug.Log(serviceResponse.Message);
             }
+            
+            return serviceResponse;
         }
     }
 } 

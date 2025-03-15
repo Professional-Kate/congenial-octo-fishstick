@@ -89,9 +89,10 @@ namespace Tests.Controller
             CurrencyTrade[] trades = Enumerable.Repeat(_addFoodTrade, tradeCount).ToArray();
             SetupMock(trades);
            
-            _currencyController.UpdateCurrency(trades);
+            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(trades);
             
             Assert.AreEqual(tradeCount * _amount, _foodCurrency.Amount);
+            Assert.IsTrue(serviceResponse.IsSuccess);
         }
         
         [TestCase(0)]
@@ -105,9 +106,10 @@ namespace Tests.Controller
             CurrencyTrade[] trades = Enumerable.Repeat(_removeFoodTrade, tradeCount).ToArray();
             SetupMock(trades);
             
-            _currencyController.UpdateCurrency(trades);
+            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(trades);
             
             Assert.AreEqual(0, _foodCurrency.Amount);
+            Assert.IsTrue(serviceResponse.IsSuccess);
         }
 
         [Test]
@@ -116,10 +118,11 @@ namespace Tests.Controller
             CurrencyTrade[] trades = { _addWoodTrade, _addFoodTrade, _removeFoodTrade, _addFoodTrade, _addWoodTrade, _removeFoodTrade, _removeWoodTrade, _removeWoodTrade, _addFoodTrade };
             SetupMock(trades);
             
-            _currencyController.UpdateCurrency(trades);
+            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(trades);
             
             Assert.AreEqual(0, _woodCurrency.Amount);
             Assert.AreEqual(10, _foodCurrency.Amount); // this is 10 because I add an extra _addFoodTrade call just to ensure correctness
+            Assert.IsTrue(serviceResponse.IsSuccess);
         }
 
         [TestCase(0)]
@@ -132,9 +135,10 @@ namespace Tests.Controller
             _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trade))
                 .Returns(ServiceResponse.Failure(""));
 
-            _currencyController.UpdateCurrency(trade);
+            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(trade);
             
             Assert.AreEqual(0, _foodCurrency.Amount);
+            Assert.IsFalse(serviceResponse.IsSuccess);
         }
 
         [Test]
@@ -146,13 +150,11 @@ namespace Tests.Controller
             _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trades))
                 .Returns(ServiceResponse.Failure(""));
             
-            _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trades))
-                .Returns(ServiceResponse.Success);
-            
-            _currencyController.UpdateCurrency(trades);
+            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(trades);
             
             Assert.AreEqual(0, _foodCurrency.Amount);
             Assert.AreEqual(0, _woodCurrency.Amount);
+            Assert.IsFalse(serviceResponse.IsSuccess);
         }
     }
 }
