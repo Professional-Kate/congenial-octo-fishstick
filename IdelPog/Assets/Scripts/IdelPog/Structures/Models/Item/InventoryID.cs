@@ -5,7 +5,6 @@
     /// </summary>
     public enum InventoryID : byte
     {
-        NO_TYPE = 0,
         OAK_WOOD, 
         BIRCH_WOOD,
         WILLOW_WOOD,
