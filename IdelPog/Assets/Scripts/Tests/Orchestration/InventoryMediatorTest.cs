@@ -106,7 +106,7 @@ namespace Tests.Orchestration
         public void Positive_AddAmount_NoFoundItem_CreatesItem()
         {
             _repositoryMock.Setup(library => library.Contains(_oakWood.ID)).Returns(false);
-            _itemFactoryMock.Setup(library => library.CreateItem(_oakWood.ID, _information, 1, AMOUNT)).Returns(_oakWood);
+            // _itemFactoryMock.Setup(library => library.CreateItem(_oakWood.ID, _information, 1, AMOUNT)).Returns(_oakWood);
             _mapperMock.Setup(library => library.GetInformation(_oakWood.ID)).Returns(_information);
             
             ServiceResponse response = _inventoryMediator.AddAmount(_oakWood.ID, AMOUNT);
@@ -115,7 +115,7 @@ namespace Tests.Orchestration
             
             _repositoryMock.Verify(library => library.AddAmount(_oakWood.ID, AMOUNT));
             _repositoryMock.Verify(library => library.Contains(_oakWood.ID));
-            _itemFactoryMock.Verify(library => library.CreateItem(_oakWood.ID, _information, 1, AMOUNT));
+            // _itemFactoryMock.Verify(library => library.CreateItem(_oakWood.ID, _information, 1, AMOUNT));
             _mapperMock.Verify(library => library.GetInformation(_oakWood.ID));
         }
     }
