@@ -7,7 +7,6 @@ namespace IdelPog.Service
     /// <summary>
     /// Information mapper, maps a passed key onto an <see cref="Information"/> object
     /// </summary>
-    /// <typeparam name="T">The type of the key, this is expected be an enum type with NO_TYPE</typeparam>
     /// <seealso cref="GetInformation"/>
     /// <seealso cref="AddInformation"/>
     public interface IMapper<in T>
