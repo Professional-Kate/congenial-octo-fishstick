@@ -8,6 +8,8 @@ namespace IdelPog.Structures.Builders
     {
         private CurrencyType _currencyType { get; set; }
         private int _amount { get; set; }
+        
+        public static ICurrencyBuilder Builder() => new CurrencyBuilder();
 
         public ICurrencyBuilder CurrencyType(CurrencyType currencyType)
         {
