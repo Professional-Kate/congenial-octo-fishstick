@@ -8,13 +8,18 @@ namespace IdelPog.Controller
     /// The main control object for Currency. Using this class you can Update any Currency.
     /// </summary>
     /// <seealso cref="UpdateCurrency"/>
-    public class CurrencyController : Singleton<CurrencyController>, ICurrencyController
+    public class CurrencyController : ICurrencyController
     {
-        protected ICurrencyMediator CurrencyService = new CurrencyMediator();
+        private readonly ICurrencyMediator _currencyService;
+
+        public CurrencyController(ICurrencyMediator currencyService)
+        {
+            _currencyService = currencyService;
+        }
         
         public void UpdateCurrency(params CurrencyTrade[] trades)
         {
-            ServiceResponse serviceResponse = CurrencyService.ProcessCurrencyUpdate(trades);
+            ServiceResponse serviceResponse = _currencyService.ProcessCurrencyUpdate(trades);
             if (serviceResponse.IsSuccess == false)
             {
                 // TODO: logger log. 

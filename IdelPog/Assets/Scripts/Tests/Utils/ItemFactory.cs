@@ -1,4 +1,5 @@
 ﻿using IdelPog.Constants;
+using IdelPog.Structures.Builders;
 using IdelPog.Structures.Models.Item;
 
 namespace Tests.Utils
@@ -7,7 +8,12 @@ namespace Tests.Utils
     {
         internal static Item CreateOakWood()
         {
-            return new Item(InventoryID.OAK_WOOD, ItemConstants.OAK_WOOD, 1, 0);
+            return ItemBuilder.Builder()
+                .InventoryID(InventoryID.OAK_WOOD)
+                .Information(ItemConstants.OAK_WOOD)
+                .SellPrice(1)
+                .Amount(0)
+                .Build();
         }
     }
 }

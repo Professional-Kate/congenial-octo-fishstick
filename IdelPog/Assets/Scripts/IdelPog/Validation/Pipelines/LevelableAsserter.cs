@@ -1,4 +1,4 @@
-﻿using IdelPog.Model;
+﻿using IdelPog.Structures.Models.Levelable;
 using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Pipelines.Interfaces;
 
@@ -18,11 +18,11 @@ namespace IdelPog.Validation.Pipelines
             _assertPositive = assertPositive;
         }
         
-        public void AssertLevelable(Job job)
+        public void AssertLevelable(ILevelable levelable)
         {
-            _assertNotNull.AssertObjectNotNull(job);
-            _assertUnderMaxLevel.AssertLevelIsUnderMax(job);
-            _assertPositive.AssertNumberIsPositive(job.ExperiencePerAction);
+            _assertNotNull.AssertObjectNotNull(levelable);
+            _assertUnderMaxLevel.AssertLevelIsUnderMax(levelable);
+            _assertPositive.AssertNumberIsPositive(levelable.ExperiencePerAction);
         }
     }
 }

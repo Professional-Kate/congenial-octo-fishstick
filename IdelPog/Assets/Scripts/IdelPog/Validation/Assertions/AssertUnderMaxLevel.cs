@@ -1,5 +1,5 @@
 ﻿using IdelPog.Constants;
-using IdelPog.Model;
+using IdelPog.Structures.Models.Levelable;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Assertions.Interfaces;
 
@@ -10,7 +10,7 @@ namespace IdelPog.Validation.Assertions
         public AssertUnderMaxLevel(IHandler handler) : base(handler) { }
 
 
-        public void AssertLevelIsUnderMax(Job levelable)
+        public void AssertLevelIsUnderMax(ILevelable levelable)
         {
             Assert(() =>
             {

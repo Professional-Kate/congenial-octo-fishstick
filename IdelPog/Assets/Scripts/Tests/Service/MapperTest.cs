@@ -16,8 +16,8 @@ namespace Tests.Service
         private Mock<IAssertFound> _assertFoundMock { get; set; }
         private Mock<IAssertNonDuplicate> _assertUniqueMock { get; set; }
 
-        private readonly Information _informationOne = Information.Create("TEST", "TESTING");
-        private readonly Information _informationTwo = Information.Create("HELLO", "WORLD");
+        private readonly Information _informationOne = new("TEST", "TESTING");
+        private readonly Information _informationTwo = new("HELLO", "WORLD");
 
         [SetUp]
         public void Setup()
@@ -54,7 +54,7 @@ namespace Tests.Service
         [Test]
         public void Positive_AddInformation_Adds_Information()
         {
-            Information newInformation = Information.Create("AAAAA", "AAA");
+            Information newInformation = new("AAAAA", "AAA");
             _informationMapper.AddInformation(3, newInformation);
             
             Information returnedInfo = _informationMapper.GetInformation(3);

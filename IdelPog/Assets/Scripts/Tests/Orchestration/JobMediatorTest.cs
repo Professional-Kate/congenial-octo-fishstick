@@ -3,6 +3,7 @@ using IdelPog.Model;
 using IdelPog.Orchestration;
 using IdelPog.Repository;
 using IdelPog.Service;
+using IdelPog.Service.Level;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using Moq;
@@ -38,14 +39,14 @@ namespace Tests.Orchestration
         {
             _repositoryMock.Verify(library => library.Get(_miningJob.JobType), Times.Exactly(getCalls));
             _repositoryMock.Verify(library => library.Update(_miningJob.JobType, _miningJob), Times.Exactly(updateCalls));
-            _experienceServiceMock.Verify(library => library.AddExperience(_miningJob), Times.Exactly(serviceCalls));
-            _levelServiceMock.Verify(library => library.LevelUpJob(_miningJob), Times.Exactly(levelServiceCalls));
+            _experienceServiceMock.Verify(library => library.AddExperience(_miningJob.Levelable), Times.Exactly(serviceCalls));
+            _levelServiceMock.Verify(library => library.LevelUpJob(_miningJob.Levelable), Times.Exactly(levelServiceCalls));
         }
 
         [Test]
         public void Positive_ProcessJobAction_ReturnsSuccess()
         {
-            _experienceServiceMock.Setup(library => library.AddExperience(_miningJob));
+            _experienceServiceMock.Setup(library => library.AddExperience(_miningJob.Levelable));
             
             ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
             
@@ -57,7 +58,7 @@ namespace Tests.Orchestration
         [Test]
         public void Positive_ProcessJobAction_JobLevelsUp()
         {
-            _levelServiceMock.Setup(library => library.CanJobLevel(_miningJob)).Returns(true);
+            _levelServiceMock.Setup(library => library.CanJobLevel(_miningJob.Levelable)).Returns(true);
 
             ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
             
@@ -65,11 +66,11 @@ namespace Tests.Orchestration
             
             VerifyDependencyCalls(1, 1, 1, 1);
         }
-
+        
         [Test]
         public void Negative_ProcessJobAction_Catches_Exception()
         {
-            _experienceServiceMock.Setup(library => library.AddExperience(_miningJob))
+            _experienceServiceMock.Setup(library => library.AddExperience(_miningJob.Levelable))
                 .Throws<Exception>();
             
             ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);

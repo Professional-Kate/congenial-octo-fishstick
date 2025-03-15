@@ -1,9 +1,9 @@
-﻿using IdelPog.Model;
+﻿using IdelPog.Structures.Models.Levelable;
 
 namespace IdelPog.Validation.Assertions.Interfaces
 {
     public interface IAssertUnderMaxLevel
     {
-        public void AssertLevelIsUnderMax(Job levelable);
+        public void AssertLevelIsUnderMax(ILevelable levelable);
     }
 }

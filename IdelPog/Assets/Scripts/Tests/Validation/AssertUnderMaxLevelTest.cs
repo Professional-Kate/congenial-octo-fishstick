@@ -1,10 +1,10 @@
-﻿using IdelPog.Model;
+﻿using IdelPog.Structures.Builders;
+using IdelPog.Structures.Models.Levelable;
 using IdelPog.Validation;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Interfaces;
 using NUnit.Framework;
-using Tests.Utils;
 
 namespace Tests.Validation
 {
@@ -12,27 +12,45 @@ namespace Tests.Validation
     public class AssertUnderMaxLevelTest
     {
         private IAssertUnderMaxLevel _assertUnderMaxLevel { get; set; }
-        private Job _job { get; set; }
+        private ILevelable _levelable { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _job = JobFactory.CreateFarming();
+            _levelable = LevelableBuilder.Builder()
+                .Level(0)
+                .Experience(1)
+                .NextLevelExperience(10)
+                .ExperiencePerAction(0)
+                .Build();
+            
             _assertUnderMaxLevel = new AssertUnderMaxLevel(new ThrowHandler());
         }
 
         [Test]
         public void Positive_AssertLevelIsUnderMax_LevelUnderMax()
         {
-            _job.Setup(99, 1, 1, 1);
-            Assert.DoesNotThrow(() => _assertUnderMaxLevel.AssertLevelIsUnderMax(_job));
+            _levelable = LevelableBuilder.Builder()
+                .Level(99)
+                .Experience(1)
+                .NextLevelExperience(10)
+                .ExperiencePerAction(0)
+                .Build();
+            
+            Assert.DoesNotThrow(() => _assertUnderMaxLevel.AssertLevelIsUnderMax(_levelable));
         }
 
         [Test]
         public void Negative_AssertLevelIsUnderMax_LevelIsMax_Throws()
         {
-            _job.Setup(100, 1, 1, 1);
-            Assert.Throws<MaxLevelException>(() => _assertUnderMaxLevel.AssertLevelIsUnderMax(_job));
+            _levelable = LevelableBuilder.Builder()
+                .Level(100)
+                .Experience(1)
+                .NextLevelExperience(1)
+                .ExperiencePerAction(1)
+                .Build();
+            
+            Assert.Throws<MaxLevelException>(() => _assertUnderMaxLevel.AssertLevelIsUnderMax(_levelable));
         }
     }
 }

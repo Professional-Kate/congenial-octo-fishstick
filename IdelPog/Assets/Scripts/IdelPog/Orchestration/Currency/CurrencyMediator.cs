@@ -6,8 +6,6 @@ using IdelPog.Service;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Validation;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Orchestration
@@ -20,14 +18,6 @@ namespace IdelPog.Orchestration
         private readonly ICurrencyService _currencyService;
         private readonly IRepository<CurrencyType, Currency> _repository;
         private readonly IAssertPositive _assert;
-
-        public CurrencyMediator()
-        {
-            _currencyService = new CurrencyService();
-
-            IAssertFound assertFound = new AssertFound(new ThrowHandler());
-            // _repository = new Repository<CurrencyType, Currency>(assertFound);
-        }
         
         public CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Currency> repository, IAssertPositive assert)
         {

@@ -16,7 +16,6 @@ namespace Tests.Orchestration
     {
         private IInventoryMediator _inventoryMediator { get; set; }
         private Mock<IInventory> _repositoryMock { get; set; }
-        private Mock<IItemFactory> _itemFactoryMock { get; set; }
         private Mock<IMapper<InventoryID>> _mapperMock { get; set; }
 
         private Item _oakWood { get; set; }
@@ -27,10 +26,9 @@ namespace Tests.Orchestration
         public void Setup()
         {
             _repositoryMock = new Mock<IInventory>();
-            _itemFactoryMock = new Mock<IItemFactory>();
             _mapperMock = new Mock<IMapper<InventoryID>>();
-            _inventoryMediator = new InventoryMediator(_repositoryMock.Object, _itemFactoryMock.Object, _mapperMock.Object);
-            _information = Information.Create("", "");
+            _inventoryMediator = new InventoryMediator(_repositoryMock.Object, _mapperMock.Object);
+            _information = new Information("", "");
             
             _oakWood = ItemFactory.CreateOakWood();
             _oakWood.AddAmount(1);
@@ -100,7 +98,6 @@ namespace Tests.Orchestration
         public void Positive_AddAmount_NoFoundItem_CreatesItem()
         {
             _repositoryMock.Setup(library => library.Contains(_oakWood.ID)).Returns(false);
-            _itemFactoryMock.Setup(library => library.CreateItem(_oakWood.ID, _information, 1, AMOUNT)).Returns(_oakWood);
             _mapperMock.Setup(library => library.GetInformation(_oakWood.ID)).Returns(_information);
             
             ServiceResponse response = _inventoryMediator.AddAmount(_oakWood.ID, AMOUNT);
@@ -109,7 +106,6 @@ namespace Tests.Orchestration
             
             _repositoryMock.Verify(library => library.AddAmount(_oakWood.ID, AMOUNT));
             _repositoryMock.Verify(library => library.Contains(_oakWood.ID));
-            _itemFactoryMock.Verify(library => library.CreateItem(_oakWood.ID, _information, 1, AMOUNT));
             _mapperMock.Verify(library => library.GetInformation(_oakWood.ID));
         }
     }

@@ -1,17 +1,14 @@
-﻿namespace IdelPog.Model
+﻿namespace IdelPog.Structures.Models.Levelable
 {
-    /// <summary>
-    /// See <see cref="ILevelable"/> for documentation
-    /// </summary>
-    public abstract class Levelable : ILevelable
+    /// <inheritdoc cref="ILevelable"/>
+    public class Levelable : ILevelable
     {
         public byte Level { get; private set; }
+        public int Experience { get; private set; }
+        public int NextLevelExperience { get; private set; }
+        public int ExperiencePerAction { get; private set; }
 
-        public int Experience { get; private set; } 
-        public int NextLevelExperience { get; private set; } = 10;
-        public int ExperiencePerAction { get; private set; } = 1;
-
-        public void Setup(byte level, int experience, int nextLevelExperience, int experiencePerAction)
+        public Levelable(byte level, int experience, int nextLevelExperience, int experiencePerAction)
         {
             Level = level;
             Experience = experience;
@@ -19,20 +16,24 @@
             ExperiencePerAction = experiencePerAction;
         }
 
-        public void AddExperience(int experience)
+        public void LevelUp()
+        {
+            Level++;
+        }
+       
+        public void SetExperience(int experience)
         {
             Experience += experience;
         }
 
         public void SetExperiencePerAction(int experiencePerAction)
         {
-            ExperiencePerAction = experiencePerAction;
+            ExperiencePerAction += experiencePerAction;
         }
 
-        public void LevelUp(int nextLevelExperience)
+        public void SetNextLevelExperience(int nextLevelExperience)
         {
-            Level++;
-            NextLevelExperience = nextLevelExperience;
+            NextLevelExperience += nextLevelExperience;
         }
     }
 }

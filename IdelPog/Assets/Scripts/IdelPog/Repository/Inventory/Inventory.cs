@@ -13,12 +13,6 @@ namespace IdelPog.Repository
         private readonly IAssertPositive _assertPositive;
         private readonly IAssertNonDuplicate _assertNonDuplicate;
         
-        public Inventory()
-        {
-            // IAssertFound assertFound = new AssertFound(new ThrowHandler());
-            // _repository = new Repository<InventoryID, Item>(assertFound);
-        }
-
         public Inventory(IRepository<InventoryID, Item> repository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertNonDuplicate assertNonDuplicate)
         {
             _repository = repository;

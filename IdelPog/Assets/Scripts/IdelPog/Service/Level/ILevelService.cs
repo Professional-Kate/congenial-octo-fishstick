@@ -1,8 +1,8 @@
 ﻿using System;
-using IdelPog.Model;
+using IdelPog.Structures.Models.Levelable;
 using IdelPog.Validation;
 
-namespace IdelPog.Service
+namespace IdelPog.Service.Level
 {
     /// <seealso cref="CanJobLevel"/>
     /// <seealso cref="LevelUpJob"/>
@@ -10,21 +10,21 @@ namespace IdelPog.Service
     {
     
         /// <summary>
-        /// Calculate and return if the passed <see cref="Job"/> can level up
+        /// Calculate and return if the passed <see cref="ILevelable"/> can level up
         /// </summary>
-        /// <param name="job">The <see cref="Job"/> you want to check if it can level up</param>
-        /// <returns>If the <see cref="Job"/> can level up</returns>
-        public bool CanJobLevel(Job job) => job.Experience >= job.NextLevelExperience;
+        /// <param name="levelable">The <see cref="ILevelable"/> you want to check if it can level up</param>
+        /// <returns>If the <see cref="ILevelable"/> can level up</returns>
+        public bool CanJobLevel(ILevelable levelable) => levelable.Experience >= levelable.NextLevelExperience;
     
         /// <summary>
-        /// Invoke this to level up the passed <see cref="Job"/>. Will increase the <see cref="Job"/>.<see cref="Job.Level"/>
+        /// Invoke this to level up the passed <see cref="ILevelable"/>
         /// </summary>
-        /// <param name="job">The <see cref="Job"/> you want to level</param>
-        /// <exception cref="ArgumentNullException">Will be thrown if the passed <see cref="Job"/> is null</exception>
-        /// <exception cref="MaxLevelException">Will be thrown if the passed <see cref="Job"/> is at max level</exception>
+        /// <param name="levelable">The <see cref="ILevelable"/> you want to level</param>
+        /// <exception cref="ArgumentNullException">Will be thrown if the passed <see cref="ILevelable"/> is null</exception>
+        /// <exception cref="MaxLevelException">Will be thrown if the passed <see cref="ILevelable"/> is at max level</exception>
         /// <remarks>
-        /// This method will calculate a new <see cref="Job.NextLevelExperience"/>
+        /// This method will calculate a new <see cref="ILevelable.NextLevelExperience"/>
         /// </remarks>
-        public void LevelUpJob(Job job);
+        public void LevelUpJob(ILevelable levelable);
     }
 }

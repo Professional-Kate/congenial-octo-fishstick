@@ -1,6 +1,8 @@
 ﻿using IdelPog.Constants;
 using IdelPog.Model;
+using IdelPog.Structures.Builders;
 using IdelPog.Structures.Enums;
+using IdelPog.Structures.Models.Levelable;
 
 namespace Tests.Utils
 {
@@ -8,12 +10,18 @@ namespace Tests.Utils
     {
         internal static Job CreateMining()
         {
-            return new Job(JobType.MINING, JobConstants.WOOD_INFO);
-        }
-        
-        internal static Job CreateFarming()
-        {
-            return new Job(JobType.FARMING, JobConstants.FARMING_INFO);
+            ILevelable levelable = LevelableBuilder.Builder()
+                .Level(1)
+                .Experience(0)
+                .NextLevelExperience(10)
+                .ExperiencePerAction(0)
+                .Build();
+            
+            return JobBuilder.Builder()
+                .JobType(JobType.MINING)
+                .Information(JobConstants.MINING_INFO)
+                .Levelable(levelable)
+                .Build();
         }
     }
 }

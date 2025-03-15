@@ -1,4 +1,4 @@
-﻿using IdelPog.Model;
+using IdelPog.Structures.Models.Levelable;
 using IdelPog.Validation.Pipelines.Interfaces;
 
 namespace IdelPog.Service
@@ -12,12 +12,12 @@ namespace IdelPog.Service
             _levelableAsserter = levelableAsserter;
         }
         
-        public void AddExperience(Job job)
+        public void AddExperience(ILevelable levelable)
         {
-           _levelableAsserter.AssertLevelable(job);
-            
-            int experienceToAdd = job.ExperiencePerAction;
-            job.AddExperience(experienceToAdd);
+            _levelableAsserter.AssertLevelable(levelable);
+
+            int experienceToAdd = levelable.ExperiencePerAction + levelable.Experience;
+            levelable.SetExperience(experienceToAdd);
         }
     }
 }

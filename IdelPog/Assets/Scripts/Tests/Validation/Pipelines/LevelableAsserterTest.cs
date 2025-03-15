@@ -1,5 +1,6 @@
 ﻿using System;
-using IdelPog.Model;
+using IdelPog.Structures.Builders;
+using IdelPog.Structures.Models.Levelable;
 using IdelPog.Validation;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -8,7 +9,6 @@ using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Pipelines;
 using IdelPog.Validation.Pipelines.Interfaces;
 using NUnit.Framework;
-using Tests.Utils;
 
 namespace Tests.Validation.Pipelines
 {
@@ -16,12 +16,17 @@ namespace Tests.Validation.Pipelines
     public class LevelableAsserterTest
     {
         private ILevelableAsserter _levelableAsserter { get; set; }
-        private Job _job { get; set; }
+        private ILevelable _levelable { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _job = JobFactory.CreateMining();
+            _levelable = LevelableBuilder.Builder()
+                .Experience(0)
+                .Level(1)
+                .ExperiencePerAction(0)
+                .NextLevelExperience(10)
+                .Build();
             
             IHandler handler = new ThrowHandler();
             IAssertUnderMaxLevel assertUnderMaxLevel = new AssertUnderMaxLevel(handler);
@@ -31,21 +36,10 @@ namespace Tests.Validation.Pipelines
             _levelableAsserter = new LevelableAsserter(assertUnderMaxLevel, assertNotNull, assertPositive);
         }
 
-        private Job CloneJob()
-        {
-            Job clonedJob = _job.Clone() as Job;
-            if (clonedJob == null)
-            {
-                Assert.Fail("cloned job is null!");
-            }
-            
-            return clonedJob;
-        }
-
         [Test]
         public void Positive_AssertLevelable_LevelableGood()
         {
-            Assert.DoesNotThrow(() => _levelableAsserter.AssertLevelable(_job));
+            Assert.DoesNotThrow(() => _levelableAsserter.AssertLevelable(_levelable));
         }
 
         [Test]
@@ -57,19 +51,21 @@ namespace Tests.Validation.Pipelines
         [Test]
         public void Negative_AssertLevelable_MaxLevel_Throws()
         {
-            Job badJob = CloneJob();
-            badJob.Setup(100, 1, 1, 1);
+            ILevelable levelable = LevelableBuilder.Builder()
+                .Level(100)
+                .Build();
             
-            Assert.Throws<MaxLevelException>(() => _levelableAsserter.AssertLevelable(badJob));
+            Assert.Throws<MaxLevelException>(() => _levelableAsserter.AssertLevelable(levelable));
         }
 
         [Test]
         public void Positive_AssertLevelable_NegativeExperiencePerAction_Throws()
         {
-            Job badJob = CloneJob();
-            badJob.Setup(10, 1, 1, -1);
+            ILevelable levelable = LevelableBuilder.Builder()
+                .ExperiencePerAction(-1)
+                .Build();
             
-            Assert.Throws<NegativeNumberException>(() => _levelableAsserter.AssertLevelable(badJob));
+            Assert.Throws<NegativeNumberException>(() => _levelableAsserter.AssertLevelable(levelable));
         }
     }
 }

@@ -2,14 +2,10 @@
 using IdelPog.Model;
 using IdelPog.Repository;
 using IdelPog.Service;
+using IdelPog.Service.Level;
 using IdelPog.Structures;
 using IdelPog.Structures.Enums;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Assertions.Handlers.Interfaces;
-using IdelPog.Validation.Assertions.Interfaces;
-using IdelPog.Validation.Pipelines;
-using IdelPog.Validation.Pipelines.Interfaces;
+using IdelPog.Structures.Models.Levelable;
 
 namespace IdelPog.Orchestration
 {
@@ -19,25 +15,6 @@ namespace IdelPog.Orchestration
         private readonly ILevelService _levelService;
         private readonly IRepository<JobType, Job> _repository;
 
-        public JobMediator()
-        {
-            IHandler handler = new ThrowHandler();
-            
-            IAssertUnderMaxLevel assertUnderMaxLevel = new AssertUnderMaxLevel(handler);
-            IAssertNotNull assertNotNull = new AssertNotNull(handler);
-            IAssertPositive assertPositive = new AssertPositive(handler);
-            ILevelableAsserter levelableAsserter = new LevelableAsserter(assertUnderMaxLevel, assertNotNull, assertPositive);
-            
-            _experienceService = new ExperienceService(levelableAsserter);
-            _levelService = new LevelService(levelableAsserter);
-
-            IAssertFound assertFound = new AssertFound(handler);
-            IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(handler);
-            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
-            
-            _repository = new Repository<JobType, Job>(repositoryAsserter);
-        }
-        
         public JobMediator(IExperienceService experienceService, ILevelService levelService, IRepository<JobType, Job> repository)
         {
             _experienceService = experienceService;
@@ -50,12 +27,13 @@ namespace IdelPog.Orchestration
             try
             {
                 Job job = _repository.Get(jobType);
+                ILevelable levelable = job.Levelable;
                 
-                _experienceService.AddExperience(job);
+                _experienceService.AddExperience(levelable);
 
-                if (_levelService.CanJobLevel(job))
+                if (_levelService.CanJobLevel(levelable))
                 {
-                    _levelService.LevelUpJob(job);
+                    _levelService.LevelUpJob(levelable);
                 }
                 
                 _repository.Update(jobType, job);

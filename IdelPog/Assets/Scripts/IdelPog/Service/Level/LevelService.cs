@@ -1,8 +1,8 @@
 ﻿using System;
-using IdelPog.Model;
+using IdelPog.Structures.Models.Levelable;
 using IdelPog.Validation.Pipelines.Interfaces;
 
-namespace IdelPog.Service
+namespace IdelPog.Service.Level
 {
     public class LevelService : ILevelService   
     {
@@ -13,17 +13,18 @@ namespace IdelPog.Service
             _levelableAsserter = levelableAsserter;
         }
         
-        public void LevelUpJob(Job job)
+        public void LevelUpJob(ILevelable levelable)
         {
-            _levelableAsserter.AssertLevelable(job);
+            _levelableAsserter.AssertLevelable(levelable);
 
             int total = 0;
-            for (int i = 1; i < job.Level; i++)
+            for (int i = 1; i < levelable.Level; i++)
             {
                 total += Convert.ToInt32(Math.Floor(i + 83 * Math.Pow(2, i / 7.0)));
             }
 
-            job.LevelUp(total);
+            levelable.LevelUp();
+            levelable.SetNextLevelExperience(total);
         }
     }
 }

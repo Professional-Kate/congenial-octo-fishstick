@@ -198,7 +198,7 @@ namespace Tests.Repository
         [TestCase(-10)]
         public void Negative_AddItem_NegativeAmount_Throws(int amount)
         {
-            Item itemWithBadAmount = new(InventoryID.WILLOW_WOOD, Information.Create("", ""), 1, amount);
+            Item itemWithBadAmount = new(InventoryID.WILLOW_WOOD, new Information("", ""), 1, amount);
 
             _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(amount))
                 .Throws(new NegativeNumberException(amount));

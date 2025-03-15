@@ -1,6 +1,6 @@
 ﻿using System;
 using IdelPog.Constants;
-using IdelPog.Model;
+using IdelPog.Structures.Models.Levelable;
 
 namespace IdelPog.Validation.Pipelines.Interfaces
 {
@@ -10,10 +10,10 @@ namespace IdelPog.Validation.Pipelines.Interfaces
         /// <summary>
         /// Asserts that the passed <see cref="ILevelable"/> is completely valid
         /// </summary>
-        /// <param name="job">The <see cref="ILevelable"/> you want to verify</param>
+        /// <param name="levelable">The <see cref="ILevelable"/> you want to verify</param>
         /// <exception cref="ArgumentNullException">If the passed <see cref="ILevelable"/> is null</exception>
         /// <exception cref="MaxLevelException">If the passed <see cref="ILevelable"/> level is <see cref="JobConstants.MAX_JOB_LEVEL"/></exception>
         /// <exception cref="NegativeNumberException">If the experience per action is negative</exception>
-        public void AssertLevelable(Job job);
+        public void AssertLevelable(ILevelable levelable);
     }
 }
