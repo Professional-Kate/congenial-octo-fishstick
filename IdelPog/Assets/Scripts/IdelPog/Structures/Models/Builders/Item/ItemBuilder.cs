@@ -2,6 +2,7 @@
 
 namespace IdelPog.Structures.Builders
 {
+    /// <inheritdoc cref="IItemBuilder"/>
     public class ItemBuilder : IItemBuilder
     {
         private InventoryID _inventoryID { get; set; }

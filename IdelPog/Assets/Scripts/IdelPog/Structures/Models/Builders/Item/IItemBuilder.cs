@@ -2,6 +2,14 @@
 
 namespace IdelPog.Structures.Builders
 {
+    /// <summary>
+    /// Builds a new <see cref="Item"/>
+    /// </summary>
+    /// <seealso cref="InventoryID"/>
+    /// <seealso cref="Information"/>
+    /// <seealso cref="SellPrice"/>
+    /// <seealso cref="Amount"/>
+    /// <seealso cref="Build"/>
     public interface IItemBuilder
     {
         public IItemBuilder InventoryID(InventoryID inventoryID);
