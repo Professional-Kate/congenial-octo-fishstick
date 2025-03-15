@@ -6,7 +6,6 @@ using IdelPog.Structures;
 using IdelPog.Structures.Models.Item;
 using Moq;
 using NUnit.Framework;
-using UnityEngine;
 using ItemFactory = Tests.Utils.ItemFactory;
 
 namespace Tests.Orchestration
@@ -63,8 +62,6 @@ namespace Tests.Orchestration
         public void Positive_RemoveAmount_RemovesAmount()
         {
             ServiceResponse response = _inventoryMediator.RemoveAmount(_oakWood.ID, AMOUNT);
-            
-            Debug.Log(response.Message);
             
             Assert.True(response.IsSuccess);
             _repositoryMock.Verify(library => library.RemoveAmount(_oakWood.ID, AMOUNT));

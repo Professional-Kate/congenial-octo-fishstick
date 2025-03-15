@@ -11,7 +11,6 @@ using IdelPog.Validation.Assertions.Interfaces;
 using Moq;
 using NUnit.Framework;
 using Tests.Utils;
-using UnityEngine;
 
 namespace Tests.Orchestration
 {
@@ -145,8 +144,6 @@ namespace Tests.Orchestration
             
             _currencyMediator.ProcessCurrencyUpdate(addTrades);
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(removeTrades);
-            
-            Debug.Log(serviceResponse.Message);
             
             Assert.True(serviceResponse.IsSuccess);
             Assert.AreEqual(10, _foodCurrency.Amount);

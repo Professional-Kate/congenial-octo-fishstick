@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using IdelPog.Validation.Pipelines.Interfaces;
-using UnityEngine;
 
 namespace IdelPog.Repository
 {
@@ -23,9 +22,7 @@ namespace IdelPog.Repository
         
         public void Add(TID key, T value)
         {
-            Debug.Log("BEFRE THROW");
             _repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
-            Debug.Log("AFTER THROW");
             
             _repository.Add(key, value);
             OnAdd?.Invoke(key.GetHashCode(), value);
