@@ -14,7 +14,7 @@ namespace IdelPog.Controller
             _jobMediator = jobMediator;
         }
         
-        public void CompleteJob(JobType jobType)
+        public ServiceResponse CompleteJob(JobType jobType)
         {
             ServiceResponse response = _jobMediator.ProcessJobAction(jobType);
             if (response.IsSuccess == false)
@@ -22,6 +22,8 @@ namespace IdelPog.Controller
                 // TODO : Log to file
                 Debug.Log(response.Message);
             }
+            
+            return response;
         }
     }
 }
