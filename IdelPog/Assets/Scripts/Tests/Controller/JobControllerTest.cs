@@ -29,9 +29,10 @@ namespace Tests.Controller
             _jobMediatorMock.Setup(library => library.ProcessJobAction(_miningJob.JobType))
                 .Returns(ServiceResponse.Success);
             
-            _controller.CompleteJob(_miningJob.JobType);
+            ServiceResponse serviceResponse = _controller.CompleteJob(_miningJob.JobType);
             
             _jobMediatorMock.Verify(library => library.ProcessJobAction(_miningJob.JobType), Times.Once());
+            Assert.IsTrue(serviceResponse.IsSuccess);
         }
 
         [Test]
@@ -40,9 +41,10 @@ namespace Tests.Controller
             _jobMediatorMock.Setup(library => library.ProcessJobAction(_miningJob.JobType))
                 .Returns(ServiceResponse.Failure(""));
             
-            _controller.CompleteJob(_miningJob.JobType);
+            ServiceResponse serviceResponse = _controller.CompleteJob(_miningJob.JobType);
             
             _jobMediatorMock.Verify(library => library.ProcessJobAction(_miningJob.JobType), Times.Once());
+            Assert.IsFalse(serviceResponse.IsSuccess);
         }
     }
 }

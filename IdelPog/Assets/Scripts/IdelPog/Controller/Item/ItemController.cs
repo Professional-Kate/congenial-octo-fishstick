@@ -1,4 +1,5 @@
 ﻿using IdelPog.Orchestration;
+using IdelPog.Structures;
 using IdelPog.Structures.Enums;
 using IdelPog.Structures.Models.Item;
 
@@ -17,17 +18,21 @@ namespace IdelPog.Controller
             _inventoryMediator = inventoryMediator;
         }
         
-        public void ModifyItem(InventoryID id, int amount, ActionType action)
+        public ServiceResponse ModifyItem(InventoryID id, int amount, ActionType action)
         {
+            ServiceResponse serviceResponse = ServiceResponse.Success();
+            
             switch (action)
             {
                 case ActionType.ADD:
-                    _inventoryMediator.AddAmount(id, amount);
+                    serviceResponse =_inventoryMediator.AddAmount(id, amount);
                     break;
                 case ActionType.REMOVE:
-                    _inventoryMediator.RemoveAmount(id, amount);
+                    serviceResponse =_inventoryMediator.RemoveAmount(id, amount);
                     break;
             }
+
+            return serviceResponse;
         }
     }
 }
