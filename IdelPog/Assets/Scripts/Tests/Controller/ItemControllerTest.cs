@@ -45,7 +45,7 @@ namespace Tests.Controller
         {
            SetupMock(ServiceResponse.Success());
             
-            _itemController.ModifyItem(ID, AMOUNT, actionType);
+            ServiceResponse serviceResponse = _itemController.ModifyItem(ID, AMOUNT, actionType);
 
             switch (actionType)
             {
@@ -56,6 +56,8 @@ namespace Tests.Controller
                     VerifyDependencyCalls(0, 1);
                     break;
             }
+            
+            Assert.IsTrue(serviceResponse.IsSuccess);
         }
         
         [TestCase(ActionType.ADD)]
@@ -64,7 +66,7 @@ namespace Tests.Controller
         {
             SetupMock(ServiceResponse.Failure(""));
             
-            _itemController.ModifyItem(ID, AMOUNT, actionType);
+            ServiceResponse serviceResponse = _itemController.ModifyItem(ID, AMOUNT, actionType);
 
             switch (actionType)
             {
@@ -75,6 +77,8 @@ namespace Tests.Controller
                     VerifyDependencyCalls(0, 1);
                     break;
             }
+            
+            Assert.IsFalse(serviceResponse.IsSuccess);
         }
     }
 }
