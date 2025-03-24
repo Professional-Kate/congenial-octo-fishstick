@@ -7,6 +7,7 @@ using IdelPog.Validation;
 using IdelPog.Validation.Pipelines.Interfaces;
 using Moq;
 using NUnit.Framework;
+using Tests.Utils;
 
 namespace Tests.Service
 {
@@ -27,7 +28,7 @@ namespace Tests.Service
         [SetUp]
         public void SetUp()
         {
-            _levelable = new Levelable(1, 0, 10000, 0);
+            _levelable = LevelableFactory.CreateLevelable();
         }
         
         [TestCase(10)]
@@ -50,7 +51,7 @@ namespace Tests.Service
             _experienceService.AddExperience(_levelable);
             
             Assert.AreEqual(10000, _levelable.Experience);
-            Assert.AreEqual(1, _levelable.Level);
+            Assert.AreEqual(0, _levelable.Level);
         }
         
         [Test]

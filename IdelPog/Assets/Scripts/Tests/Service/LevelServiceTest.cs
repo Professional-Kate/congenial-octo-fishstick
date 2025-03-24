@@ -7,6 +7,7 @@ using IdelPog.Validation;
 using IdelPog.Validation.Pipelines.Interfaces;
 using Moq;
 using NUnit.Framework;
+using Tests.Utils;
 using UnityEngine;
 
 namespace Tests.Service
@@ -30,7 +31,7 @@ namespace Tests.Service
         [SetUp]
         public void SetUp()
         {
-            _levelable = new Levelable(0, 0, 10000, 0);
+            _levelable = LevelableFactory.CreateLevelable();
         }
 
         [Test]
@@ -44,7 +45,10 @@ namespace Tests.Service
         [Test]
         public void Positive_CanJobLevel_ReturnsTrue()
         {
-            _levelable = new Levelable(1, 100, 10, 1);
+            _levelable = LevelableBuilder.Builder()
+                .Experience(10)
+                .NextLevelExperience(10)
+                .Build();
 
             bool canJobLevel = _service.CanJobLevel(_levelable);
             Assert.IsTrue(canJobLevel);
@@ -53,7 +57,9 @@ namespace Tests.Service
         [Test]
         public void Positive_CanJobLevel_ReturnsFalse()
         {
-            _levelable = new Levelable(1, 5, 10, 1);
+            _levelable = LevelableBuilder.Builder()
+                .NextLevelExperience(10)
+                .Build();
 
             bool canJobLevel = _service.CanJobLevel(_levelable);
             Assert.IsFalse(canJobLevel);
@@ -77,7 +83,12 @@ namespace Tests.Service
         [Test]
         public void Positive_JobCanLevelToMax()
         {
-            _levelable = new Levelable(1, 0, 83, 1);
+            _levelable = LevelableBuilder.Builder()
+                .Level(1)
+                .Experience(0)
+                .NextLevelExperience(100)
+                .ExperiencePerAction(1)
+                .Build();
 
             for (int i = 1; i < JobConstants.MAX_JOB_LEVEL; i++)
             {

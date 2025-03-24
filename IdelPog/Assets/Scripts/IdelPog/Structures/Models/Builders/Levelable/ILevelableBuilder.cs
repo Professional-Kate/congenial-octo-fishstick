@@ -5,6 +5,7 @@ namespace IdelPog.Structures.Builders
     /// <summary>
     /// Builds a new <see cref="ILevelable"/>
     /// </summary>
+    /// <seealso cref="LevelRewards"/>
     /// <seealso cref="Level"/>
     /// <seealso cref="Experience"/>
     /// <seealso cref="NextLevelExperience"/>
@@ -12,6 +13,8 @@ namespace IdelPog.Structures.Builders
     /// <seealso cref="Build"/>
     public interface ILevelableBuilder
     {
+        public ILevelableBuilder LevelRewards(ILevelRewards levelRewards);
+        
         public ILevelableBuilder Level(byte level);
 
         public ILevelableBuilder Experience(int experience);
