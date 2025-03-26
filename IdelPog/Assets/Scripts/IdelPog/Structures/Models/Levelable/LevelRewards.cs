@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace IdelPog.Structures
 {
@@ -7,6 +6,7 @@ namespace IdelPog.Structures
     public class LevelRewards : ILevelRewards
     {
         private readonly LevelAward[] _sortedRewards;
+        private byte _nextLevelRewardIndex;
 
         public LevelRewards(params LevelAward[] rewards)
         {
@@ -15,7 +15,24 @@ namespace IdelPog.Structures
         
         public void MaybeGrantReward(byte level)
         {
-            throw new NotImplementedException();
+            LevelAward nextLevelAward = _sortedRewards[_nextLevelRewardIndex];
+            if (level < nextLevelAward.RequiredLevel)
+            {
+                return;
+            }
+
+            while (level >= nextLevelAward.RequiredLevel)
+            {
+                nextLevelAward.OnLevelUp();
+                
+                _nextLevelRewardIndex++;
+                if (_nextLevelRewardIndex >= _sortedRewards.Length)
+                {
+                    break;
+                }
+                
+                nextLevelAward = _sortedRewards[_nextLevelRewardIndex];
+            }
         }
     }
 }
