@@ -1,4 +1,5 @@
 ﻿using System;
+using IdelPog.Structures.Models;
 using IdelPog.Structures.Models.Levelable;
 
 namespace IdelPog.Structures
@@ -13,7 +14,6 @@ namespace IdelPog.Structures
         public int Experience { get; private set; }
         public int NextLevelExperience { get; private set; }
         public int ExperiencePerAction { get; private set; }
-
 
         public Levelable(ILevelRewards levelRewards, byte level, int experience, int nextLevelExperience, int experiencePerAction)
         {

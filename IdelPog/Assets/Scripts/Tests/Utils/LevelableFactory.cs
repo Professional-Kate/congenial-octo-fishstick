@@ -1,5 +1,5 @@
-﻿using IdelPog.Structures;
-using IdelPog.Structures.Builders;
+﻿using IdelPog.Structures.Builders;
+using IdelPog.Structures.Models;
 using IdelPog.Structures.Models.Levelable;
 
 namespace Tests.Utils

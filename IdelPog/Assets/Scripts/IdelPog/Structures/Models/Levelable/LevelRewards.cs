@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace IdelPog.Structures
+namespace IdelPog.Structures.Models
 {
     /// <inheritdoc cref="ILevelRewards"/>
     public class LevelRewards : ILevelRewards

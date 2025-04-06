@@ -1,4 +1,5 @@
-﻿using IdelPog.Structures.Models.Levelable;
+﻿using IdelPog.Structures.Models;
+using IdelPog.Structures.Models.Levelable;
 
 namespace IdelPog.Structures.Builders
 {
