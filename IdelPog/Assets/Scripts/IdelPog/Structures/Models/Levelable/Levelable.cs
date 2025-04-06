@@ -27,6 +27,7 @@ namespace IdelPog.Structures
         public void LevelUp()
         {
             Level++;
+            _levelRewards.MaybeGrantReward(Level);
         }
        
         public void SetExperience(int experience)
