@@ -8,7 +8,7 @@ namespace IdelPog.Structures.Models
         private readonly LevelAward[] _sortedRewards;
         private byte _nextLevelRewardIndex;
 
-        public LevelRewards(params LevelAward[] rewards)
+        public LevelRewards(LevelAward[] rewards)
         {
             _sortedRewards = rewards.OrderBy(levelAward => levelAward.RequiredLevel).ToArray();
         }

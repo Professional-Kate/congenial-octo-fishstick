@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace IdelPog.Structures.Models.Levelable
+﻿namespace IdelPog.Structures.Models.Levelable
 {
     /// <summary>
     /// This is the main progression object. 
@@ -15,8 +13,7 @@ namespace IdelPog.Structures.Models.Levelable
         public int Experience { get; } 
         public int NextLevelExperience { get; }
         public int ExperiencePerAction { get; }
-        public event Action<byte> OnLevelUp;
-        
+
         /// <summary>
         /// Will increase the <see cref="ILevelable.Level"/> of this <see cref="ILevelable"/> by one
         /// </summary>

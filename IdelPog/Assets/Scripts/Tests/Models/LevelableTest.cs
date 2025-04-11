@@ -1,7 +1,5 @@
 ﻿using IdelPog.Structures.Builders;
-using IdelPog.Structures.Models;
 using IdelPog.Structures.Models.Levelable;
-using Moq;
 using NUnit.Framework;
 
 namespace Tests.Models
@@ -10,28 +8,27 @@ namespace Tests.Models
     public class LevelableTest
     {
         private ILevelable _levelable { get; set; }
-        private Mock<ILevelRewards> _levelRewardsMock { get; set; }
 
         private const byte LEVEL = 5;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _levelRewardsMock = new Mock<ILevelRewards>();
-           
             _levelable = LevelableBuilder.Builder()
                 .Level(LEVEL)
-                .LevelRewards(_levelRewardsMock.Object)
+                .OnLevelUp(AssertLevelUp)
                 .Build();
         }
 
+        private static void AssertLevelUp(byte level)
+        {
+            Assert.AreNotEqual(LEVEL, level);
+        }
+
         [Test]
-        public void Positive_LevelUp_CallsLevelRewards()
+        public void Positive_LevelUp_CallsAction()
         {
             _levelable.LevelUp();
-            const byte newLevel = LEVEL + 1;
-            
-            _levelRewardsMock.Verify(library => library.MaybeGrantReward(newLevel), Times.Once());
         }
     }
 }

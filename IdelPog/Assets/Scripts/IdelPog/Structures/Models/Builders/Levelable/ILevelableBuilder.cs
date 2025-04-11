@@ -1,4 +1,4 @@
-﻿using IdelPog.Structures.Models;
+﻿using System;
 using IdelPog.Structures.Models.Levelable;
 
 namespace IdelPog.Structures.Builders
@@ -6,7 +6,7 @@ namespace IdelPog.Structures.Builders
     /// <summary>
     /// Builds a new <see cref="ILevelable"/>
     /// </summary>
-    /// <seealso cref="LevelRewards"/>
+    /// <seealso cref="OnLevelUp"/>
     /// <seealso cref="Level"/>
     /// <seealso cref="Experience"/>
     /// <seealso cref="NextLevelExperience"/>
@@ -14,7 +14,7 @@ namespace IdelPog.Structures.Builders
     /// <seealso cref="Build"/>
     public interface ILevelableBuilder
     {
-        public ILevelableBuilder LevelRewards(ILevelRewards levelRewards);
+        public ILevelableBuilder OnLevelUp(Action<byte> onLevelUp);
         
         public ILevelableBuilder Level(byte level);
 

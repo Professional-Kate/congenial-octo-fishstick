@@ -1,4 +1,4 @@
-﻿using IdelPog.Structures.Models;
+﻿using System;
 using IdelPog.Structures.Models.Levelable;
 
 namespace IdelPog.Structures.Builders
@@ -6,7 +6,7 @@ namespace IdelPog.Structures.Builders
     /// <inheritdoc cref="ILevelableBuilder"/>
     public sealed class LevelableBuilder : ILevelableBuilder
     {
-        private ILevelRewards _levelRewards { get; set; }
+        private Action<byte> _onLevelUp { get; set; }
         private byte _level { get; set; }
         private int _experience { get; set; } 
         private int _nextLevelExperience { get; set; }
@@ -14,9 +14,9 @@ namespace IdelPog.Structures.Builders
 
         public static ILevelableBuilder Builder() => new LevelableBuilder();
 
-        public ILevelableBuilder LevelRewards(ILevelRewards levelRewards)
+        public ILevelableBuilder OnLevelUp(Action<byte> onLevelUp)
         {
-            _levelRewards = levelRewards;
+            _onLevelUp = onLevelUp;
 
             return this;
         } 
@@ -56,7 +56,7 @@ namespace IdelPog.Structures.Builders
         public ILevelable Build()
         {
             // TODO: ensure each of these have a value, or set to default
-            ILevelable levelable = new Levelable(_levelRewards, _level, _experience, _nextLevelExperience, _experiencePerAction);
+            ILevelable levelable = new Levelable(_level, _experience, _nextLevelExperience, _experiencePerAction, _onLevelUp);
             
             return levelable;
         }
