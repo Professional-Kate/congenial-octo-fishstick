@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using IdelPog.Constants;
 using IdelPog.Service.Level;
 using IdelPog.Structures;
@@ -94,6 +95,16 @@ namespace Tests.Service
             
             Assert.IsTrue(_wasOnLevelUpCalled);
             Assert.AreEqual(1, _levelUpCalledAmount);
+        }
+
+        [Test]
+        public void Positive_MaybeGrantReward_EmptyArray()
+        {
+            LevelAward[] levelAwards = Array.Empty<LevelAward>();
+            ILevelRewards levelRewards = new LevelRewards(levelAwards);
+            
+            levelRewards.MaybeGrantReward(10);
+            Assert.IsFalse(_wasOnLevelUpCalled);
         }
 
         [Test]

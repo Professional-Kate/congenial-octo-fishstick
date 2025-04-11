@@ -16,6 +16,11 @@ namespace IdelPog.Service.Level
         
         public void MaybeGrantReward(byte level)
         {
+            if (_sortedRewards.Length <= _nextLevelRewardIndex)
+            {
+                return;
+            }
+            
             LevelAward nextLevelAward = _sortedRewards[_nextLevelRewardIndex];
             if (level < nextLevelAward.RequiredLevel)
             {
