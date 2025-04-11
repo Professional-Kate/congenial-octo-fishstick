@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using IdelPog.Constants;
+using IdelPog.Service.Level;
 using IdelPog.Structures;
-using IdelPog.Structures.Models;
 using NUnit.Framework;
 
 namespace Tests.Service
