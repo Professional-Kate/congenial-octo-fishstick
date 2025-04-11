@@ -80,10 +80,10 @@ namespace Tests.Service
         [Test]
         public void Positive_MaybeGrantReward_GrantsMultipleMissedRewards()
         {
-            _levelRewards.MaybeGrantReward(100);
+            _levelRewards.MaybeGrantReward(23);
             
             Assert.IsTrue(_wasOnLevelUpCalled);
-            Assert.AreEqual(20, _levelUpCalledAmount);
+            Assert.AreEqual(4, _levelUpCalledAmount);
         }
 
         [Test]
