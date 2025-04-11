@@ -1,10 +1,12 @@
-﻿using IdelPog.Structures.Models.Levelable;
+﻿using System;
+using IdelPog.Structures.Models.Levelable;
 
 namespace IdelPog.Structures.Builders
 {
     /// <inheritdoc cref="ILevelableBuilder"/>
     public sealed class LevelableBuilder : ILevelableBuilder
     {
+        private Action<byte> _onLevelUp { get; set; }
         private byte _level { get; set; }
         private int _experience { get; set; } 
         private int _nextLevelExperience { get; set; }
@@ -12,6 +14,13 @@ namespace IdelPog.Structures.Builders
 
         public static ILevelableBuilder Builder() => new LevelableBuilder();
 
+        public ILevelableBuilder OnLevelUp(Action<byte> onLevelUp)
+        {
+            _onLevelUp = onLevelUp;
+
+            return this;
+        } 
+        
         public ILevelableBuilder Level(byte level)
         {
             // TODO assert level is good number
@@ -47,7 +56,7 @@ namespace IdelPog.Structures.Builders
         public ILevelable Build()
         {
             // TODO: ensure each of these have a value, or set to default
-            ILevelable levelable = new Levelable(_level, _experience, _nextLevelExperience, _experiencePerAction);
+            ILevelable levelable = new Levelable(_level, _experience, _nextLevelExperience, _experiencePerAction, _onLevelUp);
             
             return levelable;
         }

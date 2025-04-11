@@ -13,7 +13,7 @@
         public int Experience { get; } 
         public int NextLevelExperience { get; }
         public int ExperiencePerAction { get; }
-        
+
         /// <summary>
         /// Will increase the <see cref="ILevelable.Level"/> of this <see cref="ILevelable"/> by one
         /// </summary>
