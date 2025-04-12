@@ -2,7 +2,7 @@
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Validation.Exceptions;
 
-namespace IdelPog.Engine.Repository.Inventory
+namespace IdelPog.Engine.Repository
 {
     /// <summary>
     /// Using this interface you can adjust the amount of any <see cref="Item"/> in the Inventory. 

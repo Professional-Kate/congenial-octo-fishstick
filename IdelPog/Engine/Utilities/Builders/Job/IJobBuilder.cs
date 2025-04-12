@@ -1,9 +1,8 @@
 ﻿using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Levelable;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Utilities.Builders.Job
+namespace IdelPog.Engine.Utilities.Builders
 {
     /// <summary>
     /// Builds a new <see cref="Job"/> 
@@ -20,6 +19,6 @@ namespace IdelPog.Engine.Utilities.Builders.Job
 
         public IJobBuilder JobType(JobType jobType);
 
-        public Structures.Job Build();
+        public Job Build();
     }
 }

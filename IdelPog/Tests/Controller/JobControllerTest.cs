@@ -1,5 +1,5 @@
-﻿using IdelPog.Engine.Controller.Job;
-using IdelPog.Engine.Orchestration.Job;
+﻿using IdelPog.Engine.Controller;
+using IdelPog.Engine.Orchestration;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Types;
 using IdelPog.Tests.Utils;

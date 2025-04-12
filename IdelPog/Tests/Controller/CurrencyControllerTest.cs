@@ -1,5 +1,5 @@
-﻿using IdelPog.Engine.Controller.Currency;
-using IdelPog.Engine.Orchestration.Currency;
+﻿using IdelPog.Engine.Controller;
+using IdelPog.Engine.Orchestration;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;

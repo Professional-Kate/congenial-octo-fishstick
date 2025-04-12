@@ -1,9 +1,8 @@
 ﻿using IdelPog.Engine.Repository;
-using IdelPog.Engine.Repository.Inventory;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
-using IdelPog.Engine.Validation.Assertions.Interfaces;
+using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Exceptions;
 using Moq;
 using NUnit.Framework;

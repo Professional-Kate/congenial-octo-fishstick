@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Orchestration.Inventory;
-using IdelPog.Engine.Repository.Inventory;
-using IdelPog.Engine.Service.Information;
+﻿using IdelPog.Engine.Orchestration;
+using IdelPog.Engine.Repository;
+using IdelPog.Engine.Service;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;

@@ -1,11 +1,11 @@
-﻿using IdelPog.Engine.Repository.Inventory;
-using IdelPog.Engine.Service.Information;
+﻿using IdelPog.Engine.Repository;
+using IdelPog.Engine.Service;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
-using IdelPog.Engine.Utilities.Builders.Item;
+using IdelPog.Engine.Utilities.Builders;
 
-namespace IdelPog.Engine.Orchestration.Inventory
+namespace IdelPog.Engine.Orchestration
 {
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation

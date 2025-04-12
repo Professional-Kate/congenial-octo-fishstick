@@ -1,12 +1,9 @@
-﻿using IdelPog.Engine.Structures.Levelable;
-using IdelPog.Engine.Utilities.Builders.Levelable;
+﻿using IdelPog.Engine.Structures;
+using IdelPog.Engine.Utilities.Builders;
 using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Assertions.Handlers;
-using IdelPog.Engine.Validation.Assertions.Handlers.Interfaces;
-using IdelPog.Engine.Validation.Assertions.Interfaces;
 using IdelPog.Engine.Validation.Exceptions;
 using IdelPog.Engine.Validation.Pipelines;
-using IdelPog.Engine.Validation.Pipelines.Interfaces;
 using NUnit.Framework;
 
 namespace IdelPog.Tests.Validation.Pipelines

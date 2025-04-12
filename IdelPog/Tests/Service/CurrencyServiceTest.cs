@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Service.Currency;
+﻿using IdelPog.Engine.Service;
 using IdelPog.Engine.Structures;
 using IdelPog.Tests.Utils;
 using NUnit.Framework;

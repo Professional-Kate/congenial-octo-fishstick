@@ -1,20 +1,19 @@
 ﻿using IdelPog.Engine.Repository;
-using IdelPog.Engine.Service.Experience;
-using IdelPog.Engine.Service.Level;
+using IdelPog.Engine.Service;
+using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Levelable;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Orchestration.Job
+namespace IdelPog.Engine.Orchestration
 {
-    public class JobMediator(IExperienceService experienceService, ILevelService levelService, IRepository<JobType, Structures.Job> repository)
+    public class JobMediator(IExperienceService experienceService, ILevelService levelService, IRepository<JobType, Job> repository)
         : IJobMediator
     {
         public ServiceResponse ProcessJobAction(JobType jobType)
         {
             try
             {
-                Structures.Job job = repository.Get(jobType);
+                Job job = repository.Get(jobType);
                 ILevelable levelable = job.Levelable;
                 
                 experienceService.AddExperience(levelable);

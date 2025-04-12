@@ -1,7 +1,7 @@
-using IdelPog.Engine.Structures.Levelable;
-using IdelPog.Engine.Validation.Pipelines.Interfaces;
+using IdelPog.Engine.Structures;
+using IdelPog.Engine.Validation.Pipelines;
 
-namespace IdelPog.Engine.Service.Experience
+namespace IdelPog.Engine.Service
 {
     public class ExperienceService(ILevelableAsserter levelableAsserter) : IExperienceService
     {

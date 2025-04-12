@@ -1,7 +1,6 @@
 ﻿using IdelPog.Engine.Constants;
-using IdelPog.Engine.Structures.Levelable;
-using IdelPog.Engine.Validation.Assertions.Handlers.Interfaces;
-using IdelPog.Engine.Validation.Assertions.Interfaces;
+using IdelPog.Engine.Structures;
+using IdelPog.Engine.Validation.Assertions.Handlers;
 using IdelPog.Engine.Validation.Exceptions;
 
 namespace IdelPog.Engine.Validation.Assertions

@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Structures.Levelable;
+﻿using IdelPog.Engine.Structures;
 
-namespace IdelPog.Engine.Validation.Assertions.Interfaces
+namespace IdelPog.Engine.Validation.Assertions
 {
     public interface IAssertUnderMaxLevel
     {

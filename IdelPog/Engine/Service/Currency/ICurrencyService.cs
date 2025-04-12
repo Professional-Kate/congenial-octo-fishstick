@@ -1,6 +1,6 @@
 ﻿using IdelPog.Engine.Structures;
 
-namespace IdelPog.Engine.Service.Currency
+namespace IdelPog.Engine.Service
 {
     /// <summary>
     /// This class will handle modifying any data of the <see cref="Currency"/> model. 
@@ -21,7 +21,7 @@ namespace IdelPog.Engine.Service.Currency
         /// <remarks>
         /// This method will do no verification of the passed arguments
         /// </remarks>
-        public void AddAmount(Structures.Currency currency, int amount);
+        public void AddAmount(Currency currency, int amount);
 
         /// <summary>
         /// Removed the passed int amount from the passed <see cref="Currency"/> model
@@ -31,6 +31,6 @@ namespace IdelPog.Engine.Service.Currency
         /// <remarks>
         /// This method will do no verification of the passed arguments
         /// </remarks>
-        public void RemoveAmount(Structures.Currency currency, int amount);
+        public void RemoveAmount(Currency currency, int amount);
     }
 } 

@@ -2,7 +2,7 @@
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Controller.Item
+namespace IdelPog.Engine.Controller
 {
     /// <see cref="ModifyItem"/>
     public interface IItemController

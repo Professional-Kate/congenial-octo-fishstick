@@ -1,7 +1,7 @@
-﻿using IdelPog.Engine.Structures.Levelable;
+﻿using IdelPog.Engine.Structures;
 using IdelPog.Engine.Validation.Exceptions;
 
-namespace IdelPog.Engine.Service.Experience
+namespace IdelPog.Engine.Service
 {
     /// <seealso cref="AddExperience"/>
     public interface IExperienceService

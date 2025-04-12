@@ -1,7 +1,7 @@
-﻿using IdelPog.Engine.Structures.Levelable;
-using IdelPog.Engine.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Engine.Structures;
+using IdelPog.Engine.Validation.Pipelines;
 
-namespace IdelPog.Engine.Service.Level
+namespace IdelPog.Engine.Service
 {
     public class LevelService(ILevelableAsserter levelableAsserter) : ILevelService
     {

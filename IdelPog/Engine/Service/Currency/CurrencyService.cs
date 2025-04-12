@@ -1,17 +1,19 @@
-﻿namespace IdelPog.Engine.Service.Currency
+﻿using IdelPog.Engine.Structures;
+
+namespace IdelPog.Engine.Service
 {
     /// <summary>
     /// See <see cref="ICurrencyService"/> for documentation.
     /// </summary>
     public class CurrencyService : ICurrencyService
     {
-        public void AddAmount(Structures.Currency currency, int amount)
+        public void AddAmount(Currency currency, int amount)
         {
             int newAmount = currency.Amount + amount;
             currency.SetAmount(newAmount);
         }
 
-        public void RemoveAmount(Structures.Currency currency, int amount)
+        public void RemoveAmount(Currency currency, int amount)
         {
             int newAmount = currency.Amount - amount;
             currency.SetAmount(newAmount);

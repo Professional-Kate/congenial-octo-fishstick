@@ -1,9 +1,7 @@
 ﻿using IdelPog.Engine.Repository;
 using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Assertions.Handlers;
-using IdelPog.Engine.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Engine.Validation.Pipelines;
-using IdelPog.Engine.Validation.Pipelines.Interfaces;
 using NUnit.Framework;
 
 namespace IdelPog.Tests.Repository

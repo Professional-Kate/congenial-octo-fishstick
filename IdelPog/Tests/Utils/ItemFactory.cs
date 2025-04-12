@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Constants;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Utilities.Builders.Item;
+using IdelPog.Engine.Utilities.Builders;
 
 namespace IdelPog.Tests.Utils
 {

@@ -1,6 +1,6 @@
 ﻿using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Service.Level
+namespace IdelPog.Engine.Service
 {
     /// <summary>
     /// Handles granting custom rewards which can be granted on specific numbers

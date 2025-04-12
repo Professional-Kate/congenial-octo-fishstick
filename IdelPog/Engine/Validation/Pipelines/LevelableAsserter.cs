@@ -1,6 +1,5 @@
-﻿using IdelPog.Engine.Structures.Levelable;
-using IdelPog.Engine.Validation.Assertions.Interfaces;
-using IdelPog.Engine.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Engine.Structures;
+using IdelPog.Engine.Validation.Assertions;
 
 namespace IdelPog.Engine.Validation.Pipelines
 {

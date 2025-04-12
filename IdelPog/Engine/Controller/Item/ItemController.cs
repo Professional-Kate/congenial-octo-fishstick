@@ -1,8 +1,8 @@
-﻿using IdelPog.Engine.Orchestration.Inventory;
+﻿using IdelPog.Engine.Orchestration;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Controller.Item
+namespace IdelPog.Engine.Controller
 {
     /// <summary>
     /// The main control object for Item models

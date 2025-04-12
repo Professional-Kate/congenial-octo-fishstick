@@ -1,7 +1,6 @@
-﻿using IdelPog.Engine.Orchestration.Job;
+﻿using IdelPog.Engine.Orchestration;
 using IdelPog.Engine.Repository;
-using IdelPog.Engine.Service.Experience;
-using IdelPog.Engine.Service.Level;
+using IdelPog.Engine.Service;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;

@@ -1,6 +1,5 @@
 ﻿using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Assertions.Handlers;
-using IdelPog.Engine.Validation.Assertions.Interfaces;
 using IdelPog.Engine.Validation.Exceptions;
 using NUnit.Framework;
 

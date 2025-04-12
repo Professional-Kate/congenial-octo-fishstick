@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 
-namespace IdelPog.Engine.Utilities.Builders.Currency
+namespace IdelPog.Engine.Utilities.Builders
 {
     /// <summary>
     /// Builds a new <see cref="Currency"/>
@@ -15,6 +15,6 @@ namespace IdelPog.Engine.Utilities.Builders.Currency
 
         public ICurrencyBuilder Amount(int amount);
 
-        public Structures.Currency Build();
+        public Currency Build();
     }
 }

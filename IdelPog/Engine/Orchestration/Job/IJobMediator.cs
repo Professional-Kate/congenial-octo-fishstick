@@ -2,7 +2,7 @@
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Orchestration.Job
+namespace IdelPog.Engine.Orchestration
 {
     /// <seealso cref="ProcessJobAction"/>
     public interface IJobMediator

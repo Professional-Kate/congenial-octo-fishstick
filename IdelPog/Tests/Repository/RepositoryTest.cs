@@ -1,6 +1,6 @@
 ﻿using IdelPog.Engine.Repository;
 using IdelPog.Engine.Validation.Exceptions;
-using IdelPog.Engine.Validation.Pipelines.Interfaces;
+using IdelPog.Engine.Validation.Pipelines;
 using Moq;
 using NUnit.Framework;
 

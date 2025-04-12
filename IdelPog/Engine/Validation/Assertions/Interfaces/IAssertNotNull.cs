@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Validation.Assertions.Interfaces
+﻿namespace IdelPog.Engine.Validation.Assertions
 {
     public interface IAssertNotNull
     {

@@ -2,7 +2,7 @@
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Utilities.Builders.Item
+namespace IdelPog.Engine.Utilities.Builders
 {
     /// <summary>
     /// Builds a new <see cref="Item"/>
@@ -22,6 +22,6 @@ namespace IdelPog.Engine.Utilities.Builders.Item
 
         public IItemBuilder Amount(int amount);
 
-        public Structures.Item Build();
+        public Item Build();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Controller.Job
+namespace IdelPog.Engine.Controller
 {
     /// <seealso cref="CompleteJob"/>
     public interface IJobController

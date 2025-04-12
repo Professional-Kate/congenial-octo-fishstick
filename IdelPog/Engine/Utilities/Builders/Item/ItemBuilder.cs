@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Utilities.Builders.Item
+namespace IdelPog.Engine.Utilities.Builders
 {
     /// <inheritdoc cref="IItemBuilder"/>
     public class ItemBuilder : IItemBuilder

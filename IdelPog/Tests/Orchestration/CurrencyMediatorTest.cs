@@ -1,10 +1,10 @@
-﻿using IdelPog.Engine.Orchestration.Currency;
+﻿using IdelPog.Engine.Orchestration;
 using IdelPog.Engine.Repository;
-using IdelPog.Engine.Service.Currency;
+using IdelPog.Engine.Service;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
-using IdelPog.Engine.Validation.Assertions.Interfaces;
+using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Exceptions;
 using IdelPog.Tests.Utils;
 using Moq;

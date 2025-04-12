@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Engine.Validation.Pipelines;
 
 namespace IdelPog.Engine.Repository
 {

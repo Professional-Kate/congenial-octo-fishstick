@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Controller.Currency
+namespace IdelPog.Engine.Controller
 {
     /// <seealso cref="UpdateCurrency"/>
     public interface ICurrencyController

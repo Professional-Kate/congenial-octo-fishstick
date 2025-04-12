@@ -1,6 +1,6 @@
 ﻿using IdelPog.Engine.Structures.Enums;
 
-namespace IdelPog.Engine.Utilities.Builders.Currency
+namespace IdelPog.Engine.Utilities.Builders
 {
     /// <inheritdoc cref="ICurrencyBuilder"/>
     public class CurrencyBuilder : ICurrencyBuilder

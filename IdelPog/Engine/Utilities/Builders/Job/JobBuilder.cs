@@ -1,8 +1,8 @@
-﻿using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Levelable;
+﻿using IdelPog.Engine.Structures;
+using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Utilities.Builders.Job
+namespace IdelPog.Engine.Utilities.Builders
 {
     /// <inheritdoc cref="IJobBuilder"/>
     public sealed class JobBuilder : IJobBuilder
@@ -36,10 +36,10 @@ namespace IdelPog.Engine.Utilities.Builders.Job
             return this;
         }
 
-        public Structures.Job Build()
+        public Job Build()
         {
             // TODO: ensure _levelable and _information are not null
-            Structures.Job job = new(_levelable, _jobType, _information);
+            Job job = new(_levelable, _jobType, _information);
 
             return job;
         }

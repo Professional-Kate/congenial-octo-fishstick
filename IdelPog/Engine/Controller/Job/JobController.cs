@@ -1,8 +1,8 @@
-﻿using IdelPog.Engine.Orchestration.Job;
+﻿using IdelPog.Engine.Orchestration;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Controller.Job
+namespace IdelPog.Engine.Controller
 {
     public class JobController(IJobMediator jobMediator) : IJobController
     {
