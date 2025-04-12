@@ -2,7 +2,7 @@
 using IdelPog.Engine.Orchestration.Inventory;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models.Item;
+using IdelPog.Engine.Structures.Types;
 using Moq;
 using NUnit.Framework;
 

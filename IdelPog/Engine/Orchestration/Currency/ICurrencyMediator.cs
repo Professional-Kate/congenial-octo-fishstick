@@ -1,5 +1,6 @@
 ﻿using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Models;
+using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Orchestration.Currency
 {

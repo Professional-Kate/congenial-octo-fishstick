@@ -2,7 +2,8 @@
 using IdelPog.Engine.Service.Information;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models.Item;
+using IdelPog.Engine.Structures.Models;
+using IdelPog.Engine.Structures.Types;
 using IdelPog.Engine.Utilities.Builders.Item;
 
 namespace IdelPog.Engine.Orchestration.Inventory

@@ -1,5 +1,6 @@
 ﻿using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
+using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Utilities.Builders.Item
 {
@@ -41,9 +42,9 @@ namespace IdelPog.Engine.Utilities.Builders.Item
             return this;
         }
 
-        public Structures.Models.Item.Item Build()
+        public Structures.Models.Item Build()
         {
-            return new Structures.Models.Item.Item(_inventoryID, _information, _sellPrice, _amount);
+            return new Structures.Models.Item(_inventoryID, _information, _sellPrice, _amount);
         }
     }
 }

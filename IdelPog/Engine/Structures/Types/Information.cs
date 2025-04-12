@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Structures
+﻿namespace IdelPog.Engine.Structures.Types
 {
     /// <summary>
     /// Contains two readonly strings that describes an objects readable name and readable description

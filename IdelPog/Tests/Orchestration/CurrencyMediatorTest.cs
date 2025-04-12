@@ -4,6 +4,7 @@ using IdelPog.Engine.Service.Currency;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Models;
+using IdelPog.Engine.Structures.Types;
 using IdelPog.Engine.Validation.Assertions.Interfaces;
 using IdelPog.Engine.Validation.Exceptions;
 using IdelPog.Tests.Utils;

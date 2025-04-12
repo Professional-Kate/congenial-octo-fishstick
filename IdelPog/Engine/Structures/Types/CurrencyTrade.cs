@@ -1,6 +1,6 @@
 ﻿using IdelPog.Engine.Structures.Enums;
 
-namespace IdelPog.Engine.Structures
+namespace IdelPog.Engine.Structures.Types
 {
     /// <summary>
     /// This structure is used to update a Currency model. 

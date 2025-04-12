@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Orchestration.Inventory;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models.Item;
+using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Controller.Item
 {

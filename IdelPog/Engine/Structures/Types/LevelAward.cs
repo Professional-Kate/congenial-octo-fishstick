@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Structures.Models.Levelable
+﻿namespace IdelPog.Engine.Structures.Types
 {
     /// <seealso cref="RequiredLevel"/>
     /// <seealso cref="OnLevelUp"/>

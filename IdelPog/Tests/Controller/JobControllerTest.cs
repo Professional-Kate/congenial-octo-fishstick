@@ -2,6 +2,7 @@
 using IdelPog.Engine.Orchestration.Job;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Models;
+using IdelPog.Engine.Structures.Types;
 using IdelPog.Tests.Utils;
 using Moq;
 using NUnit.Framework;

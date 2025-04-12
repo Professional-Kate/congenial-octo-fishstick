@@ -5,6 +5,7 @@ using IdelPog.Engine.Service.Level;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Models;
+using IdelPog.Engine.Structures.Types;
 using IdelPog.Tests.Utils;
 using Moq;
 using NUnit.Framework;

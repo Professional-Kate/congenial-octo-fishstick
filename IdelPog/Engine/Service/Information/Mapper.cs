@@ -4,7 +4,7 @@ namespace IdelPog.Engine.Service.Information
 {
     public class Mapper<T> : IMapper<T>
     {
-        private readonly Dictionary<T, Structures.Information> _information = new();
+        private readonly Dictionary<T, Structures.Types.Information> _information = new();
         private readonly IAssertFound _assertFound;
         private readonly IAssertNonDuplicate _assertUnique;
 
@@ -14,15 +14,15 @@ namespace IdelPog.Engine.Service.Information
             _assertUnique = assertUnique;
         }
         
-        public Structures.Information GetInformation(T key)
+        public Structures.Types.Information GetInformation(T key)
         {
-            bool contains = _information.TryGetValue(key, out Structures.Information information);
+            bool contains = _information.TryGetValue(key, out Structures.Types.Information information);
             _assertFound.AssertItemIsFound(key, () => contains == false);
             
             return information;
         }
 
-        public void AddInformation(T key, Structures.Information information)
+        public void AddInformation(T key, Structures.Types.Information information)
         {
             _assertUnique.AssertContains(key, () => _information.ContainsKey(key));
             

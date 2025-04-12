@@ -1,5 +1,6 @@
 ﻿using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Models.Levelable;
+using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Structures.Models
 {
