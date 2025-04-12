@@ -3,22 +3,22 @@
 namespace IdelPog.Engine.Repository
 {
     public sealed class Repository<TID, T>(IRepositoryAsserter repositoryAsserter) : IRepository<TID, T>
-        where T : class, ICloneable
+        where T : class, ICloneable where TID : notnull
     {
         private readonly Dictionary<TID, T> _repository = new();
 
-        public event Action<int, T>? OnAdd;
-        public event Action<int, T>? OnRemove;
-        public event Action<int, T>? OnGet;
-        public event Action<T, T>? OnUpdate;
-        public event Action<int, bool>? OnContains;
+        public event Action<int, T> OnAdd = delegate { };
+        public event Action<int, T> OnRemove = delegate { };
+        public event Action<int, T> OnGet = delegate { };
+        public event Action<T, T> OnUpdate = delegate { };
+        public event Action<int, bool> OnContains = delegate { };
 
         public void Add(TID key, T value)
         {
             repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
             
             _repository.Add(key, value);
-            OnAdd?.Invoke(key.GetHashCode(), value);
+            OnAdd(key.GetHashCode(), value);
         }
 
         public void Remove(TID key)
@@ -28,16 +28,17 @@ namespace IdelPog.Engine.Repository
             T item = _repository[key];
             
             _repository.Remove(key);
-            OnRemove?.Invoke(key.GetHashCode(), item);
+            OnRemove(key.GetHashCode(), item);
         }
 
         public T Get(TID key)
         {
             AssertKeyExists(key);
             
+            // TODO: instead of the cast would be better if we made our own cloneable interface
             T entity = _repository[key].Clone() as T;
             
-            OnGet?.Invoke(key.GetHashCode(), entity);
+            OnGet(key.GetHashCode(), entity);
             return entity;
         }
 
@@ -48,14 +49,14 @@ namespace IdelPog.Engine.Repository
             T original  = _repository[key];
             
             _repository[key] = value;
-            OnUpdate?.Invoke(original, value);
+            OnUpdate(original, value);
         }
 
         public bool Contains(TID key)
         {
             bool contains = _repository.ContainsKey(key);
             
-            OnContains?.Invoke(key.GetHashCode(), contains);
+            OnContains(key.GetHashCode(), contains);
             
             return contains;
         }
