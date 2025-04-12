@@ -1,6 +1,6 @@
-﻿using IdelPog.Main.Constants;
-using IdelPog.Main.Service.Level;
-using IdelPog.Main.Structures.Models.Levelable;
+﻿using IdelPog.Engine.Constants;
+using IdelPog.Engine.Service.Level;
+using IdelPog.Engine.Structures.Models.Levelable;
 using NUnit.Framework;
 
 namespace IdelPog.Tests.Service

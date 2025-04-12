@@ -1,6 +1,6 @@
-﻿using IdelPog.Main.Structures.Enums;
-using IdelPog.Main.Structures.Models;
-using IdelPog.Main.Structures.Models.Builders.Currency;
+﻿using IdelPog.Engine.Structures.Enums;
+using IdelPog.Engine.Structures.Models;
+using IdelPog.Engine.Utilities.Builders.Currency;
 
 namespace IdelPog.Tests.Utils
 {

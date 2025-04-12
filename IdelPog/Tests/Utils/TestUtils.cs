@@ -1,5 +1,5 @@
-﻿using IdelPog.Main.Structures;
-using IdelPog.Main.Structures.Enums;
+﻿using IdelPog.Engine.Structures;
+using IdelPog.Engine.Structures.Enums;
 
 namespace IdelPog.Tests.Utils
 {

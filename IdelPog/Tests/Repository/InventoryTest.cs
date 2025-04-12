@@ -1,10 +1,10 @@
-﻿using IdelPog.Main.Repository;
-using IdelPog.Main.Repository.Inventory;
-using IdelPog.Main.Structures;
-using IdelPog.Main.Structures.Enums;
-using IdelPog.Main.Structures.Models.Item;
-using IdelPog.Main.Validation.Assertions.Interfaces;
-using IdelPog.Main.Validation.Exceptions;
+﻿using IdelPog.Engine.Repository;
+using IdelPog.Engine.Repository.Inventory;
+using IdelPog.Engine.Structures;
+using IdelPog.Engine.Structures.Enums;
+using IdelPog.Engine.Structures.Models.Item;
+using IdelPog.Engine.Validation.Assertions.Interfaces;
+using IdelPog.Engine.Validation.Exceptions;
 using Moq;
 using NUnit.Framework;
 using ItemFactory = IdelPog.Tests.Utils.ItemFactory;

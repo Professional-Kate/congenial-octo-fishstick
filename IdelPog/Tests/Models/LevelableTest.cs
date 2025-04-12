@@ -1,5 +1,5 @@
-﻿using IdelPog.Main.Structures.Models.Builders.Levelable;
-using IdelPog.Main.Structures.Models.Levelable;
+﻿using IdelPog.Engine.Structures.Models.Levelable;
+using IdelPog.Engine.Utilities.Builders.Levelable;
 using NUnit.Framework;
 
 namespace IdelPog.Tests.Models

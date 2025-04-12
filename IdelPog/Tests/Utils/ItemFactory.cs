@@ -1,6 +1,7 @@
-﻿using IdelPog.Main.Constants;
-using IdelPog.Main.Structures.Models.Builders.Item;
-using IdelPog.Main.Structures.Models.Item;
+﻿using IdelPog.Engine.Constants;
+using IdelPog.Engine.Structures.Enums;
+using IdelPog.Engine.Structures.Models.Item;
+using IdelPog.Engine.Utilities.Builders.Item;
 
 namespace IdelPog.Tests.Utils
 {

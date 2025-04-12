@@ -1,8 +1,9 @@
-﻿using IdelPog.Main.Orchestration.Inventory;
-using IdelPog.Main.Repository.Inventory;
-using IdelPog.Main.Service.Information;
-using IdelPog.Main.Structures;
-using IdelPog.Main.Structures.Models.Item;
+﻿using IdelPog.Engine.Orchestration.Inventory;
+using IdelPog.Engine.Repository.Inventory;
+using IdelPog.Engine.Service.Information;
+using IdelPog.Engine.Structures;
+using IdelPog.Engine.Structures.Enums;
+using IdelPog.Engine.Structures.Models.Item;
 using Moq;
 using NUnit.Framework;
 using ItemFactory = IdelPog.Tests.Utils.ItemFactory;

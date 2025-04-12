@@ -1,10 +1,10 @@
-﻿using IdelPog.Main.Validation.Assertions;
-using IdelPog.Main.Validation.Assertions.Handlers;
-using IdelPog.Main.Validation.Assertions.Handlers.Interfaces;
-using IdelPog.Main.Validation.Assertions.Interfaces;
-using IdelPog.Main.Validation.Exceptions;
-using IdelPog.Main.Validation.Pipelines;
-using IdelPog.Main.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Engine.Validation.Assertions;
+using IdelPog.Engine.Validation.Assertions.Handlers;
+using IdelPog.Engine.Validation.Assertions.Handlers.Interfaces;
+using IdelPog.Engine.Validation.Assertions.Interfaces;
+using IdelPog.Engine.Validation.Exceptions;
+using IdelPog.Engine.Validation.Pipelines;
+using IdelPog.Engine.Validation.Pipelines.Interfaces;
 using NUnit.Framework;
 
 namespace IdelPog.Tests.Validation.Pipelines

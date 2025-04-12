@@ -1,8 +1,8 @@
-﻿using IdelPog.Main.Controller.Item;
-using IdelPog.Main.Orchestration.Inventory;
-using IdelPog.Main.Structures;
-using IdelPog.Main.Structures.Enums;
-using IdelPog.Main.Structures.Models.Item;
+﻿using IdelPog.Engine.Controller.Item;
+using IdelPog.Engine.Orchestration.Inventory;
+using IdelPog.Engine.Structures;
+using IdelPog.Engine.Structures.Enums;
+using IdelPog.Engine.Structures.Models.Item;
 using Moq;
 using NUnit.Framework;
 

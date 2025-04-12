@@ -1,9 +1,9 @@
-﻿using IdelPog.Main.Structures.Models.Builders.Levelable;
-using IdelPog.Main.Structures.Models.Levelable;
-using IdelPog.Main.Validation.Assertions;
-using IdelPog.Main.Validation.Assertions.Handlers;
-using IdelPog.Main.Validation.Assertions.Interfaces;
-using IdelPog.Main.Validation.Exceptions;
+﻿using IdelPog.Engine.Structures.Models.Levelable;
+using IdelPog.Engine.Utilities.Builders.Levelable;
+using IdelPog.Engine.Validation.Assertions;
+using IdelPog.Engine.Validation.Assertions.Handlers;
+using IdelPog.Engine.Validation.Assertions.Interfaces;
+using IdelPog.Engine.Validation.Exceptions;
 using NUnit.Framework;
 
 namespace IdelPog.Tests.Validation

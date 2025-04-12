@@ -1,9 +1,9 @@
-﻿using IdelPog.Main.Constants;
-using IdelPog.Main.Service.Experience;
-using IdelPog.Main.Structures.Models.Builders.Levelable;
-using IdelPog.Main.Structures.Models.Levelable;
-using IdelPog.Main.Validation.Exceptions;
-using IdelPog.Main.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Engine.Constants;
+using IdelPog.Engine.Service.Experience;
+using IdelPog.Engine.Structures.Models.Levelable;
+using IdelPog.Engine.Utilities.Builders.Levelable;
+using IdelPog.Engine.Validation.Exceptions;
+using IdelPog.Engine.Validation.Pipelines.Interfaces;
 using IdelPog.Tests.Utils;
 using Moq;
 using NUnit.Framework;

@@ -1,10 +1,10 @@
-﻿using IdelPog.Main.Orchestration.Job;
-using IdelPog.Main.Repository;
-using IdelPog.Main.Service.Experience;
-using IdelPog.Main.Service.Level;
-using IdelPog.Main.Structures;
-using IdelPog.Main.Structures.Enums;
-using IdelPog.Main.Structures.Models;
+﻿using IdelPog.Engine.Orchestration.Job;
+using IdelPog.Engine.Repository;
+using IdelPog.Engine.Service.Experience;
+using IdelPog.Engine.Service.Level;
+using IdelPog.Engine.Structures;
+using IdelPog.Engine.Structures.Enums;
+using IdelPog.Engine.Structures.Models;
 using IdelPog.Tests.Utils;
 using Moq;
 using NUnit.Framework;

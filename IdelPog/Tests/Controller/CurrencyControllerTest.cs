@@ -1,8 +1,8 @@
-﻿using IdelPog.Main.Controller.Currency;
-using IdelPog.Main.Orchestration.Currency;
-using IdelPog.Main.Structures;
-using IdelPog.Main.Structures.Enums;
-using IdelPog.Main.Structures.Models;
+﻿using IdelPog.Engine.Controller.Currency;
+using IdelPog.Engine.Orchestration.Currency;
+using IdelPog.Engine.Structures;
+using IdelPog.Engine.Structures.Enums;
+using IdelPog.Engine.Structures.Models;
 using IdelPog.Tests.Utils;
 using Moq;
 using NUnit.Framework;

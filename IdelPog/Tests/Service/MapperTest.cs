@@ -1,7 +1,7 @@
-﻿using IdelPog.Main.Service.Information;
-using IdelPog.Main.Structures;
-using IdelPog.Main.Validation.Assertions.Interfaces;
-using IdelPog.Main.Validation.Exceptions;
+﻿using IdelPog.Engine.Service.Information;
+using IdelPog.Engine.Structures;
+using IdelPog.Engine.Validation.Assertions.Interfaces;
+using IdelPog.Engine.Validation.Exceptions;
 using Moq;
 using NUnit.Framework;
 

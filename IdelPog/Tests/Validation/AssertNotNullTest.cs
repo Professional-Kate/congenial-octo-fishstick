@@ -1,6 +1,6 @@
-﻿using IdelPog.Main.Validation.Assertions;
-using IdelPog.Main.Validation.Assertions.Handlers;
-using IdelPog.Main.Validation.Assertions.Interfaces;
+﻿using IdelPog.Engine.Validation.Assertions;
+using IdelPog.Engine.Validation.Assertions.Handlers;
+using IdelPog.Engine.Validation.Assertions.Interfaces;
 using NUnit.Framework;
 
 namespace IdelPog.Tests.Validation
