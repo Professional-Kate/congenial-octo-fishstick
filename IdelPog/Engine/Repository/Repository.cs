@@ -1,9 +1,10 @@
-﻿using IdelPog.Engine.Validation.Pipelines;
+﻿using IdelPog.Engine.Structures.Types;
+using IdelPog.Engine.Validation.Pipelines;
 
 namespace IdelPog.Engine.Repository
 {
     public sealed class Repository<TID, T>(IRepositoryAsserter repositoryAsserter) : IRepository<TID, T>
-        where T : class, ICloneable where TID : notnull
+        where T : class, ICloneable<T> where TID : notnull
     {
         private readonly Dictionary<TID, T> _repository = new();
 
@@ -35,8 +36,7 @@ namespace IdelPog.Engine.Repository
         {
             AssertKeyExists(key);
             
-            // TODO: instead of the cast would be better if we made our own cloneable interface
-            T entity = _repository[key].Clone() as T;
+            T entity = _repository[key].Clone();
             
             OnGet(key.GetHashCode(), entity);
             return entity;

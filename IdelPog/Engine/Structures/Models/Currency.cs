@@ -1,11 +1,12 @@
 ﻿using IdelPog.Engine.Structures.Enums;
+using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Structures.Models
 {
     /// <summary>
     /// The Currency model.
     /// </summary>
-    public class Currency(CurrencyType currencyType, int amount = 0) : ICloneable
+    public class Currency(CurrencyType currencyType, int amount = 0) : ICloneable<Currency>
     {
         public readonly CurrencyType CurrencyType = currencyType;
         public int Amount { get; private set; } = amount;
@@ -15,7 +16,7 @@ namespace IdelPog.Engine.Structures.Models
             Amount = amount;
         }
 
-        public object Clone()
+        public Currency Clone()
         {
             return new Currency(CurrencyType, Amount);
         }

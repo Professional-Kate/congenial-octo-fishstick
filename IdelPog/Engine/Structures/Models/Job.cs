@@ -6,13 +6,13 @@ namespace IdelPog.Engine.Structures.Models
     /// <summary>
     /// The Job model
     /// </summary>
-    public sealed class Job(ILevelable levelable, JobType jobType, Information information) : ICloneable
+    public sealed class Job(ILevelable levelable, JobType jobType, Information information) : ICloneable<Job>
     {
         public readonly ILevelable Levelable = levelable;
         public readonly Information Information = information;
         public readonly JobType JobType = jobType;
 
-        public object Clone()
+        public Job Clone()
         {
             return new Job(Levelable, JobType, Information);
         }
