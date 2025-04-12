@@ -1,0 +1,66 @@
+﻿using IdelPogTemp.Main.Repository;
+using IdelPogTemp.Main.Validation.Assertions;
+using IdelPogTemp.Main.Validation.Assertions.Handlers;
+using IdelPogTemp.Main.Validation.Assertions.Handlers.Interfaces;
+using IdelPogTemp.Main.Validation.Pipelines;
+using IdelPogTemp.Main.Validation.Pipelines.Interfaces;
+using NUnit.Framework;
+
+namespace IdelPogTemp.Tests.Repository
+{
+    public class HookHandler
+    {
+        protected IRepository<int, string> TestRepository;
+
+        protected bool AddEventTriggered;
+        protected bool RemoveEventTriggered;
+        protected bool GetEventTriggered;
+        protected bool UpdateEventTriggered;
+        protected bool ContainsEventTriggered;
+
+        [SetUp]
+        public void SetUp()
+        {
+            IHandler handler = new ThrowHandler();
+            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new AssertFound(handler), new AssertNotNull(handler), new AssertNonDuplicate(handler));
+            TestRepository = new Repository<int, string>(repositoryAsserter);
+            
+            AddEventTriggered = false;
+            RemoveEventTriggered = false;
+            GetEventTriggered = false;
+            UpdateEventTriggered = false;
+            ContainsEventTriggered = false;
+            
+            TestRepository.OnAdd += OnAdd;
+            TestRepository.OnRemove += OnRemove;
+            TestRepository.OnGet += OnGet;
+            TestRepository.OnUpdate += OnUpdate;
+            TestRepository.OnContains += OnContains;
+        }
+
+        private void OnAdd(int key, string value)
+        {
+            AddEventTriggered = true;
+        }
+
+        private void OnRemove(int key, string value)
+        {
+            RemoveEventTriggered = true;
+        }
+
+        private void OnGet(int key, string value)
+        {
+            GetEventTriggered = true;
+        }
+
+        private void OnUpdate(string originalValue, string value)
+        {
+            UpdateEventTriggered = true;
+        }
+
+        private void OnContains(int key, bool contains)
+        {
+            ContainsEventTriggered = true;
+        }
+    }
+}

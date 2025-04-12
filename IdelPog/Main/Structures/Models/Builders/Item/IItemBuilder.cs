@@ -1,0 +1,25 @@
+﻿using IdelPogTemp.Main.Structures.Models.Item;
+
+namespace IdelPogTemp.Main.Structures.Models.Builders.Item
+{
+    /// <summary>
+    /// Builds a new <see cref="Item"/>
+    /// </summary>
+    /// <seealso cref="InventoryID"/>
+    /// <seealso cref="Information"/>
+    /// <seealso cref="SellPrice"/>
+    /// <seealso cref="Amount"/>
+    /// <seealso cref="Build"/>
+    public interface IItemBuilder
+    {
+        public IItemBuilder InventoryID(InventoryID inventoryID);
+
+        public IItemBuilder Information(Information information);
+
+        public IItemBuilder SellPrice(int sellPrice);
+
+        public IItemBuilder Amount(int amount);
+
+        public Models.Item.Item Build();
+    }
+}
