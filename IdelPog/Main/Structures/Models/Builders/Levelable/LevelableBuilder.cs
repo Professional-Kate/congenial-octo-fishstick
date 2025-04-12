@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Structures.Models.Levelable;
+﻿using IdelPog.Main.Structures.Models.Levelable;
 
-namespace IdelPogTemp.Main.Structures.Models.Builders.Levelable
+namespace IdelPog.Main.Structures.Models.Builders.Levelable
 {
     /// <inheritdoc cref="ILevelableBuilder"/>
     public sealed class LevelableBuilder : ILevelableBuilder

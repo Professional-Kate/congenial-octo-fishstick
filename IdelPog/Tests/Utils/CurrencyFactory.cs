@@ -1,8 +1,8 @@
-﻿using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models;
-using IdelPogTemp.Main.Structures.Models.Builders.Currency;
+﻿using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models;
+using IdelPog.Main.Structures.Models.Builders.Currency;
 
-namespace IdelPogTemp.Tests.Utils
+namespace IdelPog.Tests.Utils
 {
     internal static class CurrencyFactory
     {

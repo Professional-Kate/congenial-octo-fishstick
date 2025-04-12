@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Validation.Assertions.Interfaces;
+﻿using IdelPog.Main.Validation.Assertions.Interfaces;
 
-namespace IdelPogTemp.Main.Service.Information
+namespace IdelPog.Main.Service.Information
 {
     public class Mapper<T> : IMapper<T>
     {

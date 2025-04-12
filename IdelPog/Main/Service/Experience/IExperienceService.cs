@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Structures.Models.Levelable;
-using IdelPogTemp.Main.Validation.Exceptions;
+﻿using IdelPog.Main.Structures.Models.Levelable;
+using IdelPog.Main.Validation.Exceptions;
 
-namespace IdelPogTemp.Main.Service.Experience
+namespace IdelPog.Main.Service.Experience
 {
     /// <seealso cref="AddExperience"/>
     public interface IExperienceService

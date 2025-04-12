@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Structures.Models.Item;
+﻿using IdelPog.Main.Structures.Models.Item;
 
-namespace IdelPogTemp.Main.Structures.Models.Builders.Item
+namespace IdelPog.Main.Structures.Models.Builders.Item
 {
     /// <summary>
     /// Builds a new <see cref="Item"/>

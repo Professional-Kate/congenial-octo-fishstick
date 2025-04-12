@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models.Levelable;
+﻿using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models.Levelable;
 
-namespace IdelPogTemp.Main.Structures.Models.Builders.Job
+namespace IdelPog.Main.Structures.Models.Builders.Job
 {
     /// <summary>
     /// Builds a new <see cref="Job"/> 

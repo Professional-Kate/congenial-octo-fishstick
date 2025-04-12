@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Structures.Models;
+﻿using IdelPog.Main.Structures.Models;
 
-namespace IdelPogTemp.Main.Service.Currency
+namespace IdelPog.Main.Service.Currency
 {
     /// <summary>
     /// This class will handle modifying any data of the <see cref="Currency"/> model. 

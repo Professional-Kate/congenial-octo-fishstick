@@ -1,8 +1,8 @@
-﻿using IdelPogTemp.Main.Orchestration.Job;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
+﻿using IdelPog.Main.Orchestration.Job;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
 
-namespace IdelPogTemp.Main.Controller.Job
+namespace IdelPog.Main.Controller.Job
 {
     public class JobController : IJobController
     {

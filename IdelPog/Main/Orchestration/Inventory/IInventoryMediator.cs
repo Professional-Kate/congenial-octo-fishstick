@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Models.Item;
+﻿using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Models.Item;
 
-namespace IdelPogTemp.Main.Orchestration.Inventory
+namespace IdelPog.Main.Orchestration.Inventory
 {
     /// <summary>
     /// Handles Adding and Removing an amount from an <see cref="Item"/>. Add, and Remove will both create and remove an <see cref="Item"/> respectively

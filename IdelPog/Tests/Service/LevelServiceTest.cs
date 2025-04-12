@@ -1,15 +1,14 @@
-﻿using System.Diagnostics;
-using IdelPogTemp.Main.Constants;
-using IdelPogTemp.Main.Service.Level;
-using IdelPogTemp.Main.Structures.Models.Builders.Levelable;
-using IdelPogTemp.Main.Structures.Models.Levelable;
-using IdelPogTemp.Main.Validation.Exceptions;
-using IdelPogTemp.Main.Validation.Pipelines.Interfaces;
-using IdelPogTemp.Tests.Utils;
+﻿using IdelPog.Main.Constants;
+using IdelPog.Main.Service.Level;
+using IdelPog.Main.Structures.Models.Builders.Levelable;
+using IdelPog.Main.Structures.Models.Levelable;
+using IdelPog.Main.Validation.Exceptions;
+using IdelPog.Main.Validation.Pipelines.Interfaces;
+using IdelPog.Tests.Utils;
 using Moq;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Service
+namespace IdelPog.Tests.Service
 {
     [TestFixture]
     public class LevelServiceTest

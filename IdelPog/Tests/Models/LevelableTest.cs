@@ -1,8 +1,8 @@
-﻿using IdelPogTemp.Main.Structures.Models.Builders.Levelable;
-using IdelPogTemp.Main.Structures.Models.Levelable;
+﻿using IdelPog.Main.Structures.Models.Builders.Levelable;
+using IdelPog.Main.Structures.Models.Levelable;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Models
+namespace IdelPog.Tests.Models
 {
     [TestFixture]
     public class LevelableTest

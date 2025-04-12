@@ -1,8 +1,8 @@
-﻿using IdelPogTemp.Main.Structures.Models.Levelable;
-using IdelPogTemp.Main.Validation.Assertions.Interfaces;
-using IdelPogTemp.Main.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Main.Structures.Models.Levelable;
+using IdelPog.Main.Validation.Assertions.Interfaces;
+using IdelPog.Main.Validation.Pipelines.Interfaces;
 
-namespace IdelPogTemp.Main.Validation.Pipelines
+namespace IdelPog.Main.Validation.Pipelines
 {
     /// <inheritdoc cref="ILevelableAsserter"/>
     public class LevelableAsserter : ILevelableAsserter

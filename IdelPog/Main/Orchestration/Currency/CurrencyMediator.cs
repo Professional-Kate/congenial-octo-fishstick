@@ -1,12 +1,12 @@
-﻿using IdelPogTemp.Main.Repository;
-using IdelPogTemp.Main.Service.Currency;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models;
-using IdelPogTemp.Main.Validation.Assertions.Interfaces;
-using IdelPogTemp.Main.Validation.Exceptions;
+﻿using IdelPog.Main.Repository;
+using IdelPog.Main.Service.Currency;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models;
+using IdelPog.Main.Validation.Assertions.Interfaces;
+using IdelPog.Main.Validation.Exceptions;
 
-namespace IdelPogTemp.Main.Orchestration.Currency
+namespace IdelPog.Main.Orchestration.Currency
 {
     /// <summary>
     /// See <see cref="ICurrencyMediator"/> for documentation

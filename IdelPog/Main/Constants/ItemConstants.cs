@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Structures;
+﻿using IdelPog.Main.Structures;
 
-namespace IdelPogTemp.Main.Constants
+namespace IdelPog.Main.Constants
 {
     public static class ItemConstants
     {

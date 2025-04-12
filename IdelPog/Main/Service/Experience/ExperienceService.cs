@@ -1,7 +1,7 @@
-using IdelPogTemp.Main.Structures.Models.Levelable;
-using IdelPogTemp.Main.Validation.Pipelines.Interfaces;
+using IdelPog.Main.Structures.Models.Levelable;
+using IdelPog.Main.Validation.Pipelines.Interfaces;
 
-namespace IdelPogTemp.Main.Service.Experience
+namespace IdelPog.Main.Service.Experience
 {
     public class ExperienceService : IExperienceService
     {

@@ -1,15 +1,15 @@
-﻿using IdelPogTemp.Main.Orchestration.Job;
-using IdelPogTemp.Main.Repository;
-using IdelPogTemp.Main.Service.Experience;
-using IdelPogTemp.Main.Service.Level;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models;
-using IdelPogTemp.Tests.Utils;
+﻿using IdelPog.Main.Orchestration.Job;
+using IdelPog.Main.Repository;
+using IdelPog.Main.Service.Experience;
+using IdelPog.Main.Service.Level;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models;
+using IdelPog.Tests.Utils;
 using Moq;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Orchestration
+namespace IdelPog.Tests.Orchestration
 {
     [TestFixture]
     public class JobMediatorTest

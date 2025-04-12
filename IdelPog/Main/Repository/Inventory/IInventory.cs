@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Structures.Models.Item;
-using IdelPogTemp.Main.Validation.Exceptions;
+﻿using IdelPog.Main.Structures.Models.Item;
+using IdelPog.Main.Validation.Exceptions;
 
-namespace IdelPogTemp.Main.Repository.Inventory
+namespace IdelPog.Main.Repository.Inventory
 {
     /// <summary>
     /// Using this interface you can adjust the amount of any <see cref="Item"/> in the Inventory. 

@@ -1,11 +1,11 @@
-﻿using IdelPogTemp.Main.Service.Information;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Validation.Assertions.Interfaces;
-using IdelPogTemp.Main.Validation.Exceptions;
+﻿using IdelPog.Main.Service.Information;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Validation.Assertions.Interfaces;
+using IdelPog.Main.Validation.Exceptions;
 using Moq;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Service
+namespace IdelPog.Tests.Service
 {
     [TestFixture]
     public class MapperTest

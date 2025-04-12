@@ -1,10 +1,10 @@
-﻿using IdelPogTemp.Main.Repository.Inventory;
-using IdelPogTemp.Main.Service.Information;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Models.Builders.Item;
-using IdelPogTemp.Main.Structures.Models.Item;
+﻿using IdelPog.Main.Repository.Inventory;
+using IdelPog.Main.Service.Information;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Models.Builders.Item;
+using IdelPog.Main.Structures.Models.Item;
 
-namespace IdelPogTemp.Main.Orchestration.Inventory
+namespace IdelPog.Main.Orchestration.Inventory
 {
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation

@@ -1,8 +1,8 @@
-﻿using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models;
+﻿using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models;
 
-namespace IdelPogTemp.Main.Orchestration.Job
+namespace IdelPog.Main.Orchestration.Job
 {
     /// <seealso cref="ProcessJobAction"/>
     public interface IJobMediator

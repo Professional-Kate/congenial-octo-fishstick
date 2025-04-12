@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Structures.Enums;
+﻿using IdelPog.Main.Structures.Enums;
 
-namespace IdelPogTemp.Main.Structures.Models
+namespace IdelPog.Main.Structures.Models
 {
     /// <summary>
     /// The Currency model.

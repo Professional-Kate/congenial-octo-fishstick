@@ -1,10 +1,10 @@
-﻿using IdelPogTemp.Main.Constants;
-using IdelPogTemp.Main.Structures.Models.Levelable;
-using IdelPogTemp.Main.Validation.Assertions.Handlers.Interfaces;
-using IdelPogTemp.Main.Validation.Assertions.Interfaces;
-using IdelPogTemp.Main.Validation.Exceptions;
+﻿using IdelPog.Main.Constants;
+using IdelPog.Main.Structures.Models.Levelable;
+using IdelPog.Main.Validation.Assertions.Handlers.Interfaces;
+using IdelPog.Main.Validation.Assertions.Interfaces;
+using IdelPog.Main.Validation.Exceptions;
 
-namespace IdelPogTemp.Main.Validation.Assertions
+namespace IdelPog.Main.Validation.Assertions
 {
     public class AssertUnderMaxLevel : BaseAssertion<MaxLevelException>, IAssertUnderMaxLevel
     {

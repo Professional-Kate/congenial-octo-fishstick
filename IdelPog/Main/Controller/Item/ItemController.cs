@@ -1,9 +1,9 @@
-﻿using IdelPogTemp.Main.Orchestration.Inventory;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models.Item;
+﻿using IdelPog.Main.Orchestration.Inventory;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models.Item;
 
-namespace IdelPogTemp.Main.Controller.Item
+namespace IdelPog.Main.Controller.Item
 {
     /// <summary>
     /// The main control object for Item models

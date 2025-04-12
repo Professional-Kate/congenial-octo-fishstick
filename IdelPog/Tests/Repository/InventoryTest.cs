@@ -1,15 +1,15 @@
-﻿using IdelPogTemp.Main.Repository;
-using IdelPogTemp.Main.Repository.Inventory;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models.Item;
-using IdelPogTemp.Main.Validation.Assertions.Interfaces;
-using IdelPogTemp.Main.Validation.Exceptions;
+﻿using IdelPog.Main.Repository;
+using IdelPog.Main.Repository.Inventory;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models.Item;
+using IdelPog.Main.Validation.Assertions.Interfaces;
+using IdelPog.Main.Validation.Exceptions;
 using Moq;
 using NUnit.Framework;
-using ItemFactory = IdelPogTemp.Tests.Utils.ItemFactory;
+using ItemFactory = IdelPog.Tests.Utils.ItemFactory;
 
-namespace IdelPogTemp.Tests.Repository
+namespace IdelPog.Tests.Repository
 {
     [TestFixture]
     public class InventoryTest

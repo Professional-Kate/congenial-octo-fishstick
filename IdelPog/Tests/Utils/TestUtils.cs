@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
+﻿using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
 
-namespace IdelPogTemp.Tests.Utils
+namespace IdelPog.Tests.Utils
 {
     /// <summary>
     /// Commonly used helper test methods. 

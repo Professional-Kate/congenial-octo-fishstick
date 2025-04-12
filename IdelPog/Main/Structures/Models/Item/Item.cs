@@ -1,4 +1,4 @@
-﻿namespace IdelPogTemp.Main.Structures.Models.Item
+﻿namespace IdelPog.Main.Structures.Models.Item
 {
     /// <summary>
     /// The Item model

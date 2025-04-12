@@ -1,4 +1,4 @@
-﻿namespace IdelPogTemp.Main.Validation.Assertions.Interfaces
+﻿namespace IdelPog.Main.Validation.Assertions.Interfaces
 {
     public interface IAssertFound
     {

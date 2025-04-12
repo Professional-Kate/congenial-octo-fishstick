@@ -1,4 +1,4 @@
-﻿namespace IdelPogTemp.Main.Structures.Models.Levelable
+﻿namespace IdelPog.Main.Structures.Models.Levelable
 {
     /// <inheritdoc cref="ILevelable"/>
     public class Levelable : ILevelable

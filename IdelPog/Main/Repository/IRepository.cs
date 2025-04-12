@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Validation.Exceptions;
+﻿using IdelPog.Main.Validation.Exceptions;
 
-namespace IdelPogTemp.Main.Repository
+namespace IdelPog.Main.Repository
 {
     /// <summary>
     /// Generic Repository, the implementing class is expected to create its own data structure for each method to use. This interface gives basic CRUD access to data

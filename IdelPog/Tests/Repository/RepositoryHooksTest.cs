@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Repository
+namespace IdelPog.Tests.Repository
 {
     [TestFixture]
     public class RepositoryHooksTest : HookHandler

@@ -1,9 +1,9 @@
-﻿using IdelPogTemp.Main.Service.Currency;
-using IdelPogTemp.Main.Structures.Models;
-using IdelPogTemp.Tests.Utils;
+﻿using IdelPog.Main.Service.Currency;
+using IdelPog.Main.Structures.Models;
+using IdelPog.Tests.Utils;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Service
+namespace IdelPog.Tests.Service
 {
     [TestFixture]
     public class CurrencyServiceTest

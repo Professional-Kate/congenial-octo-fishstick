@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Models;
+﻿using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Models;
 
-namespace IdelPogTemp.Main.Orchestration.Currency
+namespace IdelPog.Main.Orchestration.Currency
 {
     /// <seealso cref="ProcessCurrencyUpdate"/>
     public interface ICurrencyMediator

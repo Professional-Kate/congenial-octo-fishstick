@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Structures.Models.Item;
-using IdelPogTemp.Main.Validation.Assertions.Interfaces;
+﻿using IdelPog.Main.Structures.Models.Item;
+using IdelPog.Main.Validation.Assertions.Interfaces;
 
-namespace IdelPogTemp.Main.Repository.Inventory
+namespace IdelPog.Main.Repository.Inventory
 {
     /// <summary>
     /// The container class for all <see cref="Item"/>'s. See <see cref="IInventory"/> for documentation

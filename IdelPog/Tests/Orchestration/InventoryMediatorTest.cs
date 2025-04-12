@@ -1,13 +1,13 @@
-﻿using IdelPogTemp.Main.Orchestration.Inventory;
-using IdelPogTemp.Main.Repository.Inventory;
-using IdelPogTemp.Main.Service.Information;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Models.Item;
+﻿using IdelPog.Main.Orchestration.Inventory;
+using IdelPog.Main.Repository.Inventory;
+using IdelPog.Main.Service.Information;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Models.Item;
 using Moq;
 using NUnit.Framework;
-using ItemFactory = IdelPogTemp.Tests.Utils.ItemFactory;
+using ItemFactory = IdelPog.Tests.Utils.ItemFactory;
 
-namespace IdelPogTemp.Tests.Orchestration
+namespace IdelPog.Tests.Orchestration
 {
     [TestFixture]
     public class InventoryMediatorTest

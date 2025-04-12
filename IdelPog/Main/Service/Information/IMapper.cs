@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Validation.Exceptions;
+﻿using IdelPog.Main.Structures;
+using IdelPog.Main.Validation.Exceptions;
 
-namespace IdelPogTemp.Main.Service.Information
+namespace IdelPog.Main.Service.Information
 {
     /// <summary>
     /// Information mapper, maps a passed key onto an <see cref="Information"/> object

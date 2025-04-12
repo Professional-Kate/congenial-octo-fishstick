@@ -1,10 +1,10 @@
-﻿using IdelPogTemp.Main.Repository;
-using IdelPogTemp.Main.Validation.Exceptions;
-using IdelPogTemp.Main.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Main.Repository;
+using IdelPog.Main.Validation.Exceptions;
+using IdelPog.Main.Validation.Pipelines.Interfaces;
 using Moq;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Repository
+namespace IdelPog.Tests.Repository
 {
     [TestFixture]
     public class RepositoryTest

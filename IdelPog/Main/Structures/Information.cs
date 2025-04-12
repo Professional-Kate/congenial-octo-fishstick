@@ -1,4 +1,4 @@
-﻿namespace IdelPogTemp.Main.Structures
+﻿namespace IdelPog.Main.Structures
 {
     /// <summary>
     /// Contains two readonly strings that describes an objects readable name and readable description

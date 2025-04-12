@@ -1,4 +1,4 @@
-﻿namespace IdelPogTemp.Main.Service.Currency
+﻿namespace IdelPog.Main.Service.Currency
 {
     /// <summary>
     /// See <see cref="ICurrencyService"/> for documentation.

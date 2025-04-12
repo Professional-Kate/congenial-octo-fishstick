@@ -1,8 +1,8 @@
-﻿using IdelPogTemp.Main.Constants;
-using IdelPogTemp.Main.Structures.Models.Builders.Item;
-using IdelPogTemp.Main.Structures.Models.Item;
+﻿using IdelPog.Main.Constants;
+using IdelPog.Main.Structures.Models.Builders.Item;
+using IdelPog.Main.Structures.Models.Item;
 
-namespace IdelPogTemp.Tests.Utils
+namespace IdelPog.Tests.Utils
 {
     internal abstract class ItemFactory
     {

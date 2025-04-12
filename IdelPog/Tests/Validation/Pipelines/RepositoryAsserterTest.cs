@@ -1,13 +1,13 @@
-﻿using IdelPogTemp.Main.Validation.Assertions;
-using IdelPogTemp.Main.Validation.Assertions.Handlers;
-using IdelPogTemp.Main.Validation.Assertions.Handlers.Interfaces;
-using IdelPogTemp.Main.Validation.Assertions.Interfaces;
-using IdelPogTemp.Main.Validation.Exceptions;
-using IdelPogTemp.Main.Validation.Pipelines;
-using IdelPogTemp.Main.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Main.Validation.Assertions;
+using IdelPog.Main.Validation.Assertions.Handlers;
+using IdelPog.Main.Validation.Assertions.Handlers.Interfaces;
+using IdelPog.Main.Validation.Assertions.Interfaces;
+using IdelPog.Main.Validation.Exceptions;
+using IdelPog.Main.Validation.Pipelines;
+using IdelPog.Main.Validation.Pipelines.Interfaces;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Validation.Pipelines
+namespace IdelPog.Tests.Validation.Pipelines
 {
     [TestFixture]
     public class RepositoryAsserterTest

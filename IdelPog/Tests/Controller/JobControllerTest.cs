@@ -1,12 +1,12 @@
-﻿using IdelPogTemp.Main.Controller.Job;
-using IdelPogTemp.Main.Orchestration.Job;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Models;
-using IdelPogTemp.Tests.Utils;
+﻿using IdelPog.Main.Controller.Job;
+using IdelPog.Main.Orchestration.Job;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Models;
+using IdelPog.Tests.Utils;
 using Moq;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Controller
+namespace IdelPog.Tests.Controller
 {
     [TestFixture]
     public class JobControllerTest

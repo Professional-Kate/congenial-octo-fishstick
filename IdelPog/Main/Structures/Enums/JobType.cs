@@ -1,4 +1,4 @@
-﻿namespace IdelPogTemp.Main.Structures.Enums
+﻿namespace IdelPog.Main.Structures.Enums
 {
     public enum JobType : byte
     {

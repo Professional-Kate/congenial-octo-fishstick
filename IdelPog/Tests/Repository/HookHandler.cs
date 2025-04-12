@@ -1,12 +1,12 @@
-﻿using IdelPogTemp.Main.Repository;
-using IdelPogTemp.Main.Validation.Assertions;
-using IdelPogTemp.Main.Validation.Assertions.Handlers;
-using IdelPogTemp.Main.Validation.Assertions.Handlers.Interfaces;
-using IdelPogTemp.Main.Validation.Pipelines;
-using IdelPogTemp.Main.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Main.Repository;
+using IdelPog.Main.Validation.Assertions;
+using IdelPog.Main.Validation.Assertions.Handlers;
+using IdelPog.Main.Validation.Assertions.Handlers.Interfaces;
+using IdelPog.Main.Validation.Pipelines;
+using IdelPog.Main.Validation.Pipelines.Interfaces;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Repository
+namespace IdelPog.Tests.Repository
 {
     public class HookHandler
     {

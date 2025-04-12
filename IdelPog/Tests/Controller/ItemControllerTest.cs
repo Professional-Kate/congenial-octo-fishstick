@@ -1,12 +1,12 @@
-﻿using IdelPogTemp.Main.Controller.Item;
-using IdelPogTemp.Main.Orchestration.Inventory;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models.Item;
+﻿using IdelPog.Main.Controller.Item;
+using IdelPog.Main.Orchestration.Inventory;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models.Item;
 using Moq;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Controller
+namespace IdelPog.Tests.Controller
 {
     [TestFixture]
     public class ItemControllerTest

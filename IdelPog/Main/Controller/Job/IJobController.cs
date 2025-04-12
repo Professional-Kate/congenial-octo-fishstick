@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
+﻿using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
 
-namespace IdelPogTemp.Main.Controller.Job
+namespace IdelPog.Main.Controller.Job
 {
     /// <seealso cref="CompleteJob"/>
     public interface IJobController

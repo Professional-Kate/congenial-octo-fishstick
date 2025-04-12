@@ -1,8 +1,8 @@
-﻿using IdelPogTemp.Main.Constants;
-using IdelPogTemp.Main.Structures.Models.Levelable;
-using IdelPogTemp.Main.Validation.Exceptions;
+﻿using IdelPog.Main.Constants;
+using IdelPog.Main.Structures.Models.Levelable;
+using IdelPog.Main.Validation.Exceptions;
 
-namespace IdelPogTemp.Main.Validation.Pipelines.Interfaces
+namespace IdelPog.Main.Validation.Pipelines.Interfaces
 {
     /// <seealso cref="AssertLevelable"/>
     public interface ILevelableAsserter

@@ -1,4 +1,4 @@
-﻿namespace IdelPogTemp.Main.Structures.Models.Levelable
+﻿namespace IdelPog.Main.Structures.Models.Levelable
 {
     /// <summary>
     /// This is the main progression object. 

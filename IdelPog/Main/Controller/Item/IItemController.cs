@@ -1,8 +1,8 @@
-﻿using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models.Item;
+﻿using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models.Item;
 
-namespace IdelPogTemp.Main.Controller.Item
+namespace IdelPog.Main.Controller.Item
 {
     /// <see cref="ModifyItem"/>
     public interface IItemController

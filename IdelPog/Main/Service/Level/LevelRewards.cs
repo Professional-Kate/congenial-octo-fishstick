@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Structures.Models.Levelable;
+﻿using IdelPog.Main.Structures.Models.Levelable;
 
-namespace IdelPogTemp.Main.Service.Level
+namespace IdelPog.Main.Service.Level
 {
     /// <inheritdoc cref="ILevelRewards"/>
     public class LevelRewards : ILevelRewards

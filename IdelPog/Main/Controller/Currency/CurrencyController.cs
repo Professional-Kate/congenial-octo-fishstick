@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Orchestration.Currency;
-using IdelPogTemp.Main.Structures;
+﻿using IdelPog.Main.Orchestration.Currency;
+using IdelPog.Main.Structures;
 
-namespace IdelPogTemp.Main.Controller.Currency
+namespace IdelPog.Main.Controller.Currency
 {
     /// <summary>
     /// The main control object for Currency. Using this class you can Update any Currency.

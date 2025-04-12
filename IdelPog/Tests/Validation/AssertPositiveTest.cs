@@ -1,10 +1,10 @@
-﻿using IdelPogTemp.Main.Validation.Assertions;
-using IdelPogTemp.Main.Validation.Assertions.Handlers;
-using IdelPogTemp.Main.Validation.Assertions.Interfaces;
-using IdelPogTemp.Main.Validation.Exceptions;
+﻿using IdelPog.Main.Validation.Assertions;
+using IdelPog.Main.Validation.Assertions.Handlers;
+using IdelPog.Main.Validation.Assertions.Interfaces;
+using IdelPog.Main.Validation.Exceptions;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Validation
+namespace IdelPog.Tests.Validation
 {
     [TestFixture]
     public class AssertPositiveTest

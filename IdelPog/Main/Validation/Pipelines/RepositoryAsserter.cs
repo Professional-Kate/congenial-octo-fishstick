@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Validation.Assertions.Interfaces;
-using IdelPogTemp.Main.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Main.Validation.Assertions.Interfaces;
+using IdelPog.Main.Validation.Pipelines.Interfaces;
 
-namespace IdelPogTemp.Main.Validation.Pipelines
+namespace IdelPog.Main.Validation.Pipelines
 {
     /// <seealso cref="IRepositoryAsserter"/>
     public class RepositoryAsserter : IRepositoryAsserter

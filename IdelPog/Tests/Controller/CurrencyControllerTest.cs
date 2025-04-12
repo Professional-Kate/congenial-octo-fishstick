@@ -1,13 +1,13 @@
-﻿using IdelPogTemp.Main.Controller.Currency;
-using IdelPogTemp.Main.Orchestration.Currency;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models;
-using IdelPogTemp.Tests.Utils;
+﻿using IdelPog.Main.Controller.Currency;
+using IdelPog.Main.Orchestration.Currency;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models;
+using IdelPog.Tests.Utils;
 using Moq;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Controller
+namespace IdelPog.Tests.Controller
 {
     [TestFixture(CurrencyType.FOOD, 10)]
     public class CurrencyControllerTest

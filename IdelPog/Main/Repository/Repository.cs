@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Validation.Pipelines.Interfaces;
+﻿using IdelPog.Main.Validation.Pipelines.Interfaces;
 
-namespace IdelPogTemp.Main.Repository
+namespace IdelPog.Main.Repository
 {
     public sealed class Repository<TID, T> : IRepository<TID, T> where T : class, ICloneable
     {

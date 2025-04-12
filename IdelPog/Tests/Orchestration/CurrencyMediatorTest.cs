@@ -1,16 +1,16 @@
-﻿using IdelPogTemp.Main.Orchestration.Currency;
-using IdelPogTemp.Main.Repository;
-using IdelPogTemp.Main.Service.Currency;
-using IdelPogTemp.Main.Structures;
-using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models;
-using IdelPogTemp.Main.Validation.Assertions.Interfaces;
-using IdelPogTemp.Main.Validation.Exceptions;
-using IdelPogTemp.Tests.Utils;
+﻿using IdelPog.Main.Orchestration.Currency;
+using IdelPog.Main.Repository;
+using IdelPog.Main.Service.Currency;
+using IdelPog.Main.Structures;
+using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models;
+using IdelPog.Main.Validation.Assertions.Interfaces;
+using IdelPog.Main.Validation.Exceptions;
+using IdelPog.Tests.Utils;
 using Moq;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Orchestration
+namespace IdelPog.Tests.Orchestration
 {
     [TestFixture]
     public class CurrencyMediatorTest

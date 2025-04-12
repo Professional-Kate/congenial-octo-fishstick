@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Structures.Enums;
+﻿using IdelPog.Main.Structures.Enums;
 
-namespace IdelPogTemp.Main.Structures.Models.Builders.Currency
+namespace IdelPog.Main.Structures.Models.Builders.Currency
 {
     /// <summary>
     /// Builds a new <see cref="Currency"/>

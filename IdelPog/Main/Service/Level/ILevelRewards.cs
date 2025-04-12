@@ -1,6 +1,6 @@
-﻿using IdelPogTemp.Main.Structures.Models.Levelable;
+﻿using IdelPog.Main.Structures.Models.Levelable;
 
-namespace IdelPogTemp.Main.Service.Level
+namespace IdelPog.Main.Service.Level
 {
     /// <summary>
     /// Handles granting custom rewards which can be granted on specific numbers

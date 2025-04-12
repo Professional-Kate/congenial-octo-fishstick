@@ -1,9 +1,9 @@
-﻿using IdelPogTemp.Main.Constants;
-using IdelPogTemp.Main.Service.Level;
-using IdelPogTemp.Main.Structures.Models.Levelable;
+﻿using IdelPog.Main.Constants;
+using IdelPog.Main.Service.Level;
+using IdelPog.Main.Structures.Models.Levelable;
 using NUnit.Framework;
 
-namespace IdelPogTemp.Tests.Service
+namespace IdelPog.Tests.Service
 {
     [TestFixture]
     public class LevelRewardsTest

@@ -1,7 +1,7 @@
-﻿using IdelPogTemp.Main.Structures.Models.Builders.Levelable;
-using IdelPogTemp.Main.Structures.Models.Levelable;
+﻿using IdelPog.Main.Structures.Models.Builders.Levelable;
+using IdelPog.Main.Structures.Models.Levelable;
 
-namespace IdelPogTemp.Tests.Utils
+namespace IdelPog.Tests.Utils
 {
     internal static class LevelableFactory
     {

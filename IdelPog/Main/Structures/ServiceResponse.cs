@@ -1,4 +1,4 @@
-﻿namespace IdelPogTemp.Main.Structures
+﻿namespace IdelPog.Main.Structures
 {
     /// <summary>
     /// Contains two members <see cref="Message"/> and <see cref="IsSuccess"/> that will tell you if the called operation was successful.

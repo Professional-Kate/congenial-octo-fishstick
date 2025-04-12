@@ -1,11 +1,11 @@
-﻿using IdelPogTemp.Main.Constants;
-using IdelPogTemp.Main.Structures.Enums;
-using IdelPogTemp.Main.Structures.Models;
-using IdelPogTemp.Main.Structures.Models.Builders.Job;
-using IdelPogTemp.Main.Structures.Models.Builders.Levelable;
-using IdelPogTemp.Main.Structures.Models.Levelable;
+﻿using IdelPog.Main.Constants;
+using IdelPog.Main.Structures.Enums;
+using IdelPog.Main.Structures.Models;
+using IdelPog.Main.Structures.Models.Builders.Job;
+using IdelPog.Main.Structures.Models.Builders.Levelable;
+using IdelPog.Main.Structures.Models.Levelable;
 
-namespace IdelPogTemp.Tests.Utils
+namespace IdelPog.Tests.Utils
 {
     internal static class JobFactory
     {
