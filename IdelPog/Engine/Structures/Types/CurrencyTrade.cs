@@ -11,28 +11,21 @@ namespace IdelPog.Engine.Structures.Types
     /// <seealso cref="Amount"/>
     /// <seealso cref="Currency"/>
     /// <seealso cref="Action"/>
-    public struct CurrencyTrade
+    public struct CurrencyTrade(int amount, CurrencyType currency, ActionType action)
     {
         /// <summary>
         /// The amount that should be Removed/Added to the <see cref="CurrencyType"/>
         /// </summary>
-        public int Amount { get; }
+        public int Amount { get; } = amount;
 
         /// <summary>
         /// What <see cref="CurrencyType"/> the action should perform on
         /// </summary>
-        public CurrencyType Currency { get; }
-        
+        public CurrencyType Currency { get; } = currency;
+
         /// <summary>
         /// <inheritdoc cref="ActionType"/>
         /// </summary>
-        public ActionType Action { get; }
-
-        public CurrencyTrade(int amount, CurrencyType currency, ActionType action)
-        {
-            Amount = amount;
-            Currency = currency;
-            Action = action;
-        }
+        public ActionType Action { get; } = action;
     }
 }

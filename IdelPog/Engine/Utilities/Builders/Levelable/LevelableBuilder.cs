@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models.Levelable;
+﻿using IdelPog.Engine.Structures.Levelable;
 
 namespace IdelPog.Engine.Utilities.Builders.Levelable
 {
@@ -55,7 +55,7 @@ namespace IdelPog.Engine.Utilities.Builders.Levelable
         public ILevelable Build()
         {
             // TODO: ensure each of these have a value, or set to default
-            ILevelable levelable = new Structures.Models.Levelable.Levelable(_level, _experience, _nextLevelExperience, _experiencePerAction, _onLevelUp);
+            ILevelable levelable = new Structures.Levelable.Levelable(_level, _experience, _nextLevelExperience, _experiencePerAction, _onLevelUp);
             
             return levelable;
         }

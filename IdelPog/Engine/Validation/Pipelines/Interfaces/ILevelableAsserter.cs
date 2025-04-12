@@ -1,5 +1,5 @@
 ﻿using IdelPog.Engine.Constants;
-using IdelPog.Engine.Structures.Models.Levelable;
+using IdelPog.Engine.Structures.Levelable;
 using IdelPog.Engine.Validation.Exceptions;
 
 namespace IdelPog.Engine.Validation.Pipelines.Interfaces

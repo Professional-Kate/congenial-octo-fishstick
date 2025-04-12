@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models.Levelable;
+﻿using IdelPog.Engine.Structures.Levelable;
 using IdelPog.Engine.Utilities.Builders.Levelable;
 
 namespace IdelPog.Tests.Utils

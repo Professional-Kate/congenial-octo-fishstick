@@ -5,15 +5,9 @@
     /// </summary>
     /// <seealso cref="Name"/>
     /// <seealso cref="Description"/>
-    public readonly struct Information
+    public readonly struct Information(string name, string description)
     {
-        public readonly string Name;
-        public readonly string Description;
-
-        public Information(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+        public readonly string Name = name;
+        public readonly string Description = description;
     }
 }

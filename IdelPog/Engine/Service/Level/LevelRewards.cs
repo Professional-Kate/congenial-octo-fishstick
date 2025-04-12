@@ -1,5 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models.Levelable;
-using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Service.Level
 {

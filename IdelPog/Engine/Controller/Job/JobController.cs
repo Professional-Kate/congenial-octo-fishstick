@@ -1,22 +1,14 @@
 ﻿using IdelPog.Engine.Orchestration.Job;
-using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Controller.Job
 {
-    public class JobController : IJobController
+    public class JobController(IJobMediator jobMediator) : IJobController
     {
-        private readonly IJobMediator _jobMediator;
-
-        public JobController(IJobMediator jobMediator)
-        {
-            _jobMediator = jobMediator;
-        }
-        
         public ServiceResponse CompleteJob(JobType jobType)
         {
-            ServiceResponse response = _jobMediator.ProcessJobAction(jobType);
+            ServiceResponse response = jobMediator.ProcessJobAction(jobType);
             if (response.IsSuccess == false)
             {
                 // TODO : Log to file

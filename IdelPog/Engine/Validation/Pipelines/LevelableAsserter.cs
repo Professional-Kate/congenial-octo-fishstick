@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models.Levelable;
+﻿using IdelPog.Engine.Structures.Levelable;
 using IdelPog.Engine.Validation.Assertions.Interfaces;
 using IdelPog.Engine.Validation.Pipelines.Interfaces;
 

@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models.Levelable;
+﻿using IdelPog.Engine.Structures.Levelable;
 
 namespace IdelPog.Engine.Validation.Assertions.Interfaces
 {

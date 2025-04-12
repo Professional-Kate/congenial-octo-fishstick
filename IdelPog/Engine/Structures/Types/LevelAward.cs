@@ -2,15 +2,9 @@
 {
     /// <seealso cref="RequiredLevel"/>
     /// <seealso cref="OnLevelUp"/>
-    public class LevelAward
+    public class LevelAward(byte level, Action onLevelUp)
     {
-        public readonly byte RequiredLevel;
-        public readonly Action OnLevelUp;
-
-        public LevelAward(byte level, Action onLevelUp)
-        {
-            RequiredLevel = level;
-            OnLevelUp = onLevelUp;
-        }
+        public readonly byte RequiredLevel = level;
+        public readonly Action OnLevelUp = onLevelUp;
     }
 }

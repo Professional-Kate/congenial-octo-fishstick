@@ -4,10 +4,8 @@ using IdelPog.Engine.Validation.Exceptions;
 
 namespace IdelPog.Engine.Validation.Assertions
 {
-    public class AssertFound : BaseAssertion<NotFoundException>, IAssertFound
+    public class AssertFound(IHandler handler) : BaseAssertion<NotFoundException>(handler), IAssertFound
     {
-        public AssertFound(IHandler handler) : base(handler) { }
-        
         public void AssertItemIsFound(object key, Func<bool> itemNotFound)
         {
             Assert(() =>

@@ -2,25 +2,20 @@
 
 namespace IdelPog.Engine.Repository
 {
-    public sealed class Repository<TID, T> : IRepository<TID, T> where T : class, ICloneable
+    public sealed class Repository<TID, T>(IRepositoryAsserter repositoryAsserter) : IRepository<TID, T>
+        where T : class, ICloneable
     {
         private readonly Dictionary<TID, T> _repository = new();
-        private readonly IRepositoryAsserter _repositoryAsserter;
-       
-        public event Action<int, T> OnAdd;
-        public event Action<int, T> OnRemove;
-        public event Action<int, T> OnGet;
-        public event Action<T, T> OnUpdate;
-        public event Action<int, bool> OnContains;
 
-        public Repository(IRepositoryAsserter repositoryAsserter)
-        {
-            _repositoryAsserter = repositoryAsserter;
-        }
-        
+        public event Action<int, T>? OnAdd;
+        public event Action<int, T>? OnRemove;
+        public event Action<int, T>? OnGet;
+        public event Action<T, T>? OnUpdate;
+        public event Action<int, bool>? OnContains;
+
         public void Add(TID key, T value)
         {
-            _repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
+            repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
             
             _repository.Add(key, value);
             OnAdd?.Invoke(key.GetHashCode(), value);
@@ -71,7 +66,7 @@ namespace IdelPog.Engine.Repository
         /// <param name="key">The key you want to check if it's in the Repository</param>
         private void AssertKeyExists(TID key)
         {
-            _repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
+            repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
         }
     }
 }

@@ -8,15 +8,9 @@ namespace IdelPog.Engine.Validation.Assertions
     /// <typeparam name="T">The type of the <see cref="Exception"/> to be handled</typeparam>
     /// <seealso cref="Assert"/>
     /// <seealso cref="IHandler"/>
-    public abstract class BaseAssertion<T> where T: Exception
+    public abstract class BaseAssertion<T>(IHandler handler)
+        where T : Exception
     {
-        private readonly IHandler _handler;
-
-        protected BaseAssertion(IHandler handler)
-        {
-            _handler = handler;
-        }
-
         /// <summary>
         /// Executes the passed action, automatically handling the thrown exception
         /// </summary>
@@ -29,7 +23,7 @@ namespace IdelPog.Engine.Validation.Assertions
             }
             catch (T exception)
             {
-                _handler.Handle(exception);
+                handler.Handle(exception);
             }
         }
     }

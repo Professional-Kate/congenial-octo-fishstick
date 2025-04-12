@@ -1,7 +1,6 @@
 ﻿using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models;
-using IdelPog.Engine.Structures.Models.Levelable;
+using IdelPog.Engine.Structures.Levelable;
 using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Utilities.Builders.Job
@@ -21,6 +20,6 @@ namespace IdelPog.Engine.Utilities.Builders.Job
 
         public IJobBuilder JobType(JobType jobType);
 
-        public Structures.Models.Job Build();
+        public Structures.Job Build();
     }
 }

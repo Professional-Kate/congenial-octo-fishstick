@@ -4,10 +4,8 @@ using IdelPog.Engine.Validation.Exceptions;
 
 namespace IdelPog.Engine.Validation.Assertions
 {
-    public class AssertPositive : BaseAssertion<NegativeNumberException>, IAssertPositive
+    public class AssertPositive(IHandler handler) : BaseAssertion<NegativeNumberException>(handler), IAssertPositive
     {
-        public AssertPositive(IHandler handler) : base(handler) { } 
-        
         public void AssertNumberIsPositive(params int[] numbers)
         {
             Assert(() =>

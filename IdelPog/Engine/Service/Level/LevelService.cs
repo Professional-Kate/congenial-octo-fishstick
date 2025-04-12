@@ -1,20 +1,13 @@
-﻿using IdelPog.Engine.Structures.Models.Levelable;
+﻿using IdelPog.Engine.Structures.Levelable;
 using IdelPog.Engine.Validation.Pipelines.Interfaces;
 
 namespace IdelPog.Engine.Service.Level
 {
-    public class LevelService : ILevelService   
+    public class LevelService(ILevelableAsserter levelableAsserter) : ILevelService
     {
-        private readonly ILevelableAsserter _levelableAsserter;
-        
-        public LevelService(ILevelableAsserter levelableAsserter)
-        {
-            _levelableAsserter = levelableAsserter;
-        }
-        
         public void LevelUpJob(ILevelable levelable)
         {
-            _levelableAsserter.AssertLevelable(levelable);
+            levelableAsserter.AssertLevelable(levelable);
 
             int total = 0;
             for (int i = 1; i < levelable.Level; i++)

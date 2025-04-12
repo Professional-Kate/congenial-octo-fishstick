@@ -2,7 +2,6 @@
 using IdelPog.Engine.Service.Currency;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models;
 using IdelPog.Engine.Structures.Types;
 using IdelPog.Engine.Validation.Assertions.Interfaces;
 using IdelPog.Engine.Validation.Exceptions;
@@ -12,19 +11,9 @@ namespace IdelPog.Engine.Orchestration.Currency
     /// <summary>
     /// See <see cref="ICurrencyMediator"/> for documentation
     /// </summary>
-    public class CurrencyMediator : ICurrencyMediator
+    public class CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Structures.Currency> repository, IAssertPositive assert)
+        : ICurrencyMediator
     {
-        private readonly ICurrencyService _currencyService;
-        private readonly IRepository<CurrencyType, Structures.Models.Currency> _repository;
-        private readonly IAssertPositive _assert;
-        
-        public CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Structures.Models.Currency> repository, IAssertPositive assert)
-        {
-            _currencyService = currencyService;
-            _repository = repository;
-            _assert = assert;
-        }
-        
         public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
         {
             ServiceResponse validateTradesResponse = ValidateTrades(trades);
@@ -39,8 +28,8 @@ namespace IdelPog.Engine.Orchestration.Currency
                 return allCurrenciesExistResponse;
             }
             
-            Dictionary<CurrencyType, Structures.Models.Currency> stagingGround = new(); 
-            Dictionary<CurrencyType, Structures.Models.Currency> originalCurrencies = new(); 
+            Dictionary<CurrencyType, Structures.Currency> stagingGround = new(); 
+            Dictionary<CurrencyType, Structures.Currency> originalCurrencies = new(); 
 
             CloneCurrency(trades, originalCurrencies, stagingGround);
             MutateClonedCurrency(trades, stagingGround);
@@ -72,7 +61,7 @@ namespace IdelPog.Engine.Orchestration.Currency
                     continue;
                 }
                 
-                if (_repository.Contains(currencyTrade.Currency) == false)
+                if (repository.Contains(currencyTrade.Currency) == false)
                 {
                     return ServiceResponse.Failure($"Error! Currency type {currencyTrade.Currency} was not found.");
                 }
@@ -90,7 +79,7 @@ namespace IdelPog.Engine.Orchestration.Currency
         /// <param name="currencyTrades">Uses the internal <see cref="CurrencyTrade"/>.<see cref="CurrencyTrade.Currency"/> to Get each <see cref="Currency"/> from the Repository</param>
         /// <param name="originalCurrencies">All the <see cref="Currency"/> returned from Get will first be placed into this Dictionary</param>
         /// <param name="stagingGround">All the <see cref="Currency"/> added into the originalCurrencies Dictionary will be cloned into this</param>
-        private void CloneCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Structures.Models.Currency> originalCurrencies, Dictionary<CurrencyType, Structures.Models.Currency> stagingGround)
+        private void CloneCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Structures.Currency> originalCurrencies, Dictionary<CurrencyType, Structures.Currency> stagingGround)
         {
             foreach (CurrencyTrade currencyTrade in currencyTrades)
             {
@@ -101,11 +90,11 @@ namespace IdelPog.Engine.Orchestration.Currency
                     continue;
                 }
 
-                Structures.Models.Currency globalCurrencyClone = _repository.Get(currencyTrade.Currency);
+                Structures.Currency globalCurrencyClone = repository.Get(currencyTrade.Currency);
                 originalCurrencies.Add(currencyTrade.Currency, globalCurrencyClone);
                     
                 // entering each cloned Currency into the stagingGround so we can update them
-                stagingGround[currencyTrade.Currency] = new Structures.Models.Currency(globalCurrencyClone.CurrencyType, globalCurrencyClone.Amount);
+                stagingGround[currencyTrade.Currency] = new Structures.Currency(globalCurrencyClone.CurrencyType, globalCurrencyClone.Amount);
             }
         }
 
@@ -114,20 +103,20 @@ namespace IdelPog.Engine.Orchestration.Currency
         /// </summary>
         /// <param name="currencyTrades"><see cref="CurrencyTrade"/></param>
         /// <param name="stagingGround">This Dictionary will now contain each cloned <see cref="Currency"/> from the <see cref="Repository"/></param>
-        private void MutateClonedCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Structures.Models.Currency> stagingGround)
+        private void MutateClonedCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Structures.Currency> stagingGround)
         {
             foreach (CurrencyTrade currencyTrade in currencyTrades)
             {
                 // Apply CurrencyTrade actions to the stagingGround Currency
-                Structures.Models.Currency localCurrency = stagingGround[currencyTrade.Currency];
+                Structures.Currency localCurrency = stagingGround[currencyTrade.Currency];
 
                 switch (currencyTrade.Action)
                 {
                     case ActionType.ADD:
-                        _currencyService.AddAmount(localCurrency, currencyTrade.Amount);
+                        currencyService.AddAmount(localCurrency, currencyTrade.Amount);
                         break;
                     case ActionType.REMOVE:
-                        _currencyService.RemoveAmount(localCurrency, currencyTrade.Amount);
+                        currencyService.RemoveAmount(localCurrency, currencyTrade.Amount);
                         break;
                 }
             }
@@ -140,7 +129,7 @@ namespace IdelPog.Engine.Orchestration.Currency
         /// </summary>
         /// <param name="stagingGround">This should now contain each cloned <see cref="Currency"/> from the Repository, but, has had its internal amount updated </param>
         /// <returns>A <see cref="ServiceResponse"/> who's <see cref="ServiceResponse.IsSuccess"/> will tell if you all the passed trades pass validation</returns>
-        private ServiceResponse ValidateFinalAmounts(Dictionary<CurrencyType, Structures.Models.Currency> stagingGround)
+        private ServiceResponse ValidateFinalAmounts(Dictionary<CurrencyType, Structures.Currency> stagingGround)
         {
             ServiceResponse serviceResponse = AssertArrayIsPositive(stagingGround.Select(entry => entry.Value.Amount).ToArray());
             
@@ -153,25 +142,25 @@ namespace IdelPog.Engine.Orchestration.Currency
         /// </summary>
         /// <param name="stagingGround">These <see cref="Currency"/> should now be different from the ones retrieved from the Repository</param>
         /// <param name="originalCurrencies">This contains the original retrieved <see cref="Currency"/> that has not been changed</param>
-        private void ApplyChanges(Dictionary<CurrencyType, Structures.Models.Currency> stagingGround, Dictionary<CurrencyType, Structures.Models.Currency> originalCurrencies)
+        private void ApplyChanges(Dictionary<CurrencyType, Structures.Currency> stagingGround, Dictionary<CurrencyType, Structures.Currency> originalCurrencies)
         {
-            foreach (Structures.Models.Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
+            foreach (Structures.Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
             {
-                Structures.Models.Currency globalCurrency = originalCurrencies[stagedCurrency.CurrencyType];
+                Structures.Currency globalCurrency = originalCurrencies[stagedCurrency.CurrencyType];
 
                 // Calculating if we need to Remove or Add Amount
                 int difference = stagedCurrency.Amount - globalCurrency.Amount;
                 switch (difference)
                 {
                     case > 0:
-                        _currencyService.AddAmount(globalCurrency, difference);
+                        currencyService.AddAmount(globalCurrency, difference);
                         break;
                     case < 0:
-                        _currencyService.RemoveAmount(globalCurrency, -difference);
+                        currencyService.RemoveAmount(globalCurrency, -difference);
                         break;
                 }
 
-                _repository.Update(globalCurrency.CurrencyType, globalCurrency);
+                repository.Update(globalCurrency.CurrencyType, globalCurrency);
             }
         }
         
@@ -196,7 +185,7 @@ namespace IdelPog.Engine.Orchestration.Currency
         {
             try
             {
-                _assert.AssertNumberIsPositive(numbers);
+                assert.AssertNumberIsPositive(numbers);
                 return ServiceResponse.Success();
             }
             catch (NegativeNumberException exception)

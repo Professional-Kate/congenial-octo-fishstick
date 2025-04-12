@@ -1,6 +1,5 @@
 ﻿using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models;
 using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Utilities.Builders.Item
@@ -23,6 +22,6 @@ namespace IdelPog.Engine.Utilities.Builders.Item
 
         public IItemBuilder Amount(int amount);
 
-        public Structures.Models.Item Build();
+        public Structures.Item Build();
     }
 }

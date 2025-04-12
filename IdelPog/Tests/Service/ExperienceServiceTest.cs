@@ -1,6 +1,6 @@
 ﻿using IdelPog.Engine.Constants;
 using IdelPog.Engine.Service.Experience;
-using IdelPog.Engine.Structures.Models.Levelable;
+using IdelPog.Engine.Structures.Levelable;
 using IdelPog.Engine.Utilities.Builders.Levelable;
 using IdelPog.Engine.Validation.Exceptions;
 using IdelPog.Engine.Validation.Pipelines.Interfaces;

@@ -1,6 +1,5 @@
 ﻿using IdelPog.Engine.Controller.Item;
 using IdelPog.Engine.Orchestration.Inventory;
-using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 using Moq;

@@ -1,5 +1,4 @@
-﻿using IdelPog.Engine.Structures;
-using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.Engine.Structures.Types;
 using IdelPog.Engine.Validation.Exceptions;
 
 namespace IdelPog.Engine.Service.Information

@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Constants;
+using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models;
-using IdelPog.Engine.Structures.Models.Levelable;
+using IdelPog.Engine.Structures.Levelable;
 using IdelPog.Engine.Utilities.Builders.Job;
 using IdelPog.Engine.Utilities.Builders.Levelable;
 

@@ -1,28 +1,21 @@
 ﻿using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Structures.Models
+namespace IdelPog.Engine.Structures
 {
     /// <summary>
     /// The Item model
     /// </summary>
     /// <seealso cref="AddAmount"/>
     /// <seealso cref="RemoveAmount"/>
-    public class Item : ICloneable
+    public class Item(InventoryID id, Information information, int sellPrice, int amount = 1)
+        : ICloneable
     {
-        public readonly InventoryID ID;
-        public readonly Information Information;
-        public readonly int SellPrice;
+        public readonly InventoryID ID = id;
+        public readonly Information Information = information;
+        public readonly int SellPrice = sellPrice;
         
-        public int Amount { get; private set; }
-
-        public Item(InventoryID id, Information information, int sellPrice, int amount = 1)
-        {
-            ID = id;
-            Information = information;
-            SellPrice = sellPrice;
-            Amount = amount;
-        }
+        public int Amount { get; private set; } = amount;
 
         public void AddAmount(int amount)
         {

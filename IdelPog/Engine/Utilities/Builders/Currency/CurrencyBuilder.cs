@@ -24,9 +24,9 @@ namespace IdelPog.Engine.Utilities.Builders.Currency
             return this;
         }
 
-        public Structures.Models.Currency Build()
+        public Structures.Currency Build()
         {
-            return new Structures.Models.Currency(_currencyType, _amount);
+            return new Structures.Currency(_currencyType, _amount);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models;
+﻿using IdelPog.Engine.Structures;
+using IdelPog.Engine.Structures.Enums;
 
 namespace IdelPog.Engine.Utilities.Builders.Currency
 {
@@ -15,6 +15,6 @@ namespace IdelPog.Engine.Utilities.Builders.Currency
 
         public ICurrencyBuilder Amount(int amount);
 
-        public Structures.Models.Currency Build();
+        public Structures.Currency Build();
     }
 }

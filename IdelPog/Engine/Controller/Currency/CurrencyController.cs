@@ -1,5 +1,4 @@
 ﻿using IdelPog.Engine.Orchestration.Currency;
-using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Controller.Currency
@@ -8,18 +7,11 @@ namespace IdelPog.Engine.Controller.Currency
     /// The main control object for Currency. Using this class you can Update any Currency.
     /// </summary>
     /// <seealso cref="UpdateCurrency"/>
-    public class CurrencyController : ICurrencyController
+    public class CurrencyController(ICurrencyMediator currencyService) : ICurrencyController
     {
-        private readonly ICurrencyMediator _currencyService;
-
-        public CurrencyController(ICurrencyMediator currencyService)
-        {
-            _currencyService = currencyService;
-        }
-        
         public ServiceResponse UpdateCurrency(params CurrencyTrade[] trades)
         {
-            ServiceResponse serviceResponse = _currencyService.ProcessCurrencyUpdate(trades);
+            ServiceResponse serviceResponse = currencyService.ProcessCurrencyUpdate(trades);
             if (serviceResponse.IsSuccess == false)
             {
                 // TODO: logger log.

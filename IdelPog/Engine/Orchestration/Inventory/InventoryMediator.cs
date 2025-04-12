@@ -2,7 +2,6 @@
 using IdelPog.Engine.Service.Information;
 using IdelPog.Engine.Structures;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models;
 using IdelPog.Engine.Structures.Types;
 using IdelPog.Engine.Utilities.Builders.Item;
 
@@ -11,28 +10,19 @@ namespace IdelPog.Engine.Orchestration.Inventory
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation
     /// </summary>
-    public class InventoryMediator : IInventoryMediator
+    public class InventoryMediator(IInventory inventory, IMapper<InventoryID> mapper) : IInventoryMediator
     {
-        private readonly IInventory _inventory;
-        private readonly IMapper<InventoryID> _mapper;
-        
-        public InventoryMediator(IInventory inventory, IMapper<InventoryID> mapper)
-        {
-            _inventory = inventory;
-            _mapper = mapper;
-        }
-
         public ServiceResponse AddAmount(InventoryID inventoryID, int amount)
         {
             try
             {
-                if (_inventory.Contains(inventoryID) == false)
+                if (inventory.Contains(inventoryID) == false)
                 {
                     // if an Item doesn't exist then we create one
                     CreateItem(inventoryID, amount);
                 }
                 
-                _inventory.AddAmount(inventoryID, amount);
+                inventory.AddAmount(inventoryID, amount);
             }
             catch (Exception exception)
             {
@@ -46,7 +36,7 @@ namespace IdelPog.Engine.Orchestration.Inventory
         {
             try
             {
-                _inventory.RemoveAmount(inventoryID, amount);
+                inventory.RemoveAmount(inventoryID, amount);
             }
             catch (Exception exception)
             {
@@ -63,7 +53,7 @@ namespace IdelPog.Engine.Orchestration.Inventory
         /// <param name="amount">The amount you want the <see cref="Item"/> to have</param>
         private void CreateItem(InventoryID inventoryID, int amount)
         {
-            Information itemInformation = _mapper.GetInformation(inventoryID);
+            Information itemInformation = mapper.GetInformation(inventoryID);
             
             // TODO: for now, sell price is set to 1. This is a placeholder for all items.
             Item newItem = ItemBuilder.Builder()
@@ -73,7 +63,7 @@ namespace IdelPog.Engine.Orchestration.Inventory
                 .Amount(amount)
                 .Build();
             
-            _inventory.AddItem(newItem);
+            inventory.AddItem(newItem);
         }
     }
 }
