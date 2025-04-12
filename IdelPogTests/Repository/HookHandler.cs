@@ -1,4 +1,5 @@
 ﻿using IdelPog.Engine.Repository;
+using IdelPog.Engine.Structures.Models;
 using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Assertions.Handlers;
 using IdelPog.Engine.Validation.Pipelines;
@@ -7,7 +8,7 @@ namespace IdelPogTests.Repository
 {
     public class HookHandler
     {
-        protected IRepository<int, string> TestRepository;
+        protected IRepository<int, Currency> TestRepository;
 
         protected bool AddEventTriggered;
         protected bool RemoveEventTriggered;
@@ -20,7 +21,7 @@ namespace IdelPogTests.Repository
         {
             IHandler handler = new ThrowHandler();
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new AssertFound(handler), new AssertNotNull(handler), new AssertNonDuplicate(handler));
-            TestRepository = new Repository<int, string>(repositoryAsserter);
+            TestRepository = new Repository<int, Currency>(repositoryAsserter);
             
             AddEventTriggered = false;
             RemoveEventTriggered = false;
@@ -35,22 +36,22 @@ namespace IdelPogTests.Repository
             TestRepository.OnContains += OnContains;
         }
 
-        private void OnAdd(int key, string value)
+        private void OnAdd(int key, Currency value)
         {
             AddEventTriggered = true;
         }
 
-        private void OnRemove(int key, string value)
+        private void OnRemove(int key, Currency value)
         {
             RemoveEventTriggered = true;
         }
 
-        private void OnGet(int key, string value)
+        private void OnGet(int key, Currency value)
         {
             GetEventTriggered = true;
         }
 
-        private void OnUpdate(string originalValue, string value)
+        private void OnUpdate(Currency originalValue, Currency value)
         {
             UpdateEventTriggered = true;
         }

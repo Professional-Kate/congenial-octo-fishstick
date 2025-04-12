@@ -9,7 +9,7 @@ namespace IdelPog.Engine.Structures.Models
     /// <seealso cref="AddAmount"/>
     /// <seealso cref="RemoveAmount"/>
     public class Item(InventoryID id, Information information, int sellPrice, int amount = 1)
-        : ICloneable
+        : ICloneable<Item>
     {
         public readonly InventoryID ID = id;
         public readonly Information Information = information;
@@ -27,7 +27,7 @@ namespace IdelPog.Engine.Structures.Models
             Amount -= amount;
         }
 
-        public object Clone()
+        public Item Clone()
         {
             return new Item(ID, Information, SellPrice, Amount);
         }

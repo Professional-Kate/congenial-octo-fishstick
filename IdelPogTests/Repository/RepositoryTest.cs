@@ -1,6 +1,9 @@
 ﻿using IdelPog.Engine.Repository;
+using IdelPog.Engine.Structures.Models;
+using IdelPog.Engine.Utilities.Builders;
 using IdelPog.Engine.Validation.Exceptions;
 using IdelPog.Engine.Validation.Pipelines;
+using IdelPogTests.Utils;
 using Moq;
 
 namespace IdelPogTests.Repository
@@ -8,35 +11,45 @@ namespace IdelPogTests.Repository
     [TestFixture]
     public class RepositoryTest
     {
-        private IRepository<int, string> _repository;
+        private IRepository<int, Currency> _repository;
         private Mock<IRepositoryAsserter> _repositoryAsserterMock;
 
-        private const string VALUE = "TEST STRING";
+        private Currency _currency { get; set; }
         private const int KEY = 1;
 
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _currency = CurrencyFactory.CreateFood();
+        }
+        
         [SetUp]
         public void Setup()
         {
             _repositoryAsserterMock = new Mock<IRepositoryAsserter>();
-            _repository = new Repository<int, string>(_repositoryAsserterMock.Object);
+            _repository = new Repository<int, Currency>(_repositoryAsserterMock.Object);
         }
        
         [Test]
         public void Positive_Add_AddsItem()
         {
-            _repository.Add(KEY, VALUE);
+            _repository.Add(KEY, _currency);
             
-            string returnedString = _repository.Get(KEY);
-            Assert.That(VALUE, Is.EqualTo(returnedString));
+            Currency returnedCurrency = _repository.Get(KEY);
+            Assert.Multiple(() =>
+            {
+                Assert.That(_currency.Amount, Is.EqualTo(returnedCurrency.Amount));
+                Assert.That(_currency.CurrencyType, Is.EqualTo(returnedCurrency.CurrencyType));
+            });
         }
 
         [Test]
         public void Negative_Add_DuplicateKey_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertUnique(VALUE, It.IsAny<Func<bool>>()))
+            _repositoryAsserterMock.Setup(library => library.AssertUnique(_currency, It.IsAny<Func<bool>>()))
                 .Throws(new DuplicateItemException(KEY));
             
-            Assert.Throws<DuplicateItemException>(() => _repository.Add(KEY, VALUE));
+            Assert.Throws<DuplicateItemException>(() => _repository.Add(KEY, _currency));
         }
 
         [Test]
@@ -51,7 +64,7 @@ namespace IdelPogTests.Repository
         [Test]
         public void Positive_Remove_RemovesItem()
         {
-            _repository.Add(KEY, VALUE);
+            _repository.Add(KEY, _currency);
             _repository.Remove(KEY);
             
             bool contains = _repository.Contains(KEY);
@@ -70,10 +83,14 @@ namespace IdelPogTests.Repository
         [Test]
         public void Positive_Get_ReturnsItem()
         {
-            _repository.Add(KEY, VALUE);
+            _repository.Add(KEY, _currency);
             
-            string returnedString = _repository.Get(KEY);
-            Assert.That(VALUE, Is.EqualTo(returnedString));
+            Currency returnedCurrency = _repository.Get(KEY);
+            Assert.Multiple(() =>
+            {
+                Assert.That(_currency.Amount, Is.EqualTo(returnedCurrency.Amount));
+                Assert.That(_currency.CurrencyType, Is.EqualTo(returnedCurrency.CurrencyType));
+            });
         }
 
         [Test]
@@ -88,13 +105,20 @@ namespace IdelPogTests.Repository
         [Test]
         public void Positive_Update_UpdatesItem()
         {
-            _repository.Add(KEY, VALUE);
-            const string newValue = "CHANGED";
+            _repository.Add(KEY, _currency);
+            Currency newCurrency = CurrencyBuilder.Builder()
+                .Amount(100)
+                .CurrencyType(_currency.CurrencyType)
+                .Build();
             
-            _repository.Update(KEY, newValue);
+            _repository.Update(KEY, newCurrency);
             
-            string returnedString = _repository.Get(KEY);
-            Assert.That(newValue, Is.EqualTo(returnedString));
+            Currency returnedCurrency = _repository.Get(KEY);
+            Assert.Multiple(() =>
+            {
+                Assert.That(newCurrency.Amount, Is.EqualTo(returnedCurrency.Amount));
+                Assert.That(newCurrency.CurrencyType, Is.EqualTo(returnedCurrency.CurrencyType));
+            });
         }
 
         [Test]
@@ -103,7 +127,7 @@ namespace IdelPogTests.Repository
             _repositoryAsserterMock.Setup(library => library.AssertFound(KEY, It.IsAny<Func<bool>>()))
                 .Throws(new NotFoundException(KEY));
             
-            Assert.Throws<NotFoundException>(() => _repository.Update(KEY, VALUE));
+            Assert.Throws<NotFoundException>(() => _repository.Update(KEY, _currency));
         }
 
         [Test]
@@ -118,7 +142,7 @@ namespace IdelPogTests.Repository
         [Test]
         public void Positive_Contains_ReturnsTrue()
         {
-            _repository.Add(KEY, VALUE);
+            _repository.Add(KEY, _currency);
             
             bool  contains = _repository.Contains(KEY);
             
