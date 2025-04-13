@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog", "IdelPog\IdelPog.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPogTests", "IdelPogTests\IdelPogTests.csproj", "{14CFC328-71E4-4054-9A3C-3EC34F340205}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHydrator", "ContentHydrator\ContentHydrator.csproj", "{4934C17D-F652-456D-BB67-E60434AB391A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{14CFC328-71E4-4054-9A3C-3EC34F340205}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14CFC328-71E4-4054-9A3C-3EC34F340205}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14CFC328-71E4-4054-9A3C-3EC34F340205}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4934C17D-F652-456D-BB67-E60434AB391A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4934C17D-F652-456D-BB67-E60434AB391A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4934C17D-F652-456D-BB67-E60434AB391A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4934C17D-F652-456D-BB67-E60434AB391A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
