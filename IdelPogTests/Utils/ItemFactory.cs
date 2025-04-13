@@ -1,7 +1,6 @@
 ﻿using IdelPog.Engine.Constants;
+using IdelPog.Engine.Models;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models;
-using IdelPog.Engine.Utilities.Builders;
 
 namespace IdelPogTests.Utils
 {
@@ -9,9 +8,7 @@ namespace IdelPogTests.Utils
     {
         internal static Item CreateOakWood()
         {
-            return ItemBuilder.Builder()
-                .InventoryID(InventoryID.OAK_WOOD)
-                .Information(ItemConstants.OAK_WOOD)
+            return ItemBuilder.Create(InventoryID.OAK_WOOD, ItemConstants.OAK_WOOD)
                 .SellPrice(1)
                 .Amount(0)
                 .Build();

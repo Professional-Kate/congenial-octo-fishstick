@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
 
-namespace IdelPog.Engine.Structures.Models
+namespace IdelPog.Engine.Models
 {
     /// <summary>
     /// The Item model

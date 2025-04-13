@@ -1,5 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models;
-using IdelPog.Engine.Utilities.Builders;
+﻿using IdelPog.Engine.Models;
 
 namespace IdelPogTests.Utils
 {
@@ -7,12 +6,7 @@ namespace IdelPogTests.Utils
     {
         internal static ILevelable CreateLevelable()
         {
-            return LevelableBuilder.Builder()
-                .Level(0)
-                .NextLevelExperience(0)
-                .ExperiencePerAction(0)
-                .Experience(0)
-                .Build();
+            return new Levelable(0, 0, 0, 0);
         }
     }
 }

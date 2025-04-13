@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models;
+﻿using IdelPog.Engine.Models;
 
 namespace IdelPog.Engine.Service
 {

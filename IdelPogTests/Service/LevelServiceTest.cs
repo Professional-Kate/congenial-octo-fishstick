@@ -1,7 +1,6 @@
 ﻿using IdelPog.Engine.Constants;
+using IdelPog.Engine.Models;
 using IdelPog.Engine.Service;
-using IdelPog.Engine.Structures.Models;
-using IdelPog.Engine.Utilities.Builders;
 using IdelPog.Engine.Validation.Exceptions;
 using IdelPog.Engine.Validation.Pipelines;
 using IdelPogTests.Utils;
@@ -42,23 +41,18 @@ namespace IdelPogTests.Service
         [Test]
         public void Positive_CanJobLevel_ReturnsTrue()
         {
-            _levelable = LevelableBuilder.Builder()
-                .Experience(10)
-                .NextLevelExperience(10)
-                .Build();
+            ILevelable levelable = new Levelable(1, 10, 10, 1);
 
-            bool canJobLevel = _service.CanJobLevel(_levelable);
+            bool canJobLevel = _service.CanJobLevel(levelable);
             Assert.That(canJobLevel, Is.True);
         }
         
         [Test]
         public void Positive_CanJobLevel_ReturnsFalse()
         {
-            _levelable = LevelableBuilder.Builder()
-                .NextLevelExperience(10)
-                .Build();
+            ILevelable levelable = new Levelable(1, 5, 10, 1);
 
-            bool canJobLevel = _service.CanJobLevel(_levelable);
+            bool canJobLevel = _service.CanJobLevel(levelable);
             Assert.That(canJobLevel, Is.False);
         }
 
@@ -80,23 +74,18 @@ namespace IdelPogTests.Service
         [Test]
         public void Positive_JobCanLevelToMax()
         {
-            _levelable = LevelableBuilder.Builder()
-                .Level(1)
-                .Experience(0)
-                .NextLevelExperience(100)
-                .ExperiencePerAction(1)
-                .Build();
-
+            Levelable levelable = new(1, 0, 100, 1);
+            
             for (int i = 1; i < JobConstants.MAX_JOB_LEVEL; i++)
             {
-                _levelable.SetExperience(_levelable.NextLevelExperience + _levelable.Experience); // this is here to sum the total experience
+                levelable.SetExperience(levelable.NextLevelExperience + levelable.Experience); // this is here to sum the total experience
                 
-                _service.LevelUpJob(_levelable);
+                _service.LevelUpJob(levelable);
                 
-                Console.WriteLine($"LEVEL {_levelable.Level} | Experience: {_levelable.Experience} | Next Level: {_levelable.NextLevelExperience}");
+                Console.WriteLine($"LEVEL {levelable.Level} | Experience: {levelable.Experience} | Next Level: {levelable.NextLevelExperience}");
             }
             
-            Assert.That(JobConstants.MAX_JOB_LEVEL, Is.EqualTo(_levelable.Level));
+            Assert.That(levelable.Level, Is.EqualTo(JobConstants.MAX_JOB_LEVEL));
         }
 
         [Test]
@@ -111,9 +100,7 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_LeveUpJob_MaxLevel_Throws()
         {
-            ILevelable levelable = LevelableBuilder.Builder()
-                .Level(JobConstants.MAX_JOB_LEVEL)
-                .Build();
+            ILevelable levelable = new Levelable(1, 0, 100, 1);
             
             _levelableAsserterMock.Setup(library => library.AssertLevelable(levelable))
                 .Throws(new MaxLevelException(levelable.Level));

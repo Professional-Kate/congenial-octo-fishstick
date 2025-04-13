@@ -1,5 +1,5 @@
 ﻿using IdelPog.Engine.Constants;
-using IdelPog.Engine.Structures.Models;
+using IdelPog.Engine.Models;
 using IdelPog.Engine.Validation.Exceptions;
 
 namespace IdelPog.Engine.Validation.Pipelines

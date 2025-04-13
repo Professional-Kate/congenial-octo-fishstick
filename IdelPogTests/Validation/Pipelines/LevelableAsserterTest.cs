@@ -1,5 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models;
-using IdelPog.Engine.Utilities.Builders;
+﻿using IdelPog.Engine.Models;
 using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Assertions.Handlers;
 using IdelPog.Engine.Validation.Exceptions;
@@ -16,12 +15,7 @@ namespace IdelPogTests.Validation.Pipelines
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _levelable = LevelableBuilder.Builder()
-                .Experience(0)
-                .Level(1)
-                .ExperiencePerAction(0)
-                .NextLevelExperience(10)
-                .Build();
+            _levelable = new Levelable(1, 0, 10, 0);
             
             IHandler handler = new ThrowHandler();
             IAssertUnderMaxLevel assertUnderMaxLevel = new AssertUnderMaxLevel(handler);
@@ -46,9 +40,7 @@ namespace IdelPogTests.Validation.Pipelines
         [Test]
         public void Negative_AssertLevelable_MaxLevel_Throws()
         {
-            ILevelable levelable = LevelableBuilder.Builder()
-                .Level(100)
-                .Build();
+            ILevelable levelable = new Levelable(100, 0, 10, 0);
             
             Assert.Throws<MaxLevelException>(() => _levelableAsserter.AssertLevelable(levelable));
         }
@@ -56,9 +48,7 @@ namespace IdelPogTests.Validation.Pipelines
         [Test]
         public void Positive_AssertLevelable_NegativeExperiencePerAction_Throws()
         {
-            ILevelable levelable = LevelableBuilder.Builder()
-                .ExperiencePerAction(-1)
-                .Build();
+            ILevelable levelable = new Levelable(0, 0, 0, -1);
             
             Assert.Throws<NegativeNumberException>(() => _levelableAsserter.AssertLevelable(levelable));
         }

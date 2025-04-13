@@ -1,5 +1,5 @@
-﻿using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Models;
+﻿using IdelPog.Engine.Models;
+using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Validation.Exceptions;
 
 namespace IdelPog.Engine.Repository

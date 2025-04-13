@@ -1,5 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models;
-using IdelPog.Engine.Utilities.Builders;
+﻿using IdelPog.Engine.Models;
 
 namespace IdelPogTests.Models
 {
@@ -13,10 +12,8 @@ namespace IdelPogTests.Models
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _levelable = LevelableBuilder.Builder()
-                .Level(LEVEL)
-                .OnLevelUp(AssertLevelUp)
-                .Build();
+            _levelable = new Levelable(LEVEL, 0, 10, 0);
+            _levelable.OnLevelUp += AssertLevelUp;
         }
 
         private static void AssertLevelUp(byte level)

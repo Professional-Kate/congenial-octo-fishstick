@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models;
+﻿using IdelPog.Engine.Models;
 using IdelPogTests.Utils;
 
 namespace IdelPogTests.Repository

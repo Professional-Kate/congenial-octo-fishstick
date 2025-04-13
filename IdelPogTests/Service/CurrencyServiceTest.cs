@@ -1,5 +1,5 @@
-﻿using IdelPog.Engine.Service;
-using IdelPog.Engine.Structures.Models;
+﻿using IdelPog.Engine.Models;
+using IdelPog.Engine.Service;
 using IdelPogTests.Utils;
 
 namespace IdelPogTests.Service
