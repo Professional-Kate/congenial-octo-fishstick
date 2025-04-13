@@ -54,12 +54,8 @@ namespace IdelPog.Engine.Orchestration
         private void CreateItem(InventoryID inventoryID, int amount)
         {
             Information itemInformation = mapper.GetInformation(inventoryID);
-            
-            // TODO: for now, sell price is set to 1. This is a placeholder for all items.
-            Item newItem = ItemBuilder.Builder()
-                .InventoryID(inventoryID)
-                .Information(itemInformation)
-                .SellPrice(1)
+
+            Item newItem = ItemBuilder.Create(inventoryID, itemInformation)
                 .Amount(amount)
                 .Build();
             
