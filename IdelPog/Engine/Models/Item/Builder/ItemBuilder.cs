@@ -23,10 +23,11 @@ namespace IdelPog.Engine.Models
         /// Constructs a safe ItemBuilder, which can be called to <see cref="Build"/> right after
         /// </summary>
         /// <param name="id">The ID of the wanted <see cref="Item"/></param>
-        /// <param name="information"></param>
+        /// <param name="information">The information of the wanted <see cref="Item"/></param>
+        /// <remarks>Will assign default amounts to all properties</remarks>
         public static IItemBuilder Create(InventoryID id, Information information)
         {
-            return new ItemBuilder(id, information, 10, 1);
+            return new ItemBuilder(id, information, 1, 1);
         }
 
         public IItemBuilder SellPrice(int sellPrice)
