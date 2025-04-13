@@ -1,10 +1,10 @@
 ﻿namespace IdelPog.Engine.Structures.Models
 {
     /// <inheritdoc cref="ILevelable"/>
-    public class Levelable(byte level, int experience, int nextLevelExperience, int experiencePerAction, Action<byte> onLevelUp)
+    public class Levelable(byte level, int experience, int nextLevelExperience, int experiencePerAction)
         : ILevelable
     {
-        public event Action<byte> OnLevelUp = onLevelUp;
+        public event Action<byte> OnLevelUp = delegate { };
         
         public byte Level { get; private set; } = level;
         public int Experience { get; private set; } = experience;
@@ -14,7 +14,7 @@
         public void LevelUp()
         {
             Level++;
-            OnLevelUp?.Invoke(Level);
+            OnLevelUp(Level);
         }
        
         public void SetExperience(int experience)

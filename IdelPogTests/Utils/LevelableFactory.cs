@@ -7,12 +7,7 @@ namespace IdelPogTests.Utils
     {
         internal static ILevelable CreateLevelable()
         {
-            return LevelableBuilder.Builder()
-                .Level(0)
-                .NextLevelExperience(0)
-                .ExperiencePerAction(0)
-                .Experience(0)
-                .Build();
+            return new Levelable(0, 0, 0, 0);
         }
     }
 }

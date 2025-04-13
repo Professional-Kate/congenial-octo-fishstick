@@ -13,6 +13,7 @@
         public int Experience { get; } 
         public int NextLevelExperience { get; }
         public int ExperiencePerAction { get; }
+        public event Action<byte> OnLevelUp;
 
         /// <summary>
         /// Will increase the <see cref="ILevelable.Level"/> of this <see cref="ILevelable"/> by one

@@ -106,11 +106,7 @@ namespace IdelPogTests.Repository
         public void Positive_Update_UpdatesItem()
         {
             _repository.Add(KEY, _currency);
-            Currency newCurrency = CurrencyBuilder.Builder()
-                .Amount(100)
-                .CurrencyType(_currency.CurrencyType)
-                .Build();
-            
+            Currency newCurrency = new(_currency.CurrencyType, 100);
             _repository.Update(KEY, newCurrency);
             
             Currency returnedCurrency = _repository.Get(KEY);

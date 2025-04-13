@@ -9,18 +9,9 @@ namespace IdelPogTests.Utils
     {
         internal static Job CreateMining()
         {
-            ILevelable levelable = LevelableBuilder.Builder()
-                .Level(1)
-                .Experience(0)
-                .NextLevelExperience(10)
-                .ExperiencePerAction(0)
-                .Build();
+            ILevelable levelable = new Levelable(1, 0, 10, 0);
             
-            return JobBuilder.Builder()
-                .JobType(JobType.MINING)
-                .Information(JobConstants.MINING_INFO)
-                .Levelable(levelable)
-                .Build();
+            return new Job(levelable, JobType.MINING, JobConstants.MINING_INFO);
         }
     }
 }

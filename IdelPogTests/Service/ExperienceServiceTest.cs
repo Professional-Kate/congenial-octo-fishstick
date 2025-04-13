@@ -1,7 +1,6 @@
 ﻿using IdelPog.Engine.Constants;
 using IdelPog.Engine.Service;
 using IdelPog.Engine.Structures.Models;
-using IdelPog.Engine.Utilities.Builders;
 using IdelPog.Engine.Validation.Exceptions;
 using IdelPog.Engine.Validation.Pipelines;
 using IdelPogTests.Utils;
@@ -55,11 +54,7 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_AddExperience_MaxLevel_Throws()
         {
-            ILevelable levelable = LevelableBuilder.Builder()
-                .Level(JobConstants.MAX_JOB_LEVEL)
-                .ExperiencePerAction(1)
-                .Experience(100)
-                .Build();
+            ILevelable levelable = new Levelable(JobConstants.MAX_JOB_LEVEL, 100, 10, 1);
             
             _levelableAsserterMock.Setup(library => library.AssertLevelable(levelable))
                 .Throws(new MaxLevelException(levelable));
