@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models;
+﻿using IdelPog.Engine.Models;
 using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Orchestration

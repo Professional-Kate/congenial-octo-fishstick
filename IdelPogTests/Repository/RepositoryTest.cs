@@ -1,6 +1,5 @@
-﻿using IdelPog.Engine.Repository;
-using IdelPog.Engine.Structures.Models;
-using IdelPog.Engine.Utilities.Builders;
+﻿using IdelPog.Engine.Models;
+using IdelPog.Engine.Repository;
 using IdelPog.Engine.Validation.Exceptions;
 using IdelPog.Engine.Validation.Pipelines;
 using IdelPogTests.Utils;

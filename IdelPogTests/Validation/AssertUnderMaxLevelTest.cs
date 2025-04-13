@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models;
+﻿using IdelPog.Engine.Models;
 using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Assertions.Handlers;
 using IdelPog.Engine.Validation.Exceptions;

@@ -1,6 +1,4 @@
-﻿using IdelPog.Engine.Structures.Models;
-
-namespace IdelPog.Engine.Utilities.Builders
+﻿namespace IdelPog.Engine.Models
 {
     /// <summary>
     /// Builds a new <see cref="Item"/>
