@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPogTests", "IdelPogTest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHydrator", "ContentHydrator\ContentHydrator.csproj", "{4934C17D-F652-456D-BB67-E60434AB391A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHydratorTests", "ContentHydratorTests\ContentHydratorTests.csproj", "{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{4934C17D-F652-456D-BB67-E60434AB391A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4934C17D-F652-456D-BB67-E60434AB391A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4934C17D-F652-456D-BB67-E60434AB391A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
