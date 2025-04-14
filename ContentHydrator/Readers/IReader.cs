@@ -1,16 +1,15 @@
 ﻿namespace ContentHydrator.Readers
 {
     /// <summary>
-    /// Represents a file reader that reads flat files from a specified directory
+    /// Represents a file reader that reads flat files and returns the content as a string
     /// </summary>
     public interface IReader
     {
-        public string BaseFilePath { get; }
-        
         /// <summary>
-        /// Read each file inside the <see cref="BaseFilePath"/> directory and return their raw text
-        /// </summary>
-        /// <returns>A collection of strings got from the file</returns>
-        public IEnumerable<string> Read();
+        /// Reads from the passed file, returning the file as a string
+        /// /// </summary>
+        /// <param name="filePath">The path of the file to be read</param>
+        /// <returns>The file converted into a string</returns>
+        public string Read(string filePath);
     }
 }
