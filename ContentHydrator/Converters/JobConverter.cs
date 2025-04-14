@@ -1,8 +1,11 @@
-﻿namespace ContentHydrator.Converters
+﻿using ContentHydrator.DTO;
+
+namespace ContentHydrator.Converters
 {
-    public class JobConverter<T> : IConverter<T>
+    /// <inheritdoc cref="IConverter{T}"/>
+    public class JobConverter : IConverter<JobDTO>
     {
-        public T Convert(string content)
+        public JobDTO Convert(string content)
         {
             throw new NotImplementedException();
         }
