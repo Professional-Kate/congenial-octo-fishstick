@@ -1,5 +1,5 @@
-﻿using IdelPog.Engine.Models;
-using IdelPog.Engine.Validation.Pipelines;
+﻿using IdelPog.Engine.Assertions.Pipelines;
+using IdelPog.Engine.Models;
 
 namespace IdelPog.Engine.Service
 {

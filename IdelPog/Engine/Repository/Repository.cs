@@ -1,5 +1,5 @@
-﻿using IdelPog.Engine.Structures.Types;
-using IdelPog.Engine.Validation.Pipelines;
+﻿using IdelPog.Engine.Assertions.Pipelines;
+using IdelPog.Engine.Structures.Types;
 
 namespace IdelPog.Engine.Repository
 {

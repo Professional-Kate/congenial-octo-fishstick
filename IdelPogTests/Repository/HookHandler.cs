@@ -1,8 +1,8 @@
-﻿using IdelPog.Engine.Models;
+﻿using IdelPog.Engine.Assertions.Pipelines;
+using IdelPog.Engine.Models;
 using IdelPog.Engine.Repository;
 using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Assertions.Handlers;
-using IdelPog.Engine.Validation.Pipelines;
 
 namespace IdelPogTests.Repository
 {

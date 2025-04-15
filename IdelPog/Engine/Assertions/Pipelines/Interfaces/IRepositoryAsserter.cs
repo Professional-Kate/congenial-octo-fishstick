@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Validation.Pipelines
+﻿namespace IdelPog.Engine.Assertions.Pipelines
 {
     /// <summary>
     /// 

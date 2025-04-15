@@ -1,8 +1,8 @@
-﻿using IdelPog.Engine.Constants;
+﻿using IdelPog.Engine.Assertions.Pipelines;
+using IdelPog.Engine.Constants;
 using IdelPog.Engine.Models;
 using IdelPog.Engine.Service;
 using IdelPog.Engine.Validation.Exceptions;
-using IdelPog.Engine.Validation.Pipelines;
 using IdelPogTests.Utils;
 using Moq;
 

@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog", "IdelPog\IdelPog.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPogTests", "IdelPogTests\IdelPogTests.csproj", "{14CFC328-71E4-4054-9A3C-3EC34F340205}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Validation", "IdelPog.Validation\IdelPog.Validation.csproj", "{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{14CFC328-71E4-4054-9A3C-3EC34F340205}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14CFC328-71E4-4054-9A3C-3EC34F340205}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14CFC328-71E4-4054-9A3C-3EC34F340205}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

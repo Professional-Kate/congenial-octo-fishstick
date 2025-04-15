@@ -2,7 +2,7 @@
 using IdelPog.Engine.Models;
 using IdelPog.Engine.Validation.Exceptions;
 
-namespace IdelPog.Engine.Validation.Pipelines
+namespace IdelPog.Engine.Assertions.Pipelines
 {
     /// <seealso cref="AssertLevelable"/>
     public interface ILevelableAsserter

@@ -1,7 +1,7 @@
-﻿using IdelPog.Engine.Validation.Assertions;
+﻿using IdelPog.Engine.Assertions.Pipelines;
+using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Assertions.Handlers;
 using IdelPog.Engine.Validation.Exceptions;
-using IdelPog.Engine.Validation.Pipelines;
 
 namespace IdelPogTests.Validation.Pipelines
 {

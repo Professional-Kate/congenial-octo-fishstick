@@ -1,7 +1,7 @@
-﻿using IdelPog.Engine.Models;
+﻿using IdelPog.Engine.Assertions.Pipelines;
+using IdelPog.Engine.Models;
 using IdelPog.Engine.Repository;
 using IdelPog.Engine.Validation.Exceptions;
-using IdelPog.Engine.Validation.Pipelines;
 using IdelPogTests.Utils;
 using Moq;
 

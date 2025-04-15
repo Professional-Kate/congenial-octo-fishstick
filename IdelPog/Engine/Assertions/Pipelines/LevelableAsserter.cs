@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Models;
 using IdelPog.Engine.Validation.Assertions;
 
-namespace IdelPog.Engine.Validation.Pipelines
+namespace IdelPog.Engine.Assertions.Pipelines
 {
     /// <inheritdoc cref="ILevelableAsserter"/>
     public class LevelableAsserter(IAssertUnderMaxLevel assertUnderMaxLevel, IAssertNotNull assertNotNull, IAssertPositive assertPositive)

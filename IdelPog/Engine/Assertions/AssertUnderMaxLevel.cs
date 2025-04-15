@@ -1,9 +1,10 @@
 ﻿using IdelPog.Engine.Constants;
 using IdelPog.Engine.Models;
+using IdelPog.Engine.Validation.Assertions;
 using IdelPog.Engine.Validation.Assertions.Handlers;
 using IdelPog.Engine.Validation.Exceptions;
 
-namespace IdelPog.Engine.Validation.Assertions
+namespace IdelPog.Engine.Assertions
 {
     public class AssertUnderMaxLevel(IHandler handler) : BaseAssertion<MaxLevelException>(handler), IAssertUnderMaxLevel
     {
