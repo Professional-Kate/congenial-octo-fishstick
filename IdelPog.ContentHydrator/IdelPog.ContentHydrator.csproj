@@ -7,4 +7,8 @@
         <RootNamespace>ContentHydrator</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\IdelPog.Validation\IdelPog.Validation.csproj" />
+    </ItemGroup>
+
 </Project>

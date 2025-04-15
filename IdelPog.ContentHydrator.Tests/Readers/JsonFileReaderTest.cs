@@ -1,11 +1,22 @@
 ﻿using ContentHydrator.Readers;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
+using Moq;
 
 namespace ContentHydratorTests.Readers
 {
     [TestFixture]
     public class JsonFileReaderTest
     {
-        private readonly IReader _jsonFileReader = new JsonFileReader();
+        private IReader _jsonFileReader { get; set; }
+        private Mock<IHandler> _handlerMock { get; set; }
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _handlerMock = new Mock<IHandler>();
+            _jsonFileReader = new JsonFileReader(new AssertNotNull(_handlerMock.Object));
+        }
 
         private Dictionary<string, object> ReadFromTestFile(string fileName = "TwoKeys.json")
         {
@@ -59,6 +70,15 @@ namespace ContentHydratorTests.Readers
         {
             Assert.Throws<ArgumentNullException>(() => _jsonFileReader.Read(null));
             Assert.Throws<ArgumentException>(() => _jsonFileReader.Read(string.Empty));
+        }
+
+        [Test]
+        public void Negative_Read_AssertNotNull_Throws()
+        {
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
+                .Throws(new ArgumentNullException());
+            
+            Assert.Throws<ArgumentNullException>(() => _jsonFileReader.Read(null));
         }
     }
 }
