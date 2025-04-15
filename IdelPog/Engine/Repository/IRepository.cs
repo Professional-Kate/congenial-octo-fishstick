@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Validation.Exceptions;
+﻿using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.Engine.Repository
 {

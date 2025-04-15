@@ -1,6 +1,6 @@
 ﻿using IdelPog.Engine.Models;
 using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Validation.Assertions;
+using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Engine.Repository
 {

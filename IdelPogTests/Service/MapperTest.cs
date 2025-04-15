@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Service;
 using IdelPog.Engine.Structures.Types;
-using IdelPog.Engine.Validation.Assertions;
-using IdelPog.Engine.Validation.Exceptions;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Exceptions;
 using Moq;
 
 namespace IdelPogTests.Service

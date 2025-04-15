@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Validation.Exceptions;
+﻿using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.Engine.Validation.Assertions
+namespace IdelPog.Validation.Assertions
 {
     /// <seealso cref="AssertNumberIsPositive"/>
     public interface IAssertPositive

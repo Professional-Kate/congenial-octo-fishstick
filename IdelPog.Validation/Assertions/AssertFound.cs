@@ -1,7 +1,7 @@
-﻿using IdelPog.Engine.Validation.Assertions.Handlers;
-using IdelPog.Engine.Validation.Exceptions;
+﻿using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.Engine.Validation.Assertions
+namespace IdelPog.Validation.Assertions
 {
     public class AssertFound(IHandler handler) : BaseAssertion<NotFoundException>(handler), IAssertFound
     {

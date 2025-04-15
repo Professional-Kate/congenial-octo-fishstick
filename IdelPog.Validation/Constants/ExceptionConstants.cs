@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Validation.Constants
+﻿namespace IdelPog.Validation.Constants
 {
     public static class ExceptionConstants
     {

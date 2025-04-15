@@ -1,5 +1,5 @@
-﻿using IdelPog.Engine.Validation.Assertions;
-using IdelPog.Engine.Validation.Assertions.Handlers;
+﻿using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPogTests.Validation
 {

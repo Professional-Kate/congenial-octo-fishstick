@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Validation.Assertions.Handlers;
+﻿using IdelPog.Validation.Assertions.Handlers;
 
-namespace IdelPog.Engine.Validation.Assertions
+namespace IdelPog.Validation.Assertions
 {
     public class AssertNotNull(IHandler handler) : BaseAssertion<ArgumentNullException>(handler), IAssertNotNull
     {

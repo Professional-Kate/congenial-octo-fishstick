@@ -1,5 +1,5 @@
 ﻿using IdelPog.Engine.Models;
-using IdelPog.Engine.Validation.Exceptions;
+using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.Engine.Service
 {

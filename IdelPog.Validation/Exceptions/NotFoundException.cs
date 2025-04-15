@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Validation.Constants;
+﻿using IdelPog.Validation.Constants;
 
-namespace IdelPog.Engine.Validation.Exceptions
+namespace IdelPog.Validation.Exceptions
 {
     public class NotFoundException : Exception
     {

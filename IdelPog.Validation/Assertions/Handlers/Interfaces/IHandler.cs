@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Validation.Assertions.Handlers
+﻿namespace IdelPog.Validation.Assertions.Handlers
 {
     public interface IHandler
     {

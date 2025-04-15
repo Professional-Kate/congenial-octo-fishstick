@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Validation.Assertions;
+﻿using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Engine.Assertions.Pipelines
 {

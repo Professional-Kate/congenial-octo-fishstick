@@ -2,7 +2,7 @@
 using IdelPog.Engine.Constants;
 using IdelPog.Engine.Models;
 using IdelPog.Engine.Service;
-using IdelPog.Engine.Validation.Exceptions;
+using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
 using Moq;
 
