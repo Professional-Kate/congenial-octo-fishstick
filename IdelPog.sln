@@ -1,9 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog", "IdelPog\IdelPog.csproj", "{21BD9257-C888-476C-9813-B127AB7213B4}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdelPog", "IdelPog\IdelPog.csproj", "{21BD9257-C888-476C-9813-B127AB7213B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPogTests", "IdelPogTests\IdelPogTests.csproj", "{14CFC328-71E4-4054-9A3C-3EC34F340205}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdelPog.Tests", "IdelPog.Tests\IdelPog.Tests.csproj", "{14CFC328-71E4-4054-9A3C-3EC34F340205}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdelPog.Validation", "IdelPog.Validation\IdelPog.Validation.csproj", "{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1361A0B4-3337-4451-9BA2-5EF0EB914EA4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{225E53A1-4F82-4AD5-B50B-70F56F93508E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Validation.Tests", "IdelPog.Validation.Tests\IdelPog.Validation.Tests.csproj", "{800D7FED-8DFC-4EC6-B537-09D210EEBD29}"
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHydrator", "ContentHydrator\ContentHydrator.csproj", "{4934C17D-F652-456D-BB67-E60434AB391A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHydratorTests", "ContentHydratorTests\ContentHydratorTests.csproj", "{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B}"
@@ -22,6 +31,23 @@ Global
 		{14CFC328-71E4-4054-9A3C-3EC34F340205}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14CFC328-71E4-4054-9A3C-3EC34F340205}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14CFC328-71E4-4054-9A3C-3EC34F340205}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{800D7FED-8DFC-4EC6-B537-09D210EEBD29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{800D7FED-8DFC-4EC6-B537-09D210EEBD29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{800D7FED-8DFC-4EC6-B537-09D210EEBD29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{800D7FED-8DFC-4EC6-B537-09D210EEBD29}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{21BD9257-C888-476C-9813-B127AB7213B4} = {1361A0B4-3337-4451-9BA2-5EF0EB914EA4}
+		{14CFC328-71E4-4054-9A3C-3EC34F340205} = {225E53A1-4F82-4AD5-B50B-70F56F93508E}
+		{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E} = {1361A0B4-3337-4451-9BA2-5EF0EB914EA4}
+		{800D7FED-8DFC-4EC6-B537-09D210EEBD29} = {225E53A1-4F82-4AD5-B50B-70F56F93508E}
 		{4934C17D-F652-456D-BB67-E60434AB391A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4934C17D-F652-456D-BB67-E60434AB391A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4934C17D-F652-456D-BB67-E60434AB391A}.Release|Any CPU.ActiveCfg = Release|Any CPU
