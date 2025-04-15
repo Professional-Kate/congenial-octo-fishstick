@@ -1,11 +1,15 @@
-﻿namespace ContentHydrator.Readers
+﻿using System.Text.Json;
+
+namespace ContentHydrator.Readers
 {
     /// <inheritdoc cref="IReader"/>
-    public class JsonFileReader : IReader
+    public class JsonFileReader() : IReader
     {
-        public string Read(string filePath)
+        public Dictionary<string, object> Read(string filePath)
         {
-            throw new NotImplementedException();
+            JsonDocument document = JsonDocument.Parse(File.ReadAllText(filePath));
+
+            return JsonSerializer.Deserialize<Dictionary<string, object>>(document.RootElement.GetRawText());
         }
     }
 }

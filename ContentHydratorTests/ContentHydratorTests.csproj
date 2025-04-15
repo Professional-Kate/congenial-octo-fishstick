@@ -25,4 +25,10 @@
       <ProjectReference Include="..\ContentHydrator\ContentHydrator.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Include="Resources\*.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>
