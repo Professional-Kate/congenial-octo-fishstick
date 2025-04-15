@@ -7,6 +7,7 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <RootNamespace>ContentHydratorTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ContentHydrator\ContentHydrator.csproj" />
+      <ProjectReference Include="..\IdelPog.ContentHydrator\IdelPog.ContentHydrator.csproj" />
     </ItemGroup>
 
     <ItemGroup>
