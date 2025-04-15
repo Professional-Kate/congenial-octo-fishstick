@@ -1,7 +1,7 @@
 ﻿using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 
-namespace IdelPogTests.Validation
+namespace IdelPog.Validation.Tests.Assertions
 {
     [TestFixture]
     public class AssertNotNullTest

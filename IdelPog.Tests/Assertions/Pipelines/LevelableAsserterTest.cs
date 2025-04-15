@@ -5,7 +5,7 @@ using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPogTests.Validation.Pipelines
+namespace IdelPogTests.Assertions.Pipelines
 {
     [TestFixture]
     public class LevelableAsserterTest

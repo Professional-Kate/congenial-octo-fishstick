@@ -2,7 +2,7 @@
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPogTests.Validation
+namespace IdelPog.Validation.Tests.Assertions
 {
     [TestFixture]
     public class AssertNonDuplicateTest

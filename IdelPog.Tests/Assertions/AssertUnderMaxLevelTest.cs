@@ -3,7 +3,7 @@ using IdelPog.Engine.Models;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPogTests.Validation
+namespace IdelPogTests.Assertions
 {
     [TestFixture]
     public class AssertUnderMaxLevelTest
