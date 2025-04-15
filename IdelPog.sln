@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdelPog", "IdelPog\IdelPog.csproj", "{21BD9257-C888-476C-9813-B127AB7213B4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdelPogTests", "IdelPogTests\IdelPogTests.csproj", "{14CFC328-71E4-4054-9A3C-3EC34F340205}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdelPog.Tests", "IdelPog.Tests\IdelPog.Tests.csproj", "{14CFC328-71E4-4054-9A3C-3EC34F340205}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdelPog.Validation", "IdelPog.Validation\IdelPog.Validation.csproj", "{4C55A06A-DCA1-4C47-9F1D-73C8E95C0D6E}"
 EndProject
