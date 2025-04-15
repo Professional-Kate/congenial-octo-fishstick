@@ -7,7 +7,7 @@ namespace ContentHydratorTests.Readers
     {
         private readonly IReader _jsonFileReader = new JsonFileReader();
 
-        private Dictionary<string, object> ReadFromTestFile(string fileName = "TwoKeyTestFile.json")
+        private Dictionary<string, object> ReadFromTestFile(string fileName = "TwoKeys.json")
         {
             return _jsonFileReader.Read($"Resources/{fileName}");
         }
@@ -39,13 +39,26 @@ namespace ContentHydratorTests.Readers
         [Test]
         public void Positive_Read_ReadsNothingFromEmptyFile()
         {
-            Dictionary<string, object> returnedValue = ReadFromTestFile("EmptyTestFile.json");
+            Dictionary<string, object> returnedValue = ReadFromTestFile("EmptyStructure.json");
             
             Assert.Multiple(() =>
             {
                 Assert.That(returnedValue, Is.Not.Null);
                 Assert.That(returnedValue, Is.Empty);
             });
+        }
+
+        [Test]
+        public void Negative_Read_NoFile_Throws()
+        {
+            Assert.Throws<FileNotFoundException>(() => ReadFromTestFile("ILostMyFile.json"));
+        }
+
+        [Test]
+        public void Negative_Read_NullOrEmptyPath_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => _jsonFileReader.Read(null));
+            Assert.Throws<ArgumentException>(() => _jsonFileReader.Read(string.Empty));
         }
     }
 }

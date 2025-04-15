@@ -7,9 +7,16 @@ namespace ContentHydrator.Readers
     {
         public Dictionary<string, object> Read(string filePath)
         {
-            JsonDocument document = JsonDocument.Parse(File.ReadAllText(filePath));
+            string fileText = File.ReadAllText(filePath);
+            JsonDocument document = JsonDocument.Parse(fileText);
 
-            return JsonSerializer.Deserialize<Dictionary<string, object>>(document.RootElement.GetRawText());
+            Dictionary<string, object>? objects = JsonSerializer.Deserialize<Dictionary<string, object>>(document.RootElement.GetRawText());
+            if (objects == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            return objects;
         }
     }
 }
