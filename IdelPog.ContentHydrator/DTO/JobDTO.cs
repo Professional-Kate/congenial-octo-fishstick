@@ -1,9 +1,8 @@
 ﻿namespace ContentHydrator.DTO
 {
-    public sealed class JobDTO
+    public readonly struct JobDTO(string jobID)
     {
+        public readonly string JobID = jobID;
         public InformationDTO Information { get; init; } = new();
-        public LevelableDTO Levelable { get; init; } = new();
-        public string JobID { get; init; } = string.Empty;
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace ContentHydrator.DTO
 {
-    public sealed class InformationDTO
+    public readonly struct InformationDTO(string name, string description)
     {
-        public string Name { get; init; } = string.Empty;
-        public string Description { get; init; } = string.Empty;
+        public readonly string Name = name;
+        public readonly string Description  = description;
     }
 }

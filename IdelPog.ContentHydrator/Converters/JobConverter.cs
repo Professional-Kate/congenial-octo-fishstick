@@ -1,13 +1,18 @@
 ﻿using ContentHydrator.DTO;
+using IdelPog.Validation.Assertions;
 
 namespace ContentHydrator.Converters
 {
     /// <inheritdoc cref="IConverter{T}"/>
-    public class JobConverter : IConverter<JobDTO>
+    public class JobConverter(IAssertNotNull assertNotNull) : IConverter<JobDTO>
     {
         public JobDTO Convert(string content)
         {
-            throw new NotImplementedException();
+            assertNotNull.AssertObjectNotNull(content);
+
+            JobDTO jobDTO = new(content);
+            
+            return jobDTO;
         }
     }
 }
