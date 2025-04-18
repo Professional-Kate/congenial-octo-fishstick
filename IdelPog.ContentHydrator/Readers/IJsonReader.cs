@@ -9,7 +9,7 @@ namespace ContentHydrator.Readers
     {   
         /// <summary>
         /// Reads from the passed file, returning the file as a string
-        /// /// </summary>
+        /// </summary>
         /// <param name="filePath">The path of the file to be read</param>
         /// <returns>The file converted into a string</returns>
         public JsonDocument Read(string filePath);
