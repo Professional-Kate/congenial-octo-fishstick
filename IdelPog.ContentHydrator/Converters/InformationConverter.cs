@@ -2,9 +2,9 @@
 
 namespace ContentHydrator.Converters
 {
-    public class InformationConverter : IConverter<InformationDTO>
+    public class InformationConverter : IJsonConverter<InformationDTO>
     {
-        public InformationDTO Convert(string content)
+        public InformationDTO Convert(Dictionary<string, object> content)
         {
             throw new NotImplementedException();
         }

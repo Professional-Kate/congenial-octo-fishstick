@@ -4,10 +4,10 @@ using ContentHydrator.Readers;
 namespace ContentHydrator.Service
 {
     /// <inheritdoc cref="IDirectoryConverter{T}"/>
-    public class DirectoryConverter<T>(IReader reader, IConverter<T> converter) : IDirectoryConverter<T>
+    public class DirectoryConverter<T>(IJsonReader jsonReader, IJsonConverter<T> jsonConverter) : IDirectoryConverter<T>
     {
-        private readonly IReader _reader = reader;
-        private readonly IConverter<T> _converter = converter;
+        private readonly IJsonReader _jsonReader = jsonReader;
+        private readonly IJsonConverter<T> _jsonConverter = jsonConverter;
 
         public IEnumerable<T> ConvertDirectory(string directoryPath)
         {

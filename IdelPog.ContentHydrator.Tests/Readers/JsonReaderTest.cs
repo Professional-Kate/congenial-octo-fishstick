@@ -6,21 +6,21 @@ using Moq;
 namespace ContentHydratorTests.Readers
 {
     [TestFixture]
-    public class JsonFileReaderTest
+    public class JsonReaderTest
     {
-        private IReader _jsonFileReader { get; set; }
+        private IJsonReader _jsonFileJsonReader { get; set; }
         private Mock<IHandler> _handlerMock { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             _handlerMock = new Mock<IHandler>();
-            _jsonFileReader = new JsonFileReader(new AssertNotNull(_handlerMock.Object));
+            _jsonFileJsonReader = new JsonReader(new AssertNotNull(_handlerMock.Object));
         }
 
         private Dictionary<string, object> ReadFromTestFile(string fileName = "TwoKeys.json")
         {
-            return _jsonFileReader.Read($"Resources/{fileName}");
+            return _jsonFileJsonReader.Read($"Resources/{fileName}");
         }
 
         [Test]
@@ -68,8 +68,8 @@ namespace ContentHydratorTests.Readers
         [Test]
         public void Negative_Read_NullOrEmptyPath_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _jsonFileReader.Read(null));
-            Assert.Throws<ArgumentException>(() => _jsonFileReader.Read(string.Empty));
+            Assert.Throws<ArgumentNullException>(() => _jsonFileJsonReader.Read(null));
+            Assert.Throws<ArgumentException>(() => _jsonFileJsonReader.Read(string.Empty));
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace ContentHydratorTests.Readers
             _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
                 .Throws(new ArgumentNullException());
             
-            Assert.Throws<ArgumentNullException>(() => _jsonFileReader.Read(null));
+            Assert.Throws<ArgumentNullException>(() => _jsonFileJsonReader.Read(null));
         }
     }
 }

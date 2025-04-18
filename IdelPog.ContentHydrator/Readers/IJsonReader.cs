@@ -1,12 +1,10 @@
-﻿using System.Text.Json;
-
-namespace ContentHydrator.Readers
+﻿namespace ContentHydrator.Readers
 {
     /// <summary>
     /// Represents a file reader that reads flat files and returns the content as a string
     /// </summary>
-    public interface IReader
-    {
+    public interface IJsonReader
+    {   
         /// <summary>
         /// Reads from the passed file, returning the file as a string
         /// /// </summary>

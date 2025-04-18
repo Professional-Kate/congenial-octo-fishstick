@@ -3,8 +3,8 @@ using IdelPog.Validation.Assertions;
 
 namespace ContentHydrator.Readers
 {
-    /// <inheritdoc cref="IReader"/>
-    public class JsonFileReader(IAssertNotNull assertNotNull) : IReader
+    /// <inheritdoc cref="IJsonReader"/>
+    public class JsonReader(IAssertNotNull assertNotNull) : IJsonReader
     {
         public Dictionary<string, object> Read(string filePath)
         {
