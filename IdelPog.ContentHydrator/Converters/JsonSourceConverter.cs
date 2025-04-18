@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization.Metadata;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace ContentHydrator.Converters
 {
@@ -6,7 +7,9 @@ namespace ContentHydrator.Converters
     {
         public T Convert(string jsonString)
         {
-            throw new NotImplementedException();
+            T newData = JsonSerializer.Deserialize(jsonString, typeInfo);
+            
+            return newData;
         }
     }
 }
