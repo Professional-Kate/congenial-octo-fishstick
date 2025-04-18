@@ -1,10 +1,10 @@
 ﻿namespace ContentHydrator.DTO
 {
-    public sealed class LevelableDTO
+    public sealed record LevelableDTO
     {
-        public byte Level { get; init; } = 0;
-        public byte Experience { get; init; } = 0;
-        public byte NextLevelExperience { get; init; } = 0;
-        public byte ExperiencePerAction { get; init; } = 0;
+        public required byte Level { get; init; }
+        public required byte Experience { get; init; }
+        public required byte NextLevelExperience { get; init; }
+        public required byte ExperiencePerAction { get; init; }
     }
 }
