@@ -12,11 +12,12 @@ namespace ContentHydrator.Converters
             assertNotNull.AssertObjectNotNull(content);
 
             bool contains = content.TryGetValue("JobID", out object? id);
+            
             assertFound.AssertItemIsFound("JobID", () => contains);
-
-            assertCastable.AssertCastable<string>(id);
-            JobDTO jobDTO = new(id as string);
-                            
+            assertNotNull.AssertObjectNotNull(id);
+            assertCastable.AssertCastable<string>(id!);
+            
+            JobDTO jobDTO = new(id as string, new InformationDTO());
             return jobDTO;
         }
     }
