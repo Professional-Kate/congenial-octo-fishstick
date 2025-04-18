@@ -1,6 +1,9 @@
 ﻿using System.Text.Json;
 using ContentHydrator.Converters;
 using ContentHydratorTests.TestObjects;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
+using Moq;
 
 namespace ContentHydratorTests.Converters
 {
@@ -8,13 +11,15 @@ namespace ContentHydratorTests.Converters
     public class JsonSourceConverterTest
     {
         private JsonSourceConverter<TestDTO> _converter { get; set; }
+        private Mock<IHandler> _handlerMock { get; set; }
         private const string TEST_STRING = "testing";
         private const int TEST_NUMBER = 21;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _converter = new JsonSourceConverter<TestDTO>(TestHydrationContext.Default.TestDTO);
+            _handlerMock = new Mock<IHandler>();
+            _converter = new JsonSourceConverter<TestDTO>(TestHydrationContext.Default.TestDTO, new AssertNotNull(_handlerMock.Object));
         }
 
         private static IEnumerable<string> PositiveFlowDataSource()
@@ -88,6 +93,16 @@ namespace ContentHydratorTests.Converters
                              """;
             
             Assert.Throws<JsonException>(() => _converter.Convert(jason));
+        }
+
+        [Test]
+        public void Negative_Convert_AssertionThrows()
+        {
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
+                .Throws<ArgumentNullException>();
+            
+            Assert.Throws<ArgumentNullException>(() => _converter.Convert("null"));
+            _handlerMock.Verify(library => library.Handle(It.IsAny<ArgumentNullException>()), Times.Once);
         }
     }
 }
