@@ -1,4 +1,5 @@
-﻿using ContentHydrator.Converters;
+﻿using System.Text.Json;
+using ContentHydrator.Converters;
 using ContentHydrator.Readers;
 using ContentHydrator.Service;
 using ContentHydratorTests.TestObjects;
@@ -13,6 +14,8 @@ namespace ContentHydratorTests.Service
         private Mock<IJsonReader> _jsonReaderMock { get; set; }
         private Mock<IJsonConverter<TestDTO>> _jsonConverterMock { get; set; }
 
+        private const string DIRECTORY_PATH = "Resources/DirectoryConverterFiles";
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -24,13 +27,35 @@ namespace ContentHydratorTests.Service
         [Test]
         public void Positive_ConvertDirectory_ConvertsWholeDirectory()
         {
+            _jsonReaderMock.Setup(library => library.Read(It.IsAny<string>()))
+                .Returns<string>(path =>
+                {
+                    string jsonStrong = File.ReadAllText(path);
+                    JsonDocument json = JsonDocument.Parse(jsonStrong);
+                    return json;
+                });
+
+            _jsonConverterMock.Setup(library => library.Convert(It.IsAny<JsonDocument>()))
+                .Returns<JsonDocument>(dto =>
+                {
+                    TestDTO? document = dto.Deserialize<TestDTO>();
+
+                    if (document == null)
+                    {
+                        Assert.Fail();
+                        return null;
+                    }
+                    
+                    return document;
+                });
+            
             List<TestDTO> expected =
             [
                 new() { TestString = "One", TestInt = 1 },
                 new() { TestString = "Two", TestInt = 2 }
             ];
 
-            IEnumerable<TestDTO> returnedObjects = _directoryConverter.ConvertDirectory("Resources/DirectoryConverterFiles");
+            IEnumerable<TestDTO> returnedObjects = _directoryConverter.ConvertDirectory(DIRECTORY_PATH);
             
             Assert.Multiple(() =>
             {
@@ -41,7 +66,7 @@ namespace ContentHydratorTests.Service
         [Test]
         public void Negative_ConvertDirectory_NoDirectoryFound_Throws()
         {
-            Assert.Throws<DirectoryNotFoundException>( () => _directoryConverter.ConvertDirectory("Resources/WhereAreYou"));
+            Assert.Throws<DirectoryNotFoundException>( () => _directoryConverter.ConvertDirectory("A/A"));
         }
     }
 }

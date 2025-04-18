@@ -40,7 +40,8 @@ namespace ContentHydratorTests.Converters
         [TestCaseSource(nameof(PositiveFlowDataSource))]
         public void Positive_Convert_TestRunner(string json)
         {
-            TestDTO testDTO = _converter.Convert(json);
+            JsonDocument jsonDocument = JsonDocument.Parse(json);
+            TestDTO testDTO = _converter.Convert(jsonDocument);
             
             Assert.Multiple(() =>
             {
@@ -50,24 +51,12 @@ namespace ContentHydratorTests.Converters
         }
 
         [Test]
-        public void Negative_Convert_InvalidJson_Throws()
-        {
-            string jason = $$"""
-                            {
-                               "TestString": "{{TEST_STRING}}",
-                               "TestInt": {{TEST_NUMBER}}, 
-                            }
-                            """;
-            
-            Assert.Throws<JsonException>(() => _converter.Convert(jason));
-        }
-
-        [Test]
         public void Negative_Convert_MissingKeys_Throws()
         {
             string jason = "{}";
             
-            Assert.Throws<JsonException>(() => _converter.Convert(jason));
+            JsonDocument jsonDocument = JsonDocument.Parse(jason);
+            Assert.Throws<JsonException>(() => _converter.Convert(jsonDocument));
         }
 
         [Test]
@@ -79,7 +68,8 @@ namespace ContentHydratorTests.Converters
         [Test]
         public void Negative_Convert_EmptyString_Throws()
         {
-            Assert.Throws<JsonException>(() => _converter.Convert(""));
+            JsonDocument jsonDocument = JsonDocument.Parse("{}");
+            Assert.Throws<JsonException>(() => _converter.Convert(jsonDocument));
         }
 
         [Test]
@@ -92,7 +82,8 @@ namespace ContentHydratorTests.Converters
                              }
                              """;
             
-            Assert.Throws<JsonException>(() => _converter.Convert(jason));
+            JsonDocument jsonDocument = JsonDocument.Parse(jason);
+            Assert.Throws<JsonException>(() => _converter.Convert(jsonDocument));
         }
 
         [Test]
@@ -101,7 +92,8 @@ namespace ContentHydratorTests.Converters
             _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
                 .Throws<ArgumentNullException>();
             
-            Assert.Throws<ArgumentNullException>(() => _converter.Convert("null"));
+            JsonDocument jsonDocument = JsonDocument.Parse("null");
+            Assert.Throws<ArgumentNullException>(() => _converter.Convert(jsonDocument));
             _handlerMock.Verify(library => library.Handle(It.IsAny<ArgumentNullException>()), Times.Once);
         }
     }

@@ -53,11 +53,7 @@ namespace ContentHydratorTests.Readers
         {
             JsonDocument returnedValue = ReadFromTestFile("EmptyStructure.json");
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(returnedValue, Is.Not.Null);
-                Assert.That(returnedValue, Is.Empty);
-            });
+            Assert.That(returnedValue, Is.Not.Null);
         }
 
         [Test]

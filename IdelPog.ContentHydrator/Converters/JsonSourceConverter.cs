@@ -6,9 +6,9 @@ namespace ContentHydrator.Converters
 {
     public class JsonSourceConverter<T>(JsonTypeInfo<T> typeInfo, IAssertNotNull assertNotNull) : IJsonConverter<T>
     {
-        public T Convert(string jsonString)
+        public T Convert(JsonDocument jsonString)
         {
-            T? deserializedObject = JsonSerializer.Deserialize(jsonString, typeInfo);
+            T? deserializedObject = jsonString.Deserialize(typeInfo);
             
             assertNotNull.AssertObjectNotNull(deserializedObject);
             

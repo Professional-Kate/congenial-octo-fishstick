@@ -9,14 +9,24 @@ namespace ContentHydrator.Service
     {
         public IEnumerable<T> ConvertDirectory(string directoryPath)
         {
+            if (Directory.Exists(directoryPath) == false)
+            {
+                throw new DirectoryNotFoundException(directoryPath);
+            }
+            
+            return EnumerateFiles(directoryPath);
+        }
+
+        private IEnumerable<T> EnumerateFiles(string directoryPath)
+        {
             IEnumerable<string> files = Directory.EnumerateFiles(directoryPath);
             foreach (string file in files)
             {
                 JsonDocument pairs = jsonReader.Read(file);
-                jsonConverter.Convert(pairs.ToString());
+                T convertedDTO = jsonConverter.Convert(pairs);
+                
+                yield return convertedDTO;
             }
-            
-            throw new NotImplementedException();
         }
     }
 }
