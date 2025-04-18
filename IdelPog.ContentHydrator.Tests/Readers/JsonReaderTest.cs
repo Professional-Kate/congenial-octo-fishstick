@@ -1,4 +1,5 @@
-﻿using ContentHydrator.Readers;
+﻿using System.Text.Json;
+using ContentHydrator.Readers;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using Moq;
@@ -18,7 +19,7 @@ namespace ContentHydratorTests.Readers
             _jsonFileJsonReader = new JsonReader(new AssertNotNull(_handlerMock.Object));
         }
 
-        private Dictionary<string, object> ReadFromTestFile(string fileName = "TwoKeys.json")
+        private JsonDocument ReadFromTestFile(string fileName = "TwoKeys.json")
         {
             return _jsonFileJsonReader.Read($"Resources/{fileName}");
         }
@@ -26,8 +27,8 @@ namespace ContentHydratorTests.Readers
         [Test]
         public void Positive_Read_ReadsJsonFile()
         {
-            Dictionary<string, object> returnedValue = ReadFromTestFile();
-            string testValue = returnedValue["Test"].ToString();
+            JsonDocument returnedValue = ReadFromTestFile();
+            string testValue = returnedValue.RootElement.GetProperty("Test").ToString();
             
             Assert.That(testValue, Is.EqualTo("Testing"));
         }
@@ -35,11 +36,11 @@ namespace ContentHydratorTests.Readers
         [Test]
         public void Positive_Read_ReadsMultipleKeys()
         {
-            Dictionary<string, object> returnedValue = ReadFromTestFile();
-            
-            string testValue = returnedValue["Test"].ToString();
-            string jasonValue = returnedValue["Jason"].ToString();
-            
+            JsonDocument returnedValue = ReadFromTestFile();
+
+            string testValue = returnedValue.RootElement.GetProperty("Test").ToString();
+            string jasonValue = returnedValue.RootElement.GetProperty("Jason").ToString();
+
             Assert.Multiple(() =>
             {
                 Assert.That(testValue, Is.EqualTo("Testing"));
@@ -50,7 +51,7 @@ namespace ContentHydratorTests.Readers
         [Test]
         public void Positive_Read_ReadsNothingFromEmptyFile()
         {
-            Dictionary<string, object> returnedValue = ReadFromTestFile("EmptyStructure.json");
+            JsonDocument returnedValue = ReadFromTestFile("EmptyStructure.json");
             
             Assert.Multiple(() =>
             {

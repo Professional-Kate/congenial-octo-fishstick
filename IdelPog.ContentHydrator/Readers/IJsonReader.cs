@@ -1,4 +1,6 @@
-﻿namespace ContentHydrator.Readers
+﻿using System.Text.Json;
+
+namespace ContentHydrator.Readers
 {
     /// <summary>
     /// Represents a file reader that reads flat files and returns the content as a string
@@ -10,6 +12,6 @@
         /// /// </summary>
         /// <param name="filePath">The path of the file to be read</param>
         /// <returns>The file converted into a string</returns>
-        public Dictionary<string, object> Read(string filePath);
+        public JsonDocument Read(string filePath);
     }
 }

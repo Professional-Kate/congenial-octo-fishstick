@@ -6,12 +6,12 @@ namespace ContentHydrator.Readers
     /// <inheritdoc cref="IJsonReader"/>
     public class JsonReader(IAssertNotNull assertNotNull) : IJsonReader
     {
-        public Dictionary<string, object> Read(string filePath)
+        public JsonDocument Read(string filePath)
         {
             string fileText = File.ReadAllText(filePath);
             JsonDocument document = JsonDocument.Parse(fileText);
             
-            Dictionary<string, object>? objects = JsonSerializer.Deserialize<Dictionary<string, object>>(document.RootElement.GetRawText());
+            JsonDocument? objects = JsonSerializer.Deserialize<JsonDocument>(document.RootElement.GetRawText());
             assertNotNull.AssertObjectNotNull(objects);
                 
             return objects!;
