@@ -17,7 +17,7 @@ namespace ContentHydrator.Converters
             assertNotNull.AssertObjectNotNull(id);
             assertCastable.AssertCastable<string>(id!);
             
-            JobDTO jobDTO = new(id as string, new InformationDTO());
+            JobDTO jobDTO = new(id as string, new InformationDTO("", ""));
             return jobDTO;
         }
     }
