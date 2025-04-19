@@ -58,9 +58,16 @@ namespace ContentHydratorTests.Service
                 new() { TestString = "Two", TestInt = 2 }
             ];
 
-            IEnumerable<TestDTO> returnedObjects = _directoryConverter.ConvertDirectory(DIRECTORY_PATH);
+            List<TestDTO> returnedObjects = _directoryConverter.ConvertDirectory(DIRECTORY_PATH).ToList();
             
-            Assert.That(returnedObjects, Is.EquivalentTo(expected));
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedObjects, Is.EquivalentTo(expected));
+                Assert.That(returnedObjects, Is.EqualTo(expected));
+            });
+            
+            _jsonConverterMock.Verify(library => library.Convert(It.IsAny<JsonDocument>()), Times.Exactly(expected.Count));
+            _jsonReaderMock.Verify(library => library.Read(It.IsAny<string>()), Times.Exactly(expected.Count));
         }
         
         [Test]
