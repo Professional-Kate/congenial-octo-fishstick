@@ -23,7 +23,7 @@ namespace ContentHydrator.Service
         {
             foreach (string file in files)
             {
-                JsonDocument document = jsonReader.Read(file);
+                using JsonDocument document = jsonReader.Read(file);
                 T convertedDTO = jsonConverter.Convert(document);
                 
                 yield return convertedDTO;

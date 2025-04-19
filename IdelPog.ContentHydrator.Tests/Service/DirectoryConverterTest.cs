@@ -41,6 +41,7 @@ namespace ContentHydratorTests.Service
                     TestDTO? finalTdo = dto.Deserialize<TestDTO>();
                     if (finalTdo == null)
                     {
+                        Assert.Fail();
                         throw new Exception("TEST FAIL - Deserialize DTO FAILED");
                     }
                     
@@ -88,7 +89,7 @@ namespace ContentHydratorTests.Service
         [Test]
         public void Negative_ConvertDirectory_EmptyPath_Throws()
         {
-            Assert.Throws<Exception>(() => _directoryConverter.ConvertDirectory(""));
+            Assert.Throws<ArgumentException>(() => _directoryConverter.ConvertDirectory(""));
         }
 
         [Test]

@@ -11,8 +11,8 @@ namespace ContentHydrator.Converters
         /// <summary>
         /// Converts given JSON documents into a new instance of <typeparamref name="T"/>
         /// </summary>
-        /// <param name="jsonString">The JSON document to convert</param>
+        /// <param name="jsonDocument">The JSON document to convert</param>
         /// <returns>A new instance of type <typeparamref name="T"/></returns>
-        public T Convert(JsonDocument jsonString);
+        public T Convert(JsonDocument jsonDocument);
     }
 }
