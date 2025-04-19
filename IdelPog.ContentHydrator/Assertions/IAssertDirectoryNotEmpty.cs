@@ -2,6 +2,6 @@
 {
     public interface IAssertDirectoryNotEmpty
     {
-        public void AssertNotEmpty(string[] items);
+        public void AssertNotEmpty(string[] items, string directoryPath);
     }
 }
