@@ -2,15 +2,17 @@
 
 namespace ContentHydrator.Assertions.Pipelines
 {
-    public class DirectoryAsserter(IAssertFound assertFound, IAssertDirectoryNotEmpty notEmpty) : IDirectoryAsserter
+    public class DirectoryAsserter(IAssertDirectoryFound assertFound, IAssertDirectoryNotEmpty notEmpty, IAssertNotNull assertNotNull) : IDirectoryAsserter
     {
         public void AssertDirectory(string directoryPath)
         {
-            assertFound.AssertItemIsFound(directoryPath, () => Directory.Exists(directoryPath));
+            assertNotNull.AssertObjectNotNull(directoryPath);
+            assertFound.AssertDirectoryIsFound(directoryPath);
         }
 
         public void AssertFiles(string[] files, string directoryPath)
         {
+            assertNotNull.AssertObjectNotNull(files);
             notEmpty.AssertNotEmpty(files, directoryPath);
         }
     }
