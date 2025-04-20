@@ -12,7 +12,7 @@ namespace ContentHydrator.Service
         {
             directoryAsserter.AssertDirectory(directoryPath);
             
-            string[] files = Directory.GetFiles(directoryPath);
+            string[] files = Directory.GetFiles(directoryPath, "*.json");
             
             directoryAsserter.AssertFiles(files, directoryPath);
             

@@ -118,5 +118,15 @@ namespace ContentHydratorTests.Service
             // We need to iterate once in order to throw the exception
             Assert.Throws<Exception>(() => _directoryConverter.ConvertDirectory(DIRECTORY_PATH).First());
         }
+
+        [Test]
+        public void Negative_ConvertDictionary_MissesNonJsonFile_Throws()
+        {
+            // Three total files, 
+            _directoryConverter.ConvertDirectory(DIRECTORY_PATH).ToList();
+            
+            _jsonConverterMock.Verify(library => library.Convert(It.IsAny<JsonDocument>()), Times.Exactly(2));
+            _jsonReaderMock.Verify(library => library.Read(It.IsAny<string>()), Times.Exactly(2));
+        }
     }
 }
