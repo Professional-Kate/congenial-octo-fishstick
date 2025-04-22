@@ -20,7 +20,27 @@ namespace ContentHydratorTests.Assertions
         [Test]
         public void Positive_AssertDirectory_CorrectDirectory()
         {
-            _directoryAsserter.AssertDirectory("Resources");
+            Assert.DoesNotThrow(() => _directoryAsserter.AssertDirectory("Resources"));
+        }
+
+        [Test]
+        public void Negative_AssertDirectory_MissingDirectory()
+        {
+            Assert.Throws<DirectoryNotFoundException>(() => _directoryAsserter.AssertDirectory("hidden"));
+        }
+
+        [Test]
+        public void Negative_AssertDirectory_NullDirectory()
+        {
+            Assert.Throws<ArgumentNullException>(() => _directoryAsserter.AssertDirectory(null!));
+        }
+
+        [Test]
+        public void Positive_AssertFiles_CorrectString()
+        {
+            string[] goodStrings = ["testing", "hello"];
+            
+            Assert.DoesNotThrow(() => _directoryAsserter.AssertFiles(goodStrings, "no"));
         }
     }
 }

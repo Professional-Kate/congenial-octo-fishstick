@@ -10,10 +10,10 @@ namespace ContentHydrator.Assertions.Pipelines
             assertFound.AssertDirectoryIsFound(directoryPath);
         }
 
-        public void AssertFiles(string[] files, string directoryPath)
+        public void AssertFiles(string[] files, string directoryPathContext)
         {
             assertNotNull.AssertObjectNotNull(files);
-            notEmpty.AssertNotEmpty(files, directoryPath);
+            notEmpty.AssertNotEmpty(files, directoryPathContext);
         }
     }
 }

@@ -4,15 +4,16 @@ using IdelPog.Validation.Assertions.Handlers;
 
 namespace ContentHydrator.Assertions
 {
+    /// <inheritdoc cref="IAssertDirectoryNotEmpty"/>
     public class AssertDirectoryNotEmpty(IHandler handler) : BaseAssertion<EmptyDirectoryException>(handler), IAssertDirectoryNotEmpty
     {
-        public void AssertNotEmpty(string[] items, string directoryPath)
+        public void AssertNotEmpty(string[] items, string directoryPathContext)
         {
             Assert(() =>
             {
                 if (items.Length == 0)
                 {
-                    throw new EmptyDirectoryException(directoryPath);
+                    throw new EmptyDirectoryException(directoryPathContext);
                 }
             });
         }
