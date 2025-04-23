@@ -5,5 +5,5 @@ namespace ContentHydrator.SerializerContexts
 {
     [JsonSerializable(typeof(InformationDTO))]
     [JsonSerializable(typeof(JobDTO))]
-    public partial class JobHydrationContext : JsonSerializerContext;
+    public partial class GameContentContext : JsonSerializerContext;
 }
