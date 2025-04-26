@@ -2,6 +2,6 @@
 {
     public interface IAssertNotNull
     {
-        public void AssertObjectNotNull(object objectToAssert);
+        public void AssertObjectNotNull(object? objectToAssert);
     }
 }
