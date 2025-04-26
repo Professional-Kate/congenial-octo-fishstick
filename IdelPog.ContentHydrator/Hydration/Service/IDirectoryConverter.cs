@@ -3,7 +3,6 @@
     /// <summary>
     /// Converts all files in a given directory to a specified DTO
     /// </summary>
-    /// <typeparam name="T">The type of the DTO</typeparam>
     public interface IDirectoryConverter
     {
         /// <summary>

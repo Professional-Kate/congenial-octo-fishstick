@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Orchestration\" />
+      <Folder Include="Hydration\" />
     </ItemGroup>
 
 </Project>
