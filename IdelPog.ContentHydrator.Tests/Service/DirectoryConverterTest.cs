@@ -86,7 +86,7 @@ namespace ContentHydratorTests.Service
         }
 
         [Test]
-        public void Negative_ConvertDictionary_EmptyDictionary_Throws()
+        public void Negative_ConvertDirectory_EmptyDirectory_Throws()
         {
             _directoryAsserter.Setup(library => library.AssertFiles(It.IsAny<string[]>(), It.IsAny<string>()))
                 .Throws(new EmptyDirectoryException(DIRECTORY_PATH));
@@ -106,7 +106,7 @@ namespace ContentHydratorTests.Service
         }
 
         [Test]
-        public void Negative_ConvertDictionary_ReaderThrows()
+        public void Negative_ConvertDirectory_ReaderThrows()
         {
             _jsonReaderMock.Setup(library => library.Read(It.IsAny<string>()))
                 .Throws<Exception>();
@@ -116,17 +116,17 @@ namespace ContentHydratorTests.Service
         }
 
         [Test]
-        public void Negative_ConvertDictionary_ConverterThrows()
+        public void Negative_ConvertDirectory_ConverterThrows()
         {
-            _jsonReaderMock.Setup(library => library.Read(It.IsAny<string>()))
-                .Throws<Exception>();
+            _jsonConverterMock.Setup(library => library.Convert(It.IsAny<JsonDocument>()))
+                .Throws<ArgumentNullException>();
             
             // We need to iterate once in order to throw the exception
-            Assert.Throws<Exception>(() => _directoryConverter.ConvertDirectory<TestDTO>(DIRECTORY_PATH).First());
+            Assert.Throws<ArgumentNullException>(() => _directoryConverter.ConvertDirectory<TestDTO>(DIRECTORY_PATH).First());
         }
 
         [Test]
-        public void Negative_ConvertDictionary_MissesNonJsonFile_Throws()
+        public void Negative_ConvertDirectory_MissesNonJsonFile()
         {
             // Three total files, 
             _directoryConverter.ConvertDirectory<TestDTO>(DIRECTORY_PATH).ToList();
