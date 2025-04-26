@@ -6,6 +6,7 @@ using ContentHydrator.Readers;
 
 namespace ContentHydrator.Service
 {
+    /// <inheritdoc cref="IDirectoryConverter"/>
     public class DirectoryConverter(IJsonReader jsonReader, IConverterProvider provider, IDirectoryAsserter directoryAsserter) : IDirectoryConverter
     {
         public IEnumerable<T> ConvertDirectory<T>(string directoryPath)
