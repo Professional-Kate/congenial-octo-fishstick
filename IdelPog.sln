@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.ContentHydrator", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.ContentHydrator.Tests", "IdelPog.ContentHydrator.Tests\IdelPog.ContentHydrator.Tests.csproj", "{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Staging", "IdelPog.Staging\IdelPog.Staging.csproj", "{FC8F692B-776F-4C9E-8C38-3CA81EFA46CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Staging.Tests", "IdelPog.Staging.Tests\IdelPog.Staging.Tests.csproj", "{47F5871B-344B-4FA9-BAF2-C269E9B26249}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{4934C17D-F652-456D-BB67-E60434AB391A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC8F692B-776F-4C9E-8C38-3CA81EFA46CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC8F692B-776F-4C9E-8C38-3CA81EFA46CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC8F692B-776F-4C9E-8C38-3CA81EFA46CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC8F692B-776F-4C9E-8C38-3CA81EFA46CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47F5871B-344B-4FA9-BAF2-C269E9B26249}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47F5871B-344B-4FA9-BAF2-C269E9B26249}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47F5871B-344B-4FA9-BAF2-C269E9B26249}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47F5871B-344B-4FA9-BAF2-C269E9B26249}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,5 +76,7 @@ Global
 		{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4934C17D-F652-456D-BB67-E60434AB391A} = {1361A0B4-3337-4451-9BA2-5EF0EB914EA4}
 		{C975C11E-CCC7-4B20-A9DF-F32F9EA4400B} = {225E53A1-4F82-4AD5-B50B-70F56F93508E}
+		{FC8F692B-776F-4C9E-8C38-3CA81EFA46CF} = {1361A0B4-3337-4451-9BA2-5EF0EB914EA4}
+		{47F5871B-344B-4FA9-BAF2-C269E9B26249} = {225E53A1-4F82-4AD5-B50B-70F56F93508E}
 	EndGlobalSection
 EndGlobal
