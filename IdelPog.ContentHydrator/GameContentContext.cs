@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using ContentHydrator.DTO;
 
-namespace ContentHydrator.SerializerContexts
+namespace ContentHydrator
 {
     [JsonSerializable(typeof(InformationDTO))]
     [JsonSerializable(typeof(JobDTO))]
