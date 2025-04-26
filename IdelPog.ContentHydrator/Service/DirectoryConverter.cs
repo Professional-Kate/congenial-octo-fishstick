@@ -1,30 +1,32 @@
 ﻿using System.Text.Json;
 using ContentHydrator.Assertions.Pipelines;
 using ContentHydrator.Converters;
+using ContentHydrator.Providers;
 using ContentHydrator.Readers;
 
 namespace ContentHydrator.Service
 {
-    /// <inheritdoc cref="IDirectoryConverter{T}"/>
-    public class DirectoryConverter<T>(IJsonReader jsonReader, IJsonConverter<T> jsonConverter, IDirectoryAsserter directoryAsserter) : IDirectoryConverter<T>
+    public class DirectoryConverter(IJsonReader jsonReader, IConverterProvider provider, IDirectoryAsserter directoryAsserter) : IDirectoryConverter
     {
-        public IEnumerable<T> ConvertDirectory(string directoryPath)
+        public IEnumerable<T> ConvertDirectory<T>(string directoryPath)
         {
             directoryAsserter.AssertDirectory(directoryPath);
             
-            string[] files = Directory.GetFiles(directoryPath, "*.json");
+            string[] filePaths = Directory.EnumerateFiles(directoryPath, "*.json").ToArray();
             
-            directoryAsserter.AssertFiles(files, directoryPath);
+            directoryAsserter.AssertFiles(filePaths, directoryPath);
             
-            return EnumerateFiles(files);
+            return EnumerateFiles<T>(filePaths);
         }
 
-        private IEnumerable<T> EnumerateFiles(string[] files)
+        private IEnumerable<T> EnumerateFiles<T>(string[] files)
         {
+            IJsonConverter<T> converter = provider.CreateConverter<T>();
+            
             foreach (string file in files)
             {
                 using JsonDocument document = jsonReader.Read(file);
-                T convertedDTO = jsonConverter.Convert(document);
+                T convertedDTO = converter.Convert(document);
                 
                 yield return convertedDTO;
             }
