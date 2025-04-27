@@ -1,4 +1,7 @@
 ﻿using IdelPog.Staging.Collection;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
+using Moq;
 
 namespace IdelPog.Staging.Tests.Collection
 {
@@ -6,7 +9,8 @@ namespace IdelPog.Staging.Tests.Collection
     public class BufferTest
     {
         private Buffer<int> _buffer { get; set; }
-        private List<int> _data = [];
+        private int[] _data = [];
+        private Mock<IHandler> _handlerMock { get; set; }
 
         private bool _readyCalled;
 
@@ -15,7 +19,9 @@ namespace IdelPog.Staging.Tests.Collection
         {
             _readyCalled = false;
             
-            _buffer = new Buffer<int>();
+            _handlerMock = new Mock<IHandler>();
+            _buffer = new Buffer<int>(new AssertNotNull(_handlerMock.Object), new BufferRequest<int>(3));
+            
             _buffer.Ready += AssertBuffer;
             _data = [1, 2, 3]; 
         }
@@ -76,6 +82,9 @@ namespace IdelPog.Staging.Tests.Collection
         [Test]
         public void Negative_Assign_Null_Throws()
         {
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
+                .Throws(new ArgumentNullException());
+            
             Assert.Throws<ArgumentNullException>(() => _buffer.Assign(null!));
         }
 

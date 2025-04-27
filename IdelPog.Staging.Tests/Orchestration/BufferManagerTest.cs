@@ -1,6 +1,8 @@
 ﻿using IdelPog.Staging.Collection;
 using IdelPog.Staging.Factory;
 using IdelPog.Staging.Orchestration;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 using Moq;
 
 namespace IdelPog.Staging.Tests.Orchestration
@@ -20,7 +22,7 @@ namespace IdelPog.Staging.Tests.Orchestration
             _bufferManager = new BufferManager(_bufferFactoryMock.Object);
 
             _bufferFactoryMock.Setup(library => library.CreateBuffer(_bufferRequest))
-                .Returns(new Buffer<int>());
+                .Returns(new Buffer<int>(new AssertNotNull(new ThrowHandler()), new BufferRequest<int>(3)));
         }
 
         [Test]

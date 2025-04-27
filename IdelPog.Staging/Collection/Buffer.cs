@@ -1,21 +1,30 @@
-﻿namespace IdelPog.Staging.Collection
+﻿using IdelPog.Validation.Assertions;
+
+namespace IdelPog.Staging.Collection
 {
-    public class Buffer<T> : IBuffer
+    public class Buffer<T>: IBuffer
     {
+        private readonly IAssertNotNull _assert;
         public event Action<IBuffer>? Ready;
         
-        public IReadOnlyList<T> Data { get; private set; } = new List<T>();
+        public T[] Data { get; private set; }
+        
+        internal Buffer(IAssertNotNull assert, BufferRequest<T> request)
+        {
+            _assert = assert;
+            Data = new T[request.Length];
+        }
 
         public void MarkReady()
         {
             Ready?.Invoke(this);
         }
 
-        public void Assign(List<T> data)
+        public void Assign(T[] data)
         {
-            ArgumentNullException.ThrowIfNull(data);
+            _assert.AssertObjectNotNull(data);
 
-            Data = data.AsReadOnly();
+            Data = data;
         }
     }
 }
