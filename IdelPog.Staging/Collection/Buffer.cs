@@ -6,8 +6,7 @@
 
         public event Action<IBuffer>? Ready;
         
-        // TODO : cache this
-        public IReadOnlyList<T> Data => _data.AsReadOnly();
+        public IReadOnlyList<T> Data { get; private set; } = new List<T>();
 
         public void MarkReady()
         {
@@ -19,6 +18,7 @@
             ArgumentNullException.ThrowIfNull(data);
 
             _data = data;
+            Data = data.AsReadOnly();
         }
     }
 }

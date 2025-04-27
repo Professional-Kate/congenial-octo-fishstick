@@ -33,8 +33,11 @@ namespace IdelPog.Staging.Tests.Collection
 
             IReadOnlyList<int> readOnlyList = _buffer.Data;
             
-            Assert.That(readOnlyList, Has.Count.EqualTo(3));
-            Assert.That(readOnlyList, Is.EquivalentTo(_data));
+            Assert.Multiple(() =>
+            {
+                Assert.That(readOnlyList, Has.Count.EqualTo(3));
+                Assert.That(readOnlyList, Is.EquivalentTo(_data));
+            });
             
             _buffer.MarkReady();
             Assert.That(_readyCalled, Is.True);
@@ -55,11 +58,27 @@ namespace IdelPog.Staging.Tests.Collection
             
             Assert.That(_readyCalled, Is.False);
         }
+        
+        [Test]
+        public void Positive_Data_ReturnsReadOnlyList()
+        {
+            _buffer.Assign(_data);
+
+            IReadOnlyList<int> readOnlyList = _buffer.Data;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(readOnlyList, Has.Count.EqualTo(3));
+                Assert.That(readOnlyList, Is.EquivalentTo(_data));
+            });
+        }
 
         [Test]
         public void Negative_Assign_Null_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _buffer.Assign(null!));
         }
+
+      
     }
 }
