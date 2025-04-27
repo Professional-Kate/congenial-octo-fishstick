@@ -2,8 +2,6 @@
 {
     public class Buffer<T> : IBuffer
     {
-        private IList<T> _data = new List<T>();
-
         public event Action<IBuffer>? Ready;
         
         public IReadOnlyList<T> Data { get; private set; } = new List<T>();
@@ -17,7 +15,6 @@
         {
             ArgumentNullException.ThrowIfNull(data);
 
-            _data = data;
             Data = data.AsReadOnly();
         }
     }
