@@ -6,8 +6,8 @@ namespace IdelPog.Staging.Collection
     {
         private readonly IAssertNotNull _assert;
         public event Action<IBuffer>? Ready;
-        
-        public T[] Data { get; private set; }
+
+        public readonly T[] Data;
         
         internal Buffer(IAssertNotNull assert, BufferRequest<T> request)
         {
@@ -23,8 +23,19 @@ namespace IdelPog.Staging.Collection
         public void Assign(T[] data)
         {
             _assert.AssertObjectNotNull(data);
+            
+            // TODO: create assertion for this
+            if (data.Length != Data.Length)
+            {
+                throw new Exception();
+            }
 
-            Data = data;
+            Array.Copy(data, Data, Data.Length);
+        }
+
+        public void StreamInto(IEnumerable<T> source)
+        {
+            throw new NotImplementedException();
         }
     }
 }

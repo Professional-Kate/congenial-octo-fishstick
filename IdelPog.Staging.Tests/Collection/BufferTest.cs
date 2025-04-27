@@ -32,6 +32,11 @@ namespace IdelPog.Staging.Tests.Collection
             Assert.That(buffer, Is.Not.Null);
         }
 
+        private static IEnumerable<int> StreamData(int length)
+        {
+            return Enumerable.Range(1, length);
+        }
+
         [Test]
         public void Positive_Assign_AssignsList()
         {
@@ -80,6 +85,25 @@ namespace IdelPog.Staging.Tests.Collection
         }
 
         [Test]
+        public void Positive_StreamInto_PopulatesData()
+        {
+            _buffer.StreamInto(StreamData(3));
+            IReadOnlyList<int> readOnlyList = _buffer.Data;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(readOnlyList, Has.Count.EqualTo(3));
+                Assert.That(readOnlyList, Is.EquivalentTo(_data));
+            });
+        }
+
+        [Test]
+        public void Negative_StreamInto_PassedNull_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => _buffer.StreamInto(null!));
+        }
+
+        [Test]
         public void Negative_Assign_Null_Throws()
         {
             _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
@@ -88,6 +112,22 @@ namespace IdelPog.Staging.Tests.Collection
             Assert.Throws<ArgumentNullException>(() => _buffer.Assign(null!));
         }
 
-      
+        [TestCase(4)]
+        [TestCase(2)]
+        [TestCase(0)]
+        public void Negative_Assign_DifferentLengthArray_Throws(int size)
+        {
+            int[] numbers = Enumerable.Range(0, size).ToArray();
+            
+            Assert.Throws<Exception>(() => _buffer.Assign(numbers));
+        }
+        
+        [TestCase(4)]
+        [TestCase(2)]
+        [TestCase(0)]
+        public void Negative_StreamInto_DifferentLengthArray_Throws(int size)
+        {
+            Assert.Throws<Exception>(() => _buffer.StreamInto(StreamData(size)));
+        }
     }
 }
