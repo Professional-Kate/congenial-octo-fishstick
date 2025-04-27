@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <Folder Include="Messaging\" />
-      <Folder Include="Orchestration\" />
     </ItemGroup>
 
 </Project>
