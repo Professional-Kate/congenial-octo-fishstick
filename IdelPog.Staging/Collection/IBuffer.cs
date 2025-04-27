@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Buffer.Collection
+﻿namespace IdelPog.Staging.Collection
 {
     public interface IBuffer
     {

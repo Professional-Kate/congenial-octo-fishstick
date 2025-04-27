@@ -7,7 +7,7 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <RootNamespace>IdelPog.Buffer.Tests</RootNamespace>
+        <RootNamespace>IdelPog.Staging.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,6 +20,10 @@
 
     <ItemGroup>
         <Using Include="NUnit.Framework"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\IdelPog.Staging\IdelPog.Staging.csproj" />
     </ItemGroup>
 
 </Project>
