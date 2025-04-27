@@ -1,17 +1,20 @@
-﻿using IdelPog.Validation.Assertions;
+﻿using IdelPog.Staging.Assertions;
+using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Staging.Collection
 {
     public class Buffer<T>: IBuffer
     {
-        private readonly IAssertNotNull _assert;
+        private readonly IAssertNotNull _assertNotNull;
+        private readonly IAssertCollectionSize _assertCollectionSize;
         public event Action<IBuffer>? Ready;
 
         public readonly T[] Data;
         
-        internal Buffer(IAssertNotNull assert, BufferRequest<T> request)
+        internal Buffer(IAssertNotNull assertNotNull, IAssertCollectionSize assertCollectionSize, BufferRequest<T> request)
         {
-            _assert = assert;
+            _assertNotNull = assertNotNull;
+            _assertCollectionSize = assertCollectionSize;
             Data = new T[request.Length];
         }
 
@@ -20,21 +23,23 @@ namespace IdelPog.Staging.Collection
             Ready?.Invoke(this);
         }
 
-        public void Assign(T[] data)
+        public void Assign(T[] source)
         {
-            _assert.AssertObjectNotNull(data);
-            
-            // TODO: create assertion for this
-            if (data.Length != Data.Length)
-            {
-                throw new Exception();
-            }
+            _assertNotNull.AssertObjectNotNull(source);
+            _assertCollectionSize.AssertSize(Data.Length, source.Length);
 
-            Array.Copy(data, Data, Data.Length);
+            Array.Copy(source, Data, Data.Length);
         }
 
         public void StreamInto(IEnumerable<T> source)
         {
+            throw new NotImplementedException();
+        }
+
+        public void StreamInto(ICollection<T> source)
+        {
+            _assertCollectionSize.AssertSize(Data.Length, source.Count);
+
             throw new NotImplementedException();
         }
     }
