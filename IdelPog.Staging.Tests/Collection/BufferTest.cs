@@ -1,8 +1,6 @@
-﻿using IdelPog.Staging.Assertions;
+﻿using IdelPog.Staging.Assertions.Pipelines;
 using IdelPog.Staging.Collection;
 using IdelPog.Staging.Exceptions;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
 using Moq;
 
 namespace IdelPog.Staging.Tests.Collection
@@ -12,7 +10,7 @@ namespace IdelPog.Staging.Tests.Collection
     {
         private Buffer<int> _buffer { get; set; }
         private int[] _data = [];
-        private Mock<IHandler> _handlerMock { get; set; }
+        private Mock<IBufferAsserter> _bufferAsserterMock { get; set; }
 
         private bool _readyCalled;
 
@@ -21,8 +19,8 @@ namespace IdelPog.Staging.Tests.Collection
         {
             _readyCalled = false;
             
-            _handlerMock = new Mock<IHandler>();
-            _buffer = new Buffer<int>(new AssertNotNull(_handlerMock.Object), new AssertCollectionSize(_handlerMock.Object), new BufferRequest<int>(3));
+            _bufferAsserterMock = new Mock<IBufferAsserter>();
+            _buffer = new Buffer<int>(_bufferAsserterMock.Object, new BufferRequest<int>(3));
             
             _buffer.Ready += AssertBuffer;
             _data = [1, 2, 3]; 
@@ -32,11 +30,6 @@ namespace IdelPog.Staging.Tests.Collection
         {
             _readyCalled = true;
             Assert.That(buffer, Is.Not.Null);
-        }
-
-        private static IEnumerable<int> StreamData(int length)
-        {
-            return Enumerable.Range(1, length);
         }
 
         [Test]
@@ -89,7 +82,7 @@ namespace IdelPog.Staging.Tests.Collection
         [Test]
         public void Positive_StreamInto_PopulatesData()
         {
-            _buffer.StreamInto(StreamData(3));
+            _buffer.StreamInto(_data);
             IReadOnlyList<int> readOnlyList = _buffer.Data;
             
             Assert.Multiple(() =>
@@ -102,15 +95,15 @@ namespace IdelPog.Staging.Tests.Collection
         [Test]
         public void Negative_StreamInto_PassedNull_Throws()
         {
+            _bufferAsserterMock.Setup(library => library.CollectionAsserter(3, It.IsAny<ICollection<int>>()))
+                .Throws(new ArgumentNullException());
+            
             Assert.Throws<ArgumentNullException>(() => _buffer.StreamInto(null!));
         }
 
         [Test]
         public void Negative_Assign_Null_Throws()
         {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
-                .Throws(new ArgumentNullException());
-            
             Assert.Throws<ArgumentNullException>(() => _buffer.Assign(null!));
         }
 
@@ -119,10 +112,10 @@ namespace IdelPog.Staging.Tests.Collection
         [TestCase(0)]
         public void Negative_Assign_DifferentLengthArray_Throws(int size)
         {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<BufferSizeMismatchException>()))
-                .Throws(new BufferSizeMismatchException(3, size));
-            
             int[] numbers = Enumerable.Range(0, size).ToArray();
+            
+            _bufferAsserterMock.Setup(library => library.CollectionAsserter(3, numbers))
+                .Throws(new BufferSizeMismatchException(3, size));
             
             Assert.Throws<BufferSizeMismatchException>(() => _buffer.Assign(numbers));
         }
@@ -132,10 +125,10 @@ namespace IdelPog.Staging.Tests.Collection
         [TestCase(0)]
         public void Negative_StreamInto_DifferentLengthArray_Throws(int size)
         {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<BufferSizeMismatchException>()))
+            _bufferAsserterMock.Setup(library => library.CollectionAsserter(3, _data))
                 .Throws(new BufferSizeMismatchException(3, size));
             
-            Assert.Throws<BufferSizeMismatchException>(() => _buffer.StreamInto(StreamData(size)));
+            Assert.Throws<BufferSizeMismatchException>(() => _buffer.StreamInto(_data));
         }
     }
 }
