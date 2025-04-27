@@ -19,7 +19,7 @@ namespace IdelPog.Staging.Tests.Orchestration
             _bufferRequest = new BufferRequest<int>(3);
             _bufferManager = new BufferManager(_bufferFactoryMock.Object);
 
-            _bufferFactoryMock.Setup(library => library.CreateBuffer<int>())
+            _bufferFactoryMock.Setup(library => library.CreateBuffer(_bufferRequest))
                 .Returns(new Buffer<int>());
         }
 
@@ -29,7 +29,17 @@ namespace IdelPog.Staging.Tests.Orchestration
             Buffer<int> buffer = _bufferManager.RequestBuffer(_bufferRequest);
             
             Assert.That(buffer, Is.Not.Null);
-            _bufferFactoryMock.Verify(library => library.CreateBuffer<int>());
+            _bufferFactoryMock.Verify(library => library.CreateBuffer(_bufferRequest));
+        }
+
+        [Test]
+        public void Positive_RequestBuffer_SetsOnReady()
+        {
+            Buffer<int> buffer = _bufferManager.RequestBuffer(_bufferRequest);
+            
+            buffer.MarkReady();
+            
+            // TODO : verify MessageManager is called
         }
     }
 }

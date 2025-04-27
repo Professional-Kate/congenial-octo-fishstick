@@ -7,7 +7,15 @@ namespace IdelPog.Staging.Orchestration
     {
         public Buffer<T> RequestBuffer<T>(BufferRequest<T> request)
         {
-            return bufferFactory.CreateBuffer<T>();
+            Buffer<T> buffer = bufferFactory.CreateBuffer(request);
+            buffer.Ready += HandleBufferReady;
+
+            return buffer;
+        }
+
+        private static void HandleBufferReady(IBuffer buffer)
+        {
+            // TODO inform message manage about the reayd
         }
     }
 }
