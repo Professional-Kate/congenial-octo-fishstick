@@ -2,10 +2,17 @@
 
 namespace IdelPog.Staging.Collection
 {
-    public class Buffer<T>: IBuffer
+    public class Buffer<T>: IInternalBuffer, IBuffer<T>
     {
         private readonly IBufferAsserter _assertAsserter;
-        public event Action<IBuffer>? Ready;
+        
+        private event Action<IInternalBuffer>? Ready;
+        
+        event Action<IInternalBuffer>? IInternalBuffer.Ready
+        {
+            add => Ready += value;
+            remove => Ready -= value;
+        }
 
         public readonly T[] Data;
         
@@ -22,14 +29,6 @@ namespace IdelPog.Staging.Collection
 
         public void Assign(T[] source)
         {
-            _assertAsserter.CollectionAsserter(Data.Length, source);
-
-            Array.Copy(source, Data, Data.Length);
-        }
-        
-        public void StreamInto(ICollection<T> source)
-        {
-            
             _assertAsserter.CollectionAsserter(Data.Length, source);
 
             source.CopyTo(Data, 0);

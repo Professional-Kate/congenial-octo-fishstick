@@ -22,11 +22,16 @@ namespace IdelPog.Staging.Tests.Collection
             _bufferAsserterMock = new Mock<IBufferAsserter>();
             _buffer = new Buffer<int>(_bufferAsserterMock.Object, new BufferRequest<int>(3));
             
-            _buffer.Ready += AssertBuffer;
+            
+            if (_buffer is IInternalBuffer internalBuffer)
+            {
+                internalBuffer.Ready += AssertBuffer;
+            }
+            
             _data = [1, 2, 3]; 
         }
 
-        private void AssertBuffer(IBuffer buffer)
+        private void AssertBuffer(IInternalBuffer buffer)
         {
             _readyCalled = true;
             Assert.That(buffer, Is.Not.Null);
@@ -80,30 +85,11 @@ namespace IdelPog.Staging.Tests.Collection
         }
 
         [Test]
-        public void Positive_StreamInto_PopulatesData()
-        {
-            _buffer.StreamInto(_data);
-            IReadOnlyList<int> readOnlyList = _buffer.Data;
-            
-            Assert.Multiple(() =>
-            {
-                Assert.That(readOnlyList, Has.Count.EqualTo(3));
-                Assert.That(readOnlyList, Is.EquivalentTo(_data));
-            });
-        }
-
-        [Test]
-        public void Negative_StreamInto_PassedNull_Throws()
+        public void Negative_Assign_Null_Throws()
         {
             _bufferAsserterMock.Setup(library => library.CollectionAsserter(3, It.IsAny<ICollection<int>>()))
                 .Throws(new ArgumentNullException());
             
-            Assert.Throws<ArgumentNullException>(() => _buffer.StreamInto(null!));
-        }
-
-        [Test]
-        public void Negative_Assign_Null_Throws()
-        {
             Assert.Throws<ArgumentNullException>(() => _buffer.Assign(null!));
         }
 
@@ -118,17 +104,6 @@ namespace IdelPog.Staging.Tests.Collection
                 .Throws(new BufferSizeMismatchException(3, size));
             
             Assert.Throws<BufferSizeMismatchException>(() => _buffer.Assign(numbers));
-        }
-        
-        [TestCase(4)]
-        [TestCase(2)]
-        [TestCase(0)]
-        public void Negative_StreamInto_DifferentLengthArray_Throws(int size)
-        {
-            _bufferAsserterMock.Setup(library => library.CollectionAsserter(3, _data))
-                .Throws(new BufferSizeMismatchException(3, size));
-            
-            Assert.Throws<BufferSizeMismatchException>(() => _buffer.StreamInto(_data));
         }
     }
 }

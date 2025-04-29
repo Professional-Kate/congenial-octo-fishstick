@@ -5,15 +5,19 @@ namespace IdelPog.Staging.Orchestration
 {
     public class BufferManager(IBufferFactory bufferFactory) : IBufferManager
     {
-        public Buffer<T> RequestBuffer<T>(BufferRequest<T> request)
+        public IBuffer<T> RequestBuffer<T>(BufferRequest<T> request)
         {
             Buffer<T> buffer = bufferFactory.CreateBuffer(request);
-            buffer.Ready += HandleBufferReady;
+            
+            if (buffer is IInternalBuffer internalBuffer)
+            {
+                internalBuffer.Ready += HandleBufferReady;
+            }
 
             return buffer;
         }
 
-        private static void HandleBufferReady(IBuffer buffer)
+        private static void HandleBufferReady(IInternalBuffer buffer)
         {
             // TODO inform message manage about the reayd
         }

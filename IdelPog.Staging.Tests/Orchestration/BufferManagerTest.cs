@@ -30,7 +30,7 @@ namespace IdelPog.Staging.Tests.Orchestration
         [Test]
         public void Positive_RequestBuffer_ReturnsBuffer()
         {
-            Buffer<int> buffer = _bufferManager.RequestBuffer(_bufferRequest);
+            IBuffer<int> buffer = _bufferManager.RequestBuffer(_bufferRequest);
             
             Assert.That(buffer, Is.Not.Null);
             _bufferFactoryMock.Verify(library => library.CreateBuffer(_bufferRequest));
@@ -39,7 +39,7 @@ namespace IdelPog.Staging.Tests.Orchestration
         [Test]
         public void Positive_RequestBuffer_SetsOnReady()
         {
-            Buffer<int> buffer = _bufferManager.RequestBuffer(_bufferRequest);
+            IBuffer<int> buffer = _bufferManager.RequestBuffer(_bufferRequest);
             
             buffer.MarkReady();
             

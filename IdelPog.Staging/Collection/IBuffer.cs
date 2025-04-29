@@ -1,8 +1,8 @@
 ﻿namespace IdelPog.Staging.Collection
 {
-    public interface IBuffer
+    public interface IBuffer<in T>
     {
-        public event Action<IBuffer> Ready;
         public void MarkReady();
+        public void Assign(T[] source);
     }
 }
