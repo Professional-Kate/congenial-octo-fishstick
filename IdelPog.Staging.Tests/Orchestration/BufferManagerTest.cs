@@ -15,6 +15,7 @@ namespace IdelPog.Staging.Tests.Orchestration
         private IBufferManager _bufferManager { get; set; }
         private BufferRequest<int> _bufferRequest { get; set; }
         private Mock<IBufferFactory> _bufferFactoryMock { get; set; }
+        private Mock<IAssertBufferState> _assertBufferStateMock { get; set; }
         
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -22,9 +23,10 @@ namespace IdelPog.Staging.Tests.Orchestration
             _bufferFactoryMock = new Mock<IBufferFactory>();
             _bufferRequest = new BufferRequest<int>(3);
             _bufferManager = new BufferManager(_bufferFactoryMock.Object);
+            _assertBufferStateMock = new Mock<IAssertBufferState>();
 
             _bufferFactoryMock.Setup(library => library.CreateBuffer(_bufferRequest))
-                .Returns(new Buffer<int>(new BufferAsserter(new AssertNotNull(new ThrowHandler()), new AssertCollectionSize(new ThrowHandler()), new AssertValidCollectionSize(new ThrowHandler())), new BufferRequest<int>(3)));
+                .Returns(new Buffer<int>(new BufferAsserter(new AssertNotNull(new ThrowHandler()), new AssertCollectionSize(new ThrowHandler()), new AssertValidCollectionSize(new ThrowHandler())), _assertBufferStateMock.Object, new BufferRequest<int>(3)));
         }
 
         [Test]
@@ -33,7 +35,7 @@ namespace IdelPog.Staging.Tests.Orchestration
             IBuffer<int> buffer = _bufferManager.RequestBuffer(_bufferRequest);
             
             Assert.That(buffer, Is.Not.Null);
-            _bufferFactoryMock.Verify(library => library.CreateBuffer(_bufferRequest));
+            _bufferFactoryMock.Verify(library => library.CreateBuffer(_bufferRequest), Times.Once);
         }
 
         [Test]
@@ -41,9 +43,7 @@ namespace IdelPog.Staging.Tests.Orchestration
         {
             IBuffer<int> buffer = _bufferManager.RequestBuffer(_bufferRequest);
             
-            buffer.MarkReady();
-            
-            // TODO : verify MessageManager is called
+            // TODO: when the message dispatcher is created mock it here
         }
     }
 }
