@@ -18,14 +18,14 @@ namespace IdelPog.Staging.Collection
 
         public BufferState State { get; private set; } = BufferState.CREATED;
 
-        // TODO: update to IReadOnlyList<T>
-        public readonly T[] Data;
+        private readonly T[] _data;
+        public IReadOnlyList<T> Data => _data;
         
         internal Buffer(IBufferAsserter bufferAsserter, IAssertBufferState assertBufferState, BufferRequest<T> request)
         {
             _assertAsserter = bufferAsserter;
             _assertBufferState = assertBufferState;
-            Data = new T[request.Length];
+            _data = new T[request.Length];
         }
 
         public void MarkReady()
@@ -38,12 +38,20 @@ namespace IdelPog.Staging.Collection
 
         public void Assign(T[] source)
         {
-            Console.WriteLine(State);
             _assertBufferState.AssertState(BufferState.CREATED, State);
-            _assertAsserter.CollectionAsserter(Data.Length, source);
+            _assertAsserter.CollectionAsserter(Data.Count, source);
 
-            source.CopyTo(Data, 0);
+            CopyIntoInternalArray(source);
+            
             State = BufferState.FILLED;
+        }
+
+        private void CopyIntoInternalArray(T[] source)
+        {
+            for (int i = 0; i < source.Length; i++)
+            {
+                _data[i] = source[i];
+            }
         }
     }
 }
