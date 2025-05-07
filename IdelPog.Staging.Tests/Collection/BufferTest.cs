@@ -23,7 +23,7 @@ namespace IdelPog.Staging.Tests.Collection
             
             _bufferAsserterMock = new Mock<IBufferAsserter>();
             _assertBufferStateMock = new Mock<IAssertBufferState>();
-            _buffer = new Buffer<int>(_bufferAsserterMock.Object, _assertBufferStateMock.Object, new BufferRequest<int>(3));
+            _buffer = new Buffer<int>(_bufferAsserterMock.Object, _assertBufferStateMock.Object, new BufferRequest(3));
             
             if (_buffer is IInternalBuffer internalBuffer)
             {
@@ -42,7 +42,7 @@ namespace IdelPog.Staging.Tests.Collection
         [Test]
         public void Positive_OnConstruct_SetsState()
         {
-            Buffer<int> createdBuffer = new(_bufferAsserterMock.Object, _assertBufferStateMock.Object, new BufferRequest<int>(3));
+            Buffer<int> createdBuffer = new(_bufferAsserterMock.Object, _assertBufferStateMock.Object, new BufferRequest(3));
             
             Assert.That(createdBuffer.State, Is.EqualTo(BufferState.CREATED));
         }

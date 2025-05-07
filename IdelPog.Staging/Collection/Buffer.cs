@@ -21,7 +21,7 @@ namespace IdelPog.Staging.Collection
         private readonly T[] _data;
         public IReadOnlyList<T> Data => _data;
         
-        internal Buffer(IBufferAsserter bufferAsserter, IAssertBufferState assertBufferState, BufferRequest<T> request)
+        internal Buffer(IBufferAsserter bufferAsserter, IAssertBufferState assertBufferState, BufferRequest request)
         {
             _assertAsserter = bufferAsserter;
             _assertBufferState = assertBufferState;
