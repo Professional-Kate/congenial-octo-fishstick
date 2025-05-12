@@ -62,7 +62,7 @@ namespace IdelPog.Staging.Tests.Orchestration
             buffer.Assign([1, 2, 3]);
             buffer.MarkReady();
             
-            _bufferDispatcherMock.Verify(library => library.DispatchMessage(buffer), Times.Once);
+            _bufferDispatcherMock.Verify(library => library.DispatchMessage(It.IsAny<IReadOnlyList<int>>()), Times.Once);
         }
         
         [Test]

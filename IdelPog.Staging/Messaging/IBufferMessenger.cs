@@ -1,9 +1,11 @@
-﻿using IdelPog.Staging.Collection;
-
-namespace IdelPog.Staging.Messaging
+﻿namespace IdelPog.Staging.Messaging
 {
     public interface IBufferMessenger
     {
-        public void DispatchMessage<T>(IBuffer<T> buffer);
+        public void Subscribe<T>(IBufferListener<T> bufferListener);
+        
+        public void Unsubscribe<T>(IBufferListener<T> bufferListener);
+        
+        public void DispatchMessage<T>(IReadOnlyList<T>  buffer);
     }
 }

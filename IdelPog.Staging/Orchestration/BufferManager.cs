@@ -15,13 +15,13 @@ namespace IdelPog.Staging.Orchestration
             
             if (buffer is IInternalBuffer internalBuffer)
             {
-                internalBuffer.Ready += _ => HandleBufferReady(buffer);
+                internalBuffer.Ready += _ => HandleBufferReady(buffer.Data);
             }
 
             return buffer;
         }
 
-        private void HandleBufferReady<T>(IBuffer<T> buffer)
+        private void HandleBufferReady<T>(IReadOnlyList<T> buffer)
         {
             bufferMessenger.DispatchMessage(buffer);
         }
