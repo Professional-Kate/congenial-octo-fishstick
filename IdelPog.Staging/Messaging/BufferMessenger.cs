@@ -19,7 +19,7 @@ namespace IdelPog.Staging.Messaging
                 _listeners.Add(type, listeners);
             }
             
-            listeners!.Add(bufferListener);
+            listeners.Add(bufferListener);
         }
 
         public void Unsubscribe<T>(IBufferListener<T> bufferListener)
@@ -42,6 +42,7 @@ namespace IdelPog.Staging.Messaging
 
             if (_listeners.TryGetValue(type, out List<IListener>? listeners) == false)
             {
+                // If the type doesn't exist then we just want to return, otherwise this would throw an exception
                 return;
             }
             
