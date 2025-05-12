@@ -2,6 +2,8 @@
 using IdelPog.Staging.Assertions.Pipelines;
 using IdelPog.Staging.Collection;
 using IdelPog.Staging.Factory;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 using Moq;
 
 namespace IdelPog.Staging.Tests.Factory
@@ -14,14 +16,16 @@ namespace IdelPog.Staging.Tests.Factory
         
         private Mock<IAssertBufferState> _assertBufferStateMock { get; set; }
         private Mock<IBufferAsserter> _bufferAsserterMock { get; set; }
+        private Mock<IHandler> _handlerMock { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _assertBufferStateMock = new Mock<IAssertBufferState>();
             _bufferAsserterMock = new Mock<IBufferAsserter>();
+            _handlerMock = new Mock<IHandler>();
             
-            _bufferFactory = new BufferFactory(_bufferAsserterMock.Object, _assertBufferStateMock.Object);
+            _bufferFactory = new BufferFactory(_bufferAsserterMock.Object, _assertBufferStateMock.Object, new AssertNotNull(_handlerMock.Object));
             _bufferRequest = new BufferRequest(5);
         }
 
@@ -32,6 +36,15 @@ namespace IdelPog.Staging.Tests.Factory
             
             Assert.That(buffer, Is.Not.Null);
             Assert.That(buffer.Data, Has.Count.EqualTo(5));
+        }
+
+        [Test]
+        public void Negative_CreateBuffer_NullRequest_Throws()
+        {
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
+                .Throws<ArgumentNullException>();
+            
+            Assert.Throws<ArgumentNullException>(() => _bufferFactory.CreateBuffer<int>(null!));
         }
     }
 }
