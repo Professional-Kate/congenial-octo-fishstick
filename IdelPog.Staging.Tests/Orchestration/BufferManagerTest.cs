@@ -17,14 +17,17 @@ namespace IdelPog.Staging.Tests.Orchestration
         private BufferRequest _bufferRequest { get; set; }
         private Mock<IBufferFactory> _bufferFactoryMock { get; set; }
         private Mock<IBufferMessenger> _bufferDispatcherMock { get; set; }
+        private Mock<IHandler> _handlerMock { get; set; }
         
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             _bufferFactoryMock = new Mock<IBufferFactory>();
             _bufferDispatcherMock = new Mock<IBufferMessenger>();
+            _handlerMock = new Mock<IHandler>();
+            
             _bufferRequest = new BufferRequest(3);
-            _bufferManager = new BufferManager(_bufferFactoryMock.Object, _bufferDispatcherMock.Object);
+            _bufferManager = new BufferManager(_bufferFactoryMock.Object, _bufferDispatcherMock.Object, new AssertNotNull(_handlerMock.Object));
         }
 
         [SetUp]
@@ -61,10 +64,13 @@ namespace IdelPog.Staging.Tests.Orchestration
             
             _bufferDispatcherMock.Verify(library => library.DispatchMessage(buffer), Times.Once);
         }
-
+        
         [Test]
-        public void Positive_RequestBuffer_NullRequest_Throws()
+        public void Negative_RequestBuffer_NullRequest_Throws()
         {
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
+                .Throws<ArgumentNullException>();
+            
             Assert.Throws<ArgumentNullException>(() => _bufferManager.RequestBuffer<int>(null!));
         }
     }

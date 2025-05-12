@@ -5,7 +5,7 @@ namespace IdelPog.Staging.Collection
 {
     public class Buffer<T>: IInternalBuffer, IBuffer<T>
     {
-        private readonly IBufferAsserter _assertAsserter;
+        private readonly IBufferAsserter _bufferAsserter;
         private readonly IAssertBufferState _assertBufferState;
         
         private event Action<IInternalBuffer>? Ready;
@@ -23,7 +23,7 @@ namespace IdelPog.Staging.Collection
         
         internal Buffer(IBufferAsserter bufferAsserter, IAssertBufferState assertBufferState, BufferRequest request)
         {
-            _assertAsserter = bufferAsserter;
+            _bufferAsserter = bufferAsserter;
             _assertBufferState = assertBufferState;
             _data = new T[request.Length];
         }
@@ -39,7 +39,7 @@ namespace IdelPog.Staging.Collection
         public void Assign(T[] source)
         {
             _assertBufferState.AssertState(BufferState.CREATED, State);
-            _assertAsserter.CollectionAsserter(Data.Count, source);
+            _bufferAsserter.AssertCollection(Data.Count, source);
 
             CopyIntoInternalArray(source);
             

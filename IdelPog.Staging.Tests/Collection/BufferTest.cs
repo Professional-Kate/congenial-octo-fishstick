@@ -114,7 +114,7 @@ namespace IdelPog.Staging.Tests.Collection
         [Test]
         public void Negative_Assign_Null_Throws()
         {
-            _bufferAsserterMock.Setup(library => library.CollectionAsserter(3, It.IsAny<ICollection<int>>()))
+            _bufferAsserterMock.Setup(library => library.AssertCollection(3, It.IsAny<ICollection<int>>()))
                 .Throws(new ArgumentNullException());
             
             Assert.Throws<ArgumentNullException>(() => _buffer.Assign(null!));
@@ -152,7 +152,7 @@ namespace IdelPog.Staging.Tests.Collection
         {
             int[] numbers = Enumerable.Range(0, size).ToArray();
             
-            _bufferAsserterMock.Setup(library => library.CollectionAsserter(3, numbers))
+            _bufferAsserterMock.Setup(library => library.AssertCollection(3, numbers))
                 .Throws(new BufferSizeMismatchException(3, size));
             
             Assert.Throws<BufferSizeMismatchException>(() => _buffer.Assign(numbers));

@@ -2,6 +2,6 @@
 {
     public interface IBufferAsserter
     {
-        public void CollectionAsserter<T>(int expectedCount, ICollection<T> source);
+        public void AssertCollection<T>(int expectedCount, ICollection<T> source);
     }
 }
