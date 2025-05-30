@@ -27,8 +27,7 @@ namespace IdelPog.Staging.Tests.Messaging
         public void TearDown()
         {
             Setup();
-            _intListener.ResetWasCalled();
-            _intListener.ResetAmountCalled();
+            _intListener.ResetObject();
         }
 
         private void Setup()
@@ -109,6 +108,25 @@ namespace IdelPog.Staging.Tests.Messaging
             _bufferMessenger.DispatchMessage(_bufferData);
             
             Assert.That(_intListener.WasCalled, Is.False);
+        }
+
+        [Test]
+        public void Positive_MultipleListeners_FirstThrows_Continues()
+        {
+            TestListener<int> intListener = new()
+            {
+                ShouldThrowException = true
+            };
+            
+            _bufferMessenger.Subscribe(_intListener);
+            _bufferMessenger.Subscribe(intListener);
+            
+            Assert.DoesNotThrow(() => _bufferMessenger.DispatchMessage(_bufferData));
+            Assert.Multiple(() =>
+            {
+                Assert.That(_intListener.AmountCalled, Is.EqualTo(1));
+                Assert.That(intListener.AmountCalled, Is.EqualTo(1));
+            });
         }
 
         [Test]

@@ -48,7 +48,14 @@ namespace IdelPog.Staging.Messaging
             
             foreach (IBufferListener<T> bufferListener in listeners.OfType<IBufferListener<T>>())
             {
-                bufferListener.Handle(buffer);
+                try
+                {
+                    bufferListener.Handle(buffer);
+                }
+                catch (Exception exception)
+                {
+                    // ignored
+                }
             }
         }
     }
