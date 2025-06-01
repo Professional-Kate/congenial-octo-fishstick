@@ -26,4 +26,8 @@
       <ProjectReference Include="..\IdelPog.ECS\IdelPog.ECS.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Assertions\" />
+    </ItemGroup>
+
 </Project>
