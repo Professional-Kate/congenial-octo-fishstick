@@ -1,9 +1,9 @@
 ﻿using IdelPog.Engine.Models;
 using IdelPog.Engine.Orchestration;
-using IdelPog.Engine.Repository;
 using IdelPog.Engine.Service;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
+using IdelPog.Infrastructure.Repository;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;

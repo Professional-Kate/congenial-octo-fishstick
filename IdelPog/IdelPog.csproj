@@ -13,6 +13,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <ProjectReference Include="..\IdelPog.Infrastructure\IdelPog.Infrastructure.csproj" />
 	  <ProjectReference Include="..\IdelPog.Validation\IdelPog.Validation.csproj" />
 	</ItemGroup>
 

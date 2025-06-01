@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Assertions.Pipelines
+﻿namespace IdelPog.Infrastructure.Repository
 {
     /// <summary>
     /// 
