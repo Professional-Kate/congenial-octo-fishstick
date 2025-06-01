@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="T">The component type this store holds. Must implement <see cref="IComponent"/></typeparam>
     /// <remarks>
-    /// This store returns component refrences using <see cref="GetAllComponents"/>.
+    /// This store returns component references using <see cref="GetAllComponents"/>.
     /// Consumers are expected to mutate the components in place if needed
     /// </remarks>
     public readonly struct ComponentStore<T>() : IComponent where T : IComponent
