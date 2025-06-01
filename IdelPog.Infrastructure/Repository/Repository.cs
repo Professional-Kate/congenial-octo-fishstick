@@ -1,7 +1,6 @@
-﻿using IdelPog.Engine.Assertions.Pipelines;
-using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.Infrastructure.Structures;
 
-namespace IdelPog.Engine.Repository
+namespace IdelPog.Infrastructure.Repository
 {
     public sealed class Repository<TID, T>(IRepositoryAsserter repositoryAsserter) : IRepository<TID, T>
         where T : class, ICloneable<T> where TID : notnull

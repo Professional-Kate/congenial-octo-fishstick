@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Repository
+﻿namespace IdelPog.Infrastructure.Repository
 {
     public interface IRepositoryHooks<out T>
     {

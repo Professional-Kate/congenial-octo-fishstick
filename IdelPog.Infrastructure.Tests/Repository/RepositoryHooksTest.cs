@@ -1,7 +1,7 @@
 ﻿using IdelPog.Engine.Models;
-using IdelPogTests.Utils;
+using IdelPog.Engine.Structures.Enums;
 
-namespace IdelPogTests.Repository
+namespace IdelPog.Infrastructure.Tests.Repository
 {
     [TestFixture]
     public class RepositoryHooksTest : HookHandler
@@ -12,7 +12,7 @@ namespace IdelPogTests.Repository
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _currency = CurrencyFactory.CreateWood();
+            _currency = new Currency(CurrencyType.WOOD, 10);
         }
         
         [Test]

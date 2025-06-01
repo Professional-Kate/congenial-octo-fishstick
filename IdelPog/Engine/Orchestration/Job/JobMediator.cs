@@ -1,8 +1,8 @@
 ﻿using IdelPog.Engine.Models;
-using IdelPog.Engine.Repository;
 using IdelPog.Engine.Service;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
+using IdelPog.Infrastructure.Repository;
 
 namespace IdelPog.Engine.Orchestration
 {

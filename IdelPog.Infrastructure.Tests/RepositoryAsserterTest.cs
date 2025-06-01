@@ -1,9 +1,9 @@
-﻿using IdelPog.Engine.Assertions.Pipelines;
+﻿using IdelPog.Infrastructure.Repository;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPogTests.Assertions.Pipelines
+namespace IdelPog.Infrastructure.Tests
 {
     [TestFixture]
     public class RepositoryAsserterTest
