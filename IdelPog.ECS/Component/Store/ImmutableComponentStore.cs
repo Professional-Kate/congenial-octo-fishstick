@@ -1,4 +1,4 @@
-﻿namespace IdelPog.ECS.Component
+﻿namespace IdelPog.ECS.Component.Store
 {
     /// <summary>
     /// A component store used to group related <see cref="IComponent"/> instances of the same type

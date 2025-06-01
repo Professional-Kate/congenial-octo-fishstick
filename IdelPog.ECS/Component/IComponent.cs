@@ -1,7 +1,4 @@
 ﻿namespace IdelPog.ECS.Component
 {
-    public interface IComponent
-    {
-        
-    }
+    public interface IComponent;
 }

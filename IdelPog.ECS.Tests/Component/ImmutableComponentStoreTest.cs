@@ -1,4 +1,5 @@
 ﻿using IdelPog.ECS.Component;
+using IdelPog.ECS.Component.Store;
 
 namespace IdelPog.ECS.Tests
 {
