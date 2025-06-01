@@ -1,4 +1,5 @@
 ﻿using IdelPog.ECS.Assertions;
+using IdelPog.ECS.Exceptions;
 using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.ECS.Component.Store
@@ -27,7 +28,7 @@ namespace IdelPog.ECS.Component.Store
         /// Add a component to the store. No duplicates will be allowed
         /// </summary>
         /// <param name="component">The component to add</param>
-        /// <exception cref="Exception">Thrown if the component already exists in the store</exception>
+        /// <exception cref="ComponentAlreadyExistsException">Thrown if the component already exists in the store</exception>
         public void AddComponent(T component)
         {
             _assertComponentDoesNotExist.Handle(_components.Contains(component), component);
@@ -39,7 +40,7 @@ namespace IdelPog.ECS.Component.Store
         /// Remove a component from the store
         /// </summary>
         /// <param name="component">The component to remove</param>
-        /// <exception cref="Exception">Thrown if the component is not present in the store</exception>
+        /// <exception cref="ComponentNotFoundException">Thrown if the component is not present in the store</exception>
         public void RemoveComponent(T component)
         {
             _assertComponentFound.Handle(_components.Contains(component), component.GetType());

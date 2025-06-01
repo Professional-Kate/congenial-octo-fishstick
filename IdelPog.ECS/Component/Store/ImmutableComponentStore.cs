@@ -1,4 +1,5 @@
 ﻿using IdelPog.ECS.Assertions;
+using IdelPog.ECS.Exceptions;
 using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.ECS.Component.Store
@@ -20,8 +21,8 @@ namespace IdelPog.ECS.Component.Store
         /// </summary>
         /// <param name="components">An array of components to store. Must not be null or empty</param>
         /// <param name="handler">Handler used for controlling assertion failure behavior</param>
-        /// <exception cref="ArgumentNullException">Thrown if the passed components are null</exception>
-        /// <exception cref="Exception">Thrown if the passed components are empty </exception>
+        /// <exception cref="ComponentArrayNullException">Thrown if the passed components are null</exception>
+        /// <exception cref="ComponentArrayEmptyException">Thrown if the passed components are empty </exception>
         public ImmutableComponentStore(T[] components, IHandler handler)
         {
             AssertArrayNotEmpty assertArrayNotEmpty = new(handler);
