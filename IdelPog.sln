@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Staging", "IdelPog.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Staging.Tests", "IdelPog.Staging.Tests\IdelPog.Staging.Tests.csproj", "{47F5871B-344B-4FA9-BAF2-C269E9B26249}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Frontend.csproj", "{C091D52B-11AC-4252-BC49-88AFA3F76772}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Frontend", "IdelPog.Frontend\IdelPog.Frontend.csproj", "{C091D52B-11AC-4252-BC49-88AFA3F76772}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
