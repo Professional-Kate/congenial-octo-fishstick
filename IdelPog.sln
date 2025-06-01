@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Infrastructure", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Infrastructure.Tests", "IdelPog.Infrastructure.Tests\IdelPog.Infrastructure.Tests.csproj", "{C8F3A697-19E5-47FE-B216-8B6CAE218799}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.ECS.Tests", "IdelPog.ECS.Tests\IdelPog.ECS.Tests.csproj", "{6C24ECCC-5E77-4E52-849F-F1BE1C7BAC70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{C8F3A697-19E5-47FE-B216-8B6CAE218799}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8F3A697-19E5-47FE-B216-8B6CAE218799}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8F3A697-19E5-47FE-B216-8B6CAE218799}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C24ECCC-5E77-4E52-849F-F1BE1C7BAC70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C24ECCC-5E77-4E52-849F-F1BE1C7BAC70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C24ECCC-5E77-4E52-849F-F1BE1C7BAC70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C24ECCC-5E77-4E52-849F-F1BE1C7BAC70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,5 +105,6 @@ Global
 		{0D4FEC55-97CD-4E6D-88C0-58A0E8691217} = {1361A0B4-3337-4451-9BA2-5EF0EB914EA4}
 		{BDA3223E-24EF-405C-AC95-6EFFEE4167C6} = {1361A0B4-3337-4451-9BA2-5EF0EB914EA4}
 		{C8F3A697-19E5-47FE-B216-8B6CAE218799} = {225E53A1-4F82-4AD5-B50B-70F56F93508E}
+		{6C24ECCC-5E77-4E52-849F-F1BE1C7BAC70} = {225E53A1-4F82-4AD5-B50B-70F56F93508E}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,4 @@
-﻿namespace IdelPog.ECS.Entity.Factory
+﻿namespace IdelPog.ECS.Factory
 {
     public interface IEntityFactory
     {

@@ -1,6 +1,7 @@
-﻿using System.ComponentModel;
+﻿using IdelPog.ECS.Component;
+using IdelPog.Infrastructure.Structures;
 
-namespace IdelPog.ECS.Entity
+namespace IdelPog.ECS
 {
     public interface IEntity
     {
@@ -9,7 +10,7 @@ namespace IdelPog.ECS.Entity
         public void RemoveComponent<T>() where T : IComponent;
         
         public T GetComponent<T>() where T : IComponent;
-        
-        public bool TryGetComponent<T>(out T component) where T : IComponent;
+
+        public Optional<T> TryGetComponent<T>() where T : class, IComponent;
     }
 }
