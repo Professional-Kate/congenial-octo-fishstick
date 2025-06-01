@@ -3,7 +3,7 @@
     public readonly struct Optional<T> where T : class
     {
         private readonly T _value;
-        public bool HasValue { get; init; }
+        public bool HasValue { get; }
         
         public Optional(T value)
         {
