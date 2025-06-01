@@ -1,16 +1,23 @@
-﻿using IdelPog.ECS.Component;
+﻿using IdelPog.ECS.Assertions;
+using IdelPog.ECS.Component;
 using IdelPog.Infrastructure.Repository;
 using IdelPog.Infrastructure.Structures;
+using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.ECS
 {
     public abstract record Entity : IEntity
     {
         private readonly IRepository<Type, IComponent> _componentRepository;
+        private readonly AssertComponentDoesNotExist _assertComponentDoesNotExist;
+        private readonly AssertComponentFound _assertComponentFound;
 
-        protected Entity(IRepository<Type, IComponent> components)
+        protected Entity(IRepository<Type, IComponent> components, IHandler handler)
         {
             _componentRepository = components;
+            
+            _assertComponentDoesNotExist = new AssertComponentDoesNotExist(handler);
+            _assertComponentFound = new AssertComponentFound(handler);
         }
 
         /// <summary>
@@ -26,32 +33,21 @@ namespace IdelPog.ECS
 
         public void AddComponent(IComponent component)
         {
-            if (_componentRepository.Contains(component.GetType()))
-            {
-                throw new Exception();
-            }
+            _assertComponentDoesNotExist.Handle(_componentRepository.Contains(component.GetType()), component);
             
             _componentRepository.Add(component.GetType(), component);
         }
 
         public void RemoveComponent<T>() where T : IComponent
         {
-            if (_componentRepository.Contains(typeof(T)) == false)
-            {
-                throw new Exception();
-            }
+            _assertComponentFound.Handle(_componentRepository.Contains(typeof(T)), typeof(T));
             
             _componentRepository.Remove(typeof(T));
         }
 
         public T GetComponent<T>() where T : IComponent
         {
-            bool contains = _componentRepository.Contains(typeof(T));
-
-            if (contains == false)
-            {
-                throw new Exception();
-            }
+            _assertComponentFound.Handle(_componentRepository.Contains(typeof(T)), typeof(T));
 
             return (T) _componentRepository.Get(typeof(T));
         }

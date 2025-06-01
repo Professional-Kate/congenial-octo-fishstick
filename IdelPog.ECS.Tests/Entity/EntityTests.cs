@@ -1,7 +1,10 @@
 ﻿using IdelPog.ECS.Component;
+using IdelPog.ECS.Exceptions;
 using IdelPog.Infrastructure.Repository;
 using IdelPog.Infrastructure.Structures;
+using IdelPog.Validation.Assertions.Handlers;
 using Moq;
+using NUnit.Framework.Internal;
 
 namespace IdelPog.ECS.Tests
 {
@@ -11,13 +14,15 @@ namespace IdelPog.ECS.Tests
         private TestEntity _entity { get; set; }
         private Mock<IRepository<Type, IComponent>> _repositoryMock { get; set; }
         private TestComponent _testComponent { get; set; }
+        private Mock<IHandler> _handlerMock { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             _testComponent = new TestComponent();
             _repositoryMock = new Mock<IRepository<Type, IComponent>>();
-            _entity = new TestEntity(_repositoryMock.Object);
+            _handlerMock = new Mock<IHandler>();
+            _entity = new TestEntity(_repositoryMock.Object, _handlerMock.Object);
         }
 
         [TearDown]
@@ -61,7 +66,10 @@ namespace IdelPog.ECS.Tests
             _repositoryMock.Setup(library => library.Contains(It.Is<Type>(type => type == _testComponent.GetType())))
                 .Returns(true);
             
-            Assert.Throws<Exception>(() => _entity.AddComponent(_testComponent));
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentAlreadyExistsException>()))
+                .Throws(new ComponentAlreadyExistsException(_testComponent));
+            
+            Assert.Throws<ComponentAlreadyExistsException>(() => _entity.AddComponent(_testComponent));
             
             _repositoryMock.Verify(library => library.Contains(_testComponent.GetType()), Times.Once);
             _repositoryMock.Verify(library => library.Add(_testComponent.GetType(), _testComponent), Times.Never);
@@ -85,7 +93,10 @@ namespace IdelPog.ECS.Tests
             _repositoryMock.Setup(library => library.Contains(It.Is<Type>(type => type == _testComponent.GetType())))
                 .Returns(false);
 
-            Assert.Throws<Exception>(() => _entity.RemoveComponent<TestComponent>());
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentNotFoundException>()))
+                .Throws(new ComponentNotFoundException(typeof(TestComponent)));
+
+            Assert.Throws<ComponentNotFoundException>(() => _entity.RemoveComponent<TestComponent>());
             
             _repositoryMock.Verify(library => library.Contains(_testComponent.GetType()), Times.Once);
             _repositoryMock.Verify(library => library.Remove(_testComponent.GetType()), Times.Never);
@@ -115,7 +126,10 @@ namespace IdelPog.ECS.Tests
             _repositoryMock.Setup(library => library.Contains(It.Is<Type>(type => type == _testComponent.GetType())))
                 .Returns(false);
             
-            Assert.Throws<Exception>(() => _entity.GetComponent<TestComponent>());
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentNotFoundException>()))
+                .Throws(new ComponentNotFoundException(typeof(TestComponent)));
+            
+            Assert.Throws<ComponentNotFoundException>(() => _entity.GetComponent<TestComponent>());
             
             _repositoryMock.Verify(library => library.Contains(_testComponent.GetType()), Times.Once);
             _repositoryMock.Verify(library => library.Get(_testComponent.GetType()), Times.Never);

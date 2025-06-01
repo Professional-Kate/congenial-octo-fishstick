@@ -7,7 +7,7 @@ namespace IdelPog.ECS.Assertions
 {
     public class AssertComponentFound(IHandler handler) : BaseAssertion<ComponentNotFoundException>(handler)
     {
-        public void Handle(bool componentWasFound, IComponent componentContext)
+        public void Handle(bool componentWasFound, Type componentContext)
         {
             Assert(() =>
             {
