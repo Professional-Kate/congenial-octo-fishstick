@@ -1,13 +1,14 @@
-﻿using IdelPog.Engine.Models;
-using IdelPog.Engine.Repository;
+﻿using IdelPog.Engine;
+using IdelPog.Engine.Models;
 using IdelPog.Engine.Structures.Enums;
 using IdelPog.Engine.Structures.Types;
+using IdelPog.Infrastructure.Repository;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Exceptions;
+using IdelPogTests.Utils;
 using Moq;
-using ItemFactory = IdelPogTests.Utils.ItemFactory;
 
-namespace IdelPogTests.Repository
+namespace IdelPogTests
 {
     [TestFixture]
     public class InventoryTest
