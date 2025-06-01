@@ -1,5 +1,8 @@
 ﻿using IdelPog.ECS.Component;
 using IdelPog.ECS.Component.Store;
+using IdelPog.ECS.Exceptions;
+using IdelPog.Validation.Assertions.Handlers;
+using Moq;
 
 namespace IdelPog.ECS.Tests
 {
@@ -8,12 +11,14 @@ namespace IdelPog.ECS.Tests
     {
         private ComponentStore<TestComponent> _componentStore;
         private TestComponent _testComponent;
+        private Mock<IHandler> _handlerMock;
 
         [SetUp]
         public void SetUp()
         {
+            _handlerMock = new Mock<IHandler>();
             _testComponent = new TestComponent();
-            _componentStore = new ComponentStore<TestComponent>();
+            _componentStore = new ComponentStore<TestComponent>(_handlerMock.Object);
         }
         
         [Test]
@@ -39,9 +44,12 @@ namespace IdelPog.ECS.Tests
         [Test]
         public void Negative_AddComponent_TwiceSameComponent_Throws()
         {
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentAlreadyExistsException>()))
+                .Throws(new ComponentAlreadyExistsException(_testComponent));
+            
             _componentStore.AddComponent(_testComponent);
             
-            Assert.Throws<Exception>(() => _componentStore.AddComponent(_testComponent));
+            Assert.Throws<ComponentAlreadyExistsException>(() => _componentStore.AddComponent(_testComponent));
         }
 
         [Test]
@@ -73,7 +81,10 @@ namespace IdelPog.ECS.Tests
         [Test]
         public void Negative_RemoveComponent_ComponentNotFound_Throws()
         {
-            Assert.Throws<Exception>(() => _componentStore.RemoveComponent(_testComponent));
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentNotFoundException>()))
+                .Throws(new ComponentNotFoundException(_testComponent.GetType()));
+            
+            Assert.Throws<ComponentNotFoundException>(() => _componentStore.RemoveComponent(_testComponent));
         }
 
         [Test]

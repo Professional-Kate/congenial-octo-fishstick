@@ -1,4 +1,7 @@
-﻿namespace IdelPog.ECS.Component.Store
+﻿using IdelPog.ECS.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
+
+namespace IdelPog.ECS.Component.Store
 {
     /// <summary>
     /// A component store used to group related <see cref="IComponent"/> instances of the same type
@@ -8,9 +11,17 @@
     /// This store returns component references using <see cref="GetAllComponents"/>.
     /// Consumers are expected to mutate the components in place if needed
     /// </remarks>
-    public readonly struct ComponentStore<T>() : IComponent where T : IComponent
+    public sealed class ComponentStore<T> : IComponent where T : IComponent
     {
         private readonly List<T> _components = [];
+        private readonly AssertComponentDoesNotExist _assertComponentDoesNotExist;
+        private readonly AssertComponentFound _assertComponentFound;
+
+        public ComponentStore(IHandler handler)
+        {
+            _assertComponentDoesNotExist = new AssertComponentDoesNotExist(handler);
+            _assertComponentFound = new AssertComponentFound(handler);
+        }
 
         /// <summary>
         /// Add a component to the store. No duplicates will be allowed
@@ -19,7 +30,7 @@
         /// <exception cref="Exception">Thrown if the component already exists in the store</exception>
         public void AddComponent(T component)
         {
-            ThrowIfExists(component);
+            _assertComponentDoesNotExist.Handle(_components.Contains(component), component);
             
             _components.Add(component);
         }
@@ -31,7 +42,7 @@
         /// <exception cref="Exception">Thrown if the component is not present in the store</exception>
         public void RemoveComponent(T component)
         {
-            ThrowIfMissing(component);
+            _assertComponentFound.Handle(_components.Contains(component), component.GetType());
             
             _components.Remove(component);
         }
@@ -44,22 +55,6 @@
         public T[] GetAllComponents()
         {
             return _components.ToArray();
-        }
-
-        private void ThrowIfMissing(T component)
-        {
-            if (_components.Contains(component) == false)
-            {
-                throw new Exception();
-            }
-        }
-
-        private void ThrowIfExists(T component)
-        {
-            if (_components.Contains(component))
-            {
-                throw new Exception();
-            }
         }
     }
 }

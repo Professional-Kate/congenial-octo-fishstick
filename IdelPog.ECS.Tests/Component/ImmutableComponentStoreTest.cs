@@ -1,5 +1,8 @@
 ﻿using IdelPog.ECS.Component;
 using IdelPog.ECS.Component.Store;
+using IdelPog.ECS.Exceptions;
+using IdelPog.Validation.Assertions.Handlers;
+using Moq;
 
 namespace IdelPog.ECS.Tests
 {
@@ -7,10 +10,12 @@ namespace IdelPog.ECS.Tests
     public class ImmutableComponentStoreTest
     {
         private ImmutableComponentStore<TestComponent> _componentStore;
+        private Mock<IHandler> _handlerMock;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            _handlerMock = new Mock<IHandler>();
             SetupComponentStoreWith(10);
         }
 
@@ -23,7 +28,7 @@ namespace IdelPog.ECS.Tests
                 components[i] = new TestComponent { TestNumber = i };
             }
             
-            _componentStore = new ImmutableComponentStore<TestComponent>(components);
+            _componentStore = new ImmutableComponentStore<TestComponent>(components, _handlerMock.Object);
         }
 
         [Test]
@@ -57,13 +62,19 @@ namespace IdelPog.ECS.Tests
         [Test]
         public void Negative_ConstructNewStore_EmptyArray_Throws()
         {
-            Assert.Throws<Exception>(() => new ImmutableComponentStore<TestComponent>([]));
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentArrayEmptyException>()))
+                .Throws(new ComponentArrayEmptyException());
+            
+            Assert.Throws<ComponentArrayEmptyException>(() => new ImmutableComponentStore<TestComponent>([], _handlerMock.Object));
         }
         
         [Test]
         public void Negative_ConstructNewStore_NullArray_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new ImmutableComponentStore<TestComponent>(null!));
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentArrayNullException>()))
+                .Throws(new ComponentArrayNullException());
+            
+            Assert.Throws<ComponentArrayNullException>(() => new ImmutableComponentStore<TestComponent>(null!, _handlerMock.Object));
         }
     }
 }

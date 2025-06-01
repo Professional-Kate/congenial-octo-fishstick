@@ -1,4 +1,7 @@
-﻿namespace IdelPog.ECS.Component.Store
+﻿using IdelPog.ECS.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
+
+namespace IdelPog.ECS.Component.Store
 {
     /// <summary>
     /// A component store used to group related <see cref="IComponent"/> instances of the same type
@@ -11,21 +14,21 @@
     public sealed class ImmutableComponentStore<T> : IComponent where T : ICloneableComponent<T>
     {
         private readonly T[] _components;
-        
+
         /// <summary>
         /// Creates a new store containing the provided components
         /// </summary>
         /// <param name="components">An array of components to store. Must not be null or empty</param>
+        /// <param name="handler">Handler used for controlling assertion failure behavior</param>
         /// <exception cref="ArgumentNullException">Thrown if the passed components are null</exception>
         /// <exception cref="Exception">Thrown if the passed components are empty </exception>
-        public ImmutableComponentStore(T[] components)
+        public ImmutableComponentStore(T[] components, IHandler handler)
         {
-            ArgumentNullException.ThrowIfNull(components);
+            AssertArrayNotEmpty assertArrayNotEmpty = new(handler);
+            AssertArrayNotNull assertArrayNotNull = new(handler);
             
-            if (components.Length == 0)
-            {
-                throw new Exception();
-            }
+            assertArrayNotNull.Handle(components);
+            assertArrayNotEmpty.Handle(components.Length > 0);
             
             _components = components.ToArray();
         }

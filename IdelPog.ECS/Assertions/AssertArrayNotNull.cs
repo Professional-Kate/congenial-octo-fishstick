@@ -6,11 +6,11 @@ namespace IdelPog.ECS.Assertions
 {
     public class AssertArrayNotNull(IHandler handler) : BaseAssertion<ComponentArrayNullException>(handler)
     {
-        public void Handle(bool arrayNotNull)
+        public void Handle<T>(T[]? arrayNotNull)
         {
             Assert(() =>
             {
-                if (arrayNotNull == false)
+                if (arrayNotNull == null)
                 {
                     throw new ComponentArrayNullException();
                 }
