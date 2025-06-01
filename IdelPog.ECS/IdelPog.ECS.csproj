@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\IdelPog.Infrastructure\IdelPog.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>
