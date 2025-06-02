@@ -8,4 +8,7 @@
             <PrivateAssets>All</PrivateAssets>
         </PackageReference>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\IdelPog.ECS\IdelPog.ECS.csproj" />
+    </ItemGroup>
 </Project>
