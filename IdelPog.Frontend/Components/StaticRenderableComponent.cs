@@ -3,7 +3,7 @@ using IdelPog.ECS.Component;
 
 namespace Frontend.Components
 {
-    public struct StaticRenderableComponent(RenderEntity renderEntity) : ICloneableComponent<StaticRenderableComponent>
+    public readonly struct StaticRenderableComponent(RenderEntity renderEntity) : ICloneableComponent<StaticRenderableComponent>
     {
         public RenderEntity GetRenderEntity => _cloneRenderEntity;
         

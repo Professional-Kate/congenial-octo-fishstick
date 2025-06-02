@@ -11,13 +11,15 @@ namespace IdelPog.ECS
         private readonly IRepository<Type, IComponent> _componentRepository;
         private readonly AssertComponentDoesNotExist _assertComponentDoesNotExist;
         private readonly AssertComponentFound _assertComponentFound;
+        protected readonly IHandler Handler;
 
         protected Entity(IRepository<Type, IComponent> components, IHandler handler)
         {
             _componentRepository = components;
+            Handler = handler;
             
-            _assertComponentDoesNotExist = new AssertComponentDoesNotExist(handler);
-            _assertComponentFound = new AssertComponentFound(handler);
+            _assertComponentDoesNotExist = new AssertComponentDoesNotExist(Handler);
+            _assertComponentFound = new AssertComponentFound(Handler);
         }
 
         /// <summary>
