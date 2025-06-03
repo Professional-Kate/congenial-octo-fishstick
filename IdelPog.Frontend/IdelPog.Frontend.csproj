@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
         <RootNamespace>Frontend</RootNamespace>
+        <OutputType>WinExe</OutputType>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105">
-            <PrivateAssets>All</PrivateAssets>
-        </PackageReference>
+        <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.2.1105"/>
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\IdelPog.ECS\IdelPog.ECS.csproj" />
