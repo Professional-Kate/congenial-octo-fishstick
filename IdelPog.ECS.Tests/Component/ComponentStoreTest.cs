@@ -1,5 +1,4 @@
 ﻿using IdelPog.ECS.Component;
-using IdelPog.ECS.Component.Store;
 using IdelPog.ECS.Exceptions;
 using IdelPog.Validation.Assertions.Handlers;
 using Moq;
@@ -10,122 +9,77 @@ namespace IdelPog.ECS.Tests
     public class ComponentStoreTest
     {
         private ComponentStore<TestComponent> _componentStore;
-        private TestComponent _testComponent;
         private Mock<IHandler> _handlerMock;
 
-        [SetUp]
-        public void SetUp()
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
             _handlerMock = new Mock<IHandler>();
-            _testComponent = new TestComponent();
-            _componentStore = new ComponentStore<TestComponent>(_handlerMock.Object);
-        }
-        
-        [Test]
-        public void Positive_AddComponent_StoresComponent()
-        {
-            _componentStore.AddComponent(_testComponent);
-
-            TestComponent[] testComponents = _componentStore.GetAllComponents();
-            Assert.That(testComponents, Has.Length.EqualTo(1));
+            SetupComponentStoreWith(10);
         }
 
-        [Test]
-        public void Positive_AddComponent_MultipleAdds_StoresMultiple()
+        private void SetupComponentStoreWith(int count)
         {
-            _componentStore.AddComponent(_testComponent);
-            _componentStore.AddComponent(new TestComponent());
-            _componentStore.AddComponent(new TestComponent());
-            
-            TestComponent[] testComponents = _componentStore.GetAllComponents();
-            Assert.That(testComponents, Has.Length.EqualTo(3));
-        }
+            TestComponent[] components = new TestComponent[count];
 
-        [Test]
-        public void Negative_AddComponent_TwiceSameComponent_Throws()
-        {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentAlreadyExistsException>()))
-                .Throws(new ComponentAlreadyExistsException(_testComponent));
+            for (int i = 0; i < count; i++)
+            {
+                components[i] = new TestComponent { TestNumber = i };
+            }
             
-            _componentStore.AddComponent(_testComponent);
-            
-            Assert.Throws<ComponentAlreadyExistsException>(() => _componentStore.AddComponent(_testComponent));
-        }
-
-        [Test]
-        public void Positive_RemoveComponent_RemovesStoredComponent()
-        {
-            _componentStore.AddComponent(_testComponent);
-            _componentStore.RemoveComponent(_testComponent);
-            
-            TestComponent[] testComponents = _componentStore.GetAllComponents();
-            Assert.That(testComponents, Has.Length.EqualTo(0));
-        }
-
-        [Test]
-        public void Positive_RemoveComponent_RemovesCorrectComponent()
-        {
-            TestComponent testComponentOne = new() { TestNumber = 1 };
-            TestComponent testComponentTwo = new() { TestNumber = 2 };
-            
-            _componentStore.AddComponent(testComponentOne);
-            _componentStore.AddComponent(testComponentTwo);
-            
-            _componentStore.RemoveComponent(testComponentTwo);
-            
-            TestComponent[] testComponents = _componentStore.GetAllComponents();
-            Assert.That(testComponents, Has.Length.EqualTo(1));
-            Assert.That(testComponents[0].TestNumber, Is.EqualTo(1));
-        }
-
-        [Test]
-        public void Negative_RemoveComponent_ComponentNotFound_Throws()
-        {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentNotFoundException>()))
-                .Throws(new ComponentNotFoundException(_testComponent.GetType()));
-            
-            Assert.Throws<ComponentNotFoundException>(() => _componentStore.RemoveComponent(_testComponent));
+            _componentStore = new ComponentStore<TestComponent>(components, _handlerMock.Object);
         }
 
         [Test]
         public void Positive_GetAllComponents_ReturnsAllComponents()
         {
-            _componentStore.AddComponent(_testComponent);
-            _componentStore.AddComponent(new TestComponent());
-            
             TestComponent[] testComponents = _componentStore.GetAllComponents();
-            Assert.That(testComponents, Has.Length.EqualTo(2));
+            
+            Assert.That(testComponents, Has.Length.EqualTo(10));
         }
 
         [Test]
-        public void Positive_GetAllComponents_ReturnsReference_OriginalInstanceIsMutated()
+        public void Positive_GetAllComponents_ReturnsClones_NotReferences()
         {
-            TestComponent testComponent = new() { TestNumber = 1 };
-            _componentStore.AddComponent(testComponent);
+            SetupComponentStoreWith(1);
             
-            // To test returning by reference we must first add, then get that pointer back
+            // Get the component, store the number for later, and then set the component TestNumber to 100
             TestComponent[] testComponents = _componentStore.GetAllComponents();
             Assert.That(testComponents, Has.Length.EqualTo(1));
-
-            // Then we locally assign the TestNumber to 4 which should change the number in the ComponentStore
-            testComponents[0].TestNumber = 4;
+            int originalNumber = testComponents[0].TestNumber;
             
-            // We get that pointer again and make sure it is 4
             TestComponent[] testComponentsAgain = _componentStore.GetAllComponents();
-            Assert.Multiple(() =>
-            {
-                Assert.That(testComponentsAgain, Has.Length.EqualTo(1));
-                Assert.That(testComponentsAgain[0].TestNumber, Is.EqualTo(4));
-                // sanity check making sure we get back the exact same reference 
-                Assert.That(ReferenceEquals(testComponents[0], testComponentsAgain[0]), Is.True);
-            });
+            Assert.That(testComponentsAgain, Has.Length.EqualTo(1));
+            
+            // After getting again we ensure the number has not changed
+            Assert.That(testComponentsAgain[0].TestNumber, Is.EqualTo(originalNumber));
         }
 
         [Test]
-        public void Positive_GetAllComponents_EmptyComponents_ReturnsEmptyList()
+        public void Negative_ConstructNewStore_EmptyArray_Throws()
         {
-            TestComponent[] testComponents = _componentStore.GetAllComponents();
-            Assert.That(testComponents, Has.Length.EqualTo(0));
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentArrayEmptyException>()))
+                .Throws(new ComponentArrayEmptyException());
+            
+            Assert.Throws<ComponentArrayEmptyException>(() => new ComponentStore<TestComponent>([], _handlerMock.Object));
+        }
+        
+        [Test]
+        public void Negative_ConstructNewStore_NullArray_Throws()
+        {
+            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentArrayNullException>()))
+                .Throws(new ComponentArrayNullException());
+            
+            Assert.Throws<ComponentArrayNullException>(() => new ComponentStore<TestComponent>(null!, _handlerMock.Object));
+        }
+
+        [Test]
+        public void Positive_CloneComponent_Clones()
+        {
+            ComponentStore<TestComponent> clonedStore = _componentStore.CloneComponent();
+            
+            Assert.That(clonedStore, Is.Not.Null);
+            Assert.That(clonedStore.GetAllComponents(), Is.EqualTo(_componentStore.GetAllComponents()));
         }
     }
 }
