@@ -2,11 +2,11 @@
 
 namespace IdelPog.ECS.Tests
 {
-    public class TestComponent : ICloneableComponent<TestComponent>
+    public readonly record struct TestComponent : IComponent<TestComponent>
     {
-        public int TestNumber { get; set; }
+        public int TestNumber { get; init; }
         
-        public TestComponent Clone()
+        public TestComponent CloneComponent()
         {
             return new TestComponent { TestNumber = TestNumber };
         }

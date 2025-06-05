@@ -4,7 +4,6 @@ using IdelPog.Infrastructure.Repository;
 using IdelPog.Infrastructure.Structures;
 using IdelPog.Validation.Assertions.Handlers;
 using Moq;
-using NUnit.Framework.Internal;
 
 namespace IdelPog.ECS.Tests
 {
@@ -113,7 +112,6 @@ namespace IdelPog.ECS.Tests
             
             TestComponent component = _entity.GetComponent<TestComponent>();
             
-            Assert.That(component, Is.Not.Null);
             Assert.That(component, Is.EqualTo(_testComponent));
             
             _repositoryMock.Verify(library => library.Contains(_testComponent.GetType()), Times.Once);

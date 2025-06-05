@@ -48,9 +48,6 @@ namespace IdelPog.ECS.Tests
             TestComponent[] testComponents = _componentStore.GetAllComponents();
             Assert.That(testComponents, Has.Length.EqualTo(1));
             int originalNumber = testComponents[0].TestNumber;
-
-            // This should only change this local TestComponent. Not the one in the store 
-            testComponents[0].TestNumber = 100;
             
             TestComponent[] testComponentsAgain = _componentStore.GetAllComponents();
             Assert.That(testComponentsAgain, Has.Length.EqualTo(1));
@@ -75,6 +72,15 @@ namespace IdelPog.ECS.Tests
                 .Throws(new ComponentArrayNullException());
             
             Assert.Throws<ComponentArrayNullException>(() => new ImmutableComponentStore<TestComponent>(null!, _handlerMock.Object));
+        }
+
+        [Test]
+        public void Positive_CloneComponent_Clones()
+        {
+            ImmutableComponentStore<TestComponent> clonedStore = _componentStore.CloneComponent();
+            
+            Assert.That(clonedStore, Is.Not.Null);
+            Assert.That(clonedStore.GetAllComponents(), Is.EqualTo(_componentStore.GetAllComponents()));
         }
     }
 }

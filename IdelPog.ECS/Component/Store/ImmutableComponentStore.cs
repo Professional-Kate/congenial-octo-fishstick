@@ -5,16 +5,17 @@ using IdelPog.Validation.Assertions.Handlers;
 namespace IdelPog.ECS.Component.Store
 {
     /// <summary>
-    /// A component store used to group related <see cref="IComponent"/> instances of the same type
+    /// A component store used to group related <see cref="IComponent{TComponent}"/> instances of the same type
     /// </summary>
-    /// <typeparam name="T">The component type this store holds. Must implement <see cref="ICloneableComponent{T}"/></typeparam>
+    /// <typeparam name="T">The component type this store holds. Must implement <see cref="IComponent{TComponent}"/></typeparam>
     /// <remarks>
     /// This store returns cloned components using <see cref="GetAllComponents"/> to ensure immutability.
     /// Consumers are not expected to mutate the returned components in a way that affects the store
     /// </remarks>
-    public sealed class ImmutableComponentStore<T> : IComponent where T : ICloneableComponent<T>
+    public sealed class ImmutableComponentStore<T> : IComponent<ImmutableComponentStore<T>> where T : IComponent<T>
     {
         private readonly T[] _components;
+        private readonly IHandler _handler;
 
         /// <summary>
         /// Creates a new store containing the provided components
@@ -25,13 +26,14 @@ namespace IdelPog.ECS.Component.Store
         /// <exception cref="ComponentArrayEmptyException">Thrown if the passed components are empty </exception>
         public ImmutableComponentStore(T[] components, IHandler handler)
         {
-            AssertArrayNotEmpty assertArrayNotEmpty = new(handler);
-            AssertArrayNotNull assertArrayNotNull = new(handler);
+            _handler = handler;
+            AssertArrayNotEmpty assertArrayNotEmpty = new(_handler);
+            AssertArrayNotNull assertArrayNotNull = new(_handler);
             
             assertArrayNotNull.Handle(components);
             assertArrayNotEmpty.Handle(components.Length > 0);
             
-            _components = components.ToArray();
+            _components = components;
         }
         
         /// <summary>
@@ -49,10 +51,15 @@ namespace IdelPog.ECS.Component.Store
 
             for (int i = 0; i < _components.Length; i++)
             {
-                clones[i] = _components[i].Clone();    
+                clones[i] = (T) _components[i].CloneComponent();    
             }
             
             return clones;
+        }
+
+        public ImmutableComponentStore<T> CloneComponent()
+        {
+            return new ImmutableComponentStore<T>(_components, _handler);
         }
     }
 }
