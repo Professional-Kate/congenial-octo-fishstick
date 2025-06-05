@@ -51,7 +51,7 @@ namespace IdelPog.ECS.Component
 
             for (int i = 0; i < _components.Length; i++)
             {
-                clones[i] = (T) _components[i].CloneComponent();    
+                clones[i] = _components[i].CloneComponent();    
             }
             
             return clones;
