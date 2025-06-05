@@ -1,15 +1,10 @@
-﻿using Frontend.Rendering;
+﻿using Frontend.Enums;
 using IdelPog.ECS.Component;
 
 namespace Frontend.Components
 {
-    public class RenderableComponent : IComponent
+    public readonly record struct RenderableComponent : IComponent
     {
-        public readonly RenderEntity RenderEntity;
-
-        public RenderableComponent(RenderEntity renderEntity)
-        {
-            RenderEntity = renderEntity;
-        }
+        public required TextureID TextureID { get; init; }
     }
 }

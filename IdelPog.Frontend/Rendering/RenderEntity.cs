@@ -1,5 +1,6 @@
-﻿using System.Numerics;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Vector2 = System.Numerics.Vector2;
 
 namespace Frontend.Rendering
 {
@@ -8,6 +9,8 @@ namespace Frontend.Rendering
         public required Texture2D Texture { get; init; }
         public required Vector2 Position { get; init; }
         
+        public required Color Tint { get; init; } = Color.White;
+        
         /// <summary>
         /// Optional parameter to define a scale multiplier for the texture.
         /// If not provided, will default to <see cref="Vector2.One"/> 
@@ -15,5 +18,7 @@ namespace Frontend.Rendering
         /// <remarks>
         /// Using <see cref="Vector2.One"/> as the default means the texture is drawn at its original width and height </remarks>
         public Vector2 Size { get; init; } = Vector2.One;
+        
+        
     }
 }

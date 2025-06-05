@@ -1,4 +1,5 @@
 ﻿using System;
+using Frontend.Components;
 using Frontend.Orchestration;
 
 namespace Frontend.Controllers

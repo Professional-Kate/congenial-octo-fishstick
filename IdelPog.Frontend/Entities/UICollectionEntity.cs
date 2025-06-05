@@ -1,5 +1,6 @@
 ﻿using System;
 using Frontend.Components;
+using Frontend.Rendering;
 using IdelPog.ECS;
 using IdelPog.ECS.Component;
 using IdelPog.ECS.Component.Store;
@@ -17,7 +18,7 @@ namespace Frontend.Entities
 
         protected override void AddRequiredComponents()
         {
-            AddComponent(new ImmutableComponentStore<StaticRenderableComponent>([], Handler));
+            AddComponent(new ImmutableComponentStore<RenderableComponent>([], Handler));
         }
     }
 }
