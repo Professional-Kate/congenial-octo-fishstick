@@ -59,7 +59,7 @@ namespace IdelPog.ECS.Component
 
         public ComponentStore<T> CloneComponent()
         {
-            return new ComponentStore<T>(_components, _handler);
+            return new ComponentStore<T>(_components.ToArray(), _handler);
         }
     }
 }
