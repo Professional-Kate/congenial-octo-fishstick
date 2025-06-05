@@ -2,7 +2,7 @@
 using IdelPog.ECS.Exceptions;
 using IdelPog.Validation.Assertions.Handlers;
 
-namespace IdelPog.ECS.Component.Store
+namespace IdelPog.ECS.Component
 {
     /// <summary>
     /// A component store used to group related <see cref="IComponent{TComponent}"/> instances of the same type
@@ -12,7 +12,7 @@ namespace IdelPog.ECS.Component.Store
     /// This store returns cloned components using <see cref="GetAllComponents"/> to ensure immutability.
     /// Consumers are not expected to mutate the returned components in a way that affects the store
     /// </remarks>
-    public sealed class ImmutableComponentStore<T> : IComponent<ImmutableComponentStore<T>> where T : IComponent<T>
+    public sealed class ComponentStore<T> : IComponent<ComponentStore<T>> where T : IComponent<T>
     {
         private readonly T[] _components;
         private readonly IHandler _handler;
@@ -24,7 +24,7 @@ namespace IdelPog.ECS.Component.Store
         /// <param name="handler">Handler used for controlling assertion failure behavior</param>
         /// <exception cref="ComponentArrayNullException">Thrown if the passed components are null</exception>
         /// <exception cref="ComponentArrayEmptyException">Thrown if the passed components are empty </exception>
-        public ImmutableComponentStore(T[] components, IHandler handler)
+        public ComponentStore(T[] components, IHandler handler)
         {
             _handler = handler;
             AssertArrayNotEmpty assertArrayNotEmpty = new(_handler);
@@ -57,9 +57,9 @@ namespace IdelPog.ECS.Component.Store
             return clones;
         }
 
-        public ImmutableComponentStore<T> CloneComponent()
+        public ComponentStore<T> CloneComponent()
         {
-            return new ImmutableComponentStore<T>(_components, _handler);
+            return new ComponentStore<T>(_components, _handler);
         }
     }
 }

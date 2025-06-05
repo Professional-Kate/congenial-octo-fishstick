@@ -1,5 +1,4 @@
 ﻿using IdelPog.ECS.Component;
-using IdelPog.ECS.Component.Store;
 using IdelPog.ECS.Exceptions;
 using IdelPog.Validation.Assertions.Handlers;
 using Moq;
@@ -7,9 +6,9 @@ using Moq;
 namespace IdelPog.ECS.Tests
 {
     [TestFixture]
-    public class ImmutableComponentStoreTest
+    public class ComponentStoreTest
     {
-        private ImmutableComponentStore<TestComponent> _componentStore;
+        private ComponentStore<TestComponent> _componentStore;
         private Mock<IHandler> _handlerMock;
 
         [OneTimeSetUp]
@@ -28,7 +27,7 @@ namespace IdelPog.ECS.Tests
                 components[i] = new TestComponent { TestNumber = i };
             }
             
-            _componentStore = new ImmutableComponentStore<TestComponent>(components, _handlerMock.Object);
+            _componentStore = new ComponentStore<TestComponent>(components, _handlerMock.Object);
         }
 
         [Test]
@@ -62,7 +61,7 @@ namespace IdelPog.ECS.Tests
             _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentArrayEmptyException>()))
                 .Throws(new ComponentArrayEmptyException());
             
-            Assert.Throws<ComponentArrayEmptyException>(() => new ImmutableComponentStore<TestComponent>([], _handlerMock.Object));
+            Assert.Throws<ComponentArrayEmptyException>(() => new ComponentStore<TestComponent>([], _handlerMock.Object));
         }
         
         [Test]
@@ -71,13 +70,13 @@ namespace IdelPog.ECS.Tests
             _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentArrayNullException>()))
                 .Throws(new ComponentArrayNullException());
             
-            Assert.Throws<ComponentArrayNullException>(() => new ImmutableComponentStore<TestComponent>(null!, _handlerMock.Object));
+            Assert.Throws<ComponentArrayNullException>(() => new ComponentStore<TestComponent>(null!, _handlerMock.Object));
         }
 
         [Test]
         public void Positive_CloneComponent_Clones()
         {
-            ImmutableComponentStore<TestComponent> clonedStore = _componentStore.CloneComponent();
+            ComponentStore<TestComponent> clonedStore = _componentStore.CloneComponent();
             
             Assert.That(clonedStore, Is.Not.Null);
             Assert.That(clonedStore.GetAllComponents(), Is.EqualTo(_componentStore.GetAllComponents()));
