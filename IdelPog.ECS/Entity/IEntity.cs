@@ -41,6 +41,6 @@ namespace IdelPog.ECS
         /// <returns>
         /// An <see cref="Optional{T}"/> containing the component if it exists, or empty if not found
         /// </returns>
-        public Optional<T> TryGetComponent<T>() where T : class, IComponent;
+        public Optional<T> TryGetComponent<T>() where T : struct, IComponent;
     }
 }

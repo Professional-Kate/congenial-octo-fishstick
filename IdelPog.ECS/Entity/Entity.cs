@@ -54,7 +54,7 @@ namespace IdelPog.ECS
             return (T) _componentRepository.Get(typeof(T));
         }
 
-        public Optional<T> TryGetComponent<T>() where T : class, IComponent
+        public Optional<T> TryGetComponent<T>() where T : struct, IComponent
         {
             bool contains = _componentRepository.Contains(typeof(T));
 

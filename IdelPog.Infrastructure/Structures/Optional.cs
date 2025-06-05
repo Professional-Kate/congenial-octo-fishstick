@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.Infrastructure.Structures
 {
-    public readonly struct Optional<T> where T : class
+    public readonly struct Optional<T>
     {
         private readonly T _value;
         public bool HasValue { get; }
