@@ -1,9 +1,7 @@
 ﻿using System;
 using Frontend.Components;
-using Frontend.Rendering;
 using IdelPog.ECS;
 using IdelPog.ECS.Component;
-using IdelPog.ECS.Component.Store;
 using IdelPog.Infrastructure.Repository;
 using IdelPog.Validation.Assertions.Handlers;
 
@@ -18,7 +16,7 @@ namespace Frontend.Entities
 
         protected override void AddRequiredComponents()
         {
-            AddComponent(new ImmutableComponentStore<RenderableComponent>([], Handler));
+            AddComponent(new ComponentStore<RenderableComponent>([], Handler));
         }
     }
 }
