@@ -52,17 +52,17 @@ namespace IdelPog.ECS
             return _componentMap.Get<T>();
         }
 
-        public Optional<IComponent> TryGetComponent<T>() where T : IComponent
+        public Optional<T> TryGetComponent<T>() where T : IComponent
         {
             bool contains = _componentMap.Contains<T>();
 
             if (contains == false)
             {
-                return Optional<IComponent>.None;
+                return Optional<T>.None;
             }
             
-            IComponent component = (T) _componentMap.Get<T>();
-            return new Optional<IComponent>(component);
+            T component = (T) _componentMap.Get<T>();
+            return new Optional<T>(component);
         }
     }
 }

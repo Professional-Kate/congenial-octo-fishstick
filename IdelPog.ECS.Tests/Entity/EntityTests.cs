@@ -40,7 +40,7 @@ namespace IdelPog.ECS.Tests
             _componentMapMock.Setup(library => library.Get<TestComponent>())
                 .Returns(_testComponent);
             
-            Optional<IComponent> maybeComponent = _entity.TryGetComponent<TestComponent>();
+            Optional<TestComponent> maybeComponent = _entity.TryGetComponent<TestComponent>();
             Assert.Multiple(() =>
             {
                 Assert.That(maybeComponent.HasValue, Is.True);
@@ -143,7 +143,7 @@ namespace IdelPog.ECS.Tests
             _componentMapMock.Setup(library => library.Get<IComponent>())
                 .Returns(_testComponent);
             
-            Optional<IComponent> contains = _entity.TryGetComponent<TestComponent>();
+            Optional<TestComponent> contains = _entity.TryGetComponent<TestComponent>();
             Assert.Multiple(() =>
             {
                 Assert.That(contains.HasValue, Is.True);
@@ -160,7 +160,7 @@ namespace IdelPog.ECS.Tests
             _componentMapMock.Setup(library => library.Contains<TestComponent>())
                 .Returns(false);
             
-            Optional<IComponent> contains = _entity.TryGetComponent<TestComponent>();
+            Optional<TestComponent> contains = _entity.TryGetComponent<TestComponent>();
             Assert.That(contains.HasValue, Is.False);
             
             _componentMapMock.Verify(library => library.Contains<TestComponent>(), Times.Once);
