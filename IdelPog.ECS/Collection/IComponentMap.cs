@@ -2,6 +2,7 @@
 
 namespace IdelPog.ECS.Collection
 {
+    // TODO: docs here 
     public interface IComponentMap
     {
         public void Add(params IComponent[] components);

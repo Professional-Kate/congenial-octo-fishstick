@@ -5,6 +5,7 @@ using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.ECS.Collection
 {
+    /// <inheritdoc cref="IComponentMap"/>
     public class ComponentMap : IComponentMap
     {
         private readonly Dictionary<Type, IComponent> _components = new();
