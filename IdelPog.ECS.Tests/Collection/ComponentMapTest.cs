@@ -1,8 +1,9 @@
 ﻿using IdelPog.ECS.Collection;
 using IdelPog.ECS.Component;
+using IdelPog.ECS.Exceptions;
 using IdelPog.Validation.Assertions.Handlers;
 
-namespace IdelPog.ECS.Tests.Collection
+namespace IdelPog.ECS.Tests
 {
     [TestFixture]
     public class ComponentMapTest
@@ -15,8 +16,8 @@ namespace IdelPog.ECS.Tests.Collection
         public void Setup()
         {
             _componentMap = new ComponentMap();
-            _componentStore = new ComponentStore<TestComponent>([_testComponent], new ThrowHandler());
             _testComponent = new TestComponent { TestNumber = 1 };
+            _componentStore = new ComponentStore<TestComponent>([_testComponent], new ThrowHandler());
         }
 
         private void AssertMapContains(IComponent component, bool expectedContains)
@@ -119,36 +120,36 @@ namespace IdelPog.ECS.Tests.Collection
         }
 
         [Test]
-        public void Negative_Add_ComponentNotFound_Throws()
+        public void Negative_Add_ComponentAlreadyExists_Throws()
         {
             _componentMap.Add(_testComponent);
-            Assert.Throws<Exception>(() => _componentMap.Add(_testComponent));
+            Assert.Throws<ComponentAlreadyExistsException>(() => _componentMap.Add(_testComponent));
         }
 
         [Test]
         public void Negative_Add_NullComponent_Throws()
         {
             IComponent? component = null;
-            Assert.Throws<Exception>(() => _componentMap.Add(component!));
+            Assert.Throws<ArgumentNullException>(() => _componentMap.Add(component!));
         }
 
       
         [Test]
         public void Negative_AddArray_EmptyArray_Throws()
         {
-            Assert.Throws<Exception>(() => _componentMap.Add([]));
+            Assert.Throws<ComponentArrayEmptyException>(() => _componentMap.Add([]));
         }
         
         [Test]
         public void Negative_AddArray_NullArray_Throws()
         {
-            Assert.Throws<Exception>(() => _componentMap.Add([null!, null!]));
+            Assert.Throws<ArgumentNullException>(() => _componentMap.Add([null!, null!]));
         }
 
         [Test]
         public void Negative_AddArray_DuplicateComponents_Throws()
         {
-            Assert.Throws<Exception>(() => _componentMap.Add([_testComponent, _componentStore, _testComponent]));
+            Assert.Throws<ComponentAlreadyExistsException>(() => _componentMap.Add([_testComponent, _testComponent]));
         }
 
         [Test]
@@ -156,13 +157,13 @@ namespace IdelPog.ECS.Tests.Collection
         {
             _componentMap.Add(_componentStore);
             
-            Assert.Throws<Exception>(() => _componentMap.Remove<TestComponent>());
+            Assert.Throws<ComponentNotFoundException>(() => _componentMap.Remove<TestComponent>());
         }
         
         [Test]
         public void Negative_Get_TypeNotFound_Throws()
         {
-            Assert.Throws<Exception>(() => _componentMap.Get<TestComponent>());
+            Assert.Throws<ComponentNotFoundException>(() => _componentMap.Get<TestComponent>());
         }
     }
 }

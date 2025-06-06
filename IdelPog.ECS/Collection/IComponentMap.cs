@@ -4,9 +4,7 @@ namespace IdelPog.ECS.Collection
 {
     public interface IComponentMap
     {
-        public void Add(IComponent component);
-        
-        public void Add(IComponent[] components);
+        public void Add(params IComponent[] components);
         
         public void Remove<T>();
         

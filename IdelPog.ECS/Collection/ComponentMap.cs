@@ -1,66 +1,55 @@
-﻿using IdelPog.ECS.Component;
+﻿using IdelPog.ECS.Assertions;
+using IdelPog.ECS.Component;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.ECS.Collection
 {
     public class ComponentMap : IComponentMap
     {
         private readonly Dictionary<Type, IComponent> _components = new();
-        
-        public void Add(IComponent component)
+        private readonly AssertComponentFound _assertComponentFound;
+        private readonly AssertComponentDoesNotExist _assertComponentDoesNotExist;
+        private readonly AssertArrayNotEmpty _assertArrayNotEmpty;
+        private readonly AssertNotNull _assertNotNull;
+
+        public ComponentMap()
         {
-            if (component == null)
-            {
-                throw new Exception();
-            }
-            
-            if (_components.ContainsKey(component.GetType()))
-            {
-                throw new Exception();
-            }
-            
-            _components.Add(component.GetType(), component);
+            _assertComponentFound = new AssertComponentFound(new ThrowHandler());
+            _assertComponentDoesNotExist = new AssertComponentDoesNotExist(new ThrowHandler());
+            _assertArrayNotEmpty = new AssertArrayNotEmpty(new ThrowHandler());
+            _assertNotNull = new AssertNotNull(new ThrowHandler());
         }
 
-        public void Add(IComponent[] components)
+        public ComponentMap(AssertComponentFound assertComponentFound, AssertComponentDoesNotExist assertComponentDoesNotExist, AssertArrayNotEmpty assertArrayNotEmpty, AssertNotNull assertNotNull)
         {
-            if (components.Length == 0)
-            {
-                throw new Exception();
-            }
+            _assertComponentFound = assertComponentFound;
+            _assertComponentDoesNotExist = assertComponentDoesNotExist;
+            _assertArrayNotEmpty = assertArrayNotEmpty;
+            _assertNotNull = assertNotNull;
+        }
+        
+        public void Add(params IComponent[] components)
+        {
+           _assertArrayNotEmpty.Handle(components.Length > 0);
             
             foreach (IComponent component in components)
             {
-                if (component == null)
-                {
-                    throw new Exception();
-                }
-
-                if (_components.ContainsKey(component.GetType()))
-                {
-                    throw new Exception();
-                }
-                
+                _assertNotNull.AssertObjectNotNull(component);
+                _assertComponentDoesNotExist.Handle(_components.ContainsKey(component.GetType()), component.GetType());
                 _components.Add(component.GetType(), component);
             }
         }
 
         public void Remove<T>()
         {
-            if (_components.ContainsKey(typeof(T)) == false)
-            {
-                throw new Exception();
-            }
-            
+            _assertComponentFound.Handle(_components.ContainsKey(typeof(T)), typeof(T));
             _components.Remove(typeof(T));
         }
 
         public IComponent Get<T>()
         {
-            if (_components.ContainsKey(typeof(T)) == false) 
-            {
-                throw new Exception();
-            }
-            
+            _assertComponentFound.Handle(_components.ContainsKey(typeof(T)), typeof(T));
             return _components[typeof(T)];
         }
 
@@ -69,9 +58,9 @@ namespace IdelPog.ECS.Collection
             return _components.ContainsKey(typeof(T));
         }
 
-        public bool Contains(IComponent type)
+        public bool Contains(IComponent component)
         {
-            return _components.ContainsKey(type.GetType());
+            return _components.ContainsKey(component.GetType());
         }
     }
 }
