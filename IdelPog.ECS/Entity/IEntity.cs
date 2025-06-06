@@ -18,7 +18,7 @@ namespace IdelPog.ECS
         /// <param name="component">The component to add</param>
         /// <exception cref="ComponentAlreadyExistsException"> Thrown if a component of the same type already exists on this entity </exception>
         public void AddComponent(IComponent component);
-        
+
         /// <summary>
         /// Removes a component from this entity by type
         /// </summary>
@@ -32,7 +32,7 @@ namespace IdelPog.ECS
         /// <typeparam name="T">The component type to retrieve</typeparam>
         /// <returns>The requested component</returns>
         /// <exception cref="ComponentNotFoundException"> Thrown if the component of type <typeparamref name="T"/> does not exist on this entity </exception>
-        public T GetComponent<T>() where T : IComponent;
+        public IComponent GetComponent<T>() where T : IComponent;
 
         /// <summary>
         /// Attempts to retrieve a component from this entity by type
@@ -41,6 +41,6 @@ namespace IdelPog.ECS
         /// <returns>
         /// An <see cref="Optional{T}"/> containing the component if it exists, or empty if not found
         /// </returns>
-        public Optional<T> TryGetComponent<T>() where T : struct, IComponent;
+        public Optional<IComponent> TryGetComponent<T>() where T : IComponent;
     }
 }

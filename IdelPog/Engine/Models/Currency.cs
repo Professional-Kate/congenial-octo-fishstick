@@ -17,7 +17,7 @@ namespace IdelPog.Engine.Models
             Amount = amount;
         }
 
-        public Currency Clone()
+        public Currency DeepClone()
         {
             return new Currency(CurrencyType, Amount);
         }

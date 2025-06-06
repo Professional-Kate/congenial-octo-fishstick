@@ -76,7 +76,7 @@ namespace IdelPog.ECS.Tests
         [Test]
         public void Positive_CloneComponent_Clones()
         {
-            ComponentStore<TestComponent> clonedStore = _componentStore.CloneComponent();
+            ComponentStore<TestComponent> clonedStore = _componentStore.DeepClone();
             
             Assert.That(clonedStore, Is.Not.Null);
             Assert.That(clonedStore.GetAllComponents(), Is.EqualTo(_componentStore.GetAllComponents()));

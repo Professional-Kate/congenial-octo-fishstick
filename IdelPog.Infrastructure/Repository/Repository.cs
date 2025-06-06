@@ -35,7 +35,7 @@ namespace IdelPog.Infrastructure.Repository
         {
             AssertKeyExists(key);
             
-            T entity = _repository[key].Clone();
+            T entity = _repository[key].DeepClone();
             
             OnGet(key.GetHashCode(), entity);
             return entity;

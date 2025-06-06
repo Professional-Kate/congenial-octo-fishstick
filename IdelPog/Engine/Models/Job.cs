@@ -13,7 +13,7 @@ namespace IdelPog.Engine.Models
         public readonly Information Information = information;
         public readonly JobType JobType = jobType;
 
-        public Job Clone()
+        public Job DeepClone()
         {
             return new Job(Levelable, JobType, Information);
         }
