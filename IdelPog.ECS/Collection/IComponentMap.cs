@@ -6,6 +6,8 @@ namespace IdelPog.ECS.Collection
     {
         public void Add(IComponent component);
         
+        public void Add(IComponent[] components);
+        
         public void Remove<T>();
         
         public IComponent Get<T>();

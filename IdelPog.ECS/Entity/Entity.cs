@@ -12,23 +12,21 @@ namespace IdelPog.ECS
         private readonly AssertComponentDoesNotExist _assertComponentDoesNotExist;
         private readonly AssertComponentFound _assertComponentFound;
 
+        protected Entity(params IComponent[] requiredComponents)
+        {
+            _componentMap = new ComponentMap();
+            _assertComponentFound = new AssertComponentFound(new ThrowHandler());
+            _assertComponentDoesNotExist = new AssertComponentDoesNotExist(new ThrowHandler());
+            
+            _componentMap.Add(requiredComponents);
+        }
+
         protected Entity(IComponentMap componentMap, IHandler handler)
         {
             _componentMap = componentMap;
             
             _assertComponentDoesNotExist = new AssertComponentDoesNotExist(handler);
             _assertComponentFound = new AssertComponentFound(handler);
-        }
-
-        /// <summary>
-        /// Use <see cref="AddComponent"/> in this method to create always present <see cref="Component"/>s
-        /// </summary>
-        /// <remarks>
-        /// Calling the base is currently not required. There are no base required components
-        /// </remarks>
-        protected virtual void AddRequiredComponents()
-        {
-            // No required base components
         }
 
         public void AddComponent(IComponent component)

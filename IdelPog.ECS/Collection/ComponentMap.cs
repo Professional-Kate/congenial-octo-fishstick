@@ -9,6 +9,11 @@ namespace IdelPog.ECS.Collection
             throw new NotImplementedException();
         }
 
+        public void Add(IComponent[] components)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Remove<T>()
         {
             throw new NotImplementedException();
