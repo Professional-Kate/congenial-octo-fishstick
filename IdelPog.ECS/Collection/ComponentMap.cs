@@ -4,34 +4,74 @@ namespace IdelPog.ECS.Collection
 {
     public class ComponentMap : IComponentMap
     {
+        private readonly Dictionary<Type, IComponent> _components = new();
+        
         public void Add(IComponent component)
         {
-            throw new NotImplementedException();
+            if (component == null)
+            {
+                throw new Exception();
+            }
+            
+            if (_components.ContainsKey(component.GetType()))
+            {
+                throw new Exception();
+            }
+            
+            _components.Add(component.GetType(), component);
         }
 
         public void Add(IComponent[] components)
         {
-            throw new NotImplementedException();
+            if (components.Length == 0)
+            {
+                throw new Exception();
+            }
+            
+            foreach (IComponent component in components)
+            {
+                if (component == null)
+                {
+                    throw new Exception();
+                }
+
+                if (_components.ContainsKey(component.GetType()))
+                {
+                    throw new Exception();
+                }
+                
+                _components.Add(component.GetType(), component);
+            }
         }
 
         public void Remove<T>()
         {
-            throw new NotImplementedException();
+            if (_components.ContainsKey(typeof(T)) == false)
+            {
+                throw new Exception();
+            }
+            
+            _components.Remove(typeof(T));
         }
 
         public IComponent Get<T>()
         {
-            throw new NotImplementedException();
+            if (_components.ContainsKey(typeof(T)) == false) 
+            {
+                throw new Exception();
+            }
+            
+            return _components[typeof(T)];
         }
 
         public bool Contains<T>()
         {
-            throw new NotImplementedException();
+            return _components.ContainsKey(typeof(T));
         }
 
         public bool Contains(IComponent type)
         {
-            throw new NotImplementedException();
+            return _components.ContainsKey(type.GetType());
         }
     }
 }
