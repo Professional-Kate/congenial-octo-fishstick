@@ -6,7 +6,7 @@ namespace IdelPog.Infrastructure.Tests.Repository
     {
         public string GetValue() => value;
         
-        public CloneableTestObject Clone()
+        public CloneableTestObject DeepClone()
         {
             return new CloneableTestObject(value);
         }

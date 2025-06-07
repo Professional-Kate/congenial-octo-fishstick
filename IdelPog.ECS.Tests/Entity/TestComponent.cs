@@ -6,7 +6,7 @@ namespace IdelPog.ECS.Tests
     {
         public int TestNumber { get; init; }
         
-        public TestComponent CloneComponent()
+        public TestComponent DeepClone()
         {
             return new TestComponent { TestNumber = TestNumber };
         }

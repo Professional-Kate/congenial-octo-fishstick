@@ -28,7 +28,7 @@ namespace IdelPog.Engine.Models
             Amount -= amount;
         }
 
-        public Item Clone()
+        public Item DeepClone()
         {
             return new Item(ID, Information, SellPrice, Amount);
         }
