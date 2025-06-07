@@ -8,8 +8,8 @@ namespace Frontend
     {
         public static void Main()
         {
-            using GameController gameController = new(new IdelPogOrchestrator(new RendererService()));
-            gameController.StartGame();
+            // using GameController gameController = new(new IdelPogOrchestrator(new RendererService()));
+            // gameController.StartGame();
         }
     }
 }
