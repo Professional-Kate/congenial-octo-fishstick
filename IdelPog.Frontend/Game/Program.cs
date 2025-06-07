@@ -1,5 +1,6 @@
 ﻿using Frontend.Controllers;
 using Frontend.Orchestration;
+using Frontend.Service;
 
 namespace Frontend
 {
@@ -7,7 +8,7 @@ namespace Frontend
     {
         public static void Main()
         {
-            using GameController gameController = new(new IdelPogOrchestrator());
+            using GameController gameController = new(new IdelPogOrchestrator(new RendererService()));
             gameController.StartGame();
         }
     }
