@@ -1,13 +1,12 @@
-﻿using Frontend.Components;
-using IdelPog.ECS;
+﻿using IdelPog.ECS;
 using IdelPog.ECS.Component;
 using IdelPog.Validation.Assertions.Handlers;
 
-namespace Frontend.Entities
+namespace Frontend.UI
 {
-    public sealed record UICollectionEntity : Entity
+    public sealed record UIEntity : Entity
     {
-        public UICollectionEntity(RenderableComponent[] renderableComponents) 
+        public UIEntity(RenderableComponent[] renderableComponents) 
             : base(new ComponentStore<RenderableComponent>(renderableComponents, new ThrowHandler()))
         {
             

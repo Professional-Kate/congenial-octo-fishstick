@@ -11,4 +11,8 @@
     <ItemGroup>
       <ProjectReference Include="..\IdelPog.ECS\IdelPog.ECS.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Bootstraper\" />
+      <Folder Include="UI\Service\" />
+    </ItemGroup>
 </Project>

@@ -1,8 +1,4 @@
-﻿using Frontend.Controllers;
-using Frontend.Orchestration;
-using Frontend.Service;
-
-namespace Frontend
+﻿namespace Frontend.Bootstraper
 {
     public static class Program
     {

@@ -1,4 +1,4 @@
-﻿namespace Frontend.Orchestration
+﻿namespace Frontend.Bootstraper.Orchestration
 {
     public interface IIdelPogOrchestrator
     {

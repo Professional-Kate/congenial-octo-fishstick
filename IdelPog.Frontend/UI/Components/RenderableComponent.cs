@@ -1,7 +1,7 @@
-﻿using Frontend.Enums;
+﻿using Frontend.Rendering.Structures.Enums;
 using IdelPog.ECS.Component;
 
-namespace Frontend.Components
+namespace Frontend.UI
 {
     public readonly record struct RenderableComponent : IComponent<RenderableComponent>
     {

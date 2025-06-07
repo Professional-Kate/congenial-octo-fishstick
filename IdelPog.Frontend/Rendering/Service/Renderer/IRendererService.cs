@@ -1,6 +1,6 @@
-﻿using Frontend.Rendering;
+﻿using Frontend.Rendering.Structures;
 
-namespace Frontend.Service
+namespace Frontend.Rendering.Service
 {
     public interface IRendererService
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Frontend
+namespace Frontend.Bootstraper
 {
     public sealed class GameRoot : Game
     {

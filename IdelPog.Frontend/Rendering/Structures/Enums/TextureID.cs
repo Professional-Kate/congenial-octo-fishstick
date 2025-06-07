@@ -1,4 +1,4 @@
-﻿namespace Frontend.Enums
+﻿namespace Frontend.Rendering.Structures.Enums
 {
     public enum TextureID : byte
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Frontend.Rendering.Structures;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Frontend.Rendering
 {

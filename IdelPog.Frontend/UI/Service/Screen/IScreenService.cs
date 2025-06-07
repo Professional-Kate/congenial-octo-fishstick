@@ -1,6 +1,6 @@
-﻿using Frontend.Enums;
+﻿using Frontend.UI.Enums;
 
-namespace Frontend.Service
+namespace Frontend.UI.Service
 {
     public interface IScreenService
     {

@@ -1,7 +1,7 @@
-﻿using Frontend.Rendering;
+﻿using Frontend.Rendering.Structures;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Frontend.Service
+namespace Frontend.Rendering.Service
 {
     public class RendererService : IRendererService
     {

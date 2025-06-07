@@ -1,6 +1,6 @@
-﻿using Frontend.Service;
+﻿using Frontend.Rendering.Service;
 
-namespace Frontend.Orchestration
+namespace Frontend.Bootstraper.Orchestration
 {
     public class IdelPogOrchestrator : IIdelPogOrchestrator
     {
