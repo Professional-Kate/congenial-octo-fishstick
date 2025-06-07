@@ -51,8 +51,8 @@ namespace IdelPogTests.Orchestration
             
             _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _repositoryMock.Object, _assertPositiveMock.Object);
 
-            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns((Currency) _foodCurrency.Clone());
-            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns((Currency) _woodCurrency.Clone());
+            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns((Currency) _foodCurrency.DeepClone());
+            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns((Currency) _woodCurrency.DeepClone());
             
             _repositoryMock.Setup(library => library.Contains(It.IsAny<CurrencyType>())).Returns(true);
 
