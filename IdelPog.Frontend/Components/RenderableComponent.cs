@@ -7,7 +7,7 @@ namespace Frontend.Components
     {
         public required TextureID TextureID { get; init; }
         
-        public RenderableComponent CloneComponent()
+        public RenderableComponent DeepClone()
         {
             return new RenderableComponent { TextureID = TextureID };
         }
