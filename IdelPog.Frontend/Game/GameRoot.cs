@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Frontend.Bootstraper
+namespace Frontend.Game
 {
-    public sealed class GameRoot : Game
+    public sealed class GameRoot : Microsoft.Xna.Framework.Game
     {
         private readonly GraphicsDeviceManager _graphicsDeviceManager;
 

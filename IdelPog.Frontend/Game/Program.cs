@@ -1,4 +1,4 @@
-﻿namespace Frontend.Bootstraper
+﻿namespace Frontend.Game
 {
     public static class Program
     {

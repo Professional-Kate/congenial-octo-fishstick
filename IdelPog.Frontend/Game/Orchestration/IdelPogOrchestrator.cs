@@ -1,6 +1,6 @@
 ﻿using Frontend.Rendering.Service;
 
-namespace Frontend.Bootstraper.Orchestration
+namespace Frontend.Game.Orchestration
 {
     public class IdelPogOrchestrator : IIdelPogOrchestrator
     {

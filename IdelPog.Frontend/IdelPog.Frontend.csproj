@@ -12,6 +12,7 @@
       <ProjectReference Include="..\IdelPog.ECS\IdelPog.ECS.csproj" />
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="Game\Services\" />
       <Folder Include="UI\Service\" />
     </ItemGroup>
 </Project>

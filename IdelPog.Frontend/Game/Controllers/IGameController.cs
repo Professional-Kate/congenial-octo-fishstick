@@ -1,4 +1,4 @@
-﻿namespace Frontend.Bootstraper.Controllers
+﻿namespace Frontend.Game.Controllers
 {
     public interface IGameController
     {

@@ -1,7 +1,7 @@
 ﻿using System;
-using Frontend.Bootstraper.Orchestration;
+using Frontend.Game.Orchestration;
 
-namespace Frontend.Bootstraper.Controllers
+namespace Frontend.Game.Controllers
 {
     public class GameController(IIdelPogOrchestrator idelPogOrchestrator) : IGameController, IDisposable
     {
