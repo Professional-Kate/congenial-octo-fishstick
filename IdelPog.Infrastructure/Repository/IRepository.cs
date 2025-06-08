@@ -10,7 +10,7 @@
     /// <seealso cref="Get"/>
     /// <seealso cref="Update"/>
     /// <seealso cref="Contains"/>
-    public interface IRepository<in TID, T>  : IRepositoryHooks<T>
+    public interface IRepository<in TID, T>
     {
         /// <summary>
         /// Adds a new Key Value pair into the Repository

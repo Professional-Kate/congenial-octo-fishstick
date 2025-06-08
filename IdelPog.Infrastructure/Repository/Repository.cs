@@ -6,29 +6,19 @@ namespace IdelPog.Infrastructure.Repository
         where T : class, ICloneable<T> where TID : notnull
     {
         private readonly Dictionary<TID, T> _repository = new();
-
-        public event Action<int, T> OnAdd = delegate { };
-        public event Action<int, T> OnRemove = delegate { };
-        public event Action<int, T> OnGet = delegate { };
-        public event Action<T, T> OnUpdate = delegate { };
-        public event Action<int, bool> OnContains = delegate { };
-
+        
         public void Add(TID key, T value)
         {
             repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
             
             _repository.Add(key, value);
-            OnAdd(key.GetHashCode(), value);
         }
 
         public void Remove(TID key)
         {
             AssertKeyExists(key);
             
-            T item = _repository[key];
-            
             _repository.Remove(key);
-            OnRemove(key.GetHashCode(), item);
         }
 
         public T Get(TID key)
@@ -37,7 +27,6 @@ namespace IdelPog.Infrastructure.Repository
             
             T entity = _repository[key].DeepClone();
             
-            OnGet(key.GetHashCode(), entity);
             return entity;
         }
 
@@ -45,17 +34,12 @@ namespace IdelPog.Infrastructure.Repository
         {
             AssertKeyExists(key);
             
-            T original  = _repository[key];
-            
             _repository[key] = value;
-            OnUpdate(original, value);
         }
 
         public bool Contains(TID key)
         {
             bool contains = _repository.ContainsKey(key);
-            
-            OnContains(key.GetHashCode(), contains);
             
             return contains;
         }
