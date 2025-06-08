@@ -1,5 +1,4 @@
 ﻿using IdelPog.ECS.Assertions;
-using IdelPog.ECS.Collection;
 using IdelPog.ECS.Component;
 using IdelPog.Infrastructure.Repository;
 using IdelPog.Infrastructure.Structures;
