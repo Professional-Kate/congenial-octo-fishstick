@@ -5,7 +5,7 @@ using Moq;
 namespace IdelPog.Infrastructure.Tests.Repository
 {
     [TestFixture]
-    public class RepositoryTest
+    public class StateRepositoryTest
     {
         private IRepository<int, CloneableTestObject> _repository;
         private Mock<IRepositoryAsserter> _repositoryAsserterMock;
@@ -18,7 +18,7 @@ namespace IdelPog.Infrastructure.Tests.Repository
         public void Setup()
         {
             _repositoryAsserterMock = new Mock<IRepositoryAsserter>();
-            _repository = new Repository<int, CloneableTestObject>(_repositoryAsserterMock.Object);
+            _repository = new StateRepository<int, CloneableTestObject>(_repositoryAsserterMock.Object);
             _cloneableTestObject = new CloneableTestObject(VALUE);
         }
        

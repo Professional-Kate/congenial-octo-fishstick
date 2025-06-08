@@ -2,7 +2,7 @@
 
 namespace IdelPog.Infrastructure.Repository
 {
-    public sealed class Repository<TID, T>(IRepositoryAsserter repositoryAsserter) : IRepository<TID, T>
+    public sealed class StateRepository<TID, T>(IRepositoryAsserter repositoryAsserter) : IRepository<TID, T>
         where T : class, ICloneable<T> where TID : notnull
     {
         private readonly Dictionary<TID, T> _repository = new();
