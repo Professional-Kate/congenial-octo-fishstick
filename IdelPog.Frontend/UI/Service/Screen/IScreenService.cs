@@ -1,4 +1,4 @@
-﻿using Frontend.UI.Enums;
+﻿using Frontend.UI.Structures.Enums;
 
 namespace Frontend.UI.Service
 {

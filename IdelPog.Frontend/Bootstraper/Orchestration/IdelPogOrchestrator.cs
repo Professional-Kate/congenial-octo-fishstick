@@ -15,7 +15,6 @@ namespace Frontend.Bootstraper.Orchestration
         
         public GameRoot BeginIdelPog()
         {
-            // TODO: update to render the opening UI
             _rendererService.RenderEntities();
                 
             return _gameRoot;

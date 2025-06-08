@@ -1,4 +1,4 @@
-﻿namespace Frontend.UI.Enums
+﻿namespace Frontend.UI.Structures.Enums
 {
     public enum ScreenID : byte
     {
