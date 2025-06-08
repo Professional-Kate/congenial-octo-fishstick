@@ -2,7 +2,7 @@
 {
     public interface IAssetRepository<in TID, T>
     {
-        public void Add(TID key, T entity);
+        public void Add(TID key, T value);
         
         public void Remove(TID key);
         

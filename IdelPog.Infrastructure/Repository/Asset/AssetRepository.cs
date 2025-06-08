@@ -1,27 +1,34 @@
 ﻿namespace IdelPog.Infrastructure.Repository
 {
-    public class AssetRepository<TID, T> : IAssetRepository<TID, T> where TID : notnull
+    public class AssetRepository<TID, T>(IRepositoryAsserter repositoryAsserter) : IAssetRepository<TID, T> 
+        where TID : notnull
     {
         private readonly Dictionary<TID, T> _repository = new();
         
-        public void Add(TID key, T entity)
+        public void Add(TID key, T value)
         {
-            throw new NotImplementedException();
+            repositoryAsserter.AssertUnique(value!, () => _repository.ContainsKey(key));
+            
+            _repository.Add(key, value);
         }
 
         public void Remove(TID key)
         {
-            throw new NotImplementedException();
+            repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
+
+            _repository.Remove(key);
         }
 
         public T Get(TID key)
         {
-            throw new NotImplementedException();
+            repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
+
+            return _repository[key];
         }
 
         public bool Contains(TID key)
         {
-            throw new NotImplementedException();
+            return _repository.ContainsKey(key);
         }
     }
 }
