@@ -1,13 +1,13 @@
-﻿using IdelPog.ECS;
-using IdelPog.ECS.Component;
-using IdelPog.Validation.Assertions.Handlers;
+﻿using Frontend.Rendering.Structures.Enums;
+using Frontend.UI.Structures;
+using IdelPog.ECS;
 
 namespace Frontend.UI
 {
     public sealed record UIEntity : Entity
     {
-        public UIEntity(RenderableComponent[] renderableComponents) 
-            : base(new ComponentStore<RenderableComponent>(renderableComponents, new ThrowHandler()))
+        public UIEntity(TextureID textureID, Transform transform) 
+            : base(new RenderableComponent {TextureID = textureID}, new TransformComponent {Transform = transform})
         {
             
         }
