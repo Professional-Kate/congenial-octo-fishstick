@@ -11,7 +11,7 @@ namespace IdelPog.Engine.Orchestration
     /// <summary>
     /// See <see cref="ICurrencyMediator"/> for documentation
     /// </summary>
-    public class CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Currency> repository, IAssertPositive assert)
+    public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, IAssertPositive assert)
         : ICurrencyMediator
     {
         public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
@@ -61,7 +61,7 @@ namespace IdelPog.Engine.Orchestration
                     continue;
                 }
                 
-                if (repository.Contains(currencyTrade.Currency) == false)
+                if (stateRepository.Contains(currencyTrade.Currency) == false)
                 {
                     return ServiceResponse.Failure($"Error! Currency type {currencyTrade.Currency} was not found.");
                 }
@@ -90,7 +90,7 @@ namespace IdelPog.Engine.Orchestration
                     continue;
                 }
 
-                Currency globalCurrencyClone = repository.Get(currencyTrade.Currency);
+                Currency globalCurrencyClone = stateRepository.Get(currencyTrade.Currency);
                 originalCurrencies.Add(currencyTrade.Currency, globalCurrencyClone);
                     
                 // entering each cloned Currency into the stagingGround so we can update them
@@ -160,7 +160,7 @@ namespace IdelPog.Engine.Orchestration
                         break;
                 }
 
-                repository.Update(globalCurrency.CurrencyType, globalCurrency);
+                stateRepository.Update(globalCurrency.CurrencyType, globalCurrency);
             }
         }
         

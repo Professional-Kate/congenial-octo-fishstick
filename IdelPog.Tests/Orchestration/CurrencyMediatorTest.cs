@@ -15,7 +15,7 @@ namespace IdelPogTests.Orchestration
     public class CurrencyMediatorTest
     {
         private ICurrencyMediator _currencyMediator { get; set; }
-        private Mock<IRepository<CurrencyType, Currency>> _repositoryMock { get; set; }
+        private Mock<IStateRepository<CurrencyType, Currency>> _repositoryMock { get; set; }
         private Mock<ICurrencyService> _currencyServiceMock { get; set; }
         private Mock<IAssertPositive> _assertPositiveMock { get; set; }
         private Currency _foodCurrency { get; set; }
@@ -45,7 +45,7 @@ namespace IdelPogTests.Orchestration
 
         private void SetupMock()
         {
-            _repositoryMock = new Mock<IRepository<CurrencyType, Currency>>();
+            _repositoryMock = new Mock<IStateRepository<CurrencyType, Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
             _assertPositiveMock = new Mock<IAssertPositive>();
             

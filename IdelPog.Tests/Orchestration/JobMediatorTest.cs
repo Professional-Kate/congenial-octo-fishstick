@@ -14,7 +14,7 @@ namespace IdelPogTests.Orchestration
     {
         private IJobMediator _jobMediator { get; set; }
         private Mock<IExperienceService> _experienceServiceMock { get; set; }
-        private Mock<IRepository<JobType, Job>> _repositoryMock { get; set; }
+        private Mock<IStateRepository<JobType, Job>> _repositoryMock { get; set; }
         private Mock<ILevelService> _levelServiceMock { get; set; }
         private Job _miningJob { get; set; }
 
@@ -24,7 +24,7 @@ namespace IdelPogTests.Orchestration
             _miningJob = JobFactory.CreateMining();
             
             _experienceServiceMock = new Mock<IExperienceService>();
-            _repositoryMock = new Mock<IRepository<JobType, Job>>();
+            _repositoryMock = new Mock<IStateRepository<JobType, Job>>();
             _levelServiceMock = new Mock<ILevelService>();
             _jobMediator = new JobMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object);
 

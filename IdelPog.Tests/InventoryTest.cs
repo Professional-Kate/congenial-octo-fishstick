@@ -14,7 +14,7 @@ namespace IdelPogTests
     public class InventoryTest
     {
         private IInventory _inventory { get; set; }
-        private Mock<IRepository<InventoryID, Item>> _repositoryMock { get; set; }
+        private Mock<IStateRepository<InventoryID, Item>> _repositoryMock { get; set; }
         private Mock<IAssertPositive> _assertPositiveMock { get; set; }
         private Mock<IAssertFound> _assertFoundMock { get; set; }
         private Mock<IAssertNonDuplicate> _assertUniqueItemMock { get; set; }
@@ -37,7 +37,7 @@ namespace IdelPogTests
 
         private void SetupMock()
         {
-            _repositoryMock = new Mock<IRepository<InventoryID, Item>>();
+            _repositoryMock = new Mock<IStateRepository<InventoryID, Item>>();
             
             _assertPositiveMock = new Mock<IAssertPositive>();
             _assertFoundMock = new Mock<IAssertFound>();
