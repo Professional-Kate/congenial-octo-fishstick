@@ -18,6 +18,18 @@ namespace IdelPog.Infrastructure.Tests.Repository
         }
 
         [Test]
+        public void Positive_DefaultConstruction_CreatesRepositoryAsserter()
+        {
+            _repository = new AssetRepository<int, string>();
+            
+            _repository.Add(1, "10");
+            
+            Assert.Throws<DuplicateItemException>(() => _repository.Add(1, "10"));
+            Assert.Throws<NotFoundException>(() => _repository.Get(2));
+            Assert.Throws<NotFoundException>(() => _repository.Remove(2));
+        }
+
+        [Test]
         public void Positive_Add_AddsIntPair()
         {
             _repository.Add(1, "1");

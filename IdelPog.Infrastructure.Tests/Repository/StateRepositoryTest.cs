@@ -21,6 +21,19 @@ namespace IdelPog.Infrastructure.Tests.Repository
             _stateRepository = new StateRepository<int, CloneableTestObject>(_repositoryAsserterMock.Object);
             _cloneableTestObject = new CloneableTestObject(VALUE);
         }
+        
+        [Test]
+        public void Positive_DefaultConstruction_CreatesRepositoryAsserter()
+        {
+            _stateRepository = new StateRepository<int, CloneableTestObject>();
+            
+            _stateRepository.Add(1, _cloneableTestObject);
+            
+            Assert.Throws<DuplicateItemException>(() => _stateRepository.Add(1, _cloneableTestObject));
+            Assert.Throws<NotFoundException>(() => _stateRepository.Get(2));
+            Assert.Throws<NotFoundException>(() => _stateRepository.Remove(2));
+            Assert.Throws<NotFoundException>(() => _stateRepository.Update(2, _cloneableTestObject));
+        }
        
         [Test]
         public void Positive_Add_AddsItem()
