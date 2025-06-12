@@ -1,15 +1,29 @@
 ﻿using IdelPog.Infrastructure.Structures;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.Infrastructure.Repository
 {
-    public sealed class StateRepository<TID, T>(IRepositoryAsserter repositoryAsserter) : IStateRepository<TID, T>
+    public sealed class StateRepository<TID, T> : IStateRepository<TID, T>
         where T : class, ICloneable<T> where TID : notnull
     {
         private readonly Dictionary<TID, T> _repository = new();
+        private readonly IRepositoryAsserter _repositoryAsserter;
+
+        public StateRepository()
+        {
+            _repositoryAsserter = new RepositoryAsserter(new AssertFound(new ThrowHandler()), new AssertNotNull(new ThrowHandler()),
+                new AssertNonDuplicate(new ThrowHandler()));
+        }
+
+        public StateRepository(IRepositoryAsserter repositoryAsserter)
+        {
+            _repositoryAsserter = repositoryAsserter;
+        }
         
         public void Add(TID key, T value)
         {
-            repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
             
             _repository.Add(key, value);
         }
@@ -50,7 +64,7 @@ namespace IdelPog.Infrastructure.Repository
         /// <param name="key">The key you want to check if it's in the Repository</param>
         private void AssertKeyExists(TID key)
         {
-            repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
         }
     }
 }

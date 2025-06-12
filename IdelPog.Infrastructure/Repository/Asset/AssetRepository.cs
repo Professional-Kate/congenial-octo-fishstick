@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions.Handlers;
 namespace IdelPog.Infrastructure.Repository
 {
     public class AssetRepository<TID, T> : IAssetRepository<TID, T> 
-        where TID : notnull
+        where TID : notnull where T : notnull
     {
         private readonly Dictionary<TID, T> _repository = new();
         private readonly IRepositoryAsserter _repositoryAsserter;
@@ -22,7 +22,7 @@ namespace IdelPog.Infrastructure.Repository
         
         public void Add(TID key, T value)
         {
-            _repositoryAsserter.AssertUnique(value!, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
             
             _repository.Add(key, value);
         }
