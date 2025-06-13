@@ -10,9 +10,9 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\IdelPog.ECS\IdelPog.ECS.csproj" />
+      <ProjectReference Include="..\IdelPog.Staging\IdelPog.Staging.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="MonoGame\Services\" />
       <Folder Include="UI\Service\" />
     </ItemGroup>
 </Project>
