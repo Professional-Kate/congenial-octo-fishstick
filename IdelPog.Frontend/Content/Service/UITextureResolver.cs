@@ -6,16 +6,24 @@ namespace Frontend.Content.Service
 {
     public class UITextureResolver : IUITextureResolver
     {
-        private readonly IRepository<TextureID, Texture2D> _textureRepository;
+        private readonly IAssetRepository<TextureID, Texture2D> _textureRepository;
 
-        public UITextureResolver(IRepository<TextureID, Texture2D> textureRepository)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="textureRepository">A filled repository</param>
+        /// <remarks>
+        /// The <see cref="IAssetRepository{TID,T}"/> is expected to be filled on construct.
+        /// This class offers no way to mutate the collection after construction
+        /// </remarks>
+        public UITextureResolver(IAssetRepository<TextureID, Texture2D> textureRepository)
         {
             _textureRepository = textureRepository;
         }
         
         public Texture2D GetTexture(TextureID textureID)
         {
-            throw new System.NotImplementedException();
+            return _textureRepository.Get(textureID);
         }
     }
 }
