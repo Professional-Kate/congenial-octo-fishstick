@@ -1,6 +1,6 @@
 ﻿using Frontend.Rendering.Service;
 
-namespace Frontend.Game.Orchestration
+namespace Frontend.MonoGame.Orchestration
 {
     public class IdelPogOrchestrator : IIdelPogOrchestrator
     {
@@ -15,8 +15,8 @@ namespace Frontend.Game.Orchestration
         
         public GameRoot BeginIdelPog()
         {
-            _rendererService.RenderEntities();
-                
+            // maybe register the ScreenID listener? 
+            
             return _gameRoot;
         }
     }

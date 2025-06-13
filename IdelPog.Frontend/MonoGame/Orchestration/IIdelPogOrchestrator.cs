@@ -1,4 +1,4 @@
-﻿namespace Frontend.Game.Orchestration
+﻿namespace Frontend.MonoGame.Orchestration
 {
     public interface IIdelPogOrchestrator
     {
