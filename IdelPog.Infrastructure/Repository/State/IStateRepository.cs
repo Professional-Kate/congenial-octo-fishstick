@@ -1,16 +1,13 @@
-﻿namespace IdelPog.Infrastructure.Repository
+﻿using IdelPog.Validation.Exceptions;
+
+namespace IdelPog.Infrastructure.Repository
 {
     /// <summary>
-    /// Generic Repository, the implementing class is expected to create its own data structure for each method to use. This interface gives basic CRUD access to data
+    /// Generic CRUD Repository
     /// </summary>
     /// <typeparam name="TID">The key to link to the value</typeparam>
     /// <typeparam name="T">The value to link with the key</typeparam>
-    /// <seealso cref="Add"/>
-    /// <seealso cref="Remove"/>
-    /// <seealso cref="Get"/>
-    /// <seealso cref="Update"/>
-    /// <seealso cref="Contains"/>
-    public interface IRepository<in TID, T>  : IRepositoryHooks<T>
+    public interface IStateRepository<in TID, T>
     {
         /// <summary>
         /// Adds a new Key Value pair into the Repository
@@ -35,7 +32,7 @@
         /// <returns>The found value</returns>
         /// <exception cref="NotFoundException">Will be thrown if the passed key is not in the Repository</exception>
         /// <remarks>
-        /// This will return an object by reference.  
+        /// This will return a clone. To update state use <see cref="Update"/>  
         /// </remarks>
         public T Get(TID key);
         

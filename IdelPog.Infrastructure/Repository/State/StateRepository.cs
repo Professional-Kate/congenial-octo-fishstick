@@ -1,34 +1,38 @@
 ﻿using IdelPog.Infrastructure.Structures;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.Infrastructure.Repository
 {
-    public sealed class Repository<TID, T>(IRepositoryAsserter repositoryAsserter) : IRepository<TID, T>
+    public sealed class StateRepository<TID, T> : IStateRepository<TID, T>
         where T : class, ICloneable<T> where TID : notnull
     {
         private readonly Dictionary<TID, T> _repository = new();
+        private readonly IRepositoryAsserter _repositoryAsserter;
 
-        public event Action<int, T> OnAdd = delegate { };
-        public event Action<int, T> OnRemove = delegate { };
-        public event Action<int, T> OnGet = delegate { };
-        public event Action<T, T> OnUpdate = delegate { };
-        public event Action<int, bool> OnContains = delegate { };
+        public StateRepository()
+        {
+            _repositoryAsserter = new RepositoryAsserter(new AssertFound(new ThrowHandler()), new AssertNotNull(new ThrowHandler()),
+                new AssertNonDuplicate(new ThrowHandler()));
+        }
 
+        public StateRepository(IRepositoryAsserter repositoryAsserter)
+        {
+            _repositoryAsserter = repositoryAsserter;
+        }
+        
         public void Add(TID key, T value)
         {
-            repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
             
             _repository.Add(key, value);
-            OnAdd(key.GetHashCode(), value);
         }
 
         public void Remove(TID key)
         {
             AssertKeyExists(key);
             
-            T item = _repository[key];
-            
             _repository.Remove(key);
-            OnRemove(key.GetHashCode(), item);
         }
 
         public T Get(TID key)
@@ -37,7 +41,6 @@ namespace IdelPog.Infrastructure.Repository
             
             T entity = _repository[key].DeepClone();
             
-            OnGet(key.GetHashCode(), entity);
             return entity;
         }
 
@@ -45,17 +48,12 @@ namespace IdelPog.Infrastructure.Repository
         {
             AssertKeyExists(key);
             
-            T original  = _repository[key];
-            
             _repository[key] = value;
-            OnUpdate(original, value);
         }
 
         public bool Contains(TID key)
         {
             bool contains = _repository.ContainsKey(key);
-            
-            OnContains(key.GetHashCode(), contains);
             
             return contains;
         }
@@ -66,7 +64,7 @@ namespace IdelPog.Infrastructure.Repository
         /// <param name="key">The key you want to check if it's in the Repository</param>
         private void AssertKeyExists(TID key)
         {
-            repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
         }
     }
 }
