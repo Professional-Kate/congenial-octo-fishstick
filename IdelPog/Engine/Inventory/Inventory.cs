@@ -9,7 +9,7 @@ namespace IdelPog.Engine
     /// The container class for all <see cref="Item"/>'s. See <see cref="IInventory"/> for documentation
     /// </summary>
     public sealed class Inventory(
-        IRepository<InventoryID, Item> repository,
+        IStateRepository<InventoryID, Item> stateRepository,
         IAssertFound assertFound,
         IAssertPositive assertPositive,
         IAssertNonDuplicate assertNonDuplicate)
@@ -37,7 +37,7 @@ namespace IdelPog.Engine
            AssertAmountIsPositive(itemAmount - amount);
             if (itemAmount - amount == 0)
             {
-                repository.Remove(item.ID);
+                stateRepository.Remove(item.ID);
                 return;
             }
 
@@ -50,12 +50,12 @@ namespace IdelPog.Engine
             AssertAmountIsPositive(item.Amount);
             assertNonDuplicate.AssertContains(item, () => Contains(item.ID));
 
-            repository.Add(item.ID, item);
+            stateRepository.Add(item.ID, item);
         }
 
         public bool Contains(InventoryID item)
         {
-            return repository.Contains(item);
+            return stateRepository.Contains(item);
         }
 
         /// <summary>
@@ -78,13 +78,13 @@ namespace IdelPog.Engine
 
         private Item RepositoryGet(InventoryID id)
         {
-            Item itemClone = repository.Get(id);
+            Item itemClone = stateRepository.Get(id);
             return itemClone;
         }
 
         private void RepositoryUpdate(InventoryID id, Item item)
         {
-            repository.Update(id, item);
+            stateRepository.Update(id, item);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace IdelPog.Engine.Orchestration
     /// <summary>
     /// See <see cref="ICurrencyMediator"/> for documentation
     /// </summary>
-    public class CurrencyMediator(ICurrencyService currencyService, IRepository<CurrencyType, Currency> repository, IAssertPositive assert)
+    public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, IAssertPositive assert)
         : ICurrencyMediator
     {
         public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
@@ -61,7 +61,7 @@ namespace IdelPog.Engine.Orchestration
                     continue;
                 }
                 
-                if (repository.Contains(currencyTrade.Currency) == false)
+                if (stateRepository.Contains(currencyTrade.Currency) == false)
                 {
                     return ServiceResponse.Failure($"Error! Currency type {currencyTrade.Currency} was not found.");
                 }
@@ -73,8 +73,8 @@ namespace IdelPog.Engine.Orchestration
         }
 
         /// <summary>
-        /// Gets each separate <see cref="Currency"/> from the <see cref="Repository{TID,T}"/>, this is passed into originalCurrencies.
-        /// Then, clones these <see cref="Currency"/> retrieved from the <see cref="Repository{TID,T}"/> into the passed stagingGround Dictionary.
+        /// Gets each separate <see cref="Currency"/> from the <see cref="StateRepository{TID,T}"/>, this is passed into originalCurrencies.
+        /// Then, clones these <see cref="Currency"/> retrieved from the <see cref="StateRepository{TID,T}"/> into the passed stagingGround Dictionary.
         /// </summary>
         /// <param name="currencyTrades">Uses the internal <see cref="CurrencyTrade"/>.<see cref="CurrencyTrade.Currency"/> to Get each <see cref="Currency"/> from the Repository</param>
         /// <param name="originalCurrencies">All the <see cref="Currency"/> returned from Get will first be placed into this Dictionary</param>
@@ -90,7 +90,7 @@ namespace IdelPog.Engine.Orchestration
                     continue;
                 }
 
-                Currency globalCurrencyClone = repository.Get(currencyTrade.Currency);
+                Currency globalCurrencyClone = stateRepository.Get(currencyTrade.Currency);
                 originalCurrencies.Add(currencyTrade.Currency, globalCurrencyClone);
                     
                 // entering each cloned Currency into the stagingGround so we can update them
@@ -102,7 +102,7 @@ namespace IdelPog.Engine.Orchestration
         /// Uses the passed <see cref="CurrencyTrade"/> array properties <see cref="CurrencyTrade.Amount"/> and <see cref="CurrencyTrade.Action"/> to dictate how to update each <see cref="Currency"/>
         /// </summary>
         /// <param name="currencyTrades"><see cref="CurrencyTrade"/></param>
-        /// <param name="stagingGround">This Dictionary will now contain each cloned <see cref="Currency"/> from the <see cref="Repository{TID,T}"/></param>
+        /// <param name="stagingGround">This Dictionary will now contain each cloned <see cref="Currency"/> from the <see cref="StateRepository{TID,T}"/></param>
         private void MutateClonedCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Currency> stagingGround)
         {
             foreach (CurrencyTrade currencyTrade in currencyTrades)
@@ -160,7 +160,7 @@ namespace IdelPog.Engine.Orchestration
                         break;
                 }
 
-                repository.Update(globalCurrency.CurrencyType, globalCurrency);
+                stateRepository.Update(globalCurrency.CurrencyType, globalCurrency);
             }
         }
         
