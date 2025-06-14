@@ -13,6 +13,7 @@
       <ProjectReference Include="..\IdelPog.Staging\IdelPog.Staging.csproj" />
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="MonoGame\RenderingPipeline\Services\" />
       <Folder Include="UI\Service\" />
     </ItemGroup>
 </Project>

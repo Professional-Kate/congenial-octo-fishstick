@@ -1,5 +1,5 @@
 ﻿using Frontend.Rendering.Structures.Enums;
-using SharpDX.Direct3D11;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Frontend.Content.Service
 {

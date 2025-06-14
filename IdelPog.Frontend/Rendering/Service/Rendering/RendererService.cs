@@ -1,4 +1,5 @@
-﻿using Frontend.Rendering.Structures;
+﻿using System.Collections.Generic;
+using Frontend.Rendering.Structures;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Frontend.Rendering.Service
@@ -14,7 +15,7 @@ namespace Frontend.Rendering.Service
             _renderer = renderer;
         }
         
-        public void RenderEntities(params RenderEntity[] entities)
+        public void RenderEntities(IReadOnlyList<RenderEntity> entities)
         {
             _spriteBatch.Begin();
             

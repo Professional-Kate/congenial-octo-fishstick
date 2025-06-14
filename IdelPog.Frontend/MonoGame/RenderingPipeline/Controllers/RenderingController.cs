@@ -1,15 +1,21 @@
 ﻿using System.Collections.Generic;
-using Frontend.Rendering.Structures.Enums;
+using Frontend.MonoGame.Mediator;
 using Frontend.UI.Structures;
 
 namespace Frontend.MonoGame.Controllers
 {
     public class RenderingController : IRenderingController
     {
+        private readonly IRenderingMediator _mediator;
+
+        public RenderingController(IRenderingMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         public void RenderTextures(IReadOnlyList<RenderableDTO> dtos)
         {
-            // TODO : get texture for ID. Construct RenderEntity. Pass each RenderEntity into renderer
-            throw new System.NotImplementedException();
+            _mediator.RenderEntities(dtos);
         }
     }
 }
