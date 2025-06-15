@@ -1,7 +1,7 @@
-﻿using IdelPog.ECS.Component;
-using IdelPog.Frontend.UI.Structures;
+﻿using IdelPog.Common.Structures;
+using IdelPog.ECS.Component;
 
-namespace IdelPog.Frontend.UI
+namespace IdelPog.SimulationEngine.UI
 {
     public readonly record struct TransformComponent : IComponent<TransformComponent>
     {

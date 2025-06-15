@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using IdelPog.Common.DTO;
 using IdelPog.Frontend.MonoGame.Converter;
 using IdelPog.Frontend.Rendering.Service;
 using IdelPog.Frontend.Rendering.Structures;
-using IdelPog.Frontend.UI.Structures;
 
 namespace IdelPog.Frontend.MonoGame.Mediator
 {

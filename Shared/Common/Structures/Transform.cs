@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace IdelPog.Frontend.UI.Structures
+namespace IdelPog.Common.Structures
 {
     public readonly record struct Transform
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using IdelPog.Common.DTO;
 using IdelPog.Frontend.Rendering.Structures;
-using IdelPog.Frontend.UI.Structures;
 
 namespace IdelPog.Frontend.MonoGame.Converter
 {

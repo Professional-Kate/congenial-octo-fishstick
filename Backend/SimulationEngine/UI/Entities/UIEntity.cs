@@ -1,8 +1,7 @@
-﻿using IdelPog.ECS;
-using IdelPog.Frontend.Rendering.Structures.Enums;
-using IdelPog.Frontend.UI.Structures;
+﻿using IdelPog.Common.Structures;
+using IdelPog.ECS;
 
-namespace IdelPog.Frontend.UI
+namespace IdelPog.SimulationEngine.UI
 {
     public sealed record UIEntity : Entity
     {

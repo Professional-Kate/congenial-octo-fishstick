@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Frontend.Rendering.Structures.Enums
+﻿namespace IdelPog.Common.Structures
 {
     public enum TextureID : byte
     {

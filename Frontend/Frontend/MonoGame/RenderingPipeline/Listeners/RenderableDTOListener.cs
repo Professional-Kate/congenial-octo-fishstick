@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using IdelPog.Common.DTO;
 using IdelPog.Frontend.MonoGame.Controllers;
-using IdelPog.Frontend.UI.Structures;
 using IdelPog.Messaging.Messaging;
 
 namespace IdelPog.Frontend.MonoGame.Listeners

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using IdelPog.Common.DTO;
 using IdelPog.Frontend.MonoGame.Mediator;
-using IdelPog.Frontend.UI.Structures;
 
 namespace IdelPog.Frontend.MonoGame.Controllers
 {

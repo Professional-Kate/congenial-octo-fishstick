@@ -1,7 +1,7 @@
-﻿using IdelPog.ECS.Component;
-using IdelPog.Frontend.Rendering.Structures.Enums;
+﻿using IdelPog.Common.Structures;
+using IdelPog.ECS.Component;
 
-namespace IdelPog.Frontend.UI
+namespace IdelPog.SimulationEngine.UI
 {
     public readonly record struct RenderableComponent : IComponent<RenderableComponent>
     {

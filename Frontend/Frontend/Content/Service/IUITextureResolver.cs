@@ -1,4 +1,4 @@
-﻿using IdelPog.Frontend.Rendering.Structures.Enums;
+﻿using IdelPog.Common.Structures;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace IdelPog.Frontend.Content.Service

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using IdelPog.Frontend.UI.Structures;
+using IdelPog.Common.DTO;
 
 namespace IdelPog.Frontend.MonoGame.Controllers
 {
