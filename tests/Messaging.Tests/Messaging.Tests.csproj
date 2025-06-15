@@ -7,7 +7,7 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <RootNamespace>IdelPogTests</RootNamespace>
+        <RootNamespace>IdelPog.Messaging.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -24,9 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Backend\IdelPog.SimulationEngine\IdelPog.SimulationEngine.csproj" />
-      <ProjectReference Include="..\..\Shared\IdelPog.Common\IdelPog.Common.csproj" />
-      <ProjectReference Include="..\..\Shared\IdelPog.Validation\IdelPog.Validation.csproj" />
+      <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj" />
+      <ProjectReference Include="..\..\Shared\Validation\Validation.csproj" />
     </ItemGroup>
 
 </Project>

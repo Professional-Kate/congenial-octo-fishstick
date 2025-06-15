@@ -7,6 +7,7 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <RootNamespace>IdelPog.ECS.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,9 +24,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Backend\IdelPog.ECS\IdelPog.ECS.csproj" />
-      <ProjectReference Include="..\..\Shared\IdelPog.Common\IdelPog.Common.csproj" />
-      <ProjectReference Include="..\..\Shared\IdelPog.Validation\IdelPog.Validation.csproj" />
+      <ProjectReference Include="..\..\Backend\ECS\ECS.csproj" />
+      <ProjectReference Include="..\..\Shared\Common\Common.csproj" />
+      <ProjectReference Include="..\..\Shared\Validation\Validation.csproj" />
     </ItemGroup>
 
 </Project>
