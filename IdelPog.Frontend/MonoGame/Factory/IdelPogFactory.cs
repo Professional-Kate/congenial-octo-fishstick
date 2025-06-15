@@ -6,9 +6,9 @@ namespace Frontend.MonoGame.Factory
     {
         private readonly IGameController _gameController;
 
-        public IdelPogFactory()
+        public IdelPogFactory(IGameController gameController)
         {
-            _gameController = new GameController();
+            _gameController = gameController;
         }
         
         public void StartIdelPog()

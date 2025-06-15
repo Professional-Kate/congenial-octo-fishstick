@@ -1,12 +1,10 @@
-﻿using Frontend.MonoGame.Factory;
-
-namespace Frontend.MonoGame
+﻿namespace Frontend.MonoGame
 {
     public static class Program
     {
         public static void Main()
         { 
-            new IdelPogFactory().StartIdelPog();
+            // TODO : this eventually needs to call the true start of the game
         }
     }
 }

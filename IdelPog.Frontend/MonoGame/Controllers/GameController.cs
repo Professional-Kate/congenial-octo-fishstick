@@ -4,8 +4,13 @@ namespace Frontend.MonoGame.Controllers
 {
     public class GameController : IGameController, IDisposable
     {
-        private readonly GameRoot _gameRoot = new();
+        private readonly GameRoot _gameRoot;
         private bool _disposed;
+
+        public GameController(GameRoot gameRoot)
+        {
+            _gameRoot = gameRoot;
+        }
         
         public void StartGame()
         {
