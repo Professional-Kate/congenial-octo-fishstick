@@ -5,37 +5,37 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{242DB2B1-B0B1-43CC-896F-58657F658445}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.ContentHydrator", "Backend\IdelPog.ContentHydrator\IdelPog.ContentHydrator.csproj", "{5EE5C031-5A5C-4DF6-9F15-C976004C6FA9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHydrator", "Backend\ContentHydrator\ContentHydrator.csproj", "{5EE5C031-5A5C-4DF6-9F15-C976004C6FA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.ECS", "Backend\IdelPog.ECS\IdelPog.ECS.csproj", "{CC9B5936-8B80-4BD9-8DB6-30CDC7D6A565}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECS", "Backend\ECS\ECS.csproj", "{CC9B5936-8B80-4BD9-8DB6-30CDC7D6A565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.SimulationEngine", "Backend\IdelPog.SimulationEngine\IdelPog.SimulationEngine.csproj", "{71684A80-BE2C-4F26-BD50-1562B15B6750}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulationEngine", "Backend\SimulationEngine\SimulationEngine.csproj", "{71684A80-BE2C-4F26-BD50-1562B15B6750}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{6C387129-33C3-4375-BBF5-FCCAF7B16917}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Common", "Shared\IdelPog.Common\IdelPog.Common.csproj", "{6B3B395A-5A21-45D6-8E7F-30975E1B82CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Shared\Common\Common.csproj", "{6B3B395A-5A21-45D6-8E7F-30975E1B82CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Messaging", "Shared\IdelPog.Messaging\IdelPog.Messaging.csproj", "{657B8DE7-E413-4FCB-AA8D-27D54F5E9456}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging", "Shared\Messaging\Messaging.csproj", "{657B8DE7-E413-4FCB-AA8D-27D54F5E9456}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Validation", "Shared\IdelPog.Validation\IdelPog.Validation.csproj", "{B3338E73-6A6C-4FF6-B394-239C93F2EAEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation", "Shared\Validation\Validation.csproj", "{B3338E73-6A6C-4FF6-B394-239C93F2EAEF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{1EEAC7AD-46C5-4F44-A8BD-F03D66709DCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Frontend", "Frontend\IdelPog.Frontend\IdelPog.Frontend.csproj", "{69418C63-F5B7-43F3-8B2F-F43A57893A07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Frontend\Frontend.csproj", "{69418C63-F5B7-43F3-8B2F-F43A57893A07}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CDD96641-F86C-41FE-A8B3-012D352D2214}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.ContentHydrator.Tests", "Tests\IdelPog.ContentHydrator.Tests\IdelPog.ContentHydrator.Tests.csproj", "{2A36E7E7-4DCC-4A9D-A5AF-3070DB1E9F0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHydrator.Tests", "Tests\ContentHydrator.Tests\ContentHydrator.Tests.csproj", "{2A36E7E7-4DCC-4A9D-A5AF-3070DB1E9F0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.ECS.Tests", "Tests\IdelPog.ECS.Tests\IdelPog.ECS.Tests.csproj", "{92B11A3D-0B82-474A-9CF3-B56D0D9A0710}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECS.Tests", "Tests\ECS.Tests\ECS.Tests.csproj", "{92B11A3D-0B82-474A-9CF3-B56D0D9A0710}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Common.Tests", "Tests\IdelPog.Common.Tests\IdelPog.Common.Tests.csproj", "{0B5B3E95-99F8-4D52-A9F8-DD827F1735CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Tests", "Tests\Common.Tests\Common.Tests.csproj", "{0B5B3E95-99F8-4D52-A9F8-DD827F1735CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Messaging.Tests", "Tests\IdelPog.Messaging.Tests\IdelPog.Messaging.Tests.csproj", "{F4A681BB-2C0D-4AC4-B836-25DDEEBB46BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Tests", "Tests\Messaging.Tests\Messaging.Tests.csproj", "{F4A681BB-2C0D-4AC4-B836-25DDEEBB46BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.SimulationEngine.Tests", "Tests\IdelPog.SimulationEngine.Tests\IdelPog.SimulationEngine.Tests.csproj", "{406BCCF6-23CC-4F8C-8AC3-819C64A785D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulationEngine.Tests", "Tests\SimulationEngine.Tests\SimulationEngine.Tests.csproj", "{406BCCF6-23CC-4F8C-8AC3-819C64A785D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Validation.Tests", "Tests\IdelPog.Validation.Tests\IdelPog.Validation.Tests.csproj", "{C000C88C-0663-4092-B37D-EA8C586E4B19}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation.Tests", "Tests\Validation.Tests\Validation.Tests.csproj", "{C000C88C-0663-4092-B37D-EA8C586E4B19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

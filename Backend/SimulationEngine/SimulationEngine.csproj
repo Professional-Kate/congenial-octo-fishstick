@@ -14,7 +14,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Shared\IdelPog.Common\IdelPog.Common.csproj" />
+	  <ProjectReference Include="..\..\Shared\Common\Common.csproj" />
 	</ItemGroup>
 
 </Project>
