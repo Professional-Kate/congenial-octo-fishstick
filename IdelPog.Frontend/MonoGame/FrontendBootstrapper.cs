@@ -1,7 +1,6 @@
 ﻿using Frontend.Content.Service;
 using Frontend.MonoGame.Controllers;
 using Frontend.MonoGame.Converter;
-using Frontend.MonoGame.Factory;
 using Frontend.MonoGame.Listeners;
 using Frontend.MonoGame.Mediator;
 using Frontend.Rendering;
@@ -19,7 +18,6 @@ namespace Frontend.MonoGame
         {
             GameRoot gameRoot = new();
             IGameController gameController = new GameController(gameRoot);
-            IIdelPogFactory idelPogFactory = new IdelPogFactory(gameController);
             
             IAssetRepository<TextureID, Texture2D> repository = new AssetRepository<TextureID, Texture2D>();
             IUITextureResolver textureResolver = new UITextureResolver(repository);
@@ -33,7 +31,7 @@ namespace Frontend.MonoGame
             RenderableDTOListener renderableDTOListener = new(renderingController);
             
             bufferMessenger.Subscribe(renderableDTOListener);
-            idelPogFactory.StartIdelPog();
+            gameController.StartGame();
         }
     }
 }
