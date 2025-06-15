@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Common.Structures
+﻿namespace IdelPog.ECS
 {
     public readonly struct Optional<T>
     {

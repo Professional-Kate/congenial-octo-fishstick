@@ -9,7 +9,6 @@
         <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.2.1105"/>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\Backend\ECS\ECS.csproj" />
       <ProjectReference Include="..\..\Shared\Common\Common.csproj" />
       <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj" />
     </ItemGroup>
