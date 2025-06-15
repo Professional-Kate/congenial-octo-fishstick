@@ -1,6 +1,6 @@
 ﻿using IdelPog.Validation.Assertions.Interfaces;
 
-namespace IdelPog.Infrastructure.Repository
+namespace IdelPog.Common.Repository
 {
     /// <seealso cref="IRepositoryAsserter"/>
     public class RepositoryAsserter(IAssertFound assertFound, IAssertNotNull assertNotNull, IAssertNonDuplicate assertNonDuplicate)

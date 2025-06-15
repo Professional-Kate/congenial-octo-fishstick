@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Infrastructure.Structures
+﻿namespace IdelPog.Common.Structures
 {
     /// <summary>
     /// <see cref="ICloneable"/> but will return the actual object type

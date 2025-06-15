@@ -1,5 +1,5 @@
-﻿using IdelPog.Frontend.Rendering.Structures.Enums;
-using IdelPog.Infrastructure.Repository;
+﻿using IdelPog.Common.Repository;
+using IdelPog.Frontend.Rendering.Structures.Enums;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace IdelPog.Frontend.Content.Service

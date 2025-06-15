@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Infrastructure.Repository
+﻿namespace IdelPog.Common.Repository
 {
     /// <summary>
     /// Generic asset repository 

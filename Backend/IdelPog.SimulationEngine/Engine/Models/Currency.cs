@@ -1,4 +1,4 @@
-﻿using IdelPog.Infrastructure.Structures;
+﻿using IdelPog.Common.Structures;
 using IdelPog.SimulationEngine.Structures.Enums;
 
 namespace IdelPog.SimulationEngine.Models

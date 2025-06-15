@@ -1,4 +1,5 @@
-﻿using IdelPog.Frontend.Content.Service;
+﻿using IdelPog.Common.Repository;
+using IdelPog.Frontend.Content.Service;
 using IdelPog.Frontend.MonoGame.Controllers;
 using IdelPog.Frontend.MonoGame.Converter;
 using IdelPog.Frontend.MonoGame.Listeners;
@@ -6,7 +7,6 @@ using IdelPog.Frontend.MonoGame.Mediator;
 using IdelPog.Frontend.Rendering;
 using IdelPog.Frontend.Rendering.Service;
 using IdelPog.Frontend.Rendering.Structures.Enums;
-using IdelPog.Infrastructure.Repository;
 using IdelPog.Staging.Messaging;
 using Microsoft.Xna.Framework.Graphics;
 

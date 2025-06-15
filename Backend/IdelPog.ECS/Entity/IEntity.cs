@@ -1,6 +1,6 @@
-﻿using IdelPog.ECS.Component;
+﻿using IdelPog.Common.Structures;
+using IdelPog.ECS.Component;
 using IdelPog.ECS.Exceptions;
-using IdelPog.Infrastructure.Structures;
 
 namespace IdelPog.ECS
 {

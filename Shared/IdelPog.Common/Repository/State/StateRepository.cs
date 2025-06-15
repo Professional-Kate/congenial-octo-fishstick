@@ -1,8 +1,8 @@
-﻿using IdelPog.Infrastructure.Structures;
+﻿using IdelPog.Common.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 
-namespace IdelPog.Infrastructure.Repository
+namespace IdelPog.Common.Repository
 {
     public sealed class StateRepository<TID, T> : IStateRepository<TID, T>
         where T : class, ICloneable<T> where TID : notnull

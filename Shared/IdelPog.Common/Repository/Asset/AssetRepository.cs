@@ -1,7 +1,7 @@
 ﻿using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 
-namespace IdelPog.Infrastructure.Repository
+namespace IdelPog.Common.Repository
 {
     public class AssetRepository<TID, T> : IAssetRepository<TID, T> 
         where TID : notnull where T : notnull

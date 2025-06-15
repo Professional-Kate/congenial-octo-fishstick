@@ -1,4 +1,4 @@
-﻿using IdelPog.Infrastructure.Repository;
+﻿using IdelPog.Common.Repository;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.Validation.Assertions.Interfaces;

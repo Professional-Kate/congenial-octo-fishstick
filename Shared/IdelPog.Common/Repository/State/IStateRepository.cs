@@ -1,6 +1,6 @@
 ﻿using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.Infrastructure.Repository
+namespace IdelPog.Common.Repository
 {
     /// <summary>
     /// Generic CRUD Repository

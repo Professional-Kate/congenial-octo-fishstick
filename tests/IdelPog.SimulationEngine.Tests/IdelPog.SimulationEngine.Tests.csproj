@@ -25,7 +25,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Backend\IdelPog.SimulationEngine\IdelPog.SimulationEngine.csproj" />
-      <ProjectReference Include="..\..\Shared\IdelPog.Infrastructure\IdelPog.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Shared\IdelPog.Common\IdelPog.Common.csproj" />
       <ProjectReference Include="..\..\Shared\IdelPog.Validation\IdelPog.Validation.csproj" />
     </ItemGroup>
 

@@ -1,5 +1,5 @@
-﻿using IdelPog.ECS.Component;
-using IdelPog.Infrastructure.Repository;
+﻿using IdelPog.Common.Repository;
+using IdelPog.ECS.Component;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.ECS.Tests

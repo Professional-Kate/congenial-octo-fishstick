@@ -1,4 +1,4 @@
-﻿using IdelPog.Infrastructure.Structures;
+﻿using IdelPog.Common.Structures;
 
 namespace IdelPog.ECS.Component
 {
