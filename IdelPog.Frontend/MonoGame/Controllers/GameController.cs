@@ -1,16 +1,15 @@
 ﻿using System;
-using Frontend.MonoGame.Orchestration;
 
 namespace Frontend.MonoGame.Controllers
 {
-    public class GameController(IIdelPogOrchestrator idelPogOrchestrator) : IGameController, IDisposable
+    public class GameController : IGameController, IDisposable
     {
-        private GameRoot _gameRoot;
+        private readonly GameRoot _gameRoot = new();
         private bool _disposed;
         
         public void StartGame()
         {
-            _gameRoot = idelPogOrchestrator.BeginIdelPog();
+            // TODO: call initial GameRoot methods here
         }
         
         protected virtual void Dispose(bool disposing)
@@ -27,7 +26,6 @@ namespace Frontend.MonoGame.Controllers
             }
             
             _gameRoot.Dispose();
-            _gameRoot = null;
             _disposed = true;
         }
 

@@ -1,5 +1,4 @@
 ﻿using Frontend.MonoGame.Controllers;
-using Frontend.MonoGame.Orchestration;
 
 namespace Frontend.MonoGame.Factory
 {
@@ -9,7 +8,7 @@ namespace Frontend.MonoGame.Factory
 
         public IdelPogFactory()
         {
-            _gameController = new GameController(new IdelPogOrchestrator());
+            _gameController = new GameController();
         }
         
         public void StartIdelPog()
