@@ -13,7 +13,7 @@
 
 
     <ItemGroup>
-        <InternalsVisibleTo Include="IdelPog.Staging.Tests" />
+        <InternalsVisibleTo Include="IdelPog.Messaging.Tests" />
     </ItemGroup>
 
 </Project>
