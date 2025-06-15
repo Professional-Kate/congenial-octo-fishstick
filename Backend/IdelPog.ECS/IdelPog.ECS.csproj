@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Shared\IdelPog.Infrastructure\IdelPog.Infrastructure.csproj" />
-      <ProjectReference Include="..\IdelPog.Infrastructure\IdelPog.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

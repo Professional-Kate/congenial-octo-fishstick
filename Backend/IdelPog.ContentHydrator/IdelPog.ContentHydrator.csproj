@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Shared\IdelPog.Validation\IdelPog.Validation.csproj" />
-      <ProjectReference Include="..\IdelPog.Validation\IdelPog.Validation.csproj" />
     </ItemGroup>
 
 </Project>
