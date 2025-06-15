@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{6C3871
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Common", "Shared\IdelPog.Common\IdelPog.Common.csproj", "{6B3B395A-5A21-45D6-8E7F-30975E1B82CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Staging", "Shared\IdelPog.Staging\IdelPog.Staging.csproj", "{657B8DE7-E413-4FCB-AA8D-27D54F5E9456}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Messaging", "Shared\IdelPog.Messaging\IdelPog.Messaging.csproj", "{657B8DE7-E413-4FCB-AA8D-27D54F5E9456}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Validation", "Shared\IdelPog.Validation\IdelPog.Validation.csproj", "{B3338E73-6A6C-4FF6-B394-239C93F2EAEF}"
 EndProject
@@ -31,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.ECS.Tests", "Tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Common.Tests", "Tests\IdelPog.Common.Tests\IdelPog.Common.Tests.csproj", "{0B5B3E95-99F8-4D52-A9F8-DD827F1735CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Staging.Tests", "Tests\IdelPog.Staging.Tests\IdelPog.Staging.Tests.csproj", "{F4A681BB-2C0D-4AC4-B836-25DDEEBB46BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Messaging.Tests", "Tests\IdelPog.Messaging.Tests\IdelPog.Messaging.Tests.csproj", "{F4A681BB-2C0D-4AC4-B836-25DDEEBB46BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.SimulationEngine.Tests", "Tests\IdelPog.SimulationEngine.Tests\IdelPog.SimulationEngine.Tests.csproj", "{406BCCF6-23CC-4F8C-8AC3-819C64A785D8}"
 EndProject

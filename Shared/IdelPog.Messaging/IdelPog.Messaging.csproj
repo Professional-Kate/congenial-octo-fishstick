@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>IdelPog.Messaging</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\IdelPog.Validation\IdelPog.Validation.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="IdelPog.Staging.Tests" />
+    </ItemGroup>
+
+</Project>
