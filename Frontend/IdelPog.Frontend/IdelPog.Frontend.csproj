@@ -9,6 +9,9 @@
         <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.2.1105"/>
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\..\Backend\IdelPog.ECS\IdelPog.ECS.csproj" />
+      <ProjectReference Include="..\..\Shared\IdelPog.Infrastructure\IdelPog.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Shared\IdelPog.Staging\IdelPog.Staging.csproj" />
       <ProjectReference Include="..\IdelPog.ECS\IdelPog.ECS.csproj" />
       <ProjectReference Include="..\IdelPog.Staging\IdelPog.Staging.csproj" />
     </ItemGroup>
