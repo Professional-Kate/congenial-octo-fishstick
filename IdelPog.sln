@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.ContentHydrator", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.ECS", "Backend\IdelPog.ECS\IdelPog.ECS.csproj", "{CC9B5936-8B80-4BD9-8DB6-30CDC7D6A565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog", "Backend\IdelPog\IdelPog.csproj", "{71684A80-BE2C-4F26-BD50-1562B15B6750}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.SimulationEngine", "Backend\IdelPog.SimulationEngine\IdelPog.SimulationEngine.csproj", "{71684A80-BE2C-4F26-BD50-1562B15B6750}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{6C387129-33C3-4375-BBF5-FCCAF7B16917}"
 EndProject
@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Infrastructure.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Staging.Tests", "Tests\IdelPog.Staging.Tests\IdelPog.Staging.Tests.csproj", "{F4A681BB-2C0D-4AC4-B836-25DDEEBB46BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Tests", "Tests\IdelPog.Tests\IdelPog.Tests.csproj", "{406BCCF6-23CC-4F8C-8AC3-819C64A785D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.SimulationEngine.Tests", "Tests\IdelPog.SimulationEngine.Tests\IdelPog.SimulationEngine.Tests.csproj", "{406BCCF6-23CC-4F8C-8AC3-819C64A785D8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdelPog.Validation.Tests", "Tests\IdelPog.Validation.Tests\IdelPog.Validation.Tests.csproj", "{C000C88C-0663-4092-B37D-EA8C586E4B19}"
 EndProject

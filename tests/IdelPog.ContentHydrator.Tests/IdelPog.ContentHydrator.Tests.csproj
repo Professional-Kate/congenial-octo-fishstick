@@ -26,7 +26,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Backend\IdelPog.ContentHydrator\IdelPog.ContentHydrator.csproj" />
       <ProjectReference Include="..\..\Shared\IdelPog.Validation\IdelPog.Validation.csproj" />
-      <ProjectReference Include="..\IdelPog.ContentHydrator\IdelPog.ContentHydrator.csproj" />
     </ItemGroup>
 
     <ItemGroup>

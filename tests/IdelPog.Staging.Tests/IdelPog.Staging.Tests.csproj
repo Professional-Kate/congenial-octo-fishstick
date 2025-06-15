@@ -26,7 +26,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Shared\IdelPog.Staging\IdelPog.Staging.csproj" />
       <ProjectReference Include="..\..\Shared\IdelPog.Validation\IdelPog.Validation.csproj" />
-      <ProjectReference Include="..\IdelPog.Staging\IdelPog.Staging.csproj" />
     </ItemGroup>
 
 </Project>
