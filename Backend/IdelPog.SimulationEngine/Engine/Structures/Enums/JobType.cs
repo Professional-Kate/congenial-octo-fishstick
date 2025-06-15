@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Structures.Enums
+﻿namespace IdelPog.SimulationEngine.Structures.Enums
 {
     public enum JobType : byte
     {

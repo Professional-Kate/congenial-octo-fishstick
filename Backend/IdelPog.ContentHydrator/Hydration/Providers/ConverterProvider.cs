@@ -1,9 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using ContentHydrator.Converters;
-using IdelPog.Validation.Assertions;
+using IdelPog.ContentHydrator.Converters;
+using IdelPog.Validation.Assertions.Interfaces;
 
-namespace ContentHydrator.Providers
+namespace IdelPog.ContentHydrator.Providers
 {
     public class ConverterProvider(JsonSerializerContext context, IAssertNotNull assertNotNull) : IConverterProvider
     {

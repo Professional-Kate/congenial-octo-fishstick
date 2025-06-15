@@ -1,12 +1,12 @@
-﻿using IdelPog.Engine.Models;
-using IdelPog.Engine.Service;
-using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Types;
-using IdelPog.Infrastructure.Repository;
-using IdelPog.Validation.Assertions;
+﻿using IdelPog.Infrastructure.Repository;
+using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Service;
+using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures.Types;
+using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.Engine.Orchestration
+namespace IdelPog.SimulationEngine.Orchestration
 {
     /// <summary>
     /// See <see cref="ICurrencyMediator"/> for documentation

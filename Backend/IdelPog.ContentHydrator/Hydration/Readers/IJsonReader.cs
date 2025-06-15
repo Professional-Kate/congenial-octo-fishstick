@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace ContentHydrator.Readers
+namespace IdelPog.ContentHydrator.Readers
 {
     /// <summary>
     /// Represents a file reader that reads flat files and returns the content as a string

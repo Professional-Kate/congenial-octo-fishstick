@@ -1,8 +1,8 @@
-﻿using ContentHydrator.Exceptions;
+﻿using IdelPog.ContentHydrator.Exceptions;
 using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
-namespace ContentHydrator.Assertions
+namespace IdelPog.ContentHydrator.Assertions
 {
     /// <inheritdoc cref="IAssertDirectoryNotEmpty"/>
     public class AssertDirectoryNotEmpty(IHandler handler) : BaseAssertion<EmptyDirectoryException>(handler), IAssertDirectoryNotEmpty

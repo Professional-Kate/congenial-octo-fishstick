@@ -1,7 +1,7 @@
-﻿using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.Engine.Models
+namespace IdelPog.SimulationEngine.Models
 {
     /// <inheritdoc cref="IItemBuilder"/>
     public sealed class ItemBuilder : IItemBuilder

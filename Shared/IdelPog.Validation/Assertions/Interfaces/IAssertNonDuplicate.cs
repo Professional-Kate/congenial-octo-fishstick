@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Validation.Assertions
+﻿namespace IdelPog.Validation.Assertions.Interfaces
 {
     /// <seealso cref="AssertContains"/>
     public interface IAssertNonDuplicate

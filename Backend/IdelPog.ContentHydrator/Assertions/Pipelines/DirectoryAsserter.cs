@@ -1,6 +1,6 @@
-﻿using IdelPog.Validation.Assertions;
+﻿using IdelPog.Validation.Assertions.Interfaces;
 
-namespace ContentHydrator.Assertions.Pipelines
+namespace IdelPog.ContentHydrator.Assertions.Pipelines
 {
     public class DirectoryAsserter(IAssertDirectoryFound assertFound, IAssertDirectoryNotEmpty notEmpty, IAssertNotNull assertNotNull) : IDirectoryAsserter
     {

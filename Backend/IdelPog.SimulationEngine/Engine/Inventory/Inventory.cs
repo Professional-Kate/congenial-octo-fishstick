@@ -1,9 +1,9 @@
-﻿using IdelPog.Engine.Models;
-using IdelPog.Engine.Structures.Enums;
-using IdelPog.Infrastructure.Repository;
-using IdelPog.Validation.Assertions;
+﻿using IdelPog.Infrastructure.Repository;
+using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.Validation.Assertions.Interfaces;
 
-namespace IdelPog.Engine
+namespace IdelPog.SimulationEngine
 {
     /// <summary>
     /// The container class for all <see cref="Item"/>'s. See <see cref="IInventory"/> for documentation

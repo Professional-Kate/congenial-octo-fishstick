@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Models;
+﻿using IdelPog.SimulationEngine.Models;
 
-namespace IdelPog.Engine.Assertions
+namespace IdelPog.SimulationEngine.Assertions
 {
     public interface IAssertUnderMaxLevel
     {

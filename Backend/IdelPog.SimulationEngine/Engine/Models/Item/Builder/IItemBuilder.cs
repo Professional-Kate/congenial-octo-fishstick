@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Models
+﻿namespace IdelPog.SimulationEngine.Models
 {
     /// <summary>
     /// Builds a new <see cref="Item"/>

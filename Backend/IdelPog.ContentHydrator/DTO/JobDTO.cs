@@ -1,4 +1,4 @@
-﻿namespace ContentHydrator.DTO
+﻿namespace IdelPog.ContentHydrator.DTO
 {
     public sealed record JobDTO
     {

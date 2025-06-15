@@ -1,4 +1,4 @@
-﻿namespace ContentHydrator.Service
+﻿namespace IdelPog.ContentHydrator.Service
 {
     /// <summary>
     /// Converts all files in a given directory to a specified DTO

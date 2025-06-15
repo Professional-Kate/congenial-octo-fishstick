@@ -1,7 +1,7 @@
-﻿using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.Engine.Controller
+namespace IdelPog.SimulationEngine.Controller
 {
     /// <seealso cref="UpdateCurrency"/>
     public interface ICurrencyController

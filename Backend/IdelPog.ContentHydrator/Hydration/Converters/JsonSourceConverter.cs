@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Interfaces;
 
-namespace ContentHydrator.Converters
+namespace IdelPog.ContentHydrator.Converters
 {
     public class JsonSourceConverter<T>(JsonTypeInfo<T> typeInfo, IAssertNotNull assertNotNull) : IJsonConverter<T>
     {

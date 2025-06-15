@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
-using ContentHydrator.Assertions.Pipelines;
-using ContentHydrator.Converters;
-using ContentHydrator.Providers;
-using ContentHydrator.Readers;
+using IdelPog.ContentHydrator.Assertions.Pipelines;
+using IdelPog.ContentHydrator.Converters;
+using IdelPog.ContentHydrator.Providers;
+using IdelPog.ContentHydrator.Readers;
 
-namespace ContentHydrator.Service
+namespace IdelPog.ContentHydrator.Service
 {
     /// <inheritdoc cref="IDirectoryConverter"/>
     public class DirectoryConverter(IJsonReader jsonReader, IConverterProvider provider, IDirectoryAsserter directoryAsserter) : IDirectoryConverter

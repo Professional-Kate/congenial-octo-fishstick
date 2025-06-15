@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.Engine.Constants
+namespace IdelPog.SimulationEngine.Constants
 {
     public static class JobConstants
     {

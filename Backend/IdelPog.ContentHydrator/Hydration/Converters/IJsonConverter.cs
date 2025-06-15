@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace ContentHydrator.Converters
+namespace IdelPog.ContentHydrator.Converters
 {
     /// <summary>
     /// converts JSON strings into the specified DTO 

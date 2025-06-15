@@ -1,4 +1,5 @@
 ﻿using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Infrastructure.Repository
 {

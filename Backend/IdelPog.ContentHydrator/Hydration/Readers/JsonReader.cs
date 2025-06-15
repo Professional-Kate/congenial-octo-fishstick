@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Interfaces;
 
-namespace ContentHydrator.Readers
+namespace IdelPog.ContentHydrator.Readers
 {
     /// <inheritdoc cref="IJsonReader"/>
     public class JsonReader(IAssertNotNull assertNotNull) : IJsonReader

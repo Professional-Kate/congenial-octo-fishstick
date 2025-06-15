@@ -1,7 +1,7 @@
 ﻿using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
-namespace ContentHydrator.Assertions
+namespace IdelPog.ContentHydrator.Assertions
 {
     public class AssertDirectoryFound(IHandler handler) : BaseAssertion<DirectoryNotFoundException>(handler), IAssertDirectoryFound
     {

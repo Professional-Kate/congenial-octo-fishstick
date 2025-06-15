@@ -2,6 +2,7 @@
 using IdelPog.Staging.Assertions.Pipelines;
 using IdelPog.Staging.Collection;
 using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Staging.Factory
 {

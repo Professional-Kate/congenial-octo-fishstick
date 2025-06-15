@@ -1,7 +1,7 @@
-﻿using IdelPog.Engine.Models;
+﻿using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.Engine.Service
+namespace IdelPog.SimulationEngine.Service
 {
     /// <seealso cref="CanJobLevel"/>
     /// <seealso cref="LevelUpJob"/>

@@ -1,4 +1,4 @@
-﻿namespace ContentHydrator.Assertions
+﻿namespace IdelPog.ContentHydrator.Assertions
 {
     /// <summary>
     /// Asserts that a directory, which is represented only by its content, is not empty. This should be used before trying to lead content from flat files 

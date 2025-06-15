@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using ContentHydrator.DTO;
+using IdelPog.ContentHydrator.DTO;
 
-namespace ContentHydrator
+namespace IdelPog.ContentHydrator
 {
     [JsonSerializable(typeof(InformationDTO))]
     [JsonSerializable(typeof(JobDTO))]

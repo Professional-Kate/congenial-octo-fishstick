@@ -1,6 +1,6 @@
-﻿using IdelPog.Validation.Assertions;
+﻿using IdelPog.Validation.Assertions.Interfaces;
 
-namespace IdelPog.Engine.Service
+namespace IdelPog.SimulationEngine.Service
 {
     public class Mapper<T>(IAssertFound assertFound, IAssertNonDuplicate assertUnique) : IMapper<T>
     {

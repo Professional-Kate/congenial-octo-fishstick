@@ -1,10 +1,10 @@
-﻿using IdelPog.Engine.Models;
-using IdelPog.Engine.Service;
-using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Types;
-using IdelPog.Infrastructure.Repository;
+﻿using IdelPog.Infrastructure.Repository;
+using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Service;
+using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.Engine.Orchestration
+namespace IdelPog.SimulationEngine.Orchestration
 {
     public class JobMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<JobType, Job> stateRepository)
         : IJobMediator

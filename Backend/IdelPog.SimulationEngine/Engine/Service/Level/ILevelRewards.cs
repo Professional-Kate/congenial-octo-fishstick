@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.Engine.Service
+namespace IdelPog.SimulationEngine.Service
 {
     /// <summary>
     /// Handles granting custom rewards which can be granted on specific numbers

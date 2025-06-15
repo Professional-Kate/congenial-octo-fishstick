@@ -1,10 +1,10 @@
-﻿using IdelPog.Engine.Constants;
-using IdelPog.Engine.Models;
+﻿using IdelPog.SimulationEngine.Constants;
+using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.Engine.Assertions
+namespace IdelPog.SimulationEngine.Assertions
 {
     public class AssertUnderMaxLevel(IHandler handler) : BaseAssertion<MaxLevelException>(handler), IAssertUnderMaxLevel
     {

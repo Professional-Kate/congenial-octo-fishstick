@@ -1,6 +1,6 @@
 ﻿using IdelPog.ECS.Assertions;
 using IdelPog.ECS.Exceptions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.ECS.Component
 {

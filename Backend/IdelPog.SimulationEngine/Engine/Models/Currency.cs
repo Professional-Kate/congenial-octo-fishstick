@@ -1,8 +1,7 @@
-﻿using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Types;
-using IdelPog.Infrastructure.Structures;
+﻿using IdelPog.Infrastructure.Structures;
+using IdelPog.SimulationEngine.Structures.Enums;
 
-namespace IdelPog.Engine.Models
+namespace IdelPog.SimulationEngine.Models
 {
     /// <summary>
     /// The Currency model.

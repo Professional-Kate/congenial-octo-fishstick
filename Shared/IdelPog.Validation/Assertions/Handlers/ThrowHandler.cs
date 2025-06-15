@@ -1,4 +1,6 @@
-﻿namespace IdelPog.Validation.Assertions.Handlers
+﻿using IdelPog.Validation.Assertions.Handlers.Interfaces;
+
+namespace IdelPog.Validation.Assertions.Handlers
 {
     /// <summary>
     /// This handler will throw any passed exception

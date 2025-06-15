@@ -1,4 +1,4 @@
-﻿namespace ContentHydrator.Assertions.Pipelines
+﻿namespace IdelPog.ContentHydrator.Assertions.Pipelines
 {
     public interface IDirectoryAsserter
     {

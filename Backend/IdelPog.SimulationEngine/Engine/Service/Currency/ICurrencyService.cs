@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Models;
+﻿using IdelPog.SimulationEngine.Models;
 
-namespace IdelPog.Engine.Service
+namespace IdelPog.SimulationEngine.Service
 {
     /// <summary>
     /// This class will handle modifying any data of the <see cref="Currency"/> model. 

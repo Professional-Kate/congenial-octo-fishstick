@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.Engine.Service
+namespace IdelPog.SimulationEngine.Service
 {
     /// <inheritdoc cref="ILevelRewards"/>
     public class LevelRewards : ILevelRewards

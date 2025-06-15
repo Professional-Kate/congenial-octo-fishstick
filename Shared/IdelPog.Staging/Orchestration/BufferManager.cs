@@ -2,6 +2,7 @@
 using IdelPog.Staging.Factory;
 using IdelPog.Staging.Messaging;
 using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Staging.Orchestration
 {

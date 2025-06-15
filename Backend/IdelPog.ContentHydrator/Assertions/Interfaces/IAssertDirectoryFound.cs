@@ -1,4 +1,4 @@
-﻿namespace ContentHydrator.Assertions
+﻿namespace IdelPog.ContentHydrator.Assertions
 {
     public interface IAssertDirectoryFound
     {

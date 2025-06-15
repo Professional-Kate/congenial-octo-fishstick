@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Models
+﻿namespace IdelPog.SimulationEngine.Models
 {
     /// <summary>
     /// This is the main progression object. 

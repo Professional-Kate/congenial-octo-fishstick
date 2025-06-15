@@ -1,8 +1,8 @@
-﻿using IdelPog.Engine.Models;
-using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.Engine.Controller
+namespace IdelPog.SimulationEngine.Controller
 {
     /// <see cref="ModifyItem"/>
     public interface IItemController

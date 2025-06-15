@@ -1,7 +1,7 @@
-﻿using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Types;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.Engine.Service
+namespace IdelPog.SimulationEngine.Service
 {
     /// <summary>
     /// Information mapper, maps a passed key onto an <see cref="Information"/> object

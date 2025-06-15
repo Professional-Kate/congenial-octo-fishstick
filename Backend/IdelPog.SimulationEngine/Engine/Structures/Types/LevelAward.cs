@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Structures.Types
+﻿namespace IdelPog.SimulationEngine.Structures.Types
 {
     /// <seealso cref="RequiredLevel"/>
     /// <seealso cref="OnLevelUp"/>

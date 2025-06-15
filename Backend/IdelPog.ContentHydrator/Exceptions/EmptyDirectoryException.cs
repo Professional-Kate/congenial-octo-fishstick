@@ -1,6 +1,6 @@
 ﻿using IdelPog.Validation.Constants;
 
-namespace ContentHydrator.Exceptions
+namespace IdelPog.ContentHydrator.Exceptions
 {
     public class EmptyDirectoryException : Exception
     {

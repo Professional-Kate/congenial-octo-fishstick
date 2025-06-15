@@ -1,6 +1,6 @@
-﻿using ContentHydrator.Converters;
+﻿using IdelPog.ContentHydrator.Converters;
 
-namespace ContentHydrator.Providers
+namespace IdelPog.ContentHydrator.Providers
 {
     /// <summary>
     /// Provides a new <see cref="IJsonConverter{T}"/> based on the type param T

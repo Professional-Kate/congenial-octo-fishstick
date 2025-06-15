@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Engine.Models
+﻿namespace IdelPog.SimulationEngine.Models
 {
     /// <inheritdoc cref="ILevelable"/>
     public class Levelable(byte level, int experience, int nextLevelExperience, int experiencePerAction)
