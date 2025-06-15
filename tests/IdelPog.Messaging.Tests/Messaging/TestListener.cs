@@ -1,6 +1,6 @@
-﻿using IdelPog.Staging.Messaging;
+﻿using IdelPog.Messaging.Messaging;
 
-namespace IdelPog.Staging.Tests.Messaging
+namespace IdelPog.Messaging.Tests.Messaging
 {
     internal class TestListener<T> : IBufferListener<T>
     {

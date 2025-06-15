@@ -1,10 +1,10 @@
-﻿using IdelPog.Staging.Assertions;
-using IdelPog.Staging.Assertions.Pipelines;
-using IdelPog.Staging.Collection;
-using IdelPog.Staging.Exceptions;
+﻿using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Assertions.Pipelines;
+using IdelPog.Messaging.Collection;
+using IdelPog.Messaging.Exceptions;
 using Moq;
 
-namespace IdelPog.Staging.Tests.Collection
+namespace IdelPog.Messaging.Tests.Collection
 {
     [TestFixture]
     public class BufferTest

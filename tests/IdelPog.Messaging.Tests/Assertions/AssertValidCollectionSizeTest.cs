@@ -1,9 +1,9 @@
-﻿using IdelPog.Staging.Assertions;
-using IdelPog.Staging.Exceptions;
+﻿using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Exceptions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
-namespace IdelPog.Staging.Tests.Assertions
+namespace IdelPog.Messaging.Tests.Assertions
 {
     [TestFixture]
     public class AssertValidCollectionSizeTest

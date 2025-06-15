@@ -1,11 +1,11 @@
-﻿using IdelPog.Staging.Assertions;
-using IdelPog.Staging.Exceptions;
-using IdelPog.Staging.Messaging;
+﻿using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Exceptions;
+using IdelPog.Messaging.Messaging;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
-namespace IdelPog.Staging.Tests.Messaging
+namespace IdelPog.Messaging.Tests.Messaging
 {
     [TestFixture]
     public class BufferMessengerTest

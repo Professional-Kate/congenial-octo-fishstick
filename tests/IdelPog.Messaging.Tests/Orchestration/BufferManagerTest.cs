@@ -1,15 +1,15 @@
-﻿using IdelPog.Staging.Assertions;
-using IdelPog.Staging.Assertions.Pipelines;
-using IdelPog.Staging.Collection;
-using IdelPog.Staging.Factory;
-using IdelPog.Staging.Messaging;
-using IdelPog.Staging.Orchestration;
+﻿using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Assertions.Pipelines;
+using IdelPog.Messaging.Collection;
+using IdelPog.Messaging.Factory;
+using IdelPog.Messaging.Messaging;
+using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
-namespace IdelPog.Staging.Tests.Orchestration
+namespace IdelPog.Messaging.Tests.Orchestration
 {
     [TestFixture]
     public class BufferManagerTest

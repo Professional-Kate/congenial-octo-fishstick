@@ -1,9 +1,9 @@
-﻿using IdelPog.Staging.Assertions;
-using IdelPog.Staging.Exceptions;
-using IdelPog.Staging.Tests.Messaging;
+﻿using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Exceptions;
+using IdelPog.Messaging.Tests.Messaging;
 using IdelPog.Validation.Assertions.Handlers;
 
-namespace IdelPog.Staging.Tests.Assertions
+namespace IdelPog.Messaging.Tests.Assertions
 {
     [TestFixture]
     public class AssertListenerFoundTest

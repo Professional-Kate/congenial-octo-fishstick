@@ -1,12 +1,12 @@
-﻿using IdelPog.Staging.Assertions;
-using IdelPog.Staging.Assertions.Pipelines;
-using IdelPog.Staging.Collection;
-using IdelPog.Staging.Factory;
+﻿using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Assertions.Pipelines;
+using IdelPog.Messaging.Collection;
+using IdelPog.Messaging.Factory;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
-namespace IdelPog.Staging.Tests.Factory
+namespace IdelPog.Messaging.Tests.Factory
 {
     [TestFixture]
     public class BufferFactoryTest
