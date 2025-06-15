@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Frontend.MonoGame.Converter;
-using Frontend.Rendering.Service;
-using Frontend.Rendering.Structures;
-using Frontend.UI.Structures;
+using IdelPog.Frontend.MonoGame.Converter;
+using IdelPog.Frontend.Rendering.Service;
+using IdelPog.Frontend.Rendering.Structures;
+using IdelPog.Frontend.UI.Structures;
 
-namespace Frontend.MonoGame.Mediator
+namespace IdelPog.Frontend.MonoGame.Mediator
 {
     public class RenderingMediator : IRenderingMediator
     {

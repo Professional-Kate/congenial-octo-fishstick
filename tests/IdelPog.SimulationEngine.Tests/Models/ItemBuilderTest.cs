@@ -1,7 +1,7 @@
-﻿using IdelPog.Engine.Constants;
-using IdelPog.Engine.Models;
-using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Constants;
+using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPogTests.Models
 {

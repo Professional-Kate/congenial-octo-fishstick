@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Frontend.MonoGame.Controllers
+namespace IdelPog.Frontend.MonoGame.Controllers
 {
     public class GameController : IGameController, IDisposable
     {

@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Service;
-using IdelPog.Engine.Structures.Types;
-using IdelPog.Validation.Assertions;
+﻿using IdelPog.SimulationEngine.Service;
+using IdelPog.SimulationEngine.Structures.Types;
+using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
 using Moq;
 

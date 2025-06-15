@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Frontend.MonoGame.Controllers;
-using Frontend.UI.Structures;
+using IdelPog.Frontend.MonoGame.Controllers;
+using IdelPog.Frontend.UI.Structures;
 using IdelPog.Staging.Messaging;
 
-namespace Frontend.MonoGame.Listeners
+namespace IdelPog.Frontend.MonoGame.Listeners
 {
     public class RenderableDTOListener(IRenderingController renderingController) : IBufferListener<RenderableDTO>
     {

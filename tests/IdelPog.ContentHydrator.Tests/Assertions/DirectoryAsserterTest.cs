@@ -1,8 +1,8 @@
-﻿using ContentHydrator.Assertions;
-using ContentHydrator.Assertions.Pipelines;
-using ContentHydrator.Exceptions;
+﻿using IdelPog.ContentHydrator.Assertions;
+using IdelPog.ContentHydrator.Assertions.Pipelines;
+using IdelPog.ContentHydrator.Exceptions;
 using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
 namespace ContentHydratorTests.Assertions

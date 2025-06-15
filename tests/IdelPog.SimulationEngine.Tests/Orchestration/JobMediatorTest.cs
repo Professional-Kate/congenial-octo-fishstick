@@ -1,9 +1,9 @@
-﻿using IdelPog.Engine.Models;
-using IdelPog.Engine.Orchestration;
-using IdelPog.Engine.Service;
-using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Types;
-using IdelPog.Infrastructure.Repository;
+﻿using IdelPog.Infrastructure.Repository;
+using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Orchestration;
+using IdelPog.SimulationEngine.Service;
+using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures.Types;
 using IdelPogTests.Utils;
 using Moq;
 

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Frontend.Rendering.Structures;
+using IdelPog.Frontend.Rendering.Structures;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Frontend.Rendering.Service
+namespace IdelPog.Frontend.Rendering.Service
 {
     public class RendererService : IRendererService
     {

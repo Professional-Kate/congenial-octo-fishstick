@@ -1,6 +1,6 @@
 ﻿using IdelPog.Staging.Assertions;
 using IdelPog.Staging.Exceptions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
 namespace IdelPog.Staging.Tests.Assertions

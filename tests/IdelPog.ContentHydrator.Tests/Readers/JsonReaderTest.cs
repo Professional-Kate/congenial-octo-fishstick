@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using ContentHydrator.Readers;
+using IdelPog.ContentHydrator.Readers;
 using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
 namespace ContentHydratorTests.Readers

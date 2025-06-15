@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Frontend.Rendering.Structures;
+using IdelPog.Frontend.Rendering.Structures;
 
-namespace Frontend.Rendering.Service
+namespace IdelPog.Frontend.Rendering.Service
 {
     public interface IRendererService
     {

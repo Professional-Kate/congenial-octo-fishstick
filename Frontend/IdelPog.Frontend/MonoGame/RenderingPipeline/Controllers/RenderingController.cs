@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Frontend.MonoGame.Mediator;
-using Frontend.UI.Structures;
+using IdelPog.Frontend.MonoGame.Mediator;
+using IdelPog.Frontend.UI.Structures;
 
-namespace Frontend.MonoGame.Controllers
+namespace IdelPog.Frontend.MonoGame.Controllers
 {
     public class RenderingController : IRenderingController
     {

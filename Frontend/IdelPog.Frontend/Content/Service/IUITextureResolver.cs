@@ -1,7 +1,7 @@
-﻿using Frontend.Rendering.Structures.Enums;
+﻿using IdelPog.Frontend.Rendering.Structures.Enums;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Frontend.Content.Service
+namespace IdelPog.Frontend.Content.Service
 {
     public interface IUITextureResolver
     {

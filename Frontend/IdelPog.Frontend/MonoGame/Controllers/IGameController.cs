@@ -1,4 +1,4 @@
-﻿namespace Frontend.MonoGame.Controllers
+﻿namespace IdelPog.Frontend.MonoGame.Controllers
 {
     public interface IGameController
     {

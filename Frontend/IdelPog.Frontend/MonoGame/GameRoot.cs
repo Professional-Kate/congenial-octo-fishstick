@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Frontend.MonoGame
+namespace IdelPog.Frontend.MonoGame
 {
     public sealed class GameRoot : Game
     {

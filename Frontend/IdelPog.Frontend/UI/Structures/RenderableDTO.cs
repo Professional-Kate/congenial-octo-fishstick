@@ -1,6 +1,6 @@
-﻿using Frontend.Rendering.Structures.Enums;
+﻿using IdelPog.Frontend.Rendering.Structures.Enums;
 
-namespace Frontend.UI.Structures
+namespace IdelPog.Frontend.UI.Structures
 {
     public readonly record struct RenderableDTO
     {

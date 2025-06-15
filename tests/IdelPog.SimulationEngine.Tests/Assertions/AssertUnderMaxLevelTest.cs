@@ -1,5 +1,5 @@
-﻿using IdelPog.Engine.Assertions;
-using IdelPog.Engine.Models;
+﻿using IdelPog.SimulationEngine.Assertions;
+using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
 

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Vector2 = System.Numerics.Vector2;
 
-namespace Frontend.Rendering.Structures
+namespace IdelPog.Frontend.Rendering.Structures
 {
     public sealed record RenderEntity
     {

@@ -6,6 +6,7 @@ using IdelPog.Staging.Messaging;
 using IdelPog.Staging.Orchestration;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
 namespace IdelPog.Staging.Tests.Orchestration

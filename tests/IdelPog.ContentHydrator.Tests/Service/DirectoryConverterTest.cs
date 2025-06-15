@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
-using ContentHydrator.Assertions.Pipelines;
-using ContentHydrator.Converters;
-using ContentHydrator.Exceptions;
-using ContentHydrator.Providers;
-using ContentHydrator.Readers;
-using ContentHydrator.Service;
 using ContentHydratorTests.TestObjects;
+using IdelPog.ContentHydrator.Assertions.Pipelines;
+using IdelPog.ContentHydrator.Converters;
+using IdelPog.ContentHydrator.Exceptions;
+using IdelPog.ContentHydrator.Providers;
+using IdelPog.ContentHydrator.Readers;
+using IdelPog.ContentHydrator.Service;
 using IdelPog.Validation.Exceptions;
 using Moq;
 

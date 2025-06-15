@@ -1,9 +1,9 @@
-﻿using IdelPog.Engine;
-using IdelPog.Engine.Models;
-using IdelPog.Engine.Structures.Enums;
-using IdelPog.Engine.Structures.Types;
-using IdelPog.Infrastructure.Repository;
-using IdelPog.Validation.Assertions;
+﻿using IdelPog.Infrastructure.Repository;
+using IdelPog.SimulationEngine;
+using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures.Types;
+using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
 using Moq;

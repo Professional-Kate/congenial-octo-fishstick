@@ -1,7 +1,7 @@
-﻿using Frontend.UI.Structures;
-using IdelPog.ECS.Component;
+﻿using IdelPog.ECS.Component;
+using IdelPog.Frontend.UI.Structures;
 
-namespace Frontend.UI
+namespace IdelPog.Frontend.UI
 {
     public readonly record struct TransformComponent : IComponent<TransformComponent>
     {

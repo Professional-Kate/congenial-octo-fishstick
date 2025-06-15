@@ -1,5 +1,6 @@
 ﻿using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.Validation.Tests.Assertions

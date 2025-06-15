@@ -1,8 +1,8 @@
-﻿using Frontend.Rendering.Structures.Enums;
-using Frontend.UI.Structures;
-using IdelPog.ECS;
+﻿using IdelPog.ECS;
+using IdelPog.Frontend.Rendering.Structures.Enums;
+using IdelPog.Frontend.UI.Structures;
 
-namespace Frontend.UI
+namespace IdelPog.Frontend.UI
 {
     public sealed record UIEntity : Entity
     {

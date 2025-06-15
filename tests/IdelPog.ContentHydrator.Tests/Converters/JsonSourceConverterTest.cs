@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
-using ContentHydrator.Converters;
 using ContentHydratorTests.TestObjects;
+using IdelPog.ContentHydrator.Converters;
 using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
 namespace ContentHydratorTests.Converters

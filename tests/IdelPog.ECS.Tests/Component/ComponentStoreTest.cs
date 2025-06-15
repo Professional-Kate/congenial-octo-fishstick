@@ -1,6 +1,6 @@
 ﻿using IdelPog.ECS.Component;
 using IdelPog.ECS.Exceptions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
 namespace IdelPog.ECS.Tests

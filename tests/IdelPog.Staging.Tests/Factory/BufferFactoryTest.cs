@@ -3,7 +3,7 @@ using IdelPog.Staging.Assertions.Pipelines;
 using IdelPog.Staging.Collection;
 using IdelPog.Staging.Factory;
 using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
 namespace IdelPog.Staging.Tests.Factory

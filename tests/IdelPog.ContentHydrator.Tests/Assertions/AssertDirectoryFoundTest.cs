@@ -1,4 +1,4 @@
-﻿using ContentHydrator.Assertions;
+﻿using IdelPog.ContentHydrator.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 
 namespace ContentHydratorTests.Assertions

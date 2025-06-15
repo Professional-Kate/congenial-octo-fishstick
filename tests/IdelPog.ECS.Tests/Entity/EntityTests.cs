@@ -2,7 +2,7 @@
 using IdelPog.ECS.Exceptions;
 using IdelPog.Infrastructure.Repository;
 using IdelPog.Infrastructure.Structures;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
 namespace IdelPog.ECS.Tests

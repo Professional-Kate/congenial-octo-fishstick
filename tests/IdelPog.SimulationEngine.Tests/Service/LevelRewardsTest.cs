@@ -1,6 +1,6 @@
-﻿using IdelPog.Engine.Constants;
-using IdelPog.Engine.Service;
-using IdelPog.Engine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Constants;
+using IdelPog.SimulationEngine.Service;
+using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPogTests.Service
 {

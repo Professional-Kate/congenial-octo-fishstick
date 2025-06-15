@@ -1,4 +1,4 @@
-﻿namespace Frontend.MonoGame
+﻿namespace IdelPog.Frontend.MonoGame
 {
     public static class Program
     {

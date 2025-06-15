@@ -1,5 +1,4 @@
-﻿using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Assertions.Handlers.Interfaces;
+﻿using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Validation.Assertions

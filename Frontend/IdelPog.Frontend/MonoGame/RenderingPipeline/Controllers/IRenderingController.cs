@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Frontend.Rendering.Structures.Enums;
-using Frontend.UI.Structures;
+using IdelPog.Frontend.UI.Structures;
 
-namespace Frontend.MonoGame.Controllers
+namespace IdelPog.Frontend.MonoGame.Controllers
 {
     public interface IRenderingController
     {

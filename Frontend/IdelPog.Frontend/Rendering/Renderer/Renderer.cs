@@ -1,8 +1,8 @@
-﻿using Frontend.Rendering.Structures;
+﻿using IdelPog.Frontend.Rendering.Structures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Frontend.Rendering
+namespace IdelPog.Frontend.Rendering
 {
     public class Renderer : IRenderer
     {

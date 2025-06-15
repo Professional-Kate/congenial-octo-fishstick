@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Frontend.Rendering.Structures;
-using Frontend.UI.Structures;
+using IdelPog.Frontend.Rendering.Structures;
+using IdelPog.Frontend.UI.Structures;
 
-namespace Frontend.MonoGame.Converter
+namespace IdelPog.Frontend.MonoGame.Converter
 {
     public interface IRenderableDTOConverter
     {

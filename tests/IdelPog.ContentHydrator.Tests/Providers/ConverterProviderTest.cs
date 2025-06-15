@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
-using ContentHydrator.Converters;
-using ContentHydrator.Providers;
 using ContentHydratorTests.TestObjects;
+using IdelPog.ContentHydrator.Converters;
+using IdelPog.ContentHydrator.Providers;
 using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 using TestContext = ContentHydratorTests.TestObjects.TestContext;
 

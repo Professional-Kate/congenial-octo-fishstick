@@ -1,16 +1,16 @@
-﻿using Frontend.Content.Service;
-using Frontend.MonoGame.Controllers;
-using Frontend.MonoGame.Converter;
-using Frontend.MonoGame.Listeners;
-using Frontend.MonoGame.Mediator;
-using Frontend.Rendering;
-using Frontend.Rendering.Service;
-using Frontend.Rendering.Structures.Enums;
+﻿using IdelPog.Frontend.Content.Service;
+using IdelPog.Frontend.MonoGame.Controllers;
+using IdelPog.Frontend.MonoGame.Converter;
+using IdelPog.Frontend.MonoGame.Listeners;
+using IdelPog.Frontend.MonoGame.Mediator;
+using IdelPog.Frontend.Rendering;
+using IdelPog.Frontend.Rendering.Service;
+using IdelPog.Frontend.Rendering.Structures.Enums;
 using IdelPog.Infrastructure.Repository;
 using IdelPog.Staging.Messaging;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Frontend.MonoGame
+namespace IdelPog.Frontend.MonoGame
 {
     public class FrontendBootstrapper
     {

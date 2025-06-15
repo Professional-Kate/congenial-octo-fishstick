@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Frontend.Content.Service;
-using Frontend.Rendering.Structures;
-using Frontend.UI.Structures;
+using IdelPog.Frontend.Content.Service;
+using IdelPog.Frontend.Rendering.Structures;
+using IdelPog.Frontend.UI.Structures;
 
-namespace Frontend.MonoGame.Converter
+namespace IdelPog.Frontend.MonoGame.Converter
 {
     public class RenderableDTOConverter : IRenderableDTOConverter
     {

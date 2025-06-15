@@ -1,6 +1,6 @@
-﻿using Frontend.UI.Structures.Enums;
+﻿using IdelPog.Frontend.UI.Structures.Enums;
 
-namespace Frontend.UI.Service
+namespace IdelPog.Frontend.UI.Service
 {
     public interface IScreenService
     {

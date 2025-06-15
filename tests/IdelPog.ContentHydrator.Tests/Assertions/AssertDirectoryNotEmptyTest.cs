@@ -1,5 +1,5 @@
-﻿using ContentHydrator.Assertions;
-using ContentHydrator.Exceptions;
+﻿using IdelPog.ContentHydrator.Assertions;
+using IdelPog.ContentHydrator.Exceptions;
 using IdelPog.Validation.Assertions.Handlers;
 
 namespace ContentHydratorTests.Assertions

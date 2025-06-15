@@ -1,4 +1,4 @@
-﻿using IdelPog.Engine.Models;
+﻿using IdelPog.SimulationEngine.Models;
 
 namespace IdelPogTests.Models
 {
