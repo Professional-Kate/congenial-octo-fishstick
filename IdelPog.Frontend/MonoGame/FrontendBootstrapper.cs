@@ -19,6 +19,7 @@ namespace Frontend.MonoGame
             GameRoot gameRoot = new();
             IGameController gameController = new GameController(gameRoot);
             
+            // TODO: this needs to be filled before passing into the TextureResolver.
             IAssetRepository<TextureID, Texture2D> repository = new AssetRepository<TextureID, Texture2D>();
             IUITextureResolver textureResolver = new UITextureResolver(repository);
             IRenderableDTOConverter renderableDTOConverter = new RenderableDTOConverter(textureResolver);
