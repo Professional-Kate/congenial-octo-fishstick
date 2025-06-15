@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.UI.Structures.Enums
+﻿namespace IdelPog.SimulationEngine.UIModel.Structures.Enums
 {
     public enum ScreenID : byte
     {

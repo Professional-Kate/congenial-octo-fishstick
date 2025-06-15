@@ -1,6 +1,6 @@
-﻿using IdelPog.SimulationEngine.UI.Structures.Enums;
+﻿using IdelPog.SimulationEngine.UIModel.Structures.Enums;
 
-namespace IdelPog.SimulationEngine.UI.Service
+namespace IdelPog.SimulationEngine.UIModel.Service
 {
     public class ScreenService : IScreenService
     {
