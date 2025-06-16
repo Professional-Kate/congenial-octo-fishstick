@@ -170,7 +170,7 @@ namespace IdelPogTests.Orchestration
         {
             _repositoryMock.Setup(library => library.Contains(CurrencyType.FOOD)).Returns(false);
 
-            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(_addFoodTrade);
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate([_addFoodTrade]);
             
             Assert.That(serviceResponse.IsSuccess, Is.False);
             Assert.That(serviceResponse.Message, Is.Not.Null);
@@ -243,7 +243,7 @@ namespace IdelPogTests.Orchestration
             
             CurrencyTrade trade = TestUtils.CreateTrade(badAmount, _foodCurrency.CurrencyType, action);
 
-            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trade);
+            ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate([trade]);
             
             Assert.That(serviceResponse.IsSuccess, Is.False);
             Assert.That(serviceResponse.Message, Is.Not.Null);

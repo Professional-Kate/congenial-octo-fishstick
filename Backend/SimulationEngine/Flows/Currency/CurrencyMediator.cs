@@ -13,7 +13,7 @@ namespace IdelPog.SimulationEngine.Flows.Currency
     public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Models.Currency> stateRepository, IAssertPositive assert)
         : ICurrencyMediator
     {
-        public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
+        public ServiceResponse ProcessCurrencyUpdate(IReadOnlyList<CurrencyTrade> trades)
         {
             ServiceResponse validateTradesResponse = ValidateTrades(trades);
             if (validateTradesResponse.IsSuccess == false)
@@ -49,7 +49,7 @@ namespace IdelPog.SimulationEngine.Flows.Currency
         /// </summary>
         /// <param name="trades">The array you want to check</param>
         /// <returns>A <see cref="ServiceResponse"/> which will tell you if all the <see cref="Currency"/>'s exist</returns>
-        private ServiceResponse AllCurrenciesExist(params CurrencyTrade[] trades)
+        private ServiceResponse AllCurrenciesExist(IReadOnlyList<CurrencyTrade> trades)
         {
             List<CurrencyType> types = new(); 
             
@@ -78,7 +78,7 @@ namespace IdelPog.SimulationEngine.Flows.Currency
         /// <param name="currencyTrades">Uses the internal <see cref="CurrencyTrade"/>.<see cref="CurrencyTrade.Currency"/> to Get each <see cref="Currency"/> from the Repository</param>
         /// <param name="originalCurrencies">All the <see cref="Currency"/> returned from Get will first be placed into this Dictionary</param>
         /// <param name="stagingGround">All the <see cref="Currency"/> added into the originalCurrencies Dictionary will be cloned into this</param>
-        private void CloneCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Models.Currency> originalCurrencies, Dictionary<CurrencyType, Models.Currency> stagingGround)
+        private void CloneCurrency(IReadOnlyList<CurrencyTrade> currencyTrades, Dictionary<CurrencyType, Models.Currency> originalCurrencies, Dictionary<CurrencyType, Models.Currency> stagingGround)
         {
             foreach (CurrencyTrade currencyTrade in currencyTrades)
             {
@@ -102,7 +102,7 @@ namespace IdelPog.SimulationEngine.Flows.Currency
         /// </summary>
         /// <param name="currencyTrades"><see cref="CurrencyTrade"/></param>
         /// <param name="stagingGround">This Dictionary will now contain each cloned <see cref="Currency"/> from the <see cref="StateRepository{TID,T}"/></param>
-        private void MutateClonedCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Models.Currency> stagingGround)
+        private void MutateClonedCurrency(IReadOnlyList<CurrencyTrade> currencyTrades, Dictionary<CurrencyType, Models.Currency> stagingGround)
         {
             foreach (CurrencyTrade currencyTrade in currencyTrades)
             {
@@ -168,7 +168,7 @@ namespace IdelPog.SimulationEngine.Flows.Currency
         /// </summary>
         /// <param name="trades">The <see cref="CurrencyTrade"/> array you want to verify</param>
         /// <returns>A <see cref="ServiceResponse"/> object that will tell you if the operation was successful</returns>
-        private ServiceResponse ValidateTrades(params CurrencyTrade[] trades)
+        private ServiceResponse ValidateTrades(IReadOnlyList<CurrencyTrade> trades)
         {
             ServiceResponse serviceResponse = AssertArrayIsPositive(trades.Select(entry => entry.Amount).ToArray());
             

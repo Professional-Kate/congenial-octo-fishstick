@@ -53,10 +53,10 @@ namespace IdelPogTests.Controller
             _currencyController = new CurrencyController(_currencyServiceMock.Object);
         }
 
-        private void SetupMock(CurrencyTrade[] trades)
+        private void SetupMock(IReadOnlyList<CurrencyTrade> trades)
         {
             _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trades))
-                .Callback<CurrencyTrade[]>(currencyTrades =>
+                .Callback<IReadOnlyList<CurrencyTrade>>(currencyTrades =>
                 {
                     foreach (CurrencyTrade currencyTrade in currencyTrades)
                     {
@@ -129,7 +129,7 @@ namespace IdelPogTests.Controller
         [TestCase(-100)]
         public void Negative_ProcessCurrencyUpdate_BadAmounts_NoUpdates(int badAmount)
         {
-            CurrencyTrade trade = TestUtils.CreateTrade(badAmount, _currencyType, ActionType.ADD);
+            IReadOnlyList<CurrencyTrade> trade = [TestUtils.CreateTrade(badAmount, _currencyType, ActionType.ADD)];
 
             _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trade))
                 .Returns(ServiceResponse.Failure(""));

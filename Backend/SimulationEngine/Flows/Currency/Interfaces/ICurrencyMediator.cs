@@ -19,6 +19,6 @@ namespace IdelPog.SimulationEngine.Flows.Currency
         /// <item>A <see cref="ServiceResponse"/>.<see cref="ServiceResponse.Failure"/> will be returned if any <see cref="CurrencyTrade"/>.<see cref="CurrencyTrade.Amount"/> in the passed array is equal to or less than 0</item>
         /// </list>
         /// </remarks>
-        public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades);
+        public ServiceResponse ProcessCurrencyUpdate(IReadOnlyList<CurrencyTrade> trades);
     }
 }

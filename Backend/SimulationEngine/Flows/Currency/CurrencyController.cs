@@ -8,7 +8,7 @@ namespace IdelPog.SimulationEngine.Flows.Currency
     /// <seealso cref="UpdateCurrency"/>
     public class CurrencyController(ICurrencyMediator currencyService) : ICurrencyController
     {
-        public ServiceResponse UpdateCurrency(params CurrencyTrade[] trades)
+        public ServiceResponse UpdateCurrency(IReadOnlyList<CurrencyTrade> trades)
         {
             ServiceResponse serviceResponse = currencyService.ProcessCurrencyUpdate(trades);
             if (serviceResponse.IsSuccess == false)
