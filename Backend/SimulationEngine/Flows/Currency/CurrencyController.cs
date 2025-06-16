@@ -1,7 +1,6 @@
-﻿using IdelPog.SimulationEngine.Orchestration;
-using IdelPog.SimulationEngine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Controller
+namespace IdelPog.SimulationEngine.Flows.Currency
 {
     /// <summary>
     /// The main control object for Currency. Using this class you can Update any Currency.

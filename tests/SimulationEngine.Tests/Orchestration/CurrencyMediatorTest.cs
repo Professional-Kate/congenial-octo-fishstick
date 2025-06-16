@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.SimulationEngine.Flows.Currency;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Orchestration;
 using IdelPog.SimulationEngine.Service;

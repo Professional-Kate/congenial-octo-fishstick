@@ -1,17 +1,16 @@
 ﻿using IdelPog.Common.Repository;
 using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Service;
 using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.SimulationEngine.Orchestration
+namespace IdelPog.SimulationEngine.Flows.Currency
 {
     /// <summary>
     /// See <see cref="ICurrencyMediator"/> for documentation
     /// </summary>
-    public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, IAssertPositive assert)
+    public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Models.Currency> stateRepository, IAssertPositive assert)
         : ICurrencyMediator
     {
         public ServiceResponse ProcessCurrencyUpdate(params CurrencyTrade[] trades)
@@ -28,8 +27,8 @@ namespace IdelPog.SimulationEngine.Orchestration
                 return allCurrenciesExistResponse;
             }
             
-            Dictionary<CurrencyType, Currency> stagingGround = new(); 
-            Dictionary<CurrencyType, Currency> originalCurrencies = new(); 
+            Dictionary<CurrencyType, Models.Currency> stagingGround = new(); 
+            Dictionary<CurrencyType, Models.Currency> originalCurrencies = new(); 
 
             CloneCurrency(trades, originalCurrencies, stagingGround);
             MutateClonedCurrency(trades, stagingGround);
@@ -79,7 +78,7 @@ namespace IdelPog.SimulationEngine.Orchestration
         /// <param name="currencyTrades">Uses the internal <see cref="CurrencyTrade"/>.<see cref="CurrencyTrade.Currency"/> to Get each <see cref="Currency"/> from the Repository</param>
         /// <param name="originalCurrencies">All the <see cref="Currency"/> returned from Get will first be placed into this Dictionary</param>
         /// <param name="stagingGround">All the <see cref="Currency"/> added into the originalCurrencies Dictionary will be cloned into this</param>
-        private void CloneCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Currency> originalCurrencies, Dictionary<CurrencyType, Currency> stagingGround)
+        private void CloneCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Models.Currency> originalCurrencies, Dictionary<CurrencyType, Models.Currency> stagingGround)
         {
             foreach (CurrencyTrade currencyTrade in currencyTrades)
             {
@@ -90,11 +89,11 @@ namespace IdelPog.SimulationEngine.Orchestration
                     continue;
                 }
 
-                Currency globalCurrencyClone = stateRepository.Get(currencyTrade.Currency);
+                Models.Currency globalCurrencyClone = stateRepository.Get(currencyTrade.Currency);
                 originalCurrencies.Add(currencyTrade.Currency, globalCurrencyClone);
                     
                 // entering each cloned Currency into the stagingGround so we can update them
-                stagingGround[currencyTrade.Currency] = new Currency(globalCurrencyClone.CurrencyType, globalCurrencyClone.Amount);
+                stagingGround[currencyTrade.Currency] = new Models.Currency(globalCurrencyClone.CurrencyType, globalCurrencyClone.Amount);
             }
         }
 
@@ -103,12 +102,12 @@ namespace IdelPog.SimulationEngine.Orchestration
         /// </summary>
         /// <param name="currencyTrades"><see cref="CurrencyTrade"/></param>
         /// <param name="stagingGround">This Dictionary will now contain each cloned <see cref="Currency"/> from the <see cref="StateRepository{TID,T}"/></param>
-        private void MutateClonedCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Currency> stagingGround)
+        private void MutateClonedCurrency(CurrencyTrade[] currencyTrades, Dictionary<CurrencyType, Models.Currency> stagingGround)
         {
             foreach (CurrencyTrade currencyTrade in currencyTrades)
             {
                 // Apply CurrencyTrade actions to the stagingGround Currency
-                Currency localCurrency = stagingGround[currencyTrade.Currency];
+                Models.Currency localCurrency = stagingGround[currencyTrade.Currency];
 
                 switch (currencyTrade.Action)
                 {
@@ -129,7 +128,7 @@ namespace IdelPog.SimulationEngine.Orchestration
         /// </summary>
         /// <param name="stagingGround">This should now contain each cloned <see cref="Currency"/> from the Repository, but, has had its internal amount updated </param>
         /// <returns>A <see cref="ServiceResponse"/> who's <see cref="ServiceResponse.IsSuccess"/> will tell if you all the passed trades pass validation</returns>
-        private ServiceResponse ValidateFinalAmounts(Dictionary<CurrencyType, Currency> stagingGround)
+        private ServiceResponse ValidateFinalAmounts(Dictionary<CurrencyType, Models.Currency> stagingGround)
         {
             ServiceResponse serviceResponse = AssertArrayIsPositive(stagingGround.Select(entry => entry.Value.Amount).ToArray());
             
@@ -142,11 +141,11 @@ namespace IdelPog.SimulationEngine.Orchestration
         /// </summary>
         /// <param name="stagingGround">These <see cref="Currency"/> should now be different from the ones retrieved from the Repository</param>
         /// <param name="originalCurrencies">This contains the original retrieved <see cref="Currency"/> that has not been changed</param>
-        private void ApplyChanges(Dictionary<CurrencyType, Currency> stagingGround, Dictionary<CurrencyType, Currency> originalCurrencies)
+        private void ApplyChanges(Dictionary<CurrencyType, Models.Currency> stagingGround, Dictionary<CurrencyType, Models.Currency> originalCurrencies)
         {
-            foreach (Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
+            foreach (Models.Currency stagedCurrency in stagingGround.Select(entry => entry.Value))
             {
-                Currency globalCurrency = originalCurrencies[stagedCurrency.CurrencyType];
+                Models.Currency globalCurrency = originalCurrencies[stagedCurrency.CurrencyType];
 
                 // Calculating if we need to Remove or Add Amount
                 int difference = stagedCurrency.Amount - globalCurrency.Amount;
