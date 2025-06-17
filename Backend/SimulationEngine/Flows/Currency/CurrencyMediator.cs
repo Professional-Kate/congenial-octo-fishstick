@@ -7,9 +7,7 @@ using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Flows.Currency
 {
-    /// <summary>
-    /// See <see cref="ICurrencyMediator"/> for documentation
-    /// </summary>
+    /// <inheritdoc cref="ICurrencyMediator"/>
     public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Models.Currency> stateRepository, IAssertPositive assert)
         : ICurrencyMediator
     {

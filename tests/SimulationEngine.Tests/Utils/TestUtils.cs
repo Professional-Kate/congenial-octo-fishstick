@@ -1,5 +1,5 @@
-﻿using IdelPog.SimulationEngine.Structures.Enums;
-using IdelPog.SimulationEngine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Flows.Currency;
+using IdelPog.SimulationEngine.Structures.Enums;
 
 namespace IdelPogTests.Utils
 {
@@ -18,7 +18,12 @@ namespace IdelPogTests.Utils
         /// <returns>The created <see cref="CurrencyTrade"/></returns>
         internal static CurrencyTrade CreateTrade(int amount, CurrencyType type, ActionType action)
         {
-            return new CurrencyTrade(amount, type, action);
+            return new CurrencyTrade
+            {
+                Amount = amount,
+                Currency = type,
+                Action = action
+            };
         }
     }
 }

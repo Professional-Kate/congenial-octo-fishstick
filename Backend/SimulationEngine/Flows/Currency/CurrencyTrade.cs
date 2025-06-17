@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Structures.Enums;
 
-namespace IdelPog.SimulationEngine.Structures.Types
+namespace IdelPog.SimulationEngine.Flows.Currency
 {
     /// <summary>
     /// This structure is used to update a Currency model. 
@@ -8,24 +8,21 @@ namespace IdelPog.SimulationEngine.Structures.Types
     /// <remarks>
     /// Uses the internal <see cref="CurrencyType"/> to dictate what Currency to update, this update is decided by the <see cref="ActionType"/>
     /// </remarks>
-    /// <seealso cref="Amount"/>
-    /// <seealso cref="Currency"/>
-    /// <seealso cref="Action"/>
-    public struct CurrencyTrade(int amount, CurrencyType currency, ActionType action)
+    public readonly record struct CurrencyTrade
     {
         /// <summary>
         /// The amount that should be Removed/Added to the <see cref="CurrencyType"/>
         /// </summary>
-        public int Amount { get; } = amount;
+        public required int Amount { get; init; }
 
         /// <summary>
         /// What <see cref="CurrencyType"/> the action should perform on
         /// </summary>
-        public CurrencyType Currency { get; } = currency;
+        public required CurrencyType Currency { get; init; } 
 
         /// <summary>
         /// <inheritdoc cref="ActionType"/>
         /// </summary>
-        public ActionType Action { get; } = action;
+        public required ActionType Action { get; init; }
     }
 }
