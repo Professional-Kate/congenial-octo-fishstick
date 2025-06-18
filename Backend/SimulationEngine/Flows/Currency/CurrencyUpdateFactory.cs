@@ -1,10 +1,16 @@
-﻿namespace IdelPog.SimulationEngine.Flows.Currency
+﻿using IdelPog.SimulationEngine.Flows.Currency.Assertions;
+using IdelPog.Validation.Assertions;
+
+namespace IdelPog.SimulationEngine.Flows.Currency
 {
-    public class CurrencyUpdateFactory : ICurrencyUpdateFactory
+    public class CurrencyUpdateFactory(AssertNotNull assertNotNull, AssertCollectionNotEmpty assertCollectionNotEmpty) : ICurrencyUpdateFactory
     {
         public IReadOnlyList<CurrencyUpdateDTO> CreateFrom(IReadOnlyList<CurrencyTrade> trades)
         {
-            List<CurrencyUpdateDTO> result = [];
+            assertNotNull.AssertObjectNotNull(trades);
+            assertCollectionNotEmpty.Handle(trades);
+            
+            List<CurrencyUpdateDTO> result = new(trades.Count);
 
             foreach (CurrencyTrade currencyTrade in trades)
             {
