@@ -1,10 +1,13 @@
 ﻿using IdelPog.Common.Repository;
 using IdelPog.SimulationEngine.Flows.Currency;
+using IdelPog.SimulationEngine.Flows.Currency.Assertions;
+using IdelPog.SimulationEngine.Flows.Currency.Exceptions;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Orchestration;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
@@ -19,6 +22,9 @@ namespace IdelPogTests.Orchestration
         private Mock<IStateRepository<CurrencyType, Currency>> _repositoryMock { get; set; }
         private Mock<ICurrencyService> _currencyServiceMock { get; set; }
         private Mock<IAssertPositive> _assertPositiveMock { get; set; }
+        private Mock<IHandler>  _handlerMock { get; set; }
+        private Mock<ICurrencyDispatcher>  _dispatcherMock { get; set; }
+        
         private Currency _foodCurrency { get; set; }
         private Currency _woodCurrency { get; set; }
 
@@ -48,12 +54,14 @@ namespace IdelPogTests.Orchestration
         {
             _repositoryMock = new Mock<IStateRepository<CurrencyType, Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
+            _dispatcherMock = new Mock<ICurrencyDispatcher>();
             _assertPositiveMock = new Mock<IAssertPositive>();
+            _handlerMock =  new Mock<IHandler>();
             
-            _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _repositoryMock.Object, _assertPositiveMock.Object);
+            _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _repositoryMock.Object, _dispatcherMock.Object, _assertPositiveMock.Object, new AssertCollectionNotEmpty(_handlerMock.Object));
 
-            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns((Currency) _foodCurrency.DeepClone());
-            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns((Currency) _woodCurrency.DeepClone());
+            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns(_foodCurrency.DeepClone());
+            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns(_woodCurrency.DeepClone());
             
             _repositoryMock.Setup(library => library.Contains(It.IsAny<CurrencyType>())).Returns(true);
 
@@ -110,6 +118,11 @@ namespace IdelPogTests.Orchestration
         {
             _repositoryMock.Verify(library => library.Get(It.IsAny<CurrencyType>()), Times.Exactly(amount));
         }
+
+        private void VerifyDispatcherCalls(IReadOnlyList<CurrencyTrade> trades, int amount)
+        {
+            _dispatcherMock.Verify(library => library.Dispatch(trades),  Times.Exactly(amount));
+        }
         
         [TestCase(1)]
         [TestCase(5)]
@@ -128,6 +141,7 @@ namespace IdelPogTests.Orchestration
             VerifyContainsCalls(1);
             VerifyGetCalls(1);
             VerifyUpdateCall(1);
+            VerifyDispatcherCalls(trades, 1);
         }
         
         [TestCase(1)]
@@ -149,20 +163,26 @@ namespace IdelPogTests.Orchestration
             VerifyContainsCalls(2);
             VerifyGetCalls(2);
             VerifyUpdateCall(2);
+            VerifyDispatcherCalls(removeTrades, 1);
         }
 
         [Test]
-        public void Positive_ProcessCurrencyUpdate_NoPassedTrades_ReturnsSuccess()
+        public void Positive_ProcessCurrencyUpdate_NoPassedTrades_ReturnsFailure()
         {
-            CurrencyTrade[] trades = Array.Empty<CurrencyTrade>();
+            _handlerMock.Setup(library => library.Handle(It.IsAny<CollectionEmptyException>()))
+                .Throws(new CollectionEmptyException());
+            
+            CurrencyTrade[] trades = [];
             
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
             
-            Assert.That(serviceResponse.IsSuccess, Is.True);
+            Assert.That(serviceResponse.IsSuccess, Is.False);
+            Assert.That(serviceResponse.Message, Is.Not.Null);
             
             VerifyContainsCalls(0);
             VerifyGetCalls(0);
             VerifyUpdateCall(0);
+            VerifyDispatcherCalls(trades, 0);
         }
 
         [Test]
@@ -179,6 +199,7 @@ namespace IdelPogTests.Orchestration
             VerifyContainsCalls(1);
             VerifyGetCalls(0);
             VerifyUpdateCall(0);
+            VerifyDispatcherCalls([_addFoodTrade], 0);
         }
 
         [Test]
@@ -198,6 +219,7 @@ namespace IdelPogTests.Orchestration
             VerifyContainsCalls(2);
             VerifyGetCalls(0);
             VerifyUpdateCall(0);
+            VerifyDispatcherCalls(trades, 0);
         }
 
         [Test]
@@ -213,6 +235,7 @@ namespace IdelPogTests.Orchestration
             Assert.That(serviceResponse.IsSuccess, Is.False);
             Assert.That(0, Is.EqualTo(_woodCurrency.Amount));
             Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
+            VerifyDispatcherCalls(trades, 0);
         }
         
         [Test]
@@ -230,6 +253,7 @@ namespace IdelPogTests.Orchestration
             VerifyUpdateCall(2); // two currency = 2 update calls
             VerifyContainsCalls(2);
             VerifyGetCalls(2);
+            VerifyDispatcherCalls(trades, 1);
         }
         
         [TestCase(-10, ActionType.ADD)]
@@ -252,6 +276,7 @@ namespace IdelPogTests.Orchestration
             VerifyContainsCalls(0);
             VerifyGetCalls(0);
             VerifyUpdateCall(0);
+            VerifyDispatcherCalls([trade], 0);
         }
         
         [Test]
@@ -269,6 +294,7 @@ namespace IdelPogTests.Orchestration
             Assert.That(serviceResponse.Message, Is.Not.Null);
             Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
             Assert.That(0, Is.EqualTo(_woodCurrency.Amount));
+            VerifyDispatcherCalls(trades, 0);
         }
     }
 }

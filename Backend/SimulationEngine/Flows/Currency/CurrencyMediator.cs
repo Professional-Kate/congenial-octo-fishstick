@@ -1,4 +1,6 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.SimulationEngine.Flows.Currency.Assertions;
+using IdelPog.SimulationEngine.Flows.Currency.Exceptions;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
@@ -8,7 +10,7 @@ using IdelPog.Validation.Exceptions;
 namespace IdelPog.SimulationEngine.Flows.Currency
 {
     /// <inheritdoc cref="ICurrencyMediator"/>
-    public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Models.Currency> stateRepository, IAssertPositive assert)
+    public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Models.Currency> stateRepository, ICurrencyDispatcher currencyDispatcher, IAssertPositive assert, AssertCollectionNotEmpty assertCollectionNotEmpty)
         : ICurrencyMediator
     {
         public ServiceResponse ProcessCurrencyUpdate(IReadOnlyList<CurrencyTrade> trades)
@@ -38,6 +40,7 @@ namespace IdelPog.SimulationEngine.Flows.Currency
             }
             
             ApplyChanges(stagingGround, originalCurrencies);
+            currencyDispatcher.Dispatch(trades);
 
             return ServiceResponse.Success();
         }
@@ -168,6 +171,12 @@ namespace IdelPog.SimulationEngine.Flows.Currency
         /// <returns>A <see cref="ServiceResponse"/> object that will tell you if the operation was successful</returns>
         private ServiceResponse ValidateTrades(IReadOnlyList<CurrencyTrade> trades)
         {
+            ServiceResponse collectionEmptyResponse = AssertCollectionIsNotEmpty(trades);
+            if (collectionEmptyResponse.IsSuccess == false)
+            {
+                return collectionEmptyResponse;
+            }
+            
             ServiceResponse serviceResponse = AssertArrayIsPositive(trades.Select(entry => entry.Amount).ToArray());
             
             return serviceResponse;
@@ -186,6 +195,19 @@ namespace IdelPog.SimulationEngine.Flows.Currency
                 return ServiceResponse.Success();
             }
             catch (NegativeNumberException exception)
+            {
+                return ServiceResponse.Failure(exception.Message);
+            }
+        }
+
+        private ServiceResponse AssertCollectionIsNotEmpty(IReadOnlyList<CurrencyTrade> trades)
+        {
+            try
+            {
+                assertCollectionNotEmpty.Handle(trades);
+                return ServiceResponse.Success();
+            }
+            catch (CollectionEmptyException exception)
             {
                 return ServiceResponse.Failure(exception.Message);
             }
