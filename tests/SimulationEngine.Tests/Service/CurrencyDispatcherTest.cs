@@ -63,7 +63,7 @@ namespace IdelPogTests.Service
         }
 
         [Test]
-        public void Positive_Dispatch_DispatchesDTO()
+        public void Positive_Dispatch_MultipleTrades_DispatchesMultipleDTOs()
         {
             _currencyUpdateFactoryMock.Setup(library => library.CreateFrom(_trades))
                 .Returns(_updateDTOs);
@@ -74,7 +74,26 @@ namespace IdelPogTests.Service
             _currencyDispatcher.Dispatch(_trades);
             
             _bufferManagerMock.Verify(library => library.RequestBuffer<CurrencyUpdateDTO>(new BufferRequest(4)));
-            _bufferMock.Verify(library => library.Assign(It.IsAny<CurrencyUpdateDTO[]>()));
+            _bufferMock.Verify(library => library.Assign(_updateDTOs.ToArray()));
+            _bufferMock.Verify(library => library.MarkReady());
+        }
+        
+        [Test]
+        public void Positive_Dispatch_OneTrade_DispatchesDTO()
+        {
+            IReadOnlyList<CurrencyTrade> trade = [_trades[0]];
+            IReadOnlyList<CurrencyUpdateDTO> currencyUpdateDTO = [_updateDTOs[0]];
+            
+            _currencyUpdateFactoryMock.Setup(library => library.CreateFrom(trade))
+                .Returns(currencyUpdateDTO);
+            
+            _bufferManagerMock.Setup(library => library.RequestBuffer<CurrencyUpdateDTO>(It.IsAny<BufferRequest>()))
+                .Returns(_bufferMock.Object);
+            
+            _currencyDispatcher.Dispatch(trade);
+            
+            _bufferManagerMock.Verify(library => library.RequestBuffer<CurrencyUpdateDTO>(new BufferRequest(1)));
+            _bufferMock.Verify(library => library.Assign(currencyUpdateDTO.ToArray()));
             _bufferMock.Verify(library => library.MarkReady());
         }
 
@@ -99,7 +118,6 @@ namespace IdelPogTests.Service
             
             _asserterMock.Setup(library => library.AssertTradeCollection(trades))
                     .Throws(new NegativeNumberException(-1));
-            
             
             Assert.Throws<NegativeNumberException>(() => _currencyDispatcher.Dispatch(trades));
             _bufferManagerMock.Verify(library => library.RequestBuffer<CurrencyUpdateDTO>(new BufferRequest(1)), Times.Never);
