@@ -12,21 +12,44 @@ namespace IdelPogTests.Service
     {
         private ICurrencyDispatcher _currencyDispatcher { get; set; }
         private Mock<IBufferManager> _bufferManagerMock { get; set; }
+        private Mock<ICurrencyUpdateFactory>  _currencyUpdateFactoryMock { get; set; }
         private Mock<IBuffer<CurrencyUpdateDTO>> _bufferMock { get; set; }
+        
         private CurrencyTrade _trade { get; set; }
+        private CurrencyUpdateDTO _updateDTO { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             _bufferMock = new Mock<IBuffer<CurrencyUpdateDTO>>();
             _bufferManagerMock = new Mock<IBufferManager>();
-            _currencyDispatcher = new CurrencyDispatcher(_bufferManagerMock.Object);
-            _trade = TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.ADD);
+            _currencyUpdateFactoryMock = new Mock<ICurrencyUpdateFactory>();
+            _currencyDispatcher = new CurrencyDispatcher(_bufferManagerMock.Object,  _currencyUpdateFactoryMock.Object);
+
+            CreateTestObjects();
+        }
+
+        private void CreateTestObjects()
+        {
+            const int amount = 10;
+            const CurrencyType type = CurrencyType.FOOD;
+            const ActionType action = ActionType.ADD;
+            
+            _trade = TestUtils.CreateTrade(amount, type, action);
+            _updateDTO = new CurrencyUpdateDTO
+            {
+                Amount = amount,
+                Currency = type,
+                Action = action
+            };
         }
 
         [Test]
         public void Positive_Dispatch_DispatchesDTO()
         {
+            _currencyUpdateFactoryMock.Setup(library => library.CreateFrom(_trade))
+                .Returns(_updateDTO);
+            
             _bufferManagerMock.Setup(library => library.RequestBuffer<CurrencyUpdateDTO>(It.IsAny<BufferRequest>()))
                 .Returns(_bufferMock.Object);
             

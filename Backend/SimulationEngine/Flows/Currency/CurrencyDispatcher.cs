@@ -3,20 +3,14 @@ using IdelPog.Messaging.Orchestration;
 
 namespace IdelPog.SimulationEngine.Flows.Currency
 {
-    public class CurrencyDispatcher(IBufferManager bufferManager) : ICurrencyDispatcher
+    public class CurrencyDispatcher(IBufferManager bufferManager, ICurrencyUpdateFactory currencyUpdateFactory) : ICurrencyDispatcher
     {
         public void Dispatch(CurrencyTrade trade)
         {
-            IBuffer<CurrencyUpdateDTO> buffer = bufferManager.RequestBuffer<CurrencyUpdateDTO>(new BufferRequest(1));
-
-            CurrencyUpdateDTO currencyUpdateDTO = new()
-            {
-                Amount = trade.Amount,
-                Currency = trade.Currency,
-                Action = trade.Action
-            };
+            CurrencyUpdateDTO updateDTO = currencyUpdateFactory.CreateFrom(trade);
             
-            buffer.Assign([currencyUpdateDTO]);
+            IBuffer<CurrencyUpdateDTO> buffer = bufferManager.RequestBuffer<CurrencyUpdateDTO>(new BufferRequest(1));
+            buffer.Assign([updateDTO]);
             buffer.MarkReady();
         }
     }
