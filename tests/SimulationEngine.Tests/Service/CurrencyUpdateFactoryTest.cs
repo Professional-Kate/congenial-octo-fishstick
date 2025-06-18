@@ -16,12 +16,28 @@ namespace IdelPogTests.Service
             _currencyUpdateFactory = new CurrencyUpdateFactory();
             _currencyTrades =
             [
-                
                 TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.ADD),
-                TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.ADD),
-                TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.ADD),
-                TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.ADD)
+                TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.REMOVE),
+                // The factory doesn't care about negatives. It should be verified elsewhere if negative numbers are an issue
+                TestUtils.CreateTrade(-10, CurrencyType.FOOD, ActionType.ADD),
+                TestUtils.CreateTrade(-10, CurrencyType.FOOD, ActionType.REMOVE)
             ];
+        }
+
+        private void AssertCollection(IReadOnlyList<CurrencyUpdateDTO> currencyUpdateDTOs, IReadOnlyList<CurrencyTrade> currencyTrades)
+        {
+            for (int i = 0; i < currencyUpdateDTOs.Count; i++)
+            {
+                CurrencyUpdateDTO currencyUpdateDTO = currencyUpdateDTOs[i];
+                CurrencyTrade currencyTrade = currencyTrades[i];
+                
+                Assert.Multiple(() =>
+                {
+                    Assert.That(currencyUpdateDTO.Action, Is.EqualTo(currencyTrade.Action));
+                    Assert.That(currencyUpdateDTO.Amount, Is.EqualTo(currencyTrade.Amount));
+                    Assert.That(currencyUpdateDTO.Currency, Is.EqualTo(currencyTrade.Currency));
+                });
+            }
         }
 
         [Test]
@@ -31,15 +47,7 @@ namespace IdelPogTests.Service
             
             Assert.That(updateDTOs, Has.Count.EqualTo(_currencyTrades.Count));
             
-            foreach (CurrencyUpdateDTO currencyUpdateDTO in updateDTOs)
-            {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(currencyUpdateDTO.Action,  Is.EqualTo(ActionType.ADD));
-                    Assert.That(currencyUpdateDTO.Amount,  Is.EqualTo(10));
-                    Assert.That(currencyUpdateDTO.Currency,  Is.EqualTo(CurrencyType.FOOD));
-                });
-            }
+            AssertCollection(updateDTOs, _currencyTrades);
         }
     }
 }
