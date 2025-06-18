@@ -8,26 +8,38 @@ namespace IdelPogTests.Service
     public class CurrencyUpdateFactoryTest
     {
         private ICurrencyUpdateFactory _currencyUpdateFactory { get; set; }
-        private CurrencyTrade _currencyTrade { get; set; }
+        private IReadOnlyList<CurrencyTrade> _currencyTrades { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _currencyUpdateFactory = new CurrencyUpdateFactory();
-            _currencyTrade = TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.ADD);
+            _currencyTrades =
+            [
+                
+                TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.ADD),
+                TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.ADD),
+                TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.ADD),
+                TestUtils.CreateTrade(10, CurrencyType.FOOD, ActionType.ADD)
+            ];
         }
 
         [Test]
         public void Positive_CreateFrom_ConvertsTradeIntoUpdate()
         {
-            CurrencyUpdateDTO updateDTO =_currencyUpdateFactory.CreateFrom(_currencyTrade);
+            IReadOnlyList<CurrencyUpdateDTO> updateDTOs =_currencyUpdateFactory.CreateFrom(_currencyTrades);
             
-            Assert.Multiple(() =>
+            Assert.That(updateDTOs, Has.Count.EqualTo(_currencyTrades.Count));
+            
+            foreach (CurrencyUpdateDTO currencyUpdateDTO in updateDTOs)
             {
-                Assert.That(updateDTO.Action,  Is.EqualTo(ActionType.ADD));
-                Assert.That(updateDTO.Amount,  Is.EqualTo(10));
-                Assert.That(updateDTO.Currency,  Is.EqualTo(CurrencyType.FOOD));
-            });
+                Assert.Multiple(() =>
+                {
+                    Assert.That(currencyUpdateDTO.Action,  Is.EqualTo(ActionType.ADD));
+                    Assert.That(currencyUpdateDTO.Amount,  Is.EqualTo(10));
+                    Assert.That(currencyUpdateDTO.Currency,  Is.EqualTo(CurrencyType.FOOD));
+                });
+            }
         }
     }
 }

@@ -2,14 +2,21 @@
 {
     public class CurrencyUpdateFactory : ICurrencyUpdateFactory
     {
-        public CurrencyUpdateDTO CreateFrom(CurrencyTrade source)
+        public IReadOnlyList<CurrencyUpdateDTO> CreateFrom(IReadOnlyList<CurrencyTrade> trades)
         {
-            return new CurrencyUpdateDTO
+            List<CurrencyUpdateDTO> result = [];
+
+            foreach (CurrencyTrade currencyTrade in trades)
             {
-                Amount = source.Amount,
-                Currency = source.Currency,
-                Action = source.Action
-            };
+                result.Add(new CurrencyUpdateDTO
+                {
+                    Action = currencyTrade.Action,
+                    Currency = currencyTrade.Currency,
+                    Amount = currencyTrade.Amount,
+                });
+            }
+            
+            return result;
         }
     }
 }

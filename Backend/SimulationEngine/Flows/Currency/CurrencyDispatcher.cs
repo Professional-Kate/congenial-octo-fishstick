@@ -5,12 +5,12 @@ namespace IdelPog.SimulationEngine.Flows.Currency
 {
     public class CurrencyDispatcher(IBufferManager bufferManager, ICurrencyUpdateFactory currencyUpdateFactory) : ICurrencyDispatcher
     {
-        public void Dispatch(CurrencyTrade trade)
+        public void Dispatch(IReadOnlyList<CurrencyTrade> trades)
         {
-            CurrencyUpdateDTO updateDTO = currencyUpdateFactory.CreateFrom(trade);
+            IReadOnlyList<CurrencyUpdateDTO> updateDTOs = currencyUpdateFactory.CreateFrom(trades);
             
             IBuffer<CurrencyUpdateDTO> buffer = bufferManager.RequestBuffer<CurrencyUpdateDTO>(new BufferRequest(1));
-            buffer.Assign([updateDTO]);
+            buffer.Assign(updateDTOs.ToArray());
             buffer.MarkReady();
         }
     }

@@ -2,6 +2,6 @@
 {
     public interface ICurrencyDispatcher
     {
-        public void Dispatch(CurrencyTrade trade);
+        public void Dispatch(IReadOnlyList<CurrencyTrade> trades);
     }
 }
