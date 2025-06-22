@@ -5,16 +5,9 @@ namespace IdelPog.SimulationEngine.Flows.Skill
 {
     public class SkillController(IJobMediator jobMediator) : ISkillController
     {
-        public ServiceResponse SwitchSkill(SkillID skillID)
+        public ServiceResponse SwitchSkill(SkillChange skillChange)
         {
-            ServiceResponse response = jobMediator.ProcessJobAction(skillID);
-            if (response.IsSuccess == false)
-            {
-                // TODO : Log to file
-                Console.WriteLine(response.Message);
-            }
-            
-            return response;
+            throw new NotImplementedException();
         }
     }
 }
