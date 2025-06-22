@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Constants;
+using IdelPog.SimulationEngine.Flows.Skill;
 using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Structures.Enums;
 
 namespace IdelPogTests.Utils
 {
@@ -10,7 +10,7 @@ namespace IdelPogTests.Utils
         {
             ILevelable levelable = new Levelable(1, 0, 10, 0);
             
-            return new Job(levelable, JobType.MINING, JobConstants.MINING_INFO);
+            return new Job(levelable, SkillID.MINING, JobConstants.MINING_INFO);
         }
     }
 }

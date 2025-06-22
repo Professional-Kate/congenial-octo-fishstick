@@ -1,7 +1,6 @@
 ﻿using IdelPog.Messaging.Collection;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Flows.Currency.Assertions;
-using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Flows.Currency
 {

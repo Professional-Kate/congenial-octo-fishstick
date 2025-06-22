@@ -1,5 +1,4 @@
 ﻿using IdelPog.Messaging.Messaging;
-using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Flows.Currency
 {

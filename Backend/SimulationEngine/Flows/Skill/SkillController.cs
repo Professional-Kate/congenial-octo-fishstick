@@ -1,14 +1,13 @@
 ﻿using IdelPog.SimulationEngine.Orchestration;
-using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Controller
+namespace IdelPog.SimulationEngine.Flows.Skill
 {
-    public class JobController(IJobMediator jobMediator) : IJobController
+    public class SkillController(IJobMediator jobMediator) : ISkillController
     {
-        public ServiceResponse CompleteJob(JobType jobType)
+        public ServiceResponse SwitchSkill(SkillID skillID)
         {
-            ServiceResponse response = jobMediator.ProcessJobAction(jobType);
+            ServiceResponse response = jobMediator.ProcessJobAction(skillID);
             if (response.IsSuccess == false)
             {
                 // TODO : Log to file

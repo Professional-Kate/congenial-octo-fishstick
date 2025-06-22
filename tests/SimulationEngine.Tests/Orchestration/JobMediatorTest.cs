@@ -1,8 +1,8 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.SimulationEngine.Flows.Skill;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Orchestration;
 using IdelPog.SimulationEngine.Service;
-using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPogTests.Utils;
 using Moq;
@@ -14,7 +14,7 @@ namespace IdelPogTests.Orchestration
     {
         private IJobMediator _jobMediator { get; set; }
         private Mock<IExperienceService> _experienceServiceMock { get; set; }
-        private Mock<IStateRepository<JobType, Job>> _repositoryMock { get; set; }
+        private Mock<IStateRepository<SkillID, Job>> _repositoryMock { get; set; }
         private Mock<ILevelService> _levelServiceMock { get; set; }
         private Job _miningJob { get; set; }
 
@@ -24,18 +24,18 @@ namespace IdelPogTests.Orchestration
             _miningJob = JobFactory.CreateMining();
             
             _experienceServiceMock = new Mock<IExperienceService>();
-            _repositoryMock = new Mock<IStateRepository<JobType, Job>>();
+            _repositoryMock = new Mock<IStateRepository<SkillID, Job>>();
             _levelServiceMock = new Mock<ILevelService>();
             _jobMediator = new JobMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object);
 
-            _repositoryMock.Setup(library => library.Get(_miningJob.JobType)).Returns(_miningJob);
-            _repositoryMock.Setup(library => library.Contains(_miningJob.JobType)).Returns(true);
+            _repositoryMock.Setup(library => library.Get(_miningJob.SkillID)).Returns(_miningJob);
+            _repositoryMock.Setup(library => library.Contains(_miningJob.SkillID)).Returns(true);
         }
 
         private void VerifyDependencyCalls(int getCalls = 0, int updateCalls = 0, int serviceCalls = 0, int levelServiceCalls = 0)
         {
-            _repositoryMock.Verify(library => library.Get(_miningJob.JobType), Times.Exactly(getCalls));
-            _repositoryMock.Verify(library => library.Update(_miningJob.JobType, _miningJob), Times.Exactly(updateCalls));
+            _repositoryMock.Verify(library => library.Get(_miningJob.SkillID), Times.Exactly(getCalls));
+            _repositoryMock.Verify(library => library.Update(_miningJob.SkillID, _miningJob), Times.Exactly(updateCalls));
             _experienceServiceMock.Verify(library => library.AddExperience(_miningJob.Levelable), Times.Exactly(serviceCalls));
             _levelServiceMock.Verify(library => library.LevelUpJob(_miningJob.Levelable), Times.Exactly(levelServiceCalls));
         }
@@ -45,7 +45,7 @@ namespace IdelPogTests.Orchestration
         {
             _experienceServiceMock.Setup(library => library.AddExperience(_miningJob.Levelable));
             
-            ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
+            ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.SkillID);
             
             Assert.That(response.IsSuccess, Is.True);
 
@@ -57,7 +57,7 @@ namespace IdelPogTests.Orchestration
         {
             _levelServiceMock.Setup(library => library.CanJobLevel(_miningJob.Levelable)).Returns(true);
 
-            ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
+            ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.SkillID);
             
             Assert.That(response.IsSuccess, Is.True);
             
@@ -70,7 +70,7 @@ namespace IdelPogTests.Orchestration
             _experienceServiceMock.Setup(library => library.AddExperience(_miningJob.Levelable))
                 .Throws<Exception>();
             
-            ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.JobType);
+            ServiceResponse response = _jobMediator.ProcessJobAction(_miningJob.SkillID);
             
             Assert.That(response.IsSuccess, Is.False);
             Assert.That(response.Message, Is.Not.Null);

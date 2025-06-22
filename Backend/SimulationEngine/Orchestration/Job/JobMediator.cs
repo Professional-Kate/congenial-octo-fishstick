@@ -1,19 +1,19 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.SimulationEngine.Flows.Skill;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
-using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Orchestration
 {
-    public class JobMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<JobType, Job> stateRepository)
+    public class JobMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Job> stateRepository)
         : IJobMediator
     {
-        public ServiceResponse ProcessJobAction(JobType jobType)
+        public ServiceResponse ProcessJobAction(SkillID skillID)
         {
             try
             {
-                Job job = stateRepository.Get(jobType);
+                Job job = stateRepository.Get(skillID);
                 ILevelable levelable = job.Levelable;
                 
                 experienceService.AddExperience(levelable);
@@ -23,7 +23,7 @@ namespace IdelPog.SimulationEngine.Orchestration
                     levelService.LevelUpJob(levelable);
                 }
                 
-                stateRepository.Update(jobType, job);
+                stateRepository.Update(skillID, job);
             }
             catch (Exception exception)
             {
