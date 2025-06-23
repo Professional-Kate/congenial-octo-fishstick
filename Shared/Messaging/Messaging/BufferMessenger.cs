@@ -7,19 +7,17 @@ namespace IdelPog.Messaging.Messaging
     {
         private readonly Dictionary<Type, List<IListener>> _listeners = new();
         
-        public void Subscribe<T>(IBufferListener<T> bufferListener)
+        public void Subscribe(IListener listener)
         {
-            assertNotNull.AssertObjectNotNull(bufferListener);
+            assertNotNull.AssertObjectNotNull(listener);
             
-            Type type = typeof(T);
-
-            if (_listeners.TryGetValue(type, out List<IListener>? listeners) == false)
+            if (_listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners) == false)
             {
                 listeners = [];
-                _listeners.Add(type, listeners);
+                _listeners.Add(listener.ListenerType, listeners);
             }
             
-            listeners.Add(bufferListener);
+            listeners.Add(listener);
         }
 
         public void Unsubscribe<T>(IBufferListener<T> bufferListener)
@@ -45,12 +43,25 @@ namespace IdelPog.Messaging.Messaging
                 // If the type doesn't exist then we just want to return, otherwise this would throw an exception
                 return;
             }
-            
-            foreach (IBufferListener<T> bufferListener in listeners.OfType<IBufferListener<T>>())
+
+            foreach (IListener listener in listeners)
             {
                 try
                 {
-                    bufferListener.Handle(buffer);
+                    if (listener is IBufferListener<T> bufferListener)
+                    {
+                        bufferListener.Handle(buffer);
+                    }
+
+                    if (buffer.Count != 1)
+                    {
+                        continue;
+                    }
+                    
+                    if (listener is ISingleListener<T> singleListener)
+                    {
+                        singleListener.Handle(buffer[0]);
+                    }
                 }
                 catch (Exception exception)
                 {

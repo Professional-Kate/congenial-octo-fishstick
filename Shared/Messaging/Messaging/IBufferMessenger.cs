@@ -2,7 +2,7 @@
 {
     public interface IBufferMessenger
     {
-        public void Subscribe<T>(IBufferListener<T> bufferListener);
+        public void Subscribe(IListener listener);
         
         public void Unsubscribe<T>(IBufferListener<T> bufferListener);
         
