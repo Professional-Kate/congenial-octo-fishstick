@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Assertions;
-using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Exceptions;
+using IdelPog.Messaging.Messaging;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;

@@ -7,7 +7,7 @@ using IdelPog.Frontend.MonoGame.Listeners;
 using IdelPog.Frontend.MonoGame.Mediator;
 using IdelPog.Frontend.Rendering;
 using IdelPog.Frontend.Rendering.Service;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Messaging;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace IdelPog.Frontend.MonoGame

@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Collection;
-using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Factory;
+using IdelPog.Messaging.Messaging;
 using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Messaging.Orchestration

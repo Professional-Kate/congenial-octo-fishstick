@@ -1,8 +1,8 @@
 ﻿using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Assertions.Pipelines;
 using IdelPog.Messaging.Collection;
-using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Factory;
+using IdelPog.Messaging.Messaging;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
