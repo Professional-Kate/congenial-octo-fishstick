@@ -3,7 +3,7 @@ using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Messaging.Messaging
 {
-    public class BufferMessenger(IAssertNotNull assertNotNull, IAssertListenerFound assertListenerFound) : IBufferMessenger
+    public class BufferMessenger(IAssertNotNull assertNotNull, IAssertListenerFound assertListenerFound) : IBufferMessenger, IBufferDispatcher
     {
         private readonly Dictionary<Type, List<IListener>> _listeners = new();
         

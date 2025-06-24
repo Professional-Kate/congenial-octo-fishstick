@@ -5,7 +5,7 @@ using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Messaging.Orchestration
 {
-    public class BufferManager(IBufferFactory bufferFactory, IBufferMessenger bufferMessenger, IAssertNotNull assertNotNull) : IBufferManager
+    public class BufferManager(IBufferFactory bufferFactory, IBufferDispatcher bufferDispatcher, IAssertNotNull assertNotNull) : IBufferManager
     {
         public IBuffer<T> RequestBuffer<T>(BufferRequest request)
         {
@@ -23,7 +23,7 @@ namespace IdelPog.Messaging.Orchestration
 
         private void HandleBufferReady<T>(IReadOnlyList<T> buffer)
         {
-            bufferMessenger.DispatchMessage(buffer);
+            bufferDispatcher.DispatchMessage(buffer);
         }
     }
 }

@@ -17,14 +17,14 @@ namespace IdelPog.Messaging.Tests.Orchestration
         private IBufferManager _bufferManager { get; set; }
         private BufferRequest _bufferRequest { get; set; }
         private Mock<IBufferFactory> _bufferFactoryMock { get; set; }
-        private Mock<IBufferMessenger> _bufferDispatcherMock { get; set; }
+        private Mock<IBufferDispatcher> _bufferDispatcherMock { get; set; }
         private Mock<IHandler> _handlerMock { get; set; }
         
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             _bufferFactoryMock = new Mock<IBufferFactory>();
-            _bufferDispatcherMock = new Mock<IBufferMessenger>();
+            _bufferDispatcherMock = new Mock<IBufferDispatcher>();
             _handlerMock = new Mock<IHandler>();
             
             _bufferRequest = new BufferRequest(3);

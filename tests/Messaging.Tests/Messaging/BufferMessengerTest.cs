@@ -10,7 +10,7 @@ namespace IdelPog.Messaging.Tests.Messaging
     [TestFixture]
     public class BufferMessengerTest
     {
-        private IBufferMessenger _bufferMessenger { get; set; }
+        private BufferMessenger _bufferMessenger { get; set; }
         private TestListener<int> _intListener { get; set; }
         private Mock<IHandler> _handlerMock { get; set; }
 
