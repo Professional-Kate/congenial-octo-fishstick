@@ -1,4 +1,6 @@
-﻿namespace IdelPog.Messaging.Messaging
+﻿using IdelPog.Messaging.Listeners;
+
+namespace IdelPog.Messaging.Dispatch
 {
     public interface IBufferListener<in T> : IListener
     {
