@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Messaging.Messaging
+﻿namespace IdelPog.Messaging.Dispatch
 {
     public interface IBufferDispatcher
     {
