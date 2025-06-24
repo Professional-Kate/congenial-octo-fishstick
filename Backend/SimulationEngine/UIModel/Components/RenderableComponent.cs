@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Structures;
 using IdelPog.ECS.Component;
 
-namespace IdelPog.SimulationEngine.UIModel.Components
+namespace IdelPog.SimulationEngine.UIModel
 {
     public readonly record struct RenderableComponent : IComponent<RenderableComponent>
     {

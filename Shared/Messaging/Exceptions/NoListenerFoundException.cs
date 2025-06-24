@@ -1,5 +1,4 @@
-﻿using IdelPog.Messaging.Listeners;
-using IdelPog.Messaging.Messaging;
+﻿using IdelPog.Messaging.Messaging;
 using IdelPog.Validation.Constants;
 
 namespace IdelPog.Messaging.Exceptions

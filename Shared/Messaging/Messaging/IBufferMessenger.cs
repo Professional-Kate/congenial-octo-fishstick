@@ -1,6 +1,4 @@
-﻿using IdelPog.Messaging.Listeners;
-
-namespace IdelPog.Messaging.Messaging
+﻿namespace IdelPog.Messaging.Messaging
 {
     public interface IBufferMessenger
     {

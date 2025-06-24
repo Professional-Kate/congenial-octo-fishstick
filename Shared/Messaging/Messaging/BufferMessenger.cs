@@ -1,5 +1,4 @@
 ﻿using IdelPog.Messaging.Assertions;
-using IdelPog.Messaging.Listeners;
 using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Messaging.Messaging
