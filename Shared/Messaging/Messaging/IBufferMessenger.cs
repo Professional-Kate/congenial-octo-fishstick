@@ -4,7 +4,7 @@
     {
         public void Subscribe(IListener listener);
         
-        public void Unsubscribe<T>(IBufferListener<T> bufferListener);
+        public void Unsubscribe(IListener listener);
         
         public void DispatchMessage<T>(IReadOnlyList<T>  buffer);
     }

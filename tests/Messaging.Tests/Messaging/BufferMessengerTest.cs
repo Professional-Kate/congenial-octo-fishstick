@@ -65,6 +65,17 @@ namespace IdelPog.Messaging.Tests.Messaging
         }
 
         [Test]
+        public void Positive_Subscribe_CanSubscribeSingleListener()
+        {
+            SingleTestListener<int> intListener = new();
+            _bufferMessenger.Subscribe(intListener);
+            
+            _bufferMessenger.DispatchMessage([1]);
+            
+            Assert.That(intListener.WasCalled, Is.True);
+        }
+
+        [Test]
         public void Positive_DispatchMessage_DispatchesMessage()
         {
             _bufferMessenger.Subscribe(_intListener);
@@ -144,6 +155,19 @@ namespace IdelPog.Messaging.Tests.Messaging
         }
 
         [Test]
+        public void Positive_Unsubscribe_UnsubscribesSingleListener()
+        {
+            SingleTestListener<int> intListener = new();
+            _bufferMessenger.Subscribe(intListener);
+            
+            _bufferMessenger.Unsubscribe(intListener);
+            
+            _bufferMessenger.DispatchMessage(_bufferData);
+            
+            Assert.That(_intListener.WasCalled, Is.False);
+        }
+
+        [Test]
         public void Positive_MultipleListeners_FirstThrows_Continues()
         {
             TestListener<int> intListener = new()
@@ -177,7 +201,7 @@ namespace IdelPog.Messaging.Tests.Messaging
         [Test]
         public void Negative_Unsubscribe_NullListener_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _bufferMessenger.Unsubscribe<int>(null!));
+            Assert.Throws<ArgumentNullException>(() => _bufferMessenger.Unsubscribe(null!));
         }
 
         [Test]

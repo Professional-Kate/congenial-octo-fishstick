@@ -20,16 +20,14 @@ namespace IdelPog.Messaging.Messaging
             listeners.Add(listener);
         }
 
-        public void Unsubscribe<T>(IBufferListener<T> bufferListener)
+        public void Unsubscribe(IListener listener)
         {
-            assertNotNull.AssertObjectNotNull(bufferListener);
+            assertNotNull.AssertObjectNotNull(listener);
 
-            Type type = typeof(T);
-
-            bool contains = _listeners.TryGetValue(type, out List<IListener>? listeners);
-            assertListenerFound.AssertFound(bufferListener, contains);
+            bool contains = _listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners);
+            assertListenerFound.AssertFound(listener, contains);
             
-            listeners!.Remove(bufferListener);
+            listeners!.Remove(listener);
         }
 
         public void DispatchMessage<T>(IReadOnlyList<T> buffer)
