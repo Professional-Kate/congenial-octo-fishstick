@@ -1,7 +1,8 @@
 ﻿using IdelPog.Common.Structures;
 using IdelPog.ECS;
+using IdelPog.SimulationEngine.UIModel.Components;
 
-namespace IdelPog.SimulationEngine.UIModel
+namespace IdelPog.SimulationEngine.UIModel.Entities
 {
     public sealed record UIEntity : Entity
     {
