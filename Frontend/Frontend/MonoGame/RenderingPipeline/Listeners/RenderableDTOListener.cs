@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using IdelPog.Common.DTO;
 using IdelPog.Frontend.MonoGame.Controllers;
-using IdelPog.Messaging.Messaging;
+using IdelPog.Messaging.Listeners;
 
 namespace IdelPog.Frontend.MonoGame.Listeners
 {
