@@ -116,13 +116,17 @@ namespace IdelPog.Messaging.Tests.Messaging
             SingleTestListener<int> intListener = new();
             _bufferMessenger.Subscribe(intListener);
             _bufferMessenger.Subscribe(_intListener);
-            
-            _bufferMessenger.DispatchMessage([1]);
+
+            IReadOnlyList<int> list = [1];
+
+            _bufferMessenger.DispatchMessage(list);
             
             Assert.Multiple(() =>
             {
                 Assert.That(intListener.WasCalled, Is.True);
                 Assert.That(_intListener.WasCalled, Is.True);
+                Assert.That(intListener.Data, Is.EqualTo(1));
+                Assert.That(_intListener.BufferData, Is.EqualTo(list));
             });
         }
 
