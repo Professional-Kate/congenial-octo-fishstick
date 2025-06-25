@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Messaging.Collection
+﻿namespace IdelPog.Messaging.Buffer
 {
     public sealed record BufferRequest(int Length);
 }

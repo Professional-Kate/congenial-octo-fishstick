@@ -1,5 +1,5 @@
 ﻿using IdelPog.Messaging.Assertions;
-using IdelPog.Messaging.Collection;
+using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Exceptions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;

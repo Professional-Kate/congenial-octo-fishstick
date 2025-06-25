@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Exceptions;
-using IdelPog.Messaging.Messaging;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
@@ -10,7 +10,7 @@ namespace IdelPog.Messaging.Tests.Messaging
     [TestFixture]
     public class BufferMessengerTest
     {
-        private IBufferMessenger _bufferMessenger { get; set; }
+        private BufferMessenger _bufferMessenger { get; set; }
         private TestListener<int> _intListener { get; set; }
         private Mock<IHandler> _handlerMock { get; set; }
 
@@ -65,6 +65,17 @@ namespace IdelPog.Messaging.Tests.Messaging
         }
 
         [Test]
+        public void Positive_Subscribe_CanSubscribeSingleListener()
+        {
+            SingleTestListener<int> intListener = new();
+            _bufferMessenger.Subscribe(intListener);
+            
+            _bufferMessenger.DispatchMessage([1]);
+            
+            Assert.That(intListener.WasCalled, Is.True);
+        }
+
+        [Test]
         public void Positive_DispatchMessage_DispatchesMessage()
         {
             _bufferMessenger.Subscribe(_intListener);
@@ -98,12 +109,62 @@ namespace IdelPog.Messaging.Tests.Messaging
         {
             Assert.DoesNotThrow(() => _bufferMessenger.DispatchMessage(_bufferData));
         }
+        
+        [Test]
+        public void Positive_DispatchMessage_DispatchesSingleMessage()
+        {
+            SingleTestListener<int> intListener = new();
+            _bufferMessenger.Subscribe(intListener);
+            _bufferMessenger.Subscribe(_intListener);
+
+            IReadOnlyList<int> list = [1];
+
+            _bufferMessenger.DispatchMessage(list);
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(intListener.WasCalled, Is.True);
+                Assert.That(_intListener.WasCalled, Is.True);
+                Assert.That(intListener.Data, Is.EqualTo(1));
+                Assert.That(_intListener.BufferData, Is.EqualTo(list));
+            });
+        }
+
+        [Test]
+        public void Positive_DispatchMessage_NoSingleDispatch()
+        {
+            
+            SingleTestListener<int> intListener = new();
+            _bufferMessenger.Subscribe(intListener);
+            _bufferMessenger.Subscribe(_intListener);
+            
+            _bufferMessenger.DispatchMessage([1, 2]);
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(intListener.WasCalled, Is.False);
+                Assert.That(_intListener.WasCalled, Is.True);
+            });
+        }
 
         [Test]
         public void Positive_Unsubscribe_UnsubscribesListener()
         {
             _bufferMessenger.Subscribe(_intListener);
             _bufferMessenger.Unsubscribe(_intListener);
+            
+            _bufferMessenger.DispatchMessage(_bufferData);
+            
+            Assert.That(_intListener.WasCalled, Is.False);
+        }
+
+        [Test]
+        public void Positive_Unsubscribe_UnsubscribesSingleListener()
+        {
+            SingleTestListener<int> intListener = new();
+            _bufferMessenger.Subscribe(intListener);
+            
+            _bufferMessenger.Unsubscribe(intListener);
             
             _bufferMessenger.DispatchMessage(_bufferData);
             
@@ -132,7 +193,7 @@ namespace IdelPog.Messaging.Tests.Messaging
         [Test]
         public void Negative_Subscribe_NullListener_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _bufferMessenger.Subscribe<int>(null!));
+            Assert.Throws<ArgumentNullException>(() => _bufferMessenger.Subscribe(null!));
         }
 
         [Test]
@@ -144,7 +205,7 @@ namespace IdelPog.Messaging.Tests.Messaging
         [Test]
         public void Negative_Unsubscribe_NullListener_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _bufferMessenger.Unsubscribe<int>(null!));
+            Assert.Throws<ArgumentNullException>(() => _bufferMessenger.Unsubscribe(null!));
         }
 
         [Test]

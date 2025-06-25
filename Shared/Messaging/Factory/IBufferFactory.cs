@@ -1,4 +1,4 @@
-﻿using IdelPog.Messaging.Collection;
+﻿using IdelPog.Messaging.Buffer;
 
 namespace IdelPog.Messaging.Factory
 {

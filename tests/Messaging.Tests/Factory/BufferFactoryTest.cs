@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Assertions.Pipelines;
-using IdelPog.Messaging.Collection;
+using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Factory;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
