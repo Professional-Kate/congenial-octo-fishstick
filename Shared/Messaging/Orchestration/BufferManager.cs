@@ -1,4 +1,4 @@
-﻿using IdelPog.Messaging.Collection;
+﻿using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Factory;
 using IdelPog.Validation.Assertions.Interfaces;

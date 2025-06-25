@@ -1,7 +1,7 @@
 ﻿using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Assertions.Pipelines;
 
-namespace IdelPog.Messaging.Collection
+namespace IdelPog.Messaging.Buffer
 {
     public class Buffer<T>: IInternalBuffer, IBuffer<T>
     {
