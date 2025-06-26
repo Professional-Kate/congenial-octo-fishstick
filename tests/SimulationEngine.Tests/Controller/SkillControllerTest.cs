@@ -1,8 +1,4 @@
 ﻿using IdelPog.SimulationEngine.Flows.Skill;
-using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Orchestration;
-using IdelPog.SimulationEngine.Structures.Types;
-using IdelPogTests.Utils;
 using Moq;
 
 namespace IdelPogTests.Controller

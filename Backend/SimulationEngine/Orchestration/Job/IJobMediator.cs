@@ -1,5 +1,4 @@
 ﻿using IdelPog.SimulationEngine.Flows.Skill;
-using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Orchestration
@@ -8,7 +7,7 @@ namespace IdelPog.SimulationEngine.Orchestration
     public interface IJobMediator
     {
         /// <summary>
-        /// Processes a <see cref="Job"/> action. What each <see cref="Job"/> does per action is defined by the <see cref="Job"/> itself
+        /// Processes a <see cref="Skill"/> action. What each <see cref="Skill"/> does per action is defined by the <see cref="Skill"/> itself
         /// </summary>
         /// <param name="skillID">The <see cref="SkillID"/> you want to process an action on</param>
         /// <returns>A <see cref="ServiceResponse"/> which will tell you if the operation was successful</returns>

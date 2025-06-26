@@ -4,9 +4,9 @@
     public interface ISkillController
     {
         /// <summary>
-        /// Switches the currently active skill to the passed id <see cref="SkillID"/>
+        /// Switches the currently active skill
         /// </summary>
-        /// <param name="skillChange">The <see cref="SkillID"/> you want to process a job completion on</param>
+        /// <param name="skillChange">This command will contain the <see cref="SkillID"/> you want to switch to</param>
         public void SwitchSkill(SkillChange skillChange);
     }
 }

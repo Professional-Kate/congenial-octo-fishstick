@@ -5,13 +5,13 @@
     /// </summary>
     public class CurrencyService : ICurrencyService
     {
-        public void AddAmount(Models.Currency currency, int amount)
+        public void AddAmount(Currency currency, int amount)
         {
             int newAmount = currency.Amount + amount;
             currency.SetAmount(newAmount);
         }
 
-        public void RemoveAmount(Models.Currency currency, int amount)
+        public void RemoveAmount(Currency currency, int amount)
         {
             int newAmount = currency.Amount - amount;
             currency.SetAmount(newAmount);

@@ -1,5 +1,4 @@
 ﻿using IdelPog.SimulationEngine.Flows.Currency;
-using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPogTests.Utils;
@@ -34,8 +33,8 @@ namespace IdelPogTests.Controller
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _foodCurrency = new Currency(_currencyType);
-            _woodCurrency = new Currency(CurrencyType.WOOD);
+            _foodCurrency = new Currency(_currencyType, 0);
+            _woodCurrency = new Currency(CurrencyType.WOOD, 0);
             _addFoodTrade = TestUtils.CreateTrade(_amount, _currencyType, ActionType.ADD);
             _removeFoodTrade = TestUtils.CreateTrade(_amount, _currencyType, ActionType.REMOVE);
             _addWoodTrade = TestUtils.CreateTrade(10, CurrencyType.WOOD, ActionType.ADD);

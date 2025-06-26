@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Models;
+﻿using IdelPog.SimulationEngine.Flows.Currency;
 using IdelPog.SimulationEngine.Structures.Enums;
 
 namespace IdelPogTests.Utils
@@ -12,7 +12,7 @@ namespace IdelPogTests.Utils
 
         internal static Currency CreateFood()
         {
-            return new Currency(CurrencyType.FOOD);
+            return new Currency(CurrencyType.FOOD, 0);
         }
     }
 }

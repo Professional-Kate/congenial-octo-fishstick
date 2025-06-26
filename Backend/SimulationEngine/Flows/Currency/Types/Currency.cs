@@ -1,15 +1,21 @@
 ﻿using IdelPog.Common.Structures;
 using IdelPog.SimulationEngine.Structures.Enums;
 
-namespace IdelPog.SimulationEngine.Models
+namespace IdelPog.SimulationEngine.Flows.Currency
 {
     /// <summary>
     /// The Currency model.
     /// </summary>
-    public class Currency(CurrencyType currencyType, int amount = 0) : ICloneable<Currency>
+    public class Currency: ICloneable<Currency>
     {
-        public readonly CurrencyType CurrencyType = currencyType;
-        public int Amount { get; private set; } = amount;
+        public readonly CurrencyType CurrencyType;
+        public int Amount { get; private set; }
+
+        public Currency(CurrencyType currencyType, int amount)
+        {
+            CurrencyType = currencyType;
+            Amount = amount;
+        }
 
         public void SetAmount(int amount)
         {

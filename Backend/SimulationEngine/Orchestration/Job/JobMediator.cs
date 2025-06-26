@@ -6,15 +6,15 @@ using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Orchestration
 {
-    public class JobMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Job> stateRepository)
+    public class JobMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Skill> stateRepository)
         : IJobMediator
     {
         public ServiceResponse ProcessJobAction(SkillID skillID)
         {
             try
             {
-                Job job = stateRepository.Get(skillID);
-                ILevelable levelable = job.Levelable;
+                Skill skill = stateRepository.Get(skillID);
+                ILevelable levelable = skill.Levelable;
                 
                 experienceService.AddExperience(levelable);
 
@@ -23,7 +23,7 @@ namespace IdelPog.SimulationEngine.Orchestration
                     levelService.LevelUpJob(levelable);
                 }
                 
-                stateRepository.Update(skillID, job);
+                stateRepository.Update(skillID, skill);
             }
             catch (Exception exception)
             {

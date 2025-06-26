@@ -1,5 +1,4 @@
-﻿using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Flows.Currency
 {
