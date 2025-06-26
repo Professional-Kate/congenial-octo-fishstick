@@ -1,10 +1,9 @@
-﻿using IdelPog.SimulationEngine.Flows.Skill;
-using IdelPog.SimulationEngine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Orchestration
+namespace IdelPog.SimulationEngine.Flows.Skill
 {
-    /// <seealso cref="ProcessJobAction"/>
-    public interface IJobMediator
+    /// <seealso cref="ProcessSkillAction"/>
+    public interface ISkillMediator
     {
         /// <summary>
         /// Processes a <see cref="Skill"/> action. What each <see cref="Skill"/> does per action is defined by the <see cref="Skill"/> itself
@@ -14,6 +13,6 @@ namespace IdelPog.SimulationEngine.Orchestration
         /// <remarks>
         /// This method will only ever return a <see cref="ServiceResponse"/>, so, if anything goes wrong it'll be wrapped in this object.
         /// </remarks>
-        public ServiceResponse ProcessJobAction(SkillID skillID);
+        public ServiceResponse ProcessSkillAction(SkillID skillID);
     }
 }
