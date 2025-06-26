@@ -4,6 +4,6 @@ using IdelPog.ContentHydrator.DTO;
 namespace IdelPog.ContentHydrator
 {
     [JsonSerializable(typeof(InformationDTO))]
-    [JsonSerializable(typeof(JobDTO))]
+    [JsonSerializable(typeof(SkillDTO))]
     public partial class GameContentContext : JsonSerializerContext;
 }

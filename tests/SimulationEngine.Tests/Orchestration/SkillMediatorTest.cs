@@ -20,7 +20,7 @@ namespace IdelPogTests.Orchestration
         [SetUp]
         public void SetUp()
         {
-            _miningSkill = JobFactory.CreateMining();
+            _miningSkill = SkillFactory.CreateMining();
             
             _experienceServiceMock = new Mock<IExperienceService>();
             _repositoryMock = new Mock<IStateRepository<SkillID, Skill>>();
@@ -38,12 +38,12 @@ namespace IdelPogTests.Orchestration
             _repositoryMock.Verify(library => library.Get(_miningSkill.SkillID), Times.Exactly(getCalls));
             _repositoryMock.Verify(library => library.Update(_miningSkill.SkillID, _miningSkill), Times.Exactly(updateCalls));
             _experienceServiceMock.Verify(library => library.AddExperience(_miningSkill.Levelable), Times.Exactly(serviceCalls));
-            _levelServiceMock.Verify(library => library.LevelUpJob(_miningSkill.Levelable), Times.Exactly(levelServiceCalls));
+            _levelServiceMock.Verify(library => library.LevelUpSkill(_miningSkill.Levelable), Times.Exactly(levelServiceCalls));
             _currentSkillProviderMock.Verify(library => library.GetCurrentSkill(), Times.Exactly(providerCalls));
         }
 
         [Test]
-        public void Positive_ProcessJobAction_ReturnsSuccess()
+        public void Positive_ProcessSkillAction_ReturnsSuccess()
         {
             ServiceResponse response = _skillMediator.ProcessSkillAction();
             
@@ -53,9 +53,9 @@ namespace IdelPogTests.Orchestration
         }
 
         [Test]
-        public void Positive_ProcessJobAction_JobLevelsUp()
+        public void Positive_ProcessSkillAction_SkillLevelsUp()
         {
-            _levelServiceMock.Setup(library => library.CanJobLevel(_miningSkill.Levelable))
+            _levelServiceMock.Setup(library => library.CanSkillLevel(_miningSkill.Levelable))
                 .Returns(true);
 
             ServiceResponse response = _skillMediator.ProcessSkillAction();
@@ -66,7 +66,7 @@ namespace IdelPogTests.Orchestration
         }
         
         [Test]
-        public void Negative_ProcessJobAction_Catches_Exception()
+        public void Negative_ProcessSkillAction_Catches_Exception()
         {
             _experienceServiceMock.Setup(library => library.AddExperience(_miningSkill.Levelable))
                 .Throws<Exception>();

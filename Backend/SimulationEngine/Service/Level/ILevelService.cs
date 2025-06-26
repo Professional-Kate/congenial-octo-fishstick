@@ -3,8 +3,6 @@ using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Service
 {
-    /// <seealso cref="CanJobLevel"/>
-    /// <seealso cref="LevelUpJob"/>
     public interface ILevelService
     {
     
@@ -13,7 +11,7 @@ namespace IdelPog.SimulationEngine.Service
         /// </summary>
         /// <param name="levelable">The <see cref="ILevelable"/> you want to check if it can level up</param>
         /// <returns>If the <see cref="ILevelable"/> can level up</returns>
-        public bool CanJobLevel(ILevelable levelable) => levelable.Experience >= levelable.NextLevelExperience;
+        public bool CanSkillLevel(ILevelable levelable) => levelable.Experience >= levelable.NextLevelExperience;
     
         /// <summary>
         /// Invoke this to level up the passed <see cref="ILevelable"/>
@@ -24,6 +22,6 @@ namespace IdelPog.SimulationEngine.Service
         /// <remarks>
         /// This method will calculate a new <see cref="ILevelable.NextLevelExperience"/>
         /// </remarks>
-        public void LevelUpJob(ILevelable levelable);
+        public void LevelUpSkill(ILevelable levelable);
     }
 }

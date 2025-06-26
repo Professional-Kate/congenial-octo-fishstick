@@ -32,9 +32,9 @@ namespace IdelPog.SimulationEngine.Flows.Skill
                 
                 _experienceService.AddExperience(levelable);
 
-                if (_levelService.CanJobLevel(levelable))
+                if (_levelService.CanSkillLevel(levelable))
                 {
-                    _levelService.LevelUpJob(levelable);
+                    _levelService.LevelUpSkill(levelable);
                 }
                 
                 _skillRepository.Update(currentSkillID, skill);

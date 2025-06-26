@@ -54,7 +54,7 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_AddExperience_MaxLevel_Throws()
         {
-            ILevelable levelable = new Levelable(JobConstants.MAX_JOB_LEVEL, 100, 10, 1);
+            ILevelable levelable = new Levelable(SkillConstants.MAX_SKILL_LEVEL, 100, 10, 1);
             
             _levelableAsserterMock.Setup(library => library.AssertLevelable(levelable))
                 .Throws(new MaxLevelException(levelable));
@@ -76,7 +76,7 @@ namespace IdelPogTests.Service
         }
 
         [Test]
-        public void Negative_AddExperience_NullJob_Throws()
+        public void Negative_AddExperience_NullSkill_Throws()
         {
             _levelableAsserterMock.Setup(library => library.AssertLevelable(null))
                 .Throws(new ArgumentNullException());

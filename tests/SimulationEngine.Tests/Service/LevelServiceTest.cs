@@ -31,29 +31,29 @@ namespace IdelPogTests.Service
         }
 
         [Test]
-        public void Positive_LevelUpJob_LevelsJob()
+        public void Positive_LevelUpSkill_LevelsSkill()
         {
-            _service.LevelUpJob(_levelable);
+            _service.LevelUpSkill(_levelable);
 
             Assert.That(1, Is.EqualTo(_levelable.Level));
         }
         
         [Test]
-        public void Positive_CanJobLevel_ReturnsTrue()
+        public void Positive_CanSkillLevel_ReturnsTrue()
         {
             ILevelable levelable = new Levelable(1, 10, 10, 1);
 
-            bool canJobLevel = _service.CanJobLevel(levelable);
-            Assert.That(canJobLevel, Is.True);
+            bool canSkillLevel = _service.CanSkillLevel(levelable);
+            Assert.That(canSkillLevel, Is.True);
         }
         
         [Test]
-        public void Positive_CanJobLevel_ReturnsFalse()
+        public void Positive_CanSkillLevel_ReturnsFalse()
         {
             ILevelable levelable = new Levelable(1, 5, 10, 1);
 
-            bool canJobLevel = _service.CanJobLevel(levelable);
-            Assert.That(canJobLevel, Is.False);
+            bool canSkillLevel = _service.CanSkillLevel(levelable);
+            Assert.That(canSkillLevel, Is.False);
         }
 
 
@@ -61,51 +61,51 @@ namespace IdelPogTests.Service
         [TestCase(5, ExpectedResult = 5)]
         [TestCase(20, ExpectedResult = 20)]
         [TestCase(30, ExpectedResult = 30)]
-        public int Positive_LevelUpJob_MultipleTimes(int levels)
+        public int Positive_LevelUpSkill_MultipleTimes(int levels)
         {
             for (int i = 0; i < levels; i++)
             {
-                _service.LevelUpJob(_levelable);
+                _service.LevelUpSkill(_levelable);
             }
 
             return _levelable.Level;
         }
 
         [Test]
-        public void Positive_JobCanLevelToMax()
+        public void Positive_SkillCanLevelToMax()
         {
             Levelable levelable = new(1, 0, 100, 1);
             
-            for (int i = 1; i < JobConstants.MAX_JOB_LEVEL; i++)
+            for (int i = 1; i < SkillConstants.MAX_SKILL_LEVEL; i++)
             {
                 levelable.SetExperience(levelable.NextLevelExperience + levelable.Experience); // this is here to sum the total experience
                 
-                _service.LevelUpJob(levelable);
+                _service.LevelUpSkill(levelable);
                 
                 Console.WriteLine($"LEVEL {levelable.Level} | Experience: {levelable.Experience} | Next Level: {levelable.NextLevelExperience}");
             }
             
-            Assert.That(levelable.Level, Is.EqualTo(JobConstants.MAX_JOB_LEVEL));
+            Assert.That(levelable.Level, Is.EqualTo(SkillConstants.MAX_SKILL_LEVEL));
         }
 
         [Test]
-        public void Negative_LevelUpJob_NullJob_Throws()
+        public void Negative_LevelUpSkill_NullSkill_Throws()
         {
             _levelableAsserterMock.Setup(library => library.AssertLevelable(null))
                 .Throws<ArgumentNullException>();
             
-            Assert.Throws<ArgumentNullException>(() => _service.LevelUpJob(null));
+            Assert.Throws<ArgumentNullException>(() => _service.LevelUpSkill(null));
         }
 
         [Test]
-        public void Negative_LeveUpJob_MaxLevel_Throws()
+        public void Negative_LeveUpSkill_MaxLevel_Throws()
         {
             ILevelable levelable = new Levelable(1, 0, 100, 1);
             
             _levelableAsserterMock.Setup(library => library.AssertLevelable(levelable))
                 .Throws(new MaxLevelException(levelable.Level));
             
-            Assert.Throws<MaxLevelException>(() => _service.LevelUpJob(levelable));
+            Assert.Throws<MaxLevelException>(() => _service.LevelUpSkill(levelable));
         }
     }
 }

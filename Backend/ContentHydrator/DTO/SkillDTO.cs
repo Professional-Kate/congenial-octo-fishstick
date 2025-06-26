@@ -1,8 +1,8 @@
 ﻿namespace IdelPog.ContentHydrator.DTO
 {
-    public sealed record JobDTO
+    public sealed record SkillDTO
     {
-        public required string JobID { get; init; }
+        public required string SkillID { get; init; }
         
         public required InformationDTO Information { get; init; }
     }

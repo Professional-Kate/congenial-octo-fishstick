@@ -5,7 +5,7 @@ namespace IdelPog.SimulationEngine.Service
 {
     public class LevelService(ILevelableAsserter levelableAsserter) : ILevelService
     {
-        public void LevelUpJob(ILevelable levelable)
+        public void LevelUpSkill(ILevelable levelable)
         {
             levelableAsserter.AssertLevelable(levelable);
 
