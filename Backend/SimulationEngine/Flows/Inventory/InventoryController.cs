@@ -9,9 +9,9 @@
             _inventoryMediator = inventoryMediator;
         }
         
-        public void UpdateInventory(InventoryUpdate update)
+        public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
         {
-            throw new NotImplementedException();
+            _inventoryMediator.UpdateInventory(updates);
         }
     }
 }

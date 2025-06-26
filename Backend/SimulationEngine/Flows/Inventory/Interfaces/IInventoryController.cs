@@ -2,6 +2,6 @@
 {
     public interface IInventoryController
     {
-        public void UpdateInventory(InventoryUpdate update);
+        public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates);
     }
 }
