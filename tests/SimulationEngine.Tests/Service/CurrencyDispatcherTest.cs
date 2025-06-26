@@ -1,4 +1,4 @@
-﻿using IdelPog.Messaging.Collection;
+﻿using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Flows.Currency;
 using IdelPog.SimulationEngine.Flows.Currency.Assertions;
