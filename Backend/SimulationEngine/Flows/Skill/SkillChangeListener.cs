@@ -1,15 +1,14 @@
-﻿using IdelPog.Messaging.Messaging;
+﻿using IdelPog.Messaging.Listeners;
 
 namespace IdelPog.SimulationEngine.Flows.Skill
 {
-    public class SkillChangeListener(ISkillController skillController) : IBufferListener<SkillChange>   {
-        
-        public Type ListenerType { get; } =  typeof(SkillChange);
-        
-        public void Handle(IReadOnlyList<SkillChange> buffer)
+    public class SkillChangeListener(ISkillController skillController) : ISingleListener<SkillChange>
+    {
+        public Type ListenerType { get; } = typeof(SkillChange);
+
+        public void Handle(SkillChange skillChange)
         {
-            // TODO: we need a new BufferListener for single items
-            skillController.SwitchSkill(buffer[0]);
+            skillController.SwitchSkill(skillChange);
         }
     }
 }
