@@ -2,7 +2,7 @@
 using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Orchestration
+namespace IdelPog.SimulationEngine.Flows.Inventory
 {
     /// <summary>
     /// Handles Adding and Removing an amount from an <see cref="Item"/>. Add, and Remove will both create and remove an <see cref="Item"/> respectively

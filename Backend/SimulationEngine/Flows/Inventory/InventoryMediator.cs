@@ -3,7 +3,7 @@ using IdelPog.SimulationEngine.Service;
 using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Orchestration
+namespace IdelPog.SimulationEngine.Flows.Inventory
 {
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation

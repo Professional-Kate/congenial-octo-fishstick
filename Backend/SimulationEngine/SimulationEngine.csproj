@@ -21,6 +21,7 @@
 	
 	<ItemGroup>
 	  <Folder Include="Controller\Job\" />
+	  <Folder Include="Orchestration\Inventory\" />
 	</ItemGroup>
 
 </Project>

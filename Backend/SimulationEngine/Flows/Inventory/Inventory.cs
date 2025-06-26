@@ -3,18 +3,26 @@ using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.Validation.Assertions.Interfaces;
 
-namespace IdelPog.SimulationEngine
+namespace IdelPog.SimulationEngine.Flows.Inventory
 {
     /// <summary>
     /// The container class for all <see cref="Item"/>'s. See <see cref="IInventory"/> for documentation
     /// </summary>
-    public sealed class Inventory(
-        IStateRepository<InventoryID, Item> stateRepository,
-        IAssertFound assertFound,
-        IAssertPositive assertPositive,
-        IAssertNonDuplicate assertNonDuplicate)
-        : IInventory
+    public sealed class Inventory : IInventory
     {
+        private readonly IStateRepository<InventoryID, Item> _stateRepository;
+        private readonly IAssertFound _assertFound;
+        private readonly IAssertPositive _assertPositive;
+        private readonly IAssertNonDuplicate _assertNonDuplicate;
+
+        public Inventory(IStateRepository<InventoryID, Item> stateRepository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertNonDuplicate assertNonDuplicate)
+        {
+            _stateRepository = stateRepository;
+            _assertFound = assertFound;
+            _assertPositive = assertPositive;
+            _assertNonDuplicate = assertNonDuplicate;
+        }
+        
         public void AddAmount(InventoryID id, int amount)
         {
             AssertAmountIsPositive(amount);
@@ -37,7 +45,7 @@ namespace IdelPog.SimulationEngine
            AssertAmountIsPositive(itemAmount - amount);
             if (itemAmount - amount == 0)
             {
-                stateRepository.Remove(item.ID);
+                _stateRepository.Remove(item.ID);
                 return;
             }
 
@@ -48,14 +56,14 @@ namespace IdelPog.SimulationEngine
         public void AddItem(Item item)
         {
             AssertAmountIsPositive(item.Amount);
-            assertNonDuplicate.AssertContains(item, () => Contains(item.ID));
+            _assertNonDuplicate.AssertContains(item, () => Contains(item.ID));
 
-            stateRepository.Add(item.ID, item);
+            _stateRepository.Add(item.ID, item);
         }
 
         public bool Contains(InventoryID item)
         {
-            return stateRepository.Contains(item);
+            return _stateRepository.Contains(item);
         }
 
         /// <summary>
@@ -64,7 +72,7 @@ namespace IdelPog.SimulationEngine
         /// <param name="amount">The amount you want to verify</param>
         private void AssertAmountIsPositive(int amount)
         {
-            assertPositive.AssertNumberIsPositive(amount);
+            _assertPositive.AssertNumberIsPositive(amount);
         }
 
         /// <summary>
@@ -73,18 +81,18 @@ namespace IdelPog.SimulationEngine
         /// <param name="id">The id you want to check</param>
         private void AssertItemExists(InventoryID id)
         {
-            assertFound.AssertItemIsFound(id, () => Contains(id));
+            _assertFound.AssertItemIsFound(id, () => Contains(id));
         } 
 
         private Item RepositoryGet(InventoryID id)
         {
-            Item itemClone = stateRepository.Get(id);
+            Item itemClone = _stateRepository.Get(id);
             return itemClone;
         }
 
         private void RepositoryUpdate(InventoryID id, Item item)
         {
-            stateRepository.Update(id, item);
+            _stateRepository.Update(id, item);
         }
     }
 }
