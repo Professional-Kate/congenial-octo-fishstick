@@ -10,19 +10,24 @@ namespace IdelPog.SimulationEngine.Flows.Skill
         private readonly IExperienceService _experienceService;
         private readonly ILevelService _levelService;
         private readonly IStateRepository<SkillID, Skill>  _skillRepository;
+        private readonly ICurrentSkillProvider _currentSkillProvider;
         
-        public SkillMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Skill> skillRepository)
+        public SkillMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Skill> skillRepository,  ICurrentSkillProvider currentSkillProvider)
         {
             _experienceService = experienceService;
             _levelService = levelService;
             _skillRepository = skillRepository;
+            _currentSkillProvider = currentSkillProvider;
         }
         
-        public ServiceResponse ProcessSkillAction(SkillID skillID)
+        public ServiceResponse ProcessSkillAction()
         {
+            // TODO: this method will be called by the tick controller (when I make it)
+            SkillID currentSkillID = _currentSkillProvider.GetCurrentSkill();
+            
             try
             {
-                Skill skill = _skillRepository.Get(skillID);
+                Skill skill = _skillRepository.Get(currentSkillID);
                 ILevelable levelable = skill.Levelable;
                 
                 _experienceService.AddExperience(levelable);
@@ -32,7 +37,7 @@ namespace IdelPog.SimulationEngine.Flows.Skill
                     _levelService.LevelUpJob(levelable);
                 }
                 
-                _skillRepository.Update(skillID, skill);
+                _skillRepository.Update(currentSkillID, skill);
             }
             catch (Exception exception)
             {
