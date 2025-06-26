@@ -1,20 +1,14 @@
-﻿using IdelPog.SimulationEngine.Orchestration;
-using IdelPog.SimulationEngine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Flows.Skill
 {
-    public class SkillController(IJobMediator jobMediator) : ISkillController
+    public class SkillController(ICurrentSkillSetter currentSkillSetter) : ISkillController
     {
-        public ServiceResponse SwitchSkill(SkillID skillID)
+        public ServiceResponse SwitchSkill(SkillChange skillChange)
         {
-            ServiceResponse response = jobMediator.ProcessJobAction(skillID);
-            if (response.IsSuccess == false)
-            {
-                // TODO : Log to file
-                Console.WriteLine(response.Message);
-            }
+            currentSkillSetter.SetCurrentSkill(skillChange.SkillID);
             
-            return response;
+            return ServiceResponse.Success();
         }
     }
 }
