@@ -1,0 +1,17 @@
+﻿namespace IdelPog.SimulationEngine.Flows.Inventory
+{
+    public class InventoryController : IInventoryController
+    {
+        private readonly IInventoryMediator _inventoryMediator;
+
+        public InventoryController(IInventoryMediator inventoryMediator)
+        {
+            _inventoryMediator = inventoryMediator;
+        }
+        
+        public void UpdateInventory(InventoryUpdate update)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

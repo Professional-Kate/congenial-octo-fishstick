@@ -10,14 +10,14 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
     /// </summary>
     public sealed class Inventory : IInventory
     {
-        private readonly IStateRepository<InventoryID, Item> _stateRepository;
+        private readonly IStateRepository<InventoryID, Item> _itemRepository;
         private readonly IAssertFound _assertFound;
         private readonly IAssertPositive _assertPositive;
         private readonly IAssertNonDuplicate _assertNonDuplicate;
 
-        public Inventory(IStateRepository<InventoryID, Item> stateRepository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertNonDuplicate assertNonDuplicate)
+        public Inventory(IStateRepository<InventoryID, Item> itemRepository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertNonDuplicate assertNonDuplicate)
         {
-            _stateRepository = stateRepository;
+            _itemRepository = itemRepository;
             _assertFound = assertFound;
             _assertPositive = assertPositive;
             _assertNonDuplicate = assertNonDuplicate;
@@ -45,7 +45,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
            AssertAmountIsPositive(itemAmount - amount);
             if (itemAmount - amount == 0)
             {
-                _stateRepository.Remove(item.ID);
+                _itemRepository.Remove(item.ID);
                 return;
             }
 
@@ -58,12 +58,12 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
             AssertAmountIsPositive(item.Amount);
             _assertNonDuplicate.AssertContains(item, () => Contains(item.ID));
 
-            _stateRepository.Add(item.ID, item);
+            _itemRepository.Add(item.ID, item);
         }
 
         public bool Contains(InventoryID item)
         {
-            return _stateRepository.Contains(item);
+            return _itemRepository.Contains(item);
         }
 
         /// <summary>
@@ -86,13 +86,13 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
 
         private Item RepositoryGet(InventoryID id)
         {
-            Item itemClone = _stateRepository.Get(id);
+            Item itemClone = _itemRepository.Get(id);
             return itemClone;
         }
 
         private void RepositoryUpdate(InventoryID id, Item item)
         {
-            _stateRepository.Update(id, item);
+            _itemRepository.Update(id, item);
         }
     }
 }
