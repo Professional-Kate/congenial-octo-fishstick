@@ -7,7 +7,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation
     /// </summary>
-    public class InventoryMediator(IInventory inventory, IMapper<ItemID> mapper, IInventoryUpdateDTOFactory inventoryUpdateDTOFactory) : IInventoryMediator
+    public class InventoryMediator(IInventory inventory, IMapper<ItemID> mapper, IInventoryUpdateDTOFactory inventoryUpdateDTOFactory, IInventoryUpdateDispatcher dispatcher) : IInventoryMediator
     {
         public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
         {
@@ -16,23 +16,25 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
             
             foreach (InventoryUpdate update in updates)
             {
-                MutateType mutateType = MutateType.CHANGED;
+                MutateType mutateType;
                 
                 switch (update.Action)
                 {
                     case ActionType.ADD:
-                        mutateType = AddAmount(update.ItemID, update.Amount);
+                        mutateType = CreateOrMutateItem(update.ItemID, update.Amount);
                         break;
                     case ActionType.REMOVE:
                         mutateType = inventory.RemoveAmount(update.ItemID, update.Amount);
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException(update.Action.ToString());
                 }
 
                 Item item = inventory.GetItem(update.ItemID);
                 updateDTOs.Add(inventoryUpdateDTOFactory.CreateInventoryUpdateDTO(item, update, mutateType));
-                
-                // TODO: Dispatch list of updateDTOs
             }
+            
+            dispatcher.DispatchUpdates(updateDTOs.ToArray());
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
         /// <param name="amount">The amount you want to add</param>
         /// <returns>A <see cref="ServiceResponse"/> object that tells you how the operation went</returns>
         /// <remarks>If the <see cref="Item"/> with the passed <see cref="ItemID"/> is not found, it will be created</remarks>
-        private MutateType AddAmount(ItemID itemID, int amount)
+        private MutateType CreateOrMutateItem(ItemID itemID, int amount)
         {
             if (inventory.Contains(itemID))
             {
