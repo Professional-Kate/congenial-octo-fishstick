@@ -1,5 +1,4 @@
-﻿using IdelPog.SimulationEngine.Service;
-using IdelPog.SimulationEngine.Structures;
+﻿using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Flows.Inventory
@@ -7,12 +6,12 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation
     /// </summary>
-    public class InventoryMediator(IInventory inventory, IMapper<ItemID> mapper, IInventoryUpdateDTOFactory inventoryUpdateDTOFactory, IInventoryUpdateDispatcher dispatcher) : IInventoryMediator
+    public class InventoryMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateDTOFactory inventoryUpdateDTOFactory, IInventoryUpdateDispatcher dispatcher) : IInventoryMediator
     {
         public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
         {
             
-            List<InventoryUpdateDTO> updateDTOs = [];
+            List<InventoryUpdateDTO> updateDTOs = new(updates.Count);
             
             foreach (InventoryUpdate update in updates)
             {
@@ -21,7 +20,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
                 switch (update.Action)
                 {
                     case ActionType.ADD:
-                        mutateType = CreateOrMutateItem(update.ItemID, update.Amount);
+                        mutateType = CreateOrIncreaseAmount(update.ItemID, update.Amount);
                         break;
                     case ActionType.REMOVE:
                         mutateType = inventory.RemoveAmount(update.ItemID, update.Amount);
@@ -44,7 +43,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
         /// <param name="amount">The amount you want to add</param>
         /// <returns>A <see cref="ServiceResponse"/> object that tells you how the operation went</returns>
         /// <remarks>If the <see cref="Item"/> with the passed <see cref="ItemID"/> is not found, it will be created</remarks>
-        private MutateType CreateOrMutateItem(ItemID itemID, int amount)
+        private MutateType CreateOrIncreaseAmount(ItemID itemID, int amount)
         {
             if (inventory.Contains(itemID))
             {
@@ -53,25 +52,9 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
             }
             
             // if an Item doesn't exist then we create one
-            CreateItem(itemID, amount);
+            Item createdItem = itemFactory.CreateItem(itemID, amount);
+            inventory.AddItem(createdItem);
             return MutateType.CREATED;
-        }
-
-        /// <summary>
-        /// creates an <see cref="Item"/> using the passed <see cref="ItemID"/> and amount
-        /// </summary>
-        /// <param name="itemID">The <see cref="ItemID"/> of the <see cref="Item"/> you want to create</param>
-        /// <param name="amount">The amount you want the <see cref="Item"/> to have</param>
-        private void CreateItem(ItemID itemID, int amount)
-        {
-            // TODO: should be the role of a factory
-            Information itemInformation = mapper.GetInformation(itemID);
-
-            Item newItem = ItemBuilder.Create(itemID, itemInformation)
-                .Amount(amount)
-                .Build();
-            
-            inventory.AddItem(newItem);
         }
     }
 }

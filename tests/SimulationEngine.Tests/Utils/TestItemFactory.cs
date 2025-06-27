@@ -3,7 +3,7 @@ using IdelPog.SimulationEngine.Flows.Inventory;
 
 namespace IdelPogTests.Utils
 {
-    internal abstract class ItemFactory
+    internal abstract class TestItemFactory
     {
         internal static Item CreateOakWood()
         {

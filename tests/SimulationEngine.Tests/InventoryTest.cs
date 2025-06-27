@@ -23,14 +23,14 @@ namespace IdelPogTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _oakWoodItem = ItemFactory.CreateOakWood();
+            _oakWoodItem = TestItemFactory.CreateOakWood();
             SetupMock();
         }
 
         [TearDown]
         public void TearDown()
         {
-            _oakWoodItem = ItemFactory.CreateOakWood();
+            _oakWoodItem = TestItemFactory.CreateOakWood();
             SetupMock();
         }
 
