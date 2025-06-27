@@ -15,6 +15,7 @@ namespace IdelPogTests.Orchestration
         private Mock<IStateRepository<SkillID, Skill>> _repositoryMock { get; set; }
         private Mock<ILevelService> _levelServiceMock { get; set; }
         private Mock<ICurrentSkillProvider>  _currentSkillProviderMock { get; set; }
+        private Mock<ISkillUpdateDispatcher> _skillUpdateDispatcherMock { get; set; }
         private Skill _miningSkill { get; set; }
 
         [SetUp]
@@ -26,7 +27,8 @@ namespace IdelPogTests.Orchestration
             _repositoryMock = new Mock<IStateRepository<SkillID, Skill>>();
             _levelServiceMock = new Mock<ILevelService>();
             _currentSkillProviderMock = new Mock<ICurrentSkillProvider>();
-            _skillMediator = new SkillMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object,  _currentSkillProviderMock.Object);
+            _skillUpdateDispatcherMock = new Mock<ISkillUpdateDispatcher>();
+            _skillMediator = new SkillMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object,  _currentSkillProviderMock.Object,  _skillUpdateDispatcherMock.Object);
 
             _repositoryMock.Setup(library => library.Get(_miningSkill.SkillID)).Returns(_miningSkill);
             _repositoryMock.Setup(library => library.Contains(_miningSkill.SkillID)).Returns(true);

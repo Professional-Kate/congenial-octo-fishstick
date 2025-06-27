@@ -11,13 +11,15 @@ namespace IdelPog.SimulationEngine.Flows.Skill
         private readonly ILevelService _levelService;
         private readonly IStateRepository<SkillID, Skill>  _skillRepository;
         private readonly ICurrentSkillProvider _currentSkillProvider;
+        private readonly ISkillUpdateDispatcher _skillUpdateDispatcher;
         
-        public SkillMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Skill> skillRepository,  ICurrentSkillProvider currentSkillProvider)
+        public SkillMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Skill> skillRepository,  ICurrentSkillProvider currentSkillProvider, ISkillUpdateDispatcher skillUpdateDispatcher)
         {
             _experienceService = experienceService;
             _levelService = levelService;
             _skillRepository = skillRepository;
             _currentSkillProvider = currentSkillProvider;
+            _skillUpdateDispatcher = skillUpdateDispatcher;
         }
         
         public ServiceResponse ProcessSkillAction()
@@ -31,13 +33,30 @@ namespace IdelPog.SimulationEngine.Flows.Skill
                 ILevelable levelable = skill.Levelable;
                 
                 _experienceService.AddExperience(levelable);
+                bool canSkillLevel = _levelService.CanSkillLevel(levelable);
 
-                if (_levelService.CanSkillLevel(levelable))
+                if (canSkillLevel)
                 {
                     _levelService.LevelUpSkill(levelable);
                 }
                 
                 _skillRepository.Update(currentSkillID, skill);
+                
+                // TODO : create factory to do this
+                SkillUpdateDTO skillUpdateDTO = new()
+                {
+                    SkillID = skill.SkillID,
+                    HasLeveled = canSkillLevel,
+                    LevelableUpdateDTO = new LevelableUpdateDTO
+                    {
+                        Experience = levelable.Experience,
+                        ExperiencePerAction = levelable.ExperiencePerAction,
+                        Level = levelable.Level,
+                        NextLevelExperience = levelable.NextLevelExperience,
+                    }
+                };
+                
+                _skillUpdateDispatcher.Dispatch(skillUpdateDTO);
             }
             catch (Exception exception)
             {
