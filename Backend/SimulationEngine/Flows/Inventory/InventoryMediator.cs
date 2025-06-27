@@ -7,7 +7,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation
     /// </summary>
-    public class InventoryMediator(IInventory inventory, IMapper<ItemID> mapper) : IInventoryMediator
+    public class InventoryMediator(IInventory inventory, IMapper<ItemID> mapper, IInventoryUpdateDTOFactory inventoryUpdateDTOFactory) : IInventoryMediator
     {
         public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
         {
@@ -29,17 +29,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
                 }
 
                 Item item = inventory.GetItem(update.ItemID);
-                updateDTOs.Add(new InventoryUpdateDTO
-                {
-                    ItemDTO = new ItemDTO
-                    {
-                        Amount = item.Amount,
-                        ItemID = item.ID,
-                        SellPrice = item.SellPrice
-                    },
-                    ActionType = update.Action,
-                    MutateType = mutateType
-                });
+                updateDTOs.Add(inventoryUpdateDTOFactory.CreateInventoryUpdateDTO(item, update, mutateType));
                 
                 // TODO: Dispatch list of updateDTOs
             }
@@ -62,7 +52,6 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
             
             // if an Item doesn't exist then we create one
             CreateItem(itemID, amount);
-            inventory.AddAmount(itemID, amount);
             return MutateType.CREATED;
         }
 
