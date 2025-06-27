@@ -1,5 +1,5 @@
 ﻿using IdelPog.Common.Repository;
-using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.SimulationEngine.Flows.Inventory
@@ -33,7 +33,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
             RepositoryUpdate(id, finalItem);
         }
 
-        public void RemoveAmount(ItemID id, int amount)
+        public MutateType RemoveAmount(ItemID id, int amount)
         {
             AssertAmountIsPositive(amount);
             AssertItemExists(id);
@@ -45,11 +45,12 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
             if (itemAmount - amount == 0)
             {
                 _itemRepository.Remove(item.ID);
-                return;
+                return MutateType.DELETED;
             }
 
             item.RemoveAmount(amount);
             RepositoryUpdate(item.ID, item);
+            return MutateType.CHANGED;
         }
 
         public void AddItem(Item item)

@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Models;
+﻿using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Flows.Inventory
@@ -30,7 +30,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
         /// <exception cref="ArgumentException">Will be thrown if the passed amount would cause the <see cref="Item"/>'s amount to be less than zero</exception>
         /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="Item"/> is not in the Inventory</exception>
         /// <remarks>If the <see cref="Item"/>'s amount is exactly 0, after removing the passed amount, it will be removed from the Repository</remarks>
-        public void RemoveAmount(ItemID id, int amount);
+        public MutateType RemoveAmount(ItemID id, int amount);
 
         /// <summary>
         /// Adds a passed <see cref="Item"/> into the Inventory

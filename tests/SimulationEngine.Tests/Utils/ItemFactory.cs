@@ -1,6 +1,5 @@
 ﻿using IdelPog.SimulationEngine.Constants;
 using IdelPog.SimulationEngine.Flows.Inventory;
-using IdelPog.SimulationEngine.Models;
 
 namespace IdelPogTests.Utils
 {

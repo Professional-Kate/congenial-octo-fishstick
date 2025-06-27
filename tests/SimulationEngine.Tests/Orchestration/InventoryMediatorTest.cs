@@ -75,12 +75,12 @@ namespace IdelPogTests.Orchestration
         }
         
         [Test]
-        public void Negative_AddAmount_Catches_Exception()
+        public void Negative_AddAmount_Throws()
         {
             _repositoryMock.Setup(repo => repo.AddAmount(_inventoryUpdate.ItemID, AMOUNT))
                 .Throws<Exception>();
             
-            _inventoryMediator.UpdateInventory([_inventoryUpdate]);
+            Assert.Throws<Exception>(() => _inventoryMediator.UpdateInventory([_inventoryUpdate]));
         }
 
         [Test]
