@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Flows.Inventory;
 using IdelPog.SimulationEngine.Service;
-using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 using Moq;
 

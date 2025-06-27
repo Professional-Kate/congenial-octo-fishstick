@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
-using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Flows.Inventory
@@ -37,7 +37,8 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
         {
             try
             {
-                if (inventory.Contains(itemID) == false)
+                bool contains = inventory.Contains(itemID);
+                if (contains == false)
                 {
                     // if an Item doesn't exist then we create one
                     CreateItem(itemID, amount);
@@ -81,6 +82,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
         /// <param name="amount">The amount you want the <see cref="Item"/> to have</param>
         private void CreateItem(ItemID itemID, int amount)
         {
+            // TODO: should be the role of a factory
             Information itemInformation = mapper.GetInformation(itemID);
 
             Item newItem = ItemBuilder.Create(itemID, itemInformation)

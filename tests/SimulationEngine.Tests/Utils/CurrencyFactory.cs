@@ -1,5 +1,4 @@
 ﻿using IdelPog.SimulationEngine.Flows.Currency;
-using IdelPog.SimulationEngine.Structures.Enums;
 
 namespace IdelPogTests.Utils
 {

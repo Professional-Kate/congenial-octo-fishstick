@@ -2,7 +2,7 @@
 using IdelPog.SimulationEngine.Flows.Currency;
 using IdelPog.SimulationEngine.Flows.Currency.Assertions;
 using IdelPog.SimulationEngine.Flows.Currency.Exceptions;
-using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Assertions.Interfaces;

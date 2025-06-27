@@ -3,7 +3,7 @@ using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Flows.Currency;
 using IdelPog.SimulationEngine.Flows.Currency.Assertions;
 using IdelPog.SimulationEngine.Flows.Currency.Exceptions;
-using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
 using Moq;
