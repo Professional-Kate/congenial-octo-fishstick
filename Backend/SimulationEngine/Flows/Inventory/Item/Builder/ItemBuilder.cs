@@ -1,19 +1,18 @@
-﻿using IdelPog.SimulationEngine.Structures.Enums;
-using IdelPog.SimulationEngine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Models
+namespace IdelPog.SimulationEngine.Flows.Inventory
 {
     /// <inheritdoc cref="IItemBuilder"/>
     public sealed class ItemBuilder : IItemBuilder
     {
-        private readonly InventoryID _inventoryID;
+        private readonly ItemID _itemID;
         private readonly Information _information;
         private int _sellPrice { get; set; }
         private int _amount { get; set; }
 
-        private ItemBuilder(InventoryID inventoryID, Information information, int sellPrice, int amount)
+        private ItemBuilder(ItemID itemID, Information information, int sellPrice, int amount)
         {
-            _inventoryID = inventoryID;
+            _itemID = itemID;
             _information = information;
             _sellPrice = sellPrice;
             _amount = amount;
@@ -25,7 +24,7 @@ namespace IdelPog.SimulationEngine.Models
         /// <param name="id">The ID of the wanted <see cref="Item"/></param>
         /// <param name="information">The information of the wanted <see cref="Item"/></param>
         /// <remarks>Will assign default amounts to all properties</remarks>
-        public static IItemBuilder Create(InventoryID id, Information information)
+        public static IItemBuilder Create(ItemID id, Information information)
         {
             return new ItemBuilder(id, information, 1, 1);
         }
@@ -46,7 +45,7 @@ namespace IdelPog.SimulationEngine.Models
 
         public Item Build()
         {
-            return new Item(_inventoryID, _information, _sellPrice, _amount);
+            return new Item(_itemID, _information, _sellPrice, _amount);
         }
     }
 }

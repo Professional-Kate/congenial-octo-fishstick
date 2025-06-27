@@ -11,7 +11,7 @@ namespace IdelPogTests.Orchestration
     {
         private IInventoryMediator _inventoryMediator { get; set; }
         private Mock<IInventory> _repositoryMock { get; set; }
-        private Mock<IMapper<InventoryID>> _mapperMock { get; set; }
+        private Mock<IMapper<ItemID>> _mapperMock { get; set; }
 
         private InventoryUpdate _inventoryUpdate { get; set; }
         private Information _information { get; set; }
@@ -21,14 +21,14 @@ namespace IdelPogTests.Orchestration
         public void Setup()
         {
             _repositoryMock = new Mock<IInventory>();
-            _mapperMock = new Mock<IMapper<InventoryID>>();
+            _mapperMock = new Mock<IMapper<ItemID>>();
             _inventoryMediator = new InventoryMediator(_repositoryMock.Object, _mapperMock.Object);
             _information = new Information("", "");
 
             _inventoryUpdate = new InventoryUpdate()
             {
                 Action = ActionType.ADD,
-                InventoryID = InventoryID.OAK_WOOD,
+                ItemID = ItemID.OAK_WOOD,
                 Amount = AMOUNT
             };
             
@@ -37,8 +37,8 @@ namespace IdelPogTests.Orchestration
 
         private void SetupMocks()
         {
-            _repositoryMock.Setup(library => library.AddAmount(_inventoryUpdate.InventoryID, AMOUNT));
-            _repositoryMock.Setup(library => library.Contains(_inventoryUpdate.InventoryID)).Returns(true);
+            _repositoryMock.Setup(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT));
+            _repositoryMock.Setup(library => library.Contains(_inventoryUpdate.ItemID)).Returns(true);
         }
         
         [Test]
@@ -46,8 +46,8 @@ namespace IdelPogTests.Orchestration
         {
             _inventoryMediator.UpdateInventory([_inventoryUpdate]);
             
-            _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.InventoryID, AMOUNT));
-            _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.InventoryID));
+            _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT));
+            _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.ItemID));
         }
 
         [Test]
@@ -56,19 +56,19 @@ namespace IdelPogTests.Orchestration
             InventoryUpdate removeUpdate = new()
             {
                 Action = ActionType.REMOVE,
-                InventoryID = InventoryID.OAK_WOOD,
+                ItemID = ItemID.OAK_WOOD,
                 Amount = AMOUNT
             };
             
             _inventoryMediator.UpdateInventory([removeUpdate]);
             
-            _repositoryMock.Verify(library => library.RemoveAmount(_inventoryUpdate.InventoryID, AMOUNT));
+            _repositoryMock.Verify(library => library.RemoveAmount(_inventoryUpdate.ItemID, AMOUNT));
         }
         
         [Test]
         public void Negative_RemoveAmount_Catches_Exception()
         {
-            _repositoryMock.Setup(repo => repo.RemoveAmount(_inventoryUpdate.InventoryID, AMOUNT))
+            _repositoryMock.Setup(repo => repo.RemoveAmount(_inventoryUpdate.ItemID, AMOUNT))
                 .Throws<Exception>();
             
             _inventoryMediator.UpdateInventory([_inventoryUpdate]);
@@ -77,7 +77,7 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_AddAmount_Catches_Exception()
         {
-            _repositoryMock.Setup(repo => repo.AddAmount(_inventoryUpdate.InventoryID, AMOUNT))
+            _repositoryMock.Setup(repo => repo.AddAmount(_inventoryUpdate.ItemID, AMOUNT))
                 .Throws<Exception>();
             
             _inventoryMediator.UpdateInventory([_inventoryUpdate]);
@@ -86,14 +86,14 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Positive_AddAmount_NoFoundItem_CreatesItem()
         {
-            _repositoryMock.Setup(library => library.Contains(_inventoryUpdate.InventoryID)).Returns(false);
-            _mapperMock.Setup(library => library.GetInformation(_inventoryUpdate.InventoryID)).Returns(_information);
+            _repositoryMock.Setup(library => library.Contains(_inventoryUpdate.ItemID)).Returns(false);
+            _mapperMock.Setup(library => library.GetInformation(_inventoryUpdate.ItemID)).Returns(_information);
             
             _inventoryMediator.UpdateInventory([_inventoryUpdate]);
             
-            _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.InventoryID, AMOUNT));
-            _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.InventoryID));
-            _mapperMock.Verify(library => library.GetInformation(_inventoryUpdate.InventoryID));
+            _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT));
+            _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.ItemID));
+            _mapperMock.Verify(library => library.GetInformation(_inventoryUpdate.ItemID));
         }
     }
 }

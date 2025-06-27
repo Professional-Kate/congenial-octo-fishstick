@@ -1,18 +1,12 @@
 ﻿using IdelPog.Common.Structures;
-using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Models
+namespace IdelPog.SimulationEngine.Flows.Inventory
 {
-    /// <summary>
-    /// The Item model
-    /// </summary>
-    /// <seealso cref="AddAmount"/>
-    /// <seealso cref="RemoveAmount"/>
-    public class Item(InventoryID id, Information information, int sellPrice, int amount = 1)
+    public class Item(ItemID id, Information information, int sellPrice, int amount = 1)
         : ICloneable<Item>
     {
-        public readonly InventoryID ID = id;
+        public readonly ItemID ID = id;
         public readonly Information Information = information;
         public readonly int SellPrice = sellPrice;
         

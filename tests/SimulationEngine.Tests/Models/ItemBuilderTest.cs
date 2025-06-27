@@ -1,4 +1,5 @@
 ﻿using IdelPog.SimulationEngine.Constants;
+using IdelPog.SimulationEngine.Flows.Inventory;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures.Enums;
 using IdelPog.SimulationEngine.Structures.Types;
@@ -8,7 +9,7 @@ namespace IdelPogTests.Models
     [TestFixture]
     public class ItemBuilderTest
     {
-        private const InventoryID INVENTORY_ID = InventoryID.OAK_WOOD;
+        private const ItemID INVENTORY_ID = ItemID.OAK_WOOD;
         private readonly Information _information = ItemConstants.OAK_WOOD;
 
         private IItemBuilder GetBuilder()

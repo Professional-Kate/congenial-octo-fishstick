@@ -10,12 +10,12 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
     /// </summary>
     public sealed class Inventory : IInventory
     {
-        private readonly IStateRepository<InventoryID, Item> _itemRepository;
+        private readonly IStateRepository<ItemID, Item> _itemRepository;
         private readonly IAssertFound _assertFound;
         private readonly IAssertPositive _assertPositive;
         private readonly IAssertNonDuplicate _assertNonDuplicate;
 
-        public Inventory(IStateRepository<InventoryID, Item> itemRepository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertNonDuplicate assertNonDuplicate)
+        public Inventory(IStateRepository<ItemID, Item> itemRepository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertNonDuplicate assertNonDuplicate)
         {
             _itemRepository = itemRepository;
             _assertFound = assertFound;
@@ -23,7 +23,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
             _assertNonDuplicate = assertNonDuplicate;
         }
         
-        public void AddAmount(InventoryID id, int amount)
+        public void AddAmount(ItemID id, int amount)
         {
             AssertAmountIsPositive(amount);
             AssertItemExists(id);
@@ -34,7 +34,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
             RepositoryUpdate(id, finalItem);
         }
 
-        public void RemoveAmount(InventoryID id, int amount)
+        public void RemoveAmount(ItemID id, int amount)
         {
             AssertAmountIsPositive(amount);
             AssertItemExists(id);
@@ -61,7 +61,7 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
             _itemRepository.Add(item.ID, item);
         }
 
-        public bool Contains(InventoryID item)
+        public bool Contains(ItemID item)
         {
             return _itemRepository.Contains(item);
         }
@@ -79,18 +79,18 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
         /// Asserts that the passed id exists in the inventory
         /// </summary>
         /// <param name="id">The id you want to check</param>
-        private void AssertItemExists(InventoryID id)
+        private void AssertItemExists(ItemID id)
         {
             _assertFound.AssertItemIsFound(id, () => Contains(id));
         } 
 
-        private Item RepositoryGet(InventoryID id)
+        private Item RepositoryGet(ItemID id)
         {
             Item itemClone = _itemRepository.Get(id);
             return itemClone;
         }
 
-        private void RepositoryUpdate(InventoryID id, Item item)
+        private void RepositoryUpdate(ItemID id, Item item)
         {
             _itemRepository.Update(id, item);
         }

@@ -20,6 +20,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <Folder Include="Models\Item\" />
 	  <Folder Include="Orchestration\Inventory\" />
 	</ItemGroup>
 

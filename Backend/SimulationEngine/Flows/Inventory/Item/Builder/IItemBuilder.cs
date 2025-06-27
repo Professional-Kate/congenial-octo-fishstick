@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Models
+﻿namespace IdelPog.SimulationEngine.Flows.Inventory
 {
     /// <summary>
     /// Builds a new <see cref="Item"/>
