@@ -2,6 +2,6 @@
 {
     public interface ICurrencyUpdateFactory
     {
-        public IReadOnlyList<CurrencyUpdateDTO> CreateFrom(IReadOnlyList<CurrencyTrade> trades);
+        public CurrencyUpdateDTO[] CreateFrom(IReadOnlyList<CurrencyTrade> trades);
     }
 }

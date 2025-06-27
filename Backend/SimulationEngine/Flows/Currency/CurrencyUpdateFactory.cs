@@ -5,7 +5,7 @@ namespace IdelPog.SimulationEngine.Flows.Currency
 {
     public class CurrencyUpdateFactory(AssertNotNull assertNotNull, AssertCollectionNotEmpty assertCollectionNotEmpty) : ICurrencyUpdateFactory
     {
-        public IReadOnlyList<CurrencyUpdateDTO> CreateFrom(IReadOnlyList<CurrencyTrade> trades)
+        public CurrencyUpdateDTO[] CreateFrom(IReadOnlyList<CurrencyTrade> trades)
         {
             assertNotNull.AssertObjectNotNull(trades);
             assertCollectionNotEmpty.Handle(trades);
@@ -22,7 +22,7 @@ namespace IdelPog.SimulationEngine.Flows.Currency
                 });
             }
             
-            return result;
+            return result.ToArray();
         }
     }
 }

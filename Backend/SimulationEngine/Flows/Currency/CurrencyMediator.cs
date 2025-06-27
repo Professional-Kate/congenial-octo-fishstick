@@ -9,7 +9,7 @@ using IdelPog.Validation.Exceptions;
 namespace IdelPog.SimulationEngine.Flows.Currency
 {
     /// <inheritdoc cref="ICurrencyMediator"/>
-    public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, ICurrencyDispatcher currencyDispatcher, IAssertPositive assert, AssertCollectionNotEmpty assertCollectionNotEmpty)
+    public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, ICurrencyUpdateDispatcher currencyUpdateDispatcher, IAssertPositive assert, AssertCollectionNotEmpty assertCollectionNotEmpty, ICurrencyUpdateFactory currencyUpdateFactory)
         : ICurrencyMediator
     {
         public ServiceResponse ProcessCurrencyUpdate(IReadOnlyList<CurrencyTrade> trades)
@@ -39,7 +39,8 @@ namespace IdelPog.SimulationEngine.Flows.Currency
             }
             
             ApplyChanges(stagingGround, originalCurrencies);
-            currencyDispatcher.Dispatch(trades);
+            
+            currencyUpdateDispatcher.Dispatch(currencyUpdateFactory.CreateFrom(trades));
 
             return ServiceResponse.Success();
         }
