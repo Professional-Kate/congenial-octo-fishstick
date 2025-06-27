@@ -216,5 +216,23 @@ namespace IdelPogTests
             bool contains = _inventory.Contains(ItemID.WILLOW_WOOD);
             Assert.That(contains, Is.False);
         }
+
+        [Test]
+        public void Positive_GetItem_ReturnsItem()
+        {
+            Item item = _inventory.GetItem(_oakWoodItem.ID);
+            
+            Assert.That(item, Is.Not.Null);
+            Assert.That(item, Is.EqualTo(_oakWoodItem));
+        }
+
+        [Test]
+        public void Negative_GetItem_NoItemFound_Throws()
+        {
+            _assertFoundMock.Setup(library => library.AssertItemIsFound(ItemID.WILLOW_WOOD, It.IsAny<Func<bool>>()))
+                .Throws(new NotFoundException(ItemID.WILLOW_WOOD));
+            
+            Assert.Throws<NotFoundException>(() => _inventory.GetItem(ItemID.WILLOW_WOOD));
+        }
     }
 }

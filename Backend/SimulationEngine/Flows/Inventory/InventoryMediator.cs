@@ -28,15 +28,14 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
                         break;
                 }
 
-                // TODO: Inventory needs to be updated with a GetItem, we don't know Amount or SellPrice
-                
+                Item item = inventory.GetItem(update.ItemID);
                 updateDTOs.Add(new InventoryUpdateDTO
                 {
                     ItemDTO = new ItemDTO
                     {
-                        Amount = 1,
-                        ItemID = update.ItemID,
-                        SellPrice = 1
+                        Amount = item.Amount,
+                        ItemID = item.ID,
+                        SellPrice = item.SellPrice
                     },
                     ActionType = update.Action,
                     MutateType = mutateType

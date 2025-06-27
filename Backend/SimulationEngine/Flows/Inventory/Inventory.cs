@@ -66,6 +66,12 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
             return _itemRepository.Contains(item);
         }
 
+        public Item GetItem(ItemID item)
+        {
+            AssertItemExists(item);
+            return _itemRepository.Get(item);
+        }
+
         /// <summary>
         /// Asserts that the passed amount is greater than zero
         /// </summary>

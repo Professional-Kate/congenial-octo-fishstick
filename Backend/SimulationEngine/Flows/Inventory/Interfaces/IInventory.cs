@@ -45,5 +45,12 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
         /// </summary>
         /// <param name="item">The <see cref="ItemID"/> you want to ensure exists</param>
         public bool Contains(ItemID item);
+
+        /// <summary>
+        /// Returns an item from the Inventory
+        /// </summary>
+        /// <param name="item">The <see cref="Item"/> will have this id</param>
+        /// <returns>A clone of the <see cref="Item"/></returns>
+        public Item GetItem(ItemID item);
     }
 }
