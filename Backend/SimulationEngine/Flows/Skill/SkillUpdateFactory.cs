@@ -4,12 +4,12 @@ namespace IdelPog.SimulationEngine.Flows.Skill
 {
     public class SkillUpdateFactory(ILevelableUpdateFactory levelableUpdateFactory) : ISkillUpdateFactory
     {
-        public SkillUpdateDTO CreateSkillUpdate(Skill skill, bool canSkillLevel)
+        public SkillUpdateDTO CreateSkillUpdate(Skill skill, bool hasLeveled)
         {
             return new SkillUpdateDTO
             {
                 SkillID = skill.SkillID,
-                HasLeveled = canSkillLevel,
+                HasLeveled = hasLeveled,
                 LevelableUpdateDTO = levelableUpdateFactory.CreateLevelableUpdate(skill.Levelable)
             };
         }
