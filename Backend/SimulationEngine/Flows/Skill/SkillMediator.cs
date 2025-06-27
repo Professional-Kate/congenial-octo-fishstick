@@ -12,14 +12,16 @@ namespace IdelPog.SimulationEngine.Flows.Skill
         private readonly IStateRepository<SkillID, Skill>  _skillRepository;
         private readonly ICurrentSkillProvider _currentSkillProvider;
         private readonly ISkillUpdateDispatcher _skillUpdateDispatcher;
+        private readonly ISkillUpdateFactory _skillUpdateFactory;
         
-        public SkillMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Skill> skillRepository,  ICurrentSkillProvider currentSkillProvider, ISkillUpdateDispatcher skillUpdateDispatcher)
+        public SkillMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Skill> skillRepository,  ICurrentSkillProvider currentSkillProvider, ISkillUpdateDispatcher skillUpdateDispatcher, ISkillUpdateFactory skillUpdateFactory)
         {
             _experienceService = experienceService;
             _levelService = levelService;
             _skillRepository = skillRepository;
             _currentSkillProvider = currentSkillProvider;
             _skillUpdateDispatcher = skillUpdateDispatcher;
+            _skillUpdateFactory = skillUpdateFactory;
         }
         
         public ServiceResponse ProcessSkillAction()
@@ -41,22 +43,7 @@ namespace IdelPog.SimulationEngine.Flows.Skill
                 }
                 
                 _skillRepository.Update(currentSkillID, skill);
-                
-                // TODO : create factory to do this
-                SkillUpdateDTO skillUpdateDTO = new()
-                {
-                    SkillID = skill.SkillID,
-                    HasLeveled = canSkillLevel,
-                    LevelableUpdateDTO = new LevelableUpdateDTO
-                    {
-                        Experience = levelable.Experience,
-                        ExperiencePerAction = levelable.ExperiencePerAction,
-                        Level = levelable.Level,
-                        NextLevelExperience = levelable.NextLevelExperience,
-                    }
-                };
-                
-                _skillUpdateDispatcher.Dispatch(skillUpdateDTO);
+                _skillUpdateDispatcher.Dispatch(_skillUpdateFactory.CreateSkillUpdate(skill,  canSkillLevel));
             }
             catch (Exception exception)
             {
