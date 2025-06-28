@@ -18,9 +18,5 @@
 	  <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj" />
 	  <ProjectReference Include="..\ECS\ECS.csproj" />
 	</ItemGroup>
-	
-	<ItemGroup>
-	  <Folder Include="Orchestration\Inventory\" />
-	</ItemGroup>
 
 </Project>
