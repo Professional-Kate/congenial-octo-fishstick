@@ -23,8 +23,8 @@ namespace IdelPogTests.Orchestration
         private Mock<ICurrencyUpdateDispatcher>  _dispatcherMock { get; set; }
         private Mock<ICurrencyUpdateFactory> _currencyUpdateFactoryMock { get; set; }
         
-        private Currency _foodCurrency { get; set; }
-        private Currency _woodCurrency { get; set; }
+        private Currency _goldCurrency { get; set; }
+        private Currency _gemsCurrency { get; set; }
 
         private const int AMOUNT = 10;
 
@@ -42,8 +42,8 @@ namespace IdelPogTests.Orchestration
         [SetUp]
         public void Setup()
         {
-            _foodCurrency = CurrencyFactory.CreateFood();
-            _woodCurrency = CurrencyFactory.CreateWood();
+            _goldCurrency = CurrencyFactory.CreateGold();
+            _gemsCurrency = CurrencyFactory.CreateGems();
             
             SetupMock();
         }
@@ -59,8 +59,8 @@ namespace IdelPogTests.Orchestration
             
             _currencyMediator = new CurrencyMediator(_currencyServiceMock.Object, _repositoryMock.Object, _dispatcherMock.Object, _assertPositiveMock.Object, new AssertCollectionNotEmpty(_handlerMock.Object), _currencyUpdateFactoryMock.Object);
 
-            _repositoryMock.Setup(library => library.Get(CurrencyType.FOOD)).Returns(_foodCurrency.DeepClone());
-            _repositoryMock.Setup(library => library.Get(CurrencyType.WOOD)).Returns(_woodCurrency.DeepClone());
+            _repositoryMock.Setup(library => library.Get(CurrencyType.GOLD)).Returns(_goldCurrency.DeepClone());
+            _repositoryMock.Setup(library => library.Get(CurrencyType.GEMS)).Returns(_gemsCurrency.DeepClone());
             
             _repositoryMock.Setup(library => library.Contains(It.IsAny<CurrencyType>())).Returns(true);
 
@@ -85,11 +85,11 @@ namespace IdelPogTests.Orchestration
                 {
                     switch (type)
                     {
-                        case CurrencyType.FOOD:
-                            _foodCurrency = currency;
+                        case CurrencyType.GOLD:
+                            _goldCurrency = currency;
                             break;
-                        case CurrencyType.WOOD:
-                            _woodCurrency = currency;
+                        case CurrencyType.GEMS:
+                            _gemsCurrency = currency;
                             break;
                     }
                 });
@@ -97,10 +97,10 @@ namespace IdelPogTests.Orchestration
 
         private static void CreateTrades()
         {
-            _addFoodTrade = TestUtils.CreateTrade(AMOUNT, CurrencyType.FOOD, ActionType.ADD);
-            _removeFoodTrade = TestUtils.CreateTrade(AMOUNT, CurrencyType.FOOD, ActionType.REMOVE);
-            _addWoodTrade = TestUtils.CreateTrade(AMOUNT, CurrencyType.WOOD, ActionType.ADD);
-            _removeWoodTrade = TestUtils.CreateTrade(AMOUNT, CurrencyType.WOOD, ActionType.REMOVE);
+            _addFoodTrade = TestUtils.CreateTrade(AMOUNT, CurrencyType.GOLD, ActionType.ADD);
+            _removeFoodTrade = TestUtils.CreateTrade(AMOUNT, CurrencyType.GOLD, ActionType.REMOVE);
+            _addWoodTrade = TestUtils.CreateTrade(AMOUNT, CurrencyType.GEMS, ActionType.ADD);
+            _removeWoodTrade = TestUtils.CreateTrade(AMOUNT, CurrencyType.GEMS, ActionType.REMOVE);
         }
 
         private void VerifyUpdateCall(int amount)
@@ -135,7 +135,7 @@ namespace IdelPogTests.Orchestration
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
             
             Assert.That(serviceResponse.IsSuccess, Is.True);
-            Assert.That(tradeCount * AMOUNT, Is.EqualTo(_foodCurrency.Amount));
+            Assert.That(tradeCount * AMOUNT, Is.EqualTo(_goldCurrency.Amount));
 
             VerifyContainsCalls(1);
             VerifyGetCalls(1);
@@ -157,7 +157,7 @@ namespace IdelPogTests.Orchestration
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(removeTrades);
             
             Assert.That(serviceResponse.IsSuccess, Is.True);
-            Assert.That(10, Is.EqualTo(_foodCurrency.Amount));
+            Assert.That(10, Is.EqualTo(_goldCurrency.Amount));
 
             VerifyContainsCalls(2);
             VerifyGetCalls(2);
@@ -187,13 +187,13 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_CurrencyNotFound_ReturnsFailure()
         {
-            _repositoryMock.Setup(library => library.Contains(CurrencyType.FOOD)).Returns(false);
+            _repositoryMock.Setup(library => library.Contains(CurrencyType.GOLD)).Returns(false);
 
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate([_addFoodTrade]);
             
             Assert.That(serviceResponse.IsSuccess, Is.False);
             Assert.That(serviceResponse.Message, Is.Not.Null);
-            Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
+            Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
             
             VerifyContainsCalls(1);
             VerifyGetCalls(0);
@@ -204,7 +204,7 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_OneCurrencyNotFound_ReturnsFailure()
         {
-            _repositoryMock.Setup(library => library.Contains(CurrencyType.WOOD)).Returns(false);
+            _repositoryMock.Setup(library => library.Contains(CurrencyType.GEMS)).Returns(false);
 
             CurrencyTrade[] trades = { _addFoodTrade, _addWoodTrade };
             
@@ -212,8 +212,8 @@ namespace IdelPogTests.Orchestration
             
             Assert.That(serviceResponse.IsSuccess, Is.False);
             Assert.That(serviceResponse.Message, Is.Not.Null);
-            Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
-            Assert.That(0, Is.EqualTo(_woodCurrency.Amount));
+            Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
+            Assert.That(0, Is.EqualTo(_gemsCurrency.Amount));
             
             VerifyContainsCalls(2);
             VerifyGetCalls(0);
@@ -232,8 +232,8 @@ namespace IdelPogTests.Orchestration
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
             
             Assert.That(serviceResponse.IsSuccess, Is.False);
-            Assert.That(0, Is.EqualTo(_woodCurrency.Amount));
-            Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
+            Assert.That(0, Is.EqualTo(_gemsCurrency.Amount));
+            Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
             VerifyDispatcherCalls(0);
         }
         
@@ -246,8 +246,8 @@ namespace IdelPogTests.Orchestration
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate(trades);
             
             Assert.That(serviceResponse.IsSuccess, Is.True);
-            Assert.That(10, Is.EqualTo(_woodCurrency.Amount));
-            Assert.That(10, Is.EqualTo(_foodCurrency.Amount)); 
+            Assert.That(10, Is.EqualTo(_gemsCurrency.Amount));
+            Assert.That(10, Is.EqualTo(_goldCurrency.Amount)); 
             
             VerifyUpdateCall(2); // two currency = 2 update calls
             VerifyContainsCalls(2);
@@ -264,13 +264,13 @@ namespace IdelPogTests.Orchestration
             _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(It.IsAny<int[]>()))
                 .Throws(new NegativeNumberException(-1));
             
-            CurrencyTrade trade = TestUtils.CreateTrade(badAmount, _foodCurrency.CurrencyType, action);
+            CurrencyTrade trade = TestUtils.CreateTrade(badAmount, _goldCurrency.CurrencyType, action);
 
             ServiceResponse serviceResponse = _currencyMediator.ProcessCurrencyUpdate([trade]);
             
             Assert.That(serviceResponse.IsSuccess, Is.False);
             Assert.That(serviceResponse.Message, Is.Not.Null);
-            Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
+            Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
             
             VerifyContainsCalls(0);
             VerifyGetCalls(0);
@@ -291,8 +291,8 @@ namespace IdelPogTests.Orchestration
             
             Assert.That(serviceResponse.IsSuccess, Is.False);
             Assert.That(serviceResponse.Message, Is.Not.Null);
-            Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
-            Assert.That(0, Is.EqualTo(_woodCurrency.Amount));
+            Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
+            Assert.That(0, Is.EqualTo(_gemsCurrency.Amount));
             VerifyDispatcherCalls(0);
         }
     }

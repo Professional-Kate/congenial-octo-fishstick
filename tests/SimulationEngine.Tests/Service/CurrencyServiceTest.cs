@@ -20,7 +20,7 @@ namespace IdelPogTests.Service
         [SetUp]
         public void Setup()
         {
-            _foodCurrency = CurrencyFactory.CreateFood();
+            _foodCurrency = CurrencyFactory.CreateGold();
         }
         
         [Test]

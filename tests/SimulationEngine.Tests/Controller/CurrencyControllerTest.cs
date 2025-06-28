@@ -6,7 +6,7 @@ using Moq;
 
 namespace IdelPogTests.Controller
 {
-    [TestFixture(CurrencyType.FOOD, 10)]
+    [TestFixture(CurrencyType.GOLD, 10)]
     public class CurrencyControllerTest
     {
         // TODO: when I implement a logging framework, ensure this class logs the ServiceResponse output.
@@ -34,11 +34,11 @@ namespace IdelPogTests.Controller
         public void OneTimeSetUp()
         {
             _foodCurrency = new Currency(_currencyType, 0);
-            _woodCurrency = new Currency(CurrencyType.WOOD, 0);
+            _woodCurrency = new Currency(CurrencyType.GEMS, 0);
             _addFoodTrade = TestUtils.CreateTrade(_amount, _currencyType, ActionType.ADD);
             _removeFoodTrade = TestUtils.CreateTrade(_amount, _currencyType, ActionType.REMOVE);
-            _addWoodTrade = TestUtils.CreateTrade(10, CurrencyType.WOOD, ActionType.ADD);
-            _removeWoodTrade = TestUtils.CreateTrade(10, CurrencyType.WOOD, ActionType.REMOVE);
+            _addWoodTrade = TestUtils.CreateTrade(10, CurrencyType.GEMS, ActionType.ADD);
+            _removeWoodTrade = TestUtils.CreateTrade(10, CurrencyType.GEMS, ActionType.REMOVE);
         }
 
         [SetUp]
