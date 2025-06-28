@@ -1,5 +1,7 @@
 ﻿using IdelPog.Common.Repository;
 using IdelPog.SimulationEngine.Structures;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.SimulationEngine.Flows.Inventory
@@ -13,6 +15,14 @@ namespace IdelPog.SimulationEngine.Flows.Inventory
         private readonly IAssertFound _assertFound;
         private readonly IAssertPositive _assertPositive;
         private readonly IAssertNonDuplicate _assertNonDuplicate;
+
+        public Inventory()
+        {
+            _itemRepository = new StateRepository<ItemID, Item>();
+            _assertFound = new AssertFound(new ThrowHandler());
+            _assertPositive = new AssertPositive(new ThrowHandler());
+            _assertNonDuplicate = new AssertNonDuplicate(new ThrowHandler());
+        }
 
         public Inventory(IStateRepository<ItemID, Item> itemRepository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertNonDuplicate assertNonDuplicate)
         {
