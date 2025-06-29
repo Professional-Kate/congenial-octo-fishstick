@@ -2,6 +2,7 @@
 
 namespace IdelPog.SimulationEngine.Currency
 {
+    /// <inheritdoc cref="ICurrencyController"/>
     public class CurrencyController(ICurrencyUpdateMediator currencyUpdateMediator, ICurrencyCreationMediator currencyCreationMediator) : ICurrencyController
     {
         public void UpdateCurrency(IReadOnlyList<CurrencyTrade> trades)

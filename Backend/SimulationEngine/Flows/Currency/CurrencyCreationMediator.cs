@@ -11,13 +11,17 @@ namespace IdelPog.SimulationEngine.Currency
         private readonly ICurrencyCreationDispatcher _currencyCreationDispatcher;
         private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
+        private readonly IAssertNonDuplicate _assertNonDuplicate;
+        private readonly IAssertPositive _assertPositive;
 
-        public CurrencyCreationMediator(IStateRepository<CurrencyType, Currency> currencyRepository,  ICurrencyCreationDispatcher currencyCreationDispatcher, IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public CurrencyCreationMediator(IStateRepository<CurrencyType, Currency> currencyRepository,  ICurrencyCreationDispatcher currencyCreationDispatcher, IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty,  IAssertNonDuplicate assertNonDuplicate, IAssertPositive assertPositive)
         {
             _currencyRepository = currencyRepository;
             _currencyCreationDispatcher = currencyCreationDispatcher;
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
+            _assertNonDuplicate = assertNonDuplicate;
+            _assertPositive = assertPositive;
         }
         
         public void CreateCurrency(IReadOnlyList<CurrencyCreation> currencies)
@@ -28,19 +32,13 @@ namespace IdelPog.SimulationEngine.Currency
             Dictionary<CurrencyType, Currency> createdCurrencies =  new(currencies.Count);
             foreach (CurrencyCreation currencyCreation in currencies)
             {
-                // TODO: collection contains for both collections
-                if (_currencyRepository.Contains(currencyCreation.CurrencyType))
-                {
-                    throw new Exception();
-                }
+                _assertPositive.AssertNumberIsPositive(currencyCreation.StartingAmount);
+                _assertNonDuplicate.AssertContains(currencyCreation, () => _currencyRepository.Contains(currencyCreation.CurrencyType));
                 
                 // TODO: currency factory
                 Currency currency = new(currencyCreation.CurrencyType, currencyCreation.StartingAmount);
                 
-                if (createdCurrencies.TryAdd(currency.CurrencyType, currency) == false)
-                {
-                    throw new Exception();
-                }
+                _assertNonDuplicate.AssertContains(currencyCreation, () => !createdCurrencies.TryAdd(currency.CurrencyType, currency));
             }
 
             foreach (KeyValuePair<CurrencyType, Currency> keyValuePair in createdCurrencies)

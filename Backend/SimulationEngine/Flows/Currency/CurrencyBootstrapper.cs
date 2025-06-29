@@ -16,6 +16,7 @@ namespace IdelPog.SimulationEngine.Currency
             IAssertPositive assertPositive = new AssertPositive(new ThrowHandler());
             IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(new ThrowHandler());
             IAssertNotNull assertNotNull = new AssertNotNull(new ThrowHandler());
+            IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(new ThrowHandler());
             
             IStateRepository<CurrencyType, Currency> currencyRepository = new StateRepository<CurrencyType, Currency>();
             
@@ -26,7 +27,7 @@ namespace IdelPog.SimulationEngine.Currency
             
             ICurrencyCreationFactory currencyCreationFactory = new CurrencyCreationFactory(assertNotNull, assertCollectionNotEmpty);
             ICurrencyCreationDispatcher currencyCreationDispatcher = new CurrencyCreationDispatcher(bufferManager, currencyCreationFactory);
-            ICurrencyCreationMediator currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationDispatcher,  assertNotNull, assertCollectionNotEmpty);
+            ICurrencyCreationMediator currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationDispatcher,  assertNotNull, assertCollectionNotEmpty,  assertNonDuplicate, assertPositive);
             
             ICurrencyController currencyController = new CurrencyController(currencyUpdateMediator, currencyCreationMediator);
             CurrencyTradeListener currencyTradeListener = new(currencyController);

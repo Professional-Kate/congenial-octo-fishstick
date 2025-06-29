@@ -3,16 +3,14 @@
 namespace IdelPog.SimulationEngine.Currency.Commands
 {
     /// <summary>
-    /// This structure is used to update a Currency model. 
+    /// This command is used to update a Currency model
     /// </summary>
-    /// <remarks>
-    /// Uses the internal <see cref="CurrencyType"/> to dictate what Currency to update, this update is decided by the <see cref="ActionType"/>
-    /// </remarks>
     public readonly record struct CurrencyTrade
     {
         /// <summary>
         /// The amount that should be Removed/Added to the <see cref="CurrencyType"/>
         /// </summary>
+        /// <remarks>This number should be positive. We do not accept zero</remarks>
         public required int Amount { get; init; }
 
         /// <summary>
