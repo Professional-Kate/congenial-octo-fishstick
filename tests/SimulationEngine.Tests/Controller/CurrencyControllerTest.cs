@@ -10,7 +10,6 @@ namespace IdelPogTests.Controller
     [TestFixture(CurrencyType.GOLD, 10)]
     public class CurrencyControllerTest
     {
-        // TODO: when I implement a logging framework, ensure this class logs the ServiceResponse output.
         // TODO: most of these tests maybe aren't needed. Functionality is now mainly handed by the ICurrencyMediator.
         private ICurrencyController _currencyController { get; set; }
         private Mock<ICurrencyMediator> _currencyServiceMock { get; set; }
@@ -71,8 +70,7 @@ namespace IdelPogTests.Controller
                                 break;
                         }
                     }
-                })
-                .Returns(ServiceResponse.Success);
+                });
         }
 
         [TestCase(0)]
@@ -86,10 +84,9 @@ namespace IdelPogTests.Controller
             CurrencyTrade[] trades = Enumerable.Repeat(_addFoodTrade, tradeCount).ToArray();
             SetupMock(trades);
            
-            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(trades);
+            _currencyController.UpdateCurrency(trades);
             
             Assert.That(tradeCount * _amount, Is.EqualTo(_foodCurrency.Amount));
-            Assert.That(serviceResponse.IsSuccess, Is.True);
         }
         
         [TestCase(0)]
@@ -103,10 +100,9 @@ namespace IdelPogTests.Controller
             CurrencyTrade[] trades = Enumerable.Repeat(_removeFoodTrade, tradeCount).ToArray();
             SetupMock(trades);
             
-            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(trades);
+            _currencyController.UpdateCurrency(trades);
             
             Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
-            Assert.That(serviceResponse.IsSuccess, Is.True);
         }
 
         [Test]
@@ -115,11 +111,10 @@ namespace IdelPogTests.Controller
             CurrencyTrade[] trades = { _addWoodTrade, _addFoodTrade, _removeFoodTrade, _addFoodTrade, _addWoodTrade, _removeFoodTrade, _removeWoodTrade, _removeWoodTrade, _addFoodTrade };
             SetupMock(trades);
             
-            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(trades);
+            _currencyController.UpdateCurrency(trades);
             
             Assert.That(0, Is.EqualTo(_woodCurrency.Amount));
             Assert.That(10, Is.EqualTo(_foodCurrency.Amount)); // this is 10 because I add an extra _addFoodTrade call just to ensure correctness
-            Assert.That(serviceResponse.IsSuccess, Is.True);
         }
 
         [TestCase(0)]
@@ -129,13 +124,9 @@ namespace IdelPogTests.Controller
         {
             IReadOnlyList<CurrencyTrade> trade = [TestUtils.CreateTrade(badAmount, _currencyType, ActionType.ADD)];
 
-            _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trade))
-                .Returns(ServiceResponse.Failure(""));
-
-            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(trade);
+            _currencyController.UpdateCurrency(trade);
             
             Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
-            Assert.That(serviceResponse.IsSuccess, Is.False);
         }
 
         [Test]
@@ -144,14 +135,10 @@ namespace IdelPogTests.Controller
             // First action is okay, 2nd action should stop processing for all actions 
             CurrencyTrade[] trades = { _addFoodTrade, _removeWoodTrade, _addFoodTrade };
             
-            _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trades))
-                .Returns(ServiceResponse.Failure(""));
-            
-            ServiceResponse serviceResponse = _currencyController.UpdateCurrency(trades);
+            _currencyController.UpdateCurrency(trades);
             
             Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
             Assert.That(0, Is.EqualTo(_woodCurrency.Amount));
-            Assert.That(serviceResponse.IsSuccess, Is.False);
         }
     }
 }
