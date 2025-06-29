@@ -3,6 +3,7 @@ using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Dispatchers;
+using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Currency.Listeners;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;

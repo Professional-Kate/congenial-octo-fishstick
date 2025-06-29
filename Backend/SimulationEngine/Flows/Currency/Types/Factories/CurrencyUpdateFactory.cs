@@ -3,32 +3,33 @@ using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.Validation.Assertions.Interfaces;
 
-namespace IdelPog.SimulationEngine.Currency
+namespace IdelPog.SimulationEngine.Currency.Factories
 {
-    public class CurrencyCreationFactory : ICurrencyCreationFactory
+    public class CurrencyUpdateFactory : ICurrencyUpdateFactory
     {
         private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
 
-        public CurrencyCreationFactory(IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public CurrencyUpdateFactory(IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
         {
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
         }
         
-        public CurrencyCreationDTO[] CreateFrom(IReadOnlyList<CurrencyCreation> trades)
+        public CurrencyUpdateDTO[] CreateFrom(IReadOnlyList<CurrencyTrade> trades)
         {
             _assertNotNull.AssertObjectNotNull(trades);
             _assertCollectionNotEmpty.Handle(trades);
             
-            List<CurrencyCreationDTO> result = new(trades.Count);
+            List<CurrencyUpdateDTO> result = new(trades.Count);
 
-            foreach (CurrencyCreation currencyCreation in trades)
+            foreach (CurrencyTrade currencyTrade in trades)
             {
-                result.Add(new CurrencyCreationDTO
+                result.Add(new CurrencyUpdateDTO
                 {
-                    Currency = currencyCreation.CurrencyType,
-                    Amount = currencyCreation.StartingAmount
+                    Action = currencyTrade.Action,
+                    Currency = currencyTrade.Currency,
+                    Amount = currencyTrade.Amount
                 });
             }
             

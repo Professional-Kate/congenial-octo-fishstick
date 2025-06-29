@@ -1,7 +1,7 @@
 ﻿using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
 
-namespace IdelPog.SimulationEngine.Currency
+namespace IdelPog.SimulationEngine.Currency.Factories
 {
     public interface ICurrencyCreationFactory
     {
