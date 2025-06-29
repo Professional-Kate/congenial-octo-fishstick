@@ -32,8 +32,13 @@ namespace IdelPog.SimulationEngine.Currency
             ICurrencyCreationMediator currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationDispatcher,  assertNotNull, assertCollectionNotEmpty,  assertNonDuplicate, assertPositive);
             
             ICurrencyController currencyController = new CurrencyController(currencyUpdateMediator, currencyCreationMediator);
+            
+            IErrorFactory errorFactory = new ErrorFactory();
+            
             CurrencyTradeListener currencyTradeListener = new(currencyController);
-            CurrencyCreationListener currencyCreationListener = new(currencyController);
+
+            ICurrencyCreationErrorDispatcher currencyCreationErrorDispatcher = new CurrencyCreationErrorDispatcher(errorFactory);
+            CurrencyCreationListener currencyCreationListener = new(currencyController, currencyCreationErrorDispatcher);
             
             bufferMessenger.Subscribe(currencyTradeListener);
             bufferMessenger.Subscribe(currencyCreationListener);
