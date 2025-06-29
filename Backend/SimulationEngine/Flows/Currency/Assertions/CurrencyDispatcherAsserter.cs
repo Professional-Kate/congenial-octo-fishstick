@@ -1,4 +1,5 @@
-﻿using IdelPog.Validation.Assertions;
+﻿using IdelPog.SimulationEngine.Currency.Commands;
+using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Currency.Assertions
 {

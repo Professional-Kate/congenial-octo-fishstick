@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Currency
+﻿using IdelPog.SimulationEngine.Currency.Commands;
+
+namespace IdelPog.SimulationEngine.Currency
 {
     public interface ICurrencyUpdateFactory
     {

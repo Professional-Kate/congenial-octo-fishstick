@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Currency.Assertions
+﻿using IdelPog.SimulationEngine.Currency.Commands;
+
+namespace IdelPog.SimulationEngine.Currency.Assertions
 {
     public interface ICurrencyDispatcherAsserter
     {

@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Currency.Commands;
+using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Currency
 {
@@ -14,5 +15,7 @@ namespace IdelPog.SimulationEngine.Currency
         /// Every implementation of this method is required to take a single, or an array of <see cref="CurrencyTrade"/>s
         /// </remarks>
         public ServiceResponse UpdateCurrency(IReadOnlyList<CurrencyTrade> trades);
+        
+        public void CreateCurrency(IReadOnlyList<CurrencyCreation> commands);
     }
 }

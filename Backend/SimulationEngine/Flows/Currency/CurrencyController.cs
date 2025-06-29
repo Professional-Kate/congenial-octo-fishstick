@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Currency.Commands;
+using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Currency
 {
@@ -18,6 +19,11 @@ namespace IdelPog.SimulationEngine.Currency
             }
             
             return serviceResponse;
+        }
+
+        public void CreateCurrency(IReadOnlyList<CurrencyCreation> commands)
+        {
+            throw new NotImplementedException();
         }
     }
 } 

@@ -1,4 +1,5 @@
 ﻿using IdelPog.Messaging.Listeners;
+using IdelPog.SimulationEngine.Currency.Commands;
 
 namespace IdelPog.SimulationEngine.Currency.Listeners
 {
