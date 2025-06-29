@@ -1,6 +1,7 @@
 ﻿using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Currency.Commands;
+using IdelPog.SimulationEngine.Currency.DTO;
 
 namespace IdelPog.SimulationEngine.Currency.Dispatchers
 {

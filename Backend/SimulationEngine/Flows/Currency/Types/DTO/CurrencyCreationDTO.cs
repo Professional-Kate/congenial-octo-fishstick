@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Currency
+﻿namespace IdelPog.SimulationEngine.Currency.DTO
 {
     public readonly record struct CurrencyCreationDTO
     {
