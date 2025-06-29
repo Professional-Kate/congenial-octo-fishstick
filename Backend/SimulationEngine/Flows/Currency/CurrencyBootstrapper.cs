@@ -19,21 +19,14 @@ namespace IdelPog.SimulationEngine.Currency
             
             ICurrencyService currencyService = new CurrencyService();
             IStateRepository<CurrencyType, Currency> currencyRepository = new StateRepository<CurrencyType, Currency>();
-            ICurrencyUpdateDispatcher currencyUpdateDispatcher = new CurrencyUpdateDispatcher(bufferManager);
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory(assertNotNull, assertCollectionNotEmpty);
+            ICurrencyUpdateDispatcher currencyUpdateDispatcher = new CurrencyUpdateDispatcher(bufferManager, currencyUpdateFactory);
             
-            ICurrencyMediator currencyMediator = new CurrencyMediator(currencyService,  currencyRepository, currencyUpdateDispatcher, assertPositive, assertCollectionNotEmpty, currencyUpdateFactory);
+            ICurrencyMediator currencyMediator = new CurrencyMediator(currencyService,  currencyRepository, currencyUpdateDispatcher, assertPositive, assertCollectionNotEmpty);
             ICurrencyController currencyController = new CurrencyController(currencyMediator);
             CurrencyTradeListener currencyTradeListener = new(currencyController);
-            CreateBasicCurrency(currencyRepository);
             
             bufferMessenger.Subscribe(currencyTradeListener);
-        }
-
-        private static void CreateBasicCurrency(IStateRepository<CurrencyType, Currency> repository)
-        {
-            repository.Add(CurrencyType.GOLD, new Currency(CurrencyType.GOLD, 0));
-            repository.Add(CurrencyType.GEMS, new Currency(CurrencyType.GEMS, 0));
         }
     }
 }

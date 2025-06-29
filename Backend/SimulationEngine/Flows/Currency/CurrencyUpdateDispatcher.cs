@@ -17,6 +17,7 @@ namespace IdelPog.SimulationEngine.Currency
         
         public void Dispatch(IReadOnlyList<CurrencyTrade> trades)
         {
+            // TODO: update to only dispatch one CurrencyUpdateDTO per type
             IBuffer<CurrencyUpdateDTO> buffer = _bufferManager.RequestBuffer<CurrencyUpdateDTO>(new BufferRequest(trades.Count));
             buffer.Assign(_currencyUpdateFactory.CreateFrom(trades));
             buffer.MarkReady();
