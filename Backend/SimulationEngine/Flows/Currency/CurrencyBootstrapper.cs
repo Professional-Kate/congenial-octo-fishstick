@@ -37,7 +37,8 @@ namespace IdelPog.SimulationEngine.Currency
             
             CurrencyTradeListener currencyTradeListener = new(currencyController);
 
-            ICurrencyCreationErrorDispatcher currencyCreationErrorDispatcher = new CurrencyCreationErrorDispatcher(errorFactory);
+            ICurrencyCreationErrorFactory currencyCreationErrorFactory = new CurrencyCreationErrorFactory(errorFactory, currencyCreationFactory);
+            ICurrencyCreationErrorDispatcher currencyCreationErrorDispatcher = new CurrencyCreationErrorDispatcher(bufferManager, currencyCreationErrorFactory);
             CurrencyCreationListener currencyCreationListener = new(currencyController, currencyCreationErrorDispatcher);
             
             bufferMessenger.Subscribe(currencyTradeListener);
