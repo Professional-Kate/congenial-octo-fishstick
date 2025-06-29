@@ -2,7 +2,7 @@
 {
     public readonly record struct CurrencyUpdateErrorDTO
     {
-        public required CurrencyUpdateDTO CurrencyUpdate { get; init; }
+        public required CurrencyUpdateDTO[] CurrencyUpdates { get; init; }
         public required ErrorDTO ErrorDetails  { get; init; }
     }
 }
