@@ -8,14 +8,30 @@ using IdelPog.Validation.Assertions.Interfaces;
 namespace IdelPog.SimulationEngine.Currency
 {
     /// <inheritdoc cref="ICurrencyUpdateMediator"/>
-    public class CurrencyUpdateMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, ICurrencyUpdateDispatcher currencyUpdateDispatcher, IAssertPositive assert, IAssertCollectionNotEmpty assertCollectionNotEmpty)
-        : ICurrencyUpdateMediator
+    public class CurrencyUpdateMediator : ICurrencyUpdateMediator
     {
+        private readonly ICurrencyService _currencyService;
+        private readonly IStateRepository<CurrencyType, Currency> _currencyRepository;
+        private readonly ICurrencyUpdateDispatcher _currencyUpdateDispatcher;
+        private readonly IAssertPositive _assertPositive;
+        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
+        private readonly IAssertFound _assertFound;
+        
+        public CurrencyUpdateMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, ICurrencyUpdateDispatcher currencyUpdateDispatcher, IAssertPositive assertPositive, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertFound assertFound)
+        {
+            _currencyService = currencyService;
+            _currencyRepository = stateRepository;
+            _currencyUpdateDispatcher = currencyUpdateDispatcher;
+            _assertPositive = assertPositive;
+            _assertCollectionNotEmpty = assertCollectionNotEmpty;
+            _assertFound = assertFound;
+        }
+        
         public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyUpdate> trades)
         {
             // validate trades
-            assertCollectionNotEmpty.Handle(trades);
-            assert.AssertNumberIsPositive(trades.Select(entry => entry.Amount).ToArray());
+            _assertCollectionNotEmpty.Handle(trades);
+            _assertPositive.AssertNumberIsPositive(trades.Select(entry => entry.Amount).ToArray());
             
             AllCurrenciesExist(trades);
             
@@ -26,11 +42,11 @@ namespace IdelPog.SimulationEngine.Currency
             MutateClonedCurrency(trades, stagingGround);
 
             // validate final amounts
-            assert.AssertNumberIsPositive(stagingGround.Select(entry => entry.Value.Amount).ToArray());
+            _assertPositive.AssertNumberIsPositive(stagingGround.Select(entry => entry.Value.Amount).ToArray());
             
             ApplyChanges(stagingGround, originalCurrencies);
             
-            currencyUpdateDispatcher.Dispatch(trades);
+            _currencyUpdateDispatcher.Dispatch(trades);
         }
 
         private void AllCurrenciesExist(IReadOnlyList<CurrencyUpdate> trades)
@@ -44,11 +60,7 @@ namespace IdelPog.SimulationEngine.Currency
                     continue;
                 }
                 
-                if (stateRepository.Contains(currencyTrade.Currency) == false)
-                {
-                    throw new Exception();
-                }
-                
+                _assertFound.AssertItemIsFound(currencyTrade.Currency,() => _currencyRepository.Contains(currencyTrade.Currency));
                 types.Add(currencyTrade.Currency);
             }
         }
@@ -71,7 +83,7 @@ namespace IdelPog.SimulationEngine.Currency
                     continue;
                 }
 
-                Currency globalCurrencyClone = stateRepository.Get(currencyTrade.Currency);
+                Currency globalCurrencyClone = _currencyRepository.Get(currencyTrade.Currency);
                 originalCurrencies.Add(currencyTrade.Currency, globalCurrencyClone);
                     
                 // entering each cloned Currency into the stagingGround so we can update them
@@ -94,10 +106,10 @@ namespace IdelPog.SimulationEngine.Currency
                 switch (currencyTrade.Action)
                 {
                     case ActionType.ADD:
-                        currencyService.AddAmount(localCurrency, currencyTrade.Amount);
+                        _currencyService.AddAmount(localCurrency, currencyTrade.Amount);
                         break;
                     case ActionType.REMOVE:
-                        currencyService.RemoveAmount(localCurrency, currencyTrade.Amount);
+                        _currencyService.RemoveAmount(localCurrency, currencyTrade.Amount);
                         break;
                 }
             }
@@ -120,14 +132,14 @@ namespace IdelPog.SimulationEngine.Currency
                 switch (difference)
                 {
                     case > 0:
-                        currencyService.AddAmount(globalCurrency, difference);
+                        _currencyService.AddAmount(globalCurrency, difference);
                         break;
                     case < 0:
-                        currencyService.RemoveAmount(globalCurrency, -difference);
+                        _currencyService.RemoveAmount(globalCurrency, -difference);
                         break;
                 }
 
-                stateRepository.Update(globalCurrency.CurrencyType, globalCurrency);
+                _currencyRepository.Update(globalCurrency.CurrencyType, globalCurrency);
             }
         }
     }

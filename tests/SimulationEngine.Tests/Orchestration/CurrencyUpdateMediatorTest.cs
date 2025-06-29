@@ -6,6 +6,7 @@ using IdelPog.SimulationEngine.Currency.Dispatchers;
 using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
+using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
@@ -59,7 +60,7 @@ namespace IdelPogTests.Orchestration
             _handlerMock =  new Mock<IHandler>();
             _currencyUpdateFactoryMock = new Mock<ICurrencyUpdateFactory>();
             
-            _currencyUpdateMediator = new CurrencyUpdateMediator(_currencyServiceMock.Object, _repositoryMock.Object, _dispatcherMock.Object, _assertPositiveMock.Object, new AssertCollectionNotEmpty(_handlerMock.Object));
+            _currencyUpdateMediator = new CurrencyUpdateMediator(_currencyServiceMock.Object, _repositoryMock.Object, _dispatcherMock.Object, _assertPositiveMock.Object, new AssertCollectionNotEmpty(_handlerMock.Object), new AssertFound(_handlerMock.Object));
 
             _repositoryMock.Setup(library => library.Get(CurrencyType.GOLD)).Returns(_goldCurrency.DeepClone());
             _repositoryMock.Setup(library => library.Get(CurrencyType.GEMS)).Returns(_gemsCurrency.DeepClone());
@@ -186,7 +187,10 @@ namespace IdelPogTests.Orchestration
         {
             _repositoryMock.Setup(library => library.Contains(CurrencyType.GOLD)).Returns(false);
 
-            Assert.Throws<Exception>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_addFoodUpdate]));
+            _handlerMock.Setup(library => library.Handle(It.IsAny<NotFoundException>()))
+                .Throws(new NotFoundException(CurrencyType.GOLD));
+
+            Assert.Throws<NotFoundException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_addFoodUpdate]));
             
             Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
             
@@ -200,10 +204,13 @@ namespace IdelPogTests.Orchestration
         public void Negative_ProcessCurrencyUpdate_OneCurrencyNotFound_Throws()
         {
             _repositoryMock.Setup(library => library.Contains(CurrencyType.GEMS)).Returns(false);
+            
+            _handlerMock.Setup(library => library.Handle(It.IsAny<NotFoundException>()))
+                .Throws(new NotFoundException(CurrencyType.GOLD));
 
             CurrencyUpdate[] trades = { _addFoodUpdate, _addWoodUpdate };
             
-            Assert.Throws<Exception>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(trades));
+            Assert.Throws<NotFoundException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(trades));
             
             Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
             Assert.That(0, Is.EqualTo(_gemsCurrency.Amount));

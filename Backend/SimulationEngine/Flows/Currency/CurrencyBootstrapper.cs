@@ -19,20 +19,20 @@ namespace IdelPog.SimulationEngine.Currency
             IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(new ThrowHandler());
             IAssertNotNull assertNotNull = new AssertNotNull(new ThrowHandler());
             IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(new ThrowHandler());
+            IAssertFound assertFound = new AssertFound(new ThrowHandler());
             
             IStateRepository<CurrencyType, Currency> currencyRepository = new StateRepository<CurrencyType, Currency>();
             
             ICurrencyService currencyService = new CurrencyService();
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory(assertNotNull, assertCollectionNotEmpty);
             ICurrencyUpdateDispatcher currencyUpdateDispatcher = new CurrencyUpdateDispatcher(bufferManager, currencyUpdateFactory);
-            ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyService,  currencyRepository, currencyUpdateDispatcher, assertPositive, assertCollectionNotEmpty);
+            ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyService,  currencyRepository, currencyUpdateDispatcher, assertPositive, assertCollectionNotEmpty, assertFound);
             
             ICurrencyCreationFactory currencyCreationFactory = new CurrencyCreationFactory(assertNotNull, assertCollectionNotEmpty);
             ICurrencyCreationDispatcher currencyCreationDispatcher = new CurrencyCreationDispatcher(bufferManager, currencyCreationFactory);
             ICurrencyCreationMediator currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationDispatcher,  assertNotNull, assertCollectionNotEmpty,  assertNonDuplicate, assertPositive);
             
             ICurrencyController currencyController = new CurrencyController(currencyUpdateMediator, currencyCreationMediator);
-            
             IErrorFactory errorFactory = new ErrorFactory();
 
             ICurrencyUpdateErrorFactory currencyUpdateErrorFactory = new CurrencyUpdateErrorFactory(errorFactory, currencyUpdateFactory);
