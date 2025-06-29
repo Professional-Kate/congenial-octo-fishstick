@@ -1,6 +1,6 @@
-﻿using IdelPog.SimulationEngine.Flows.Currency;
-using IdelPog.SimulationEngine.Flows.Currency.Assertions;
-using IdelPog.SimulationEngine.Flows.Currency.Exceptions;
+﻿using IdelPog.SimulationEngine.Currency;
+using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;

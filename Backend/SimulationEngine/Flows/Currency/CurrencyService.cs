@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Flows.Currency
+﻿namespace IdelPog.SimulationEngine.Currency
 {
     /// <summary>
     /// See <see cref="ICurrencyService"/> for documentation.

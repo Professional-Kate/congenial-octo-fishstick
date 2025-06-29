@@ -3,7 +3,7 @@ using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Flows.Skill
+namespace IdelPog.SimulationEngine.Skill
 {
     public class SkillMediator : ISkillMediator
     {

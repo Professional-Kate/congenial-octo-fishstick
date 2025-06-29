@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Flows.Currency.Exceptions
+﻿namespace IdelPog.SimulationEngine.Currency.Exceptions
 {
     public class CollectionEmptyException : Exception
     {

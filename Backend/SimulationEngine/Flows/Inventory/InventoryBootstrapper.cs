@@ -2,7 +2,7 @@
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Service;
 
-namespace IdelPog.SimulationEngine.Flows.Inventory
+namespace IdelPog.SimulationEngine.Inventory
 {
     public class InventoryBootstrapper
     {

@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Listeners;
 
-namespace IdelPog.SimulationEngine.Flows.Skill
+namespace IdelPog.SimulationEngine.Skill
 {
     public class SkillChangeListener(ISkillController skillController) : ISingleListener<SkillChange>
     {

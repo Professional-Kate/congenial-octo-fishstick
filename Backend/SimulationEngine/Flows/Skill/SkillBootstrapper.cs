@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Dispatch;
 
-namespace IdelPog.SimulationEngine.Flows.Skill
+namespace IdelPog.SimulationEngine.Skill
 {
     public class SkillBootstrapper
     {

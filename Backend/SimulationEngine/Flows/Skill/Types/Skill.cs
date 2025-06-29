@@ -2,7 +2,7 @@
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Flows.Skill
+namespace IdelPog.SimulationEngine.Skill
 {
     public sealed class Skill : ICloneable<Skill>
     {

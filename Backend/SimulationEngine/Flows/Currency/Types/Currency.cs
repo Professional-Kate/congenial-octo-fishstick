@@ -1,6 +1,6 @@
 ﻿using IdelPog.Common.Structures;
 
-namespace IdelPog.SimulationEngine.Flows.Currency
+namespace IdelPog.SimulationEngine.Currency
 {
     /// <summary>
     /// The Currency model.

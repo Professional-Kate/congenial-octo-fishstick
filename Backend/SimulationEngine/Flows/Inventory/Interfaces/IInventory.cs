@@ -1,7 +1,7 @@
 ﻿using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.SimulationEngine.Flows.Inventory
+namespace IdelPog.SimulationEngine.Inventory
 {
     /// <summary>
     /// Using this interface you can adjust the amount of any <see cref="Item"/> in the Inventory. 

@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Structures;
 
-namespace IdelPog.SimulationEngine.Flows.Inventory
+namespace IdelPog.SimulationEngine.Inventory
 {
     public readonly record struct InventoryUpdate
     {

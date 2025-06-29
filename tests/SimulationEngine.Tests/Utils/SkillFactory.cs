@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Constants;
-using IdelPog.SimulationEngine.Flows.Skill;
 using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Skill;
 
 namespace IdelPogTests.Utils
 {

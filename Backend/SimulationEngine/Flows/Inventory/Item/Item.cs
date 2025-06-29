@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Flows.Inventory
+namespace IdelPog.SimulationEngine.Inventory
 {
     public class Item(ItemID id, Information information, int sellPrice, int amount = 1)
         : ICloneable<Item>

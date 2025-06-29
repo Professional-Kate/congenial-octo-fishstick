@@ -1,5 +1,5 @@
 ﻿using IdelPog.Common.Repository;
-using IdelPog.SimulationEngine.Flows.Inventory;
+using IdelPog.SimulationEngine.Inventory;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPog.Validation.Assertions.Interfaces;

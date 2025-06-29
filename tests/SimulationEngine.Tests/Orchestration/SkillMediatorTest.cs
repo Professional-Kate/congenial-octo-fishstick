@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Repository;
-using IdelPog.SimulationEngine.Flows.Skill;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
+using IdelPog.SimulationEngine.Skill;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPogTests.Utils;
 using Moq;

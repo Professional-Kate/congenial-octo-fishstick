@@ -1,7 +1,7 @@
-﻿using IdelPog.SimulationEngine.Flows.Currency.Assertions;
+﻿using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.Validation.Assertions;
 
-namespace IdelPog.SimulationEngine.Flows.Currency
+namespace IdelPog.SimulationEngine.Currency
 {
     public class CurrencyUpdateFactory(AssertNotNull assertNotNull, AssertCollectionNotEmpty assertCollectionNotEmpty) : ICurrencyUpdateFactory
     {

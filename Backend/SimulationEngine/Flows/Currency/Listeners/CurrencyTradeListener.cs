@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Listeners;
 
-namespace IdelPog.SimulationEngine.Flows.Currency
+namespace IdelPog.SimulationEngine.Currency.Listeners
 {
     public class CurrencyTradeListener(ICurrencyController currencyController) : IBufferListener<CurrencyTrade>
     {

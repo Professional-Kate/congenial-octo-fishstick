@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Flows.Inventory
+﻿namespace IdelPog.SimulationEngine.Inventory
 {
     /// <summary>
     /// Each item should have an entry here, these are how we store the item 

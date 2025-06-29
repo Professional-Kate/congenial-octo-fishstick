@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Interfaces;
 
-namespace IdelPog.SimulationEngine.Flows.Inventory
+namespace IdelPog.SimulationEngine.Inventory
 {
     /// <summary>
     /// The container class for all <see cref="Item"/>'s. See <see cref="IInventory"/> for documentation

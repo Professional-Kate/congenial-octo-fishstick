@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Listeners;
 
-namespace IdelPog.SimulationEngine.Flows.Inventory
+namespace IdelPog.SimulationEngine.Inventory
 {
     public class InventoryUpdateListener(IInventoryController inventoryController) : IBufferListener<InventoryUpdate>
     {

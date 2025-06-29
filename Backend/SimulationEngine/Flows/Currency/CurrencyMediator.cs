@@ -1,12 +1,12 @@
 ﻿using IdelPog.Common.Repository;
-using IdelPog.SimulationEngine.Flows.Currency.Assertions;
-using IdelPog.SimulationEngine.Flows.Currency.Exceptions;
+using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.SimulationEngine.Flows.Currency
+namespace IdelPog.SimulationEngine.Currency
 {
     /// <inheritdoc cref="ICurrencyMediator"/>
     public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, ICurrencyUpdateDispatcher currencyUpdateDispatcher, IAssertPositive assert, AssertCollectionNotEmpty assertCollectionNotEmpty, ICurrencyUpdateFactory currencyUpdateFactory)

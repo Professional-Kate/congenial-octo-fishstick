@@ -1,7 +1,7 @@
 ﻿using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Orchestration;
 
-namespace IdelPog.SimulationEngine.Flows.Inventory
+namespace IdelPog.SimulationEngine.Inventory
 {
     public class InventoryUpdateDispatcher(IBufferManager bufferManager) : IInventoryUpdateDispatcher
     {

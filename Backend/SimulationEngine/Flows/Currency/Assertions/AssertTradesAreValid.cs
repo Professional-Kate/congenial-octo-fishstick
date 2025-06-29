@@ -2,7 +2,7 @@
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.SimulationEngine.Flows.Currency.Assertions
+namespace IdelPog.SimulationEngine.Currency.Assertions
 {
     public class AssertTradesAreValid(IHandler handler) : BaseAssertion<NegativeNumberException>(handler)
     {

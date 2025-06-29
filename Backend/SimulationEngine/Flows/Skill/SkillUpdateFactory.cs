@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Models;
 
-namespace IdelPog.SimulationEngine.Flows.Skill
+namespace IdelPog.SimulationEngine.Skill
 {
     public class SkillUpdateFactory(ILevelableUpdateFactory levelableUpdateFactory) : ISkillUpdateFactory
     {

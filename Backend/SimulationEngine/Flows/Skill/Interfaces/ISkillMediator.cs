@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Flows.Skill
+namespace IdelPog.SimulationEngine.Skill
 {
     /// <seealso cref="ProcessSkillAction"/>
     public interface ISkillMediator

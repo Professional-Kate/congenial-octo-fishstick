@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Flows.Currency
+﻿namespace IdelPog.SimulationEngine.Currency
 {
     /// <summary>
     /// This class will handle modifying any data of the <see cref="Currency"/> model. 

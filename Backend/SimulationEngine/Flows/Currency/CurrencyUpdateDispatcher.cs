@@ -1,7 +1,7 @@
 ﻿using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Orchestration;
 
-namespace IdelPog.SimulationEngine.Flows.Currency
+namespace IdelPog.SimulationEngine.Currency
 {
     public class CurrencyUpdateDispatcher(IBufferManager bufferManager) : ICurrencyUpdateDispatcher
     {

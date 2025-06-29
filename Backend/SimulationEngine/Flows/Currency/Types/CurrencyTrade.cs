@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Structures;
 
-namespace IdelPog.SimulationEngine.Flows.Currency
+namespace IdelPog.SimulationEngine.Currency
 {
     /// <summary>
     /// This structure is used to update a Currency model. 

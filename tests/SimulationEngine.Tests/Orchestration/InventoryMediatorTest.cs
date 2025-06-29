@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Flows.Inventory;
+﻿using IdelPog.SimulationEngine.Inventory;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPogTests.Utils;

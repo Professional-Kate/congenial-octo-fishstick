@@ -1,7 +1,7 @@
 ﻿using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Flows.Inventory
+namespace IdelPog.SimulationEngine.Inventory
 {
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation

@@ -1,6 +1,6 @@
 ﻿using IdelPog.Validation.Assertions;
 
-namespace IdelPog.SimulationEngine.Flows.Currency.Assertions
+namespace IdelPog.SimulationEngine.Currency.Assertions
 {
     public class CurrencyDispatcherAsserter(AssertTradesAreValid assertTradesAreValid, AssertNotNull assertNotNull, AssertCollectionNotEmpty assertCollectionNotEmpty) : ICurrencyDispatcherAsserter
     {

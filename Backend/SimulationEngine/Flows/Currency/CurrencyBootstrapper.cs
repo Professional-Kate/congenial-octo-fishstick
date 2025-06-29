@@ -1,12 +1,13 @@
 ﻿using IdelPog.Common.Repository;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Orchestration;
-using IdelPog.SimulationEngine.Flows.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Listeners;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Interfaces;
 
-namespace IdelPog.SimulationEngine.Flows.Currency
+namespace IdelPog.SimulationEngine.Currency
 {
     public class CurrencyBootstrapper
     {

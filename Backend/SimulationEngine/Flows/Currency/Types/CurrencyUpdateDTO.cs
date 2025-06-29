@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Structures;
 
-namespace IdelPog.SimulationEngine.Flows.Currency
+namespace IdelPog.SimulationEngine.Currency
 {
     public readonly record struct CurrencyUpdateDTO
     {

@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Flows.Skill
+﻿namespace IdelPog.SimulationEngine.Skill
 {
     public interface ICurrentSkillSetter
     {

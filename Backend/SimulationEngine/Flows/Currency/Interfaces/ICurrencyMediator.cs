@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Flows.Currency
+namespace IdelPog.SimulationEngine.Currency
 {
     /// <seealso cref="ProcessCurrencyUpdate"/>
     public interface ICurrencyMediator

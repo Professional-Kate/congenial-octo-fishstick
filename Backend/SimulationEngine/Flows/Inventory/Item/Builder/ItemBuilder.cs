@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Structures.Types;
 
-namespace IdelPog.SimulationEngine.Flows.Inventory
+namespace IdelPog.SimulationEngine.Inventory
 {
     /// <inheritdoc cref="IItemBuilder"/>
     public sealed class ItemBuilder : IItemBuilder

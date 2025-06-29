@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Flows.Inventory
+﻿namespace IdelPog.SimulationEngine.Inventory
 {
     public interface IInventoryController
     {

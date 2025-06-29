@@ -1,7 +1,7 @@
 ﻿using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Orchestration;
 
-namespace IdelPog.SimulationEngine.Flows.Skill
+namespace IdelPog.SimulationEngine.Skill
 {
     public class SkillUpdateDispatcher(IBufferManager bufferManager) : ISkillUpdateDispatcher
     {

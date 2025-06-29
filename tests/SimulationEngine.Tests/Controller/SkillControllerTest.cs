@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Flows.Skill;
+﻿using IdelPog.SimulationEngine.Skill;
 using Moq;
 
 namespace IdelPogTests.Controller
