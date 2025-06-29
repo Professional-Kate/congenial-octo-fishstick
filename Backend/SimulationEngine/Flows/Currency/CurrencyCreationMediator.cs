@@ -1,6 +1,7 @@
 ﻿using IdelPog.Common.Repository;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
+using IdelPog.SimulationEngine.Currency.Dispatchers;
 using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.SimulationEngine.Currency

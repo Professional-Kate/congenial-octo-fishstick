@@ -2,7 +2,7 @@
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Currency.Commands;
 
-namespace IdelPog.SimulationEngine.Currency
+namespace IdelPog.SimulationEngine.Currency.Dispatchers
 {
     public class CurrencyUpdateDispatcher : ICurrencyUpdateDispatcher
     {
