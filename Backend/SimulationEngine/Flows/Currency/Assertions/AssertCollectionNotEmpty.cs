@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.SimulationEngine.Currency.Assertions
 {
-    public class AssertCollectionNotEmpty(IHandler handler) : BaseAssertion<CollectionEmptyException>(handler)
+    public class AssertCollectionNotEmpty(IHandler handler) : BaseAssertion<CollectionEmptyException>(handler), IAssertCollectionNotEmpty
     {
         public void Handle<T>(IReadOnlyList<T> collection)
         {

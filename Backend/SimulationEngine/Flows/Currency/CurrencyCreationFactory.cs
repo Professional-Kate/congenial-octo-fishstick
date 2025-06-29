@@ -4,31 +4,30 @@ using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    public class CurrencyUpdateFactory : ICurrencyUpdateFactory
+    public class CurrencyCreationFactory : ICurrencyCreationFactory
     {
         private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
 
-        public CurrencyUpdateFactory(IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public CurrencyCreationFactory(IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
         {
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
         }
         
-        public CurrencyUpdateDTO[] CreateFrom(IReadOnlyList<CurrencyTrade> trades)
+        public CurrencyCreationDTO[] CreateFrom(IReadOnlyList<CurrencyCreation> trades)
         {
             _assertNotNull.AssertObjectNotNull(trades);
             _assertCollectionNotEmpty.Handle(trades);
             
-            List<CurrencyUpdateDTO> result = new(trades.Count);
+            List<CurrencyCreationDTO> result = new(trades.Count);
 
-            foreach (CurrencyTrade currencyTrade in trades)
+            foreach (CurrencyCreation currencyCreation in trades)
             {
-                result.Add(new CurrencyUpdateDTO
+                result.Add(new CurrencyCreationDTO
                 {
-                    Action = currencyTrade.Action,
-                    Currency = currencyTrade.Currency,
-                    Amount = currencyTrade.Amount
+                    Currency = currencyCreation.Currency,
+                    Amount = currencyCreation.StartingAmount
                 });
             }
             
