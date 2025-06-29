@@ -1,24 +1,12 @@
 ﻿using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    /// <summary>
-    /// The main control object for Currency. Using this class you can Update any Currency.
-    /// </summary>
-    /// <seealso cref="UpdateCurrency"/>
-    public class CurrencyController(ICurrencyMediator currencyService) : ICurrencyController
+    public class CurrencyController(ICurrencyMediator currencyMediator) : ICurrencyController
     {
-        public ServiceResponse UpdateCurrency(IReadOnlyList<CurrencyTrade> trades)
+        public void UpdateCurrency(IReadOnlyList<CurrencyTrade> trades)
         {
-            ServiceResponse serviceResponse = currencyService.ProcessCurrencyUpdate(trades);
-            if (serviceResponse.IsSuccess == false)
-            {
-                // TODO: logger log.
-                Console.WriteLine(serviceResponse.Message);
-            }
-            
-            return serviceResponse;
+            currencyMediator.ProcessCurrencyUpdate(trades);
         }
 
         public void CreateCurrency(IReadOnlyList<CurrencyCreation> commands)
