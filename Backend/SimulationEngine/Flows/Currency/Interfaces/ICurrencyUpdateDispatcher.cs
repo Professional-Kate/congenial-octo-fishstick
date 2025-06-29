@@ -1,7 +1,9 @@
-﻿namespace IdelPog.SimulationEngine.Currency
+﻿using IdelPog.SimulationEngine.Currency.Commands;
+
+namespace IdelPog.SimulationEngine.Currency
 {
     public interface ICurrencyUpdateDispatcher
     {
-        public void Dispatch(CurrencyUpdateDTO[] updates);
+        public void Dispatch(IReadOnlyList<CurrencyTrade> trades);
     }
 }

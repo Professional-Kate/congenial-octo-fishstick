@@ -1,14 +1,24 @@
 ﻿using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Orchestration;
+using IdelPog.SimulationEngine.Currency.Commands;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    public class CurrencyUpdateDispatcher(IBufferManager bufferManager) : ICurrencyUpdateDispatcher
+    public class CurrencyUpdateDispatcher : ICurrencyUpdateDispatcher
     {
-        public void Dispatch(CurrencyUpdateDTO[] updates)
+        private readonly IBufferManager _bufferManager;
+        private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
+        
+        public CurrencyUpdateDispatcher(IBufferManager bufferManager, ICurrencyUpdateFactory currencyUpdateFactory)
         {
-            IBuffer<CurrencyUpdateDTO> buffer = bufferManager.RequestBuffer<CurrencyUpdateDTO>(new BufferRequest(updates.Length));
-            buffer.Assign(updates);
+            _bufferManager = bufferManager;
+            _currencyUpdateFactory = currencyUpdateFactory;
+        }
+        
+        public void Dispatch(IReadOnlyList<CurrencyTrade> trades)
+        {
+            IBuffer<CurrencyUpdateDTO> buffer = _bufferManager.RequestBuffer<CurrencyUpdateDTO>(new BufferRequest(trades.Count));
+            buffer.Assign(_currencyUpdateFactory.CreateFrom(trades));
             buffer.MarkReady();
         }
     }

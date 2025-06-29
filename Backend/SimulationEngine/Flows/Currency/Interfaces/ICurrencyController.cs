@@ -2,7 +2,6 @@
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    /// <seealso cref="UpdateCurrency"/>
     public interface ICurrencyController
     {
         /// <summary>

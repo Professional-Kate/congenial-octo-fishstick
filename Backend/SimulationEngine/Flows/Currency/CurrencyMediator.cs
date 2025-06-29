@@ -7,7 +7,7 @@ using IdelPog.Validation.Assertions.Interfaces;
 namespace IdelPog.SimulationEngine.Currency
 {
     /// <inheritdoc cref="ICurrencyMediator"/>
-    public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, ICurrencyUpdateDispatcher currencyUpdateDispatcher, IAssertPositive assert, AssertCollectionNotEmpty assertCollectionNotEmpty, ICurrencyUpdateFactory currencyUpdateFactory)
+    public class CurrencyMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, ICurrencyUpdateDispatcher currencyUpdateDispatcher, IAssertPositive assert, AssertCollectionNotEmpty assertCollectionNotEmpty)
         : ICurrencyMediator
     {
         public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyTrade> trades)
@@ -29,7 +29,7 @@ namespace IdelPog.SimulationEngine.Currency
             
             ApplyChanges(stagingGround, originalCurrencies);
             
-            currencyUpdateDispatcher.Dispatch(currencyUpdateFactory.CreateFrom(trades));
+            currencyUpdateDispatcher.Dispatch(trades);
         }
 
         public void CreateCurrency(IReadOnlyList<CurrencyCreation> currencies)
