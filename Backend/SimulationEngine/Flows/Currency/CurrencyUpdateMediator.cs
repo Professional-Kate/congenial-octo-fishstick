@@ -11,7 +11,7 @@ namespace IdelPog.SimulationEngine.Currency
     public class CurrencyUpdateMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, ICurrencyUpdateDispatcher currencyUpdateDispatcher, IAssertPositive assert, IAssertCollectionNotEmpty assertCollectionNotEmpty)
         : ICurrencyUpdateMediator
     {
-        public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyTrade> trades)
+        public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyUpdate> trades)
         {
             // validate trades
             assertCollectionNotEmpty.Handle(trades);
@@ -33,11 +33,11 @@ namespace IdelPog.SimulationEngine.Currency
             currencyUpdateDispatcher.Dispatch(trades);
         }
 
-        private void AllCurrenciesExist(IReadOnlyList<CurrencyTrade> trades)
+        private void AllCurrenciesExist(IReadOnlyList<CurrencyUpdate> trades)
         {
             List<CurrencyType> types = []; 
             
-            foreach (CurrencyTrade currencyTrade in trades)
+            foreach (CurrencyUpdate currencyTrade in trades)
             {
                 if (types.Contains(currencyTrade.Currency))
                 {
@@ -57,12 +57,12 @@ namespace IdelPog.SimulationEngine.Currency
         /// Gets each separate <see cref="Currency"/> from the <see cref="StateRepository{TID,T}"/>, this is passed into originalCurrencies.
         /// Then, clones these <see cref="Currency"/> retrieved from the <see cref="StateRepository{TID,T}"/> into the passed stagingGround Dictionary.
         /// </summary>
-        /// <param name="currencyTrades">Uses the internal <see cref="CurrencyTrade"/>.<see cref="CurrencyTrade.Currency"/> to Get each <see cref="Currency"/> from the Repository</param>
+        /// <param name="currencyTrades">Uses the internal <see cref="CurrencyUpdate"/>.<see cref="CurrencyUpdate.Currency"/> to Get each <see cref="Currency"/> from the Repository</param>
         /// <param name="originalCurrencies">All the <see cref="Currency"/> returned from Get will first be placed into this Dictionary</param>
         /// <param name="stagingGround">All the <see cref="Currency"/> added into the originalCurrencies Dictionary will be cloned into this</param>
-        private void CloneCurrency(IReadOnlyList<CurrencyTrade> currencyTrades, Dictionary<CurrencyType, Currency> originalCurrencies, Dictionary<CurrencyType, Currency> stagingGround)
+        private void CloneCurrency(IReadOnlyList<CurrencyUpdate> currencyTrades, Dictionary<CurrencyType, Currency> originalCurrencies, Dictionary<CurrencyType, Currency> stagingGround)
         {
-            foreach (CurrencyTrade currencyTrade in currencyTrades)
+            foreach (CurrencyUpdate currencyTrade in currencyTrades)
             {
                 // cloning each Currency, skipping ones we already have gotten
                 if (originalCurrencies.ContainsKey(currencyTrade.Currency))
@@ -80,13 +80,13 @@ namespace IdelPog.SimulationEngine.Currency
         }
 
         /// <summary>
-        /// Uses the passed <see cref="CurrencyTrade"/> array properties <see cref="CurrencyTrade.Amount"/> and <see cref="CurrencyTrade.Action"/> to dictate how to update each <see cref="Currency"/>
+        /// Uses the passed <see cref="CurrencyUpdate"/> array properties <see cref="CurrencyUpdate.Amount"/> and <see cref="CurrencyUpdate.Action"/> to dictate how to update each <see cref="Currency"/>
         /// </summary>
-        /// <param name="currencyTrades"><see cref="CurrencyTrade"/></param>
+        /// <param name="currencyTrades"><see cref="CurrencyUpdate"/></param>
         /// <param name="stagingGround">This Dictionary will now contain each cloned <see cref="Currency"/> from the <see cref="StateRepository{TID,T}"/></param>
-        private void MutateClonedCurrency(IReadOnlyList<CurrencyTrade> currencyTrades, Dictionary<CurrencyType, Currency> stagingGround)
+        private void MutateClonedCurrency(IReadOnlyList<CurrencyUpdate> currencyTrades, Dictionary<CurrencyType, Currency> stagingGround)
         {
-            foreach (CurrencyTrade currencyTrade in currencyTrades)
+            foreach (CurrencyUpdate currencyTrade in currencyTrades)
             {
                 // Apply CurrencyTrade actions to the stagingGround Currency
                 Currency localCurrency = stagingGround[currencyTrade.Currency];

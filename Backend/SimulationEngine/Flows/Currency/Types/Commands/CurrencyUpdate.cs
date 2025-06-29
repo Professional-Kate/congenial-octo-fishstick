@@ -5,7 +5,7 @@ namespace IdelPog.SimulationEngine.Currency.Commands
     /// <summary>
     /// This command is used to update a Currency model
     /// </summary>
-    public readonly record struct CurrencyTrade
+    public readonly record struct CurrencyUpdate
     {
         /// <summary>
         /// The amount that should be Removed/Added to the <see cref="CurrencyType"/>

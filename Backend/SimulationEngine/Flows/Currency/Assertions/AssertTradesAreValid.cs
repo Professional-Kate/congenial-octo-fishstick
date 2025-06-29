@@ -7,11 +7,11 @@ namespace IdelPog.SimulationEngine.Currency.Assertions
 {
     public class AssertTradesAreValid(IHandler handler) : BaseAssertion<NegativeNumberException>(handler)
     {
-        public void Handle(IReadOnlyList<CurrencyTrade> trades)
+        public void Handle(IReadOnlyList<CurrencyUpdate> trades)
         {
             Assert(() =>
             {
-                foreach (CurrencyTrade currencyTrade in trades)
+                foreach (CurrencyUpdate currencyTrade in trades)
                 {
                     if (currencyTrade.Amount <= 0)
                     {

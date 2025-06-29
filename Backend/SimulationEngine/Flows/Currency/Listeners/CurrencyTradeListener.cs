@@ -3,11 +3,11 @@ using IdelPog.SimulationEngine.Currency.Commands;
 
 namespace IdelPog.SimulationEngine.Currency.Listeners
 {
-    public class CurrencyTradeListener(ICurrencyController currencyController) : IBufferListener<CurrencyTrade>
+    public class CurrencyTradeListener(ICurrencyController currencyController) : IBufferListener<CurrencyUpdate>
     {
-        public Type ListenerType { get; } = typeof(CurrencyTrade);
+        public Type ListenerType { get; } = typeof(CurrencyUpdate);
         
-        public void Handle(IReadOnlyList<CurrencyTrade> buffer)
+        public void Handle(IReadOnlyList<CurrencyUpdate> buffer)
         {
             currencyController.UpdateCurrency(buffer);
         }

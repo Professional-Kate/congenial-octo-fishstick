@@ -13,7 +13,7 @@ namespace IdelPogTests.Controller
         private Mock<ICurrencyUpdateMediator> _currencyUpdateMediatorMock { get; set; }
         private Mock<ICurrencyCreationMediator> _currencyCreationMediatorMock { get; set; }
 
-        private List<CurrencyTrade> _currencyTrades { get; set; }
+        private List<CurrencyUpdate> _currencyTrades { get; set; }
         private List<CurrencyCreation> _currencyCreations { get; set; }
 
         [OneTimeSetUp]

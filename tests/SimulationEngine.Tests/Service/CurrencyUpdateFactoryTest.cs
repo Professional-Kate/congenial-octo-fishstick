@@ -16,7 +16,7 @@ namespace IdelPogTests.Service
     public class CurrencyUpdateFactoryTest
     {
         private ICurrencyUpdateFactory _currencyUpdateFactory { get; set; }
-        private IReadOnlyList<CurrencyTrade> _currencyTrades { get; set; }
+        private IReadOnlyList<CurrencyUpdate> _currencyTrades { get; set; }
         private Mock<IHandler> _handlerMock { get; set; }
         
         [OneTimeSetUp]
@@ -37,18 +37,18 @@ namespace IdelPogTests.Service
             ];
         }
 
-        private void AssertCollection(IReadOnlyList<CurrencyUpdateDTO> currencyUpdateDTOs, IReadOnlyList<CurrencyTrade> currencyTrades)
+        private void AssertCollection(IReadOnlyList<CurrencyUpdateDTO> currencyUpdateDTOs, IReadOnlyList<CurrencyUpdate> currencyTrades)
         {
             for (int i = 0; i < currencyUpdateDTOs.Count; i++)
             {
                 CurrencyUpdateDTO currencyUpdateDTO = currencyUpdateDTOs[i];
-                CurrencyTrade currencyTrade = currencyTrades[i];
+                CurrencyUpdate currencyUpdate = currencyTrades[i];
                 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(currencyUpdateDTO.Action, Is.EqualTo(currencyTrade.Action));
-                    Assert.That(currencyUpdateDTO.Amount, Is.EqualTo(currencyTrade.Amount));
-                    Assert.That(currencyUpdateDTO.Currency, Is.EqualTo(currencyTrade.Currency));
+                    Assert.That(currencyUpdateDTO.Action, Is.EqualTo(currencyUpdate.Action));
+                    Assert.That(currencyUpdateDTO.Amount, Is.EqualTo(currencyUpdate.Amount));
+                    Assert.That(currencyUpdateDTO.Currency, Is.EqualTo(currencyUpdate.Currency));
                 });
             }
         }

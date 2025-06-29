@@ -10,14 +10,14 @@ namespace IdelPog.SimulationEngine.Currency
     public interface ICurrencyController
     {
         /// <summary>
-        /// Updates <see cref="Currency"/> in the Repository based on each <see cref="CurrencyTrade"/> in the collection
+        /// Updates <see cref="Currency"/> in the Repository based on each <see cref="CurrencyUpdate"/> in the collection
         /// </summary>
-        /// <param name="trades">A collection of valid <see cref="CurrencyTrade"/> commands</param>
+        /// <param name="trades">A collection of valid <see cref="CurrencyUpdate"/> commands</param>
         /// <exception cref="NegativeNumberException">Will be thrown if any trades amount is not positive (zero or negative). Also thrown if committing the collection will leave any <see cref="Currency"/> negative</exception>
         /// <exception cref="CollectionEmptyException">Will be thrown if the collection has zero elements</exception>
         /// <exception cref="ArgumentNullException">Will be thrown if the collection is null</exception>
         /// <remarks>The collection is simulated first only being committed into the Repository if each command passes all validation</remarks>
-        public void UpdateCurrency(IReadOnlyList<CurrencyTrade> trades);
+        public void UpdateCurrency(IReadOnlyList<CurrencyUpdate> trades);
         
         /// <summary>
         /// Creates a new <see cref="CurrencyType"/>:<see cref="Currency"/> pair in the Repository

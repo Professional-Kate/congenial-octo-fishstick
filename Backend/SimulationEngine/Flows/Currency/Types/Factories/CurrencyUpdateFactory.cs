@@ -16,14 +16,14 @@ namespace IdelPog.SimulationEngine.Currency.Factories
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
         }
         
-        public CurrencyUpdateDTO[] CreateFrom(IReadOnlyList<CurrencyTrade> trades)
+        public CurrencyUpdateDTO[] CreateFrom(IReadOnlyList<CurrencyUpdate> trades)
         {
             _assertNotNull.AssertObjectNotNull(trades);
             _assertCollectionNotEmpty.Handle(trades);
             
             List<CurrencyUpdateDTO> result = new(trades.Count);
 
-            foreach (CurrencyTrade currencyTrade in trades)
+            foreach (CurrencyUpdate currencyTrade in trades)
             {
                 result.Add(new CurrencyUpdateDTO
                 {

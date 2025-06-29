@@ -4,6 +4,6 @@ namespace IdelPog.SimulationEngine.Currency.Dispatchers
 {
     public interface ICurrencyUpdateDispatcher
     {
-        public void Dispatch(IReadOnlyList<CurrencyTrade> trades);
+        public void Dispatch(IReadOnlyList<CurrencyUpdate> trades);
     }
 }
