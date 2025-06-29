@@ -10,7 +10,6 @@ namespace IdelPog.SimulationEngine.Inventory
     {
         public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
         {
-            
             List<InventoryUpdateDTO> updateDTOs = new(updates.Count);
             
             foreach (InventoryUpdate update in updates)

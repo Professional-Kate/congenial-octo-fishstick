@@ -2,7 +2,7 @@
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    public class CurrencyController(ICurrencyUpdateMediator currencyUpdateMediator) : ICurrencyController
+    public class CurrencyController(ICurrencyUpdateMediator currencyUpdateMediator, ICurrencyCreationMediator currencyCreationMediator) : ICurrencyController
     {
         public void UpdateCurrency(IReadOnlyList<CurrencyTrade> trades)
         {
@@ -11,7 +11,7 @@ namespace IdelPog.SimulationEngine.Currency
 
         public void CreateCurrency(IReadOnlyList<CurrencyCreation> commands)
         {
-            throw new NotImplementedException();
+            currencyCreationMediator.CreateCurrency(commands);
         }
     }
 } 

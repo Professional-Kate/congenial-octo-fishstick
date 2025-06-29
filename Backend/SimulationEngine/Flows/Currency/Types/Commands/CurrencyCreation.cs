@@ -2,7 +2,7 @@
 {
     public readonly record struct CurrencyCreation
     {
-        public required CurrencyType Currency { get; init; }
+        public required CurrencyType CurrencyType { get; init; }
         public required int StartingAmount { get; init; }
     }
 }

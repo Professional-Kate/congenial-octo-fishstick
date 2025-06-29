@@ -7,138 +7,74 @@ using Moq;
 
 namespace IdelPogTests.Controller
 {
-    [TestFixture(CurrencyType.GOLD, 10)]
+    [TestFixture]
     public class CurrencyControllerTest
     {
-        // TODO: most of these tests maybe aren't needed. Functionality is now mainly handed by the ICurrencyMediator.
         private ICurrencyController _currencyController { get; set; }
-        private Mock<ICurrencyUpdateMediator> _currencyServiceMock { get; set; }
-        private Currency _foodCurrency { get; set; }
-        private Currency _woodCurrency { get; set; }
+        private Mock<ICurrencyUpdateMediator> _currencyUpdateMediatorMock { get; set; }
+        private Mock<ICurrencyCreationMediator> _currencyCreationMediatorMock { get; set; }
 
-        private readonly CurrencyType _currencyType;
-        private readonly int _amount;
-        
-        private static CurrencyTrade _addFoodTrade { get; set; }
-        private static CurrencyTrade _removeFoodTrade { get; set; }
-        private static CurrencyTrade _addWoodTrade { get; set; } 
-        private static CurrencyTrade _removeWoodTrade { get; set; }
-
-        public CurrencyControllerTest(CurrencyType currencyType, int amount)
-        {
-            _currencyType = currencyType;
-            _amount = amount;
-        }
+        private List<CurrencyTrade> _currencyTrades { get; set; }
+        private List<CurrencyCreation> _currencyCreations { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _foodCurrency = new Currency(_currencyType, 0);
-            _woodCurrency = new Currency(CurrencyType.GEMS, 0);
-            _addFoodTrade = TestUtils.CreateTrade(_amount, _currencyType, ActionType.ADD);
-            _removeFoodTrade = TestUtils.CreateTrade(_amount, _currencyType, ActionType.REMOVE);
-            _addWoodTrade = TestUtils.CreateTrade(10, CurrencyType.GEMS, ActionType.ADD);
-            _removeWoodTrade = TestUtils.CreateTrade(10, CurrencyType.GEMS, ActionType.REMOVE);
+            _currencyTrades =
+            [
+                TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD),
+                TestUtils.CreateTrade(5, CurrencyType.GOLD, ActionType.REMOVE),
+                TestUtils.CreateTrade(10, CurrencyType.GEMS, ActionType.ADD),
+                TestUtils.CreateTrade(5, CurrencyType.GEMS, ActionType.REMOVE)
+            ];
+
+            _currencyCreations =
+            [
+                new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = 10},
+                new CurrencyCreation { CurrencyType = CurrencyType.GEMS, StartingAmount = 10}
+            ];
         }
 
         [SetUp]
         public void Setup()
         {
-            _foodCurrency.SetAmount(0);
-            _woodCurrency.SetAmount(0);
-            _currencyServiceMock = new Mock<ICurrencyUpdateMediator>();
-            _currencyController = new CurrencyController(_currencyServiceMock.Object);
+            _currencyUpdateMediatorMock = new Mock<ICurrencyUpdateMediator>();
+            _currencyCreationMediatorMock = new Mock<ICurrencyCreationMediator>();
+            _currencyController = new CurrencyController(_currencyUpdateMediatorMock.Object, _currencyCreationMediatorMock.Object);
         }
 
-        private void SetupMock(IReadOnlyList<CurrencyTrade> trades)
+        [Test]
+        public void Positive_UpdateCurrency_InvokesMediator()
         {
-            _currencyServiceMock.Setup(library => library.ProcessCurrencyUpdate(trades))
-                .Callback<IReadOnlyList<CurrencyTrade>>(currencyTrades =>
-                {
-                    foreach (CurrencyTrade currencyTrade in currencyTrades)
-                    {
-                        switch (currencyTrade.Action)
-                        {
-                            case ActionType.ADD:
-                                int newAmount = currencyTrade.Amount + _foodCurrency.Amount;
-                                _foodCurrency.SetAmount(newAmount);
-                                break;
-                            case ActionType.REMOVE:
-                                _foodCurrency.SetAmount(currencyTrade.Amount);
-                                newAmount = currencyTrade.Amount - _foodCurrency.Amount;
-                                _foodCurrency.SetAmount(newAmount);
-                                break;
-                        }
-                    }
-                });
-        }
-
-        [TestCase(0)]
-        [TestCase(1)]
-        [TestCase(5)]
-        [TestCase(10)]
-        [TestCase(15)]
-        [TestCase(20)]
-        public void Positive_ProcessCurrencyUpdate_MultipleAddUpdates_UpdatesAmount(int tradeCount)
-        {
-            CurrencyTrade[] trades = Enumerable.Repeat(_addFoodTrade, tradeCount).ToArray();
-            SetupMock(trades);
-           
-            _currencyController.UpdateCurrency(trades);
+            _currencyController.UpdateCurrency(_currencyTrades);
             
-            Assert.That(tradeCount * _amount, Is.EqualTo(_foodCurrency.Amount));
+            _currencyUpdateMediatorMock.Verify(library => library.ProcessCurrencyUpdate(_currencyTrades), Times.Once);
+        }
+
+        [Test]
+        public void Positive_UpdateCurrency_DoesNotSuppressExceptions()
+        {
+            _currencyUpdateMediatorMock.Setup(library => library.ProcessCurrencyUpdate(_currencyTrades))
+                .Throws<Exception>();
+            
+            Assert.Throws<Exception>(() => _currencyController.UpdateCurrency(_currencyTrades));
         }
         
-        [TestCase(0)]
-        [TestCase(1)]
-        [TestCase(5)]
-        [TestCase(10)]
-        [TestCase(15)]
-        [TestCase(20)]
-        public void Positive_ProcessCurrencyUpdate_MultipleRemoveUpdates_UpdatesAmount(int tradeCount)
+        [Test]
+        public void Positive_CreateCurrency_InvokesMediator()
         {
-            CurrencyTrade[] trades = Enumerable.Repeat(_removeFoodTrade, tradeCount).ToArray();
-            SetupMock(trades);
+            _currencyController.CreateCurrency(_currencyCreations);
             
-            _currencyController.UpdateCurrency(trades);
-            
-            Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
+            _currencyCreationMediatorMock.Verify(library => library.CreateCurrency(_currencyCreations), Times.Once);
         }
 
         [Test]
-        public void Positive_ProcessCurrencyUpdate_MultipleTypeUpdates_UpdatesAmount()
+        public void Positive_CreateCurrency_DoesNotSuppressExceptions()
         {
-            CurrencyTrade[] trades = { _addWoodTrade, _addFoodTrade, _removeFoodTrade, _addFoodTrade, _addWoodTrade, _removeFoodTrade, _removeWoodTrade, _removeWoodTrade, _addFoodTrade };
-            SetupMock(trades);
+            _currencyCreationMediatorMock.Setup(library => library.CreateCurrency(_currencyCreations))
+                .Throws<Exception>();
             
-            _currencyController.UpdateCurrency(trades);
-            
-            Assert.That(0, Is.EqualTo(_woodCurrency.Amount));
-            Assert.That(10, Is.EqualTo(_foodCurrency.Amount)); // this is 10 because I add an extra _addFoodTrade call just to ensure correctness
-        }
-
-        [TestCase(0)]
-        [TestCase(-10)]
-        [TestCase(-100)]
-        public void Negative_ProcessCurrencyUpdate_BadAmounts_NoUpdates(int badAmount)
-        {
-            IReadOnlyList<CurrencyTrade> trade = [TestUtils.CreateTrade(badAmount, _currencyType, ActionType.ADD)];
-
-            _currencyController.UpdateCurrency(trade);
-            
-            Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
-        }
-
-        [Test]
-        public void Negative_ProcessCurrencyUpdate_ArrayFails_NoUpdates()
-        {
-            // First action is okay, 2nd action should stop processing for all actions 
-            CurrencyTrade[] trades = { _addFoodTrade, _removeWoodTrade, _addFoodTrade };
-            
-            _currencyController.UpdateCurrency(trades);
-            
-            Assert.That(0, Is.EqualTo(_foodCurrency.Amount));
-            Assert.That(0, Is.EqualTo(_woodCurrency.Amount));
+            Assert.Throws<Exception>(() => _currencyController.CreateCurrency(_currencyCreations));
         }
     }
 }
