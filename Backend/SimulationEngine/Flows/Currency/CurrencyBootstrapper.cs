@@ -22,8 +22,8 @@ namespace IdelPog.SimulationEngine.Currency
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory(assertNotNull, assertCollectionNotEmpty);
             ICurrencyUpdateDispatcher currencyUpdateDispatcher = new CurrencyUpdateDispatcher(bufferManager, currencyUpdateFactory);
             
-            ICurrencyMediator currencyMediator = new CurrencyMediator(currencyService,  currencyRepository, currencyUpdateDispatcher, assertPositive, assertCollectionNotEmpty);
-            ICurrencyController currencyController = new CurrencyController(currencyMediator);
+            ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyService,  currencyRepository, currencyUpdateDispatcher, assertPositive, assertCollectionNotEmpty);
+            ICurrencyController currencyController = new CurrencyController(currencyUpdateMediator);
             CurrencyTradeListener currencyTradeListener = new(currencyController);
             
             bufferMessenger.Subscribe(currencyTradeListener);

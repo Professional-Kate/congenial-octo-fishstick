@@ -12,7 +12,7 @@ namespace IdelPogTests.Controller
     {
         // TODO: most of these tests maybe aren't needed. Functionality is now mainly handed by the ICurrencyMediator.
         private ICurrencyController _currencyController { get; set; }
-        private Mock<ICurrencyMediator> _currencyServiceMock { get; set; }
+        private Mock<ICurrencyUpdateMediator> _currencyServiceMock { get; set; }
         private Currency _foodCurrency { get; set; }
         private Currency _woodCurrency { get; set; }
 
@@ -46,7 +46,7 @@ namespace IdelPogTests.Controller
         {
             _foodCurrency.SetAmount(0);
             _woodCurrency.SetAmount(0);
-            _currencyServiceMock = new Mock<ICurrencyMediator>();
+            _currencyServiceMock = new Mock<ICurrencyUpdateMediator>();
             _currencyController = new CurrencyController(_currencyServiceMock.Object);
         }
 

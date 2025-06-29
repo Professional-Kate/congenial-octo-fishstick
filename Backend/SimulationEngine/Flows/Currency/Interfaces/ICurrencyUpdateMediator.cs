@@ -4,7 +4,7 @@ using IdelPog.SimulationEngine.Structures.Types;
 namespace IdelPog.SimulationEngine.Currency
 {
     /// <seealso cref="ProcessCurrencyUpdate"/>
-    public interface ICurrencyMediator
+    public interface ICurrencyUpdateMediator
     {
         /// <summary>
         /// Uses a passed <see cref="CurrencyTrade"/> array, or a singular <see cref="CurrencyTrade"/> to modify a <see cref="Currency"/> model
@@ -19,7 +19,5 @@ namespace IdelPog.SimulationEngine.Currency
         /// </list>
         /// </remarks>
         public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyTrade> trades);
-        
-        public void CreateCurrency(IReadOnlyList<CurrencyCreation> currencies);
     }
 }
