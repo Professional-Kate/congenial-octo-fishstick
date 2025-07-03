@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Currency.Commands;
+﻿using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.Dispatchers;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
@@ -10,40 +11,59 @@ namespace IdelPog.SimulationEngine.Currency
     {
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
         private readonly IAssertPositive _assertPositive;
+        private readonly IAssertNotNull _assertNotNull;
+        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
 
-        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, IAssertPositive assertPositive)
+        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, IAssertPositive assertPositive,  IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
         {
             _currencyUpdateFactory = currencyUpdateFactory;
             _assertPositive = assertPositive;
+            _assertNotNull = assertNotNull;
+            _assertCollectionNotEmpty = assertCollectionNotEmpty;
         }
         
         public CurrencyUpdate[] GetSummary(IReadOnlyList<CurrencyUpdate> updates)
         {
-            Dictionary<CurrencyType, int> amounts = [];
+            _assertNotNull.AssertObjectNotNull(updates);
+            _assertCollectionNotEmpty.Handle(updates);
+            
+            Dictionary<CurrencyType, int> amounts =  SummarizeAmounts(updates);
+            List<CurrencyUpdate> summaryUpdates = CreateSummaryUpdates(amounts);
+            
+            return summaryUpdates.ToArray();
+        }
 
+        private Dictionary<CurrencyType, int> SummarizeAmounts(IReadOnlyList<CurrencyUpdate> updates)
+        {
+            Dictionary<CurrencyType, int> amounts = new();
+            
             foreach (CurrencyUpdate currencyUpdate in updates)
             {
                 _assertPositive.AssertNumberIsPositive(currencyUpdate.Amount);
 
-                if (amounts.ContainsKey(currencyUpdate.CurrencyType))
+                if (amounts.ContainsKey(currencyUpdate.CurrencyType) == false)
                 {
-                    switch (currencyUpdate.Action)
-                    {
-                        case ActionType.ADD:
-                            amounts[currencyUpdate.CurrencyType] += currencyUpdate.Amount;
-                            break;
-                        case ActionType.REMOVE:
-                            amounts[currencyUpdate.CurrencyType] -= currencyUpdate.Amount;
-                            break;
-                    }
-
-                    continue;
+                    amounts.Add(currencyUpdate.CurrencyType, 0);
                 }
                 
-                amounts.Add(currencyUpdate.CurrencyType, currencyUpdate.Amount);
+                switch (currencyUpdate.Action)
+                {
+                    case ActionType.ADD:
+                        amounts[currencyUpdate.CurrencyType] += currencyUpdate.Amount;
+                        break;
+                    case ActionType.REMOVE:
+                        amounts[currencyUpdate.CurrencyType] -= currencyUpdate.Amount;
+                        break;
+                }
             }
-
-            List<CurrencyUpdate> summaryUpdates = [];
+            
+            return amounts;
+        }
+        
+        private List<CurrencyUpdate> CreateSummaryUpdates(Dictionary<CurrencyType, int> amounts)
+        {
+            List<CurrencyUpdate> updates = [];
+            
             foreach ((CurrencyType currencyType, int amount) in amounts)
             {
                 if (amount == 0)
@@ -62,10 +82,10 @@ namespace IdelPog.SimulationEngine.Currency
                     action = ActionType.ADD;
                 }
                 
-                summaryUpdates.Add(_currencyUpdateFactory.CreateCurrencyUpdate(currencyType, action, amount));
+                updates.Add(_currencyUpdateFactory.CreateCurrencyUpdate(currencyType, action, Math.Abs(amount)));
             }
-            
-            return summaryUpdates.ToArray();
+
+            return updates;
         }
     }
 }
