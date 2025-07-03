@@ -8,15 +8,15 @@ namespace IdelPog.SimulationEngine.Currency.Commands
     public readonly record struct CurrencyUpdate
     {
         /// <summary>
-        /// The amount that should be Removed/Added to the <see cref="CurrencyType"/>
+        /// The amount that should be Removed/Added to the <see cref="SimulationEngine.Currency.CurrencyType"/>
         /// </summary>
         /// <remarks>This number should be positive. We do not accept zero</remarks>
         public required int Amount { get; init; }
 
         /// <summary>
-        /// What <see cref="CurrencyType"/> the action should perform on
+        /// What <see cref="SimulationEngine.Currency.CurrencyType"/> the action should perform on
         /// </summary>
-        public required CurrencyType Currency { get; init; } 
+        public required CurrencyType CurrencyType { get; init; } 
 
         /// <summary>
         /// <inheritdoc cref="ActionType"/>

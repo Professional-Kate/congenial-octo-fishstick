@@ -22,7 +22,7 @@ namespace IdelPogTests.Utils
             return new CurrencyUpdate
             {
                 Amount = amount,
-                Currency = type,
+                CurrencyType = type,
                 Action = action
             };
         }

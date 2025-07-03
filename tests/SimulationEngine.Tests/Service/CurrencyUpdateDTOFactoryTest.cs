@@ -48,7 +48,7 @@ namespace IdelPogTests.Service
                 {
                     Assert.That(currencyUpdateDTO.Action, Is.EqualTo(currencyUpdate.Action));
                     Assert.That(currencyUpdateDTO.Amount, Is.EqualTo(currencyUpdate.Amount));
-                    Assert.That(currencyUpdateDTO.Currency, Is.EqualTo(currencyUpdate.Currency));
+                    Assert.That(currencyUpdateDTO.Currency, Is.EqualTo(currencyUpdate.CurrencyType));
                 });
             }
         }

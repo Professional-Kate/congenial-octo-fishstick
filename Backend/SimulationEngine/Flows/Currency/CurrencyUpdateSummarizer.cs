@@ -25,22 +25,22 @@ namespace IdelPog.SimulationEngine.Currency
             {
                 _assertPositive.AssertNumberIsPositive(currencyUpdate.Amount);
 
-                if (amounts.ContainsKey(currencyUpdate.Currency))
+                if (amounts.ContainsKey(currencyUpdate.CurrencyType))
                 {
                     switch (currencyUpdate.Action)
                     {
                         case ActionType.ADD:
-                            amounts[currencyUpdate.Currency] += currencyUpdate.Amount;
+                            amounts[currencyUpdate.CurrencyType] += currencyUpdate.Amount;
                             break;
                         case ActionType.REMOVE:
-                            amounts[currencyUpdate.Currency] -= currencyUpdate.Amount;
+                            amounts[currencyUpdate.CurrencyType] -= currencyUpdate.Amount;
                             break;
                     }
 
                     continue;
                 }
                 
-                amounts.Add(currencyUpdate.Currency, currencyUpdate.Amount);
+                amounts.Add(currencyUpdate.CurrencyType, currencyUpdate.Amount);
             }
 
             List<CurrencyUpdate> summaryUpdates = [];

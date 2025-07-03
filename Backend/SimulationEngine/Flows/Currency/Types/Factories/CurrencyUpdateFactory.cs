@@ -11,7 +11,7 @@ namespace IdelPog.SimulationEngine.Currency.Factories
             {
                 Action = actionType,
                 Amount = amount,
-                Currency = currencyType
+                CurrencyType = currencyType
             };
         }
     }

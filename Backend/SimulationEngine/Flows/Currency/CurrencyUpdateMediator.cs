@@ -55,13 +55,13 @@ namespace IdelPog.SimulationEngine.Currency
             
             foreach (CurrencyUpdate currencyTrade in trades)
             {
-                if (types.Contains(currencyTrade.Currency))
+                if (types.Contains(currencyTrade.CurrencyType))
                 {
                     continue;
                 }
                 
-                _assertFound.AssertItemIsFound(currencyTrade.Currency,() => _currencyRepository.Contains(currencyTrade.Currency));
-                types.Add(currencyTrade.Currency);
+                _assertFound.AssertItemIsFound(currencyTrade.CurrencyType,() => _currencyRepository.Contains(currencyTrade.CurrencyType));
+                types.Add(currencyTrade.CurrencyType);
             }
         }
 
@@ -69,7 +69,7 @@ namespace IdelPog.SimulationEngine.Currency
         /// Gets each separate <see cref="Currency"/> from the <see cref="StateRepository{TID,T}"/>, this is passed into originalCurrencies.
         /// Then, clones these <see cref="Currency"/> retrieved from the <see cref="StateRepository{TID,T}"/> into the passed stagingGround Dictionary.
         /// </summary>
-        /// <param name="currencyTrades">Uses the internal <see cref="CurrencyUpdate"/>.<see cref="CurrencyUpdate.Currency"/> to Get each <see cref="Currency"/> from the Repository</param>
+        /// <param name="currencyTrades">Uses the internal <see cref="CurrencyUpdate"/>.<see cref="CurrencyUpdate.CurrencyType"/> to Get each <see cref="Currency"/> from the Repository</param>
         /// <param name="originalCurrencies">All the <see cref="Currency"/> returned from Get will first be placed into this Dictionary</param>
         /// <param name="stagingGround">All the <see cref="Currency"/> added into the originalCurrencies Dictionary will be cloned into this</param>
         private void CloneCurrency(IReadOnlyList<CurrencyUpdate> currencyTrades, Dictionary<CurrencyType, Currency> originalCurrencies, Dictionary<CurrencyType, Currency> stagingGround)
@@ -77,17 +77,17 @@ namespace IdelPog.SimulationEngine.Currency
             foreach (CurrencyUpdate currencyTrade in currencyTrades)
             {
                 // cloning each Currency, skipping ones we already have gotten
-                if (originalCurrencies.ContainsKey(currencyTrade.Currency))
+                if (originalCurrencies.ContainsKey(currencyTrade.CurrencyType))
                 {
                     // if we already have the Currency, no need to clone it again
                     continue;
                 }
 
-                Currency globalCurrencyClone = _currencyRepository.Get(currencyTrade.Currency);
-                originalCurrencies.Add(currencyTrade.Currency, globalCurrencyClone);
+                Currency globalCurrencyClone = _currencyRepository.Get(currencyTrade.CurrencyType);
+                originalCurrencies.Add(currencyTrade.CurrencyType, globalCurrencyClone);
                     
                 // entering each cloned Currency into the stagingGround so we can update them
-                stagingGround[currencyTrade.Currency] = new Currency(globalCurrencyClone.CurrencyType, globalCurrencyClone.Amount);
+                stagingGround[currencyTrade.CurrencyType] = new Currency(globalCurrencyClone.CurrencyType, globalCurrencyClone.Amount);
             }
         }
 
@@ -101,7 +101,7 @@ namespace IdelPog.SimulationEngine.Currency
             foreach (CurrencyUpdate currencyTrade in currencyTrades)
             {
                 // Apply CurrencyTrade actions to the stagingGround Currency
-                Currency localCurrency = stagingGround[currencyTrade.Currency];
+                Currency localCurrency = stagingGround[currencyTrade.CurrencyType];
 
                 switch (currencyTrade.Action)
                 {
