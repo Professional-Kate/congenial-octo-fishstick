@@ -9,19 +9,19 @@ namespace IdelPog.SimulationEngine.Currency.Dispatchers
     public class CurrencyUpdateDispatcher : ICurrencyUpdateDispatcher
     {
         private readonly IBufferManager _bufferManager;
-        private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
+        private readonly ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory;
         
-        public CurrencyUpdateDispatcher(IBufferManager bufferManager, ICurrencyUpdateFactory currencyUpdateFactory)
+        public CurrencyUpdateDispatcher(IBufferManager bufferManager, ICurrencyUpdateDTOFactory currencyUpdateDTOFactory)
         {
             _bufferManager = bufferManager;
-            _currencyUpdateFactory = currencyUpdateFactory;
+            _currencyUpdateDTOFactory = currencyUpdateDTOFactory;
         }
         
         public void Dispatch(IReadOnlyList<CurrencyUpdate> trades)
         {
             // TODO: update to only dispatch one CurrencyUpdateDTO per type
             IBuffer<CurrencyUpdateDTO> buffer = _bufferManager.RequestBuffer<CurrencyUpdateDTO>(new BufferRequest(trades.Count));
-            buffer.Assign(_currencyUpdateFactory.CreateFrom(trades));
+            buffer.Assign(_currencyUpdateDTOFactory.CreateFrom(trades));
             buffer.MarkReady();
         }
     }

@@ -1,10 +1,10 @@
 ﻿using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.DTO;
+using IdelPog.SimulationEngine.Structures;
 
 namespace IdelPog.SimulationEngine.Currency.Factories
 {
     public interface ICurrencyUpdateFactory
     {
-        public CurrencyUpdateDTO[] CreateFrom(IReadOnlyList<CurrencyUpdate> trades);
+        public CurrencyUpdate CreateCurrencyUpdate(CurrencyType currencyType, ActionType actionType, int amount);
     }
 }

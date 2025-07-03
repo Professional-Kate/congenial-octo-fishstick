@@ -24,8 +24,8 @@ namespace IdelPog.SimulationEngine.Currency
             IStateRepository<CurrencyType, Currency> currencyRepository = new StateRepository<CurrencyType, Currency>();
             
             ICurrencyService currencyService = new CurrencyService();
-            ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory(assertNotNull, assertCollectionNotEmpty);
-            ICurrencyUpdateDispatcher currencyUpdateDispatcher = new CurrencyUpdateDispatcher(bufferManager, currencyUpdateFactory);
+            ICurrencyUpdateDTOFactory currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(assertNotNull, assertCollectionNotEmpty);
+            ICurrencyUpdateDispatcher currencyUpdateDispatcher = new CurrencyUpdateDispatcher(bufferManager, currencyUpdateDTOFactory);
             ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyService,  currencyRepository, currencyUpdateDispatcher, assertPositive, assertCollectionNotEmpty, assertFound);
             
             ICurrencyCreationFactory currencyCreationFactory = new CurrencyCreationFactory(assertNotNull, assertCollectionNotEmpty);
@@ -35,7 +35,7 @@ namespace IdelPog.SimulationEngine.Currency
             ICurrencyController currencyController = new CurrencyController(currencyUpdateMediator, currencyCreationMediator);
             IErrorFactory errorFactory = new ErrorFactory();
 
-            ICurrencyUpdateErrorFactory currencyUpdateErrorFactory = new CurrencyUpdateErrorFactory(errorFactory, currencyUpdateFactory);
+            ICurrencyUpdateErrorFactory currencyUpdateErrorFactory = new CurrencyUpdateErrorFactory(errorFactory, currencyUpdateDTOFactory);
             ICurrencyUpdateErrorDispatcher currencyUpdateErrorDispatcher = new CurrencyUpdateErrorDispatcher(bufferManager, currencyUpdateErrorFactory);
             CurrencyUpdateListener currencyUpdateListener = new(currencyController, currencyUpdateErrorDispatcher);
 

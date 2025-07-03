@@ -24,7 +24,7 @@ namespace IdelPogTests.Orchestration
         private Mock<IAssertPositive> _assertPositiveMock { get; set; }
         private Mock<IHandler>  _handlerMock { get; set; }
         private Mock<ICurrencyUpdateDispatcher>  _dispatcherMock { get; set; }
-        private Mock<ICurrencyUpdateFactory> _currencyUpdateFactoryMock { get; set; }
+        private Mock<ICurrencyUpdateDTOFactory> _currencyUpdateFactoryMock { get; set; }
         
         private Currency _goldCurrency { get; set; }
         private Currency _gemsCurrency { get; set; }
@@ -58,7 +58,7 @@ namespace IdelPogTests.Orchestration
             _dispatcherMock = new Mock<ICurrencyUpdateDispatcher>();
             _assertPositiveMock = new Mock<IAssertPositive>();
             _handlerMock =  new Mock<IHandler>();
-            _currencyUpdateFactoryMock = new Mock<ICurrencyUpdateFactory>();
+            _currencyUpdateFactoryMock = new Mock<ICurrencyUpdateDTOFactory>();
             
             _currencyUpdateMediator = new CurrencyUpdateMediator(_currencyServiceMock.Object, _repositoryMock.Object, _dispatcherMock.Object, _assertPositiveMock.Object, new AssertCollectionNotEmpty(_handlerMock.Object), new AssertFound(_handlerMock.Object));
 

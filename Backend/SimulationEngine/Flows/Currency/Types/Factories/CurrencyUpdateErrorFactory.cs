@@ -6,19 +6,19 @@ namespace IdelPog.SimulationEngine.Currency.Factories
     public class CurrencyUpdateErrorFactory : ICurrencyUpdateErrorFactory
     {
         private readonly IErrorFactory _errorFactory;
-        private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
+        private readonly ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory;
 
-        public CurrencyUpdateErrorFactory(IErrorFactory errorFactory, ICurrencyUpdateFactory currencyUpdateFactory)
+        public CurrencyUpdateErrorFactory(IErrorFactory errorFactory, ICurrencyUpdateDTOFactory currencyUpdateDTOFactory)
         {
             _errorFactory = errorFactory;
-            _currencyUpdateFactory = currencyUpdateFactory;
+            _currencyUpdateDTOFactory = currencyUpdateDTOFactory;
         }
         
         public CurrencyUpdateErrorDTO CreateCurrencyUpdateError(IReadOnlyList<CurrencyUpdate> updates, Exception exception)
         {
             return new CurrencyUpdateErrorDTO
             {
-                CurrencyUpdates = _currencyUpdateFactory.CreateFrom(updates),
+                CurrencyUpdates = _currencyUpdateDTOFactory.CreateFrom(updates),
                 ErrorDetails = _errorFactory.CreateError(exception)
             };
         }
