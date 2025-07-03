@@ -30,7 +30,12 @@ namespace IdelPogTests.Service
 
             _addGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
             _removeGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.REMOVE);
+        }
 
+        [SetUp]
+        public void SetUp()
+        {
+            _currencyUpdateFactoryMock.Reset();
             SetupFactoryMock();
         }
 
@@ -90,6 +95,15 @@ namespace IdelPogTests.Service
         }
 
         [Test]
+        public void Positive_GetSummary_CurrencyEndsWithZeroGold_NoReturn()
+        {
+            CurrencyUpdate[] updates = _currencyUpdateSummarizer.GetSummary([_addGoldUpdate, _removeGoldUpdate]);
+            
+            Assert.That(updates, Has.Length.EqualTo(0));
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Test]
         public void Positive_GetSummary_MultipleTypes_ReturnsSummaryForEach()
         {
             CurrencyUpdate addGemsUpdate = new() { Action = ActionType.ADD, Amount = 10, CurrencyType = CurrencyType.GEMS };
@@ -128,22 +142,47 @@ namespace IdelPogTests.Service
         }
 
         [Test]
+        public void Positive_GetSummary_MultipleTypes_OneZeroAmount_ReturnsOneUpdate()
+        {
+            CurrencyUpdate addGemsUpdate = new() { Action = ActionType.ADD, Amount = 10, CurrencyType = CurrencyType.GEMS };
+            
+            _currencyUpdateFactoryMock.Setup(library => library.CreateCurrencyUpdate(CurrencyType.GEMS, ActionType.ADD, 10))
+                .Returns(addGemsUpdate);
+            
+            CurrencyUpdate[] summarizedUpdates = _currencyUpdateSummarizer.GetSummary([_removeGoldUpdate, addGemsUpdate, _addGoldUpdate]);
+            
+            Assert.That(summarizedUpdates, Has.Length.EqualTo(1));
+            Assert.Multiple(() =>
+            {
+                Assert.That(summarizedUpdates[0].Action, Is.EqualTo(addGemsUpdate.Action));
+                Assert.That(summarizedUpdates[0].CurrencyType, Is.EqualTo(addGemsUpdate.CurrencyType));
+                Assert.That(summarizedUpdates[0].Amount, Is.EqualTo(addGemsUpdate.Amount));
+            });
+            
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(CurrencyType.GOLD, It.IsAny<ActionType>(), It.IsAny<int>()), Times.Never);
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(CurrencyType.GEMS, It.IsAny<ActionType>(), It.IsAny<int>()), Times.Once);
+        }
+
+        [Test]
         public void Negative_GetSummary_EmptyList_Throws()
         {
             Assert.Throws<CollectionEmptyException>(() => _currencyUpdateSummarizer.GetSummary([]));
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()), Times.Never);
         }
         
         [Test]
         public void Negative_GetSummary_NullList_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _currencyUpdateSummarizer.GetSummary(null!));
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()), Times.Never);
         }
         
         [Test]
         public void Negative_GetSummary_TradeContainsNegativeNumber_Throws()
         {
-            Assert.Throws<NegativeNumberException>(() => _currencyUpdateSummarizer.GetSummary([_addGoldUpdate, new CurrencyUpdate() { Action = ActionType.ADD, Amount = -10, CurrencyType = CurrencyType.GOLD}
-            ]));
+            Assert.Throws<NegativeNumberException>(() => _currencyUpdateSummarizer.GetSummary([_addGoldUpdate, new CurrencyUpdate { Action = ActionType.ADD, Amount = -10, CurrencyType = CurrencyType.GOLD}]));
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()), Times.Never);
+            
         }
     }
 }
