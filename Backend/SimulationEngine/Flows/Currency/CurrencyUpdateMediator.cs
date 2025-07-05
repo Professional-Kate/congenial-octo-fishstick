@@ -126,8 +126,6 @@ namespace IdelPog.SimulationEngine.Currency
                     case ActionType.REMOVE:
                         _currencyService.RemoveAmount(currency, currencyUpdate.Amount);
                         break;
-                    default:
-                        continue;
                 }
                 
                 _currencyRepository.Update(currency.CurrencyType, currency);

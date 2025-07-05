@@ -25,6 +25,7 @@ namespace IdelPogTests.Orchestration
         private Mock<ICurrencyUpdateDispatcher>  _dispatcherMock { get; set; }
         private Mock<ICurrencyUpdateSummarizer> _currencyUpdateSummarizerMock { get; set; }
 
+        private Currency _goldCurrency;
         private CurrencyUpdate _addGoldUpdate;
         private CurrencyUpdate _removeGoldUpdate;
 
@@ -41,30 +42,68 @@ namespace IdelPogTests.Orchestration
 
             _addGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
             _removeGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.REMOVE);
+            _goldCurrency = new Currency(_addGoldUpdate.CurrencyType, 0);
         }
 
-        [Test]
-        public void Positive_ProcessCurrencyUpdate_SingleUpdate_UpdatesOneCurrency()
+        [SetUp]
+        public void SetUp()
         {
-            IReadOnlyList<CurrencyUpdate> currencyUpdate = [_addGoldUpdate];
-            Currency goldCurrency = new(_addGoldUpdate.CurrencyType, 0);
-            
+            _repositoryMock.Reset();
+            _currencyServiceMock.Reset();
+            _dispatcherMock.Reset();
+            _currencyUpdateSummarizerMock.Reset();
+            _goldCurrency = new Currency(_addGoldUpdate.CurrencyType, 0);
+        }
+
+        private void TestRunner(IReadOnlyList<CurrencyUpdate> updates, CurrencyUpdate[] summaryUpdates) 
+        {
             _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(true);
             
-            _repositoryMock.Setup(library => library.Get(_addGoldUpdate.CurrencyType)).Returns(goldCurrency);
+            _repositoryMock.Setup(library => library.Get(_addGoldUpdate.CurrencyType)).Returns(_goldCurrency);
             
-            _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(currencyUpdate)).Returns(currencyUpdate.ToArray);
+            _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(updates)).Returns(summaryUpdates);
             
-            Assert.DoesNotThrow(() => _currencyUpdateMediator.ProcessCurrencyUpdate(currencyUpdate));
+            Assert.DoesNotThrow(() => _currencyUpdateMediator.ProcessCurrencyUpdate(updates));
             
             _repositoryMock.Verify(library => library.Contains(_addGoldUpdate.CurrencyType), Times.Once);
             _repositoryMock.Verify(library => library.Get(_addGoldUpdate.CurrencyType), Times.Once);
-            _repositoryMock.Verify(library => library.Update(_addGoldUpdate.CurrencyType, goldCurrency));
+            _repositoryMock.Verify(library => library.Update(_addGoldUpdate.CurrencyType, _goldCurrency), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
 
-            _currencyServiceMock.Verify(library => library.AddAmount(goldCurrency, _addGoldUpdate.Amount), Times.Once);
-            _dispatcherMock.Verify(library => library.Dispatch(currencyUpdate),  Times.Once);
-            _currencyUpdateSummarizerMock.Verify(library => library.GetSummary(currencyUpdate), Times.Once);
+            _dispatcherMock.Verify(library => library.Dispatch(summaryUpdates),  Times.Once);
+            _dispatcherMock.VerifyNoOtherCalls();
+            
+            _currencyUpdateSummarizerMock.Verify(library => library.GetSummary(updates), Times.Once);
+            _currencyUpdateSummarizerMock.VerifyNoOtherCalls();
+        }
+
+        [TestCase(1)]
+        [TestCase(10)]
+        [TestCase(100)]
+        public void Positive_ProcessCurrencyUpdate_MultipleAddUpdates_AddAmountToCurrency(int amountOfUpdates)
+        {
+            IReadOnlyList<CurrencyUpdate> currencyUpdate = Enumerable.Repeat(_addGoldUpdate, amountOfUpdates).ToList();
+            CurrencyUpdate[] summaryUpdate = [new() { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = _addGoldUpdate.Amount * amountOfUpdates }];
+            
+            TestRunner(currencyUpdate, summaryUpdate);
+
+            _currencyServiceMock.Verify(library => library.AddAmount(_goldCurrency, _addGoldUpdate.Amount * amountOfUpdates), Times.Once);
+            _currencyServiceMock.VerifyNoOtherCalls();
+        }
+
+        [TestCase(1)]
+        [TestCase(10)]
+        [TestCase(100)]
+        public void Positive_ProcessCurrencyUpdate_SingleRemoveUpdate_RemovesAmountFromCurrency(int amountOfUpdates)
+        {
+            _goldCurrency.SetAmount(_addGoldUpdate.Amount * amountOfUpdates);
+            IReadOnlyList<CurrencyUpdate> currencyUpdate = Enumerable.Repeat(_removeGoldUpdate, amountOfUpdates).ToList();
+            CurrencyUpdate[] summaryUpdate = [new() { Action = ActionType.REMOVE, CurrencyType = CurrencyType.GOLD, Amount = _addGoldUpdate.Amount * amountOfUpdates }];
+            
+            TestRunner(currencyUpdate, summaryUpdate);
+            
+            _currencyServiceMock.Verify(library => library.RemoveAmount(_goldCurrency, _addGoldUpdate.Amount * amountOfUpdates), Times.Once);
+            _currencyServiceMock.VerifyNoOtherCalls();
         }
     }
 }
