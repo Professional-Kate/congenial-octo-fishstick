@@ -17,8 +17,12 @@ namespace IdelPog.SimulationEngine.Currency
         private readonly IAssertPositive _assertPositive;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
         private readonly IAssertFound _assertFound;
+        private readonly IAssertNotNull _assertNotNull;
         
-        public CurrencyUpdateMediator(ICurrencyService currencyService, IStateRepository<CurrencyType, Currency> stateRepository, ICurrencyUpdateDispatcher currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer, IAssertPositive assertPositive, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertFound assertFound)
+        public CurrencyUpdateMediator(
+            IStateRepository<CurrencyType, Currency> stateRepository, 
+            ICurrencyService currencyService, ICurrencyUpdateDispatcher currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer, 
+            IAssertPositive assertPositive, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertFound assertFound,  IAssertNotNull assertNotNull)
         {
             _currencyService = currencyService;
             _currencyRepository = stateRepository;
@@ -27,10 +31,12 @@ namespace IdelPog.SimulationEngine.Currency
             _assertPositive = assertPositive;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
             _assertFound = assertFound;
+            _assertNotNull = assertNotNull;
         }
         
         public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyUpdate> updates)
         {
+            _assertNotNull.AssertObjectNotNull(updates);
             AssertUpdates(updates);
             
             CurrencyUpdate[] summarizedUpdates = _currencyUpdateSummarizer.GetSummary(updates);
@@ -105,11 +111,6 @@ namespace IdelPog.SimulationEngine.Currency
         {
             foreach ((Currency currency, CurrencyUpdate currencyUpdate) in mappedRemoveUpdates)
             {
-                if (currencyUpdate.Action != ActionType.REMOVE)
-                {
-                    continue;
-                }
-
                 _assertPositive.AssertNumberIsPositive(currency.Amount - currencyUpdate.Amount);
             }
         }
