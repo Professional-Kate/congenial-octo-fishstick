@@ -7,6 +7,7 @@ using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Exceptions;
@@ -21,273 +22,49 @@ namespace IdelPogTests.Orchestration
         private ICurrencyUpdateMediator _currencyUpdateMediator { get; set; }
         private Mock<IStateRepository<CurrencyType, Currency>> _repositoryMock { get; set; }
         private Mock<ICurrencyService> _currencyServiceMock { get; set; }
-        private Mock<IAssertPositive> _assertPositiveMock { get; set; }
-        private Mock<IHandler>  _handlerMock { get; set; }
         private Mock<ICurrencyUpdateDispatcher>  _dispatcherMock { get; set; }
-        private Mock<ICurrencyUpdateDTOFactory> _currencyUpdateFactoryMock { get; set; }
-        
-        private Currency _goldCurrency { get; set; }
-        private Currency _gemsCurrency { get; set; }
+        private Mock<ICurrencyUpdateSummarizer> _currencyUpdateSummarizerMock { get; set; }
 
-        private const int AMOUNT = 10;
-
-        private static CurrencyUpdate _addFoodUpdate { get; set; }
-        private static CurrencyUpdate _removeFoodUpdate { get; set; }
-        private static CurrencyUpdate _addWoodUpdate { get; set; } 
-        private static CurrencyUpdate _removeWoodUpdate { get; set; }
+        private CurrencyUpdate _addGoldUpdate;
+        private CurrencyUpdate _removeGoldUpdate;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            CreateTrades();
-        }
-        
-        [SetUp]
-        public void Setup()
-        {
-            _goldCurrency = CurrencyFactory.CreateGold();
-            _gemsCurrency = CurrencyFactory.CreateGems();
-            
-            SetupMock();
-        }
-
-        private void SetupMock()
-        {
             _repositoryMock = new Mock<IStateRepository<CurrencyType, Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
             _dispatcherMock = new Mock<ICurrencyUpdateDispatcher>();
-            _assertPositiveMock = new Mock<IAssertPositive>();
-            _handlerMock =  new Mock<IHandler>();
-            _currencyUpdateFactoryMock = new Mock<ICurrencyUpdateDTOFactory>();
+            _currencyUpdateSummarizerMock = new Mock<ICurrencyUpdateSummarizer>();
             
-            _currencyUpdateMediator = new CurrencyUpdateMediator(_currencyServiceMock.Object, _repositoryMock.Object, _dispatcherMock.Object, _assertPositiveMock.Object, new AssertCollectionNotEmpty(_handlerMock.Object), new AssertFound(_handlerMock.Object));
+            IHandler throwHandler = new ThrowHandler();
+            _currencyUpdateMediator = new CurrencyUpdateMediator(_currencyServiceMock.Object, _repositoryMock.Object, _dispatcherMock.Object, _currencyUpdateSummarizerMock.Object, new AssertPositive(throwHandler), new AssertCollectionNotEmpty(throwHandler), new AssertFound(throwHandler));
 
-            _repositoryMock.Setup(library => library.Get(CurrencyType.GOLD)).Returns(_goldCurrency.DeepClone());
-            _repositoryMock.Setup(library => library.Get(CurrencyType.GEMS)).Returns(_gemsCurrency.DeepClone());
-            
-            _repositoryMock.Setup(library => library.Contains(It.IsAny<CurrencyType>())).Returns(true);
-
-            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(It.IsAny<int[]>()));
-
-            _currencyServiceMock.Setup(library => library.AddAmount(It.IsAny<Currency>(), It.IsAny<int>()))
-                .Callback<Currency, int>((currency, amount) =>
-                {
-                    int newAmount = currency.Amount + amount;
-                    currency.SetAmount(newAmount);
-                });
-
-            _currencyServiceMock.Setup(library => library.RemoveAmount(It.IsAny<Currency>(), It.IsAny<int>()))
-                .Callback<Currency, int>((currency, amount) =>
-                {
-                    int newAmount = currency.Amount - amount;
-                    currency.SetAmount(newAmount);
-                });
-
-            _repositoryMock.Setup(library => library.Update(It.IsAny<CurrencyType>(), It.IsAny<Currency>()))
-                .Callback<CurrencyType, Currency>((type, currency) =>
-                {
-                    switch (type)
-                    {
-                        case CurrencyType.GOLD:
-                            _goldCurrency = currency;
-                            break;
-                        case CurrencyType.GEMS:
-                            _gemsCurrency = currency;
-                            break;
-                    }
-                });
-        }
-
-        private static void CreateTrades()
-        {
-            _addFoodUpdate = TestUtils.CreateTrade(AMOUNT, CurrencyType.GOLD, ActionType.ADD);
-            _removeFoodUpdate = TestUtils.CreateTrade(AMOUNT, CurrencyType.GOLD, ActionType.REMOVE);
-            _addWoodUpdate = TestUtils.CreateTrade(AMOUNT, CurrencyType.GEMS, ActionType.ADD);
-            _removeWoodUpdate = TestUtils.CreateTrade(AMOUNT, CurrencyType.GEMS, ActionType.REMOVE);
-        }
-
-        private void VerifyUpdateCall(int amount)
-        {
-            _repositoryMock.Verify(library => library.Update(It.IsAny<CurrencyType>(), It.IsAny<Currency>()), Times.Exactly(amount));
-        }
-
-        private void VerifyContainsCalls(int amount)
-        {
-            _repositoryMock.Verify(library => library.Contains(It.IsAny<CurrencyType>()), Times.Exactly(amount));
-        }
-
-        private void VerifyGetCalls(int amount)
-        {
-            _repositoryMock.Verify(library => library.Get(It.IsAny<CurrencyType>()), Times.Exactly(amount));
-        }
-
-        private void VerifyDispatcherCalls(int amount)
-        {
-            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<CurrencyUpdate[]>()),  Times.Exactly(amount));
-        }
-        
-        [TestCase(1)]
-        [TestCase(5)]
-        [TestCase(10)]
-        [TestCase(15)]
-        [TestCase(20)]
-        public void Positive_ProcessCurrencyUpdate_MultipleAddUpdates_UpdatesAmount(int tradeCount)
-        {
-            CurrencyUpdate[] trades = Enumerable.Repeat(_addFoodUpdate, tradeCount).ToArray();
-
-            _currencyUpdateMediator.ProcessCurrencyUpdate(trades);
-            
-            Assert.That(tradeCount * AMOUNT, Is.EqualTo(_goldCurrency.Amount));
-
-            VerifyContainsCalls(1);
-            VerifyGetCalls(1);
-            VerifyUpdateCall(1);
-            VerifyDispatcherCalls(1);
-        }
-        
-        [TestCase(1)]
-        [TestCase(5)]
-        [TestCase(10)]
-        [TestCase(15)]
-        [TestCase(20)]
-        public void Positive_ProcessCurrencyUpdate_MultipleRemoveUpdates_UpdatesAmount(int tradeCount)
-        {
-            CurrencyUpdate[] removeTrades = Enumerable.Repeat(_removeFoodUpdate, tradeCount).ToArray();
-            CurrencyUpdate[] addTrades = Enumerable.Repeat(_addFoodUpdate, tradeCount + 1).ToArray();
-            
-            _currencyUpdateMediator.ProcessCurrencyUpdate(addTrades);
-            _currencyUpdateMediator.ProcessCurrencyUpdate(removeTrades);
-            
-            Assert.That(10, Is.EqualTo(_goldCurrency.Amount));
-
-            VerifyContainsCalls(2);
-            VerifyGetCalls(2);
-            VerifyUpdateCall(2);
-            VerifyDispatcherCalls(2);
+            _addGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
+            _removeGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.REMOVE);
         }
 
         [Test]
-        public void Positive_ProcessCurrencyUpdate_NoPassedTrades_Throws()
+        public void Positive_ProcessCurrencyUpdate_SingleUpdate_UpdatesOneCurrency()
         {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<CollectionEmptyException>()))
-                .Throws(new CollectionEmptyException());
+            IReadOnlyList<CurrencyUpdate> currencyUpdate = [_addGoldUpdate];
+            Currency goldCurrency = new(_addGoldUpdate.CurrencyType, 0);
             
-            CurrencyUpdate[] trades = [];
+            _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(true);
             
-            Assert.Throws<CollectionEmptyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(trades));
+            _repositoryMock.Setup(library => library.Get(_addGoldUpdate.CurrencyType)).Returns(goldCurrency);
             
-            VerifyContainsCalls(0);
-            VerifyGetCalls(0);
-            VerifyUpdateCall(0);
-            VerifyDispatcherCalls(0);
-        }
+            _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(currencyUpdate)).Returns(currencyUpdate.ToArray);
+            
+            Assert.DoesNotThrow(() => _currencyUpdateMediator.ProcessCurrencyUpdate(currencyUpdate));
+            
+            _repositoryMock.Verify(library => library.Contains(_addGoldUpdate.CurrencyType), Times.Once);
+            _repositoryMock.Verify(library => library.Get(_addGoldUpdate.CurrencyType), Times.Once);
+            _repositoryMock.Verify(library => library.Update(_addGoldUpdate.CurrencyType, goldCurrency));
+            _repositoryMock.VerifyNoOtherCalls();
 
-        [Test]
-        public void Negative_ProcessCurrencyUpdate_CurrencyNotFound_Throws()
-        {
-            _repositoryMock.Setup(library => library.Contains(CurrencyType.GOLD)).Returns(false);
-
-            _handlerMock.Setup(library => library.Handle(It.IsAny<NotFoundException>()))
-                .Throws(new NotFoundException(CurrencyType.GOLD));
-
-            Assert.Throws<NotFoundException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_addFoodUpdate]));
-            
-            Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
-            
-            VerifyContainsCalls(1);
-            VerifyGetCalls(0);
-            VerifyUpdateCall(0);
-            VerifyDispatcherCalls(0);
-        }
-
-        [Test]
-        public void Negative_ProcessCurrencyUpdate_OneCurrencyNotFound_Throws()
-        {
-            _repositoryMock.Setup(library => library.Contains(CurrencyType.GEMS)).Returns(false);
-            
-            _handlerMock.Setup(library => library.Handle(It.IsAny<NotFoundException>()))
-                .Throws(new NotFoundException(CurrencyType.GOLD));
-
-            CurrencyUpdate[] trades = { _addFoodUpdate, _addWoodUpdate };
-            
-            Assert.Throws<NotFoundException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(trades));
-            
-            Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
-            Assert.That(0, Is.EqualTo(_gemsCurrency.Amount));
-            
-            VerifyContainsCalls(2);
-            VerifyGetCalls(0);
-            VerifyUpdateCall(0);
-            VerifyDispatcherCalls(0);
-        }
-
-        [Test]
-        public void Negative_ProcessCurrencyUpdate_PassedTradesResultInNegativeAmount__Throws()
-        {
-            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(-10))
-                .Throws(new NegativeNumberException(-1));
-            
-            CurrencyUpdate[] trades = { _removeWoodUpdate };
-            
-            Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(trades));
-            
-            Assert.That(0, Is.EqualTo(_gemsCurrency.Amount));
-            Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
-            VerifyDispatcherCalls(0);
-        }
-        
-        [Test]
-        public void Positive_ProcessCurrencyUpdate_MultipleTypeUpdates_UpdatesAmount()
-        {
-            // certain upgrades will cost multiple currency / give multiple currency for buying. This test is to prove it works.
-            CurrencyUpdate[] trades = { _removeFoodUpdate, _removeWoodUpdate, _addFoodUpdate, _addWoodUpdate, _addFoodUpdate, _addWoodUpdate };
-            
-            _currencyUpdateMediator.ProcessCurrencyUpdate(trades);
-            
-            Assert.That(10, Is.EqualTo(_gemsCurrency.Amount));
-            Assert.That(10, Is.EqualTo(_goldCurrency.Amount)); 
-            
-            VerifyUpdateCall(2); // two currency = 2 update calls
-            VerifyContainsCalls(2);
-            VerifyGetCalls(2);
-            VerifyDispatcherCalls(1);
-        }
-        
-        [TestCase(-10, ActionType.ADD)]
-        [TestCase(-100, ActionType.ADD)]
-        [TestCase(-10, ActionType.REMOVE)]
-        [TestCase(-100, ActionType.REMOVE)]
-        public void Negative_ProcessCurrencyUpdate_BadAmounts_NoUpdates_Throws(int badAmount, ActionType action)
-        {
-            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(It.IsAny<int[]>()))
-                .Throws(new NegativeNumberException(-1));
-            
-            CurrencyUpdate update = TestUtils.CreateTrade(badAmount, _goldCurrency.CurrencyType, action);
-
-            Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([update]));
-            
-            Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
-            
-            VerifyContainsCalls(0);
-            VerifyGetCalls(0);
-            VerifyUpdateCall(0);
-            VerifyDispatcherCalls(0);
-        }
-        
-        [Test]
-        public void Negative_ProcessCurrencyUpdate_ArrayFails_NoUpdates_Throws()
-        {
-            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(It.IsAny<int[]>()))
-                .Throws(new NegativeNumberException(-1));
-            
-            // First action is okay, 2nd action should stop processing for all actions 
-            CurrencyUpdate[] trades = { _addFoodUpdate, _removeWoodUpdate, _addFoodUpdate };
-            
-            Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(trades));
-            
-            Assert.That(0, Is.EqualTo(_goldCurrency.Amount));
-            Assert.That(0, Is.EqualTo(_gemsCurrency.Amount));
-            VerifyDispatcherCalls(0);
+            _currencyServiceMock.Verify(library => library.AddAmount(goldCurrency, _addGoldUpdate.Amount), Times.Once);
+            _dispatcherMock.Verify(library => library.Dispatch(currencyUpdate),  Times.Once);
+            _currencyUpdateSummarizerMock.Verify(library => library.GetSummary(currencyUpdate), Times.Once);
         }
     }
 }

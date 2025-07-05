@@ -9,7 +9,7 @@ namespace IdelPog.SimulationEngine.Currency
         /// <summary>
         /// Uses a passed <see cref="CurrencyUpdate"/> array, or a singular <see cref="CurrencyUpdate"/> to modify a <see cref="Currency"/> model
         /// </summary>
-        /// <param name="trades">An array of <see cref="CurrencyUpdate"/>s will dictate what <see cref="Currency"/> to update with how much amount and what action</param>
+        /// <param name="updates">An array of <see cref="CurrencyUpdate"/>s will dictate what <see cref="Currency"/> to update with how much amount and what action</param>
         /// <remarks>
         /// <list type="bullet">
         /// <item>The total <see cref="CurrencyUpdate"/> array will need to leave <see cref="Currency"/> in a correct state. <see cref="Currency.Amount"/> cannot be less than or equal to 0</item>
@@ -18,6 +18,6 @@ namespace IdelPog.SimulationEngine.Currency
         /// <item>A <see cref="ServiceResponse"/>.<see cref="ServiceResponse.Failure"/> will be returned if any <see cref="CurrencyUpdate"/>.<see cref="CurrencyUpdate.Amount"/> in the passed array is equal to or less than 0</item>
         /// </list>
         /// </remarks>
-        public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyUpdate> trades);
+        public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyUpdate> updates);
     }
 }

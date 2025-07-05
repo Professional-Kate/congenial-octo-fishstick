@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Currency.Commands;
 
-namespace IdelPog.SimulationEngine.Currency.Dispatchers
+namespace IdelPog.SimulationEngine.Currency
 {
     public interface ICurrencyUpdateSummarizer
     {
