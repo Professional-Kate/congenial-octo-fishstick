@@ -15,6 +15,7 @@ namespace Integration.Tests.CurrencyFlows.Update
             CurrencyUpdateErrorDTO = currencyUpdateErrorDTO;
             
             Console.WriteLine(currencyUpdateErrorDTO.ErrorDetails.ErrorMessage);
+            Console.WriteLine(currencyUpdateErrorDTO.ErrorDetails.Exception);
         }
     }
 }

@@ -159,6 +159,25 @@ namespace Integration.Tests.CurrencyFlows.Update
             AssertUpdateResponse(currencyUpdate[0], new CurrencyUpdate { Action = ActionType.REMOVE, Amount = _removeGoldCommand.Amount * amount, CurrencyType = CurrencyType.GOLD });
         }
 
+        [TestCase(1)]
+        [TestCase(10)]
+        [TestCase(100)]
+        public void Positive_SendMixedUpdates_ProducesSingleCorrectUpdate(int amount)
+        {
+            List<CurrencyUpdate> currencyUpdates = [];
+            currencyUpdates.AddRange(Enumerable.Repeat(_removeGoldCommand, amount));
+            currencyUpdates.AddRange(Enumerable.Repeat(_addGoldCommand,  amount));
+            
+            SendGoldCreationBuffer(_removeGoldCommand.Amount * amount);
+            SendCurrencyTradeBuffer(currencyUpdates.ToArray());
+            AssertErrorListener(0, false);
+            AssertUpdateListener(true);
+            
+            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateListener.Buffer!.ToArray();
+            int finalAmount = _addGoldCommand.Amount * amount - _removeGoldCommand.Amount * amount ;
+            AssertUpdateResponse(currencyUpdate[0], new CurrencyUpdate { Action = ActionType.ADD, Amount = finalAmount, CurrencyType = CurrencyType.GOLD });
+        }
+        
         [Test]
         public void Negative_OneCommand_NotFoundCurrency_NoUpdate_SendsErrorDTO()
         {
@@ -173,6 +192,60 @@ namespace Integration.Tests.CurrencyFlows.Update
             {
                 Assert.That(errorDTO.ErrorDetails.ErrorMessage, Is.EqualTo(string.Format(ExceptionConstants.NOT_FOUND_MESSAGE, _addGoldCommand.CurrencyType)));
                 Assert.That(errorDTO.ErrorDetails.Exception, Is.TypeOf<NotFoundException>());
+            });
+        }
+
+        [Test]
+        public void Negative_OneCommand_NegativeNumber_NoUpdate_SendsErrorDTO()
+        {
+            SendGoldCreationBuffer();
+            
+            CurrencyUpdate negativeNumberUpdate = new()
+            {
+                Action = ActionType.ADD,
+                Amount = -1,
+                CurrencyType = CurrencyType.GOLD
+            };
+            
+            Assert.DoesNotThrow(() => SendCurrencyTradeBuffer([negativeNumberUpdate]));
+            AssertErrorListener(1, true);
+            AssertUpdateListener(false);
+            
+            CurrencyUpdateErrorDTO errorDTO = _currencyUpdateErrorListener.CurrencyUpdateErrorDTO;
+            AssertUpdateResponse(errorDTO.CurrencyUpdates[0], negativeNumberUpdate);
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(errorDTO.ErrorDetails.ErrorMessage, Is.EqualTo(string.Format(ExceptionConstants.NEGATIVE_NUMBER_MESSAGE, negativeNumberUpdate.Amount)));
+                Assert.That(errorDTO.ErrorDetails.Exception, Is.TypeOf<NegativeNumberException>());
+            });
+        }
+        
+        [Test]
+        public void Negative_OneCommand_NotEnoughCurrency_NoUpdate_SendsErrorDTO()
+        {
+            const int goldAmount = 10;
+            SendGoldCreationBuffer(goldAmount);
+            
+            CurrencyUpdate notEnoughGoldUpdate = new()
+            {
+                Action = ActionType.REMOVE,
+                Amount = 20,
+                CurrencyType = CurrencyType.GOLD
+            };
+            
+            Assert.DoesNotThrow(() => SendCurrencyTradeBuffer([notEnoughGoldUpdate]));
+            AssertErrorListener(1, true);
+            AssertUpdateListener(false);
+            
+            CurrencyUpdateErrorDTO errorDTO = _currencyUpdateErrorListener.CurrencyUpdateErrorDTO;
+            AssertUpdateResponse(errorDTO.CurrencyUpdates[0], notEnoughGoldUpdate);
+            
+            Assert.Multiple(() =>
+            {
+                // TODO: need to change this message. No idea what negative number exception means in this context
+                Assert.That(errorDTO.ErrorDetails.ErrorMessage, Is.EqualTo(string.Format(ExceptionConstants.NEGATIVE_NUMBER_MESSAGE, goldAmount - notEnoughGoldUpdate.Amount)));
+                Assert.That(errorDTO.ErrorDetails.Exception, Is.TypeOf<NegativeNumberException>());
             });
         }
 

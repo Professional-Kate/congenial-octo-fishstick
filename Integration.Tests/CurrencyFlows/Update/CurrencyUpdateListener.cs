@@ -13,6 +13,13 @@ namespace Integration.Tests.CurrencyFlows.Update
         {
             WasCalled = true;
             Buffer = buffer;
+            
+            foreach (CurrencyUpdateDTO currencyUpdateDTO in buffer)
+            {
+                Console.WriteLine($"Amount : {currencyUpdateDTO.Amount}");
+                Console.WriteLine($"CurrencyType : {currencyUpdateDTO.Currency}");
+                Console.WriteLine($"Action : {currencyUpdateDTO.Action}");
+            }
         }
     }
 }
