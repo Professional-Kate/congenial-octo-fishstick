@@ -71,10 +71,10 @@ namespace Integration.Tests.CurrencyFlows.Update
             _bufferMessenger.Subscribe(_currencyUpdateErrorListener);
         }
 
-        private void SendGoldCreationBuffer()
+        private void SendGoldCreationBuffer(int startingAmount = 0)
         {
             IBuffer<CurrencyCreation> buffer = _bufferManager.RequestBuffer<CurrencyCreation>(new BufferRequest(1));
-            buffer.Assign([new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = 0}]);
+            buffer.Assign([new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = startingAmount}]);
             buffer.MarkReady();
         }
 
@@ -127,40 +127,36 @@ namespace Integration.Tests.CurrencyFlows.Update
             });
         } 
 
-        [Test]
-        public void Positive_SendAddGoldUpdate_ProducesSingleCurrencyUpdate()
+        [TestCase(1)]
+        [TestCase(10)]
+        [TestCase(100)]
+        public void Positive_SendAddGoldUpdate_ProducesSingleCurrencyUpdate(int amount)
         {
+            CurrencyUpdate[] currencyUpdates = Enumerable.Repeat(_addGoldCommand, amount).ToArray();
+            
             SendGoldCreationBuffer();
-            SendCurrencyTradeBuffer([_addGoldCommand]);
+            SendCurrencyTradeBuffer(currencyUpdates);
             AssertErrorListener(0, false);
             AssertUpdateListener(true);
             
             CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateListener.Buffer!.ToArray();
-            foreach (CurrencyUpdateDTO currencyUpdateDTO in currencyUpdate)
-            {
-                AssertUpdateResponse(currencyUpdateDTO, _addGoldCommand);
-            }
+            AssertUpdateResponse(currencyUpdate[0], new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = _addGoldCommand.Amount * amount });
         }
 
-        [Test]
-        public void Positive_SendRemoveGoldUpdate_ProducesSingleCurrencyUpdate()
+        [TestCase(1)]
+        [TestCase(10)]
+        [TestCase(100)]
+        public void Positive_SendRemoveGoldUpdate_ProducesSingleCurrencyUpdate(int amount)
         {
-            SendGoldCreationBuffer();
-            SendCurrencyTradeBuffer([_removeGoldCommand, _addGoldCommand]);
+            CurrencyUpdate[] currencyUpdates = Enumerable.Repeat(_removeGoldCommand, amount).ToArray();
+            
+            SendGoldCreationBuffer(_removeGoldCommand.Amount * amount);
+            SendCurrencyTradeBuffer(currencyUpdates);
             AssertErrorListener(0, false);
             AssertUpdateListener(true);
             
-            CurrencyUpdateDTO[] currencyUpdates = _currencyUpdateListener.Buffer!.ToArray();
-            AssertUpdateResponse(currencyUpdates[0], new CurrencyUpdate { Action = ActionType.ADD, Amount = 9, CurrencyType = CurrencyType.GOLD });
-        }
-
-        [Test]
-        public void Positive_SendMultipleAddGoldUpdates_ProducesMultipleCurrencyUpdates()
-        {
-            SendGoldCreationBuffer();
-            SendCurrencyTradeBuffer([_addGoldCommand, _addGoldCommand, _addGoldCommand, _addGoldCommand, _addGoldCommand]);
-            AssertErrorListener(0, false);
-            AssertUpdateListener(true);
+            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateListener.Buffer!.ToArray();
+            AssertUpdateResponse(currencyUpdate[0], new CurrencyUpdate { Action = ActionType.REMOVE, Amount = _removeGoldCommand.Amount * amount, CurrencyType = CurrencyType.GOLD });
         }
 
         [Test]
