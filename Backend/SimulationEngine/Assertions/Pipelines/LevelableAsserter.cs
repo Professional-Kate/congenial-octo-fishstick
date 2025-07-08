@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Models;
+﻿using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.SimulationEngine.Assertions.Pipelines
@@ -11,7 +12,7 @@ namespace IdelPog.SimulationEngine.Assertions.Pipelines
         {
             assertNotNull.AssertObjectNotNull(levelable);
             assertUnderMaxLevel.AssertLevelIsUnderMax(levelable);
-            assertPositive.AssertNumberIsPositive(levelable.ExperiencePerAction);
+            assertPositive.AssertNumberIsPositive<ILevelable>(levelable.ExperiencePerAction);
         }
     }
 }

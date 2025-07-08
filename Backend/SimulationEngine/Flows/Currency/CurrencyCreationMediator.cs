@@ -33,7 +33,7 @@ namespace IdelPog.SimulationEngine.Currency
             Dictionary<CurrencyType, Currency> createdCurrencies =  new(currencies.Count);
             foreach (CurrencyCreation currencyCreation in currencies)
             {
-                _assertPositive.AssertNumberIsPositive(currencyCreation.StartingAmount);
+                _assertPositive.AssertNumberIsPositive<CurrencyCreation>(currencyCreation.StartingAmount);
                 _assertNonDuplicate.AssertContains(currencyCreation, () => _currencyRepository.Contains(currencyCreation.CurrencyType));
                 
                 // TODO: currency factory

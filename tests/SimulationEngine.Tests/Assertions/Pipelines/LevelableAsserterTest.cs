@@ -1,5 +1,7 @@
 ﻿using IdelPog.SimulationEngine.Assertions;
 using IdelPog.SimulationEngine.Assertions.Pipelines;
+using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;

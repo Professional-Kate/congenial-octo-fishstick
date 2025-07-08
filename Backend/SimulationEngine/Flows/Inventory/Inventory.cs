@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -88,7 +89,7 @@ namespace IdelPog.SimulationEngine.Inventory
         /// <param name="amount">The amount you want to verify</param>
         private void AssertAmountIsPositive(int amount)
         {
-            _assertPositive.AssertNumberIsPositive(amount);
+            _assertPositive.AssertNumberIsPositive<Item>(amount);
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 ﻿using IdelPog.SimulationEngine.Currency.Commands;
+using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
-using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Currency.Assertions
 {
@@ -15,7 +15,7 @@ namespace IdelPog.SimulationEngine.Currency.Assertions
                 {
                     if (currencyTrade.Amount <= 0)
                     {
-                        throw new NegativeNumberException(currencyTrade.Amount);
+                        throw new NegativeNumberException(typeof(CurrencyUpdate));
                     }
                 }
             });
