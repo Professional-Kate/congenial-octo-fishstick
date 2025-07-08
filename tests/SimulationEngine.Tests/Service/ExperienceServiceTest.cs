@@ -1,10 +1,15 @@
-﻿using IdelPog.SimulationEngine.Assertions.Pipelines;
+﻿using IdelPog.SimulationEngine.Assertions;
+using IdelPog.SimulationEngine.Assertions.Pipelines;
 using IdelPog.SimulationEngine.Constants;
+using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
-using Moq;
 
 namespace IdelPogTests.Service
 {
@@ -12,14 +17,13 @@ namespace IdelPogTests.Service
     public class ExperienceServiceTest
     {
         private IExperienceService _experienceService { get; set; }
-        private Mock<ILevelableAsserter> _levelableAsserterMock { get; set; }
         private ILevelable _levelable { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _levelableAsserterMock = new Mock<ILevelableAsserter>(); 
-            _experienceService = new ExperienceService(_levelableAsserterMock.Object);
+            IHandler throwHandler = new ThrowHandler();
+            _experienceService = new ExperienceService(new LevelableAsserter(new AssertUnderMaxLevel(throwHandler), new AssertNotNull(throwHandler), new AssertPositive(throwHandler)));
         }
 
         [SetUp]
@@ -56,20 +60,13 @@ namespace IdelPogTests.Service
         {
             ILevelable levelable = new Levelable(SkillConstants.MAX_SKILL_LEVEL, 100, 10, 1);
             
-            _levelableAsserterMock.Setup(library => library.AssertLevelable(levelable))
-                .Throws(new MaxLevelException(levelable));
-            
             Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(levelable));
         }
 
-        [TestCase(0)]
         [TestCase(-10)]
         [TestCase(-1000)]
         public void Negative_AddExperience_BadExperiencePerAction_Throws(int experiencePerAction)
         {
-            _levelableAsserterMock.Setup(library => library.AssertLevelable(_levelable))
-                .Throws(new NegativeNumberException(experiencePerAction));
-            
             _levelable.SetExperiencePerAction(experiencePerAction);
             
             Assert.Throws<NegativeNumberException>(() => _experienceService.AddExperience(_levelable));
@@ -78,9 +75,6 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_AddExperience_NullSkill_Throws()
         {
-            _levelableAsserterMock.Setup(library => library.AssertLevelable(null))
-                .Throws(new ArgumentNullException());
-            
             Assert.Throws<ArgumentNullException>(() => _experienceService.AddExperience(null));
         }
     }

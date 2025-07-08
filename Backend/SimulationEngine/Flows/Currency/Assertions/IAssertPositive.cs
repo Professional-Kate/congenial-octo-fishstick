@@ -1,8 +1,7 @@
-﻿using IdelPog.Validation.Exceptions;
+﻿using IdelPog.SimulationEngine.Currency.Exceptions;
 
-namespace IdelPog.Validation.Assertions.Interfaces
+namespace IdelPog.SimulationEngine.Currency.Assertions
 {
-    /// <seealso cref="AssertNumberIsPositive"/>
     public interface IAssertPositive
     {
         /// <summary>
@@ -10,6 +9,6 @@ namespace IdelPog.Validation.Assertions.Interfaces
         /// </summary>
         /// <param name="numbers">The number you want to assert</param>
         /// <exception cref="NegativeNumberException">WIll be thrown if the number is less than zero</exception>
-        public void AssertNumberIsPositive(params int[] numbers);
+        public void AssertNumberIsPositive<T>(params int[] numbers);
     }
 }

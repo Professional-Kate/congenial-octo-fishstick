@@ -12,7 +12,7 @@ namespace IdelPog.SimulationEngine.Currency.Assertions
             {
                 if (collection.Count == 0)
                 {
-                    throw new CollectionEmptyException();
+                    throw new CollectionEmptyException(typeof(T));
                 }
             });
         } 

@@ -67,7 +67,7 @@ namespace IdelPogTests.Service
         public void Negative_CreateFrom_EmptyTrades_Throws()
         {
             _handlerMock.Setup(library => library.Handle(It.IsAny<CollectionEmptyException>()))
-                .Throws(new CollectionEmptyException());
+                .Throws(new CollectionEmptyException(typeof(CurrencyUpdate)));
             
             Assert.Throws<CollectionEmptyException>(() => _currencyUpdateDTOFactory.CreateFrom([]));
         }

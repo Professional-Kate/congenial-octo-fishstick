@@ -1,6 +1,5 @@
 ﻿using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.Dispatchers;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions.Interfaces;
@@ -39,7 +38,7 @@ namespace IdelPog.SimulationEngine.Currency
             
             foreach (CurrencyUpdate currencyUpdate in updates)
             {
-                _assertPositive.AssertNumberIsPositive(currencyUpdate.Amount);
+                _assertPositive.AssertNumberIsPositive<CurrencyUpdate>(currencyUpdate.Amount);
 
                 if (amounts.ContainsKey(currencyUpdate.CurrencyType) == false)
                 {
