@@ -69,7 +69,9 @@ namespace IdelPogTests.Service
         {
             _levelable.SetExperiencePerAction(experiencePerAction);
             
-            Assert.Throws<NegativeNumberException>(() => _experienceService.AddExperience(_levelable));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _experienceService.AddExperience(_levelable));
+            
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(ILevelable)));
         }
 
         [Test]

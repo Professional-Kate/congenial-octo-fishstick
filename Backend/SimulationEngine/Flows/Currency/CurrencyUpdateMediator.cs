@@ -55,7 +55,7 @@ namespace IdelPog.SimulationEngine.Currency
         private void AssertUpdates(IReadOnlyList<CurrencyUpdate> updates)
         {
             _assertCollectionNotEmpty.Handle(updates);
-            _assertPositive.AssertNumberIsPositive<CurrencyCreation>(updates.Select(entry => entry.Amount).ToArray());
+            _assertPositive.AssertNumberIsPositive<CurrencyUpdate>(updates.Select(entry => entry.Amount).ToArray());
         }
 
         private void AllCurrenciesExist(IReadOnlyList<CurrencyUpdate> trades)

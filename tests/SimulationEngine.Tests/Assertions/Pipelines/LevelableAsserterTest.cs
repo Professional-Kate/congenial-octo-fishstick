@@ -2,6 +2,7 @@
 using IdelPog.SimulationEngine.Assertions.Pipelines;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Exceptions;
+using IdelPog.SimulationEngine.Inventory;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -55,7 +56,8 @@ namespace IdelPogTests.Assertions.Pipelines
         {
             ILevelable levelable = new Levelable(0, 0, 0, -1);
             
-            Assert.Throws<NegativeNumberException>(() => _levelableAsserter.AssertLevelable(levelable));
+            NegativeNumberException exception =  Assert.Throws<NegativeNumberException>(() => _levelableAsserter.AssertLevelable(levelable));
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(ILevelable)));
         }
     }
 }
