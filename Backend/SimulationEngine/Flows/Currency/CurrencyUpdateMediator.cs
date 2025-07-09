@@ -97,6 +97,7 @@ namespace IdelPog.SimulationEngine.Currency
                         _currencyService.AddAmount(currency, currencyUpdate.Amount);
                         break;
                     case ActionType.REMOVE:
+                        Console.WriteLine($"CurrencyAmount {currency.Amount}. RemoveAmount {currencyUpdate.Amount}");
                         _currencyService.RemoveAmount(currency, currencyUpdate.Amount);
                         break;
                 }
