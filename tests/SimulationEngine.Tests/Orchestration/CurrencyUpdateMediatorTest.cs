@@ -10,7 +10,6 @@ using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
-using Microsoft.VisualBasic;
 using Moq;
 
 namespace IdelPogTests.Orchestration
@@ -177,7 +176,9 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_NegativeAmount_Throws()
         {
-            Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([new CurrencyUpdate() { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = -10 }]));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = -10 }]));
+            
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyUpdate)));
         }
 
         [Test]
@@ -198,7 +199,8 @@ namespace IdelPogTests.Orchestration
             
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(new [] { _removeGoldUpdate })).Returns([_removeGoldUpdate]);
             
-            Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_removeGoldUpdate]));
+            NegativeNumberException exception =  Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_removeGoldUpdate]));
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyUpdate)));
             
             _currencyServiceMock.VerifyNoOtherCalls();
             _dispatcherMock.VerifyNoOtherCalls();

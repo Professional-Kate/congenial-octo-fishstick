@@ -30,13 +30,17 @@ namespace IdelPog.Validation.Tests.Assertions
         [Test]
         public void Negative_AssertNumberIsPositive_NegativeNumber_Throws()
         {
-            Assert.Throws<NegativeNumberException>(() => _assertPositive.AssertNumberIsPositive<int>(-100));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _assertPositive.AssertNumberIsPositive<int>(-100));
+            
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(int)));
         }
         
         [Test]
         public void Negative_AssertNumberIsPositive_OneNegativeNumber_Throws()
         {
-            Assert.Throws<NegativeNumberException>(() => _assertPositive.AssertNumberIsPositive<int>(10, 20, 30, -1));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _assertPositive.AssertNumberIsPositive<int>(10, 20, 30, -1));
+            
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(int)));
         }
     }
 }
