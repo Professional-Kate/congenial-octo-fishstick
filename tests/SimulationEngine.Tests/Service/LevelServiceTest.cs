@@ -81,8 +81,6 @@ namespace IdelPogTests.Service
                 levelable.SetExperience(levelable.NextLevelExperience + levelable.Experience); // this is here to sum the total experience
                 
                 _service.LevelUpSkill(levelable);
-                
-                Console.WriteLine($"LEVEL {levelable.Level} | Experience: {levelable.Experience} | Next Level: {levelable.NextLevelExperience}");
             }
             
             Assert.That(levelable.Level, Is.EqualTo(SkillConstants.MAX_SKILL_LEVEL));
