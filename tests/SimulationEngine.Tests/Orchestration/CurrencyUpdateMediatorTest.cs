@@ -193,16 +193,26 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_Remove_NotEnoughCurrency_Throws()
         {
-            _goldCurrency.SetAmount(_removeGoldUpdate.Amount - 1);
+            _goldCurrency.SetAmount(1);
             _repositoryMock.Setup(library => library.Contains(_removeGoldUpdate.CurrencyType)).Returns(true);
             _repositoryMock.Setup(library => library.Get(_removeGoldUpdate.CurrencyType)).Returns(_goldCurrency);
             
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(new [] { _removeGoldUpdate })).Returns([_removeGoldUpdate]);
+
+            _currencyServiceMock.Setup(library => library.RemoveAmount(It.Is<Currency>(currency => currency.CurrencyType == _goldCurrency.CurrencyType), _removeGoldUpdate.Amount))
+                .Throws(new NotEnoughCurrencyException(_goldCurrency.CurrencyType, _goldCurrency.Amount, _removeGoldUpdate.Amount));
             
-            NegativeNumberException exception =  Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_removeGoldUpdate]));
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyUpdate)));
+            NotEnoughCurrencyException exception =  Assert.Throws<NotEnoughCurrencyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_removeGoldUpdate]));
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.CurrencyTypeContext, Is.EqualTo(_removeGoldUpdate.CurrencyType));
+                Assert.That(exception.CurrencyAmount, Is.EqualTo(_goldCurrency.Amount));
+                Assert.That(exception.RemoveAmount, Is.EqualTo(_removeGoldUpdate.Amount));
+            });
             
-            _currencyServiceMock.VerifyNoOtherCalls();
+            _currencyServiceMock.Verify(library => library.RemoveAmount(_goldCurrency, _removeGoldUpdate.Amount), Times.Once);
+            
             _dispatcherMock.VerifyNoOtherCalls();
             _currencyServiceMock.VerifyNoOtherCalls();
         }

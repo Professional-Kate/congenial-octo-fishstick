@@ -20,10 +20,11 @@ namespace IdelPog.SimulationEngine.Currency
             IAssertNotNull assertNotNull = new AssertNotNull(new ThrowHandler());
             IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(new ThrowHandler());
             IAssertFound assertFound = new AssertFound(new ThrowHandler());
+            IAssertEnoughCurrency assertEnoughCurrency = new AssertEnoughCurrency(new ThrowHandler());
             
             IStateRepository<CurrencyType, Currency> currencyRepository = new StateRepository<CurrencyType, Currency>();
             
-            ICurrencyService currencyService = new CurrencyService(assertPositive);
+            ICurrencyService currencyService = new CurrencyService(assertPositive, assertEnoughCurrency);
             ICurrencyUpdateDTOFactory currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(assertNotNull, assertCollectionNotEmpty);
             ICurrencyUpdateDispatcher currencyUpdateDispatcher = new CurrencyUpdateDispatcher(bufferManager, currencyUpdateDTOFactory);
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
