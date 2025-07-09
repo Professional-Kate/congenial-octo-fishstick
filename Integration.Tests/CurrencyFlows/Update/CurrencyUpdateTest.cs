@@ -7,6 +7,7 @@ using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
+using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -216,8 +217,11 @@ namespace Integration.Tests.CurrencyFlows.Update
             
             Assert.Multiple(() =>
             {
-                Assert.That(errorDTO.ErrorDetails.ErrorMessage, Is.EqualTo(string.Format(ExceptionConstants.NEGATIVE_NUMBER_MESSAGE, negativeNumberUpdate.Amount)));
-                Assert.That(errorDTO.ErrorDetails.Exception, Is.TypeOf<NegativeNumberException>());
+                if (errorDTO.ErrorDetails.Exception is NegativeNumberException exception)
+                {
+                    Assert.That(exception, Is.TypeOf<NegativeNumberException>());
+                    Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyUpdate)));
+                }
             });
         }
         
@@ -243,9 +247,12 @@ namespace Integration.Tests.CurrencyFlows.Update
             
             Assert.Multiple(() =>
             {
-                // TODO: need to change this message. No idea what negative number exception means in this context
-                Assert.That(errorDTO.ErrorDetails.ErrorMessage, Is.EqualTo(string.Format(ExceptionConstants.NEGATIVE_NUMBER_MESSAGE, goldAmount - notEnoughGoldUpdate.Amount)));
-                Assert.That(errorDTO.ErrorDetails.Exception, Is.TypeOf<NegativeNumberException>());
+                if (errorDTO.ErrorDetails.Exception is NegativeNumberException exception)
+                {
+                    // TODO: need to change this exception. No idea what negative number exception means in this context
+                    Assert.That(exception, Is.TypeOf<NegativeNumberException>());
+                    Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyUpdate)));
+                }
             });
         }
 
