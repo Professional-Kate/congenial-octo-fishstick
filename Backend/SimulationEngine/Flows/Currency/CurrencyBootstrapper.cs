@@ -23,7 +23,7 @@ namespace IdelPog.SimulationEngine.Currency
             
             IStateRepository<CurrencyType, Currency> currencyRepository = new StateRepository<CurrencyType, Currency>();
             
-            ICurrencyService currencyService = new CurrencyService();
+            ICurrencyService currencyService = new CurrencyService(assertPositive);
             ICurrencyUpdateDTOFactory currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(assertNotNull, assertCollectionNotEmpty);
             ICurrencyUpdateDispatcher currencyUpdateDispatcher = new CurrencyUpdateDispatcher(bufferManager, currencyUpdateDTOFactory);
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();

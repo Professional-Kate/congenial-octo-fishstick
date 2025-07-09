@@ -1,4 +1,8 @@
 ﻿using IdelPog.SimulationEngine.Currency;
+using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Commands;
+using IdelPog.SimulationEngine.Currency.Exceptions;
+using IdelPog.Validation.Assertions.Handlers;
 using IdelPogTests.Utils;
 
 namespace IdelPogTests.Service
@@ -14,7 +18,7 @@ namespace IdelPogTests.Service
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _currencyService = new CurrencyService();
+            _currencyService = new CurrencyService(new AssertPositive(new ThrowHandler()));
         }
         
         [SetUp]
@@ -41,13 +45,11 @@ namespace IdelPogTests.Service
             }
         }
 
+        [TestCase(-1)]
         [TestCase(-10)]
-        [TestCase(0)]
-        public void Negative_AddAmount_BadAmount_ReturnsBadServiceResponse(int amount)
+        public void Negative_AddAmount_NegativeAmount_Throws(int amount)
         {
-            _currencyService.AddAmount(_foodCurrency, amount);
-            
-            Assert.That(Amount, Is.Not.EqualTo(_foodCurrency.Amount));
+            Assert.Throws<NegativeNumberException>(() => _currencyService.AddAmount(_foodCurrency, amount));
         }
 
         [Test]
@@ -70,6 +72,13 @@ namespace IdelPogTests.Service
                 Assert.That(i, Is.EqualTo(_foodCurrency.Amount));
                 _currencyService.RemoveAmount(_foodCurrency, 1);
             }
+        }
+        
+        [TestCase(-1)]
+        [TestCase(-10)]
+        public void Negative_RemoveAmount_NegativeAmount_Throws(int amount)
+        {
+            Assert.Throws<NegativeNumberException>(() => _currencyService.RemoveAmount(_foodCurrency, amount));
         }
     }
 }

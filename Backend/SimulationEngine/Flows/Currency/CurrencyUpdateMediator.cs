@@ -44,10 +44,7 @@ namespace IdelPog.SimulationEngine.Currency
             
             AllCurrenciesExist(summarizedUpdates);
             List<Currency> currencies = GetAllCurrencies(summarizedUpdates);
-            
-            Dictionary<Currency, CurrencyUpdate> mappedUpdates = MapUpdates(summarizedUpdates, currencies);
-            AssertCanRemoveCurrency(FilterRemoveUpdates(mappedUpdates));
-            UpdateCurrencies(mappedUpdates);
+            UpdateCurrencies(MapUpdates(summarizedUpdates, currencies));
             
             _currencyUpdateDispatcher.Dispatch(summarizedUpdates);
         }
@@ -88,31 +85,6 @@ namespace IdelPog.SimulationEngine.Currency
             }
 
             return map;
-        }
-
-        private static Dictionary<Currency, CurrencyUpdate> FilterRemoveUpdates(Dictionary<Currency, CurrencyUpdate> mappedUpdates)
-        {
-            Dictionary<Currency, CurrencyUpdate> removeUpdates = [];
-
-            foreach ((Currency currency, CurrencyUpdate currencyUpdate) in mappedUpdates)
-            {
-                if (currencyUpdate.Action != ActionType.REMOVE)
-                {
-                    continue;
-                }
-                
-                removeUpdates.Add(currency, currencyUpdate);
-            }
-
-            return removeUpdates;
-        }
-
-        private void AssertCanRemoveCurrency(Dictionary<Currency, CurrencyUpdate> mappedRemoveUpdates)
-        {
-            foreach ((Currency currency, CurrencyUpdate currencyUpdate) in mappedRemoveUpdates)
-            {
-                _assertPositive.AssertNumberIsPositive<CurrencyUpdate>(currency.Amount - currencyUpdate.Amount);
-            }
         }
 
         private void UpdateCurrencies(Dictionary<Currency, CurrencyUpdate> mappedUpdates)
