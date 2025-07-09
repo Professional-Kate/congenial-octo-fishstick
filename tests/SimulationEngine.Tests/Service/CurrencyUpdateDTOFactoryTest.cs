@@ -6,9 +6,9 @@ using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPogTests.Utils;
-using Moq;
 
 namespace IdelPogTests.Service
 {
@@ -17,13 +17,12 @@ namespace IdelPogTests.Service
     {
         private ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory { get; set; }
         private IReadOnlyList<CurrencyUpdate> _currencyTrades { get; set; }
-        private Mock<IHandler> _handlerMock { get; set; }
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _handlerMock = new Mock<IHandler>();
-            _currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(new AssertNotNull(_handlerMock.Object), new AssertCollectionNotEmpty(_handlerMock.Object));
+            IHandler throwHandler = new ThrowHandler();
+            _currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(new AssertNotNull(throwHandler), new AssertCollectionNotEmpty(throwHandler));
             
             _currencyTrades =
             [
@@ -66,19 +65,15 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_CreateFrom_EmptyTrades_Throws()
         {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<CollectionEmptyException>()))
-                .Throws(new CollectionEmptyException(typeof(CurrencyUpdate)));
+            CollectionEmptyException exception = Assert.Throws<CollectionEmptyException>(() => _currencyUpdateDTOFactory.CreateFrom([]));
             
-            Assert.Throws<CollectionEmptyException>(() => _currencyUpdateDTOFactory.CreateFrom([]));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
         
         [Test]
         public void Negative_CreateFrom_NullTrades_Throws()
         {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
-                .Throws<ArgumentNullException>();
-            
-            Assert.Throws<ArgumentNullException>(() => _currencyUpdateDTOFactory.CreateFrom(null!));
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => _currencyUpdateDTOFactory.CreateFrom(null!));
         }
     }
 }

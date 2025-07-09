@@ -113,10 +113,12 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_CreateCurrency_EmptyCollection_Throws()
         {
-            Assert.Throws<CollectionEmptyException>(() => _currencyCreationMediator.CreateCurrency([]));
+            CollectionEmptyException exception = Assert.Throws<CollectionEmptyException>(() => _currencyCreationMediator.CreateCurrency([]));
             
             _stateRepositoryMock.VerifyNoOtherCalls();
             _currencyCreationDispatcherMock.VerifyNoOtherCalls();
+            
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyCreation)));
         }
     }
 }

@@ -10,6 +10,7 @@ using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
+using Microsoft.VisualBasic;
 using Moq;
 
 namespace IdelPogTests.Orchestration
@@ -154,7 +155,9 @@ namespace IdelPogTests.Orchestration
             
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(currencyUpdates)).Returns([]);
             
-            Assert.Throws<CollectionEmptyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(currencyUpdates));
+            CollectionEmptyException exception = Assert.Throws<CollectionEmptyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(currencyUpdates));
+            
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
 
         [Test]
@@ -166,7 +169,9 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_EmptyCollection_Throws()
         {
-            Assert.Throws<CollectionEmptyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([]));
+            CollectionEmptyException exception = Assert.Throws<CollectionEmptyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([]));
+            
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
 
         [Test]
