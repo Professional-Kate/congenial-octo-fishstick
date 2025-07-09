@@ -247,12 +247,13 @@ namespace Integration.Tests.CurrencyFlows.Update
             
             Assert.Multiple(() =>
             {
-                if (errorDTO.ErrorDetails.Exception is NegativeNumberException exception)
+                if (errorDTO.ErrorDetails.Exception is NotEnoughCurrencyException exception)
                 {
-                    // TODO: need to change this exception. No idea what negative number exception means in this context
-                    Assert.That(exception, Is.TypeOf<NegativeNumberException>());
-                    Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyUpdate)));
-                }
+                    Assert.That(exception, Is.TypeOf<NotEnoughCurrencyException>());
+                    Assert.That(exception.CurrencyTypeContext, Is.EqualTo(notEnoughGoldUpdate.CurrencyType));
+                    Assert.That(exception.RemoveAmount, Is.EqualTo(notEnoughGoldUpdate.Amount));
+                    Assert.That(exception.CurrencyAmount, Is.EqualTo(goldAmount));
+                };
             });
         }
 
