@@ -23,7 +23,7 @@ namespace Integration.Tests.CurrencyFlows.Update
         private IBufferManager _bufferManager;
         private IBufferMessenger _bufferMessenger;
         private IBufferDispatcher _bufferDispatcher;
-        private CurrencyUpdateListener _currencyUpdateListener;
+        private CurrencyUpdateDTOListener _currencyUpdateDTOListener;
         private CurrencyUpdateErrorListener _currencyUpdateErrorListener;
 
         private CurrencyUpdate _addGoldCommand;
@@ -65,8 +65,8 @@ namespace Integration.Tests.CurrencyFlows.Update
             _bufferManager = new BufferManager(bufferFactory, _bufferDispatcher, assertNotNull);
             
             new CurrencyBootstrapper().Initialize(_bufferMessenger, _bufferManager);
-            _currencyUpdateListener = new CurrencyUpdateListener();
-            _bufferMessenger.Subscribe(_currencyUpdateListener);
+            _currencyUpdateDTOListener = new CurrencyUpdateDTOListener();
+            _bufferMessenger.Subscribe(_currencyUpdateDTOListener);
             
             _currencyUpdateErrorListener = new CurrencyUpdateErrorListener();
             _bufferMessenger.Subscribe(_currencyUpdateErrorListener);
@@ -90,15 +90,15 @@ namespace Integration.Tests.CurrencyFlows.Update
         {
             Assert.Multiple(() =>
             {
-                Assert.That(_currencyUpdateListener.WasCalled, Is.EqualTo(wasCalled));
+                Assert.That(_currencyUpdateDTOListener.WasCalled, Is.EqualTo(wasCalled));
                 
                 if (wasCalled == false)
                 {
                     return;
                 }
                 
-                Assert.That(_currencyUpdateListener.Buffer, Is.Not.Null);
-                Assert.That(_currencyUpdateListener.Buffer!, Has.Count.EqualTo(1));
+                Assert.That(_currencyUpdateDTOListener.Buffer, Is.Not.Null);
+                Assert.That(_currencyUpdateDTOListener.Buffer!, Has.Count.EqualTo(1));
             });
         }
         
@@ -140,7 +140,7 @@ namespace Integration.Tests.CurrencyFlows.Update
             AssertErrorListener(0, false);
             AssertUpdateListener(true);
             
-            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateListener.Buffer!.ToArray();
+            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateDTOListener.Buffer!.ToArray();
             AssertUpdateResponse(currencyUpdate[0], new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = _addGoldCommand.Amount * amount });
         }
 
@@ -156,7 +156,7 @@ namespace Integration.Tests.CurrencyFlows.Update
             AssertErrorListener(0, false);
             AssertUpdateListener(true);
             
-            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateListener.Buffer!.ToArray();
+            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateDTOListener.Buffer!.ToArray();
             AssertUpdateResponse(currencyUpdate[0], new CurrencyUpdate { Action = ActionType.REMOVE, Amount = _removeGoldCommand.Amount * amount, CurrencyType = CurrencyType.GOLD });
         }
 
@@ -174,7 +174,7 @@ namespace Integration.Tests.CurrencyFlows.Update
             AssertErrorListener(0, false);
             AssertUpdateListener(true);
             
-            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateListener.Buffer!.ToArray();
+            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateDTOListener.Buffer!.ToArray();
             int finalAmount = _addGoldCommand.Amount * amount - _removeGoldCommand.Amount * amount ;
             AssertUpdateResponse(currencyUpdate[0], new CurrencyUpdate { Action = ActionType.ADD, Amount = finalAmount, CurrencyType = CurrencyType.GOLD });
         }
@@ -275,7 +275,7 @@ namespace Integration.Tests.CurrencyFlows.Update
 
             Assert.Multiple(() =>
             {
-                Assert.That(_currencyUpdateListener.WasCalled, Is.False);
+                Assert.That(_currencyUpdateDTOListener.WasCalled, Is.False);
                 Assert.That(_currencyUpdateErrorListener.WasCalled, Is.True);
                 
                 Assert.That(_currencyUpdateErrorListener.CurrencyUpdateErrorDTO.ErrorDetails.ErrorMessage, Is.EqualTo(string.Format(ExceptionConstants.NOT_FOUND_MESSAGE, notFoundUpdate.CurrencyType)));

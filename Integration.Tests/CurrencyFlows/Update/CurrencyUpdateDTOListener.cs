@@ -3,7 +3,7 @@ using IdelPog.SimulationEngine.Currency.DTO;
 
 namespace Integration.Tests.CurrencyFlows.Update
 {
-    internal class CurrencyUpdateListener : IBufferListener<CurrencyUpdateDTO>
+    internal class CurrencyUpdateDTOListener : IBufferListener<CurrencyUpdateDTO>
     {
         public Type ListenerType { get; } = typeof(CurrencyUpdateDTO);
         public IReadOnlyList<CurrencyUpdateDTO>? Buffer { get; private set; }
