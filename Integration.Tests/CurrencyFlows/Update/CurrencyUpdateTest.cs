@@ -1,28 +1,17 @@
-﻿using IdelPog.Messaging.Assertions;
-using IdelPog.Messaging.Assertions.Pipelines;
-using IdelPog.Messaging.Buffer;
-using IdelPog.Messaging.Dispatch;
-using IdelPog.Messaging.Factory;
-using IdelPog.Messaging.Orchestration;
+﻿using IdelPog.Messaging.Buffer;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Structures;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Assertions.Interfaces;
 using IdelPog.Validation.Constants;
 using IdelPog.Validation.Exceptions;
 
 namespace Integration.Tests.CurrencyFlows.Update
 {
     [TestFixture]
-    public class CurrencyFlowTest
+    public class CurrencyFlowTest : ManagedBuffer
     {
-        private IBufferManager _bufferManager;
-        private IBufferMessenger _bufferMessenger;
-        private IBufferDispatcher _bufferDispatcher;
         private CurrencyUpdateDTOListener _currencyUpdateDTOListener;
         private CurrencyUpdateErrorListener _currencyUpdateErrorListener;
 
@@ -50,38 +39,26 @@ namespace Integration.Tests.CurrencyFlows.Update
         [SetUp]
         public void SetUp()
         {
-            IAssertNotNull assertNotNull = new AssertNotNull(new ThrowHandler());
-            IAssertListenerFound assertListenerFound = new AssertListenerFound(new ThrowHandler());
-            IAssertCollectionSize assertCollectionSize = new AssertCollectionSize(new ThrowHandler());
-            IAssertValidCollectionSize assertValidCollectionSize = new AssertValidCollectionSize(new ThrowHandler());
-            IAssertBufferState assertBufferState = new AssertBufferState(new ThrowHandler());
-
-            IBufferAsserter bufferAsserter = new BufferAsserter(assertNotNull, assertCollectionSize, assertValidCollectionSize);
-            IBufferFactory bufferFactory = new BufferFactory(bufferAsserter, assertBufferState, assertNotNull);
+            new CurrencyBootstrapper().Initialize(BufferMessenger, BufferManager);
             
-            BufferMessenger bufferMessenger = new(assertNotNull, assertListenerFound);
-            _bufferMessenger = bufferMessenger;
-            _bufferDispatcher = bufferMessenger;
-            _bufferManager = new BufferManager(bufferFactory, _bufferDispatcher, assertNotNull);
-            
-            new CurrencyBootstrapper().Initialize(_bufferMessenger, _bufferManager);
             _currencyUpdateDTOListener = new CurrencyUpdateDTOListener();
-            _bufferMessenger.Subscribe(_currencyUpdateDTOListener);
-            
             _currencyUpdateErrorListener = new CurrencyUpdateErrorListener();
-            _bufferMessenger.Subscribe(_currencyUpdateErrorListener);
+            
+            ManagedSubscribe(_currencyUpdateDTOListener);
+            ManagedSubscribe(_currencyUpdateErrorListener);
+            
         }
 
         private void SendGoldCreationBuffer(int startingAmount = 0)
         {
-            IBuffer<CurrencyCreation> buffer = _bufferManager.RequestBuffer<CurrencyCreation>(new BufferRequest(1));
+            IBuffer<CurrencyCreation> buffer = BufferManager.RequestBuffer<CurrencyCreation>(new BufferRequest(1));
             buffer.Assign([new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = startingAmount}]);
             buffer.MarkReady();
         }
 
         private void SendCurrencyTradeBuffer(CurrencyUpdate[] trades)
         {
-            IBuffer<CurrencyUpdate> buffer = _bufferManager.RequestBuffer<CurrencyUpdate>(new BufferRequest(trades.Length));
+            IBuffer<CurrencyUpdate> buffer = BufferManager.RequestBuffer<CurrencyUpdate>(new BufferRequest(trades.Length));
             buffer.Assign(trades);
             buffer.MarkReady();
         }

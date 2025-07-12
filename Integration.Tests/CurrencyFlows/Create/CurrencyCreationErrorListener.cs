@@ -13,9 +13,6 @@ namespace Integration.Tests.CurrencyFlows.Create
         {
             CurrencyUpdateErrorDTO = item;
             WasCalled = true;
-            
-            Console.WriteLine(CurrencyUpdateErrorDTO.ErrorDetails.ErrorMessage);
-            Console.WriteLine(CurrencyUpdateErrorDTO.ErrorDetails.Exception);
         }
     }
 }
