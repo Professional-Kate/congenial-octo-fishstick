@@ -8,7 +8,7 @@ using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Interfaces;
 
-namespace Integration.Tests.CurrencyFlows
+namespace Integration.Tests
 {
     public class ManagedBuffer
     {

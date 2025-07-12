@@ -6,7 +6,7 @@ namespace IdelPog.SimulationEngine.UIModel.Service.Screen
     {
         public void SwitchScreen(ScreenID screen)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

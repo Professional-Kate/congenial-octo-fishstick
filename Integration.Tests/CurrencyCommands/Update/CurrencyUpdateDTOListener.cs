@@ -1,7 +1,7 @@
 ﻿using IdelPog.Messaging.Listeners;
 using IdelPog.SimulationEngine.Currency.DTO;
 
-namespace Integration.Tests.CurrencyFlows.Update
+namespace Integration.Tests.CurrencyCommands.Update
 {
     internal class CurrencyUpdateDTOListener : IBufferListener<CurrencyUpdateDTO>
     {

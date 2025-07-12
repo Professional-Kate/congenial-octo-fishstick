@@ -1,7 +1,7 @@
 ﻿using IdelPog.Messaging.Listeners;
 using IdelPog.SimulationEngine.Currency.DTO;
 
-namespace Integration.Tests.CurrencyFlows.Create
+namespace Integration.Tests.CurrencyCommands.Create
 {
     internal class CurrencyCreationErrorListener : ISingleListener<CurrencyCreationErrorDTO>
     {

@@ -7,7 +7,7 @@ using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Constants;
 using IdelPog.Validation.Exceptions;
 
-namespace Integration.Tests.CurrencyFlows.Update
+namespace Integration.Tests.CurrencyCommands.Update
 {
     [TestFixture]
     public class CurrencyFlowTest : ManagedBuffer

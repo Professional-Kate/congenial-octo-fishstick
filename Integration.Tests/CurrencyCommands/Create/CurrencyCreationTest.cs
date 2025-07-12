@@ -5,7 +5,7 @@ using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.Validation.Exceptions;
 
-namespace Integration.Tests.CurrencyFlows.Create
+namespace Integration.Tests.CurrencyCommands.Create
 {
     [TestFixture]
     public class CurrencyCreationTest : ManagedBuffer
