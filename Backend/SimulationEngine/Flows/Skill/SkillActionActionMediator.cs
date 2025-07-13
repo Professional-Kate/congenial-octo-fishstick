@@ -5,7 +5,7 @@ using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Skill
 {
-    public class SkillMediator : ISkillMediator
+    public class SkillActionActionMediator : ISkillActionMediator
     {
         private readonly IExperienceService _experienceService;
         private readonly ILevelService _levelService;
@@ -14,7 +14,7 @@ namespace IdelPog.SimulationEngine.Skill
         private readonly ISkillUpdateDispatcher _skillUpdateDispatcher;
         private readonly ISkillUpdateFactory _skillUpdateFactory;
         
-        public SkillMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Skill> skillRepository,  ICurrentSkillProvider currentSkillProvider, ISkillUpdateDispatcher skillUpdateDispatcher, ISkillUpdateFactory skillUpdateFactory)
+        public SkillActionActionMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Skill> skillRepository,  ICurrentSkillProvider currentSkillProvider, ISkillUpdateDispatcher skillUpdateDispatcher, ISkillUpdateFactory skillUpdateFactory)
         {
             _experienceService = experienceService;
             _levelService = levelService;

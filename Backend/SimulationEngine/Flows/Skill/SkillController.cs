@@ -1,10 +1,17 @@
 ﻿namespace IdelPog.SimulationEngine.Skill
 {
-    public class SkillController(ICurrentSkillSetter currentSkillSetter) : ISkillController
+    public class SkillController : ISkillController
     {
+        private ISkillChangeMediator _skillChangeMediator;
+        
+        public SkillController(ISkillChangeMediator skillChangeMediator)
+        {
+            _skillChangeMediator = skillChangeMediator;
+        }
+        
         public void SwitchSkill(SkillChange skillChange)
         {
-            currentSkillSetter.SetCurrentSkill(skillChange.SkillID);
+            _skillChangeMediator.SwitchSkill(skillChange);
         }
     }
 }
