@@ -100,7 +100,7 @@ namespace Integration.Tests.CurrencyCommands.Update
             Assert.Multiple(() =>
             {
                 Assert.That(dto.Amount, Is.EqualTo(expected.Amount));
-                Assert.That(dto.Currency, Is.EqualTo(expected.CurrencyType));
+                Assert.That(dto.CurrencyType, Is.EqualTo(expected.CurrencyType));
                 Assert.That(dto.Action, Is.EqualTo(expected.Action));
             });
         } 

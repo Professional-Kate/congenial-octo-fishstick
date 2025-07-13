@@ -76,7 +76,7 @@ namespace Integration.Tests.CurrencyCommands.Create
             ErrorDTO errorDTO = _currencyCreationErrorListener.CurrencyUpdateErrorDTO.ErrorDetails;
             Assert.Multiple(() =>
             {
-                Assert.That(creationDTO.Currency, Is.EqualTo(creation.CurrencyType));
+                Assert.That(creationDTO.CurrencyType, Is.EqualTo(creation.CurrencyType));
                 Assert.That(creationDTO.Amount, Is.EqualTo(creation.StartingAmount));
                 Assert.That(errorDTO.Exception, Is.TypeOf(typeof(T)));
             });
@@ -106,7 +106,7 @@ namespace Integration.Tests.CurrencyCommands.Create
             Assert.Multiple(() =>
             {
                 Assert.That(creationDTO.Amount, Is.EqualTo(_createGold.StartingAmount));
-                Assert.That(creationDTO.Currency, Is.EqualTo(_createGold.CurrencyType));
+                Assert.That(creationDTO.CurrencyType, Is.EqualTo(_createGold.CurrencyType));
             });
         }
 
@@ -123,13 +123,13 @@ namespace Integration.Tests.CurrencyCommands.Create
             {
                 Assert.That(currencyCreationDTO.Amount, Is.EqualTo(10));
                 
-                switch (currencyCreationDTO.Currency)
+                switch (currencyCreationDTO.CurrencyType)
                 {
                     case CurrencyType.GOLD: 
-                        Assert.That(currencyCreationDTO.Currency, Is.EqualTo(_createGold.CurrencyType));
+                        Assert.That(currencyCreationDTO.CurrencyType, Is.EqualTo(_createGold.CurrencyType));
                         break;
                     case CurrencyType.GEMS: 
-                        Assert.That(currencyCreationDTO.Currency, Is.EqualTo(_createGems.CurrencyType));
+                        Assert.That(currencyCreationDTO.CurrencyType, Is.EqualTo(_createGems.CurrencyType));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

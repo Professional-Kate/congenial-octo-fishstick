@@ -25,7 +25,7 @@ namespace Integration.Tests.SkillCommands.Switch
         [SetUp]
         public void Setup()
         {
-            SkillBootstrapper.Initialize(BufferMessenger, BufferManager, _currentSkillSetter);
+            new SkillBootstrapper().Initialize(BufferMessenger, BufferManager, _currentSkillSetter);
             
             _listener = new SkillChangeDTOListener();
             ManagedSubscribe(_listener);
