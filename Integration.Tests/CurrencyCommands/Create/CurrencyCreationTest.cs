@@ -22,13 +22,13 @@ namespace Integration.Tests.CurrencyCommands.Create
             _createGold = new CurrencyCreation
             {
                 CurrencyType = CurrencyType.GOLD,
-                StartingAmount = 10
+                StartingAmount = 0
             };
 
             _createGems = new CurrencyCreation
             {
                 CurrencyType = CurrencyType.GEMS,
-                StartingAmount = 10
+                StartingAmount = 0
             };
         }
 
@@ -121,7 +121,7 @@ namespace Integration.Tests.CurrencyCommands.Create
             IReadOnlyList<CurrencyCreationDTO> creationDTOs = _currencyCreationDTOListener.Buffer!;
             foreach (CurrencyCreationDTO currencyCreationDTO in creationDTOs)
             {
-                Assert.That(currencyCreationDTO.Amount, Is.EqualTo(10));
+                Assert.That(currencyCreationDTO.Amount, Is.EqualTo(_createGems.StartingAmount));
                 
                 switch (currencyCreationDTO.CurrencyType)
                 {
