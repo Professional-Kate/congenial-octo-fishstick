@@ -1,6 +1,4 @@
-﻿using IdelPog.SimulationEngine.Structures.Types;
-
-namespace IdelPog.SimulationEngine.Skill
+﻿namespace IdelPog.SimulationEngine.Skill
 {
     /// <seealso cref="ProcessSkillAction"/>
     public interface ISkillActionMediator
@@ -8,10 +6,6 @@ namespace IdelPog.SimulationEngine.Skill
         /// <summary>
         /// Processes a <see cref="Skill"/> action. What each <see cref="Skill"/> does per action is defined by the <see cref="Skill"/> itself
         /// </summary>
-        /// <returns>A <see cref="ServiceResponse"/> which will tell you if the operation was successful</returns>
-        /// <remarks>
-        /// This method will only ever return a <see cref="ServiceResponse"/>, so, if anything goes wrong it'll be wrapped in this object.
-        /// </remarks>
-        public ServiceResponse ProcessSkillAction();
+        public void ProcessSkillAction();
     }
 }

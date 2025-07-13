@@ -1,5 +1,4 @@
 ﻿using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Currency
 {

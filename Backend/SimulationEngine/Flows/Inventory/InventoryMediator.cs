@@ -1,5 +1,4 @@
 ﻿using IdelPog.SimulationEngine.Structures;
-using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Inventory
 {

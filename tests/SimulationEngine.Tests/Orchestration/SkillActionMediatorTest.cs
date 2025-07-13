@@ -2,7 +2,6 @@
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.SimulationEngine.Skill;
-using IdelPog.SimulationEngine.Structures.Types;
 using IdelPogTests.Utils;
 using Moq;
 
@@ -72,10 +71,8 @@ namespace IdelPogTests.Orchestration
             
             _skillUpdateFactoryMock.Setup(library => library.CreateSkillUpdate(_miningSkill, false))
                 .Returns(_miningSkillUpdateDTO);
-            
-            ServiceResponse response = _skillActionMediator.ProcessSkillAction();
-            
-            Assert.That(response.IsSuccess, Is.True);
+
+            Assert.DoesNotThrow(() => _skillActionMediator.ProcessSkillAction());
 
             VerifyDependencyCalls(1, 1, 1);
             _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateDTO));
@@ -93,9 +90,7 @@ namespace IdelPogTests.Orchestration
             _levelServiceMock.Setup(library => library.CanSkillLevel(_miningSkill.Levelable))
                 .Returns(true);
 
-            ServiceResponse response = _skillActionMediator.ProcessSkillAction();
-            
-            Assert.That(response.IsSuccess, Is.True);
+            Assert.DoesNotThrow(() => _skillActionMediator.ProcessSkillAction());
             
             VerifyDependencyCalls(1, 1, 1, 1);
             _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateDTO));
@@ -108,10 +103,7 @@ namespace IdelPogTests.Orchestration
             _experienceServiceMock.Setup(library => library.AddExperience(_miningSkill.Levelable))
                 .Throws<Exception>();
             
-            ServiceResponse response = _skillActionMediator.ProcessSkillAction();
-            
-            Assert.That(response.IsSuccess, Is.False);
-            Assert.That(response.Message, Is.Not.Null);
+            Assert.Throws<Exception>(() => _skillActionMediator.ProcessSkillAction());
             
             VerifyDependencyCalls(1, 0, 1);
         }
