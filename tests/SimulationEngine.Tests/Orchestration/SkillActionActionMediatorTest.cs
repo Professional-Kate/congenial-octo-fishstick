@@ -9,9 +9,9 @@ using Moq;
 namespace IdelPogTests.Orchestration
 {
     [TestFixture]
-    public class SkillMediatorTest
+    public class SkillActionActionMediatorTest
     {
-        private ISkillMediator _skillMediator { get; set; }
+        private ISkillActionMediator _skillActionMediator { get; set; }
         private Mock<IExperienceService> _experienceServiceMock { get; set; }
         private Mock<IStateRepository<SkillID, Skill>> _repositoryMock { get; set; }
         private Mock<ILevelService> _levelServiceMock { get; set; }
@@ -33,7 +33,7 @@ namespace IdelPogTests.Orchestration
             _currentSkillProviderMock = new Mock<ICurrentSkillProvider>();
             _skillUpdateDispatcherMock = new Mock<ISkillUpdateDispatcher>();
             _skillUpdateFactoryMock = new Mock<ISkillUpdateFactory>();
-            _skillMediator = new SkillMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object,  _currentSkillProviderMock.Object,  _skillUpdateDispatcherMock.Object, _skillUpdateFactoryMock.Object);
+            _skillActionMediator = new SkillActionActionMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object,  _currentSkillProviderMock.Object,  _skillUpdateDispatcherMock.Object, _skillUpdateFactoryMock.Object);
 
             _repositoryMock.Setup(library => library.Get(_miningSkill.SkillID)).Returns(_miningSkill);
             _repositoryMock.Setup(library => library.Contains(_miningSkill.SkillID)).Returns(true);
@@ -73,7 +73,7 @@ namespace IdelPogTests.Orchestration
             _skillUpdateFactoryMock.Setup(library => library.CreateSkillUpdate(_miningSkill, false))
                 .Returns(_miningSkillUpdateDTO);
             
-            ServiceResponse response = _skillMediator.ProcessSkillAction();
+            ServiceResponse response = _skillActionMediator.ProcessSkillAction();
             
             Assert.That(response.IsSuccess, Is.True);
 
@@ -93,7 +93,7 @@ namespace IdelPogTests.Orchestration
             _levelServiceMock.Setup(library => library.CanSkillLevel(_miningSkill.Levelable))
                 .Returns(true);
 
-            ServiceResponse response = _skillMediator.ProcessSkillAction();
+            ServiceResponse response = _skillActionMediator.ProcessSkillAction();
             
             Assert.That(response.IsSuccess, Is.True);
             
@@ -108,7 +108,7 @@ namespace IdelPogTests.Orchestration
             _experienceServiceMock.Setup(library => library.AddExperience(_miningSkill.Levelable))
                 .Throws<Exception>();
             
-            ServiceResponse response = _skillMediator.ProcessSkillAction();
+            ServiceResponse response = _skillActionMediator.ProcessSkillAction();
             
             Assert.That(response.IsSuccess, Is.False);
             Assert.That(response.Message, Is.Not.Null);
