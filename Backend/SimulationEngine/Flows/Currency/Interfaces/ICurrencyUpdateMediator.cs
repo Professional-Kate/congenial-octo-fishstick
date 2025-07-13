@@ -14,7 +14,6 @@ namespace IdelPog.SimulationEngine.Currency
         /// <item>The total <see cref="CurrencyUpdate"/> array will need to leave <see cref="Currency"/> in a correct state. <see cref="Currency.Amount"/> cannot be less than or equal to 0</item>
         /// <item>If one <see cref="CurrencyUpdate"/> will leave any <see cref="Currency"/> in a non-correct state, the whole array won't be processed</item>
         /// <item>The specific order of the <see cref="CurrencyUpdate"/>[] doesn't matter</item>
-        /// <item>A <see cref="ServiceResponse"/>.<see cref="ServiceResponse.Failure"/> will be returned if any <see cref="CurrencyUpdate"/>.<see cref="CurrencyUpdate.Amount"/> in the passed array is equal to or less than 0</item>
         /// </list>
         /// </remarks>
         public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyUpdate> updates);

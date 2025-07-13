@@ -39,7 +39,6 @@ namespace IdelPog.SimulationEngine.Inventory
         /// </summary>
         /// <param name="itemID">The <see cref="Item"/> you want to add will have this <see cref="ItemID"/></param>
         /// <param name="amount">The amount you want to add</param>
-        /// <returns>A <see cref="ServiceResponse"/> object that tells you how the operation went</returns>
         /// <remarks>If the <see cref="Item"/> with the passed <see cref="ItemID"/> is not found, it will be created</remarks>
         private MutateType CreateOrIncreaseAmount(ItemID itemID, int amount)
         {
