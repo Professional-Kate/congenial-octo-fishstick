@@ -1,11 +1,8 @@
-﻿using IdelPog.SimulationEngine;
-using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Orchestration;
-using IdelPog.SimulationEngine.Service;
-using IdelPog.SimulationEngine.Structures.Enums;
+﻿using IdelPog.SimulationEngine.Inventory;
+using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
+using IdelPogTests.Utils;
 using Moq;
-using ItemFactory = IdelPogTests.Utils.ItemFactory;
 
 namespace IdelPogTests.Orchestration
 {
@@ -14,9 +11,12 @@ namespace IdelPogTests.Orchestration
     {
         private IInventoryMediator _inventoryMediator { get; set; }
         private Mock<IInventory> _repositoryMock { get; set; }
-        private Mock<IMapper<InventoryID>> _mapperMock { get; set; }
+        private Mock<IItemFactory> _itemFactoryMock { get; set; }
+        private Mock<IInventoryUpdateDTOFactory>  _factoryMock { get; set; }
+        private Mock<IInventoryUpdateDispatcher>  _dispatcherMock { get; set; }
 
-        private Item _oakWood { get; set; }
+        private InventoryUpdate _inventoryUpdate { get; set; }
+        private InventoryUpdateDTO _inventoryUpdateDTO { get; set; }
         private Information _information { get; set; }
         private const int AMOUNT = 9;
 
@@ -24,85 +24,108 @@ namespace IdelPogTests.Orchestration
         public void Setup()
         {
             _repositoryMock = new Mock<IInventory>();
-            _mapperMock = new Mock<IMapper<InventoryID>>();
-            _inventoryMediator = new InventoryMediator(_repositoryMock.Object, _mapperMock.Object);
+            _itemFactoryMock = new Mock<IItemFactory>();
+            _factoryMock = new Mock<IInventoryUpdateDTOFactory>();
+            _dispatcherMock = new Mock<IInventoryUpdateDispatcher>();
+            _inventoryMediator = new InventoryMediator(_repositoryMock.Object, _itemFactoryMock.Object, _factoryMock.Object, _dispatcherMock.Object);
             _information = new Information("", "");
+
+            _inventoryUpdate = new InventoryUpdate
+            {
+                Action = ActionType.ADD,
+                ItemID = ItemID.OAK_WOOD,
+                Amount = AMOUNT
+            };
+
+            _inventoryUpdateDTO = new InventoryUpdateDTO
+            {
+                ItemDTO = new ItemDTO
+                {
+                    Amount = AMOUNT,
+                    ItemID = ItemID.OAK_WOOD,
+                    SellPrice = 1
+                },
+                ActionType = ActionType.ADD,
+                MutateType = MutateType.CHANGED
+            };
             
-            _oakWood = ItemFactory.CreateOakWood();
-            _oakWood.AddAmount(1);
-
             SetupMocks();
-        }
-
-        [TearDown]
-        public void Teardown()
-        {
-            _oakWood = ItemFactory.CreateOakWood();
-            _oakWood.AddAmount(1);
         }
 
         private void SetupMocks()
         {
-            _repositoryMock.Setup(library => library.AddAmount(_oakWood.ID, AMOUNT));
-            _repositoryMock.Setup(library => library.Contains(_oakWood.ID)).Returns(true);
+            _repositoryMock.Setup(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT));
+            _repositoryMock.Setup(library => library.Contains(_inventoryUpdate.ItemID)).Returns(true);
+            
+            _factoryMock.Setup(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), _inventoryUpdate, MutateType.CHANGED))
+                .Returns(_inventoryUpdateDTO);
         }
         
         [Test]
         public void Positive_AddAmount_AddsAmount()
         {
-            ServiceResponse response = _inventoryMediator.AddAmount(_oakWood.ID, AMOUNT);
+            _inventoryMediator.UpdateInventory([_inventoryUpdate, _inventoryUpdate]);
             
-            Assert.That(response.IsSuccess, Is.True);
-            _repositoryMock.Verify(library => library.AddAmount(_oakWood.ID, AMOUNT));
-            _repositoryMock.Verify(library => library.Contains(_oakWood.ID));
+            _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT));
+            _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.ItemID));
+            _factoryMock.Verify(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), _inventoryUpdate, MutateType.CHANGED));
+            _dispatcherMock.Verify(library => library.DispatchUpdates(new [] { _inventoryUpdateDTO, _inventoryUpdateDTO}), Times.Once);
+            _itemFactoryMock.Verify(library => library.CreateItem(ItemID.OAK_WOOD, AMOUNT), Times.Never);
         }
 
         [Test]
         public void Positive_RemoveAmount_RemovesAmount()
         {
-            ServiceResponse response = _inventoryMediator.RemoveAmount(_oakWood.ID, AMOUNT);
+            InventoryUpdate removeUpdate = new()
+            {
+                Action = ActionType.REMOVE,
+                ItemID = ItemID.OAK_WOOD,
+                Amount = AMOUNT
+            };
             
-            Assert.That(response.IsSuccess, Is.True);
-            _repositoryMock.Verify(library => library.RemoveAmount(_oakWood.ID, AMOUNT));
+            _inventoryMediator.UpdateInventory([removeUpdate, removeUpdate]);
+            
+            _repositoryMock.Verify(library => library.RemoveAmount(_inventoryUpdate.ItemID, AMOUNT));
+            _factoryMock.Verify(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), removeUpdate, MutateType.CHANGED));
+            _dispatcherMock.Verify(library => library.DispatchUpdates(It.IsAny<InventoryUpdateDTO[]>()), Times.Once);
+            _itemFactoryMock.Verify(library => library.CreateItem(ItemID.OAK_WOOD, AMOUNT), Times.Never);
         }
         
         [Test]
         public void Negative_RemoveAmount_Catches_Exception()
         {
-            _repositoryMock.Setup(repo => repo.RemoveAmount(_oakWood.ID, AMOUNT))
+            _repositoryMock.Setup(repo => repo.RemoveAmount(_inventoryUpdate.ItemID, AMOUNT))
                 .Throws<Exception>();
             
-            ServiceResponse response = _inventoryMediator.RemoveAmount(_oakWood.ID, AMOUNT);
-            
-            Assert.That(response.IsSuccess, Is.False);
-            Assert.That(response.Message, Is.Not.Null);
+            _inventoryMediator.UpdateInventory([_inventoryUpdate, _inventoryUpdate]);
         }
         
         [Test]
-        public void Negative_AddAmount_Catches_Exception()
+        public void Negative_AddAmount_Throws()
         {
-            _repositoryMock.Setup(repo => repo.AddAmount(_oakWood.ID, AMOUNT))
+            _repositoryMock.Setup(repo => repo.AddAmount(_inventoryUpdate.ItemID, AMOUNT))
                 .Throws<Exception>();
             
-            ServiceResponse response = _inventoryMediator.AddAmount(_oakWood.ID, AMOUNT);
-            
-            Assert.That(response.IsSuccess, Is.False);
-            Assert.That(response.Message, Is.Not.Null);
+            Assert.Throws<Exception>(() => _inventoryMediator.UpdateInventory([_inventoryUpdate, _inventoryUpdate]));
         }
 
         [Test]
         public void Positive_AddAmount_NoFoundItem_CreatesItem()
         {
-            _repositoryMock.Setup(library => library.Contains(_oakWood.ID)).Returns(false);
-            _mapperMock.Setup(library => library.GetInformation(_oakWood.ID)).Returns(_information);
+            Item item = TestItemFactory.CreateOakWood();
+            item.AddAmount(AMOUNT);
             
-            ServiceResponse response = _inventoryMediator.AddAmount(_oakWood.ID, AMOUNT);
+            _repositoryMock.Setup(library => library.Contains(_inventoryUpdate.ItemID)).Returns(false);
+            _itemFactoryMock.Setup(library => library.CreateItem(_inventoryUpdate.ItemID, AMOUNT))
+                .Returns(item);
             
-            Assert.That(response.IsSuccess, Is.True);
+            _inventoryMediator.UpdateInventory([_inventoryUpdate]);
             
-            _repositoryMock.Verify(library => library.AddAmount(_oakWood.ID, AMOUNT));
-            _repositoryMock.Verify(library => library.Contains(_oakWood.ID));
-            _mapperMock.Verify(library => library.GetInformation(_oakWood.ID));
+            _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT), Times.Never);
+            _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.ItemID));
+            _factoryMock.Verify(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), _inventoryUpdate, MutateType.CREATED));
+            _itemFactoryMock.Verify(library => library.CreateItem(ItemID.OAK_WOOD, AMOUNT), Times.Once);
+            _dispatcherMock.Verify(library => library.DispatchUpdates(It.IsAny<InventoryUpdateDTO[]>()), Times.Once);
         }
     }
 }

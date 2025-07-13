@@ -1,18 +1,17 @@
-﻿using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Structures.Enums;
+﻿using IdelPog.SimulationEngine.Currency;
 
 namespace IdelPogTests.Utils
 {
     internal static class CurrencyFactory
     {
-        internal static Currency CreateWood()
+        internal static Currency CreateGems()
         {
-            return new Currency(CurrencyType.WOOD, 0);
+            return new Currency(CurrencyType.GEMS, 0);
         }
 
-        internal static Currency CreateFood()
+        internal static Currency CreateGold()
         {
-            return new Currency(CurrencyType.FOOD);
+            return new Currency(CurrencyType.GOLD, 0);
         }
     }
 }

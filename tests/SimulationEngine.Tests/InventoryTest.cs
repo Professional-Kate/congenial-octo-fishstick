@@ -1,9 +1,12 @@
 ﻿using IdelPog.Common.Repository;
-using IdelPog.SimulationEngine;
-using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Structures.Enums;
+using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Exceptions;
+using IdelPog.SimulationEngine.Inventory;
+using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
 using Moq;
@@ -14,41 +17,36 @@ namespace IdelPogTests
     public class InventoryTest
     {
         private IInventory _inventory { get; set; }
-        private Mock<IStateRepository<InventoryID, Item>> _repositoryMock { get; set; }
-        private Mock<IAssertPositive> _assertPositiveMock { get; set; }
-        private Mock<IAssertFound> _assertFoundMock { get; set; }
-        private Mock<IAssertNonDuplicate> _assertUniqueItemMock { get; set; }
+        private Mock<IStateRepository<ItemID, Item>> _repositoryMock { get; set; }
 
         private Item _oakWoodItem { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _oakWoodItem = ItemFactory.CreateOakWood();
+            _oakWoodItem = TestItemFactory.CreateOakWood();
             SetupMock();
         }
 
         [TearDown]
         public void TearDown()
         {
-            _oakWoodItem = ItemFactory.CreateOakWood();
+            _oakWoodItem = TestItemFactory.CreateOakWood();
             SetupMock();
         }
 
         private void SetupMock()
         {
-            _repositoryMock = new Mock<IStateRepository<InventoryID, Item>>();
+            _repositoryMock = new Mock<IStateRepository<ItemID, Item>>();
+            IHandler throwHandler = new ThrowHandler();
             
-            _assertPositiveMock = new Mock<IAssertPositive>();
-            _assertFoundMock = new Mock<IAssertFound>();
-            _assertUniqueItemMock = new Mock<IAssertNonDuplicate>();
-            _inventory = new Inventory(_repositoryMock.Object, _assertFoundMock.Object,_assertPositiveMock.Object, _assertUniqueItemMock.Object);
+            _inventory = new Inventory(_repositoryMock.Object, new AssertFound(throwHandler), new AssertPositive(throwHandler), new AssertNonDuplicate(throwHandler));
             
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
 
-            _repositoryMock.Setup(library => library.Get(InventoryID.BIRCH_WOOD))
-                .Throws(new NotFoundException(InventoryID.BIRCH_WOOD));
+            _repositoryMock.Setup(library => library.Get(ItemID.BIRCH_WOOD))
+                .Throws(new NotFoundException(ItemID.BIRCH_WOOD));
         }
 
         private void ModifyAmountTestRunner(int amount, ActionType action)
@@ -88,19 +86,17 @@ namespace IdelPogTests
         [Test]
         public void Negative_AddAmount_NoItem_Throws()
         {
-            _repositoryMock.Setup(library => library.Contains(InventoryID.BIRCH_WOOD)).Returns(false);
+            _repositoryMock.Setup(library => library.Contains(ItemID.BIRCH_WOOD)).Returns(false);
             
-            Assert.Throws<NotFoundException>(() => _inventory.AddAmount(InventoryID.BIRCH_WOOD, 5));
+            Assert.Throws<NotFoundException>(() => _inventory.AddAmount(ItemID.BIRCH_WOOD, 5));
         }
 
         [TestCase(-1)]        
         [TestCase(-10)]
         public void Negative_AddAmount_NegativeAmount_Throws(int amount)
         {
-            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(amount))
-                .Throws(new NegativeNumberException(amount));
-            
-            Assert.Throws<NegativeNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
+            NegativeNumberException exception =  Assert.Throws<NegativeNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
         }
 
 
@@ -130,28 +126,24 @@ namespace IdelPogTests
         [Test]
         public void Negative_RemoveAmount_NoItemFound_Throws()
         {
-            _repositoryMock.Setup(library => library.Contains(InventoryID.BIRCH_WOOD)).Returns(false);
+            _repositoryMock.Setup(library => library.Contains(ItemID.BIRCH_WOOD)).Returns(false);
 
-            Assert.Throws<NotFoundException>(() => _inventory.RemoveAmount(InventoryID.BIRCH_WOOD, 1));
+            Assert.Throws<NotFoundException>(() => _inventory.RemoveAmount(ItemID.BIRCH_WOOD, 1));
         }
 
         [Test]
         public void Negative_RemoveAmount_AmountUnderZero_Throws()
         {
-            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(10))
-                .Throws(new NegativeNumberException(10));
-            
-            Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
+            NegativeNumberException exception =  Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
         }
         
         [TestCase(-1)]
         [TestCase(-10)]
         public void Negative_RemoveAmount_NegativeAmount_Throws(int amount)
         {
-            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(amount))
-                .Throws(new NegativeNumberException(amount));
-            
-            Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
         }
 
         [Test]
@@ -174,7 +166,7 @@ namespace IdelPogTests
 
             
             _repositoryMock.Setup(library => library.Add(_oakWoodItem.ID, It.IsAny<Item>()))
-                .Callback<InventoryID, Item>((id, item) =>
+                .Callback<ItemID, Item>((id, item) =>
                 {
                     Assert.That(_oakWoodItem.ID, Is.EqualTo(id));
                     Assert.That(amount, Is.EqualTo(item.Amount));
@@ -186,9 +178,6 @@ namespace IdelPogTests
         [Test]
         public void Negative_AddItem_ItemExists_Throws()
         {
-            _assertUniqueItemMock.Setup(library => library.AssertContains(_oakWoodItem, It.IsAny<Func<bool>>()))
-                .Throws(new DuplicateItemException(_oakWoodItem));
-            
             Assert.Throws<DuplicateItemException>(() => _inventory.AddItem(_oakWoodItem));
         }
 
@@ -196,12 +185,10 @@ namespace IdelPogTests
         [TestCase(-10)]
         public void Negative_AddItem_NegativeAmount_Throws(int amount)
         {
-            Item itemWithBadAmount = new(InventoryID.WILLOW_WOOD, new Information("", ""), 1, amount);
-
-            _assertPositiveMock.Setup(library => library.AssertNumberIsPositive(amount))
-                .Throws(new NegativeNumberException(amount));
+            Item itemWithBadAmount = new(ItemID.WILLOW_WOOD, new Information("", ""), 1, amount);
             
-            Assert.Throws<NegativeNumberException>(() => _inventory.AddItem(itemWithBadAmount));
+            NegativeNumberException exception =  Assert.Throws<NegativeNumberException>(() => _inventory.AddItem(itemWithBadAmount));
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
         }
 
         [Test]
@@ -214,8 +201,23 @@ namespace IdelPogTests
         [Test]
         public void Negative_Contains_ReturnsFalse()
         {
-            bool contains = _inventory.Contains(InventoryID.WILLOW_WOOD);
+            bool contains = _inventory.Contains(ItemID.WILLOW_WOOD);
             Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void Positive_GetItem_ReturnsItem()
+        {
+            Item item = _inventory.GetItem(_oakWoodItem.ID);
+            
+            Assert.That(item, Is.Not.Null);
+            Assert.That(item, Is.EqualTo(_oakWoodItem));
+        }
+
+        [Test]
+        public void Negative_GetItem_NoItemFound_Throws()
+        {
+            Assert.Throws<NotFoundException>(() => _inventory.GetItem(ItemID.WILLOW_WOOD));
         }
     }
 }

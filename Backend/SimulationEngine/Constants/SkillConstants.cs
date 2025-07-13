@@ -1,0 +1,13 @@
+﻿using IdelPog.SimulationEngine.Structures.Types;
+
+namespace IdelPog.SimulationEngine.Constants
+{
+    public static class SkillConstants
+    {
+        public const byte MAX_SKILL_LEVEL = 100;
+
+        public static readonly Information WOOD_INFO = new("Wood Cutting", "Chop Trees! Get Wood!");
+        public static readonly Information MINING_INFO = new("Mining", "Rock and Stone! Strike the Earth!");
+        public static readonly Information FARMING_INFO = new("Farming", "Magical Crops!");
+    }
+}

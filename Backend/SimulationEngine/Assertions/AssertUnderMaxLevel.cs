@@ -12,7 +12,7 @@ namespace IdelPog.SimulationEngine.Assertions
         {
             Assert(() =>
             {
-                if (levelable.Level == JobConstants.MAX_JOB_LEVEL)
+                if (levelable.Level == SkillConstants.MAX_SKILL_LEVEL)
                 {
                     throw new MaxLevelException(levelable);
                 }

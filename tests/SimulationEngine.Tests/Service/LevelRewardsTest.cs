@@ -38,7 +38,7 @@ namespace IdelPogTests.Service
         {
             List<LevelAward> levelAwards = new();
             
-            for (byte i = LEVELS_PER_AWARD; i <= JobConstants.MAX_JOB_LEVEL; i += LEVELS_PER_AWARD)
+            for (byte i = LEVELS_PER_AWARD; i <= SkillConstants.MAX_SKILL_LEVEL; i += LEVELS_PER_AWARD)
             {
                 LevelAward levelAward = new(i, OnLevelUp);
                 levelAwards.Add(levelAward);
@@ -66,7 +66,7 @@ namespace IdelPogTests.Service
         [Test]
         public void Positive_MaybeGrantReward_GrantsRewardEveryLevel()
         {
-            for (byte i = LEVELS_PER_AWARD; i <= JobConstants.MAX_JOB_LEVEL; i += LEVELS_PER_AWARD)
+            for (byte i = LEVELS_PER_AWARD; i <= SkillConstants.MAX_SKILL_LEVEL; i += LEVELS_PER_AWARD)
             {
                 _levelRewards.MaybeGrantReward(i);
             }

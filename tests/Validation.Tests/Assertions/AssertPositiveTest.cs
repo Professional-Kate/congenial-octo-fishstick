@@ -1,7 +1,6 @@
-﻿using IdelPog.Validation.Assertions;
+﻿using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Assertions.Interfaces;
-using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.Validation.Tests.Assertions
 {
@@ -19,25 +18,29 @@ namespace IdelPog.Validation.Tests.Assertions
         [Test]
         public void Positive_AssertNumberIsPositive_PositiveNumber()
         {
-            Assert.DoesNotThrow(() => _assertPositive.AssertNumberIsPositive(100));
+            Assert.DoesNotThrow(() => _assertPositive.AssertNumberIsPositive<int>(100));
         }
         
         [Test]
         public void Positive_AssertNumberIsPositive_Array_PositiveNumber()
         {
-            Assert.DoesNotThrow(() => _assertPositive.AssertNumberIsPositive(1, 2, 3));
+            Assert.DoesNotThrow(() => _assertPositive.AssertNumberIsPositive<int>(1, 2, 3));
         }
 
         [Test]
         public void Negative_AssertNumberIsPositive_NegativeNumber_Throws()
         {
-            Assert.Throws<NegativeNumberException>(() => _assertPositive.AssertNumberIsPositive(-100));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _assertPositive.AssertNumberIsPositive<int>(-100));
+            
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(int)));
         }
         
         [Test]
         public void Negative_AssertNumberIsPositive_OneNegativeNumber_Throws()
         {
-            Assert.Throws<NegativeNumberException>(() => _assertPositive.AssertNumberIsPositive(10, 20, 30, -1));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _assertPositive.AssertNumberIsPositive<int>(10, 20, 30, -1));
+            
+            Assert.That(exception.NumberSource, Is.EqualTo(typeof(int)));
         }
     }
 }
