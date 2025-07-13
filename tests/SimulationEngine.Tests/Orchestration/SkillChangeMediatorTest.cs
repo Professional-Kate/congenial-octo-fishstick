@@ -36,7 +36,7 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Positive_ChangeSkill_InvokesDependencies()
         {
-            SkillChangeDTO dto = new() { CurrentSkill = _skillChange.SkillID };
+            SkillChangeDTO dto = new() { SkillID = _skillChange.SkillID };
             _skillChangeFactoryMock.Setup(library => library.CreateSkillChangeDTO(_skillChange)).Returns(dto);
             
             Assert.DoesNotThrow(() => _skillChangeMediator.ChangeSkill(_skillChange));

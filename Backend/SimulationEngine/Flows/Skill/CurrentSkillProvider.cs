@@ -9,9 +9,9 @@
             return _currentSkill;
         }
 
-        public void SetCurrentSkill(SkillID currencySkill)
+        public void SetCurrentSkill(SkillID skill)
         {
-            _currentSkill = currencySkill;
+            _currentSkill = skill;
         }
     }
 }
