@@ -5,7 +5,7 @@ using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.SimulationEngine.Currency.Assertions
 {
-    public class AssertTradesAreValid(IHandler handler) : BaseAssertion<NegativeNumberException>(handler)
+    public class AssertTradesAreValid(IHandler handler) : BaseAssertion<NegativeNumberException>(handler), IAssertTradesAreValid
     {
         public void Handle(IReadOnlyList<CurrencyUpdate> trades)
         {
