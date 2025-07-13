@@ -8,6 +8,7 @@ using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
+using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
 
 namespace IdelPogTests.Service

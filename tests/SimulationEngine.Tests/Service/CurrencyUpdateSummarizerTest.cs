@@ -6,6 +6,7 @@ using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
 using Moq;
 

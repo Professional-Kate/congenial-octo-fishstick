@@ -1,8 +1,8 @@
-﻿using IdelPog.SimulationEngine.Currency.Exceptions;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers.Interfaces;
+﻿using IdelPog.Validation.Assertions.Handlers.Interfaces;
+using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.SimulationEngine.Currency.Assertions
+namespace IdelPog.Validation.Assertions
 {
     public class AssertCollectionNotEmpty(IHandler handler) : BaseAssertion<CollectionEmptyException>(handler), IAssertCollectionNotEmpty
     {
