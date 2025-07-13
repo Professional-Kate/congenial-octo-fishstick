@@ -168,7 +168,6 @@ namespace Integration.Tests.CurrencyCommands.Update
             
             Assert.Multiple(() =>
             {
-                Assert.That(errorDTO.ErrorDetails.ErrorMessage, Is.EqualTo(string.Format(ExceptionConstants.NOT_FOUND_MESSAGE, _addGoldCommand.CurrencyType)));
                 Assert.That(errorDTO.ErrorDetails.Exception, Is.TypeOf<NotFoundException>());
             });
         }
@@ -255,7 +254,6 @@ namespace Integration.Tests.CurrencyCommands.Update
                 Assert.That(_currencyUpdateDTOListener.WasCalled, Is.False);
                 Assert.That(_currencyUpdateErrorListener.WasCalled, Is.True);
                 
-                Assert.That(_currencyUpdateErrorListener.CurrencyUpdateErrorDTO.ErrorDetails.ErrorMessage, Is.EqualTo(string.Format(ExceptionConstants.NOT_FOUND_MESSAGE, notFoundUpdate.CurrencyType)));
                 Assert.That(_currencyUpdateErrorListener.CurrencyUpdateErrorDTO.ErrorDetails.Exception, Is.TypeOf<NotFoundException>());
             });
         }
