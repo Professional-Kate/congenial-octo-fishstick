@@ -2,6 +2,6 @@
 {
     public interface ISkillChangeMediator
     {
-        public void SwitchSkill(SkillChange skillChange);
+        public void ChangeSkill(SkillChange skillChange);
     }
 }

@@ -9,7 +9,7 @@ using Moq;
 namespace IdelPogTests.Orchestration
 {
     [TestFixture]
-    public class SkillActionActionMediatorTest
+    public class SkillActionMediatorTest
     {
         private ISkillActionMediator _skillActionMediator { get; set; }
         private Mock<IExperienceService> _experienceServiceMock { get; set; }
@@ -33,7 +33,7 @@ namespace IdelPogTests.Orchestration
             _currentSkillProviderMock = new Mock<ICurrentSkillProvider>();
             _skillUpdateDispatcherMock = new Mock<ISkillUpdateDispatcher>();
             _skillUpdateFactoryMock = new Mock<ISkillUpdateFactory>();
-            _skillActionMediator = new SkillActionActionMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object,  _currentSkillProviderMock.Object,  _skillUpdateDispatcherMock.Object, _skillUpdateFactoryMock.Object);
+            _skillActionMediator = new SkillActionMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object,  _currentSkillProviderMock.Object,  _skillUpdateDispatcherMock.Object, _skillUpdateFactoryMock.Object);
 
             _repositoryMock.Setup(library => library.Get(_miningSkill.SkillID)).Returns(_miningSkill);
             _repositoryMock.Setup(library => library.Contains(_miningSkill.SkillID)).Returns(true);
