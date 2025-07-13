@@ -2,16 +2,16 @@
 {
     public class SkillController : ISkillController
     {
-        private ISkillChangeMediator _skillChangeMediator;
+        private readonly ISkillChangeMediator _skillChangeMediator;
         
         public SkillController(ISkillChangeMediator skillChangeMediator)
         {
             _skillChangeMediator = skillChangeMediator;
         }
         
-        public void SwitchSkill(SkillChange skillChange)
+        public void ChangeSkill(SkillChange skillChange)
         {
-            _skillChangeMediator.SwitchSkill(skillChange);
+            _skillChangeMediator.ChangeSkill(skillChange);
         }
     }
 }

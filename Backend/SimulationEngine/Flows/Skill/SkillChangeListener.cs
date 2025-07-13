@@ -8,7 +8,7 @@ namespace IdelPog.SimulationEngine.Skill
 
         public void Handle(SkillChange skillChange)
         {
-            skillController.SwitchSkill(skillChange);
+            skillController.ChangeSkill(skillChange);
         }
     }
 }

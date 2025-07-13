@@ -13,7 +13,7 @@
             _skillChangeDispatcher = skillChangeDispatcher;
         }
 
-        public void SwitchSkill(SkillChange skillChange)
+        public void ChangeSkill(SkillChange skillChange)
         {
             _currentSkillSetter.SetCurrentSkill(skillChange.SkillID);
             _skillChangeDispatcher.Dispatch(_skillChangeFactory.CreateSkillChangeDTO(skillChange));
