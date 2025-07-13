@@ -1,4 +1,4 @@
-﻿namespace Console.Runtime.Systems.Resolvers
+﻿namespace Console.Commands.Domains
 {
     public interface ICommandDomainResolver
     {

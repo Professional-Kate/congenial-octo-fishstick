@@ -2,7 +2,7 @@
 using IdelPog.ECS.Component;
 using IdelPog.Validation.Assertions.Handlers;
 
-namespace Console.Runtime
+namespace Console.Runtime.ECS
 {
     public record AllowedDomainsEntity : Entity
     {

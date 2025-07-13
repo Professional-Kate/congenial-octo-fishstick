@@ -1,4 +1,4 @@
-﻿namespace Console.Runtime.Systems.Resolvers
+﻿namespace Console.Commands.Domains
 {
     public class CurrencyDomainResolver : ICommandDomainResolver
     {
@@ -6,7 +6,7 @@
         
         public void Resolve(string action, string[] args)
         {
-            // TODO: verify args are length two <Action> <int>
+            // TODO: verify args are length three <CurrencyType> <Action> <int>
             string normalizedAction = action.ToLowerInvariant();
             // TODO: initialize CurrencyUpdate
             
