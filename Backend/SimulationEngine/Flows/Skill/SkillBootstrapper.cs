@@ -5,7 +5,7 @@ namespace IdelPog.SimulationEngine.Skill
 {
     public class SkillBootstrapper
     {
-        public static void Initialize(IBufferMessenger bufferMessenger, IBufferManager bufferManager, ICurrentSkillSetter currentSkillSetter)
+        public void Initialize(IBufferMessenger bufferMessenger, IBufferManager bufferManager, ICurrentSkillSetter currentSkillSetter)
         {
             ISkillChangeDispatcher skillChangeDispatcher = new SkillChangeDispatcher(bufferManager);
             ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();

@@ -1,9 +1,9 @@
 ﻿using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.SimulationEngine.Currency.Assertions
 {
-    public class CurrencyDispatcherAsserter(AssertTradesAreValid assertTradesAreValid, AssertNotNull assertNotNull, AssertCollectionNotEmpty assertCollectionNotEmpty) : ICurrencyDispatcherAsserter
+    public class CurrencyUpdateUpdateDispatcherAsserter(IAssertTradesAreValid assertTradesAreValid, IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty) : ICurrencyUpdateDispatcherAsserter
     {
         public void AssertTradeCollection(IReadOnlyList<CurrencyUpdate> trades)
         {

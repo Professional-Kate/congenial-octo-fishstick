@@ -2,7 +2,7 @@
 
 namespace IdelPog.SimulationEngine.Currency.Assertions
 {
-    public interface ICurrencyDispatcherAsserter
+    public interface ICurrencyUpdateDispatcherAsserter
     {
         public void AssertTradeCollection(IReadOnlyList<CurrencyUpdate> trades);
     }
