@@ -27,7 +27,7 @@ namespace IdelPog.SimulationEngine.Currency.Factories
             {
                 result.Add(new CurrencyCreationDTO
                 {
-                    Currency = currencyCreation.CurrencyType,
+                    CurrencyType = currencyCreation.CurrencyType,
                     Amount = currencyCreation.StartingAmount
                 });
             }

@@ -2,6 +2,6 @@
 {
     public interface ICurrentSkillSetter
     {
-        public void SetCurrentSkill(SkillID currencySkill);
+        public void SetCurrentSkill(SkillID skill);
     }
 }

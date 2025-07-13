@@ -2,6 +2,6 @@
 {
     public readonly record struct SkillChangeDTO
     {
-        public required SkillID CurrentSkill { get; init; }
+        public required SkillID SkillID { get; init; }
     }
 }

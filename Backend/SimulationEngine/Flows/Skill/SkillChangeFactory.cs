@@ -6,7 +6,7 @@
         {
             return new SkillChangeDTO
             {
-                CurrentSkill = skillChange.SkillID
+                SkillID = skillChange.SkillID
             };
         }
     }
