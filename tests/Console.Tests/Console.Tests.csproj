@@ -24,7 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Backend\Console\Console.csproj" />
-      <ProjectReference Include="..\Backend\Console\Console.csproj" />
+      <ProjectReference Include="..\..\Backend\Console\Console.csproj" />
     </ItemGroup>
 
 </Project>
