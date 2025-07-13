@@ -22,7 +22,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Backend\SimulationEngine\SimulationEngine.csproj" />
+      <ProjectReference Include="..\..\Backend\SimulationEngine\SimulationEngine.csproj" />
+      <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj" />
+      <ProjectReference Include="..\..\Backend\SimulationEngine\SimulationEngine.csproj" />
     </ItemGroup>
 
 </Project>
