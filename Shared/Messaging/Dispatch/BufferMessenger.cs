@@ -10,7 +10,6 @@ namespace IdelPog.Messaging.Dispatch
         
         public void Subscribe(IListener listener)
         {
-            Console.WriteLine("SUBSCRIBE 1");
             assertNotNull.AssertObjectNotNull(listener);
             
             if (_listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners) == false)
@@ -24,7 +23,6 @@ namespace IdelPog.Messaging.Dispatch
 
         public void Unsubscribe(IListener listener)
         {
-            Console.WriteLine("UNSUBSCRIBE 1");
             assertNotNull.AssertObjectNotNull(listener);
 
             bool contains = _listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners);
