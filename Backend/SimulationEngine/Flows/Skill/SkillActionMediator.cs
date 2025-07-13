@@ -1,7 +1,6 @@
 ﻿using IdelPog.Common.Repository;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
-using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Skill
 {
@@ -24,33 +23,24 @@ namespace IdelPog.SimulationEngine.Skill
             _skillUpdateFactory = skillUpdateFactory;
         }
         
-        public ServiceResponse ProcessSkillAction()
+        public void ProcessSkillAction()
         {
             // TODO: this method will be called by the tick controller (when I make it)
             SkillID currentSkillID = _currentSkillProvider.GetCurrentSkill();
             
-            try
-            {
-                Skill skill = _skillRepository.Get(currentSkillID);
-                ILevelable levelable = skill.Levelable;
-                
-                _experienceService.AddExperience(levelable);
-                bool canSkillLevel = _levelService.CanSkillLevel(levelable);
+            Skill skill = _skillRepository.Get(currentSkillID);
+            ILevelable levelable = skill.Levelable;
+            
+            _experienceService.AddExperience(levelable);
+            bool canSkillLevel = _levelService.CanSkillLevel(levelable);
 
-                if (canSkillLevel)
-                {
-                    _levelService.LevelUpSkill(levelable);
-                }
-                
-                _skillRepository.Update(currentSkillID, skill);
-                _skillUpdateDispatcher.Dispatch(_skillUpdateFactory.CreateSkillUpdate(skill,  canSkillLevel));
-            }
-            catch (Exception exception)
+            if (canSkillLevel)
             {
-                return ServiceResponse.Failure(exception.Message);
+                _levelService.LevelUpSkill(levelable);
             }
             
-            return ServiceResponse.Success();
+            _skillRepository.Update(currentSkillID, skill);
+            _skillUpdateDispatcher.Dispatch(_skillUpdateFactory.CreateSkillUpdate(skill,  canSkillLevel));
         }
     }
 }
