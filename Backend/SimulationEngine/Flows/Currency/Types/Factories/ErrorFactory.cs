@@ -8,7 +8,6 @@ namespace IdelPog.SimulationEngine.Currency.Factories
         {
             return new ErrorDTO
             {
-                ErrorMessage = exception.Message,
                 Exception = exception
             };
         }
