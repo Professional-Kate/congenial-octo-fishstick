@@ -8,7 +8,7 @@ namespace IdelPog.Validation.Exceptions
         
         public readonly Type CollectionType;
 
-        public EmptyCollectionException(IEnumerable collection) : base(string.Format(MESSAGE, collection.GetType().Name))
+        public EmptyCollectionException(IEnumerable collection) : base(string.Format(MESSAGE, collection.GetType()))
         {
             CollectionType = collection.GetType();
         }

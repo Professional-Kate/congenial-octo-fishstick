@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
@@ -20,7 +21,7 @@ namespace IdelPogTests.Orchestration
         private ICurrencyUpdateMediator _currencyUpdateMediator { get; set; }
         private Mock<IStateRepository<CurrencyType, Currency>> _repositoryMock { get; set; }
         private Mock<ICurrencyService> _currencyServiceMock { get; set; }
-        private Mock<ICurrencyUpdateDispatcher>  _dispatcherMock { get; set; }
+        private Mock<IDispatchMany<CurrencyUpdate>>  _dispatcherMock { get; set; }
         private Mock<ICurrencyUpdateSummarizer> _currencyUpdateSummarizerMock { get; set; }
 
         private Currency _goldCurrency;
@@ -32,7 +33,7 @@ namespace IdelPogTests.Orchestration
         {
             _repositoryMock = new Mock<IStateRepository<CurrencyType, Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
-            _dispatcherMock = new Mock<ICurrencyUpdateDispatcher>();
+            _dispatcherMock = new Mock<IDispatchMany<CurrencyUpdate>>();
             _currencyUpdateSummarizerMock = new Mock<ICurrencyUpdateSummarizer>();
             
             IHandler throwHandler = new ThrowHandler();

@@ -1,7 +1,9 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.Dispatchers;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Currency.Listeners;
@@ -21,14 +23,12 @@ namespace IdelPog.SimulationEngine.Currency
             IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(new ThrowHandler());
             IAssertFound assertFound = new AssertFound(new ThrowHandler());
             IAssertEnoughCurrency assertEnoughCurrency = new AssertEnoughCurrency(new ThrowHandler());
-            IAssertTradesAreValid assertTradesAreValid = new AssertTradesAreValid(new ThrowHandler());
             
             IStateRepository<CurrencyType, Currency> currencyRepository = new StateRepository<CurrencyType, Currency>();
 
             ICurrencyService currencyService = new CurrencyService(assertPositive, assertEnoughCurrency);
             ICurrencyUpdateDTOFactory currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(assertNotNull, assertCollectionNotEmpty);
-            ICurrencyUpdateDispatcherAsserter currencyUpdateDispatcherAsserter = new CurrencyUpdateUpdateDispatcherAsserter(assertTradesAreValid, assertNotNull, assertCollectionNotEmpty);
-            ICurrencyUpdateDispatcher currencyUpdateDispatcher = new CurrencyUpdateDispatcher(bufferManager, currencyUpdateDTOFactory, currencyUpdateDispatcherAsserter);
+            IDispatchMany<CurrencyUpdate> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdate>(bufferManager, assertNotNull, assertCollectionNotEmpty);
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
             ICurrencyUpdateSummarizer currencyUpdateSummarizer = new CurrencyUpdateSummarizer(currencyUpdateFactory, assertPositive, assertNotNull, assertCollectionNotEmpty);
             ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, currencyUpdateDispatcher, currencyUpdateSummarizer, assertPositive, assertCollectionNotEmpty, assertFound, assertNotNull);

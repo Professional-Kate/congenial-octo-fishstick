@@ -4,13 +4,13 @@ using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.Messaging.Dispatch
 {
-    public abstract class BaseDispatcher<T> : IDispatchOne<T>, IDispatchMany<T>
+    public sealed class ManagedDispatcher<T> : IDispatchOne<T>, IDispatchMany<T>
     {
         private readonly IBufferManager _bufferManager;
         private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
 
-        protected BaseDispatcher(IBufferManager bufferManager, IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public ManagedDispatcher(IBufferManager bufferManager, IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
         {
             _bufferManager = bufferManager;
             _assertNotNull = assertNotNull;

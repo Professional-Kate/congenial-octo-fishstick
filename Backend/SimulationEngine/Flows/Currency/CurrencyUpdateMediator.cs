@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.Dispatchers;
@@ -12,7 +13,7 @@ namespace IdelPog.SimulationEngine.Currency
     {
         private readonly ICurrencyService _currencyService;
         private readonly IStateRepository<CurrencyType, Currency> _currencyRepository;
-        private readonly ICurrencyUpdateDispatcher _currencyUpdateDispatcher;
+        private readonly IDispatchMany<CurrencyUpdate> _currencyUpdateDispatcher;
         private readonly ICurrencyUpdateSummarizer _currencyUpdateSummarizer;
         private readonly IAssertPositive _assertPositive;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
@@ -21,7 +22,7 @@ namespace IdelPog.SimulationEngine.Currency
         
         public CurrencyUpdateMediator(
             IStateRepository<CurrencyType, Currency> stateRepository, 
-            ICurrencyService currencyService, ICurrencyUpdateDispatcher currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer, 
+            ICurrencyService currencyService, IDispatchMany<CurrencyUpdate> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer, 
             IAssertPositive assertPositive, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertFound assertFound,  IAssertNotNull assertNotNull)
         {
             _currencyService = currencyService;
