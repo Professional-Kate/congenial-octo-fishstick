@@ -154,9 +154,9 @@ namespace IdelPogTests.Orchestration
             
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(currencyUpdates)).Returns([]);
             
-            CollectionEmptyException exception = Assert.Throws<CollectionEmptyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(currencyUpdates));
+            EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(currencyUpdates));
             
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
         }
 
         [Test]
@@ -168,9 +168,9 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_EmptyCollection_Throws()
         {
-            CollectionEmptyException exception = Assert.Throws<CollectionEmptyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([]));
+            EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([]));
             
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
         }
 
         [Test]

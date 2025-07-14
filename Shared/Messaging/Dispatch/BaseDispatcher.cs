@@ -8,22 +8,25 @@ namespace IdelPog.Messaging.Dispatch
     {
         private readonly IBufferManager _bufferManager;
         private readonly IAssertNotNull _assertNotNull;
-        
-        public BaseDispatcher(IBufferManager bufferManager, IAssertNotNull assertNotNull)
+        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
+
+        protected BaseDispatcher(IBufferManager bufferManager, IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
         {
             _bufferManager = bufferManager;
             _assertNotNull = assertNotNull;
+            _assertCollectionNotEmpty = assertCollectionNotEmpty;
         }
         
         public void Dispatch(T payload)
         {
             _assertNotNull.AssertObjectNotNull(payload);
-            CreateAndDispatchBuffer([payload], 1);
+            CreateAndDispatchBuffer([payload], length: 1);
         }
 
         public void Dispatch(IReadOnlyList<T> payload)
         {
             _assertNotNull.AssertObjectNotNull(payload);
+            _assertCollectionNotEmpty.Handle(payload);
             CreateAndDispatchBuffer(payload, payload.Count);
         }
 

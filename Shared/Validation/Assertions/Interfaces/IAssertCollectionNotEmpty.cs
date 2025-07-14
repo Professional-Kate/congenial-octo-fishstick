@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Currency.Assertions
+﻿namespace IdelPog.Validation.Assertions.Interfaces
 {
     public interface IAssertCollectionNotEmpty
     {
