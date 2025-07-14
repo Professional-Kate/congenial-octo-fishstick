@@ -1,8 +1,10 @@
-﻿namespace Console.Commands.Domains
+﻿using Console.Types;
+
+namespace Console.Commands.Domains
 {
     public class SkillDomainResolver : ICommandDomainResolver
     {
-        public string HandledDomainName { get; } = "skill";
+        public CommandDomain HandledDomain { get; } = CommandDomain.SKILL;
         
         public void Resolve(string action, string[] args)
         {
@@ -17,7 +19,7 @@
                     // TODO: assign SkillChange
                     break;
                 default: 
-                    throw new ArgumentOutOfRangeException($"{action} is not a valid action for domain: {HandledDomainName}");
+                    throw new ArgumentOutOfRangeException($"{action} is not a valid action for domain: {HandledDomain}");
             }
             
             // TODO: dispatch SkillChange

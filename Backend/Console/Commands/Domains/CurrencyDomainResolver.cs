@@ -1,12 +1,14 @@
-﻿namespace Console.Commands.Domains
+﻿using Console.Types;
+
+namespace Console.Commands.Domains
 {
     public class CurrencyDomainResolver : ICommandDomainResolver
     {
-        public string HandledDomainName { get; } = "currency";
+        public CommandDomain HandledDomain { get; } = CommandDomain.CURRENCY;
         
         public void Resolve(string action, string[] args)
         {
-            // TODO: verify args are length three <CurrencyType> <Action> <int>
+            // TODO: verify args are length two <CurrencyType> <int>
             string normalizedAction = action.ToLowerInvariant();
             // TODO: initialize CurrencyUpdate
             
@@ -21,7 +23,7 @@
                     // TODO: assign CurrencyUpdate
                     break;
                 default: 
-                    throw new ArgumentOutOfRangeException($"{action} is not a valid action for domain: {HandledDomainName}");
+                    throw new ArgumentOutOfRangeException($"{action} is not a valid action for domain: {HandledDomain}");
             }
             
             // TODO: dispatch CurrencyUpdate

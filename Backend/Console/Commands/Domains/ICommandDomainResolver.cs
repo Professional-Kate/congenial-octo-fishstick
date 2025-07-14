@@ -1,8 +1,10 @@
-﻿namespace Console.Commands.Domains
+﻿using Console.Types;
+
+namespace Console.Commands.Domains
 {
     public interface ICommandDomainResolver
     {
-        public string HandledDomainName { get; }
+        public CommandDomain HandledDomain { get; }
 
         public void Resolve(string action, string[] args);
     }
