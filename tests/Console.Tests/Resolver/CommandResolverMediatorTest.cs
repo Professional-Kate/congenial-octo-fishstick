@@ -40,7 +40,7 @@ namespace Console.Tests.Resolver
             
             _stateRepositoryMock.Verify(library => library.Contains(CommandDomain.CURRENCY), Times.Once);
             _stateRepositoryMock.Verify(library => library.Get(CommandDomain.CURRENCY), Times.Once);
-            _commandDomainResolverMock.Verify(library => library.Resolve("ADD", new[] {"10"}), Times.Once);
+            _commandDomainResolverMock.Verify(library => library.Resolve(new[] {"ADD", "10"}), Times.Once);
         }
         
         [Test]

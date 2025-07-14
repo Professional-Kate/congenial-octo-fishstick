@@ -20,14 +20,14 @@ namespace Console.Commands
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
         }
         
-        public void ResolveCommand(CommandDomain domain, string[] args)
+        public void ResolveCommand(CommandDomain domain, string[] arguments)
         {
-            _assertNotNull.AssertObjectNotNull(args);
-            _assertCollectionNotEmpty.Handle(args);
+            _assertNotNull.AssertObjectNotNull(arguments);
+            _assertCollectionNotEmpty.Handle(arguments);
             _assertFound.AssertItemIsFound(domain, () => _commandResolverMap.Contains(domain));
             
             ICommandDomainResolver commandResolver = _commandResolverMap.Get(domain);
-            commandResolver.Resolve(args[0], args.Skip(1).ToArray());
+            commandResolver.Resolve(arguments);
         }
     }
 }

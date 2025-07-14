@@ -6,11 +6,11 @@ namespace Console.Commands.Domains
     {
         public CommandDomain HandledDomain { get; } = CommandDomain.SKILL;
         
-        public void Resolve(string action, string[] args)
+        public void Resolve(string[] arguments)
         {
             // TODO: verify args are length one <SkillID>
             // TODO: verify args have SkillID
-            string normalizedAction = action.ToLowerInvariant();
+            string normalizedAction = arguments[1].ToLowerInvariant();
             // TODO: initialize SkillChange
             
             switch (normalizedAction)
@@ -19,7 +19,7 @@ namespace Console.Commands.Domains
                     // TODO: assign SkillChange
                     break;
                 default: 
-                    throw new ArgumentOutOfRangeException($"{action} is not a valid action for domain: {HandledDomain}");
+                    throw new ArgumentOutOfRangeException($"{normalizedAction} is not a valid action for domain: {HandledDomain}");
             }
             
             // TODO: dispatch SkillChange
