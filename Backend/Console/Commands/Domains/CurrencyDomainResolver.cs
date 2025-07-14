@@ -1,6 +1,7 @@
 ﻿using Console.Commands.Assertions;
 using Console.Commands.Resolver.Pipelines;
 using Console.Types;
+using IdelPog.Common.Dispatchers.Interfaces;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
 
@@ -13,23 +14,25 @@ namespace Console.Commands.Domains
         private readonly IArgumentResolverPipeline<CurrencyUpdateArguments> _currencyUpdatePipeline;
         private readonly IAssertArgumentLength _assertArgumentLength;
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
+        private readonly ICurrencyUpdateDispatcher _currencyUpdateDispatcher;
 
-        public CurrencyDomainResolver(IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline,  IAssertArgumentLength assertArgumentLength,  ICurrencyUpdateFactory currencyUpdateFactory)
+        public CurrencyDomainResolver(IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline,  IAssertArgumentLength assertArgumentLength,  ICurrencyUpdateFactory currencyUpdateFactory,  ICurrencyUpdateDispatcher currencyUpdateDispatcher)
         {
             _currencyUpdatePipeline = currencyUpdatePipeline;
             _assertArgumentLength = assertArgumentLength;
             _currencyUpdateFactory = currencyUpdateFactory;
+            _currencyUpdateDispatcher = currencyUpdateDispatcher;
         }
 
-        public void Resolve(string[] args)
+        public void Resolve(string[] arguments)
         {
             // TODO: need a type to store the expected size of args, and other useful details
-            _assertArgumentLength.Handle(args.Length, 3);
+            _assertArgumentLength.Handle(arguments.Length, 3);
 
-            CurrencyUpdateArguments currencyUpdateArguments = _currencyUpdatePipeline.Resolve(args);
+            CurrencyUpdateArguments currencyUpdateArguments = _currencyUpdatePipeline.Resolve(arguments);
             CurrencyUpdate currencyUpdate = _currencyUpdateFactory.CreateCurrencyUpdate(currencyUpdateArguments.ActionType, currencyUpdateArguments.Amount, currencyUpdateArguments.CurrencyType);
             
-            // TODO: dispatch CurrencyUpdate
+            _currencyUpdateDispatcher.DispatchCurrencyUpdate(currencyUpdate);
         }
     }
 }

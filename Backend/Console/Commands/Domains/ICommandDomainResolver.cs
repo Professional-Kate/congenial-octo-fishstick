@@ -6,6 +6,6 @@ namespace Console.Commands.Domains
     {
         public CommandDomain HandledDomain { get; }
 
-        public void Resolve(string[] args);
+        public void Resolve(string[] arguments);
     }
 }
