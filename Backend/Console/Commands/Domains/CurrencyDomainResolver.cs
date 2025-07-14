@@ -9,10 +9,12 @@ namespace Console.Commands.Domains
         public CommandDomain HandledDomain { get; } = CommandDomain.CURRENCY;
         
         private readonly IArgumentResolver<CurrencyType> _currencyTypeResolver;
+        private readonly IArgumentResolver<int> _intResolver;
 
-        public CurrencyDomainResolver(IArgumentResolver<CurrencyType> currencyTypeResolver)
+        public CurrencyDomainResolver(IArgumentResolver<CurrencyType> currencyTypeResolver,  IArgumentResolver<int> intResolver)
         {
             _currencyTypeResolver = currencyTypeResolver;
+            _intResolver = intResolver;
         }
 
         public void Resolve(string action, string[] args)
@@ -21,6 +23,7 @@ namespace Console.Commands.Domains
             
             string normalizedAction = action.ToLowerInvariant();
             CurrencyType currencyType = _currencyTypeResolver.Resolve(args[0]);
+            int amount = _intResolver.Resolve(args[1]);
             
             switch (normalizedAction)
             {
