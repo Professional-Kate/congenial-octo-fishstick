@@ -1,7 +1,4 @@
-﻿using IdelPog.Common.Enums;
-using IdelPog.SimulationEngine.Structures;
-
-namespace IdelPog.SimulationEngine.Currency.Commands
+﻿namespace IdelPog.Common.Enums
 {
     /// <summary>
     /// This command is used to update a Currency model

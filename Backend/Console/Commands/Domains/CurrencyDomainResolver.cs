@@ -1,10 +1,9 @@
 ﻿using Console.Commands.Assertions;
 using Console.Commands.Resolver;
+using Console.Commands.Resolver.Pipelines;
 using Console.Types;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
-using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Structures;
 
 namespace Console.Commands.Domains
 {
@@ -12,31 +11,24 @@ namespace Console.Commands.Domains
     {
         public CommandDomain HandledDomain => CommandDomain.CURRENCY;
         
-        private readonly IArgumentResolver<ActionType>  _actionTypeResolver;
-        private readonly IArgumentResolver<CurrencyType> _currencyTypeResolver;
-        private readonly IArgumentResolver<int> _intResolver;
+        private readonly IArgumentResolverPipeline<CurrencyUpdateArguments> _currencyUpdatePipeline;
         private readonly IAssertArgumentLength _assertArgumentLength;
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
 
-        public CurrencyDomainResolver(IArgumentResolver<ActionType> actionTypeResolver, IArgumentResolver<CurrencyType> currencyTypeResolver, IArgumentResolver<int> intResolver,  IAssertArgumentLength assertArgumentLength,  ICurrencyUpdateFactory currencyUpdateFactory)
+        public CurrencyDomainResolver(IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline,  IAssertArgumentLength assertArgumentLength,  ICurrencyUpdateFactory currencyUpdateFactory)
         {
-            _actionTypeResolver = actionTypeResolver;
-            _currencyTypeResolver = currencyTypeResolver;
-            _intResolver = intResolver;
+            _currencyUpdatePipeline = currencyUpdatePipeline;
             _assertArgumentLength = assertArgumentLength;
             _currencyUpdateFactory = currencyUpdateFactory;
         }
 
-        public void Resolve(string action, string[] args)
+        public void Resolve(string[] args)
         {
             // TODO: need a type to store the expected size of args, and other useful details
             _assertArgumentLength.Handle(args.Length, 3);
-            
-            ActionType actionType = _actionTypeResolver.Resolve(action);
-            int amount = _intResolver.Resolve(args[0]);
-            CurrencyType currencyType = _currencyTypeResolver.Resolve(args[1]);
 
-            CurrencyUpdate currencyUpdate = _currencyUpdateFactory.CreateCurrencyUpdate(actionType, amount, currencyType);
+            CurrencyUpdateArguments currencyUpdateArguments = _currencyUpdatePipeline.Resolve(args);
+            CurrencyUpdate currencyUpdate = _currencyUpdateFactory.CreateCurrencyUpdate(currencyUpdateArguments.ActionType, currencyUpdateArguments.Amount, currencyUpdateArguments.CurrencyType);
             
             // TODO: dispatch CurrencyUpdate
         }
