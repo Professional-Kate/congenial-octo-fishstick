@@ -1,7 +1,6 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Structures;
 using IdelPogTests.Utils;
 using Moq;
 

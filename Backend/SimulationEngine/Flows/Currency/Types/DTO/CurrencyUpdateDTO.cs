@@ -1,5 +1,4 @@
 ﻿using IdelPog.Common.Enums;
-using IdelPog.SimulationEngine.Structures;
 
 namespace IdelPog.SimulationEngine.Currency.DTO
 {

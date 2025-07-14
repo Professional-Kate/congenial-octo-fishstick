@@ -1,7 +1,6 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Orchestration;
-using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Factories;
 

@@ -1,5 +1,4 @@
 ﻿using IdelPog.Common.Enums;
-using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.SimulationEngine.Currency.Assertions

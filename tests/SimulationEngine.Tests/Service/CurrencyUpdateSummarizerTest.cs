@@ -1,10 +1,8 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Assertions;
-using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Currency.Factories;
-using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
