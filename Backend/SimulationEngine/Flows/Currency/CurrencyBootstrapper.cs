@@ -1,5 +1,5 @@
 ﻿using IdelPog.Common.Repository;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Dispatchers;

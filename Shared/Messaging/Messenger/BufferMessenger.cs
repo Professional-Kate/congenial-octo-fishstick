@@ -2,7 +2,7 @@
 using IdelPog.Messaging.Listeners;
 using IdelPog.Validation.Assertions.Interfaces;
 
-namespace IdelPog.Messaging.Dispatch
+namespace IdelPog.Messaging.Messenger
 {
     public class BufferMessenger(IAssertNotNull assertNotNull, IAssertListenerFound assertListenerFound) : IBufferMessenger, IBufferDispatcher
     {

@@ -1,4 +1,4 @@
-﻿using IdelPog.Messaging.Dispatch;
+﻿using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Service;
 
