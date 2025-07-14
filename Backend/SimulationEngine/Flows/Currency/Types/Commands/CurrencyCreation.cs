@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Currency.Commands
+﻿using IdelPog.Common.Enums;
+
+namespace IdelPog.SimulationEngine.Currency.Commands
 {
     public readonly record struct CurrencyCreation
     {

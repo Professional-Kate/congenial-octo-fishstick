@@ -3,7 +3,7 @@ using Console.Types;
 using IdelPog.Common.Repository;
 using IdelPog.Validation.Assertions.Interfaces;
 
-namespace Console.Commands.Resolver
+namespace Console.Commands
 {
     public class CommandResolverMediator : ICommandResolverMediator
     {

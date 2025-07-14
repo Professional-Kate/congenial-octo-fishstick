@@ -1,4 +1,5 @@
-﻿using IdelPog.Messaging.Buffer;
+﻿using IdelPog.Common.Enums;
+using IdelPog.Messaging.Buffer;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;

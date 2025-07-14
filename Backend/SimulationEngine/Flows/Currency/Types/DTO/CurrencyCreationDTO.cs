@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Currency.DTO
+﻿using IdelPog.Common.Enums;
+
+namespace IdelPog.SimulationEngine.Currency.DTO
 {
     public readonly record struct CurrencyCreationDTO
     {

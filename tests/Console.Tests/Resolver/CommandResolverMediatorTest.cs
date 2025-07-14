@@ -1,4 +1,5 @@
-﻿using Console.Commands.Domains;
+﻿using Console.Commands;
+using Console.Commands.Domains;
 using Console.Commands.Resolver;
 using Console.Types;
 using IdelPog.Common.Repository;

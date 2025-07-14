@@ -1,6 +1,6 @@
 ﻿using Console.Types;
 
-namespace Console.Commands.Resolver
+namespace Console.Commands
 {
     public interface ICommandResolverMediator
     {
