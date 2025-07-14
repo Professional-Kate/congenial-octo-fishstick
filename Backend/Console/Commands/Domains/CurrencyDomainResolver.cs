@@ -1,4 +1,6 @@
-﻿using Console.Types;
+﻿using Console.Commands.Resolver;
+using Console.Types;
+using IdelPog.Common.Enums;
 
 namespace Console.Commands.Domains
 {
@@ -6,11 +8,19 @@ namespace Console.Commands.Domains
     {
         public CommandDomain HandledDomain { get; } = CommandDomain.CURRENCY;
         
+        private readonly IArgumentResolver<CurrencyType> _currencyTypeResolver;
+
+        public CurrencyDomainResolver(IArgumentResolver<CurrencyType> currencyTypeResolver)
+        {
+            _currencyTypeResolver = currencyTypeResolver;
+        }
+
         public void Resolve(string action, string[] args)
         {
             // TODO: verify args are length two <CurrencyType> <int>
+            
             string normalizedAction = action.ToLowerInvariant();
-            // TODO: initialize CurrencyUpdate
+            CurrencyType currencyType = _currencyTypeResolver.Resolve(args[0]);
             
             switch (normalizedAction)
             {
