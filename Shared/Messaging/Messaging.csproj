@@ -16,9 +16,4 @@
         <InternalsVisibleTo Include="Messaging.Tests" />
     </ItemGroup>
 
-
-    <ItemGroup>
-      <Folder Include="Dispatch\" />
-    </ItemGroup>
-
 </Project>
