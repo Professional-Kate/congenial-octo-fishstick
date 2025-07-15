@@ -5,6 +5,7 @@ using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.Dispatchers;
+using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Currency.Listeners;
 using IdelPog.Validation.Assertions;
@@ -28,10 +29,10 @@ namespace IdelPog.SimulationEngine.Currency
 
             ICurrencyService currencyService = new CurrencyService(assertPositive, assertEnoughCurrency);
             ICurrencyUpdateDTOFactory currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(assertNotNull, assertCollectionNotEmpty);
-            IDispatchMany<CurrencyUpdate> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdate>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+            IDispatchMany<CurrencyUpdateDTO> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdateDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
             ICurrencyUpdateSummarizer currencyUpdateSummarizer = new CurrencyUpdateSummarizer(currencyUpdateFactory, assertPositive, assertNotNull, assertCollectionNotEmpty);
-            ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, currencyUpdateDispatcher, currencyUpdateSummarizer, assertPositive, assertCollectionNotEmpty, assertFound, assertNotNull);
+            ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, currencyUpdateDispatcher, currencyUpdateSummarizer, currencyUpdateDTOFactory, assertPositive, assertCollectionNotEmpty, assertFound, assertNotNull);
             
             ICurrencyCreationFactory currencyCreationFactory = new CurrencyCreationFactory(assertNotNull, assertCollectionNotEmpty);
             ICurrencyCreationDispatcher currencyCreationDispatcher = new CurrencyCreationDispatcher(bufferManager, currencyCreationFactory);

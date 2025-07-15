@@ -32,6 +32,7 @@ namespace IdelPog.Messaging.Dispatch
 
         private void CreateAndDispatchBuffer(IReadOnlyList<T> payload, int length)
         {
+            Console.WriteLine("DISPATCHED");
             IBuffer<T> buffer = _bufferManager.RequestBuffer<T>(new BufferRequest(length));
             buffer.Assign(payload);
             buffer.MarkReady();

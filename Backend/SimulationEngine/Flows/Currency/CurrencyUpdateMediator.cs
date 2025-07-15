@@ -3,6 +3,8 @@ using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.Dispatchers;
+using IdelPog.SimulationEngine.Currency.DTO;
+using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions.Interfaces;
 
@@ -13,8 +15,9 @@ namespace IdelPog.SimulationEngine.Currency
     {
         private readonly ICurrencyService _currencyService;
         private readonly IStateRepository<CurrencyType, Currency> _currencyRepository;
-        private readonly IDispatchMany<CurrencyUpdate> _currencyUpdateDispatcher;
+        private readonly IDispatchMany<CurrencyUpdateDTO> _currencyUpdateDispatcher;
         private readonly ICurrencyUpdateSummarizer _currencyUpdateSummarizer;
+        private readonly ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory;
         private readonly IAssertPositive _assertPositive;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
         private readonly IAssertFound _assertFound;
@@ -22,13 +25,14 @@ namespace IdelPog.SimulationEngine.Currency
         
         public CurrencyUpdateMediator(
             IStateRepository<CurrencyType, Currency> stateRepository, 
-            ICurrencyService currencyService, IDispatchMany<CurrencyUpdate> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer, 
+            ICurrencyService currencyService, IDispatchMany<CurrencyUpdateDTO> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer, ICurrencyUpdateDTOFactory currencyUpdateDTOFactory,
             IAssertPositive assertPositive, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertFound assertFound,  IAssertNotNull assertNotNull)
         {
             _currencyService = currencyService;
             _currencyRepository = stateRepository;
             _currencyUpdateDispatcher = currencyUpdateDispatcher;
             _currencyUpdateSummarizer = currencyUpdateSummarizer;
+            _currencyUpdateDTOFactory = currencyUpdateDTOFactory;
             _assertPositive = assertPositive;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
             _assertFound = assertFound;
@@ -47,7 +51,7 @@ namespace IdelPog.SimulationEngine.Currency
             List<Currency> currencies = GetAllCurrencies(summarizedUpdates);
             UpdateCurrencies(MapUpdates(summarizedUpdates, currencies));
             
-            _currencyUpdateDispatcher.Dispatch(summarizedUpdates);
+            _currencyUpdateDispatcher.Dispatch(_currencyUpdateDTOFactory.CreateFrom(summarizedUpdates));
         }
 
         private void AssertUpdates(IReadOnlyList<CurrencyUpdate> updates)
