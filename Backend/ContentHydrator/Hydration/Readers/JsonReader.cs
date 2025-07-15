@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Assertions;
 
 namespace IdelPog.ContentHydrator.Readers
 {
