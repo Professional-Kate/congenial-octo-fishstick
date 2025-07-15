@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.SimulationEngine.Skill;
@@ -15,7 +16,7 @@ namespace IdelPogTests.Orchestration
         private Mock<IStateRepository<SkillID, Skill>> _repositoryMock { get; set; }
         private Mock<ILevelService> _levelServiceMock { get; set; }
         private Mock<ICurrentSkillProvider>  _currentSkillProviderMock { get; set; }
-        private Mock<ISkillUpdateDispatcher> _skillUpdateDispatcherMock { get; set; }
+        private Mock<IDispatchOne<SkillUpdateDTO>> _skillUpdateDispatcherMock { get; set; }
         private Mock<ISkillUpdateFactory>  _skillUpdateFactoryMock { get; set; }
         
         private Skill _miningSkill { get; set; }
@@ -30,7 +31,7 @@ namespace IdelPogTests.Orchestration
             _repositoryMock = new Mock<IStateRepository<SkillID, Skill>>();
             _levelServiceMock = new Mock<ILevelService>();
             _currentSkillProviderMock = new Mock<ICurrentSkillProvider>();
-            _skillUpdateDispatcherMock = new Mock<ISkillUpdateDispatcher>();
+            _skillUpdateDispatcherMock = new Mock<IDispatchOne<SkillUpdateDTO>>();
             _skillUpdateFactoryMock = new Mock<ISkillUpdateFactory>();
             _skillActionMediator = new SkillActionMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object,  _currentSkillProviderMock.Object,  _skillUpdateDispatcherMock.Object, _skillUpdateFactoryMock.Object);
 

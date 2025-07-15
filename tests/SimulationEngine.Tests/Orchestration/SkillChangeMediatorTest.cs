@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Skill;
+﻿using IdelPog.Messaging.Dispatch;
+using IdelPog.SimulationEngine.Skill;
 using Moq;
 
 namespace IdelPogTests.Orchestration
@@ -9,7 +10,7 @@ namespace IdelPogTests.Orchestration
         private ISkillChangeMediator _skillChangeMediator;
         private Mock<ICurrentSkillSetter> _currentSkillSetterMock;
         private Mock<ISkillChangeFactory> _skillChangeFactoryMock;
-        private Mock<ISkillChangeDispatcher> _skillChangeDispatcherMock;
+        private Mock<IDispatchOne<SkillChangeDTO>> _skillChangeDispatcherMock;
 
         private SkillChange _skillChange;
 
@@ -20,7 +21,7 @@ namespace IdelPogTests.Orchestration
             
             _currentSkillSetterMock = new Mock<ICurrentSkillSetter>();
             _skillChangeFactoryMock = new Mock<ISkillChangeFactory>();
-            _skillChangeDispatcherMock = new Mock<ISkillChangeDispatcher>();
+            _skillChangeDispatcherMock = new Mock<IDispatchOne<SkillChangeDTO>>();
             
             _skillChangeMediator = new SkillChangeMediator(_currentSkillSetterMock.Object, _skillChangeFactoryMock.Object, _skillChangeDispatcherMock.Object);
         }
