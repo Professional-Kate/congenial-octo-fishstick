@@ -19,20 +19,19 @@ namespace IdelPog.Messaging.Dispatch
         
         public void Dispatch(T payload)
         {
-            _assertNotNull.AssertObjectNotNull(payload);
-            CreateAndDispatchBuffer([payload], length: 1);
+            Dispatch([payload]);
         }
 
         public void Dispatch(IReadOnlyList<T> payload)
         {
             _assertNotNull.AssertObjectNotNull(payload);
             _assertCollectionNotEmpty.Handle(payload);
-            CreateAndDispatchBuffer(payload, payload.Count);
+            CreateAndDispatchBuffer(payload);
         }
 
-        private void CreateAndDispatchBuffer(IReadOnlyList<T> payload, int length)
+        private void CreateAndDispatchBuffer(IReadOnlyList<T> payload)
         {
-            IBuffer<T> buffer = _bufferManager.RequestBuffer<T>(new BufferRequest(length));
+            IBuffer<T> buffer = _bufferManager.RequestBuffer<T>(new BufferRequest(payload.Count));
             buffer.Assign(payload);
             buffer.MarkReady();
         }
