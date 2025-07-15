@@ -2,7 +2,6 @@
 using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.Dispatchers;
 using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
