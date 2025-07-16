@@ -6,6 +6,7 @@ using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
 using Moq;
 
@@ -164,10 +165,10 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_GetSummary_EmptyList_Throws()
         {
-            CollectionEmptyException exception = Assert.Throws<CollectionEmptyException>(() => _currencyUpdateSummarizer.GetSummary([]));
+            EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateSummarizer.GetSummary([]));
             _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()), Times.Never);
             
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
             
         }
         

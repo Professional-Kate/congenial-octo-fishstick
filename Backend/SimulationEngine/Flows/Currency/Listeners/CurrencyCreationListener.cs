@@ -1,18 +1,22 @@
-﻿using IdelPog.Messaging.Listeners;
+﻿using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Listeners;
 using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.Dispatchers;
+using IdelPog.SimulationEngine.Currency.DTO;
+using IdelPog.SimulationEngine.Currency.Factories;
 
 namespace IdelPog.SimulationEngine.Currency.Listeners
 {
     public class CurrencyCreationListener : IBufferListener<CurrencyCreation>
     {
         private readonly ICurrencyController _currencyController;
-        private readonly ICurrencyCreationErrorDispatcher  _currencyCreationErrorDispatcher;
+        private readonly IDispatchOne<CurrencyCreationErrorDTO> _currencyCreationErrorDTODispatcher;
+        private readonly ICurrencyCreationErrorDTOFactory  _currencyCreationErrorDTOFactory;
 
-        public CurrencyCreationListener(ICurrencyController currencyController,  ICurrencyCreationErrorDispatcher currencyCreationErrorDispatcher)
+        public CurrencyCreationListener(ICurrencyController currencyController,  IDispatchOne<CurrencyCreationErrorDTO> currencyCreationErrorDTODispatcher, ICurrencyCreationErrorDTOFactory currencyCreationErrorDTOFactory)
         {
             _currencyController = currencyController;
-            _currencyCreationErrorDispatcher = currencyCreationErrorDispatcher;
+            _currencyCreationErrorDTODispatcher = currencyCreationErrorDTODispatcher;
+            _currencyCreationErrorDTOFactory = currencyCreationErrorDTOFactory;
         }
         
         public Type ListenerType { get; } = typeof(CurrencyCreation);
@@ -25,7 +29,7 @@ namespace IdelPog.SimulationEngine.Currency.Listeners
             }
             catch (Exception exception)
             {
-                _currencyCreationErrorDispatcher.Dispatch(buffer, exception);
+                _currencyCreationErrorDTODispatcher.Dispatch(_currencyCreationErrorDTOFactory.CreateCurrencyCreationError(buffer, exception));
             }
         }
     }

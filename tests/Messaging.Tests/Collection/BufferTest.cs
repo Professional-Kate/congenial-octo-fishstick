@@ -114,7 +114,7 @@ namespace IdelPog.Messaging.Tests.Collection
         [Test]
         public void Negative_Assign_Null_Throws()
         {
-            _bufferAsserterMock.Setup(library => library.AssertCollection(3, It.IsAny<ICollection<int>>()))
+            _bufferAsserterMock.Setup(library => library.AssertCollection<int>(3, It.IsAny<IReadOnlyList<int>>()))
                 .Throws(new ArgumentNullException());
             
             Assert.Throws<ArgumentNullException>(() => _buffer.Assign(null!));

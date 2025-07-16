@@ -1,16 +1,15 @@
-﻿using IdelPog.SimulationEngine.Currency.Assertions;
-using IdelPog.SimulationEngine.Currency.Commands;
+﻿using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Currency.Factories
 {
-    public class CurrencyCreationFactory : ICurrencyCreationFactory
+    public class CurrencyCreationDTOFactory : ICurrencyCreationDTOFactory
     {
         private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
 
-        public CurrencyCreationFactory(IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public CurrencyCreationDTOFactory(IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
         {
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;

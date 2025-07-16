@@ -1,7 +1,7 @@
 ﻿using IdelPog.Messaging.Buffer;
-using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Factory;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Messaging.Messenger;
+using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Messaging.Orchestration
 {

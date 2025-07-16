@@ -1,9 +1,11 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.Dispatchers;
+using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Exceptions;
+using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -20,8 +22,9 @@ namespace IdelPogTests.Orchestration
         private ICurrencyUpdateMediator _currencyUpdateMediator { get; set; }
         private Mock<IStateRepository<CurrencyType, Currency>> _repositoryMock { get; set; }
         private Mock<ICurrencyService> _currencyServiceMock { get; set; }
-        private Mock<ICurrencyUpdateDispatcher>  _dispatcherMock { get; set; }
+        private Mock<IDispatchMany<CurrencyUpdateDTO>>  _dispatcherMock { get; set; }
         private Mock<ICurrencyUpdateSummarizer> _currencyUpdateSummarizerMock { get; set; }
+        private Mock<ICurrencyUpdateDTOFactory> _currencyUpdateDTOFactoryMock { get; set; }
 
         private Currency _goldCurrency;
         private CurrencyUpdate _addGoldUpdate;
@@ -32,11 +35,12 @@ namespace IdelPogTests.Orchestration
         {
             _repositoryMock = new Mock<IStateRepository<CurrencyType, Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
-            _dispatcherMock = new Mock<ICurrencyUpdateDispatcher>();
+            _dispatcherMock = new Mock<IDispatchMany<CurrencyUpdateDTO>>();
             _currencyUpdateSummarizerMock = new Mock<ICurrencyUpdateSummarizer>();
+            _currencyUpdateDTOFactoryMock = new Mock<ICurrencyUpdateDTOFactory>();
             
             IHandler throwHandler = new ThrowHandler();
-            _currencyUpdateMediator = new CurrencyUpdateMediator( _repositoryMock.Object, _currencyServiceMock.Object, _dispatcherMock.Object, _currencyUpdateSummarizerMock.Object, new AssertPositive(throwHandler), new AssertCollectionNotEmpty(throwHandler), new AssertFound(throwHandler), new AssertNotNull(throwHandler));
+            _currencyUpdateMediator = new CurrencyUpdateMediator( _repositoryMock.Object, _currencyServiceMock.Object, _dispatcherMock.Object, _currencyUpdateSummarizerMock.Object, _currencyUpdateDTOFactoryMock.Object, new AssertPositive(throwHandler), new AssertCollectionNotEmpty(throwHandler), new AssertFound(throwHandler), new AssertNotNull(throwHandler));
 
             _addGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
             _removeGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.REMOVE);
@@ -53,13 +57,18 @@ namespace IdelPogTests.Orchestration
             _goldCurrency.SetAmount(0);
         }
 
-        private void TestRunner(IReadOnlyList<CurrencyUpdate> updates, CurrencyUpdate[] summaryUpdates) 
+        private void TestRunner(IReadOnlyList<CurrencyUpdate> updates, CurrencyUpdate[] summaryUpdates)
         {
+            CurrencyUpdateDTO[] currencyUpdateDTOs = [];
+            
             _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(true);
             
             _repositoryMock.Setup(library => library.Get(_addGoldUpdate.CurrencyType)).Returns(_goldCurrency);
             
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(updates)).Returns(summaryUpdates);
+
+            _currencyUpdateDTOFactoryMock.Setup(library => library.CreateFrom(summaryUpdates))
+                .Returns(currencyUpdateDTOs);
             
             Assert.DoesNotThrow(() => _currencyUpdateMediator.ProcessCurrencyUpdate(updates));
             
@@ -67,7 +76,7 @@ namespace IdelPogTests.Orchestration
             _repositoryMock.Verify(library => library.Get(_addGoldUpdate.CurrencyType), Times.Once);
             _repositoryMock.Verify(library => library.Update(_addGoldUpdate.CurrencyType, _goldCurrency), Times.Once);
 
-            _dispatcherMock.Verify(library => library.Dispatch(summaryUpdates),  Times.Once);
+            _dispatcherMock.Verify(library => library.Dispatch(currencyUpdateDTOs),  Times.Once);
             _dispatcherMock.VerifyNoOtherCalls();
             
             _currencyUpdateSummarizerMock.Verify(library => library.GetSummary(updates), Times.Once);
@@ -154,9 +163,9 @@ namespace IdelPogTests.Orchestration
             
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(currencyUpdates)).Returns([]);
             
-            CollectionEmptyException exception = Assert.Throws<CollectionEmptyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(currencyUpdates));
+            EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(currencyUpdates));
             
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
         }
 
         [Test]
@@ -168,9 +177,9 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_EmptyCollection_Throws()
         {
-            CollectionEmptyException exception = Assert.Throws<CollectionEmptyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([]));
+            EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([]));
             
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
         }
 
         [Test]

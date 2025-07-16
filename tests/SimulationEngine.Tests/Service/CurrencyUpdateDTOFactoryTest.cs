@@ -1,13 +1,12 @@
 ﻿using IdelPog.SimulationEngine.Currency;
-using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
-using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
+using IdelPog.Validation.Exceptions;
 using IdelPogTests.Utils;
 
 namespace IdelPogTests.Service
@@ -65,9 +64,9 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_CreateFrom_EmptyTrades_Throws()
         {
-            CollectionEmptyException exception = Assert.Throws<CollectionEmptyException>(() => _currencyUpdateDTOFactory.CreateFrom([]));
+            EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateDTOFactory.CreateFrom([]));
             
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
         }
         
         [Test]

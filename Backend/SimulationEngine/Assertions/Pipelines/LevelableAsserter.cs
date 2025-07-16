@@ -1,6 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Models;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Assertions.Pipelines
 {

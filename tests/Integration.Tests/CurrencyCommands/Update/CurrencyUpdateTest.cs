@@ -1,10 +1,10 @@
 ﻿using IdelPog.Messaging.Buffer;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Structures;
-using IdelPog.Validation.Constants;
 using IdelPog.Validation.Exceptions;
 
 namespace Integration.Tests.CurrencyCommands.Update
