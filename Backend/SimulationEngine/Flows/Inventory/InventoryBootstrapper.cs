@@ -1,6 +1,9 @@
-﻿using IdelPog.Messaging.Messenger;
+﻿using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Service;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.SimulationEngine.Inventory
 {
@@ -8,7 +11,10 @@ namespace IdelPog.SimulationEngine.Inventory
     {
         public void Initialize(IBufferMessenger bufferMessenger, IBufferManager bufferManager)
         {
-            IInventoryUpdateDispatcher inventoryUpdateDispatcher = new InventoryUpdateDispatcher(bufferManager);
+            IAssertNotNull assertNotNull = new AssertNotNull(new ThrowHandler());
+            IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(new ThrowHandler());
+            
+            IDispatchMany<InventoryUpdateDTO> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
             IInventoryUpdateDTOFactory inventoryUpdateDTOFactory = new InventoryUpdateDTOFactory();
             IMapper<ItemID> itemMapper = new Mapper<ItemID>();
             IItemFactory itemFactory = new ItemFactory(itemMapper);
