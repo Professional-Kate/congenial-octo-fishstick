@@ -1,4 +1,4 @@
-﻿using Console.Commands.Assertions;
+﻿using Console.Commands.Resolver.Assertions;
 using Console.Commands.Resolver.Pipelines;
 using Console.Types;
 using IdelPog.Common.Enums;

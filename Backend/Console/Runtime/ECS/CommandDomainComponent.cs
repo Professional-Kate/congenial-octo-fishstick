@@ -5,11 +5,11 @@ namespace Console.Runtime.ECS
 {
     public readonly record struct CommandDomainComponent : IComponent<CommandDomainComponent>
     {
-        public required CommandDomain CommandDomain { get; init; }
+        public required CommandDomain AllowedCommandDomain { get; init; }
         
         public CommandDomainComponent DeepClone()
         {
-            return new CommandDomainComponent { CommandDomain = CommandDomain };
+            return new CommandDomainComponent { AllowedCommandDomain = AllowedCommandDomain };
         }
     }
 }

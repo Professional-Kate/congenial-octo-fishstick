@@ -1,4 +1,4 @@
-﻿namespace Console.Commands.Assertions
+﻿namespace Console.Commands.Resolver.Assertions
 {
     public interface IAssertArgumentLength
     {

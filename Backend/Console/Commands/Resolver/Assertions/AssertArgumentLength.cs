@@ -2,7 +2,7 @@
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
-namespace Console.Commands.Assertions
+namespace Console.Commands.Resolver.Assertions
 {
     public class AssertArgumentLength(IHandler handler) : BaseAssertion<InvalidArgumentCountException>(handler), IAssertArgumentLength
     {

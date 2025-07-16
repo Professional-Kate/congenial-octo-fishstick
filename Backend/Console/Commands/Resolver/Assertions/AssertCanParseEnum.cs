@@ -2,7 +2,7 @@
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
-namespace Console.Commands.Assertions
+namespace Console.Commands.Resolver.Assertions
 {
     public class AssertCanParseEnum(IHandler handler) : BaseAssertion<FailedEnumParseException>(handler), IAssertCanParseEnum
     {

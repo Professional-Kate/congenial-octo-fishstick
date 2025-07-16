@@ -1,4 +1,4 @@
-﻿using Console.Commands.Assertions;
+﻿using Console.Commands.Resolver.Assertions;
 
 namespace Console.Commands.Resolver
 {
