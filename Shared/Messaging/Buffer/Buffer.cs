@@ -36,7 +36,7 @@ namespace IdelPog.Messaging.Buffer
             Ready?.Invoke(this);
         }
 
-        public void Assign(T[] source)
+        public void Assign(IReadOnlyList<T> source)
         {
             _assertBufferState.AssertState(BufferState.CREATED, State);
             _bufferAsserter.AssertCollection(Data.Count, source);
@@ -46,9 +46,9 @@ namespace IdelPog.Messaging.Buffer
             State = BufferState.FILLED;
         }
 
-        private void CopyIntoInternalArray(T[] source)
+        private void CopyIntoInternalArray(IReadOnlyList<T> source)
         {
-            for (int i = 0; i < source.Length; i++)
+            for (int i = 0; i < source.Count; i++)
             {
                 _data[i] = source[i];
             }

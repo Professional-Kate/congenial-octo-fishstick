@@ -46,7 +46,7 @@ namespace Console.Tests.Resolver
         [Test]
         public void Negative_ResolveCommand_EmptyArgsArray_Throws()
         {
-            Assert.Throws<CollectionEmptyException>(() => _commandResolverMediator.ResolveCommand(CommandDomain.CURRENCY, []));
+            Assert.Throws<EmptyCollectionException>(() => _commandResolverMediator.ResolveCommand(CommandDomain.CURRENCY, []));
         }
         
         [Test]

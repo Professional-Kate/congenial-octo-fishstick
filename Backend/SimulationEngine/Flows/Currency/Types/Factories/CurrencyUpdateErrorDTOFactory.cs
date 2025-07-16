@@ -3,12 +3,12 @@ using IdelPog.SimulationEngine.Currency.DTO;
 
 namespace IdelPog.SimulationEngine.Currency.Factories
 {
-    public class CurrencyUpdateErrorFactory : ICurrencyUpdateErrorFactory
+    public class CurrencyUpdateErrorDTOFactory : ICurrencyUpdateErrorDTOFactory
     {
         private readonly IErrorFactory _errorFactory;
         private readonly ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory;
 
-        public CurrencyUpdateErrorFactory(IErrorFactory errorFactory, ICurrencyUpdateDTOFactory currencyUpdateDTOFactory)
+        public CurrencyUpdateErrorDTOFactory(IErrorFactory errorFactory, ICurrencyUpdateDTOFactory currencyUpdateDTOFactory)
         {
             _errorFactory = errorFactory;
             _currencyUpdateDTOFactory = currencyUpdateDTOFactory;

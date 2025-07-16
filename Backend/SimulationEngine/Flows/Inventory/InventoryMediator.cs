@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Enums;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Structures;
 
 namespace IdelPog.SimulationEngine.Inventory
@@ -6,8 +7,21 @@ namespace IdelPog.SimulationEngine.Inventory
     /// <summary>
     /// See <see cref="IInventoryMediator"/> for documentation
     /// </summary>
-    public class InventoryMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateDTOFactory inventoryUpdateDTOFactory, IInventoryUpdateDispatcher dispatcher) : IInventoryMediator
+    public class InventoryMediator : IInventoryMediator
     {
+        private readonly IInventory _inventory;
+        private readonly IItemFactory _itemFactory;
+        private readonly IInventoryUpdateDTOFactory _inventoryUpdateDTOFactory;
+        private readonly IDispatchMany<InventoryUpdateDTO> _inventoryUpdateDispatcher;
+
+        public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateDTOFactory inventoryUpdateDTOFactory, IDispatchMany<InventoryUpdateDTO>  inventoryUpdateDispatcher)
+        {
+            _inventory = inventory;
+            _itemFactory = itemFactory;
+            _inventoryUpdateDTOFactory = inventoryUpdateDTOFactory;
+            _inventoryUpdateDispatcher = inventoryUpdateDispatcher;
+        }
+        
         public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
         {
             List<InventoryUpdateDTO> updateDTOs = new(updates.Count);
@@ -22,17 +36,17 @@ namespace IdelPog.SimulationEngine.Inventory
                         mutateType = CreateOrIncreaseAmount(update.ItemID, update.Amount);
                         break;
                     case ActionType.REMOVE:
-                        mutateType = inventory.RemoveAmount(update.ItemID, update.Amount);
+                        mutateType = _inventory.RemoveAmount(update.ItemID, update.Amount);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(update.Action.ToString());
                 }
 
-                Item item = inventory.GetItem(update.ItemID);
-                updateDTOs.Add(inventoryUpdateDTOFactory.CreateInventoryUpdateDTO(item, update, mutateType));
+                Item item = _inventory.GetItem(update.ItemID);
+                updateDTOs.Add(_inventoryUpdateDTOFactory.CreateInventoryUpdateDTO(item, update, mutateType));
             }
             
-            dispatcher.DispatchUpdates(updateDTOs.ToArray());
+            _inventoryUpdateDispatcher.Dispatch(updateDTOs.ToArray());
         }
 
         /// <summary>
@@ -43,15 +57,15 @@ namespace IdelPog.SimulationEngine.Inventory
         /// <remarks>If the <see cref="Item"/> with the passed <see cref="ItemID"/> is not found, it will be created</remarks>
         private MutateType CreateOrIncreaseAmount(ItemID itemID, int amount)
         {
-            if (inventory.Contains(itemID))
+            if (_inventory.Contains(itemID))
             {
-                inventory.AddAmount(itemID, amount);
+                _inventory.AddAmount(itemID, amount);
                 return MutateType.CHANGED;
             }
             
             // if an Item doesn't exist then we create one
-            Item createdItem = itemFactory.CreateItem(itemID, amount);
-            inventory.AddItem(createdItem);
+            Item createdItem = _itemFactory.CreateItem(itemID, amount);
+            _inventory.AddItem(createdItem);
             return MutateType.CREATED;
         }
     }

@@ -3,7 +3,6 @@ using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Assertions.Interfaces;
 
 namespace IdelPog.SimulationEngine.Inventory
 {

@@ -3,22 +3,22 @@ using IdelPog.SimulationEngine.Currency.DTO;
 
 namespace IdelPog.SimulationEngine.Currency.Factories
 {
-    public class CurrencyCreationErrorFactory : ICurrencyCreationErrorFactory
+    public class CurrencyCreationErrorDTOFactory : ICurrencyCreationErrorDTOFactory
     {
         private readonly IErrorFactory _errorFactory;
-        private readonly ICurrencyCreationFactory _currencyCreationFactory;
+        private readonly ICurrencyCreationDTOFactory _currencyCreationDTOFactory;
 
-        public CurrencyCreationErrorFactory(IErrorFactory errorFactory, ICurrencyCreationFactory currencyCreationFactory)
+        public CurrencyCreationErrorDTOFactory(IErrorFactory errorFactory, ICurrencyCreationDTOFactory currencyCreationDTOFactory)
         {
             _errorFactory = errorFactory;
-            _currencyCreationFactory = currencyCreationFactory;
+            _currencyCreationDTOFactory = currencyCreationDTOFactory;
         }
         
         public CurrencyCreationErrorDTO CreateCurrencyCreationError(IReadOnlyList<CurrencyCreation> currencyCreations, Exception exception)
         {
             return new CurrencyCreationErrorDTO
             {
-                CurrencyCreations = _currencyCreationFactory.CreateFrom(currencyCreations),
+                CurrencyCreations = _currencyCreationDTOFactory.CreateFrom(currencyCreations),
                 ErrorDetails = _errorFactory.CreateError(exception)
             };
         }

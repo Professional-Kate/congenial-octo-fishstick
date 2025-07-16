@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using IdelPog.ContentHydrator.Converters;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Assertions;
 
 namespace IdelPog.ContentHydrator.Providers
 {

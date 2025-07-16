@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Listeners;
 
-namespace IdelPog.Messaging.Dispatch
+namespace IdelPog.Messaging.Messenger
 {
     public interface IBufferMessenger
     {

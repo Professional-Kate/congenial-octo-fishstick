@@ -1,12 +1,11 @@
 ﻿using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Assertions.Pipelines;
-using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Factory;
 using IdelPog.Messaging.Listeners;
+using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Assertions.Interfaces;
 
 namespace Integration.Tests
 {

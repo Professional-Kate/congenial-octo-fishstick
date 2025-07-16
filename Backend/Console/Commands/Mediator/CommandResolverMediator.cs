@@ -1,7 +1,7 @@
 ﻿using Console.Commands.Domains;
 using Console.Types;
 using IdelPog.Common.Repository;
-using IdelPog.Validation.Assertions.Interfaces;
+using IdelPog.Validation.Assertions;
 
 namespace Console.Commands
 {
