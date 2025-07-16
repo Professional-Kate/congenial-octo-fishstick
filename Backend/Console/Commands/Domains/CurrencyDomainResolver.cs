@@ -1,9 +1,9 @@
 ﻿using Console.Commands.Assertions;
 using Console.Commands.Resolver.Pipelines;
 using Console.Types;
-using IdelPog.Common.Dispatchers.Interfaces;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
+using IdelPog.Messaging.Dispatch;
 
 namespace Console.Commands.Domains
 {
@@ -14,9 +14,9 @@ namespace Console.Commands.Domains
         private readonly IArgumentResolverPipeline<CurrencyUpdateArguments> _currencyUpdatePipeline;
         private readonly IAssertArgumentLength _assertArgumentLength;
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
-        private readonly ICurrencyUpdateDispatcher _currencyUpdateDispatcher;
+        private readonly IDispatchOne<CurrencyUpdate> _currencyUpdateDispatcher;
 
-        public CurrencyDomainResolver(IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline,  IAssertArgumentLength assertArgumentLength,  ICurrencyUpdateFactory currencyUpdateFactory,  ICurrencyUpdateDispatcher currencyUpdateDispatcher)
+        public CurrencyDomainResolver(IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline,  IAssertArgumentLength assertArgumentLength,  ICurrencyUpdateFactory currencyUpdateFactory,  IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher)
         {
             _currencyUpdatePipeline = currencyUpdatePipeline;
             _assertArgumentLength = assertArgumentLength;
@@ -32,7 +32,7 @@ namespace Console.Commands.Domains
             CurrencyUpdateArguments currencyUpdateArguments = _currencyUpdatePipeline.Resolve(arguments);
             CurrencyUpdate currencyUpdate = _currencyUpdateFactory.CreateCurrencyUpdate(currencyUpdateArguments.ActionType, currencyUpdateArguments.Amount, currencyUpdateArguments.CurrencyType);
             
-            _currencyUpdateDispatcher.DispatchCurrencyUpdate(currencyUpdate);
+            _currencyUpdateDispatcher.Dispatch(currencyUpdate);
         }
     }
 }
