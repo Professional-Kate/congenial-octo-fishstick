@@ -1,6 +1,6 @@
-﻿using Console.Commands;
+﻿using Console.Assertions;
+using Console.Commands;
 using Console.Commands.Resolver;
-using Console.Runtime.Input.Assertions;
 using Console.Types;
 
 namespace Console.Runtime.Input

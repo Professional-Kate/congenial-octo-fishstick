@@ -2,6 +2,6 @@
 {
     public interface IArgumentResolverPipeline<out T>
     {
-        public T Resolve(string[] arguments);
+        public T Resolve(ReadOnlySpan<string> arguments);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Console.Runtime.Input.Assertions
+﻿namespace Console.Assertions
 {
     public interface IAssertSpanNotEmpty
     {

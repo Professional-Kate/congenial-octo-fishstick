@@ -25,7 +25,7 @@ namespace Console.Commands.Domains
             _currencyUpdateDispatcher = currencyUpdateDispatcher;
         }
 
-        public void Resolve(string[] arguments)
+        public void Resolve(ReadOnlySpan<string> arguments)
         {
             _assertArgumentLength.Handle(arguments.Length, 3);
 

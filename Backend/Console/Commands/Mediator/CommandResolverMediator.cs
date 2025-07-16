@@ -1,4 +1,5 @@
-﻿using Console.Commands.Domains;
+﻿using Console.Assertions;
+using Console.Commands.Domains;
 using Console.Types;
 using IdelPog.Common.Repository;
 using IdelPog.Validation.Assertions;
@@ -8,28 +9,23 @@ namespace Console.Commands
     public class CommandResolverMediator : ICommandResolverMediator
     {
         private readonly IStateRepository<CommandDomain, ICommandDomainResolver> _commandResolverMap;
-        private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertFound _assertFound;
-        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
+        private readonly IAssertSpanNotEmpty _assertSpanNotEmpty;
 
-        public CommandResolverMediator(IStateRepository<CommandDomain, ICommandDomainResolver> commandResolverMap, IAssertNotNull assertNotNull, IAssertFound assertFound,  IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public CommandResolverMediator(IStateRepository<CommandDomain, ICommandDomainResolver> commandResolverMap, IAssertFound assertFound,  IAssertSpanNotEmpty assertSpanNotEmpty)
         {
             _commandResolverMap = commandResolverMap;
-            _assertNotNull = assertNotNull;
             _assertFound = assertFound;
-            _assertCollectionNotEmpty = assertCollectionNotEmpty;
+            _assertSpanNotEmpty = assertSpanNotEmpty;
         }
         
         public void ResolveCommand(CommandDomain domain, ReadOnlySpan<string> arguments)
         {
-            string[] argumentArray = arguments.ToArray();
-            
-            _assertNotNull.AssertObjectNotNull(argumentArray);
-            _assertCollectionNotEmpty.Handle(argumentArray);
+            _assertSpanNotEmpty.Handle(arguments);
             _assertFound.AssertItemIsFound(domain, () => _commandResolverMap.Contains(domain));
             
             ICommandDomainResolver commandResolver = _commandResolverMap.Get(domain);
-            commandResolver.Resolve(argumentArray);
+            commandResolver.Resolve(arguments);
         }
     }
 }

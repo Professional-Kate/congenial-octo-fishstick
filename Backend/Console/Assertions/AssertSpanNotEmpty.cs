@@ -2,7 +2,7 @@
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
-namespace Console.Runtime.Input.Assertions
+namespace Console.Assertions
 {
     public class AssertSpanNotEmpty(IHandler handler) : BaseAssertion<EmptySpanException>(handler), IAssertSpanNotEmpty
     {

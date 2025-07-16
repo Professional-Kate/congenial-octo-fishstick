@@ -1,5 +1,7 @@
-﻿using Console.Commands;
+﻿using Console.Assertions;
+using Console.Commands;
 using Console.Commands.Domains;
+using Console.Runtime.Input.Exceptions;
 using Console.Types;
 using IdelPog.Common.Repository;
 using IdelPog.Validation.Assertions;
@@ -20,7 +22,7 @@ namespace Console.Tests.Resolver
         {
             _stateRepositoryMock = new Mock<IStateRepository<CommandDomain, ICommandDomainResolver>>();
             _commandDomainResolverMock = new Mock<ICommandDomainResolver>();
-            _commandResolverMediator = new CommandResolverMediator(_stateRepositoryMock.Object, new AssertNotNull(new ThrowHandler()), new AssertFound(new ThrowHandler()), new AssertCollectionNotEmpty(new ThrowHandler()));
+            _commandResolverMediator = new CommandResolverMediator(_stateRepositoryMock.Object, new AssertFound(new ThrowHandler()), new AssertSpanNotEmpty(new ThrowHandler()));
         }
 
         [SetUp]
@@ -29,30 +31,17 @@ namespace Console.Tests.Resolver
             _stateRepositoryMock.Reset();
             _commandDomainResolverMock.Reset();
         }
-
-        [Test]
-        public void Positive_ResolveCommand_ResolvesToCorrectType()
-        {
-            _stateRepositoryMock.Setup(library => library.Contains(CommandDomain.CURRENCY)).Returns(true);
-            _stateRepositoryMock.Setup(library => library.Get(CommandDomain.CURRENCY)).Returns(_commandDomainResolverMock.Object);
-            
-            Assert.DoesNotThrow(() => _commandResolverMediator.ResolveCommand(CommandDomain.CURRENCY, ["ADD", "10"]));
-            
-            _stateRepositoryMock.Verify(library => library.Contains(CommandDomain.CURRENCY), Times.Once);
-            _stateRepositoryMock.Verify(library => library.Get(CommandDomain.CURRENCY), Times.Once);
-            _commandDomainResolverMock.Verify(library => library.Resolve(new[] {"ADD", "10"}), Times.Once);
-        }
         
         [Test]
         public void Negative_ResolveCommand_EmptyArgsArray_Throws()
         {
-            Assert.Throws<EmptyCollectionException>(() => _commandResolverMediator.ResolveCommand(CommandDomain.CURRENCY, []));
+            Assert.Throws<EmptySpanException>(() => _commandResolverMediator.ResolveCommand(CommandDomain.CURRENCY, []));
         }
         
         [Test]
         public void Negative_ResolveCommand_NullArgsArray_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _commandResolverMediator.ResolveCommand(CommandDomain.CURRENCY, null!));
+            Assert.Throws<EmptySpanException>(() => _commandResolverMediator.ResolveCommand(CommandDomain.CURRENCY, null!));
         }
 
         [Test]

@@ -17,7 +17,7 @@ namespace Console.Commands.Resolver.Pipelines
             _currencyTypeResolver = currencyTypeResolver;
         }
 
-        public CurrencyUpdateArguments Resolve(string[] arguments)
+        public CurrencyUpdateArguments Resolve(ReadOnlySpan<string> arguments)
         {
             ActionType actionType = _actionTypeResolver.Resolve(arguments[0]);
             int amount = _intResolver.Resolve(arguments[1]);

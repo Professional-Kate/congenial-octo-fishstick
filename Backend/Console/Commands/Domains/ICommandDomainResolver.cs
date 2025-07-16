@@ -7,6 +7,6 @@ namespace Console.Commands.Domains
         public CommandDomain HandledDomain { get; }
         public CommandDocumentation CommandDocumentation { get; }
 
-        public void Resolve(string[] arguments);
+        public void Resolve(ReadOnlySpan<string> arguments);
     }
 }
