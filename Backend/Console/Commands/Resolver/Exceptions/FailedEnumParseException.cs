@@ -1,4 +1,4 @@
-﻿namespace Console.Commands.Exceptions
+﻿namespace Console.Commands.Resolver.Exceptions
 {
     public class FailedEnumParseException : Exception
     {

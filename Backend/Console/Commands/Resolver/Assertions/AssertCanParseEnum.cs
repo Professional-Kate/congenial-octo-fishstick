@@ -1,4 +1,4 @@
-﻿using Console.Commands.Exceptions;
+﻿using Console.Commands.Resolver.Exceptions;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
