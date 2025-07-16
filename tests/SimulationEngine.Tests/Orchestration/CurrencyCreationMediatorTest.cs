@@ -1,9 +1,11 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.Dispatchers;
+using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Exceptions;
+using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
@@ -17,7 +19,8 @@ namespace IdelPogTests.Orchestration
     {
         private ICurrencyCreationMediator  _currencyCreationMediator;
         private Mock<IStateRepository<CurrencyType, Currency>> _stateRepositoryMock;
-        private Mock<ICurrencyCreationDispatcher>  _currencyCreationDispatcherMock;
+        private Mock<IDispatchMany<CurrencyCreationDTO>>  _currencyCreationDispatcherMock;
+        private Mock<ICurrencyCreationDTOFactory> _currencyCreationDTOFactoryMock;
 
         private CurrencyCreation _createGold;
         private CurrencyCreation _createGems;
@@ -26,8 +29,9 @@ namespace IdelPogTests.Orchestration
         public void OneTimeSetUp()
         {
             _stateRepositoryMock = new Mock<IStateRepository<CurrencyType, Currency>>();
-            _currencyCreationDispatcherMock = new Mock<ICurrencyCreationDispatcher>();
-            _currencyCreationMediator = new CurrencyCreationMediator(_stateRepositoryMock.Object, _currencyCreationDispatcherMock.Object, new AssertNotNull(new ThrowHandler()), new AssertCollectionNotEmpty(new ThrowHandler()),  new AssertNonDuplicate(new ThrowHandler()), new AssertPositive(new ThrowHandler()));
+            _currencyCreationDispatcherMock = new Mock<IDispatchMany<CurrencyCreationDTO>>();
+            _currencyCreationDTOFactoryMock = new Mock<ICurrencyCreationDTOFactory>();
+            _currencyCreationMediator = new CurrencyCreationMediator(_stateRepositoryMock.Object, _currencyCreationDispatcherMock.Object, _currencyCreationDTOFactoryMock.Object, new AssertNotNull(new ThrowHandler()), new AssertCollectionNotEmpty(new ThrowHandler()),  new AssertNonDuplicate(new ThrowHandler()), new AssertPositive(new ThrowHandler()));
 
             _createGold = new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = 10 };
             _createGems = new CurrencyCreation { CurrencyType = CurrencyType.GEMS, StartingAmount = 15 };
@@ -40,38 +44,63 @@ namespace IdelPogTests.Orchestration
             _currencyCreationDispatcherMock.Reset();
         }
 
+        public CurrencyCreationDTO[] CurrencyCreationConverter(CurrencyCreation[] currencyCreations)
+        {
+            List<CurrencyCreationDTO> currencyCreationDTOs = new(currencyCreations.Length);
+
+            foreach (CurrencyCreation currencyCreation in currencyCreations)
+            {
+                currencyCreationDTOs.Add(new CurrencyCreationDTO { Amount = currencyCreation.StartingAmount, CurrencyType = currencyCreation.CurrencyType});
+            }
+             
+            return currencyCreationDTOs.ToArray();
+        }
+
         [TestCase(0)]
         [TestCase(10)]
         [TestCase(int.MaxValue)]
         public void Positive_CreateCurrency_SingleValidCommand_CreatesCurrency(int amount)
         {
             CurrencyCreation currencyCreation = new() { CurrencyType = CurrencyType.GOLD, StartingAmount = amount };
+            CurrencyCreationDTO[] currencyCreationDTOs = CurrencyCreationConverter([currencyCreation]);
+            _currencyCreationDTOFactoryMock.Setup(library => library.CreateFrom(new [] { currencyCreation }))
+                .Returns(currencyCreationDTOs);
+            
             _currencyCreationMediator.CreateCurrency([currencyCreation]);
             
             _stateRepositoryMock.Verify(library => library.Add(currencyCreation.CurrencyType, It.IsAny<Currency>()), Times.Once);
             _stateRepositoryMock.Verify(library => library.Contains(currencyCreation.CurrencyType), Times.Once);
-            _currencyCreationDispatcherMock.Verify(library => library.Dispatch(new[] { currencyCreation }), Times.Once);
+            _currencyCreationDispatcherMock.Verify(library => library.Dispatch(currencyCreationDTOs), Times.Once);
         }
         
         [Test]
         public void Positive_CreateCurrency_MultipleValidCommands_CreatesCurrency()
         {
+            CurrencyCreation[] currencyCreations = [_createGold, _createGems];
+            CurrencyCreationDTO[] currencyCreationDTOs = CurrencyCreationConverter(currencyCreations);
+            _currencyCreationDTOFactoryMock.Setup(library => library.CreateFrom(currencyCreations))
+                .Returns(currencyCreationDTOs);
+            
             _currencyCreationMediator.CreateCurrency([_createGold, _createGems]);
             
             _stateRepositoryMock.Verify(library => library.Add(It.IsInRange(CurrencyType.GOLD, CurrencyType.GEMS, Range.Inclusive), It.IsAny<Currency>()), Times.Exactly(2));
             _stateRepositoryMock.Verify(library => library.Contains(It.IsInRange(CurrencyType.GOLD, CurrencyType.GEMS, Range.Inclusive)), Times.Exactly(2));
-            _currencyCreationDispatcherMock.Verify(library => library.Dispatch(new[] { _createGold, _createGems }), Times.Once);
+            _currencyCreationDispatcherMock.Verify(library => library.Dispatch(currencyCreationDTOs), Times.Once);
         }
 
         [Test]
         public void Negative_CreateCurrency_CurrencyAlreadyExists_Throws()
         {
+            CurrencyCreationDTO[] currencyCreationDTOs = CurrencyCreationConverter([_createGold]);
+            _currencyCreationDTOFactoryMock.Setup(library => library.CreateFrom(new[] { _createGold }))
+                .Returns(currencyCreationDTOs);
+            
             _stateRepositoryMock.SetupSequence(library => library.Contains(CurrencyType.GOLD))
                 .Returns(false)
                 .Returns(true);
             
             _currencyCreationMediator.CreateCurrency([_createGold]);
-            _currencyCreationDispatcherMock.Verify(library => library.Dispatch(new[] { _createGold }), Times.Once);
+            _currencyCreationDispatcherMock.Verify(library => library.Dispatch(currencyCreationDTOs), Times.Once);
             
             Assert.Throws<DuplicateItemException>(() => _currencyCreationMediator.CreateCurrency([_createGold]));
             

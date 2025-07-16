@@ -1,7 +1,9 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.Dispatchers;
+using IdelPog.SimulationEngine.Currency.DTO;
+using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Currency
@@ -9,16 +11,18 @@ namespace IdelPog.SimulationEngine.Currency
     public class CurrencyCreationMediator : ICurrencyCreationMediator
     {
         private readonly IStateRepository<CurrencyType, Currency> _currencyRepository;
-        private readonly ICurrencyCreationDispatcher _currencyCreationDispatcher;
+        private readonly IDispatchMany<CurrencyCreationDTO> _currencyCreationDTODispatcher;
+        private readonly ICurrencyCreationDTOFactory  _currencyCreationDTOFactory;
         private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
         private readonly IAssertNonDuplicate _assertNonDuplicate;
         private readonly IAssertPositive _assertPositive;
 
-        public CurrencyCreationMediator(IStateRepository<CurrencyType, Currency> currencyRepository,  ICurrencyCreationDispatcher currencyCreationDispatcher, IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty,  IAssertNonDuplicate assertNonDuplicate, IAssertPositive assertPositive)
+        public CurrencyCreationMediator(IStateRepository<CurrencyType, Currency> currencyRepository,  IDispatchMany<CurrencyCreationDTO> currencyCreationDTODispatcher, ICurrencyCreationDTOFactory currencyCreationDTOFactory, IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty,  IAssertNonDuplicate assertNonDuplicate, IAssertPositive assertPositive)
         {
             _currencyRepository = currencyRepository;
-            _currencyCreationDispatcher = currencyCreationDispatcher;
+            _currencyCreationDTODispatcher = currencyCreationDTODispatcher;
+            _currencyCreationDTOFactory = currencyCreationDTOFactory;
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
             _assertNonDuplicate = assertNonDuplicate;
@@ -47,7 +51,7 @@ namespace IdelPog.SimulationEngine.Currency
                 _currencyRepository.Add(keyValuePair.Key, keyValuePair.Value);
             }
             
-            _currencyCreationDispatcher.Dispatch(currencies);
+            _currencyCreationDTODispatcher.Dispatch(_currencyCreationDTOFactory.CreateFrom(currencies));
         }
     }
 }

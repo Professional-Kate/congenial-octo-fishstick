@@ -4,12 +4,12 @@ using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Currency.Factories
 {
-    public class CurrencyCreationFactory : ICurrencyCreationFactory
+    public class CurrencyCreationDTOFactory : ICurrencyCreationDTOFactory
     {
         private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
 
-        public CurrencyCreationFactory(IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public CurrencyCreationDTOFactory(IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
         {
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;

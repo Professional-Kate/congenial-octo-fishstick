@@ -3,7 +3,7 @@ using IdelPog.SimulationEngine.Currency.DTO;
 
 namespace IdelPog.SimulationEngine.Currency.Factories
 {
-    public interface ICurrencyUpdateErrorFactory
+    public interface ICurrencyUpdateErrorDTOFactory
     {
         public CurrencyUpdateErrorDTO CreateCurrencyUpdateError(IReadOnlyList<CurrencyUpdate> updates, Exception exception);
     }
