@@ -1,4 +1,9 @@
-﻿using Console.Types;
+﻿using Console.Commands.Resolver.Assertions;
+using Console.Commands.Resolver.Pipelines;
+using Console.Types;
+using IdelPog.Common.Factories;
+using IdelPog.Messaging.Dispatch;
+using IdelPog.SimulationEngine.Skill;
 
 namespace Console.Commands.Domains
 {
@@ -7,23 +12,25 @@ namespace Console.Commands.Domains
         public CommandDomain HandledDomain => CommandDomain.SKILL;
         public CommandDocumentation CommandDocumentation { get; } = new() { Syntax = "skill change <SkillID>", Description = "Change to another skill!!! Exciting times!"};
 
+        private readonly IArgumentResolverPipeline<SkillChangeArguments> _argumentResolverPipeline;
+        private readonly IDispatchOne<SkillChange> _skillChangeDispatcher;
+        private readonly ISkillChangeFactory _skillChangeFactory;
+        private readonly IAssertArgumentLength _assertArgumentLength;
+
+        public SkillDomainResolver(IArgumentResolverPipeline<SkillChangeArguments> argumentResolverPipeline, IDispatchOne<SkillChange> skillChangeDispatcher, ISkillChangeFactory skillChangeFactory, IAssertArgumentLength assertArgumentLength)
+        {
+            _argumentResolverPipeline = argumentResolverPipeline;
+            _skillChangeDispatcher = skillChangeDispatcher;
+            _skillChangeFactory = skillChangeFactory;
+            _assertArgumentLength = assertArgumentLength;
+        }
+
         public void Resolve(ReadOnlySpan<string> arguments)
         {
-            // TODO: verify args are length one <SkillID>
-            // TODO: verify args have SkillID
-            string normalizedAction = arguments[1].ToLowerInvariant();
-            // TODO: initialize SkillChange
+            _assertArgumentLength.Handle(arguments.Length, 1);
+            SkillChangeArguments skillChangeArguments = _argumentResolverPipeline.Resolve(arguments);
             
-            switch (normalizedAction)
-            {
-                case "change": 
-                    // TODO: assign SkillChange
-                    break;
-                default: 
-                    throw new ArgumentOutOfRangeException($"{normalizedAction} is not a valid action for domain: {HandledDomain}");
-            }
-            
-            // TODO: dispatch SkillChange
+            _skillChangeDispatcher.Dispatch(_skillChangeFactory.CreateSkillChange(skillChangeArguments.SkillID));
         }
     }
 }
