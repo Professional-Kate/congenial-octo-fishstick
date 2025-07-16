@@ -9,7 +9,6 @@ namespace Console.Commands.Resolver.Pipelines
         private readonly IArgumentResolver<int> _intResolver;
         private readonly IArgumentResolver<CurrencyType> _currencyTypeResolver;
 
-
         public CurrencyUpdateResolver(IArgumentResolver<ActionType> actionTypeResolver, IArgumentResolver<int> intResolver, IArgumentResolver<CurrencyType> currencyTypeResolver)
         {
             _actionTypeResolver = actionTypeResolver;
