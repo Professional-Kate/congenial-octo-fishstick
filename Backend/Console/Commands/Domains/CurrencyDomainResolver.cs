@@ -10,7 +10,8 @@ namespace Console.Commands.Domains
     public class CurrencyDomainResolver : ICommandDomainResolver
     {
         public CommandDomain HandledDomain => CommandDomain.CURRENCY;
-        
+        public CommandDocumentation CommandDocumentation { get; } = new() { Syntax = "currency <ActionType> <int> <CurrencyType>", Description = "Add or Remove an amount from any Currency!"};
+
         private readonly IArgumentResolverPipeline<CurrencyUpdateArguments> _currencyUpdatePipeline;
         private readonly IAssertArgumentLength _assertArgumentLength;
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
@@ -26,7 +27,6 @@ namespace Console.Commands.Domains
 
         public void Resolve(string[] arguments)
         {
-            // TODO: need a type to store the expected size of args, and other useful details
             _assertArgumentLength.Handle(arguments.Length, 3);
 
             CurrencyUpdateArguments currencyUpdateArguments = _currencyUpdatePipeline.Resolve(arguments);

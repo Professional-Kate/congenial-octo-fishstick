@@ -4,8 +4,9 @@ namespace Console.Commands.Domains
 {
     public class SkillDomainResolver : ICommandDomainResolver
     {
-        public CommandDomain HandledDomain { get; } = CommandDomain.SKILL;
-        
+        public CommandDomain HandledDomain => CommandDomain.SKILL;
+        public CommandDocumentation CommandDocumentation { get; } = new() { Syntax = "skill change <SkillID>", Description = "Change to another skill!!! Exciting times!"};
+
         public void Resolve(string[] arguments)
         {
             // TODO: verify args are length one <SkillID>
