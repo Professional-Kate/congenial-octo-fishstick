@@ -1,4 +1,5 @@
-﻿using IdelPog.Common.Repository;
+﻿using System.Diagnostics.CodeAnalysis;
+using IdelPog.Common.Repository;
 using IdelPog.ECS.Assertions;
 using IdelPog.ECS.Component;
 using IdelPog.Validation.Assertions.Handlers;
@@ -46,24 +47,25 @@ namespace IdelPog.ECS
             _componentMap.Remove(typeof(T));
         }
 
-        public IComponent GetComponent<T>() where T : IComponent
+        public T GetComponent<T>() where T : IComponent
         {
             _assertComponentFound.Handle(_componentMap.Contains(typeof(T)), typeof(T));
 
-            return _componentMap.Get(typeof(T));
+            return (T) _componentMap.Get(typeof(T));
         }
 
-        public Optional<T> TryGetComponent<T>() where T : IComponent
+        public bool TryGetComponent<T>([NotNullWhen(true)] out T? component) where T : IComponent
         {
             bool contains = _componentMap.Contains(typeof(T));
 
             if (contains == false)
             {
-                return Optional<T>.None;
+                component = default;
+                return false;
             }
             
-            T component = (T) _componentMap.Get(typeof(T));
-            return new Optional<T>(component);
+            component = (T) _componentMap.Get(typeof(T));
+            return true;
         }
     }
 }

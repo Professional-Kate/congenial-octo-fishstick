@@ -59,7 +59,7 @@ namespace IdelPog.ECS.Component
 
         public ComponentStore<T> DeepClone()
         {
-            return new ComponentStore<T>(_components.ToArray(), _handler);
+            return new ComponentStore<T>(GetAllComponents(), _handler);
         }
     }
 }
