@@ -8,11 +8,11 @@ namespace Console.Commands
 {
     public class CommandResolverMediator : ICommandResolverMediator
     {
-        private readonly IStateRepository<CommandDomain, ICommandDomainResolver> _commandResolverMap;
+        private readonly IAssetRepository<CommandDomain, ICommandDomainResolver> _commandResolverMap;
         private readonly IAssertFound _assertFound;
         private readonly IAssertSpanNotEmpty _assertSpanNotEmpty;
 
-        public CommandResolverMediator(IStateRepository<CommandDomain, ICommandDomainResolver> commandResolverMap, IAssertFound assertFound,  IAssertSpanNotEmpty assertSpanNotEmpty)
+        public CommandResolverMediator(IAssetRepository<CommandDomain, ICommandDomainResolver> commandResolverMap, IAssertFound assertFound,  IAssertSpanNotEmpty assertSpanNotEmpty)
         {
             _commandResolverMap = commandResolverMap;
             _assertFound = assertFound;
