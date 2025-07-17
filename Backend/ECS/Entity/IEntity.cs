@@ -1,4 +1,5 @@
-﻿using IdelPog.ECS.Component;
+﻿using System.Diagnostics.CodeAnalysis;
+using IdelPog.ECS.Component;
 using IdelPog.ECS.Exceptions;
 
 namespace IdelPog.ECS
@@ -31,15 +32,15 @@ namespace IdelPog.ECS
         /// <typeparam name="T">The component type to retrieve</typeparam>
         /// <returns>The requested component</returns>
         /// <exception cref="ComponentNotFoundException"> Thrown if the component of type <typeparamref name="T"/> does not exist on this entity </exception>
-        public IComponent GetComponent<T>() where T : IComponent;
+        public T GetComponent<T>() where T : IComponent;
 
         /// <summary>
         /// Attempts to retrieve a component from this entity by type
         /// </summary>
         /// <typeparam name="T">The component type to retrieve</typeparam>
         /// <returns>
-        /// An <see cref="Optional{T}"/> containing the component if it exists, or empty if not found
+        /// If the component was found
         /// </returns>
-        public Optional<T> TryGetComponent<T>() where T : IComponent;
+        public bool TryGetComponent<T>([NotNullWhen(true)] out T? component) where T : IComponent;
     }
 }
