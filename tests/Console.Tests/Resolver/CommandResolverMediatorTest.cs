@@ -14,13 +14,13 @@ namespace Console.Tests.Resolver
     public class CommandResolverMediatorTest
     {
         private ICommandResolverMediator _commandResolverMediator { get; set; }
-        private Mock<IStateRepository<CommandDomain, ICommandDomainResolver>> _stateRepositoryMock { get; set; }
+        private Mock<IAssetRepository<CommandDomain, ICommandDomainResolver>> _stateRepositoryMock { get; set; }
         private Mock<ICommandDomainResolver>  _commandDomainResolverMock { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _stateRepositoryMock = new Mock<IStateRepository<CommandDomain, ICommandDomainResolver>>();
+            _stateRepositoryMock = new Mock<IAssetRepository<CommandDomain, ICommandDomainResolver>>();
             _commandDomainResolverMock = new Mock<ICommandDomainResolver>();
             _commandResolverMediator = new CommandResolverMediator(_stateRepositoryMock.Object, new AssertFound(new ThrowHandler()), new AssertSpanNotEmpty(new ThrowHandler()));
         }
