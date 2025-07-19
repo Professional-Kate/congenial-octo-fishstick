@@ -15,7 +15,6 @@ namespace IdelPog.ECS.Tests
         public void OneTimeSetUp()
         {
             _handlerMock = new Mock<IHandler>();
-            SetupComponentStoreWith(10);
         }
 
         private void SetupComponentStoreWith(int count)
@@ -33,6 +32,7 @@ namespace IdelPog.ECS.Tests
         [Test]
         public void Positive_GetAllComponents_ReturnsAllComponents()
         {
+            SetupComponentStoreWith(10);
             TestComponent[] testComponents = _componentStore.GetAllComponents();
             
             Assert.That(testComponents, Has.Length.EqualTo(10));
@@ -56,6 +56,28 @@ namespace IdelPog.ECS.Tests
         }
 
         [Test]
+        public void Positive_ContainsComponent_ContainsComponent_ShouldReturnsTrue()
+        {
+            SetupComponentStoreWith(1);
+            
+            bool contains = _componentStore.ContainsComponent(component => component.TestNumber == 0);
+            
+            Assert.That(contains, Is.True);
+            
+        }
+        
+        [Test]
+        public void Positive_ContainsComponent_DoesNotContainsComponent_ShouldReturnsFalse()
+        {
+            SetupComponentStoreWith(1);
+            
+            bool contains = _componentStore.ContainsComponent(component => component.TestNumber == 10);
+            
+            Assert.That(contains, Is.False);
+            
+        }
+
+        [Test]
         public void Negative_ConstructNewStore_EmptyArray_Throws()
         {
             _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentArrayEmptyException>()))
@@ -76,9 +98,9 @@ namespace IdelPog.ECS.Tests
         [Test]
         public void Positive_CloneComponent_Clones()
         {
+            SetupComponentStoreWith(1);
             ComponentStore<TestComponent> clonedStore = _componentStore.DeepClone();
             
-            Assert.That(clonedStore, Is.Not.Null);
             Assert.That(clonedStore.GetAllComponents(), Is.EqualTo(_componentStore.GetAllComponents()));
         }
     }

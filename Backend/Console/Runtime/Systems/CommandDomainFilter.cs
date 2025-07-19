@@ -16,7 +16,7 @@ namespace Console.Runtime.Systems
 
         public bool IsAllowed(CommandDomain domain)
         {
-            ComponentStore<CommandDomainComponent> componentStore = _allowedDomainEntity.GetComponent<ComponentStore<CommandDomainComponent>>()
+            ComponentStore<CommandDomainComponent> componentStore = _allowedDomainEntity.GetComponent<ComponentStore<CommandDomainComponent>>();
             CommandDomainComponent[] commandDomainComponents = componentStore.GetAllComponents();
             foreach (CommandDomainComponent commandDomainComponent in commandDomainComponents)
             {

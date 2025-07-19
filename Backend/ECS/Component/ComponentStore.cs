@@ -12,7 +12,7 @@ namespace IdelPog.ECS.Component
     /// This store returns cloned components using <see cref="GetAllComponents"/> to ensure immutability.
     /// Consumers are not expected to mutate the returned components in a way that affects the store
     /// </remarks>
-    public sealed class ComponentStore<T> : IComponent<ComponentStore<T>> where T : IComponent<T>
+    public readonly struct ComponentStore<T> : IComponent<ComponentStore<T>> where T : IComponent<T>
     {
         private readonly T[] _components;
         private readonly IHandler _handler;
@@ -34,6 +34,24 @@ namespace IdelPog.ECS.Component
             assertArrayNotEmpty.Handle(components.Length > 0);
             
             _components = components;
+        }
+
+        /// <summary>
+        /// Determined whether any component in the store matches the given predicate  
+        /// </summary>
+        /// <param name="predicate">The Predicate to run each component against</param>
+        /// <returns>if any component satisfied the predicate</returns>
+        public bool ContainsComponent(Predicate<T> predicate)
+        {
+            foreach (T component in _components)
+            {
+                if (predicate(component))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
         
         /// <summary>
