@@ -32,7 +32,7 @@ jobs:
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
       - name: Generate HTML Test Report
-        run: reportgenerator -reports:**/test-results.trx -targetdir:TestReport -reporttypes:Html
+        run: reportgenerator -reports:**/*.trx -targetdir:TestReport -reporttypes:Html
 
       - name: Upload Test Results (TRX + HTML)
         if: always()
