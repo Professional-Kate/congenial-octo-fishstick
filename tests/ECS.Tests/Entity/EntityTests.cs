@@ -86,6 +86,30 @@ namespace IdelPog.ECS.Tests
         }
 
         [Test]
+        public void Positive_GetComponent_ContainsComponent_ShouldReturnTrue()
+        {
+            _repositoryMock.Setup(library => library.Contains(typeof(TestComponent)))
+                .Returns(true);
+
+            bool contains = _entity.ContainsComponent<TestComponent>();
+            
+            Assert.That(contains, Is.True);
+            _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
+        }
+        
+        [Test]
+        public void Positive_GetComponent_DoesNotComponent_ShouldReturnFalse()
+        {
+            _repositoryMock.Setup(library => library.Contains(typeof(TestComponent)))
+                .Returns(false);
+
+            bool contains = _entity.ContainsComponent<TestComponent>();
+            
+            Assert.That(contains, Is.False);
+            _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
+        }
+
+        [Test]
         public void Negative_RemoveComponent_MissingComponent_Throws()
         {
             _repositoryMock.Setup(library => library.Contains(typeof(TestComponent)))

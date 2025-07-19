@@ -47,6 +47,11 @@ namespace IdelPog.ECS
             _componentMap.Remove(typeof(T));
         }
 
+        public bool ContainsComponent<T>() where T : IComponent
+        {
+            return _componentMap.Contains(typeof(T));
+        }
+
         public T GetComponent<T>() where T : IComponent
         {
             _assertComponentFound.Handle(_componentMap.Contains(typeof(T)), typeof(T));
