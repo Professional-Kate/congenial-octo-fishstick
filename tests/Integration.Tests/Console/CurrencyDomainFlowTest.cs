@@ -50,26 +50,27 @@ namespace Integration.Tests.Console
             return _currencyUpdateListener.Buffer[0];
         }
         
-        private static IEnumerable<object[]> ValidCurrencyCases()
+        private static IEnumerable<TestCaseData> ValidCurrencyCases()
         {
-            return
-            [
-                [
-                    new[] { "currency", "add", "10", "gold" },
-                    new CurrencyUpdate { Action = ActionType.ADD, Amount = 10, CurrencyType = CurrencyType.GOLD }
-                ],[
-                    new[] { "currency", "REMOVE", "0", "gold" },
-                    new CurrencyUpdate { Action = ActionType.REMOVE, Amount = 0, CurrencyType = CurrencyType.GOLD }
-                ],
-                [
-                    new[] { "CURRENCY", "add", "-100", "gold" },
-                    new CurrencyUpdate { Action = ActionType.ADD, Amount = -100, CurrencyType = CurrencyType.GOLD }
-                ],
-                [
-                    new[] { "currency", "remove", "1", "GOLD" },
-                    new CurrencyUpdate { Action = ActionType.REMOVE, Amount = 1, CurrencyType = CurrencyType.GOLD }
-                ]
-            ];
+            yield return new TestCaseData(
+                new[] { "currency", "add", "10", "gold" },
+                new CurrencyUpdate { Action = ActionType.ADD, Amount = 10, CurrencyType = CurrencyType.GOLD }
+            ).SetName("Add_10_Gold");
+
+            yield return new TestCaseData(
+                new[] { "currency", "REMOVE", "0", "gold" },
+                new CurrencyUpdate { Action = ActionType.REMOVE, Amount = 0, CurrencyType = CurrencyType.GOLD }
+            ).SetName("Remove_0_Gold");
+
+            yield return new TestCaseData(
+                new[] { "CURRENCY", "add", "-100", "gold" },
+                new CurrencyUpdate { Action = ActionType.ADD, Amount = -100, CurrencyType = CurrencyType.GOLD }
+            ).SetName("Add_Negative_100_Gold");
+
+            yield return new TestCaseData(
+                new[] { "currency", "remove", "1", "GOLD" },
+                new CurrencyUpdate { Action = ActionType.REMOVE, Amount = 1, CurrencyType = CurrencyType.GOLD }
+            ).SetName("Remove_1_Gold");
         }
 
         [TestCaseSource(nameof(ValidCurrencyCases))]
