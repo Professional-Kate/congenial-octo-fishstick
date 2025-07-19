@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.ECS.Assertions
 {
-    public class AssertArrayNotEmpty(IHandler handler) : BaseAssertion<ComponentArrayEmptyException>(handler)
+    public class AssertArrayNotEmpty(IHandler handler) : BaseAssertion<ComponentArrayEmptyException>(handler), IAssertArrayNotEmpty
     {
         public void Handle(bool arrayHasElements) 
         {

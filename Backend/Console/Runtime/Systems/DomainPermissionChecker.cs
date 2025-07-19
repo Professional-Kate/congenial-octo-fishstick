@@ -9,9 +9,9 @@ namespace Console.Runtime.Systems
     public class DomainPermissionChecker : IDomainPermissionChecker
     {
         private readonly IEntity _allowedDomainEntity;
-        private readonly AssertComponentFound _assertComponentFound;
+        private readonly IAssertComponentFound _assertComponentFound;
 
-        public DomainPermissionChecker(IEntity allowedDomainEntity, AssertComponentFound assertComponentFound)
+        public DomainPermissionChecker(IEntity allowedDomainEntity, IAssertComponentFound assertComponentFound)
         {
             _allowedDomainEntity = allowedDomainEntity;
             _assertComponentFound = assertComponentFound;

@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.ECS.Assertions
 {
-    public class AssertComponentFound(IHandler handler) : BaseAssertion<ComponentNotFoundException>(handler)
+    public class AssertComponentFound(IHandler handler) : BaseAssertion<ComponentNotFoundException>(handler), IAssertComponentFound
     {
         public void Handle(bool componentWasFound, Type componentContext)
         {
