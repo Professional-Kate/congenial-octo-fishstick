@@ -15,7 +15,6 @@ namespace IdelPog.ECS.Tests
         public void OneTimeSetUp()
         {
             _handlerMock = new Mock<IHandler>();
-            SetupComponentStoreWith(10);
         }
 
         private void SetupComponentStoreWith(int count)
@@ -33,6 +32,7 @@ namespace IdelPog.ECS.Tests
         [Test]
         public void Positive_GetAllComponents_ReturnsAllComponents()
         {
+            SetupComponentStoreWith(10);
             TestComponent[] testComponents = _componentStore.GetAllComponents();
             
             Assert.That(testComponents, Has.Length.EqualTo(10));
@@ -98,6 +98,7 @@ namespace IdelPog.ECS.Tests
         [Test]
         public void Positive_CloneComponent_Clones()
         {
+            SetupComponentStoreWith(1);
             ComponentStore<TestComponent> clonedStore = _componentStore.DeepClone();
             
             Assert.That(clonedStore.GetAllComponents(), Is.EqualTo(_componentStore.GetAllComponents()));
