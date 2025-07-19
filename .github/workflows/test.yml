@@ -26,13 +26,13 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Run Tests
-        run: dotnet test --no-build --configuration Release --logger "trx"
+        run: dotnet test --no-build --configuration Release --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test-results.trx"
 
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
       - name: Generate HTML Test Report
-        run: reportgenerator -reports:"**/*.trx" -targetdir:TestReport -reporttypes:Html
+        run: reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:TestReport -reporttypes:Html
 
       - name: Upload Test Results (TRX + HTML)
         if: always()
