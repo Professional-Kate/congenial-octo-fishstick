@@ -27,4 +27,10 @@ jobs:
 
       - name: Run Tests
         run: dotnet test --no-build --configuration Release --logger "trx"
-
+        
+      - name: Update Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: '**/TestResults/*.trx'
