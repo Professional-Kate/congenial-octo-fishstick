@@ -5,6 +5,7 @@
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+TestResults/
 *.log
 
 # User-specific files
