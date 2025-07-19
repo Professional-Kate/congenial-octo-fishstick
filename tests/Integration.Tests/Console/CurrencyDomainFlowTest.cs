@@ -3,12 +3,11 @@ using Console.Commands.Resolver.Exceptions;
 using Console.Runtime.Input;
 using Console.Runtime.Input.Exceptions;
 using IdelPog.Common.Enums;
-using IdelPog.SimulationEngine.Currency.Exceptions;
 
 namespace Integration.Tests.Console
 {
     [TestFixture]
-    public class ConsoleFlowTest : ManagedBuffer
+    public class CurrencyDomainFlowTest : ManagedBuffer
     {
         private IInputHandler _inputHandler;
         
@@ -50,44 +49,35 @@ namespace Integration.Tests.Console
         {
             return _currencyUpdateListener.Buffer[0];
         }
+        
+        private static IEnumerable<object[]> ValidCurrencyCases()
+        {
+            return
+            [
+                [
+                    new[] { "currency", "add", "10", "gold" },
+                    new CurrencyUpdate { Action = ActionType.ADD, Amount = 10, CurrencyType = CurrencyType.GOLD }
+                ],[
+                    new[] { "currency", "REMOVE", "0", "gold" },
+                    new CurrencyUpdate { Action = ActionType.REMOVE, Amount = 0, CurrencyType = CurrencyType.GOLD }
+                ],
+                [
+                    new[] { "CURRENCY", "add", "-100", "gold" },
+                    new CurrencyUpdate { Action = ActionType.ADD, Amount = -100, CurrencyType = CurrencyType.GOLD }
+                ],
+                [
+                    new[] { "currency", "remove", "1", "GOLD" },
+                    new CurrencyUpdate { Action = ActionType.REMOVE, Amount = 1, CurrencyType = CurrencyType.GOLD }
+                ]
+            ];
+        }
 
-        [Test]
-        public void Positive_AddCurrencyToGold_DispatchesUpdate()
+        [TestCaseSource(nameof(ValidCurrencyCases))]
+        public void Positive_ChangeCurrency_DispatchesUpdate(string[] arguments, CurrencyUpdate expectedUpdate)
         {
-            string[] arguments =
-            [
-                "currency", "add", "10", "gold"
-            ];
-            
-            Assert.DoesNotThrow(() => _inputHandler.Input(new ReadOnlySpan<string>(arguments)));
+            _inputHandler.Input(new ReadOnlySpan<string>(arguments));
             AssertUpdateListener(true);
-            AssertCurrencyUpdate(new CurrencyUpdate { Action = ActionType.ADD, Amount = 10, CurrencyType = CurrencyType.GOLD }, GetListenerCurrencyUpdate());
-        }
-        
-        [Test]
-        public void Positive_RemoveCurrencyFromGold_DispatchesUpdate()
-        {
-            string[] arguments =
-            [
-                "CURRENCY", "REMOVE", "0", "GOLD"
-            ];
-            
-            Assert.DoesNotThrow(() => _inputHandler.Input(new ReadOnlySpan<string>(arguments)));
-            AssertUpdateListener(true);
-            AssertCurrencyUpdate(new CurrencyUpdate { Action = ActionType.REMOVE, Amount = 0, CurrencyType = CurrencyType.GOLD }, GetListenerCurrencyUpdate());
-        }
-        
-        [Test]
-        public void Positive_AddNegativeAmount_DispatchesUpdate()
-        {
-            string[] arguments =
-            [
-                "CURRENCY", "add", "-100", "gold"
-            ];
-            
-            Assert.DoesNotThrow(() => _inputHandler.Input(new ReadOnlySpan<string>(arguments)));
-            AssertUpdateListener(true);
-            AssertCurrencyUpdate(new CurrencyUpdate { Action = ActionType.ADD, Amount = -100, CurrencyType = CurrencyType.GOLD }, GetListenerCurrencyUpdate());
+            AssertCurrencyUpdate(expectedUpdate, GetListenerCurrencyUpdate());
         }
         
         [TestCase(new[] {"UNKNOWN", "REMOVE", "1", "GOLD"}, typeof(FailedEnumParseException), TestName = "UnknownDomain_ThrowsFailedEnumParse")]
