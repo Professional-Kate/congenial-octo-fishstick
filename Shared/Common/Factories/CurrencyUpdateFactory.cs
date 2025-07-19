@@ -6,7 +6,7 @@ namespace IdelPog.Common.Factories
     {
         public CurrencyUpdate CreateCurrencyUpdate(ActionType actionType, int amount, CurrencyType currencyType)
         {
-            return new  CurrencyUpdate { Action = actionType, Amount = amount, CurrencyType = currencyType };
+            return new CurrencyUpdate { Action = actionType, Amount = amount, CurrencyType = currencyType };
         }
     }
 }
