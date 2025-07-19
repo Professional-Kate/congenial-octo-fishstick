@@ -2,7 +2,7 @@
 
 namespace Console.Runtime.Systems
 {
-    public interface ICommandDomainFilter
+    public interface IDomainPermissionChecker
     {
         public bool IsAllowed(CommandDomain domain);
     }
