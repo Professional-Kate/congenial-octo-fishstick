@@ -82,6 +82,8 @@ namespace Integration.Tests.Console
         }
         
         [TestCase(new[] {"UNKNOWN", "REMOVE", "1", "GOLD"}, typeof(FailedEnumParseException), TestName = "UnknownDomain_ThrowsFailedEnumParse")]
+        [TestCase(new[] {"currency", "remove", "100F", "GOLD"}, typeof(FailedTypeParseException), TestName = "InvalidAmount_Float__ThrowsFailedTypeParseException")]
+        [TestCase(new[] {"currency", "remove", "10+10", "GOLD"}, typeof(FailedTypeParseException), TestName = "InvalidAmount_Expression_ThrowsFailedTypeParseException")]
         [TestCase(new[] {"CURRENCY", "ADD", "1232", "WOOD"}, typeof(FailedEnumParseException), TestName = "UnknownCurrency_ThrowsFailedEnumParse")]
         [TestCase(new[] {"CURRENCY", "UPDATE", "42", "GOLD"}, typeof(FailedEnumParseException), TestName = "UnknownAction_ThrowsFailedEnumParse")]
         [TestCase(new[] {"CURRENCY", "UPDATE"}, typeof(InvalidArgumentCountException), TestName = "MissingAmountAndCurrency_ThrowsInvalidArgumentCountException")]
