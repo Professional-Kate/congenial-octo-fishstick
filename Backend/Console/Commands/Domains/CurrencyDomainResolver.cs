@@ -13,16 +13,16 @@ namespace Console.Commands.Domains
         public CommandDocumentation CommandDocumentation { get; } = new() { Syntax = "currency <ActionType> <int> <CurrencyType>", Description = "Add or Remove an amount from any Currency!"};
 
         private readonly IArgumentResolverPipeline<CurrencyUpdateArguments> _currencyUpdatePipeline;
-        private readonly IAssertArgumentLength _assertArgumentLength;
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
         private readonly IDispatchOne<CurrencyUpdate> _currencyUpdateDispatcher;
+        private readonly IAssertArgumentLength _assertArgumentLength;
 
-        public CurrencyDomainResolver(IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline,  IAssertArgumentLength assertArgumentLength,  ICurrencyUpdateFactory currencyUpdateFactory,  IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher)
+        public CurrencyDomainResolver(IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline,  ICurrencyUpdateFactory currencyUpdateFactory,  IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher, IAssertArgumentLength assertArgumentLength)
         {
             _currencyUpdatePipeline = currencyUpdatePipeline;
-            _assertArgumentLength = assertArgumentLength;
             _currencyUpdateFactory = currencyUpdateFactory;
             _currencyUpdateDispatcher = currencyUpdateDispatcher;
+            _assertArgumentLength = assertArgumentLength;
         }
 
         public void Resolve(ReadOnlySpan<string> arguments)
