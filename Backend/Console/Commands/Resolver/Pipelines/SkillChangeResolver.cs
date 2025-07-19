@@ -14,7 +14,8 @@ namespace Console.Commands.Resolver.Pipelines
 
         public SkillChangeArguments Resolve(ReadOnlySpan<string> arguments)
         {
-            SkillID skillID = _skillIDResolver.Resolve(arguments[0]);
+            // arguments[0] == CHANGE
+            SkillID skillID = _skillIDResolver.Resolve(arguments[1]);
 
             return new SkillChangeArguments
             {

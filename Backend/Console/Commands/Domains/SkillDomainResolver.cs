@@ -27,7 +27,7 @@ namespace Console.Commands.Domains
 
         public void Resolve(ReadOnlySpan<string> arguments)
         {
-            _assertArgumentLength.Handle(arguments.Length, 1);
+            _assertArgumentLength.Handle(arguments.Length, 2);
             SkillChangeArguments skillChangeArguments = _argumentResolverPipeline.Resolve(arguments);
             
             _skillChangeDispatcher.Dispatch(_skillChangeFactory.CreateSkillChange(skillChangeArguments.SkillID));

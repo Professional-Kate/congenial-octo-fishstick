@@ -1,4 +1,5 @@
-﻿using Console.Assertions;
+﻿using System.Windows.Input;
+using Console.Assertions;
 using Console.Commands;
 using Console.Commands.Domains;
 using Console.Commands.Resolver;
@@ -11,6 +12,7 @@ using IdelPog.Common.Factories;
 using IdelPog.Common.Repository;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Orchestration;
+using IdelPog.SimulationEngine.Skill;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
@@ -37,14 +39,22 @@ namespace Console
             IArgumentResolver<ActionType> actionTypeResolver = new EnumResolver<ActionType>(assertCanParseEnum);
             IArgumentResolver<CurrencyType> currencyTypeResolver = new EnumResolver<CurrencyType>(assertCanParseEnum);
             IArgumentResolver<int> intResolver = new IntResolver(assertCanParseType);
+            IArgumentResolver<SkillID> skillIDResolver = new EnumResolver<SkillID>(assertCanParseEnum);
             
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
             IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdate>(bufferManager, assertNotNull, assertCollectionNotEmpty);
                 
             IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline = new CurrencyUpdateResolver(actionTypeResolver, intResolver, currencyTypeResolver);
             ICommandDomainResolver currencyDomainResolver = new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateFactory, currencyUpdateDispatcher, assertArgumentLength);
+
+            ISkillChangeFactory skillChangeFactory = new SkillChangeFactory(); 
+            IDispatchOne<SkillChange> skillChangeDispatcher = new ManagedDispatcher<SkillChange>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+            
+            IArgumentResolverPipeline<SkillChangeArguments> skillChangePipeline = new SkillChangeResolver(skillIDResolver);
+            ICommandDomainResolver skillDomainResolver = new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, skillChangeFactory, assertArgumentLength);
             
             commandRepository.Add(CommandDomain.CURRENCY, currencyDomainResolver);
+            commandRepository.Add(CommandDomain.SKILL, skillDomainResolver);
             
             ICommandResolverMediator commandResolverMediator = new CommandResolverMediator(commandRepository, assertFound, assertSpanNotEmpty);
 
