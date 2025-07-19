@@ -25,21 +25,20 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      - name: Create Artifacts directory
-        run: mkdir -p Artifacts
-
       - name: Run Tests
-        run: dotnet test --no-build --configuration Release --logger "trx;LogFileName=Artifacts/test-results.trx"
+        run: dotnet test --no-build --configuration Release --logger "trx"
 
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
       - name: Generate HTML Test Report
-        run: reportgenerator -reports:Artifacts/test-results.trx -targetdir:Artifacts/TestReport -reporttypes:Html
+        run: reportgenerator -reports:"**/*.trx" -targetdir:TestReport -reporttypes:Html
 
       - name: Upload Test Results (TRX + HTML)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
-          path: Artifacts/
+          path: |
+            **/*.trx
+            TestReport/**
