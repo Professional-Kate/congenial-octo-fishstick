@@ -1,5 +1,6 @@
 ﻿using Console;
 using Console.Commands.Resolver.Exceptions;
+using Console.Exceptions;
 using Console.Runtime.Input;
 using Console.Runtime.Input.Exceptions;
 using Console.Types;
@@ -97,6 +98,13 @@ namespace Integration.Tests.Console
         {
             Assert.Throws(exception, () => _inputHandler.Input(new ReadOnlySpan<string>(arguments)));
             AssertUpdateListener(false);
+        }
+
+        [Test]
+        public void Negative_PermissionDenied_NoUpdate_Throws()
+        {
+            TestPermissionService.SendRemovePermissionCall(_inputHandler, Domain.CURRENCY);
+            Assert.Throws<DomainPermissionDeniedException>(() => _inputHandler.Input(new ReadOnlySpan<string>(["currency", "remove", "1", "GOLD"])));
         }
     }
 }
