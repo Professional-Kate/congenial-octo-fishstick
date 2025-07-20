@@ -15,7 +15,7 @@ namespace Console.Tests.Systems
     {
         private IDomainPermissionChecker _domainPermissionChecker;
         private Mock<IEntity> _entityMock;
-        private ComponentStore<CommandDomainComponent>  _componentStore;
+        private ComponentStore<DomainComponent>  _componentStore;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -30,22 +30,22 @@ namespace Console.Tests.Systems
             _entityMock.Reset();
         }
 
-        private void SetupComponentStore(CommandDomain allowedDomain)
+        private void SetupComponentStore(Domain allowedDomain)
         {
-            CommandDomainComponent[] commandDomainComponents = [new() { AllowedCommandDomain = allowedDomain }];
-            _componentStore = new ComponentStore<CommandDomainComponent>(commandDomainComponents, new ThrowHandler());
+            DomainComponent[] commandDomainComponents = [new() { AllowedDomain = allowedDomain }];
+            _componentStore = new ComponentStore<DomainComponent>(commandDomainComponents, new ThrowHandler());
         }
 
         [Test]
         public void Positive_IsAllowed_DomainAdded_ReturnsTrue()
         {
-            SetupComponentStore(CommandDomain.CURRENCY);
+            SetupComponentStore(Domain.CURRENCY);
 
             _entityMock
                 .Setup(library => library.TryGetComponent(out _componentStore))
                 .Returns(true);
 
-            bool isAllowed = _domainPermissionChecker.IsAllowed(CommandDomain.CURRENCY);
+            bool isAllowed = _domainPermissionChecker.IsAllowed(Domain.CURRENCY);
             
             Assert.That(isAllowed, Is.True);
             _entityMock.Verify(library => library.TryGetComponent(out _componentStore), Times.Once);
@@ -54,13 +54,13 @@ namespace Console.Tests.Systems
         [Test]
         public void Positive_IsAllowed_DomainNotAdded_ReturnsFalse()
         {
-            SetupComponentStore(CommandDomain.SKILL);
+            SetupComponentStore(Domain.SKILL);
             
             _entityMock
                 .Setup(library => library.TryGetComponent(out _componentStore))
                 .Returns(true);
 
-            bool isAllowed = _domainPermissionChecker.IsAllowed(CommandDomain.CURRENCY);
+            bool isAllowed = _domainPermissionChecker.IsAllowed(Domain.CURRENCY);
             
             Assert.That(isAllowed, Is.False);
             _entityMock.Verify(library => library.TryGetComponent(out _componentStore), Times.Once);
@@ -69,10 +69,10 @@ namespace Console.Tests.Systems
         [Test]
         public void Negative_IsAllowed_NoComponentStoreFound_Throws()
         {
-            _entityMock.Setup(library => library.ContainsComponent<ComponentStore<CommandDomainComponent>>())
+            _entityMock.Setup(library => library.ContainsComponent<ComponentStore<DomainComponent>>())
                 .Returns(false);
             
-            Assert.Throws<ComponentNotFoundException>(() => _domainPermissionChecker.IsAllowed(CommandDomain.CURRENCY));
+            Assert.Throws<ComponentNotFoundException>(() => _domainPermissionChecker.IsAllowed(Domain.CURRENCY));
         }
     }
 }

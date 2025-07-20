@@ -7,13 +7,13 @@ namespace Console.Assertions
 {
     public class AssertHasPermission(IHandler handler) : BaseAssertion<DomainPermissionDeniedException>(handler), IAssertHasPermission
     {
-        public void Handle(bool hasPermission, CommandDomain commandDomainContext)
+        public void Handle(bool hasPermission, Domain domainContext)
         {
             Assert(() =>
             {
                 if (hasPermission == false)
                 {
-                    throw new DomainPermissionDeniedException(commandDomainContext);
+                    throw new DomainPermissionDeniedException(domainContext);
                 }
             });
         }

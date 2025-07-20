@@ -42,17 +42,17 @@ namespace Console
             IAssertHasPermission assertHasPermission = new AssertHasPermission(throwHandler);
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
             
-            CommandDomainComponent currencyDomainComponent = new() { AllowedCommandDomain = CommandDomain.CURRENCY};
-            CommandDomainComponent skillDomainComponent = new() { AllowedCommandDomain = CommandDomain.SKILL};
-            CommandDomainComponent permissionDomainCommand = new() { AllowedCommandDomain = CommandDomain.PERMISSION};
-            IEntity allowedDomainEntity = new AllowedDomainsEntity([permissionDomainCommand]);
+            DomainComponent currencyDomainComponent = new() { AllowedDomain = Domain.CURRENCY};
+            DomainComponent skillDomainComponent = new() { AllowedDomain = Domain.SKILL};
+            DomainComponent permissionDomain = new() { AllowedDomain = Domain.PERMISSION};
+            IEntity allowedDomainEntity = new AllowedDomainsEntity([permissionDomain, currencyDomainComponent, skillDomainComponent]);
             
-            IAssetRepository<CommandDomain, ICommandDomainResolver> commandRepository = new AssetRepository<CommandDomain, ICommandDomainResolver>(repositoryAsserter);
+            IAssetRepository<Domain, ICommandDomainResolver> commandRepository = new AssetRepository<Domain, ICommandDomainResolver>(repositoryAsserter);
 
             IArgumentResolver<ActionType> actionTypeResolver = new EnumResolver<ActionType>(assertCanParseEnum);
             IArgumentResolver<CurrencyType> currencyTypeResolver = new EnumResolver<CurrencyType>(assertCanParseEnum);
             IArgumentResolver<SkillID> skillIDResolver = new EnumResolver<SkillID>(assertCanParseEnum);
-            IArgumentResolver<CommandDomain> commandDomainResolver = new EnumResolver<CommandDomain>(assertCanParseEnum);
+            IArgumentResolver<Domain> commandDomainResolver = new EnumResolver<Domain>(assertCanParseEnum);
             IArgumentResolver<int> intResolver = new IntResolver(assertCanParseType);
             
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
@@ -75,14 +75,14 @@ namespace Console
             IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline = new PermissionUpdateResolver(actionTypeResolver,commandDomainResolver);
             ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(permissionUpdatePipeline, permissionService, assertArgumentLength);
             
-            commandRepository.Add(CommandDomain.CURRENCY, currencyDomainResolver);
-            commandRepository.Add(CommandDomain.SKILL, skillDomainResolver);
-            commandRepository.Add(CommandDomain.PERMISSION, permissionDomainResolver);
+            commandRepository.Add(Domain.CURRENCY, currencyDomainResolver);
+            commandRepository.Add(Domain.SKILL, skillDomainResolver);
+            commandRepository.Add(Domain.PERMISSION, permissionDomainResolver);
            
             IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, assertComponentFound);            
             ICommandResolverMediator commandResolverMediator = new CommandResolverMediator(commandRepository, domainPermissionChecker, assertFound, assertSpanNotEmpty, assertHasPermission);
 
-            IArgumentResolver<CommandDomain> commandArgumentResolver = new EnumResolver<CommandDomain>(assertCanParseEnum);
+            IArgumentResolver<Domain> commandArgumentResolver = new EnumResolver<Domain>(assertCanParseEnum);
             
             return new InputHandler(commandResolverMediator, commandArgumentResolver, assertSpanNotEmpty);
         }

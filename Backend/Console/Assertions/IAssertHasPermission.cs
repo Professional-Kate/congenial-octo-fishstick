@@ -4,6 +4,6 @@ namespace Console.Assertions
 {
     public interface IAssertHasPermission
     {
-        public void Handle(bool hasPermission, CommandDomain commandDomainContext);
+        public void Handle(bool hasPermission, Domain domainContext);
     }
 }

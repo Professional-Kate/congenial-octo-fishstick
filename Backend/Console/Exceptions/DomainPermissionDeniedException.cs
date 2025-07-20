@@ -6,11 +6,11 @@ namespace Console.Exceptions
     {
         private const string MESSAGE = "You don't have permission to access domain: {0}!!!!";
         
-        public readonly CommandDomain PermissionDeniedDomain;
+        public readonly Domain PermissionDeniedDomain;
 
-        public DomainPermissionDeniedException(CommandDomain commandDomain) : base(string.Format(MESSAGE, commandDomain))
+        public DomainPermissionDeniedException(Domain domain) : base(string.Format(MESSAGE, domain))
         {
-            PermissionDeniedDomain = commandDomain;
+            PermissionDeniedDomain = domain;
         }
     }
 }

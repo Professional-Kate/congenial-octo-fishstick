@@ -31,43 +31,43 @@ namespace Console.Runtime.Systems
             switch (arguments.ActionType)
             {
                 case ActionType.ADD:
-                    AddAllowedDomain(arguments.CommandDomain);
+                    AddAllowedDomain(arguments.Domain);
                     break;
                 case ActionType.REMOVE:
-                    RemoveAllowedDomain(arguments.CommandDomain);
+                    RemoveAllowedDomain(arguments.Domain);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
         
-        private void AddAllowedDomain(CommandDomain commandDomain)
+        private void AddAllowedDomain(Domain domain)
         {
-            ComponentStore<CommandDomainComponent> componentStore = TryGetComponentStore();
-            _assertComponentDoesNotExist.Handle(componentStore.ContainsComponent(component => component.AllowedCommandDomain == commandDomain), typeof(CommandDomainComponent));
+            ComponentStore<DomainComponent> componentStore = TryGetComponentStore();
+            _assertComponentDoesNotExist.Handle(componentStore.ContainsComponent(component => component.AllowedDomain == domain), typeof(DomainComponent));
 
-            CommandDomainComponent[] commandDomainComponents = componentStore.GetAllComponents();
+            DomainComponent[] commandDomainComponents = componentStore.GetAllComponents();
             
-            CommandDomainComponent[] newCommandDomainComponents = new CommandDomainComponent[commandDomainComponents.Length + 1];
+            DomainComponent[] newCommandDomainComponents = new DomainComponent[commandDomainComponents.Length + 1];
             Array.Copy(commandDomainComponents, newCommandDomainComponents, commandDomainComponents.Length);
-            newCommandDomainComponents[newCommandDomainComponents.Length] = _domainComponentFactory.CreateDomainComponent(commandDomain);
+            newCommandDomainComponents[newCommandDomainComponents.Length] = _domainComponentFactory.CreateDomainComponent(domain);
             
-            _allowedDomainEntity.RemoveComponent<ComponentStore<CommandDomainComponent>>();
+            _allowedDomainEntity.RemoveComponent<ComponentStore<DomainComponent>>();
             _allowedDomainEntity.AddComponent(_componentStoreFactory.CreateComponentStore(newCommandDomainComponents));
         }
 
-        private void RemoveAllowedDomain(CommandDomain commandDomain)
+        private void RemoveAllowedDomain(Domain domain)
         {
-            ComponentStore<CommandDomainComponent> componentStore = TryGetComponentStore();
-            _assertComponentFound.Handle(componentStore.ContainsComponent(component => component.AllowedCommandDomain == commandDomain), typeof(CommandDomainComponent));
+            ComponentStore<DomainComponent> componentStore = TryGetComponentStore();
+            _assertComponentFound.Handle(componentStore.ContainsComponent(component => component.AllowedDomain == domain), typeof(DomainComponent));
             
-            CommandDomainComponent[] commandDomainComponents = componentStore.GetAllComponents();
-            CommandDomainComponent[] newCommandDomainComponents = new CommandDomainComponent[commandDomainComponents.Length - 1];
+            DomainComponent[] commandDomainComponents = componentStore.GetAllComponents();
+            DomainComponent[] newCommandDomainComponents = new DomainComponent[commandDomainComponents.Length - 1];
 
             int writeIndex = 0;
-            foreach (CommandDomainComponent component in commandDomainComponents)
+            foreach (DomainComponent component in commandDomainComponents)
             {
-                if (component.AllowedCommandDomain == commandDomain)
+                if (component.AllowedDomain == domain)
                 {
                     // skipping the component with matching ID
                     continue;
@@ -77,14 +77,14 @@ namespace Console.Runtime.Systems
                 writeIndex++;
             }
             
-            _allowedDomainEntity.RemoveComponent<ComponentStore<CommandDomainComponent>>();
+            _allowedDomainEntity.RemoveComponent<ComponentStore<DomainComponent>>();
             _allowedDomainEntity.AddComponent(_componentStoreFactory.CreateComponentStore(newCommandDomainComponents));
         }
 
-        private ComponentStore<CommandDomainComponent> TryGetComponentStore()
+        private ComponentStore<DomainComponent> TryGetComponentStore()
         {
-            bool contains = _allowedDomainEntity.TryGetComponent(out ComponentStore<CommandDomainComponent> componentStore);
-            _assertComponentFound.Handle(contains, typeof(ComponentStore<CommandDomainComponent>));
+            bool contains = _allowedDomainEntity.TryGetComponent(out ComponentStore<DomainComponent> componentStore);
+            _assertComponentFound.Handle(contains, typeof(ComponentStore<DomainComponent>));
             
             return  componentStore;
         }

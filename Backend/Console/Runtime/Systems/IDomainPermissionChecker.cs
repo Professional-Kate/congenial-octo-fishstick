@@ -4,6 +4,6 @@ namespace Console.Runtime.Systems
 {
     public interface IDomainPermissionChecker
     {
-        public bool IsAllowed(CommandDomain domain);
+        public bool IsAllowed(Domain domain);
     }
 }

@@ -9,7 +9,7 @@ namespace Console.Commands.Domains
 {
     public class SkillDomainResolver : ICommandDomainResolver
     {
-        public CommandDomain HandledDomain => CommandDomain.SKILL;
+        public Domain HandledDomain => Domain.SKILL;
         public CommandDocumentation CommandDocumentation { get; } = new() { Syntax = "skill change <SkillID>", Description = "Change to another skill!!! Exciting times!"};
 
         private readonly IArgumentResolverPipeline<SkillChangeArguments> _argumentResolverPipeline;

@@ -5,6 +5,6 @@ namespace Console.Runtime.Factory
 {
     public interface IDomainComponentFactory
     {
-        public CommandDomainComponent CreateDomainComponent(CommandDomain commandDomain);
+        public DomainComponent CreateDomainComponent(Domain domain);
     }
 }

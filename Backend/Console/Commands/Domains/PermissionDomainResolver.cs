@@ -7,7 +7,7 @@ namespace Console.Commands.Domains
 {
     public class PermissionDomainResolver : ICommandDomainResolver
     {
-        public CommandDomain HandledDomain => CommandDomain.PERMISSION;
+        public Domain HandledDomain => Domain.PERMISSION;
         public CommandDocumentation CommandDocumentation => new() { Syntax = "permission <ActionType> <CommandDomain>", Description = "Add or Remove permission for a domain"};
         
         private readonly IArgumentResolverPipeline<PermissionUpdateArguments> _permissionUpdatePipeline;

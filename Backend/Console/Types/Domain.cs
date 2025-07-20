@@ -1,6 +1,6 @@
 ﻿namespace Console.Types
 {
-    public enum CommandDomain : byte
+    public enum Domain : byte
     {
         PERMISSION,
         CURRENCY,

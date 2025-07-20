@@ -8,10 +8,10 @@ namespace Console.Runtime.Input
     public sealed class InputHandler : IInputHandler
     {
         private readonly ICommandResolverMediator _commandResolverMediator;
-        private readonly IArgumentResolver<CommandDomain>  _commandDomainResolver;
+        private readonly IArgumentResolver<Domain>  _commandDomainResolver;
         private readonly IAssertSpanNotEmpty  _assertSpanNotEmpty;
 
-        public InputHandler(ICommandResolverMediator commandResolverMediator, IArgumentResolver<CommandDomain> commandDomainResolver, IAssertSpanNotEmpty  assertSpanNotEmpty)
+        public InputHandler(ICommandResolverMediator commandResolverMediator, IArgumentResolver<Domain> commandDomainResolver, IAssertSpanNotEmpty  assertSpanNotEmpty)
         {
             _commandResolverMediator = commandResolverMediator;
             _commandDomainResolver = commandDomainResolver;
@@ -21,10 +21,10 @@ namespace Console.Runtime.Input
         public void Input(ReadOnlySpan<string> args)
         {
             _assertSpanNotEmpty.Handle(args);
-            CommandDomain commandDomain = _commandDomainResolver.Resolve(args[0]);
+            Domain domain = _commandDomainResolver.Resolve(args[0]);
 
             ReadOnlySpan<string> commandArgs = args.Slice(1);
-            _commandResolverMediator.ResolveCommand(commandDomain, commandArgs);
+            _commandResolverMediator.ResolveCommand(domain, commandArgs);
         }
     }
 }

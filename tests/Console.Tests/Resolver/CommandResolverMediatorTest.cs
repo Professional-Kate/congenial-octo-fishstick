@@ -15,14 +15,14 @@ namespace Console.Tests.Resolver
     public class CommandResolverMediatorTest
     {
         private ICommandResolverMediator _commandResolverMediator { get; set; }
-        private Mock<IAssetRepository<CommandDomain, ICommandDomainResolver>> _repositoryMock { get; set; }
+        private Mock<IAssetRepository<Domain, ICommandDomainResolver>> _repositoryMock { get; set; }
         private Mock<ICommandDomainResolver>  _commandDomainResolverMock { get; set; }
         private Mock<IDomainPermissionChecker> _domainPermissionCheckerMock { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _repositoryMock = new Mock<IAssetRepository<CommandDomain, ICommandDomainResolver>>();
+            _repositoryMock = new Mock<IAssetRepository<Domain, ICommandDomainResolver>>();
             _commandDomainResolverMock = new Mock<ICommandDomainResolver>();
             _domainPermissionCheckerMock = new Mock<IDomainPermissionChecker>();
             _commandResolverMediator = new CommandResolverMediator(_repositoryMock.Object, _domainPermissionCheckerMock.Object, new AssertFound(new ThrowHandler()), new AssertSpanNotEmpty(new ThrowHandler()), new AssertHasPermission(new ThrowHandler()));
@@ -38,19 +38,19 @@ namespace Console.Tests.Resolver
         [Test]
         public void Negative_ResolveCommand_EmptyArgsArray_Throws()
         {
-            Assert.Throws<EmptySpanException>(() => _commandResolverMediator.ResolveCommand(CommandDomain.CURRENCY, []));
+            Assert.Throws<EmptySpanException>(() => _commandResolverMediator.ResolveCommand(Domain.CURRENCY, []));
         }
         
         [Test]
         public void Negative_ResolveCommand_NullArgsArray_Throws()
         {
-            Assert.Throws<EmptySpanException>(() => _commandResolverMediator.ResolveCommand(CommandDomain.CURRENCY, null!));
+            Assert.Throws<EmptySpanException>(() => _commandResolverMediator.ResolveCommand(Domain.CURRENCY, null!));
         }
 
         [Test]
         public void Negative_ResolveCommand_NoResolverFound_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _commandResolverMediator.ResolveCommand(CommandDomain.CURRENCY, ["10, 10, 10"]));
+            Assert.Throws<NotFoundException>(() => _commandResolverMediator.ResolveCommand(Domain.CURRENCY, ["10, 10, 10"]));
         }
     }
 }

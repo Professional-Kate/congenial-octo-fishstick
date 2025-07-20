@@ -6,9 +6,9 @@ namespace Console.Commands.Resolver.Pipelines
     public class PermissionUpdateResolver : IArgumentResolverPipeline<PermissionUpdateArguments>
     {
         private readonly IArgumentResolver<ActionType>  _actionTypeResolver;
-        private readonly IArgumentResolver<CommandDomain> _commandDomainResolver;
+        private readonly IArgumentResolver<Domain> _commandDomainResolver;
 
-        public PermissionUpdateResolver(IArgumentResolver<ActionType> actionTypeResolver, IArgumentResolver<CommandDomain> commandDomainResolver)
+        public PermissionUpdateResolver(IArgumentResolver<ActionType> actionTypeResolver, IArgumentResolver<Domain> commandDomainResolver)
         {
             _actionTypeResolver = actionTypeResolver;
             _commandDomainResolver = commandDomainResolver;
@@ -17,9 +17,9 @@ namespace Console.Commands.Resolver.Pipelines
         public PermissionUpdateArguments Resolve(ReadOnlySpan<string> arguments)
         {
             ActionType actionType = _actionTypeResolver.Resolve(arguments[0]);
-            CommandDomain commandDomain = _commandDomainResolver.Resolve(arguments[1]);
+            Domain domain = _commandDomainResolver.Resolve(arguments[1]);
             
-            return new PermissionUpdateArguments { ActionType = actionType, CommandDomain = commandDomain };
+            return new PermissionUpdateArguments { ActionType = actionType, Domain = domain };
         }
     }
 }

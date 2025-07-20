@@ -17,12 +17,12 @@ namespace Console.Runtime.Systems
             _assertComponentFound = assertComponentFound;
         }
 
-        public bool IsAllowed(CommandDomain domain)
+        public bool IsAllowed(Domain domain)
         {
-            bool contains = _allowedDomainEntity.TryGetComponent(out ComponentStore<CommandDomainComponent> componentStore);
-            _assertComponentFound.Handle(contains, typeof(ComponentStore<CommandDomainComponent>));
+            bool contains = _allowedDomainEntity.TryGetComponent(out ComponentStore<DomainComponent> componentStore);
+            _assertComponentFound.Handle(contains, typeof(ComponentStore<DomainComponent>));
             
-            return componentStore.ContainsComponent(component => component.AllowedCommandDomain == domain);
+            return componentStore.ContainsComponent(component => component.AllowedDomain == domain);
         }
     }
 } 

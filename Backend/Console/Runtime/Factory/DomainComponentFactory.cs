@@ -5,9 +5,9 @@ namespace Console.Runtime.Factory
 {
     public class DomainComponentFactory : IDomainComponentFactory
     {
-        public CommandDomainComponent CreateDomainComponent(CommandDomain commandDomain)
+        public DomainComponent CreateDomainComponent(Domain domain)
         {
-            return new  CommandDomainComponent { AllowedCommandDomain = commandDomain };
+            return new  DomainComponent { AllowedDomain = domain };
         }
     }
 }

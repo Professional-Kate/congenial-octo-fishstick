@@ -9,7 +9,7 @@ namespace Console.Commands.Domains
 {
     public class CurrencyDomainResolver : ICommandDomainResolver
     {
-        public CommandDomain HandledDomain => CommandDomain.CURRENCY;
+        public Domain HandledDomain => Domain.CURRENCY;
         public CommandDocumentation CommandDocumentation { get; } = new() { Syntax = "currency <ActionType> <int> <CurrencyType>", Description = "Add or Remove an amount from any Currency!"};
 
         private readonly IArgumentResolverPipeline<CurrencyUpdateArguments> _currencyUpdatePipeline;

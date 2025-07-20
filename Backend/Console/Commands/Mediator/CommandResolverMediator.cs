@@ -9,13 +9,13 @@ namespace Console.Commands
 {
     public class CommandResolverMediator : ICommandResolverMediator
     {
-        private readonly IAssetRepository<CommandDomain, ICommandDomainResolver> _commandResolverMap;
+        private readonly IAssetRepository<Domain, ICommandDomainResolver> _commandResolverMap;
         private readonly IDomainPermissionChecker  _domainPermissionChecker;
         private readonly IAssertFound _assertFound;
         private readonly IAssertSpanNotEmpty _assertSpanNotEmpty;
         private readonly IAssertHasPermission _assertHasPermission;
 
-        public CommandResolverMediator(IAssetRepository<CommandDomain, ICommandDomainResolver> commandResolverMap, IDomainPermissionChecker domainPermissionChecker, IAssertFound assertFound,  IAssertSpanNotEmpty assertSpanNotEmpty, IAssertHasPermission assertHasPermission)
+        public CommandResolverMediator(IAssetRepository<Domain, ICommandDomainResolver> commandResolverMap, IDomainPermissionChecker domainPermissionChecker, IAssertFound assertFound,  IAssertSpanNotEmpty assertSpanNotEmpty, IAssertHasPermission assertHasPermission)
         {
             _commandResolverMap = commandResolverMap;
             _domainPermissionChecker = domainPermissionChecker;
@@ -24,7 +24,7 @@ namespace Console.Commands
             _assertHasPermission = assertHasPermission;
         }
         
-        public void ResolveCommand(CommandDomain domain, ReadOnlySpan<string> arguments)
+        public void ResolveCommand(Domain domain, ReadOnlySpan<string> arguments)
         {
             _assertSpanNotEmpty.Handle(arguments);
             _assertFound.AssertItemIsFound(domain, () => _commandResolverMap.Contains(domain));
