@@ -1,4 +1,6 @@
-﻿using IdelPog.Messaging.Dispatch;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Enums;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Skill;
 using Moq;
 

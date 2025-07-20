@@ -1,11 +1,13 @@
-﻿using IdelPog.Common.Repository;
+﻿using IdelPog.Common.Enums;
+using IdelPog.Common.Repository;
+using IdelPog.Common.Structures;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 
 namespace IdelPog.SimulationEngine.Skill
 {
-    public class SkillActionMediator : ISkillActionMediator
+    public class SkillActionMediator : IRunnable
     {
         private readonly IExperienceService _experienceService;
         private readonly ILevelService _levelService;
@@ -23,10 +25,9 @@ namespace IdelPog.SimulationEngine.Skill
             _skillUpdateDTODispatcher = skillUpdateDTODispatcher;
             _skillUpdateFactory = skillUpdateFactory;
         }
-        
-        public void ProcessSkillAction()
+
+        public void Run()
         {
-            // TODO: this method will be called by the tick controller (when I make it)
             SkillID currentSkillID = _currentSkillProvider.GetCurrentSkill();
             
             Skill skill = _skillRepository.Get(currentSkillID);

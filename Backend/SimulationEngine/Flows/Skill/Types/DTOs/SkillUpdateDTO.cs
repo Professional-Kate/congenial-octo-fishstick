@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Models;
+﻿using IdelPog.Common.Enums;
+using IdelPog.SimulationEngine.Models;
 
 namespace IdelPog.SimulationEngine.Skill
 {

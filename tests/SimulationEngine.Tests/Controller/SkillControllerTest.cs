@@ -1,4 +1,6 @@
-﻿using IdelPog.SimulationEngine.Skill;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Enums;
+using IdelPog.SimulationEngine.Skill;
 using Moq;
 
 namespace IdelPogTests.Controller

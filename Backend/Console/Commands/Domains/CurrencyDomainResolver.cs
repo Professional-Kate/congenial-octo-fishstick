@@ -1,6 +1,7 @@
 ﻿using Console.Commands.Resolver.Assertions;
 using Console.Commands.Resolver.Pipelines;
 using Console.Types;
+using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
 using IdelPog.Messaging.Dispatch;

@@ -1,4 +1,6 @@
-﻿using IdelPog.Common.Repository;
+﻿using IdelPog.Common.Enums;
+using IdelPog.Common.Repository;
+using IdelPog.Common.Structures;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
@@ -11,7 +13,7 @@ namespace IdelPogTests.Orchestration
     [TestFixture]
     public class SkillActionMediatorTest
     {
-        private ISkillActionMediator _skillActionMediator { get; set; }
+        private IRunnable _skillActionMediator { get; set; }
         private Mock<IExperienceService> _experienceServiceMock { get; set; }
         private Mock<IStateRepository<SkillID, Skill>> _repositoryMock { get; set; }
         private Mock<ILevelService> _levelServiceMock { get; set; }
@@ -73,7 +75,7 @@ namespace IdelPogTests.Orchestration
             _skillUpdateFactoryMock.Setup(library => library.CreateSkillUpdate(_miningSkill, false))
                 .Returns(_miningSkillUpdateDTO);
 
-            Assert.DoesNotThrow(() => _skillActionMediator.ProcessSkillAction());
+            Assert.DoesNotThrow(() => _skillActionMediator.Run());
 
             VerifyDependencyCalls(1, 1, 1);
             _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateDTO));
@@ -91,7 +93,7 @@ namespace IdelPogTests.Orchestration
             _levelServiceMock.Setup(library => library.CanSkillLevel(_miningSkill.Levelable))
                 .Returns(true);
 
-            Assert.DoesNotThrow(() => _skillActionMediator.ProcessSkillAction());
+            Assert.DoesNotThrow(() => _skillActionMediator.Run());
             
             VerifyDependencyCalls(1, 1, 1, 1);
             _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateDTO));
@@ -104,7 +106,7 @@ namespace IdelPogTests.Orchestration
             _experienceServiceMock.Setup(library => library.AddExperience(_miningSkill.Levelable))
                 .Throws<Exception>();
             
-            Assert.Throws<Exception>(() => _skillActionMediator.ProcessSkillAction());
+            Assert.Throws<Exception>(() => _skillActionMediator.Run());
             
             VerifyDependencyCalls(1, 0, 1);
         }

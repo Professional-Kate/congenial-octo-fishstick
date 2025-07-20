@@ -1,4 +1,4 @@
-﻿namespace Scheduler.Interfaces
+﻿namespace IdelPog.Common.Structures
 {
     public interface IRunnable
     {

@@ -1,4 +1,6 @@
-﻿namespace IdelPog.Common.Enums
+﻿using IdelPog.Common.Enums;
+
+namespace IdelPog.Common.Commands
 {
     /// <summary>
     /// This command is used to update a Currency model

@@ -1,4 +1,7 @@
-﻿namespace IdelPog.SimulationEngine.Skill
+﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Enums;
+
+namespace IdelPog.SimulationEngine.Skill
 {
     /// <seealso cref="ChangeSkill"/>
     public interface ISkillController

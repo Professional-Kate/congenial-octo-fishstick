@@ -1,4 +1,6 @@
-﻿using IdelPog.Messaging.Buffer;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Enums;
+using IdelPog.Messaging.Buffer;
 using IdelPog.SimulationEngine.Skill;
 
 namespace Integration.Tests.SkillCommands.Switch

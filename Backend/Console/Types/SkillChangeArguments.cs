@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Skill;
+﻿using IdelPog.Common.Enums;
 
 namespace Console.Types
 {

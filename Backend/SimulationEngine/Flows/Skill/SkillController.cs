@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Skill
+﻿using IdelPog.Common.Commands;
+
+namespace IdelPog.SimulationEngine.Skill
 {
     public class SkillController : ISkillController
     {

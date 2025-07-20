@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Skill;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Enums;
 
 namespace IdelPog.Common.Factories
 {
