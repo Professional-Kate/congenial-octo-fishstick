@@ -2,6 +2,7 @@
 using Console.Commands;
 using Console.Commands.Domains;
 using Console.Runtime.Input.Exceptions;
+using Console.Runtime.Systems;
 using Console.Types;
 using IdelPog.Common.Repository;
 using IdelPog.Validation.Assertions;
@@ -16,13 +17,15 @@ namespace Console.Tests.Resolver
         private ICommandResolverMediator _commandResolverMediator { get; set; }
         private Mock<IAssetRepository<CommandDomain, ICommandDomainResolver>> _repositoryMock { get; set; }
         private Mock<ICommandDomainResolver>  _commandDomainResolverMock { get; set; }
+        private Mock<IDomainPermissionChecker> _domainPermissionCheckerMock { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _repositoryMock = new Mock<IAssetRepository<CommandDomain, ICommandDomainResolver>>();
             _commandDomainResolverMock = new Mock<ICommandDomainResolver>();
-            _commandResolverMediator = new CommandResolverMediator(_repositoryMock.Object, new AssertFound(new ThrowHandler()), new AssertSpanNotEmpty(new ThrowHandler()));
+            _domainPermissionCheckerMock = new Mock<IDomainPermissionChecker>();
+            _commandResolverMediator = new CommandResolverMediator(_repositoryMock.Object, _domainPermissionCheckerMock.Object, new AssertFound(new ThrowHandler()), new AssertSpanNotEmpty(new ThrowHandler()), new AssertHasPermission(new ThrowHandler()));
         }
 
         [SetUp]

@@ -1,15 +1,18 @@
-﻿using System.Windows.Input;
-using Console.Assertions;
+﻿using Console.Assertions;
 using Console.Commands;
 using Console.Commands.Domains;
 using Console.Commands.Resolver;
 using Console.Commands.Resolver.Assertions;
 using Console.Commands.Resolver.Pipelines;
+using Console.Runtime.ECS;
 using Console.Runtime.Input;
+using Console.Runtime.Systems;
 using Console.Types;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
 using IdelPog.Common.Repository;
+using IdelPog.ECS;
+using IdelPog.ECS.Assertions;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Skill;
@@ -31,7 +34,9 @@ namespace Console
             IAssertCanParseEnum assertCanParseEnum = new AssertCanParseEnum(throwHandler);
             IAssertCanParseType assertCanParseType = new AssertCanParseType(throwHandler);
             IAssertArgumentLength assertArgumentLength = new AssertArgumentLength(throwHandler);
-            IAssertCollectionNotEmpty  assertCollectionNotEmpty = new AssertCollectionNotEmpty(throwHandler);
+            IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(throwHandler);
+            IAssertComponentFound assertComponentFound = new AssertComponentFound(throwHandler);
+            IAssertHasPermission assertHasPermission = new AssertHasPermission(throwHandler);
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
             
             IAssetRepository<CommandDomain, ICommandDomainResolver> commandRepository = new AssetRepository<CommandDomain, ICommandDomainResolver>(repositoryAsserter);
@@ -55,8 +60,12 @@ namespace Console
             
             commandRepository.Add(CommandDomain.CURRENCY, currencyDomainResolver);
             commandRepository.Add(CommandDomain.SKILL, skillDomainResolver);
-            
-            ICommandResolverMediator commandResolverMediator = new CommandResolverMediator(commandRepository, assertFound, assertSpanNotEmpty);
+
+            CommandDomainComponent currencyDomainComponent = new() { AllowedCommandDomain = CommandDomain.CURRENCY};
+            CommandDomainComponent skillDomainComponent = new() { AllowedCommandDomain = CommandDomain.SKILL};
+            IEntity allowedDomainEntity = new AllowedDomainsEntity([skillDomainComponent]);
+            IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, assertComponentFound);            
+            ICommandResolverMediator commandResolverMediator = new CommandResolverMediator(commandRepository, domainPermissionChecker, assertFound, assertSpanNotEmpty, assertHasPermission);
 
             IArgumentResolver<CommandDomain> commandArgumentResolver = new EnumResolver<CommandDomain>(assertCanParseEnum);
             
