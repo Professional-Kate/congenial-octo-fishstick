@@ -7,6 +7,17 @@ namespace IdelPog.Validation.Assertions
     {
         public void Handle<T>(IReadOnlyList<T> collection)
         {
+            RunAssertion(collection);
+        }
+
+        public void Handle<T>(ReadOnlySpan<T> collection)
+        {
+            T[] collectionArray = collection.ToArray();
+            RunAssertion(collectionArray);
+        }
+
+        private void RunAssertion<T>(IReadOnlyList<T> collection)
+        {
             Assert(() =>
             {
                 if (collection.Count == 0)
