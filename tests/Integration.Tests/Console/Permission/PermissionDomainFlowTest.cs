@@ -55,5 +55,18 @@ namespace Integration.Tests.Console.Permission
             string[] arguments = ["permission", "remove", domain.ToString()];
             Assert.DoesNotThrow(() => _inputHandler.Input(new ReadOnlySpan<string>(arguments)));
         }
+
+        [Test]
+        public void Negative_AddPermissionUpdate_AlreadyExistingPermission_Throws()
+        {
+            Assert.Throws<ComponentAlreadyExistsException>(() => TestPermissionService.SendAddPermissionCall(_inputHandler, Domain.PERMISSION));
+        }
+        
+        [Test]
+        public void Negative_RemovePermissionUpdate_PermissionNotFound_Throws()
+        {
+            VerifyPermissionDoesNotExist(Domain.CURRENCY);
+            Assert.Throws<ComponentNotFoundException>(() => TestPermissionService.SendRemovePermissionCall(_inputHandler, Domain.CURRENCY));
+        }
     }
 }
