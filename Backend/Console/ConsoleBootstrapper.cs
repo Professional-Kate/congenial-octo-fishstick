@@ -5,6 +5,7 @@ using Console.Commands.Resolver;
 using Console.Commands.Resolver.Assertions;
 using Console.Commands.Resolver.Pipelines;
 using Console.Runtime.ECS;
+using Console.Runtime.Factory;
 using Console.Runtime.Input;
 using Console.Runtime.Systems;
 using Console.Types;
@@ -13,6 +14,7 @@ using IdelPog.Common.Factories;
 using IdelPog.Common.Repository;
 using IdelPog.ECS;
 using IdelPog.ECS.Assertions;
+using IdelPog.ECS.Factory;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Skill;
@@ -36,15 +38,22 @@ namespace Console
             IAssertArgumentLength assertArgumentLength = new AssertArgumentLength(throwHandler);
             IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(throwHandler);
             IAssertComponentFound assertComponentFound = new AssertComponentFound(throwHandler);
+            IAssertComponentDoesNotExist assertComponentDoesNotExist = new AssertComponentDoesNotExist(throwHandler);
             IAssertHasPermission assertHasPermission = new AssertHasPermission(throwHandler);
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
+            
+            CommandDomainComponent currencyDomainComponent = new() { AllowedCommandDomain = CommandDomain.CURRENCY};
+            CommandDomainComponent skillDomainComponent = new() { AllowedCommandDomain = CommandDomain.SKILL};
+            CommandDomainComponent permissionDomainCommand = new() { AllowedCommandDomain = CommandDomain.PERMISSION};
+            IEntity allowedDomainEntity = new AllowedDomainsEntity([permissionDomainCommand]);
             
             IAssetRepository<CommandDomain, ICommandDomainResolver> commandRepository = new AssetRepository<CommandDomain, ICommandDomainResolver>(repositoryAsserter);
 
             IArgumentResolver<ActionType> actionTypeResolver = new EnumResolver<ActionType>(assertCanParseEnum);
             IArgumentResolver<CurrencyType> currencyTypeResolver = new EnumResolver<CurrencyType>(assertCanParseEnum);
-            IArgumentResolver<int> intResolver = new IntResolver(assertCanParseType);
             IArgumentResolver<SkillID> skillIDResolver = new EnumResolver<SkillID>(assertCanParseEnum);
+            IArgumentResolver<CommandDomain> commandDomainResolver = new EnumResolver<CommandDomain>(assertCanParseEnum);
+            IArgumentResolver<int> intResolver = new IntResolver(assertCanParseType);
             
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
             IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdate>(bufferManager, assertNotNull, assertCollectionNotEmpty);
@@ -57,13 +66,19 @@ namespace Console
             
             IArgumentResolverPipeline<SkillChangeArguments> skillChangePipeline = new SkillChangeResolver(skillIDResolver);
             ICommandDomainResolver skillDomainResolver = new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, skillChangeFactory, assertArgumentLength);
+
+            IComponentStoreFactory componentStoreFactory = new ComponentStoreFactory();
+            IDomainComponentFactory domainComponentFactory = new DomainComponentFactory();
+            
+            IPermissionService permissionService = new PermissionService(allowedDomainEntity, domainComponentFactory, componentStoreFactory, assertComponentFound, assertComponentDoesNotExist);
+
+            IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline = new PermissionUpdateResolver(actionTypeResolver,commandDomainResolver);
+            ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(permissionUpdatePipeline, permissionService, assertArgumentLength);
             
             commandRepository.Add(CommandDomain.CURRENCY, currencyDomainResolver);
             commandRepository.Add(CommandDomain.SKILL, skillDomainResolver);
-
-            CommandDomainComponent currencyDomainComponent = new() { AllowedCommandDomain = CommandDomain.CURRENCY};
-            CommandDomainComponent skillDomainComponent = new() { AllowedCommandDomain = CommandDomain.SKILL};
-            IEntity allowedDomainEntity = new AllowedDomainsEntity([currencyDomainComponent, skillDomainComponent]);
+            commandRepository.Add(CommandDomain.PERMISSION, permissionDomainResolver);
+           
             IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, assertComponentFound);            
             ICommandResolverMediator commandResolverMediator = new CommandResolverMediator(commandRepository, domainPermissionChecker, assertFound, assertSpanNotEmpty, assertHasPermission);
 

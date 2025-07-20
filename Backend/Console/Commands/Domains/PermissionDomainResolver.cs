@@ -1,5 +1,6 @@
 ﻿using Console.Commands.Resolver.Assertions;
 using Console.Commands.Resolver.Pipelines;
+using Console.Runtime.Systems;
 using Console.Types;
 
 namespace Console.Commands.Domains
@@ -11,10 +12,12 @@ namespace Console.Commands.Domains
         
         private readonly IArgumentResolverPipeline<PermissionUpdateArguments> _permissionUpdatePipeline;
         private readonly IAssertArgumentLength _assertArgumentLength;
+        private readonly IPermissionService _permissionService;
         
-        public PermissionDomainResolver(IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline, IAssertArgumentLength assertArgumentLength)
+        public PermissionDomainResolver(IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline, IPermissionService permissionService, IAssertArgumentLength assertArgumentLength)
         {
             _permissionUpdatePipeline = permissionUpdatePipeline;
+            _permissionService = permissionService;
             _assertArgumentLength = assertArgumentLength;
         }
         
@@ -23,10 +26,7 @@ namespace Console.Commands.Domains
             _assertArgumentLength.Handle(arguments.Length, 2);
             
             PermissionUpdateArguments permissionUpdateArguments = _permissionUpdatePipeline.Resolve(arguments);
-            
-            // TODO: new System level class
-            // ADD: assert not found, factory create domain component, add into ECS
-            // REMOVE: assert found, remove from ECS
+            _permissionService.PermissionUpdate(permissionUpdateArguments);
         }
     }
 }
