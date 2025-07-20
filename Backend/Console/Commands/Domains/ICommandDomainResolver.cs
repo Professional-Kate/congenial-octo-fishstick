@@ -4,7 +4,7 @@ namespace Console.Commands.Domains
 {
     public interface ICommandDomainResolver
     {
-        public CommandDomain HandledPermission { get; }
+        public CommandDomain HandledDomain { get; }
         public CommandDocumentation CommandDocumentation { get; }
 
         public void Resolve(ReadOnlySpan<string> arguments);
