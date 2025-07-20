@@ -1,4 +1,5 @@
-﻿using IdelPog.Common.Repository;
+﻿using IdelPog.Common.Enums;
+using IdelPog.Common.Repository;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;

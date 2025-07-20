@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Currency.Commands;
+﻿using IdelPog.Common.Enums;
 
 namespace IdelPog.SimulationEngine.Currency
 {

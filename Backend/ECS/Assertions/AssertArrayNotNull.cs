@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.ECS.Assertions
 {
-    public class AssertArrayNotNull(IHandler handler) : BaseAssertion<ComponentArrayNullException>(handler)
+    public class AssertArrayNotNull(IHandler handler) : BaseAssertion<ComponentArrayNullException>(handler), IAssertArrayNotNull
     {
         public void Handle<T>(T[]? arrayNotNull)
         {

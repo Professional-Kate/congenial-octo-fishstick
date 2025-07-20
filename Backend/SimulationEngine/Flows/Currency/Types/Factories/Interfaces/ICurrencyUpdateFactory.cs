@@ -1,5 +1,4 @@
-﻿using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Structures;
+﻿using IdelPog.Common.Enums;
 
 namespace IdelPog.SimulationEngine.Currency.Factories
 {

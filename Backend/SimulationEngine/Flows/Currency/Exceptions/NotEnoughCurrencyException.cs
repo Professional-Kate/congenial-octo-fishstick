@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Currency.Exceptions
+﻿using IdelPog.Common.Enums;
+
+namespace IdelPog.SimulationEngine.Currency.Exceptions
 {
     public class NotEnoughCurrencyException : Exception
     {

@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Currency.Exceptions;
+﻿using IdelPog.Common.Enums;
+using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 

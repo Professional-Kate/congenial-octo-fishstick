@@ -1,8 +1,8 @@
-﻿using IdelPog.Common.Repository;
+﻿using IdelPog.Common.Enums;
+using IdelPog.Common.Repository;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Inventory;
-using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;

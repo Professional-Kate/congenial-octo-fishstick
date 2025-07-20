@@ -1,6 +1,4 @@
-﻿using IdelPog.SimulationEngine.Structures;
-
-namespace IdelPog.SimulationEngine.Currency.Commands
+﻿namespace IdelPog.Common.Enums
 {
     /// <summary>
     /// This command is used to update a Currency model
@@ -8,12 +6,12 @@ namespace IdelPog.SimulationEngine.Currency.Commands
     public readonly record struct CurrencyUpdate
     {
         /// <summary>
-        /// What <see cref="SimulationEngine.Currency.CurrencyType"/> the action should perform on
+        /// What <see cref="Common.Enums.CurrencyType"/> the action should perform on
         /// </summary>
         public required CurrencyType CurrencyType { get; init; } 
         
         /// <summary>
-        /// The amount that should be Removed/Added to the <see cref="SimulationEngine.Currency.CurrencyType"/>
+        /// The amount that should be Removed/Added to the <see cref="Common.Enums.CurrencyType"/>
         /// </summary>
         /// <remarks>This number should be positive. We do not accept zero</remarks>
         public required int Amount { get; init; }

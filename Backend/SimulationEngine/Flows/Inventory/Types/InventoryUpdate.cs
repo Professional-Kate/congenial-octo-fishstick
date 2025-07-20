@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Structures;
+﻿using IdelPog.Common.Enums;
 
 namespace IdelPog.SimulationEngine.Inventory
 {

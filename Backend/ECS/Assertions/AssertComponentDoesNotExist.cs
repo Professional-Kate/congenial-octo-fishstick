@@ -4,17 +4,17 @@ using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.ECS.Assertions
 {
-    public class AssertComponentDoesNotExist(IHandler handler) : BaseAssertion<ComponentAlreadyExistsException>(handler)
+    public class AssertComponentDoesNotExist(IHandler handler) : BaseAssertion<ComponentAlreadyExistsException>(handler), IAssertComponentDoesNotExist
     {
-        public void Handle(bool componentAlreadyExists, object componentContext)
+    public void Handle(bool componentAlreadyExists, object componentContext)
+    {
+        Assert(() =>
         {
-            Assert(() =>
+            if (componentAlreadyExists)
             {
-                if (componentAlreadyExists)
-                {
-                    throw new ComponentAlreadyExistsException(componentContext);
-                }
-            });
-        }
+                throw new ComponentAlreadyExistsException(componentContext);
+            }
+        });
+    }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Structures
+﻿namespace IdelPog.Common.Enums
 {
     /// <summary>
     /// These Actions wills be used to dictate how to modify an object

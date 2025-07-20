@@ -1,4 +1,5 @@
-﻿using IdelPog.Messaging.Dispatch;
+﻿using IdelPog.Common.Enums;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Structures;
 
 namespace IdelPog.SimulationEngine.Inventory
