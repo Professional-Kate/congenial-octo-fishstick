@@ -50,7 +50,7 @@ namespace Console.Runtime.Systems
             
             DomainComponent[] newCommandDomainComponents = new DomainComponent[commandDomainComponents.Length + 1];
             Array.Copy(commandDomainComponents, newCommandDomainComponents, commandDomainComponents.Length);
-            newCommandDomainComponents[newCommandDomainComponents.Length] = _domainComponentFactory.CreateDomainComponent(domain);
+            newCommandDomainComponents[^1] = _domainComponentFactory.CreateDomainComponent(domain);
             
             _allowedDomainEntity.RemoveComponent<ComponentStore<DomainComponent>>();
             _allowedDomainEntity.AddComponent(_componentStoreFactory.CreateComponentStore(newCommandDomainComponents));

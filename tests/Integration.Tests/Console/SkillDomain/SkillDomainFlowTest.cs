@@ -2,7 +2,9 @@
 using Console.Commands.Resolver.Exceptions;
 using Console.Runtime.Input;
 using Console.Runtime.Input.Exceptions;
+using Console.Types;
 using IdelPog.SimulationEngine.Skill;
+using Integration.Tests.Console.Permission;
 
 namespace Integration.Tests.Console
 {
@@ -16,6 +18,7 @@ namespace Integration.Tests.Console
         public void Setup()
         {
             _inputHandler = ConsoleBootstrapper.Initialize(BufferManager);
+            TestPermissionService.SendAddPermissionCall(_inputHandler, Domain.SKILL);
             
             _skillChangeListener = new SkillChangeListener();
             ManagedSubscribe(_skillChangeListener);

@@ -42,11 +42,9 @@ namespace Console
             IAssertHasPermission assertHasPermission = new AssertHasPermission(throwHandler);
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
             
-            DomainComponent currencyDomainComponent = new() { AllowedDomain = Domain.CURRENCY};
-            DomainComponent skillDomainComponent = new() { AllowedDomain = Domain.SKILL};
             DomainComponent permissionDomain = new() { AllowedDomain = Domain.PERMISSION};
-            IEntity allowedDomainEntity = new AllowedDomainsEntity([permissionDomain, currencyDomainComponent, skillDomainComponent]);
-            
+            IEntity allowedDomainEntity = new AllowedDomainsEntity([permissionDomain]);
+
             IAssetRepository<Domain, ICommandDomainResolver> commandRepository = new AssetRepository<Domain, ICommandDomainResolver>(repositoryAsserter);
 
             IArgumentResolver<ActionType> actionTypeResolver = new EnumResolver<ActionType>(assertCanParseEnum);
