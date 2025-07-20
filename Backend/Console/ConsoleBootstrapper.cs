@@ -63,7 +63,7 @@ namespace Console
 
             CommandDomainComponent currencyDomainComponent = new() { AllowedCommandDomain = CommandDomain.CURRENCY};
             CommandDomainComponent skillDomainComponent = new() { AllowedCommandDomain = CommandDomain.SKILL};
-            IEntity allowedDomainEntity = new AllowedDomainsEntity([skillDomainComponent]);
+            IEntity allowedDomainEntity = new AllowedDomainsEntity([currencyDomainComponent, skillDomainComponent]);
             IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, assertComponentFound);            
             ICommandResolverMediator commandResolverMediator = new CommandResolverMediator(commandRepository, domainPermissionChecker, assertFound, assertSpanNotEmpty, assertHasPermission);
 
