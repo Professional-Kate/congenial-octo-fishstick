@@ -13,7 +13,7 @@ namespace IdelPogTests.Orchestration
     [TestFixture]
     public class SkillActionMediatorTest
     {
-        private IRunnable _skillActionMediator { get; set; }
+        private IScheduledTask _skillActionMediator { get; set; }
         private Mock<IExperienceService> _experienceServiceMock { get; set; }
         private Mock<IStateRepository<SkillID, Skill>> _repositoryMock { get; set; }
         private Mock<ILevelService> _levelServiceMock { get; set; }

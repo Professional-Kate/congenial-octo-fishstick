@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Currency.DTO
+﻿namespace IdelPog.Common.DTO
 {
     public readonly record struct ErrorDTO
     {

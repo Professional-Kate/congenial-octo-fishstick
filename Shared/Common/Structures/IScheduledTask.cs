@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.Common.Structures
 {
-    public interface IRunnable
+    public interface IScheduledTask
     {
         public void Run();
     }

@@ -7,7 +7,7 @@ using IdelPog.SimulationEngine.Service;
 
 namespace IdelPog.SimulationEngine.Skill
 {
-    public class SkillActionMediator : IRunnable
+    public class SkillActionMediator : IScheduledTask
     {
         private readonly IExperienceService _experienceService;
         private readonly ILevelService _levelService;

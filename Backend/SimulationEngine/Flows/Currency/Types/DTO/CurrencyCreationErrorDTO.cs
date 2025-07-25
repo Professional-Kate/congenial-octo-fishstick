@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Currency.DTO
+﻿using IdelPog.Common.DTO;
+
+namespace IdelPog.SimulationEngine.Currency.DTO
 {
     public readonly record struct CurrencyCreationErrorDTO
     {

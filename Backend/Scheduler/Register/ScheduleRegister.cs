@@ -3,26 +3,26 @@ using IdelPog.Common.Structures;
 
 namespace Scheduler.Register
 {
-    public class ScheduleRegister : IScheduleRegister
+    public class ScheduleRegister : IScheduleRegister, IScheduleReader
     {
-        private readonly IAssetRepository<Type, IRunnable> _runnableRepository;
+        private readonly IAssetRepository<Type, IScheduledTask> _runnableRepository;
 
-        public ScheduleRegister(IAssetRepository<Type, IRunnable> runnableRepository)
+        public ScheduleRegister(IAssetRepository<Type, IScheduledTask> runnableRepository)
         {
             _runnableRepository = runnableRepository;
         }
 
-        public ReadOnlySpan<IRunnable> GetRunnables()
+        public IReadOnlyList<IScheduledTask> GetScheduledTasks()
         {
             throw new NotImplementedException();
         }
 
-        public void Register(IRunnable runnable)
+        public void Register(IScheduledTask scheduledTask)
         {
             throw new NotImplementedException();
         }
 
-        public void Unregister(IRunnable runnable)
+        public void Unregister(IScheduledTask scheduledTask)
         {
             throw new NotImplementedException();
         }
