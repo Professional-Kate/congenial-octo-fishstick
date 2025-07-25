@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Enums;
+using IdelPog.Common.Factories;
 using IdelPog.Common.Repository;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Messenger;
@@ -9,6 +10,8 @@ using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Currency.Listeners;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
+using CurrencyUpdateFactory = IdelPog.SimulationEngine.Currency.Factories.CurrencyUpdateFactory;
+using ICurrencyUpdateFactory = IdelPog.SimulationEngine.Currency.Factories.ICurrencyUpdateFactory;
 
 namespace IdelPog.SimulationEngine.Currency
 {
@@ -37,13 +40,13 @@ namespace IdelPog.SimulationEngine.Currency
             ICurrencyCreationMediator currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationDispatcher, currencyCreationDTOFactory,  assertNotNull, assertCollectionNotEmpty,  assertNonDuplicate, assertPositive);
             
             ICurrencyController currencyController = new CurrencyController(currencyUpdateMediator, currencyCreationMediator);
-            IErrorFactory errorFactory = new ErrorFactory();
+            IErrorDTOFactory errorDTOFactory = new ErrorDTOFactory();
 
-            ICurrencyUpdateErrorDTOFactory currencyUpdateErrorDTOFactory = new CurrencyUpdateErrorDTOFactory(errorFactory, currencyUpdateDTOFactory);
+            ICurrencyUpdateErrorDTOFactory currencyUpdateErrorDTOFactory = new CurrencyUpdateErrorDTOFactory(errorDTOFactory, currencyUpdateDTOFactory);
             IDispatchOne<CurrencyUpdateErrorDTO> currencyUpdateErrorDispatcher = new ManagedDispatcher<CurrencyUpdateErrorDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
             CurrencyUpdateListener currencyUpdateListener = new(currencyController, currencyUpdateErrorDispatcher, currencyUpdateErrorDTOFactory);
 
-            ICurrencyCreationErrorDTOFactory currencyCreationErrorDTOFactory = new CurrencyCreationErrorDTOFactory(errorFactory, currencyCreationDTOFactory);
+            ICurrencyCreationErrorDTOFactory currencyCreationErrorDTOFactory = new CurrencyCreationErrorDTOFactory(errorDTOFactory, currencyCreationDTOFactory);
             IDispatchOne<CurrencyCreationErrorDTO> currencyCreationErrorDispatcher = new ManagedDispatcher<CurrencyCreationErrorDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
             CurrencyCreationListener currencyCreationListener = new(currencyController, currencyCreationErrorDispatcher, currencyCreationErrorDTOFactory);
             

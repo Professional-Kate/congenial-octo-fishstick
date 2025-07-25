@@ -6,7 +6,6 @@ using Console.Runtime.Input.Exceptions;
 using Console.Types;
 using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
-using IdelPog.SimulationEngine.Skill;
 using Integration.Tests.Console.Permission;
 
 namespace Integration.Tests.Console

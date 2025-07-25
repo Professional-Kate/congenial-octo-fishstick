@@ -1,5 +1,4 @@
 ﻿using IdelPog.Common.Commands;
-using IdelPog.Common.Enums;
 using IdelPog.Messaging.Listeners;
 
 namespace Integration.Tests.Console

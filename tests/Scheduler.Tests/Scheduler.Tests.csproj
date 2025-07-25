@@ -26,7 +26,6 @@
       <ProjectReference Include="..\..\Backend\Scheduler\Scheduler.csproj" />
       <ProjectReference Include="..\..\Shared\Common\Common.csproj" />
       <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj" />
-      <ProjectReference Include="..\Backend\Scheduler\Scheduler.csproj" />
     </ItemGroup>
 
 </Project>

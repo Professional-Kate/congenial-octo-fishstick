@@ -1,6 +1,5 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Messaging.Listeners;
-using IdelPog.SimulationEngine.Skill;
 
 namespace Integration.Tests.Console
 {
