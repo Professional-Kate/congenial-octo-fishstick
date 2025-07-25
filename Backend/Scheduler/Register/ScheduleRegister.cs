@@ -1,30 +1,39 @@
-﻿using IdelPog.Common.Repository;
-using IdelPog.Common.Structures;
+﻿using IdelPog.Common.Structures;
+using IdelPog.Validation.Assertions;
 
 namespace Scheduler.Register
 {
     public class ScheduleRegister : IScheduleRegister, IScheduleReader
     {
-        private readonly IAssetRepository<Type, IScheduledTask> _runnableRepository;
+        private readonly IList<IScheduledTask> _taskList = new List<IScheduledTask>();
+        private readonly IAssertNonDuplicate _assertNonDuplicate;
+        private readonly IAssertFound _assertFound;
+        private readonly IAssertNotNull _assertNotNull;
 
-        public ScheduleRegister(IAssetRepository<Type, IScheduledTask> runnableRepository)
+        public ScheduleRegister(IAssertNonDuplicate assertNonDuplicate, IAssertFound assertFound, IAssertNotNull assertNotNull)
         {
-            _runnableRepository = runnableRepository;
+            _assertNonDuplicate = assertNonDuplicate;
+            _assertFound = assertFound;
+            _assertNotNull = assertNotNull;
         }
 
         public IReadOnlyList<IScheduledTask> GetScheduledTasks()
         {
-            throw new NotImplementedException();
+            return _taskList.AsReadOnly();
         }
 
         public void Register(IScheduledTask scheduledTask)
         {
-            throw new NotImplementedException();
+            _assertNotNull.AssertObjectNotNull(scheduledTask);
+            _assertNonDuplicate.AssertContains(scheduledTask, () => _taskList.Contains(scheduledTask));
+            _taskList.Add(scheduledTask);
         }
 
         public void Unregister(IScheduledTask scheduledTask)
         {
-            throw new NotImplementedException();
+            _assertNotNull.AssertObjectNotNull(scheduledTask);
+            _assertFound.AssertItemIsFound(scheduledTask, () => _taskList.Contains(scheduledTask));
+            _taskList.Remove(scheduledTask);
         }
     }
 }
