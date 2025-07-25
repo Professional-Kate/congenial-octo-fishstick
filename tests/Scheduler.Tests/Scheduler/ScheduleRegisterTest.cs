@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
 using Scheduler.Register;
 
-namespace Scheduler.Tests.Register
+namespace Scheduler.Tests.Scheduler
 {
     [TestFixture]
     public class ScheduleRegisterTest

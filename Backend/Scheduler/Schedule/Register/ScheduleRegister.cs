@@ -5,7 +5,7 @@ namespace Scheduler.Register
 {
     public class ScheduleRegister : IScheduleRegister, IScheduleReader
     {
-        private readonly IList<IScheduledTask> _taskList = new List<IScheduledTask>();
+        private readonly List<IScheduledTask> _taskList = [];
         private readonly IAssertNonDuplicate _assertNonDuplicate;
         private readonly IAssertFound _assertFound;
         private readonly IAssertNotNull _assertNotNull;

@@ -9,7 +9,7 @@ using Scheduler.Mediator;
 using Scheduler.Register;
 using Scheduler.Types;
 
-namespace Scheduler.Tests.Mediator
+namespace Scheduler.Tests.Scheduler
 {
     [TestFixture]
     public class ScheduleMediatorTest
