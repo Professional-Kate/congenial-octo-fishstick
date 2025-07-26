@@ -21,7 +21,7 @@ namespace Console.Tests.Systems
         public void OneTimeSetup()
         {
             _entityMock = new Mock<IEntity>();
-            _domainPermissionChecker = new DomainPermissionChecker(_entityMock.Object, new AssertComponentFound(new ThrowHandler()));
+            _domainPermissionChecker = new DomainPermissionChecker(_entityMock.Object, new ComponentAssertion(new ThrowHandler()));
         }
 
         [SetUp]

@@ -37,8 +37,7 @@ namespace Console
             ITypeParseAssertion typeParseAssertion = new TypeParseAssertion(throwHandler);
             IArgumentCountAssertion argumentCountAssertion = new ArgumentCountAssertion(throwHandler);
             IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(throwHandler);
-            IAssertComponentFound assertComponentFound = new AssertComponentFound(throwHandler);
-            IAssertComponentDoesNotExist assertComponentDoesNotExist = new AssertComponentDoesNotExist(throwHandler);
+            IComponentAssertion componentAssertion = new ComponentAssertion(throwHandler);
             IDomainPermissionAssertion domainPermissionAssertion = new DomainPermissionAssertion(throwHandler);
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
 
@@ -73,8 +72,7 @@ namespace Console
             IComponentStoreFactory componentStoreFactory = new ComponentStoreFactory();
             IDomainComponentFactory domainComponentFactory = new DomainComponentFactory();
 
-            IPermissionService permissionService = new PermissionService(allowedDomainEntity, domainComponentFactory, componentStoreFactory, assertComponentFound,
-                assertComponentDoesNotExist);
+            IPermissionService permissionService = new PermissionService(allowedDomainEntity, domainComponentFactory, componentStoreFactory, componentAssertion);
 
             IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline =
                 new PermissionUpdateResolver(actionTypeResolver, commandDomainResolver);
@@ -94,7 +92,7 @@ namespace Console
             commandRepository.Add(Domain.PERMISSION, permissionDomainResolver);
             commandRepository.Add(Domain.SCHEDULE, scheduleDomainResolver);
 
-            IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, assertComponentFound);
+            IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, componentAssertion);
             ICommandResolverMediator commandResolverMediator =
                 new CommandResolverMediator(commandRepository, domainPermissionChecker, assertFound, spanAssertion, domainPermissionAssertion);
 
