@@ -1,12 +1,12 @@
 ﻿using IdelPog.Messaging.Assertions;
-using IdelPog.Messaging.Assertions.Pipelines;
+using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Messaging.Buffer
 {
     public class Buffer<T> : IInternalBuffer, IBuffer<T>
     {
-        private readonly IBufferAsserter _bufferAsserter;
-        private readonly IAssertBufferState _assertBufferState;
+        private readonly IBufferAssertion _bufferAssertion;
+        private readonly IAssertNotNull _assertNotNull;
 
         private event Action<IInternalBuffer>? Ready;
 
@@ -21,16 +21,16 @@ namespace IdelPog.Messaging.Buffer
         private readonly T[] _data;
         public IReadOnlyList<T> Data => _data;
 
-        internal Buffer(IBufferAsserter bufferAsserter, IAssertBufferState assertBufferState, BufferRequest request)
+        internal Buffer(IBufferAssertion bufferAssertion, IAssertNotNull assertNotNull, BufferRequest request)
         {
-            _bufferAsserter = bufferAsserter;
-            _assertBufferState = assertBufferState;
+            _bufferAssertion = bufferAssertion;
+            _assertNotNull = assertNotNull;
             _data = new T[request.Length];
         }
 
         public void MarkReady()
         {
-            _assertBufferState.AssertState(BufferState.FILLED, State);
+            _bufferAssertion.AssertStateEquals(BufferState.FILLED, State);
             State = BufferState.READY;
 
             Ready?.Invoke(this);
@@ -38,8 +38,9 @@ namespace IdelPog.Messaging.Buffer
 
         public void Assign(IReadOnlyList<T> source)
         {
-            _assertBufferState.AssertState(BufferState.CREATED, State);
-            _bufferAsserter.AssertCollection(Data.Count, source);
+            _assertNotNull.AssertObjectNotNull(source);
+            _bufferAssertion.AssertStateEquals(BufferState.CREATED, State);
+            _bufferAssertion.AssertCountEquals(source.Count, Data.Count);
 
             CopyIntoInternalArray(source);
 

@@ -2,6 +2,9 @@
 using IdelPog.Messaging.Assertions.Pipelines;
 using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Exceptions;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
 namespace IdelPog.Messaging.Tests.Collection
@@ -11,8 +14,8 @@ namespace IdelPog.Messaging.Tests.Collection
     {
         private Buffer<int> _buffer { get; set; }
         private int[] _data = [];
-        private Mock<IBufferAsserter> _bufferAsserterMock { get; set; }
-        private Mock<IAssertBufferState> _assertBufferStateMock { get; set; }
+        private Mock<IBufferPipelineAssertion> _bufferAsserterPipelineMock { get; set; }
+        private IBufferAssertion _bufferAssertion { get; set; }
 
         private bool _readyCalled;
 
@@ -21,9 +24,9 @@ namespace IdelPog.Messaging.Tests.Collection
         {
             _readyCalled = false;
 
-            _bufferAsserterMock = new Mock<IBufferAsserter>();
-            _assertBufferStateMock = new Mock<IAssertBufferState>();
-            _buffer = new Buffer<int>(_bufferAsserterMock.Object, _assertBufferStateMock.Object, new BufferRequest(3));
+            _bufferAssertion = new BufferAssertion(new Mock<IHandler>().Object);
+            _bufferAsserterPipelineMock = new Mock<IBufferPipelineAssertion>();
+            _buffer = new Buffer<int>(_bufferAssertion, new AssertNotNull(new ThrowHandler()), new BufferRequest(3));
 
             if (_buffer is IInternalBuffer internalBuffer)
             {
@@ -42,7 +45,7 @@ namespace IdelPog.Messaging.Tests.Collection
         [Test]
         public void Positive_OnConstruct_SetsState()
         {
-            Buffer<int> createdBuffer = new(_bufferAsserterMock.Object, _assertBufferStateMock.Object, new BufferRequest(3));
+            Buffer<int> createdBuffer = new(_bufferAssertion, new AssertNotNull(new ThrowHandler()), new BufferRequest(3));
 
             Assert.That(createdBuffer.State, Is.EqualTo(BufferState.CREATED));
         }
@@ -114,7 +117,7 @@ namespace IdelPog.Messaging.Tests.Collection
         [Test]
         public void Negative_Assign_Null_Throws()
         {
-            _bufferAsserterMock.Setup(library => library.AssertCollection<int>(3, It.IsAny<IReadOnlyList<int>>()))
+            _bufferAsserterPipelineMock.Setup(library => library.AssertCollectionSize<int>(It.IsAny<IReadOnlyList<int>>(), 3))
                 .Throws(new ArgumentNullException());
 
             Assert.Throws<ArgumentNullException>(() => _buffer.Assign(null!));
@@ -123,9 +126,6 @@ namespace IdelPog.Messaging.Tests.Collection
         [Test]
         public void Negative_Assign_AlreadyFilledState_Throws()
         {
-            _assertBufferStateMock.Setup(library => library.AssertState(BufferState.CREATED, BufferState.FILLED))
-                .Throws(new InvalidBufferStateException(BufferState.CREATED, BufferState.FILLED));
-
             _buffer.Assign(_data);
 
             Assert.Throws<InvalidBufferStateException>(() => _buffer.Assign(_data));
@@ -135,9 +135,6 @@ namespace IdelPog.Messaging.Tests.Collection
         [Test]
         public void Negative_Assign_ReadyState_Throws()
         {
-            _assertBufferStateMock.Setup(library => library.AssertState(BufferState.CREATED, BufferState.READY))
-                .Throws(new InvalidBufferStateException(BufferState.CREATED, BufferState.READY));
-
             _buffer.Assign(_data);
             _buffer.MarkReady();
 
@@ -152,18 +149,12 @@ namespace IdelPog.Messaging.Tests.Collection
         {
             int[] numbers = Enumerable.Range(0, size).ToArray();
 
-            _bufferAsserterMock.Setup(library => library.AssertCollection(3, numbers))
-                .Throws(new BufferSizeMismatchException(3, size));
-
             Assert.Throws<BufferSizeMismatchException>(() => _buffer.Assign(numbers));
         }
 
         [Test]
         public void Negative_MarkReady_NotFilledState_Throws()
         {
-            _assertBufferStateMock.Setup(library => library.AssertState(BufferState.FILLED, BufferState.CREATED))
-                .Throws(new InvalidBufferStateException(BufferState.FILLED, BufferState.CREATED));
-
             Assert.Throws<InvalidBufferStateException>(() => _buffer.MarkReady());
             Assert.That(_buffer.State, Is.EqualTo(BufferState.CREATED));
         }
@@ -171,9 +162,6 @@ namespace IdelPog.Messaging.Tests.Collection
         [Test]
         public void Negative_MarkReady_Twice_Throws()
         {
-            _assertBufferStateMock.Setup(library => library.AssertState(BufferState.FILLED, BufferState.READY))
-                .Throws(new InvalidBufferStateException(BufferState.FILLED, BufferState.READY));
-
             _buffer.Assign(_data);
             _buffer.MarkReady();
 

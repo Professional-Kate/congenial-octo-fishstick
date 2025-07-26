@@ -5,11 +5,15 @@ using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.Messaging.Assertions
 {
-    public class AssertListenerFound(IHandler handler) : BaseAssertion<NoListenerFoundException>(handler), IAssertListenerFound
+    public class ListenerAssertion : BaseAssertion, IListenerAssertion
     {
-        public void AssertFound(IListener listener, bool wasFound)
+        public ListenerAssertion(IHandler handler) : base(handler)
         {
-            Assert(() =>
+        }
+
+        public void AssertListenerFound(bool wasFound, IListener listener)
+        {
+            Assert<NoListenerFoundException>(() =>
             {
                 if (wasFound == false)
                 {

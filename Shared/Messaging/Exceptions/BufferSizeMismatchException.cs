@@ -6,8 +6,8 @@ namespace IdelPog.Messaging.Exceptions
     {
         private const string BASE_MESSAGE = ExceptionConstants.BUFFER_SIZE_MISMATCH_MESSAGE;
 
-        public BufferSizeMismatchException(int expectedSize, int actualSize)
-            : base(string.Format(BASE_MESSAGE, expectedSize, actualSize))
+        public BufferSizeMismatchException(int actual, int expected)
+            : base(string.Format(BASE_MESSAGE, actual, expected))
         {
             // TODO : don't say it
         }

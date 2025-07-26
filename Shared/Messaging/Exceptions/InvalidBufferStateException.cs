@@ -7,8 +7,8 @@ namespace IdelPog.Messaging.Exceptions
     {
         private const string BASE_MESSAGE = ExceptionConstants.BUFFER_STATE_INVALID_MESSAGE;
 
-        public InvalidBufferStateException(BufferState expected, BufferState actual)
-            : base(string.Format(BASE_MESSAGE, expected, actual))
+        public InvalidBufferStateException(BufferState actual, BufferState expected)
+            : base(string.Format(BASE_MESSAGE, actual, expected))
         {
             // TODO : I will get to it
         }

@@ -1,5 +1,4 @@
 ﻿using IdelPog.Messaging.Assertions;
-using IdelPog.Messaging.Assertions.Pipelines;
 using IdelPog.Messaging.Factory;
 using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Messenger;
@@ -20,20 +19,17 @@ namespace Integration.Tests
         protected void BaseOneTimeSetUp()
         {
             _assertNotNull = new AssertNotNull(new ThrowHandler());
-            IAssertCollectionSize assertCollectionSize = new AssertCollectionSize(new ThrowHandler());
-            IAssertValidCollectionSize assertValidCollectionSize = new AssertValidCollectionSize(new ThrowHandler());
-            IAssertBufferState assertBufferState = new AssertBufferState(new ThrowHandler());
+            IBufferAssertion bufferAssertion = new BufferAssertion(new ThrowHandler());
 
-            IBufferAsserter bufferAsserter = new BufferAsserter(_assertNotNull, assertCollectionSize, assertValidCollectionSize);
-            _bufferFactory = new BufferFactory(bufferAsserter, assertBufferState, _assertNotNull);
+            _bufferFactory = new BufferFactory(bufferAssertion, _assertNotNull);
         }
 
         [SetUp]
         protected void BaseSetUp()
         {
-            IAssertListenerFound assertListenerFound = new AssertListenerFound(new ThrowHandler());
+            IListenerAssertion listenerAssertion = new ListenerAssertion(new ThrowHandler());
 
-            BufferMessenger bufferMessenger = new(_assertNotNull, assertListenerFound);
+            BufferMessenger bufferMessenger = new(_assertNotNull, listenerAssertion);
             BufferMessenger = bufferMessenger;
             IBufferDispatcher bufferDispatcher = bufferMessenger;
             BufferManager = new BufferManager(_bufferFactory, bufferDispatcher, _assertNotNull);

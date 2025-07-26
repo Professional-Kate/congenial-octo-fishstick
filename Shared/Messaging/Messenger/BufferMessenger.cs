@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Messaging.Messenger
 {
-    public class BufferMessenger(IAssertNotNull assertNotNull, IAssertListenerFound assertListenerFound) : IBufferMessenger, IBufferDispatcher
+    public class BufferMessenger(IAssertNotNull assertNotNull, IListenerAssertion listenerAssertion) : IBufferMessenger, IBufferDispatcher
     {
         private readonly Dictionary<Type, List<IListener>> _listeners = new();
 
@@ -26,7 +26,7 @@ namespace IdelPog.Messaging.Messenger
             assertNotNull.AssertObjectNotNull(listener);
 
             bool contains = _listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners);
-            assertListenerFound.AssertFound(listener, contains);
+            listenerAssertion.AssertListenerFound(contains, listener);
 
             listeners!.Remove(listener);
         }

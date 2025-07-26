@@ -1,10 +1,8 @@
 ﻿using IdelPog.Messaging.Assertions;
-using IdelPog.Messaging.Assertions.Pipelines;
 using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Factory;
 using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers.Interfaces;
-using Moq;
+using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.Messaging.Tests.Factory
 {
@@ -14,18 +12,14 @@ namespace IdelPog.Messaging.Tests.Factory
         private IBufferFactory _bufferFactory { get; set; }
         private BufferRequest _bufferRequest { get; set; }
 
-        private Mock<IAssertBufferState> _assertBufferStateMock { get; set; }
-        private Mock<IBufferAsserter> _bufferAsserterMock { get; set; }
-        private Mock<IHandler> _handlerMock { get; set; }
+        private IBufferAssertion _bufferAssertion { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _assertBufferStateMock = new Mock<IAssertBufferState>();
-            _bufferAsserterMock = new Mock<IBufferAsserter>();
-            _handlerMock = new Mock<IHandler>();
+            _bufferAssertion = new BufferAssertion(new ThrowHandler());
 
-            _bufferFactory = new BufferFactory(_bufferAsserterMock.Object, _assertBufferStateMock.Object, new AssertNotNull(_handlerMock.Object));
+            _bufferFactory = new BufferFactory(_bufferAssertion, new AssertNotNull(new ThrowHandler()));
             _bufferRequest = new BufferRequest(5);
         }
 
@@ -41,9 +35,6 @@ namespace IdelPog.Messaging.Tests.Factory
         [Test]
         public void Negative_CreateBuffer_NullRequest_Throws()
         {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
-                .Throws<ArgumentNullException>();
-
             Assert.Throws<ArgumentNullException>(() => _bufferFactory.CreateBuffer<int>(null!));
         }
     }

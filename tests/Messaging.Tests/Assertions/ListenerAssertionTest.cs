@@ -6,26 +6,26 @@ using IdelPog.Validation.Assertions.Handlers;
 namespace IdelPog.Messaging.Tests.Assertions
 {
     [TestFixture]
-    public class AssertListenerFoundTest
+    public class ListenerAssertionTest
     {
-        private IAssertListenerFound _assertListenerFound { get; set; }
+        private IListenerAssertion _listenerAssertion { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _assertListenerFound = new AssertListenerFound(new ThrowHandler());
+            _listenerAssertion = new ListenerAssertion(new ThrowHandler());
         }
 
         [Test]
         public void Positive_AssertFound_True_NoThrow()
         {
-            Assert.DoesNotThrow(() => _assertListenerFound.AssertFound(new TestListener<int>(), true));
+            Assert.DoesNotThrow(() => _listenerAssertion.AssertListenerFound(true, new TestListener<int>()));
         }
 
         [Test]
         public void Negative_AssertFound_False_Throws()
         {
-            Assert.Throws<NoListenerFoundException>(() => _assertListenerFound.AssertFound(new TestListener<int>(), false));
+            Assert.Throws<NoListenerFoundException>(() => _listenerAssertion.AssertListenerFound(false, new TestListener<int>()));
         }
     }
 }
