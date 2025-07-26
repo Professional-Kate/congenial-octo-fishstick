@@ -1,5 +1,5 @@
-﻿using Console.Commands.Domains.Arguments;
-using Console.Commands.Resolver.Assertions;
+﻿using Console.Assertions;
+using Console.Commands.Domains.Arguments;
 using Console.Commands.Resolver.Pipelines;
 using Console.Types;
 using IdelPog.Common.Commands;
@@ -17,20 +17,20 @@ namespace Console.Commands.Domains
         private readonly IArgumentResolverPipeline<CurrencyUpdateArguments> _currencyUpdatePipeline;
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
         private readonly IDispatchOne<CurrencyUpdate> _currencyUpdateDispatcher;
-        private readonly IAssertArgumentLength _assertArgumentLength;
+        private readonly IArgumentCountAssertion _argumentCountAssertion;
 
         public CurrencyDomainResolver(IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline, ICurrencyUpdateFactory currencyUpdateFactory,
-            IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher, IAssertArgumentLength assertArgumentLength)
+            IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher, IArgumentCountAssertion argumentCountAssertion)
         {
             _currencyUpdatePipeline = currencyUpdatePipeline;
             _currencyUpdateFactory = currencyUpdateFactory;
             _currencyUpdateDispatcher = currencyUpdateDispatcher;
-            _assertArgumentLength = assertArgumentLength;
+            _argumentCountAssertion = argumentCountAssertion;
         }
 
         public void Resolve(ReadOnlySpan<string> arguments)
         {
-            _assertArgumentLength.Handle(arguments.Length, 3);
+            _argumentCountAssertion.AssertCount(arguments.Length, 3);
 
             CurrencyUpdateArguments currencyUpdateArguments = _currencyUpdatePipeline.Resolve(arguments);
             CurrencyUpdate currencyUpdate = _currencyUpdateFactory.CreateCurrencyUpdate(currencyUpdateArguments.ActionType, currencyUpdateArguments.Amount,

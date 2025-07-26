@@ -4,13 +4,17 @@ using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace Console.Assertions
 {
-    public class AssertSpanNotEmpty(IHandler handler) : BaseAssertion<EmptySpanException>(handler), IAssertSpanNotEmpty
+    public class SpanAssertion : BaseAssertion, ISpanAssertion
     {
-        public void Handle<T>(ReadOnlySpan<T> span)
+        public SpanAssertion(IHandler handler) : base(handler)
+        {
+        }
+        
+        public void AssertNotEmpty<T>(ReadOnlySpan<T> span)
         {
             bool spanEmpty = span.IsEmpty;
 
-            Assert(() =>
+            Assert<EmptySpanException>(() =>
             {
                 if (spanEmpty)
                 {

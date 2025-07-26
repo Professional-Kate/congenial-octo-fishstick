@@ -1,12 +1,12 @@
-﻿using Console.Commands.Resolver.Assertions;
+﻿using Console.Assertions;
 
 namespace Console.Commands.Resolver
 {
     public class EnumResolver<TEnum> : IArgumentResolver<TEnum> where TEnum : struct
     {
-        private readonly IAssertCanParseEnum _assertCanParse;
+        private readonly IEnumParseAssertion _assertCanParse;
 
-        public EnumResolver(IAssertCanParseEnum assertCanParse)
+        public EnumResolver(IEnumParseAssertion assertCanParse)
         {
             _assertCanParse = assertCanParse;
         }
@@ -14,7 +14,7 @@ namespace Console.Commands.Resolver
         public TEnum Resolve(string argument)
         {
             bool successfulParse = Enum.TryParse(argument, true, out TEnum result);
-            _assertCanParse.Handle(successfulParse, argument, nameof(TEnum));
+            _assertCanParse.AssertCanParse(successfulParse, argument, nameof(TEnum));
 
             return result;
         }

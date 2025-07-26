@@ -12,24 +12,24 @@ namespace Console.Commands
         private readonly IAssetRepository<Domain, ICommandDomainResolver> _commandResolverMap;
         private readonly IDomainPermissionChecker _domainPermissionChecker;
         private readonly IAssertFound _assertFound;
-        private readonly IAssertSpanNotEmpty _assertSpanNotEmpty;
-        private readonly IAssertHasPermission _assertHasPermission;
+        private readonly ISpanAssertion _spanAssertion;
+        private readonly IDomainPermissionAssertion _domainPermissionAssertion;
 
         public CommandResolverMediator(IAssetRepository<Domain, ICommandDomainResolver> commandResolverMap, IDomainPermissionChecker domainPermissionChecker,
-            IAssertFound assertFound, IAssertSpanNotEmpty assertSpanNotEmpty, IAssertHasPermission assertHasPermission)
+            IAssertFound assertFound, ISpanAssertion spanAssertion, IDomainPermissionAssertion domainPermissionAssertion)
         {
             _commandResolverMap = commandResolverMap;
             _domainPermissionChecker = domainPermissionChecker;
             _assertFound = assertFound;
-            _assertSpanNotEmpty = assertSpanNotEmpty;
-            _assertHasPermission = assertHasPermission;
+            _spanAssertion = spanAssertion;
+            _domainPermissionAssertion = domainPermissionAssertion;
         }
 
         public void ResolveCommand(Domain domain, ReadOnlySpan<string> arguments)
         {
-            _assertSpanNotEmpty.Handle(arguments);
+            _spanAssertion.AssertNotEmpty(arguments);
             _assertFound.AssertItemIsFound(domain, () => _commandResolverMap.Contains(domain));
-            _assertHasPermission.Handle(_domainPermissionChecker.IsAllowed(domain), domain);
+            _domainPermissionAssertion.AssertHasPermission(_domainPermissionChecker.IsAllowed(domain), domain);
 
             ICommandDomainResolver commandResolver = _commandResolverMap.Get(domain);
 

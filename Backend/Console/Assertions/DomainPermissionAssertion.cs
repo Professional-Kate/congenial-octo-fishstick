@@ -5,11 +5,15 @@ using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace Console.Assertions
 {
-    public class AssertHasPermission(IHandler handler) : BaseAssertion<DomainPermissionDeniedException>(handler), IAssertHasPermission
+    public class DomainPermissionAssertion : BaseAssertion, IDomainPermissionAssertion
     {
-        public void Handle(bool hasPermission, Domain domainContext)
+        public DomainPermissionAssertion(IHandler handler) : base(handler)
         {
-            Assert(() =>
+        }
+
+        public void AssertHasPermission(bool hasPermission, Domain domainContext)
+        {
+            Assert<DomainPermissionDeniedException>(() =>
             {
                 if (hasPermission == false)
                 {

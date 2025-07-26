@@ -9,19 +9,19 @@ namespace Console.Runtime.Input
     {
         private readonly ICommandResolverMediator _commandResolverMediator;
         private readonly IArgumentResolver<Domain> _commandDomainResolver;
-        private readonly IAssertSpanNotEmpty _assertSpanNotEmpty;
+        private readonly ISpanAssertion _spanAssertion;
 
         public InputHandler(ICommandResolverMediator commandResolverMediator, IArgumentResolver<Domain> commandDomainResolver,
-            IAssertSpanNotEmpty assertSpanNotEmpty)
+            ISpanAssertion spanAssertion)
         {
             _commandResolverMediator = commandResolverMediator;
             _commandDomainResolver = commandDomainResolver;
-            _assertSpanNotEmpty = assertSpanNotEmpty;
+            _spanAssertion = spanAssertion;
         }
 
         public void Input(ReadOnlySpan<string> args)
         {
-            _assertSpanNotEmpty.Handle(args);
+            _spanAssertion.AssertNotEmpty(args);
             Domain domain = _commandDomainResolver.Resolve(args[0]);
 
             ReadOnlySpan<string> commandArgs = args.Slice(1);

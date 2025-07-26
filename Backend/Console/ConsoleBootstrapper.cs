@@ -3,7 +3,6 @@ using Console.Commands;
 using Console.Commands.Domains;
 using Console.Commands.Domains.Arguments;
 using Console.Commands.Resolver;
-using Console.Commands.Resolver.Assertions;
 using Console.Commands.Resolver.Pipelines;
 using Console.Runtime.ECS;
 using Console.Runtime.Factory;
@@ -33,14 +32,14 @@ namespace Console
             IAssertFound assertFound = new AssertFound(throwHandler);
             IAssertNotNull assertNotNull = new AssertNotNull(throwHandler);
             IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(throwHandler);
-            IAssertSpanNotEmpty assertSpanNotEmpty = new AssertSpanNotEmpty(throwHandler);
-            IAssertCanParseEnum assertCanParseEnum = new AssertCanParseEnum(throwHandler);
-            IAssertCanParseType assertCanParseType = new AssertCanParseType(throwHandler);
-            IAssertArgumentLength assertArgumentLength = new AssertArgumentLength(throwHandler);
+            ISpanAssertion spanAssertion = new SpanAssertion(throwHandler);
+            IEnumParseAssertion enumParseAssertion = new EnumParseAssertion(throwHandler);
+            ITypeParseAssertion typeParseAssertion = new TypeParseAssertion(throwHandler);
+            IArgumentCountAssertion argumentCountAssertion = new ArgumentCountAssertion(throwHandler);
             IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(throwHandler);
             IAssertComponentFound assertComponentFound = new AssertComponentFound(throwHandler);
             IAssertComponentDoesNotExist assertComponentDoesNotExist = new AssertComponentDoesNotExist(throwHandler);
-            IAssertHasPermission assertHasPermission = new AssertHasPermission(throwHandler);
+            IDomainPermissionAssertion domainPermissionAssertion = new DomainPermissionAssertion(throwHandler);
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
 
             DomainComponent permissionDomain = new() { AllowedDomain = Domain.PERMISSION };
@@ -48,12 +47,12 @@ namespace Console
 
             IAssetRepository<Domain, ICommandDomainResolver> commandRepository = new AssetRepository<Domain, ICommandDomainResolver>(repositoryAsserter);
 
-            IArgumentResolver<ActionType> actionTypeResolver = new EnumResolver<ActionType>(assertCanParseEnum);
-            IArgumentResolver<CurrencyType> currencyTypeResolver = new EnumResolver<CurrencyType>(assertCanParseEnum);
-            IArgumentResolver<SkillID> skillIDResolver = new EnumResolver<SkillID>(assertCanParseEnum);
-            IArgumentResolver<Domain> commandDomainResolver = new EnumResolver<Domain>(assertCanParseEnum);
-            IArgumentResolver<ControlAction> controlActionResolver = new EnumResolver<ControlAction>(assertCanParseEnum);
-            IArgumentResolver<int> intResolver = new IntResolver(assertCanParseType);
+            IArgumentResolver<ActionType> actionTypeResolver = new EnumResolver<ActionType>(enumParseAssertion);
+            IArgumentResolver<CurrencyType> currencyTypeResolver = new EnumResolver<CurrencyType>(enumParseAssertion);
+            IArgumentResolver<SkillID> skillIDResolver = new EnumResolver<SkillID>(enumParseAssertion);
+            IArgumentResolver<Domain> commandDomainResolver = new EnumResolver<Domain>(enumParseAssertion);
+            IArgumentResolver<ControlAction> controlActionResolver = new EnumResolver<ControlAction>(enumParseAssertion);
+            IArgumentResolver<int> intResolver = new IntResolver(typeParseAssertion);
 
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
             IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdate>(bufferManager, assertNotNull, assertCollectionNotEmpty);
@@ -62,14 +61,14 @@ namespace Console
                 new CurrencyUpdateResolver(actionTypeResolver, intResolver, currencyTypeResolver);
 
             ICommandDomainResolver currencyDomainResolver =
-                new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateFactory, currencyUpdateDispatcher, assertArgumentLength);
+                new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateFactory, currencyUpdateDispatcher, argumentCountAssertion);
 
             ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();
             IDispatchOne<SkillChange> skillChangeDispatcher = new ManagedDispatcher<SkillChange>(bufferManager, assertNotNull, assertCollectionNotEmpty);
 
             IArgumentResolverPipeline<SkillChangeArguments> skillChangePipeline = new SkillChangeResolver(skillIDResolver);
             ICommandDomainResolver skillDomainResolver =
-                new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, skillChangeFactory, assertArgumentLength);
+                new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, skillChangeFactory, argumentCountAssertion);
 
             IComponentStoreFactory componentStoreFactory = new ComponentStoreFactory();
             IDomainComponentFactory domainComponentFactory = new DomainComponentFactory();
@@ -80,7 +79,7 @@ namespace Console
             IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline =
                 new PermissionUpdateResolver(actionTypeResolver, commandDomainResolver);
 
-            ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(permissionUpdatePipeline, permissionService, assertArgumentLength);
+            ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(permissionUpdatePipeline, permissionService, argumentCountAssertion);
 
             IScheduleControlFactory scheduleControlFactory = new ScheduleControlFactory();
             IDispatchOne<ScheduleControl> scheduleControlDispatcher =
@@ -88,7 +87,7 @@ namespace Console
 
             IArgumentResolverPipeline<ScheduleControlArguments> scheduleControlPipeline = new ScheduleControlResolver(controlActionResolver);
             ICommandDomainResolver scheduleDomainResolver =
-                new ScheduleDomainResolver(scheduleControlPipeline, scheduleControlDispatcher, scheduleControlFactory, assertArgumentLength);
+                new ScheduleDomainResolver(scheduleControlPipeline, scheduleControlDispatcher, scheduleControlFactory, argumentCountAssertion);
 
             commandRepository.Add(Domain.CURRENCY, currencyDomainResolver);
             commandRepository.Add(Domain.SKILL, skillDomainResolver);
@@ -97,11 +96,11 @@ namespace Console
 
             IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, assertComponentFound);
             ICommandResolverMediator commandResolverMediator =
-                new CommandResolverMediator(commandRepository, domainPermissionChecker, assertFound, assertSpanNotEmpty, assertHasPermission);
+                new CommandResolverMediator(commandRepository, domainPermissionChecker, assertFound, spanAssertion, domainPermissionAssertion);
 
-            IArgumentResolver<Domain> commandArgumentResolver = new EnumResolver<Domain>(assertCanParseEnum);
+            IArgumentResolver<Domain> commandArgumentResolver = new EnumResolver<Domain>(enumParseAssertion);
 
-            return new InputHandler(commandResolverMediator, commandArgumentResolver, assertSpanNotEmpty);
+            return new InputHandler(commandResolverMediator, commandArgumentResolver, spanAssertion);
         }
     }
 }
