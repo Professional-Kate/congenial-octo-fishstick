@@ -200,7 +200,8 @@ namespace IdelPogTests.Orchestration
             _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(false);
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(new[] { _addGoldUpdate })).Returns([_addGoldUpdate]);
 
-            Assert.Throws<NotFoundException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_addGoldUpdate]));
+            NotFoundException<CurrencyType> exception = Assert.Throws<NotFoundException<CurrencyType>>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_addGoldUpdate]));
+            Assert.That(exception.Key, Is.EqualTo(_addGoldUpdate.CurrencyType));
         }
 
         [Test]

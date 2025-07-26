@@ -6,13 +6,13 @@ namespace IdelPog.Common.Repository
     public class RepositoryAsserter(IFoundAssertion foundAssertion, IObjectNullAssertion objectNullAssertion, IUniqueAssertion uniqueAssertion)
         : IRepositoryAsserter
     {
-        public void AssertUnique(object context, bool alreadyExists)
+        public void AssertUnique<T>(T context, bool alreadyExists)
         {
             objectNullAssertion.AssertNotNull(context, nameof(context));
             uniqueAssertion.AssertUnique(context, alreadyExists);
         }
 
-        public void AssertFound(object context, bool notFound)
+        public void AssertFound<T>(T context, bool notFound)
         {
             objectNullAssertion.AssertNotNull(context, nameof(context));
             foundAssertion.AssertFound(context, notFound);

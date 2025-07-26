@@ -31,9 +31,9 @@ namespace IdelPog.Common.Tests.Repository
             _stateRepository.Add(1, _cloneableTestObject);
 
             Assert.Throws<DuplicateItemException>(() => _stateRepository.Add(1, _cloneableTestObject));
-            Assert.Throws<NotFoundException>(() => _stateRepository.Get(2));
-            Assert.Throws<NotFoundException>(() => _stateRepository.Remove(2));
-            Assert.Throws<NotFoundException>(() => _stateRepository.Update(2, _cloneableTestObject));
+            Assert.Throws<NotFoundException<int>>(() => _stateRepository.Get(2));
+            Assert.Throws<NotFoundException<int>>(() => _stateRepository.Remove(2));
+            Assert.Throws<NotFoundException<int>>(() => _stateRepository.Update(2, _cloneableTestObject));
         }
 
         [Test]
@@ -72,7 +72,8 @@ namespace IdelPog.Common.Tests.Repository
         [Test]
         public void Negative_Remove_NonExisting_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _stateRepository.Remove(KEY));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _stateRepository.Remove(KEY));
+            Assert.That(exception.Key, Is.EqualTo(KEY));
         }
 
         [Test]
@@ -88,7 +89,8 @@ namespace IdelPog.Common.Tests.Repository
         [Test]
         public void Negative_Get_NonExisting_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _stateRepository.Get(KEY));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _stateRepository.Get(KEY));
+            Assert.That(exception.Key, Is.EqualTo(KEY));
         }
 
         [Test]
@@ -107,7 +109,8 @@ namespace IdelPog.Common.Tests.Repository
         [Test]
         public void Negative_Update_NonExisting_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _stateRepository.Update(KEY, _cloneableTestObject));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _stateRepository.Update(KEY, _cloneableTestObject));
+            Assert.That(exception.Key, Is.EqualTo(KEY));
         }
 
         [Test]

@@ -42,7 +42,8 @@ namespace IdelPogTests.Service
         {
             const int badId = -1;
 
-            Assert.Throws<NotFoundException>(() => _informationMapper.GetInformation(badId));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _informationMapper.GetInformation(badId));
+            Assert.That(exception.Key, Is.EqualTo(badId));
         }
 
         [Test]

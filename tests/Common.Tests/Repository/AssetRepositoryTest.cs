@@ -26,8 +26,10 @@ namespace IdelPog.Common.Tests.Repository
             _repository.Add(1, "10");
 
             Assert.Throws<DuplicateItemException>(() => _repository.Add(1, "10"));
-            Assert.Throws<NotFoundException>(() => _repository.Get(2));
-            Assert.Throws<NotFoundException>(() => _repository.Remove(2));
+            NotFoundException<int> getException = Assert.Throws<NotFoundException<int>>(() => _repository.Get(2));
+            Assert.That(getException.Key, Is.EqualTo(2));
+            NotFoundException<int> removeException = Assert.Throws<NotFoundException<int>>(() => _repository.Remove(2));
+            Assert.That(removeException.Key, Is.EqualTo(2));
         }
 
         [Test]
@@ -106,7 +108,8 @@ namespace IdelPog.Common.Tests.Repository
         [Test]
         public void Negative_Remove_NoKeyFound_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _repository.Remove(1));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _repository.Remove(1));
+            Assert.That(exception.Key, Is.EqualTo(1));
         }
 
         [Test]
@@ -116,13 +119,15 @@ namespace IdelPog.Common.Tests.Repository
 
             _repository.Remove(1);
 
-            Assert.Throws<NotFoundException>(() => _repository.Get(1));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _repository.Get(1));
+            Assert.That(exception.Key, Is.EqualTo(1));
         }
 
         [Test]
         public void Negative_Get_NoKeyFound_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _repository.Get(1));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _repository.Get(1));
+            Assert.That(exception.Key, Is.EqualTo(1));
         }
     }
 }

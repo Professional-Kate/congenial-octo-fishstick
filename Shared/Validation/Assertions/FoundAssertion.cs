@@ -11,11 +11,11 @@ namespace IdelPog.Validation.Assertions
 
         public void AssertFound<TKey>(TKey key, bool found)
         {
-            Assert<NotFoundException>(() =>
+            Assert<NotFoundException<TKey>>(() =>
             {
                 if (found == false)
                 {
-                    throw new NotFoundException(key);
+                    throw new NotFoundException<TKey>(key);
                 }
             });
         }

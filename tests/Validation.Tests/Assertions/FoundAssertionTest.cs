@@ -24,7 +24,8 @@ namespace IdelPog.Validation.Tests.Assertions
         [Test]
         public void Negative_AssertItemIsFound_PassedFalse_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _foundAssertion.AssertFound(1, false));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _foundAssertion.AssertFound(1, false));
+            Assert.That(exception.Key, Is.EqualTo(1));
         }
     }
 }

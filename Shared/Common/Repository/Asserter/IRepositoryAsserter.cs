@@ -2,9 +2,9 @@
 {
     public interface IRepositoryAsserter
     {
-        public void AssertUnique(object context, bool alreadyExists);
+        public void AssertUnique<T>(T context, bool alreadyExists);
 
-        public void AssertFound(object context, bool notFound);
+        public void AssertFound<T>(T context, bool notFound);
 
         public void AssertNotNull<T>(T value);
     }

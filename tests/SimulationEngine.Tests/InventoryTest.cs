@@ -45,9 +45,6 @@ namespace IdelPogTests
 
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
-
-            _repositoryMock.Setup(library => library.Get(ItemID.BIRCH_WOOD))
-                .Throws(new NotFoundException(ItemID.BIRCH_WOOD));
         }
 
         private void ModifyAmountTestRunner(int amount, ActionType action)
@@ -89,7 +86,8 @@ namespace IdelPogTests
         {
             _repositoryMock.Setup(library => library.Contains(ItemID.BIRCH_WOOD)).Returns(false);
 
-            Assert.Throws<NotFoundException>(() => _inventory.AddAmount(ItemID.BIRCH_WOOD, 5));
+            NotFoundException<ItemID> exception = Assert.Throws<NotFoundException<ItemID>>(() => _inventory.AddAmount(ItemID.BIRCH_WOOD, 5));
+            Assert.That(exception.Key, Is.EqualTo(ItemID.BIRCH_WOOD));
         }
 
         [TestCase(-1)]
@@ -129,7 +127,8 @@ namespace IdelPogTests
         {
             _repositoryMock.Setup(library => library.Contains(ItemID.BIRCH_WOOD)).Returns(false);
 
-            Assert.Throws<NotFoundException>(() => _inventory.RemoveAmount(ItemID.BIRCH_WOOD, 1));
+            NotFoundException<ItemID> exception = Assert.Throws<NotFoundException<ItemID>>(() => _inventory.RemoveAmount(ItemID.BIRCH_WOOD, 1));
+            Assert.That(exception.Key, Is.EqualTo(ItemID.BIRCH_WOOD));
         }
 
         [Test]
@@ -218,7 +217,8 @@ namespace IdelPogTests
         [Test]
         public void Negative_GetItem_NoItemFound_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _inventory.GetItem(ItemID.WILLOW_WOOD));
+            NotFoundException<ItemID> exception = Assert.Throws<NotFoundException<ItemID>>(() => _inventory.GetItem(ItemID.WILLOW_WOOD));
+            Assert.That(exception.Key, Is.EqualTo(ItemID.WILLOW_WOOD));
         }
     }
 }

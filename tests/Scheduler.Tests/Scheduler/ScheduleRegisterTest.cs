@@ -52,8 +52,9 @@ namespace Scheduler.Tests.Scheduler
         public void Negative_Unregister_TypeNotFound_Throws()
         {
             TestScheduledTask task = new();
-
-            Assert.Throws<NotFoundException>(() => _scheduleRegister.Unregister(task));
+            
+            NotFoundException<IScheduledTask> exception = Assert.Throws<NotFoundException<IScheduledTask>>(() => _scheduleRegister.Unregister(task));
+            Assert.That(exception.Key, Is.EqualTo(task));
         }
 
         [Test]

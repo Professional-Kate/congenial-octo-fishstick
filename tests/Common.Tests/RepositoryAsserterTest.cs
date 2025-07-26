@@ -37,7 +37,7 @@ namespace IdelPog.Common.Tests
         [Test]
         public void Negative_AssertUnique_PassedNull_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _repositoryAsserter.AssertUnique(null!, false));
+            Assert.Throws<ArgumentNullException>(() => _repositoryAsserter.AssertUnique<string>(null!, false));
         }
 
         [Test]
@@ -49,13 +49,14 @@ namespace IdelPog.Common.Tests
         [Test]
         public void Negative_AssertFound_PassedFalse_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _repositoryAsserter.AssertFound(1, false));
+             NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _repositoryAsserter.AssertFound(1, false));
+             Assert.That(exception.Key, Is.EqualTo(1));
         }
 
         [Test]
         public void Negative_AssertFound_PassedNull_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _repositoryAsserter.AssertFound(null, true));
+            Assert.Throws<ArgumentNullException>(() => _repositoryAsserter.AssertFound<string>(null!, true));
         }
     }
 }
