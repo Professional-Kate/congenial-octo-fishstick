@@ -1,11 +1,12 @@
 ﻿using IdelPog.SimulationEngine.Constants;
+using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Assertions.Pipelines
 {
     /// <seealso cref="AssertLevelable"/>
-    public interface ILevelableAsserter
+    public interface ILevelableAssertionPipeline
     {
         /// <summary>
         /// Asserts that the passed <see cref="ILevelable"/> is completely valid

@@ -17,7 +17,7 @@ namespace IdelPogTests.Service
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _currencyService = new CurrencyService(new AssertPositive(new ThrowHandler()), new AssertEnoughCurrency(new ThrowHandler()));
+            _currencyService = new CurrencyService(new NumberAssertion(new ThrowHandler()), new CurrencyAssertion(new ThrowHandler()));
         }
 
         [SetUp]

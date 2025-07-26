@@ -17,7 +17,7 @@ namespace IdelPog.SimulationEngine.Currency
         private readonly IDispatchMany<CurrencyUpdateDTO> _currencyUpdateDispatcher;
         private readonly ICurrencyUpdateSummarizer _currencyUpdateSummarizer;
         private readonly ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory;
-        private readonly IAssertPositive _assertPositive;
+        private readonly INumberAssertion _numberAssertion;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
         private readonly IAssertFound _assertFound;
         private readonly IAssertNotNull _assertNotNull;
@@ -26,14 +26,14 @@ namespace IdelPog.SimulationEngine.Currency
             IStateRepository<CurrencyType, Currency> stateRepository,
             ICurrencyService currencyService, IDispatchMany<CurrencyUpdateDTO> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer,
             ICurrencyUpdateDTOFactory currencyUpdateDTOFactory,
-            IAssertPositive assertPositive, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertFound assertFound, IAssertNotNull assertNotNull)
+            INumberAssertion numberAssertion, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertFound assertFound, IAssertNotNull assertNotNull)
         {
             _currencyService = currencyService;
             _currencyRepository = stateRepository;
             _currencyUpdateDispatcher = currencyUpdateDispatcher;
             _currencyUpdateSummarizer = currencyUpdateSummarizer;
             _currencyUpdateDTOFactory = currencyUpdateDTOFactory;
-            _assertPositive = assertPositive;
+            _numberAssertion = numberAssertion;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
             _assertFound = assertFound;
             _assertNotNull = assertNotNull;
@@ -57,7 +57,7 @@ namespace IdelPog.SimulationEngine.Currency
         private void AssertUpdates(IReadOnlyList<CurrencyUpdate> updates)
         {
             _assertCollectionNotEmpty.Handle(updates);
-            _assertPositive.AssertNumberIsPositive<CurrencyUpdate>(updates.Select(entry => entry.Amount).ToArray());
+            _numberAssertion.AssertAllNonNegative(updates.Select(entry => entry.Amount).ToArray());
         }
 
         private void AllCurrenciesExist(IReadOnlyList<CurrencyUpdate> trades)

@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.ContentHydrator.Assertions.Pipelines
 {
-    public interface IDirectoryPipelineAssertion
+    public interface IDirectoryAssertionPipeline
     {
         public void AssertDirectory(string directoryPath);
 

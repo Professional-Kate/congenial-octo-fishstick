@@ -1,0 +1,35 @@
+﻿using IdelPog.SimulationEngine.Assertions;
+using IdelPog.SimulationEngine.Models;
+using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Exceptions;
+
+namespace IdelPogTests.Assertions
+{
+    [TestFixture]
+    public class LevelAssertionTest
+    {
+        private ILevelAssertion _levelAssertion { get; set; }
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _levelAssertion = new LevelAssertion(new ThrowHandler());
+        }
+
+        [Test]
+        public void Positive_AssertBelowMaxLevel_LevelUnderMax_NoThrow()
+        {
+            ILevelable levelable = new Levelable(99, 1, 10, 0);
+
+            Assert.DoesNotThrow(() => _levelAssertion.AssertBelowMaxLevel(levelable));
+        }
+
+        [Test]
+        public void Negative_AssertBelowMaxLevel_LevelIsMax_Throws()
+        {
+            ILevelable levelable = new Levelable(100, 1, 1, 1);
+
+            Assert.Throws<MaxLevelException>(() => _levelAssertion.AssertBelowMaxLevel(levelable));
+        }
+    }
+}

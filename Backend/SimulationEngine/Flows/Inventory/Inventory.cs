@@ -13,23 +13,23 @@ namespace IdelPog.SimulationEngine.Inventory
     {
         private readonly IStateRepository<ItemID, Item> _itemRepository;
         private readonly IAssertFound _assertFound;
-        private readonly IAssertPositive _assertPositive;
+        private readonly INumberAssertion _numberAssertion;
         private readonly IAssertNonDuplicate _assertNonDuplicate;
 
         public Inventory()
         {
             _itemRepository = new StateRepository<ItemID, Item>();
             _assertFound = new AssertFound(new ThrowHandler());
-            _assertPositive = new AssertPositive(new ThrowHandler());
+            _numberAssertion = new NumberAssertion(new ThrowHandler());
             _assertNonDuplicate = new AssertNonDuplicate(new ThrowHandler());
         }
 
-        public Inventory(IStateRepository<ItemID, Item> itemRepository, IAssertFound assertFound, IAssertPositive assertPositive,
+        public Inventory(IStateRepository<ItemID, Item> itemRepository, IAssertFound assertFound, INumberAssertion numberAssertion,
             IAssertNonDuplicate assertNonDuplicate)
         {
             _itemRepository = itemRepository;
             _assertFound = assertFound;
-            _assertPositive = assertPositive;
+            _numberAssertion = numberAssertion;
             _assertNonDuplicate = assertNonDuplicate;
         }
 
@@ -89,7 +89,7 @@ namespace IdelPog.SimulationEngine.Inventory
         /// <param name="amount">The amount you want to verify</param>
         private void AssertAmountIsPositive(int amount)
         {
-            _assertPositive.AssertNumberIsPositive<Item>(amount);
+            _numberAssertion.AssertNonNegative(amount);
         }
 
         /// <summary>

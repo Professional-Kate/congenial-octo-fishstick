@@ -7,15 +7,15 @@ using IdelPog.ContentHydrator.Readers;
 namespace IdelPog.ContentHydrator.Service
 {
     /// <inheritdoc cref="IDirectoryConverter"/>
-    public class DirectoryConverter(IJsonReader jsonReader, IConverterProvider provider, IDirectoryPipelineAssertion directoryPipelineAssertion) : IDirectoryConverter
+    public class DirectoryConverter(IJsonReader jsonReader, IConverterProvider provider, IDirectoryAssertionPipeline directoryAssertionPipeline) : IDirectoryConverter
     {
         public IEnumerable<T> ConvertDirectory<T>(string directoryPath)
         {
-            directoryPipelineAssertion.AssertDirectory(directoryPath);
+            directoryAssertionPipeline.AssertDirectory(directoryPath);
 
             string[] filePaths = Directory.EnumerateFiles(directoryPath, "*.json").ToArray();
 
-            directoryPipelineAssertion.AssertFiles(filePaths.Length, directoryPath);
+            directoryAssertionPipeline.AssertFiles(filePaths.Length, directoryPath);
 
             return EnumerateFiles<T>(filePaths);
         }

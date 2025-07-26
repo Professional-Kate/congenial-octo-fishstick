@@ -34,7 +34,7 @@ namespace IdelPogTests.Orchestration
             _currencyCreationDTOFactoryMock = new Mock<ICurrencyCreationDTOFactory>();
             _currencyCreationMediator = new CurrencyCreationMediator(_stateRepositoryMock.Object, _currencyCreationDispatcherMock.Object,
                 _currencyCreationDTOFactoryMock.Object, new AssertNotNull(new ThrowHandler()), new AssertCollectionNotEmpty(new ThrowHandler()),
-                new AssertNonDuplicate(new ThrowHandler()), new AssertPositive(new ThrowHandler()));
+                new AssertNonDuplicate(new ThrowHandler()), new NumberAssertion(new ThrowHandler()));
 
             _createGold = new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = 10 };
             _createGems = new CurrencyCreation { CurrencyType = CurrencyType.GEMS, StartingAmount = 15 };
@@ -119,8 +119,7 @@ namespace IdelPogTests.Orchestration
         {
             CurrencyCreation[] creation = [new() { CurrencyType = CurrencyType.GOLD, StartingAmount = -1 }];
 
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _currencyCreationMediator.CreateCurrency(creation));
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyCreation)));
+            Assert.Throws<NegativeNumberException>(() => _currencyCreationMediator.CreateCurrency(creation));
 
             _stateRepositoryMock.VerifyNoOtherCalls();
             _currencyCreationDispatcherMock.VerifyNoOtherCalls();

@@ -11,9 +11,9 @@ using IdelPog.Validation.Exceptions;
 namespace IdelPogTests.Assertions.Pipelines
 {
     [TestFixture]
-    public class LevelableAsserterTest
+    public class LevelableAssertionPipelineTest
     {
-        private ILevelableAsserter _levelableAsserter { get; set; }
+        private ILevelableAssertionPipeline _levelableAssertionPipeline { get; set; }
         private ILevelable _levelable { get; set; }
 
         [OneTimeSetUp]
@@ -22,23 +22,23 @@ namespace IdelPogTests.Assertions.Pipelines
             _levelable = new Levelable(1, 0, 10, 0);
 
             IHandler handler = new ThrowHandler();
-            IAssertUnderMaxLevel assertUnderMaxLevel = new AssertUnderMaxLevel(handler);
+            ILevelAssertion levelAssertion = new LevelAssertion(handler);
             IAssertNotNull assertNotNull = new AssertNotNull(handler);
-            IAssertPositive assertPositive = new AssertPositive(handler);
+            INumberAssertion numberAssertion = new NumberAssertion(handler);
 
-            _levelableAsserter = new LevelableAsserter(assertUnderMaxLevel, assertNotNull, assertPositive);
+            _levelableAssertionPipeline = new LevelableAssertionPipeline(levelAssertion, assertNotNull, numberAssertion);
         }
 
         [Test]
         public void Positive_AssertLevelable_LevelableGood()
         {
-            Assert.DoesNotThrow(() => _levelableAsserter.AssertLevelable(_levelable));
+            Assert.DoesNotThrow(() => _levelableAssertionPipeline.AssertLevelable(_levelable));
         }
 
         [Test]
         public void Negative_AssertLevelable_NullLevelable_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _levelableAsserter.AssertLevelable(null));
+            Assert.Throws<ArgumentNullException>(() => _levelableAssertionPipeline.AssertLevelable(null!));
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace IdelPogTests.Assertions.Pipelines
         {
             ILevelable levelable = new Levelable(100, 0, 10, 0);
 
-            Assert.Throws<MaxLevelException>(() => _levelableAsserter.AssertLevelable(levelable));
+            Assert.Throws<MaxLevelException>(() => _levelableAssertionPipeline.AssertLevelable(levelable));
         }
 
         [Test]
@@ -54,8 +54,7 @@ namespace IdelPogTests.Assertions.Pipelines
         {
             ILevelable levelable = new Levelable(0, 0, 0, -1);
 
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _levelableAsserter.AssertLevelable(levelable));
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(ILevelable)));
+            Assert.Throws<NegativeNumberException>(() => _levelableAssertionPipeline.AssertLevelable(levelable));
         }
     }
 }

@@ -8,18 +8,18 @@ namespace IdelPog.SimulationEngine.Currency
     /// </summary>
     public class CurrencyService : ICurrencyService
     {
-        private readonly IAssertPositive _assertPositive;
-        private readonly IAssertEnoughCurrency _assertEnoughCurrency;
+        private readonly INumberAssertion _numberAssertion;
+        private readonly ICurrencyAssertion _currencyAssertion;
 
-        public CurrencyService(IAssertPositive assertPositive, IAssertEnoughCurrency assertEnoughCurrency)
+        public CurrencyService(INumberAssertion numberAssertion, ICurrencyAssertion currencyAssertion)
         {
-            _assertPositive = assertPositive;
-            _assertEnoughCurrency = assertEnoughCurrency;
+            _numberAssertion = numberAssertion;
+            _currencyAssertion = currencyAssertion;
         }
 
         public void AddAmount(Currency currency, int amount)
         {
-            _assertPositive.AssertNumberIsPositive<CurrencyUpdate>(amount);
+            _numberAssertion.AssertNonNegative(amount);
 
             int newAmount = currency.Amount + amount;
             currency.SetAmount(newAmount);
@@ -27,9 +27,9 @@ namespace IdelPog.SimulationEngine.Currency
 
         public void RemoveAmount(Currency currency, int amount)
         {
-            _assertPositive.AssertNumberIsPositive<CurrencyUpdate>(amount);
+            _numberAssertion.AssertNonNegative(amount);
 
-            _assertEnoughCurrency.Handle(currency.Amount, amount, currency.CurrencyType);
+            _currencyAssertion.AssertSufficientCurrency(currency.Amount, amount, currency.CurrencyType);
             int newAmount = currency.Amount - amount;
             currency.SetAmount(newAmount);
         }

@@ -194,7 +194,6 @@ namespace Integration.Tests.CurrencyCommands.Update
                 if (errorDTO.ErrorDetails.Exception is NegativeNumberException exception)
                 {
                     Assert.That(exception, Is.TypeOf<NegativeNumberException>());
-                    Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyUpdate)));
                 }
             });
         }

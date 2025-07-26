@@ -23,8 +23,8 @@ namespace IdelPogTests.Service
         public void OneTimeSetUp()
         {
             IHandler throwHandler = new ThrowHandler();
-            _experienceService = new ExperienceService(new LevelableAsserter(new AssertUnderMaxLevel(throwHandler), new AssertNotNull(throwHandler),
-                new AssertPositive(throwHandler)));
+            _experienceService = new ExperienceService(new LevelableAssertionPipeline(new LevelAssertion(throwHandler), new AssertNotNull(throwHandler),
+                new NumberAssertion(throwHandler)));
         }
 
         [SetUp]
@@ -70,9 +70,7 @@ namespace IdelPogTests.Service
         {
             _levelable.SetExperiencePerAction(experiencePerAction);
 
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _experienceService.AddExperience(_levelable));
-
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(ILevelable)));
+            Assert.Throws<NegativeNumberException>(() => _experienceService.AddExperience(_levelable));
         }
 
         [Test]

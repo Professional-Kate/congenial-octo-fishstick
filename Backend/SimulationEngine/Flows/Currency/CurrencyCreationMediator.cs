@@ -17,12 +17,12 @@ namespace IdelPog.SimulationEngine.Currency
         private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
         private readonly IAssertNonDuplicate _assertNonDuplicate;
-        private readonly IAssertPositive _assertPositive;
+        private readonly INumberAssertion _numberAssertion;
 
         public CurrencyCreationMediator(IStateRepository<CurrencyType, Currency> currencyRepository,
             IDispatchMany<CurrencyCreationDTO> currencyCreationDTODispatcher, ICurrencyCreationDTOFactory currencyCreationDTOFactory,
             IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertNonDuplicate assertNonDuplicate,
-            IAssertPositive assertPositive)
+            INumberAssertion numberAssertion)
         {
             _currencyRepository = currencyRepository;
             _currencyCreationDTODispatcher = currencyCreationDTODispatcher;
@@ -30,7 +30,7 @@ namespace IdelPog.SimulationEngine.Currency
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
             _assertNonDuplicate = assertNonDuplicate;
-            _assertPositive = assertPositive;
+            _numberAssertion = numberAssertion;
         }
 
         public void CreateCurrency(IReadOnlyList<CurrencyCreation> currencies)
@@ -41,7 +41,7 @@ namespace IdelPog.SimulationEngine.Currency
             Dictionary<CurrencyType, Currency> createdCurrencies = new(currencies.Count);
             foreach (CurrencyCreation currencyCreation in currencies)
             {
-                _assertPositive.AssertNumberIsPositive<CurrencyCreation>(currencyCreation.StartingAmount);
+                _numberAssertion.AssertNonNegative(currencyCreation.StartingAmount);
                 _assertNonDuplicate.AssertContains(currencyCreation, () => _currencyRepository.Contains(currencyCreation.CurrencyType));
 
                 // TODO: currency factory

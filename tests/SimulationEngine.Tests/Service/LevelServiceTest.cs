@@ -12,14 +12,14 @@ namespace IdelPogTests.Service
     public class LevelServiceTest
     {
         private ILevelService _service { get; set; }
-        private Mock<ILevelableAsserter> _levelableAsserterMock { get; set; }
+        private Mock<ILevelableAssertionPipeline> _levelableAsserterMock { get; set; }
 
         private ILevelable _levelable { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _levelableAsserterMock = new Mock<ILevelableAsserter>();
+            _levelableAsserterMock = new Mock<ILevelableAssertionPipeline>();
 
             _service = new LevelService(_levelableAsserterMock.Object);
         }

@@ -9,15 +9,15 @@ namespace IdelPog.SimulationEngine.Currency
     public class CurrencyUpdateSummarizer : ICurrencyUpdateSummarizer
     {
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
-        private readonly IAssertPositive _assertPositive;
+        private readonly INumberAssertion _numberAssertion;
         private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
 
-        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, IAssertPositive assertPositive, IAssertNotNull assertNotNull,
+        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, INumberAssertion numberAssertion, IAssertNotNull assertNotNull,
             IAssertCollectionNotEmpty assertCollectionNotEmpty)
         {
             _currencyUpdateFactory = currencyUpdateFactory;
-            _assertPositive = assertPositive;
+            _numberAssertion = numberAssertion;
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
         }
@@ -39,7 +39,7 @@ namespace IdelPog.SimulationEngine.Currency
 
             foreach (CurrencyUpdate currencyUpdate in updates)
             {
-                _assertPositive.AssertNumberIsPositive<CurrencyUpdate>(currencyUpdate.Amount);
+                _numberAssertion.AssertNonNegative(currencyUpdate.Amount);
 
                 if (amounts.ContainsKey(currencyUpdate.CurrencyType) == false)
                 {

@@ -6,11 +6,15 @@ using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Assertions
 {
-    public class AssertUnderMaxLevel(IHandler handler) : BaseAssertion<MaxLevelException>(handler), IAssertUnderMaxLevel
+    public class LevelAssertion : BaseAssertion, ILevelAssertion
     {
-        public void AssertLevelIsUnderMax(ILevelable levelable)
+        public LevelAssertion(IHandler handler) : base(handler)
         {
-            Assert(() =>
+        }
+
+        public void AssertBelowMaxLevel(ILevelable levelable)
+        {
+            Assert<MaxLevelException>(() =>
             {
                 if (levelable.Level == SkillConstants.MAX_SKILL_LEVEL)
                 {

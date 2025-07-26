@@ -71,7 +71,7 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_CreateFrom_NullTrades_Throws()
         {
-            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => _currencyUpdateDTOFactory.CreateFrom(null!));
+            Assert.Throws<ArgumentNullException>(() => _currencyUpdateDTOFactory.CreateFrom(null!));
         }
     }
 }
