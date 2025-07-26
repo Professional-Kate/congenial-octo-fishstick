@@ -1,4 +1,5 @@
-﻿using Console.Runtime.ECS;
+﻿using Console.Commands.Domains.Arguments;
+using Console.Runtime.ECS;
 using Console.Runtime.Factory;
 using Console.Types;
 using IdelPog.Common.Enums;

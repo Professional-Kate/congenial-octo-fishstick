@@ -1,6 +1,7 @@
 ﻿using Console.Assertions;
 using Console.Commands;
 using Console.Commands.Domains;
+using Console.Commands.Domains.Arguments;
 using Console.Commands.Resolver;
 using Console.Commands.Resolver.Assertions;
 using Console.Commands.Resolver.Pipelines;

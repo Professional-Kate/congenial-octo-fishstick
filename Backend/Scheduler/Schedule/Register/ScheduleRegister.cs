@@ -3,7 +3,7 @@ using IdelPog.Validation.Assertions;
 
 namespace Scheduler.Register
 {
-    public class ScheduleRegister : IScheduleRegister, IScheduleReader
+    public sealed class ScheduleRegister : IScheduleRegister, IScheduleReader
     {
         private readonly List<IScheduledTask> _taskList = [];
         private readonly IAssertNonDuplicate _assertNonDuplicate;
