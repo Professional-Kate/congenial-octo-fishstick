@@ -34,7 +34,7 @@ namespace IdelPog.Messaging.Tests.Messaging
         {
             _handlerMock = new Mock<IHandler>();
             _bufferMessenger = new BufferMessenger(new AssertNotNull(_handlerMock.Object), new AssertListenerFound(_handlerMock.Object));
-            
+
             _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
                 .Throws<ArgumentNullException>();
         }
@@ -45,7 +45,7 @@ namespace IdelPog.Messaging.Tests.Messaging
             _bufferMessenger.Subscribe(_intListener);
 
             _bufferMessenger.DispatchMessage(_bufferData);
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(_intListener.WasCalled, Is.True);
@@ -58,9 +58,9 @@ namespace IdelPog.Messaging.Tests.Messaging
         {
             _bufferMessenger.Subscribe(_intListener);
             _bufferMessenger.Subscribe(_intListener);
-            
+
             _bufferMessenger.DispatchMessage(_bufferData);
-            
+
             Assert.That(_intListener.AmountCalled, Is.EqualTo(2));
         }
 
@@ -69,9 +69,9 @@ namespace IdelPog.Messaging.Tests.Messaging
         {
             SingleTestListener<int> intListener = new();
             _bufferMessenger.Subscribe(intListener);
-            
+
             _bufferMessenger.DispatchMessage([1]);
-            
+
             Assert.That(intListener.WasCalled, Is.True);
         }
 
@@ -80,7 +80,7 @@ namespace IdelPog.Messaging.Tests.Messaging
         {
             _bufferMessenger.Subscribe(_intListener);
             _bufferMessenger.DispatchMessage(_bufferData);
-            
+
             Assert.That(_intListener.BufferData, Is.EquivalentTo(_bufferData));
         }
 
@@ -88,13 +88,13 @@ namespace IdelPog.Messaging.Tests.Messaging
         public void Positive_DispatchMessage_DispatchesCorrectMessage()
         {
             TestListener<string> stringListener = new();
-            
+
             _bufferMessenger.Subscribe(_intListener);
             _bufferMessenger.Subscribe(stringListener);
-            
+
             _bufferMessenger.DispatchMessage(["Testing!"]);
             _bufferMessenger.DispatchMessage(_bufferData);
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(stringListener.WasCalled, Is.True);
@@ -109,7 +109,7 @@ namespace IdelPog.Messaging.Tests.Messaging
         {
             Assert.DoesNotThrow(() => _bufferMessenger.DispatchMessage(_bufferData));
         }
-        
+
         [Test]
         public void Positive_DispatchMessage_DispatchesSingleMessage()
         {
@@ -120,7 +120,7 @@ namespace IdelPog.Messaging.Tests.Messaging
             IReadOnlyList<int> list = [1];
 
             _bufferMessenger.DispatchMessage(list);
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(intListener.WasCalled, Is.True);
@@ -133,13 +133,12 @@ namespace IdelPog.Messaging.Tests.Messaging
         [Test]
         public void Positive_DispatchMessage_NoSingleDispatch()
         {
-            
             SingleTestListener<int> intListener = new();
             _bufferMessenger.Subscribe(intListener);
             _bufferMessenger.Subscribe(_intListener);
-            
+
             _bufferMessenger.DispatchMessage([1, 2]);
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(intListener.WasCalled, Is.False);
@@ -152,9 +151,9 @@ namespace IdelPog.Messaging.Tests.Messaging
         {
             _bufferMessenger.Subscribe(_intListener);
             _bufferMessenger.Unsubscribe(_intListener);
-            
+
             _bufferMessenger.DispatchMessage(_bufferData);
-            
+
             Assert.That(_intListener.WasCalled, Is.False);
         }
 
@@ -163,11 +162,11 @@ namespace IdelPog.Messaging.Tests.Messaging
         {
             SingleTestListener<int> intListener = new();
             _bufferMessenger.Subscribe(intListener);
-            
+
             _bufferMessenger.Unsubscribe(intListener);
-            
+
             _bufferMessenger.DispatchMessage(_bufferData);
-            
+
             Assert.That(_intListener.WasCalled, Is.False);
         }
 
@@ -178,10 +177,10 @@ namespace IdelPog.Messaging.Tests.Messaging
             {
                 ShouldThrowException = true
             };
-            
+
             _bufferMessenger.Subscribe(_intListener);
             _bufferMessenger.Subscribe(intListener);
-            
+
             Assert.DoesNotThrow(() => _bufferMessenger.DispatchMessage(_bufferData));
             Assert.Multiple(() =>
             {
@@ -213,7 +212,7 @@ namespace IdelPog.Messaging.Tests.Messaging
         {
             _handlerMock.Setup(library => library.Handle(It.IsAny<NoListenerFoundException>()))
                 .Throws(new NoListenerFoundException(_intListener));
-            
+
             Assert.Throws<NoListenerFoundException>(() => _bufferMessenger.Unsubscribe(_intListener));
         }
     }

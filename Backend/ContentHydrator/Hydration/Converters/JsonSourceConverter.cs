@@ -9,9 +9,9 @@ namespace IdelPog.ContentHydrator.Converters
         public T Convert(JsonDocument jsonDocument)
         {
             T? deserializedObject = jsonDocument.Deserialize(typeInfo);
-            
+
             assertNotNull.AssertObjectNotNull(deserializedObject);
-            
+
             return deserializedObject!;
         }
     }

@@ -5,14 +5,16 @@ namespace IdelPog.SimulationEngine.Service
 {
     public interface ILevelService
     {
-    
         /// <summary>
         /// Calculate and return if the passed <see cref="ILevelable"/> can level up
         /// </summary>
         /// <param name="levelable">The <see cref="ILevelable"/> you want to check if it can level up</param>
         /// <returns>If the <see cref="ILevelable"/> can level up</returns>
-        public bool CanSkillLevel(ILevelable levelable) => levelable.Experience >= levelable.NextLevelExperience;
-    
+        public bool CanSkillLevel(ILevelable levelable)
+        {
+            return levelable.Experience >= levelable.NextLevelExperience;
+        }
+
         /// <summary>
         /// Invoke this to level up the passed <see cref="ILevelable"/>
         /// </summary>

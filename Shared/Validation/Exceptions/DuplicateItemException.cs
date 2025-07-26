@@ -6,7 +6,7 @@ namespace IdelPog.Validation.Exceptions
     {
         private static readonly string _baseMessage = ExceptionConstants.DUPLICATE_ITEM_MESSAGE;
 
-        public DuplicateItemException(object item) 
+        public DuplicateItemException(object item)
             : base(string.Format(_baseMessage, item))
         {
             // TODO: whenever will I get a logging framework

@@ -8,7 +8,7 @@ namespace Integration.Tests.Console
         public Type ListenerType => typeof(ScheduleControl);
         public bool WasCalled { get; private set; }
         public ScheduleControl ScheduleControl { get; private set; }
-        
+
         public void Handle(ScheduleControl item)
         {
             WasCalled = true;

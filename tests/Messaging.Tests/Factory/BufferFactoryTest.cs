@@ -13,7 +13,7 @@ namespace IdelPog.Messaging.Tests.Factory
     {
         private IBufferFactory _bufferFactory { get; set; }
         private BufferRequest _bufferRequest { get; set; }
-        
+
         private Mock<IAssertBufferState> _assertBufferStateMock { get; set; }
         private Mock<IBufferAsserter> _bufferAsserterMock { get; set; }
         private Mock<IHandler> _handlerMock { get; set; }
@@ -24,7 +24,7 @@ namespace IdelPog.Messaging.Tests.Factory
             _assertBufferStateMock = new Mock<IAssertBufferState>();
             _bufferAsserterMock = new Mock<IBufferAsserter>();
             _handlerMock = new Mock<IHandler>();
-            
+
             _bufferFactory = new BufferFactory(_bufferAsserterMock.Object, _assertBufferStateMock.Object, new AssertNotNull(_handlerMock.Object));
             _bufferRequest = new BufferRequest(5);
         }
@@ -33,7 +33,7 @@ namespace IdelPog.Messaging.Tests.Factory
         public void Positive_CreateBuffer_CreatesBuffer_CorrectLength()
         {
             Buffer<int> buffer = _bufferFactory.CreateBuffer<int>(_bufferRequest);
-            
+
             Assert.That(buffer, Is.Not.Null);
             Assert.That(buffer.Data, Has.Count.EqualTo(5));
         }
@@ -43,7 +43,7 @@ namespace IdelPog.Messaging.Tests.Factory
         {
             _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
                 .Throws<ArgumentNullException>();
-            
+
             Assert.Throws<ArgumentNullException>(() => _bufferFactory.CreateBuffer<int>(null!));
         }
     }

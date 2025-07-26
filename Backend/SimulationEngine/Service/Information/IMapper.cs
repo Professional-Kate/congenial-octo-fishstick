@@ -17,7 +17,7 @@ namespace IdelPog.SimulationEngine.Service
         /// <returns>The found <see cref="Information"/> object</returns>
         /// <exception cref="NotFoundException">Will be thrown if the passed key is not found in the Dictionary</exception>
         public Information GetInformation(T key);
-        
+
         /// <summary>
         /// Adds a key value pair into the Dictionary
         /// </summary>

@@ -8,7 +8,7 @@ namespace Integration.Tests.CurrencyCommands.Create
         public Type ListenerType { get; } = typeof(CurrencyCreationErrorDTO);
         public CurrencyCreationErrorDTO CurrencyUpdateErrorDTO { get; private set; }
         public bool WasCalled { get; private set; }
-        
+
         public void Handle(CurrencyCreationErrorDTO item)
         {
             CurrencyUpdateErrorDTO = item;

@@ -9,7 +9,7 @@ namespace Console.Assertions
         public void Handle<T>(ReadOnlySpan<T> span)
         {
             bool spanEmpty = span.IsEmpty;
-            
+
             Assert(() =>
             {
                 if (spanEmpty)

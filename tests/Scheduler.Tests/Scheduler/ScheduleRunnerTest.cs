@@ -27,18 +27,18 @@ namespace Scheduler.Tests.Scheduler
         public void Positive_StartSchedule_InvokesTimerStart()
         {
             _scheduleRunner.StartSchedule(TimeSpan.FromMilliseconds(1));
-            
-            _managedTimerMock.Verify(library => library.Start(TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(1)),  Times.Once);
-            _managedTimerMock.Verify(library => library.Stop(),  Times.Never);
+
+            _managedTimerMock.Verify(library => library.Start(TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(1)), Times.Once);
+            _managedTimerMock.Verify(library => library.Stop(), Times.Never);
         }
 
         [Test]
         public void Positive_StopSchedule_InvokesTimerStop()
         {
             _scheduleRunner.StopSchedule();
-            
-            _managedTimerMock.Verify(library => library.Start(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>()),  Times.Never);
-            _managedTimerMock.Verify(library => library.Stop(),  Times.Once);
+
+            _managedTimerMock.Verify(library => library.Start(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>()), Times.Never);
+            _managedTimerMock.Verify(library => library.Stop(), Times.Once);
         }
     }
 }

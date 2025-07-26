@@ -9,7 +9,7 @@
                 Experience = levelable.Experience,
                 ExperiencePerAction = levelable.ExperiencePerAction,
                 Level = levelable.Level,
-                NextLevelExperience = levelable.NextLevelExperience,
+                NextLevelExperience = levelable.NextLevelExperience
             };
         }
     }

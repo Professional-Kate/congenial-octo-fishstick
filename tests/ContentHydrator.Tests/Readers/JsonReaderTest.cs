@@ -29,7 +29,7 @@ namespace ContentHydratorTests.Readers
         {
             JsonDocument returnedValue = ReadFromTestFile();
             string testValue = returnedValue.RootElement.GetProperty("Test").ToString();
-            
+
             Assert.That(testValue, Is.EqualTo("Testing"));
         }
 
@@ -52,7 +52,7 @@ namespace ContentHydratorTests.Readers
         public void Positive_Read_ReadsNothingFromEmptyFile()
         {
             JsonDocument returnedValue = ReadFromTestFile("EmptyStructure.json");
-            
+
             Assert.That(returnedValue, Is.Not.Null);
         }
 
@@ -74,7 +74,7 @@ namespace ContentHydratorTests.Readers
         {
             _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
                 .Throws(new ArgumentNullException());
-            
+
             Assert.Throws<ArgumentNullException>(() => _jsonFileJsonReader.Read(null));
         }
     }

@@ -8,7 +8,7 @@ namespace Integration.Tests.Console
         public Type ListenerType => typeof(SkillChange);
         public bool WasCalled { get; private set; }
         public SkillChange SkillChange { get; private set; }
-        
+
         public void Handle(SkillChange item)
         {
             WasCalled = true;

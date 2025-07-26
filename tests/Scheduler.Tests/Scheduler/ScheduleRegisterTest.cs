@@ -15,7 +15,9 @@ namespace Scheduler.Tests.Scheduler
         [SetUp]
         public void Setup()
         {
-            ScheduleRegister scheduleRegister = new(new AssertNonDuplicate(new ThrowHandler()), new AssertFound(new ThrowHandler()), new AssertNotNull(new ThrowHandler()));
+            ScheduleRegister scheduleRegister = new(new AssertNonDuplicate(new ThrowHandler()), new AssertFound(new ThrowHandler()),
+                new AssertNotNull(new ThrowHandler()));
+
             _scheduleReader = scheduleRegister;
             _scheduleRegister = scheduleRegister;
         }
@@ -24,7 +26,7 @@ namespace Scheduler.Tests.Scheduler
         public void Positive_Register_CallsRepositoryAdd()
         {
             TestScheduledTask task = new();
-            
+
             Assert.DoesNotThrow(() => _scheduleRegister.Register(task));
         }
 
@@ -36,7 +38,7 @@ namespace Scheduler.Tests.Scheduler
             _scheduleRegister.Register(task);
             Assert.Throws<DuplicateItemException>(() => _scheduleRegister.Register(task));
         }
-        
+
         [Test]
         public void Positive_Unregister_CallsRepositoryAdd()
         {
@@ -66,14 +68,14 @@ namespace Scheduler.Tests.Scheduler
         {
             TestScheduledTask task = new();
             TestThrowingTask throwingTask = new();
-            
+
             _scheduleRegister.Register(task);
             _scheduleRegister.Register(throwingTask);
 
             IReadOnlyList<IScheduledTask> tasks = _scheduleReader.GetScheduledTasks();
             Assert.That(tasks, Has.Count.EqualTo(2));
         }
-        
+
         [Test]
         public void Positive_GetScheduledTasks_ReturnsZeroTasks()
         {

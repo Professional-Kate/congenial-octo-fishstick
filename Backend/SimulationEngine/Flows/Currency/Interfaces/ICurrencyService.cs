@@ -31,4 +31,4 @@
         /// </remarks>
         public void RemoveAmount(Currency currency, int amount);
     }
-} 
+}

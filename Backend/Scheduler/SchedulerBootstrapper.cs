@@ -29,15 +29,17 @@ namespace Scheduler
 
             IErrorDTOFactory errorDTOFactory = new ErrorDTOFactory();
             ITaskErrorDTOFactory taskErrorDTOFactory = new TaskErrorDTOFactory(errorDTOFactory);
-            IDispatchOne<ScheduledTaskErrorDTO> errorDTODispatcher = new ManagedDispatcher<ScheduledTaskErrorDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
-            IScheduleReader scheduleReader = new ScheduleRegister(assertNonDuplicate, assertFound, assertNotNull);   
+            IDispatchOne<ScheduledTaskErrorDTO> errorDTODispatcher =
+                new ManagedDispatcher<ScheduledTaskErrorDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+
+            IScheduleReader scheduleReader = new ScheduleRegister(assertNonDuplicate, assertFound, assertNotNull);
             IScheduleMediator scheduleMediator = new ScheduleMediator(scheduleReader, errorDTODispatcher, taskErrorDTOFactory, assertCollectionNotEmpty);
 
             IManagedTimer threadingManagedTimer = new ThreadingTimer(scheduleMediator.RunUpdate);
             IScheduleRunner scheduleRunner = new ScheduleRunner(threadingManagedTimer);
             IScheduleController scheduleController = new ScheduleController(scheduleRunner);
             ISingleListener<ScheduleControl> scheduleControlListener = new ScheduleControlListener(scheduleController);
-            
+
             bufferMessenger.Subscribe(scheduleControlListener);
         }
     }

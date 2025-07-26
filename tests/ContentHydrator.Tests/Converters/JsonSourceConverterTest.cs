@@ -31,7 +31,7 @@ namespace ContentHydratorTests.Converters
                               "TestInt": {{TEST_NUMBER}}
                            }
                            """;
-            
+
             // smol
             yield return $$"""{"TestString":"{{TEST_STRING}}","TestInt":{{TEST_NUMBER}}}""";
         }
@@ -42,7 +42,7 @@ namespace ContentHydratorTests.Converters
         {
             JsonDocument jsonDocument = JsonDocument.Parse(json);
             TestDTO testDTO = _converter.Convert(jsonDocument);
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(testDTO.TestInt, Is.EqualTo(TEST_NUMBER));
@@ -54,7 +54,7 @@ namespace ContentHydratorTests.Converters
         public void Negative_Convert_MissingKeys_Throws()
         {
             string jason = "{}";
-            
+
             JsonDocument jsonDocument = JsonDocument.Parse(jason);
             Assert.Throws<JsonException>(() => _converter.Convert(jsonDocument));
         }
@@ -81,7 +81,7 @@ namespace ContentHydratorTests.Converters
                                 "TestInt": "{{TEST_STRING}}"
                              }
                              """;
-            
+
             JsonDocument jsonDocument = JsonDocument.Parse(jason);
             Assert.Throws<JsonException>(() => _converter.Convert(jsonDocument));
         }
@@ -91,7 +91,7 @@ namespace ContentHydratorTests.Converters
         {
             _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
                 .Throws<ArgumentNullException>();
-            
+
             JsonDocument jsonDocument = JsonDocument.Parse("null");
             Assert.Throws<ArgumentNullException>(() => _converter.Convert(jsonDocument));
             _handlerMock.Verify(library => library.Handle(It.IsAny<ArgumentNullException>()), Times.Once);

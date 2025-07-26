@@ -6,7 +6,7 @@ namespace IdelPog.Messaging.Exceptions
     {
         private const string BASE_MESSAGE = ExceptionConstants.BUFFER_SIZE_INVALID_MESSAGE;
 
-        public BufferSizeInvalidException(int size) 
+        public BufferSizeInvalidException(int size)
             : base(string.Format(BASE_MESSAGE, size))
         {
             // TODO : hoo hee ha ha

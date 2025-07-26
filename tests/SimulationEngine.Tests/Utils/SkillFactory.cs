@@ -10,7 +10,7 @@ namespace IdelPogTests.Utils
         internal static Skill CreateMining()
         {
             ILevelable levelable = new Levelable(1, 0, 10, 0);
-            
+
             return new Skill(levelable, SkillID.MINING, SkillConstants.MINING_INFO);
         }
     }

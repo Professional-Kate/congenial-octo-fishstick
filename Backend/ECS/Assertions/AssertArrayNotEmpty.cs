@@ -6,7 +6,7 @@ namespace IdelPog.ECS.Assertions
 {
     public class AssertArrayNotEmpty(IHandler handler) : BaseAssertion<ComponentArrayEmptyException>(handler), IAssertArrayNotEmpty
     {
-        public void Handle(bool arrayHasElements) 
+        public void Handle(bool arrayHasElements)
         {
             Assert(() =>
             {

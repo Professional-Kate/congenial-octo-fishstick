@@ -9,7 +9,8 @@ namespace IdelPog.SimulationEngine.Skill
         private readonly ISkillChangeFactory _skillChangeFactory;
         private readonly IDispatchOne<SkillChangeDTO> _skillChangeDTODispatcher;
 
-        public SkillChangeMediator(ICurrentSkillSetter currentSkillSetter, ISkillChangeFactory skillChangeFactory, IDispatchOne<SkillChangeDTO> skillChangeDTODispatcher)
+        public SkillChangeMediator(ICurrentSkillSetter currentSkillSetter, ISkillChangeFactory skillChangeFactory,
+            IDispatchOne<SkillChangeDTO> skillChangeDTODispatcher)
         {
             _currentSkillSetter = currentSkillSetter;
             _skillChangeFactory = skillChangeFactory;

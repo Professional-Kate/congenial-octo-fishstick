@@ -21,21 +21,21 @@ namespace Integration.Tests.Console
         {
             _inputHandler = ConsoleBootstrapper.Initialize(BufferManager);
             TestPermissionService.SendAddPermissionCall(_inputHandler, Domain.SCHEDULE);
-            
+
             _scheduleControlListener = new ScheduleControlListener();
             ManagedSubscribe(_scheduleControlListener);
         }
-        
+
         private static IEnumerable<TestCaseData> ValidScheduleCases()
         {
             yield return new TestCaseData(
                 new[] { "SCHEDULE", "start" },
-                new ScheduleControl { ControlAction = ControlAction.START}
+                new ScheduleControl { ControlAction = ControlAction.START }
             ).SetName("Start_Schedule");
 
             yield return new TestCaseData(
                 new[] { "schedule", "STOP" },
-                new ScheduleControl { ControlAction = ControlAction.STOP}
+                new ScheduleControl { ControlAction = ControlAction.STOP }
             ).SetName("Stop_Schedule");
         }
 
@@ -49,36 +49,36 @@ namespace Integration.Tests.Console
                 Assert.That(_scheduleControlListener.ScheduleControl.ControlAction, Is.EqualTo(expectedCommand.ControlAction));
             });
         }
-        
+
         private static IEnumerable<TestCaseData> InvalidScheduleCases()
         {
             yield return new TestCaseData(
                 new[] { "UNKNOWN", "start" },
                 typeof(FailedEnumParseException)
-            ).SetName("UnknownDomain_ThrowsFailedEnumParse"); 
-            
+            ).SetName("UnknownDomain_ThrowsFailedEnumParse");
+
             yield return new TestCaseData(
                 new[] { "schedule", "UPDATE" },
                 typeof(FailedEnumParseException)
             ).SetName("UnknownAction_ThrowsFailedEnumParse");
-            
+
             yield return new TestCaseData(
-                new [] { "start", "Schedule" },
+                new[] { "start", "Schedule" },
                 typeof(FailedEnumParseException)
             ).SetName("WrongArgumentOrder_ThrowsFailedEnumParse");
-            
+
             yield return new TestCaseData(
                 new[] { "schedule", "start", "0" },
                 typeof(InvalidArgumentCountException)
             ).SetName("TooManyArguments_ThrowsInvalidArgumentCount");
-            
+
             yield return new TestCaseData(
                 new[] { "schedule" },
                 typeof(EmptySpanException)
             ).SetName("MissingArguments_ThrowsEmptySpan");
-            
+
             yield return new TestCaseData(
-                new string[] {},
+                new string[] { },
                 typeof(EmptySpanException)
             ).SetName("EmptyArguments_ThrowsEmptySpan");
         }

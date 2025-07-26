@@ -9,7 +9,7 @@ namespace Integration.Tests.Console.Permission
     public class PermissionDomainFlowTest : ManagedBuffer
     {
         private IInputHandler _inputHandler;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -20,13 +20,13 @@ namespace Integration.Tests.Console.Permission
         {
             try
             {
-               TestPermissionService.SendRemovePermissionCall(_inputHandler, domain);
+                TestPermissionService.SendRemovePermissionCall(_inputHandler, domain);
             }
             catch (ComponentNotFoundException)
             {
             }
         }
-        
+
         private void VerifyPermissionExists(Domain domain)
         {
             try
@@ -46,7 +46,7 @@ namespace Integration.Tests.Console.Permission
             string[] arguments = ["permission", "add", domain.ToString()];
             Assert.DoesNotThrow(() => _inputHandler.Input(new ReadOnlySpan<string>(arguments)));
         }
-        
+
         [TestCase(Domain.CURRENCY)]
         [TestCase(Domain.SKILL)]
         public void Positive_RemovePermissionUpdate_RemovesPermission_CommandThrows(Domain domain)
@@ -61,7 +61,7 @@ namespace Integration.Tests.Console.Permission
         {
             Assert.Throws<ComponentAlreadyExistsException>(() => TestPermissionService.SendAddPermissionCall(_inputHandler, Domain.PERMISSION));
         }
-        
+
         [Test]
         public void Negative_RemovePermissionUpdate_PermissionNotFound_Throws()
         {

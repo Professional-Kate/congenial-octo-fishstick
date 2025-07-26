@@ -5,8 +5,8 @@
     /// </summary>
     public enum ItemID : byte
     {
-        OAK_WOOD, 
+        OAK_WOOD,
         BIRCH_WOOD,
-        WILLOW_WOOD,
+        WILLOW_WOOD
     }
 }

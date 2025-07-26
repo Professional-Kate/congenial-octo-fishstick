@@ -14,7 +14,7 @@ namespace IdelPog.SimulationEngine.Currency.Factories
             _errorDTOFactory = errorDTOFactory;
             _currencyCreationDTOFactory = currencyCreationDTOFactory;
         }
-        
+
         public CurrencyCreationErrorDTO CreateCurrencyCreationError(IReadOnlyList<CurrencyCreation> currencyCreations, Exception exception)
         {
             return new CurrencyCreationErrorDTO

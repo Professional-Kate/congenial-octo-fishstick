@@ -7,7 +7,7 @@
         /// </summary>
         /// <param name="source">The data you want in the Buffer</param>
         public void Assign(IReadOnlyList<T> source);
-        
+
         /// <summary>
         /// Mark this buffer ready for consuming. After marking ready you will no longer be able to <see cref="Assign"/>
         /// </summary>

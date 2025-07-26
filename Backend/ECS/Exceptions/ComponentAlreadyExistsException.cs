@@ -2,6 +2,8 @@
 {
     public class ComponentAlreadyExistsException : Exception
     {
-        public ComponentAlreadyExistsException(Object component) : base(string.Format(ExceptionMessages.COMPONENT_ALREADY_EXISTS, component)) { }
+        public ComponentAlreadyExistsException(object component) : base(string.Format(ExceptionMessages.COMPONENT_ALREADY_EXISTS, component))
+        {
+        }
     }
 }

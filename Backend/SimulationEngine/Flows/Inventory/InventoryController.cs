@@ -8,7 +8,7 @@
         {
             _inventoryMediator = inventoryMediator;
         }
-        
+
         public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
         {
             _inventoryMediator.UpdateInventory(updates);

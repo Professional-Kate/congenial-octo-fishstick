@@ -6,15 +6,15 @@ namespace IdelPog.ECS.Assertions
 {
     public class AssertComponentDoesNotExist(IHandler handler) : BaseAssertion<ComponentAlreadyExistsException>(handler), IAssertComponentDoesNotExist
     {
-    public void Handle(bool componentAlreadyExists, object componentContext)
-    {
-        Assert(() =>
+        public void Handle(bool componentAlreadyExists, object componentContext)
         {
-            if (componentAlreadyExists)
+            Assert(() =>
             {
-                throw new ComponentAlreadyExistsException(componentContext);
-            }
-        });
-    }
+                if (componentAlreadyExists)
+                {
+                    throw new ComponentAlreadyExistsException(componentContext);
+                }
+            });
+        }
     }
 }

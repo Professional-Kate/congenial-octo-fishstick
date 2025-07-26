@@ -10,9 +10,9 @@ namespace IdelPog.ContentHydrator.Providers
         public IJsonConverter<T> CreateConverter<T>()
         {
             JsonTypeInfo? typeInfo = context.GetTypeInfo(typeof(T));
-            
+
             assertNotNull.AssertObjectNotNull(typeInfo);
-            
+
             return new JsonSourceConverter<T>((JsonTypeInfo<T>)typeInfo!, assertNotNull);
         }
     }

@@ -16,4 +16,4 @@ namespace IdelPog.SimulationEngine.Currency
             currencyCreationMediator.CreateCurrency(commands);
         }
     }
-} 
+}

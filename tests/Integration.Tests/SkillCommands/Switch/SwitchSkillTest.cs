@@ -18,17 +18,17 @@ namespace Integration.Tests.SkillCommands.Switch
         public void OneTimeSetUp()
         {
             _skillChange = new SkillChange { SkillID = SkillID.FARMING };
-            
+
             CurrentSkillProvider currentSkillProvider = new();
             _currentSkillSetter = currentSkillProvider;
             _currentSkillProvider = currentSkillProvider;
         }
-        
+
         [SetUp]
         public void Setup()
         {
             new SkillBootstrapper().Initialize(BufferMessenger, BufferManager, _currentSkillSetter);
-            
+
             _listener = new SkillChangeDTOListener();
             ManagedSubscribe(_listener);
         }
@@ -49,7 +49,7 @@ namespace Integration.Tests.SkillCommands.Switch
                 Assert.That(_listener.SkillChangeDTO.SkillID, Is.EqualTo(skillChange.SkillID));
             });
         }
-        
+
         [Test]
         public void Positive_SendChangeSkill_SwitchesSkill_DispatchesSkillChangeDTO()
         {
@@ -62,7 +62,7 @@ namespace Integration.Tests.SkillCommands.Switch
         {
             Assert.DoesNotThrow(() => SendChangeSkillBuffer(_skillChange));
             AssertListener(_skillChange);
-            
+
             SkillChange secondSkillChange = new() { SkillID = SkillID.MINING };
             Assert.DoesNotThrow(() => SendChangeSkillBuffer(secondSkillChange));
             AssertListener(secondSkillChange);

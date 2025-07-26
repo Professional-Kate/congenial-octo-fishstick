@@ -21,7 +21,7 @@ namespace Integration.Tests.Console
         {
             _inputHandler = ConsoleBootstrapper.Initialize(BufferManager);
             TestPermissionService.SendAddPermissionCall(_inputHandler, Domain.SKILL);
-            
+
             _skillChangeListener = new SkillChangeListener();
             ManagedSubscribe(_skillChangeListener);
         }
@@ -29,25 +29,26 @@ namespace Integration.Tests.Console
         private static IEnumerable<TestCaseData> ValidSkillChanges()
         {
             yield return new TestCaseData(
-                new[] {"SKILL", "change", "wood_cutting"},
+                new[] { "SKILL", "change", "wood_cutting" },
                 SkillID.WOOD_CUTTING
             ).SetName("WOOD_CUTTING");
+
             yield return new TestCaseData(
-                new[] {"skill", "CHANGE", "mining"},
+                new[] { "skill", "CHANGE", "mining" },
                 SkillID.MINING
             ).SetName("MINING");
+
             yield return new TestCaseData(
-                new[] {"skill", "change", "FARMING"},
+                new[] { "skill", "change", "FARMING" },
                 SkillID.FARMING
             ).SetName("FARMING");
-            
         }
 
         [TestCaseSource(nameof(ValidSkillChanges))]
         public void Positive_ChangeSkill_DispatchesUpdate(string[] arguments, SkillID skillID)
         {
             Assert.DoesNotThrow(() => _inputHandler.Input(arguments));
-            
+
             Assert.That(_skillChangeListener.WasCalled, Is.True);
             Assert.Multiple(() =>
             {
@@ -62,13 +63,13 @@ namespace Integration.Tests.Console
         [TestCase(new[] { "skill", "change", "woodcutting" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
         [TestCase(new[] { "skill", "change" }, typeof(InvalidArgumentCountException), TestName = "MissingSkill_ThrowsInvalidArgumentCountException")]
         [TestCase(new[] { "skill" }, typeof(EmptySpanException), TestName = "MissingChangeAndSkill_ThrowsEmptySpanException")]
-        [TestCase(new string[] {}, typeof(EmptySpanException), TestName = "NoArguments_ThrowsEmptySpanException")]
+        [TestCase(new string[] { }, typeof(EmptySpanException), TestName = "NoArguments_ThrowsEmptySpanException")]
         public void Negative_ChangeSkill_BadArguments_Throws(string[] arguments, Type exception)
         {
             Assert.Throws(exception, () => _inputHandler.Input(arguments));
             Assert.That(_skillChangeListener.WasCalled, Is.False);
         }
-        
+
         [Test]
         public void Negative_PermissionDenied_NoUpdate_Throws()
         {

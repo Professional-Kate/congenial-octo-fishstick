@@ -6,7 +6,7 @@ namespace IdelPog.ContentHydrator.Readers
     /// Represents a file reader that reads flat files and returns the content as a string
     /// </summary>
     public interface IJsonReader
-    {   
+    {
         /// <summary>
         /// Reads from the passed file, returning the file as a string
         /// </summary>

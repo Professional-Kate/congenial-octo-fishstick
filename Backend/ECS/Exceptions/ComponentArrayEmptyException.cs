@@ -2,7 +2,8 @@
 {
     public class ComponentArrayEmptyException : Exception
     {
-        public ComponentArrayEmptyException() : base(ExceptionMessages.COMPONENT_ARRAY_EMPTY) { }
-
+        public ComponentArrayEmptyException() : base(ExceptionMessages.COMPONENT_ARRAY_EMPTY)
+        {
+        }
     }
 }

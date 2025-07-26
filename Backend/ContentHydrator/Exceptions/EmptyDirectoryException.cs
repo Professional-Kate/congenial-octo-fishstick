@@ -6,7 +6,7 @@ namespace IdelPog.ContentHydrator.Exceptions
     {
         private static readonly string _baseMessage = ExceptionConstants.EMPTY_DIRECTORY_MESSAGE;
 
-        public EmptyDirectoryException(string path) 
+        public EmptyDirectoryException(string path)
             : base(string.Format(_baseMessage, path))
         {
             // TODO: whenever will I get a logging framework

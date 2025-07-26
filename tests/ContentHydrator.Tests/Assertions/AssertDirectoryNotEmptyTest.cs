@@ -19,7 +19,7 @@ namespace ContentHydratorTests.Assertions
         public void Positive_AssertNotEmpty_NonEmptyArray()
         {
             string[] items = ["a"];
-            
+
             Assert.DoesNotThrow(() => _assertDirectoryNotEmpty.AssertNotEmpty(items, "TEST"));
         }
 

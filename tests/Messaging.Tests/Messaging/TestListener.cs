@@ -10,7 +10,7 @@ namespace IdelPog.Messaging.Tests.Messaging
         public IReadOnlyList<T> BufferData { get; private set; }
         public int AmountCalled { get; private set; }
         public bool ShouldThrowException { get; set; }
-        
+
         public void Handle(IReadOnlyList<T> buffer)
         {
             WasCalled = true;
@@ -28,9 +28,15 @@ namespace IdelPog.Messaging.Tests.Messaging
             ResetWasCalled();
             ResetAmountCalled();
         }
-        
-        public void ResetWasCalled() => WasCalled = false;
-        
-        public void ResetAmountCalled() => AmountCalled = 0;
+
+        public void ResetWasCalled()
+        {
+            WasCalled = false;
+        }
+
+        public void ResetAmountCalled()
+        {
+            AmountCalled = 0;
+        }
     }
 }

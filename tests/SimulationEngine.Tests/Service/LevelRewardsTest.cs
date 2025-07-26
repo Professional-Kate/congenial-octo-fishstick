@@ -11,7 +11,7 @@ namespace IdelPogTests.Service
 
         private LevelAward[] _levelAwards { get; set; }
         private const byte LEVELS_PER_AWARD = 5;
-        
+
         private bool _wasOnLevelUpCalled;
         private int _levelUpCalledAmount;
 
@@ -37,13 +37,13 @@ namespace IdelPogTests.Service
         private void SetupLevelAwards()
         {
             List<LevelAward> levelAwards = new();
-            
+
             for (byte i = LEVELS_PER_AWARD; i <= SkillConstants.MAX_SKILL_LEVEL; i += LEVELS_PER_AWARD)
             {
                 LevelAward levelAward = new(i, OnLevelUp);
                 levelAwards.Add(levelAward);
-            } 
-            
+            }
+
             levelAwards.Reverse();
             _levelAwards = levelAwards.ToArray();
         }
@@ -58,7 +58,7 @@ namespace IdelPogTests.Service
         public void Positive_MaybeGrantReward_GrantsReward()
         {
             _levelRewards.MaybeGrantReward(5);
-            
+
             Assert.That(_wasOnLevelUpCalled, Is.True);
             Assert.That(1, Is.EqualTo(_levelUpCalledAmount));
         }
@@ -79,7 +79,7 @@ namespace IdelPogTests.Service
         public void Positive_MaybeGrantReward_GrantsMultipleMissedRewards()
         {
             _levelRewards.MaybeGrantReward(23);
-            
+
             Assert.That(_wasOnLevelUpCalled, Is.True);
             Assert.That(4, Is.EqualTo(_levelUpCalledAmount));
         }
@@ -89,7 +89,7 @@ namespace IdelPogTests.Service
         {
             _levelRewards.MaybeGrantReward(5);
             _levelRewards.MaybeGrantReward(5);
-            
+
             Assert.That(_wasOnLevelUpCalled, Is.True);
             Assert.That(1, Is.EqualTo(_levelUpCalledAmount));
         }
@@ -99,7 +99,7 @@ namespace IdelPogTests.Service
         {
             LevelAward[] levelAwards = Array.Empty<LevelAward>();
             ILevelRewards levelRewards = new LevelRewards(levelAwards);
-            
+
             levelRewards.MaybeGrantReward(10);
             Assert.That(_wasOnLevelUpCalled, Is.False);
         }
@@ -108,7 +108,7 @@ namespace IdelPogTests.Service
         public void Negative_MaybeGrantReward_DoesNotGrantReward()
         {
             _levelRewards.MaybeGrantReward(4);
-            
+
             Assert.That(_wasOnLevelUpCalled, Is.False);
             Assert.That(0, Is.EqualTo(_levelUpCalledAmount));
         }

@@ -10,17 +10,18 @@ namespace IdelPog.SimulationEngine.Currency.Listeners
     {
         private readonly ICurrencyController _currencyController;
         private readonly IDispatchOne<CurrencyCreationErrorDTO> _currencyCreationErrorDTODispatcher;
-        private readonly ICurrencyCreationErrorDTOFactory  _currencyCreationErrorDTOFactory;
+        private readonly ICurrencyCreationErrorDTOFactory _currencyCreationErrorDTOFactory;
 
-        public CurrencyCreationListener(ICurrencyController currencyController,  IDispatchOne<CurrencyCreationErrorDTO> currencyCreationErrorDTODispatcher, ICurrencyCreationErrorDTOFactory currencyCreationErrorDTOFactory)
+        public CurrencyCreationListener(ICurrencyController currencyController, IDispatchOne<CurrencyCreationErrorDTO> currencyCreationErrorDTODispatcher,
+            ICurrencyCreationErrorDTOFactory currencyCreationErrorDTOFactory)
         {
             _currencyController = currencyController;
             _currencyCreationErrorDTODispatcher = currencyCreationErrorDTODispatcher;
             _currencyCreationErrorDTOFactory = currencyCreationErrorDTOFactory;
         }
-        
+
         public Type ListenerType { get; } = typeof(CurrencyCreation);
-        
+
         public void Handle(IReadOnlyList<CurrencyCreation> buffer)
         {
             try

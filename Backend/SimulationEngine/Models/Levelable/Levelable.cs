@@ -5,7 +5,7 @@
         : ILevelable
     {
         public event Action<byte> OnLevelUp = delegate { };
-        
+
         public byte Level { get; private set; } = level;
         public int Experience { get; private set; } = experience;
         public int NextLevelExperience { get; private set; } = nextLevelExperience;
@@ -16,7 +16,7 @@
             Level++;
             OnLevelUp(Level);
         }
-       
+
         public void SetExperience(int experience)
         {
             Experience += experience;

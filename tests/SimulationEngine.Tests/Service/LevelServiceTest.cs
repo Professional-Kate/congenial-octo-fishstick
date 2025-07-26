@@ -15,12 +15,12 @@ namespace IdelPogTests.Service
         private Mock<ILevelableAsserter> _levelableAsserterMock { get; set; }
 
         private ILevelable _levelable { get; set; }
-        
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _levelableAsserterMock = new Mock<ILevelableAsserter>(); 
-            
+            _levelableAsserterMock = new Mock<ILevelableAsserter>();
+
             _service = new LevelService(_levelableAsserterMock.Object);
         }
 
@@ -37,7 +37,7 @@ namespace IdelPogTests.Service
 
             Assert.That(1, Is.EqualTo(_levelable.Level));
         }
-        
+
         [Test]
         public void Positive_CanSkillLevel_ReturnsTrue()
         {
@@ -46,7 +46,7 @@ namespace IdelPogTests.Service
             bool canSkillLevel = _service.CanSkillLevel(levelable);
             Assert.That(canSkillLevel, Is.True);
         }
-        
+
         [Test]
         public void Positive_CanSkillLevel_ReturnsFalse()
         {
@@ -75,14 +75,14 @@ namespace IdelPogTests.Service
         public void Positive_SkillCanLevelToMax()
         {
             Levelable levelable = new(1, 0, 100, 1);
-            
+
             for (int i = 1; i < SkillConstants.MAX_SKILL_LEVEL; i++)
             {
                 levelable.SetExperience(levelable.NextLevelExperience + levelable.Experience); // this is here to sum the total experience
-                
+
                 _service.LevelUpSkill(levelable);
             }
-            
+
             Assert.That(levelable.Level, Is.EqualTo(SkillConstants.MAX_SKILL_LEVEL));
         }
 
@@ -91,7 +91,7 @@ namespace IdelPogTests.Service
         {
             _levelableAsserterMock.Setup(library => library.AssertLevelable(null))
                 .Throws<ArgumentNullException>();
-            
+
             Assert.Throws<ArgumentNullException>(() => _service.LevelUpSkill(null));
         }
 
@@ -99,10 +99,10 @@ namespace IdelPogTests.Service
         public void Negative_LeveUpSkill_MaxLevel_Throws()
         {
             ILevelable levelable = new Levelable(1, 0, 100, 1);
-            
+
             _levelableAsserterMock.Setup(library => library.AssertLevelable(levelable))
                 .Throws(new MaxLevelException(levelable.Level));
-            
+
             Assert.Throws<MaxLevelException>(() => _service.LevelUpSkill(levelable));
         }
     }

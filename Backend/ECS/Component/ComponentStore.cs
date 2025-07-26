@@ -29,10 +29,10 @@ namespace IdelPog.ECS.Component
             _handler = handler;
             AssertArrayNotEmpty assertArrayNotEmpty = new(_handler);
             AssertArrayNotNull assertArrayNotNull = new(_handler);
-            
+
             assertArrayNotNull.Handle(components);
             assertArrayNotEmpty.Handle(components.Length > 0);
-            
+
             _components = components;
         }
 
@@ -53,7 +53,7 @@ namespace IdelPog.ECS.Component
 
             return false;
         }
-        
+
         /// <summary>
         /// Returns deep clones of all stored components.
         /// Consumer can safely mutate the returned array without affecting internal state 
@@ -69,9 +69,9 @@ namespace IdelPog.ECS.Component
 
             for (int i = 0; i < _components.Length; i++)
             {
-                clones[i] = _components[i].DeepClone();    
+                clones[i] = _components[i].DeepClone();
             }
-            
+
             return clones;
         }
 

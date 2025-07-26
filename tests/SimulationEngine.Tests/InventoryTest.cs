@@ -39,9 +39,10 @@ namespace IdelPogTests
         {
             _repositoryMock = new Mock<IStateRepository<ItemID, Item>>();
             IHandler throwHandler = new ThrowHandler();
-            
-            _inventory = new Inventory(_repositoryMock.Object, new AssertFound(throwHandler), new AssertPositive(throwHandler), new AssertNonDuplicate(throwHandler));
-            
+
+            _inventory = new Inventory(_repositoryMock.Object, new AssertFound(throwHandler), new AssertPositive(throwHandler),
+                new AssertNonDuplicate(throwHandler));
+
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
 
@@ -52,7 +53,7 @@ namespace IdelPogTests
         private void ModifyAmountTestRunner(int amount, ActionType action)
         {
             int finalAmount = 0;
-            
+
             switch (action)
             {
                 case ActionType.ADD:
@@ -64,11 +65,11 @@ namespace IdelPogTests
                     _inventory.RemoveAmount(_oakWoodItem.ID, amount);
                     break;
             }
-            
+
             Assert.That(finalAmount, Is.EqualTo(_oakWoodItem.Amount));
-             
+
             _repositoryMock.Verify(library => library.Get(_oakWoodItem.ID));
-            
+
             _repositoryMock.Verify(library => library.Update(_oakWoodItem.ID, _oakWoodItem));
             _repositoryMock.Verify(library => library.Remove(_oakWoodItem.ID), Times.Never());
         }
@@ -82,20 +83,20 @@ namespace IdelPogTests
         {
             ModifyAmountTestRunner(amount, ActionType.ADD);
         }
-        
+
         [Test]
         public void Negative_AddAmount_NoItem_Throws()
         {
             _repositoryMock.Setup(library => library.Contains(ItemID.BIRCH_WOOD)).Returns(false);
-            
+
             Assert.Throws<NotFoundException>(() => _inventory.AddAmount(ItemID.BIRCH_WOOD, 5));
         }
 
-        [TestCase(-1)]        
+        [TestCase(-1)]
         [TestCase(-10)]
         public void Negative_AddAmount_NegativeAmount_Throws(int amount)
         {
-            NegativeNumberException exception =  Assert.Throws<NegativeNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
             Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
         }
 
@@ -110,19 +111,19 @@ namespace IdelPogTests
             _oakWoodItem.AddAmount(amount + 1);
             ModifyAmountTestRunner(amount, ActionType.REMOVE);
         }
-        
+
         [Test]
         public void Positive_RemoveAmount_RemovesItem()
         {
             _oakWoodItem.AddAmount(1);
             _inventory.RemoveAmount(_oakWoodItem.ID, 1);
-            
+
             // The Item will be left with zero amount. Which means, we need to remove it from the Repository
             _repositoryMock.Verify(library => library.Remove(_oakWoodItem.ID));
             // Removing it from the Repository means we shouldn't Update it
             _repositoryMock.Verify(library => library.Update(_oakWoodItem.ID, _oakWoodItem), Times.Never());
         }
-        
+
         [Test]
         public void Negative_RemoveAmount_NoItemFound_Throws()
         {
@@ -134,10 +135,10 @@ namespace IdelPogTests
         [Test]
         public void Negative_RemoveAmount_AmountUnderZero_Throws()
         {
-            NegativeNumberException exception =  Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
             Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
         }
-        
+
         [TestCase(-1)]
         [TestCase(-10)]
         public void Negative_RemoveAmount_NegativeAmount_Throws(int amount)
@@ -150,7 +151,7 @@ namespace IdelPogTests
         public void Positive_AddItem_AddsItemToRepository()
         {
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(false);
-            
+
             _inventory.AddItem(_oakWoodItem);
 
             _repositoryMock.Verify(library => library.Add(_oakWoodItem.ID, It.IsAny<Item>()));
@@ -164,14 +165,14 @@ namespace IdelPogTests
             const int amount = 1;
             _oakWoodItem.AddAmount(amount);
 
-            
+
             _repositoryMock.Setup(library => library.Add(_oakWoodItem.ID, It.IsAny<Item>()))
                 .Callback<ItemID, Item>((id, item) =>
                 {
                     Assert.That(_oakWoodItem.ID, Is.EqualTo(id));
                     Assert.That(amount, Is.EqualTo(item.Amount));
                 });
-            
+
             _inventory.AddItem(_oakWoodItem);
         }
 
@@ -186,8 +187,8 @@ namespace IdelPogTests
         public void Negative_AddItem_NegativeAmount_Throws(int amount)
         {
             Item itemWithBadAmount = new(ItemID.WILLOW_WOOD, new Information("", ""), 1, amount);
-            
-            NegativeNumberException exception =  Assert.Throws<NegativeNumberException>(() => _inventory.AddItem(itemWithBadAmount));
+
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.AddItem(itemWithBadAmount));
             Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
         }
 
@@ -209,7 +210,7 @@ namespace IdelPogTests
         public void Positive_GetItem_ReturnsItem()
         {
             Item item = _inventory.GetItem(_oakWoodItem.ID);
-            
+
             Assert.That(item, Is.Not.Null);
             Assert.That(item, Is.EqualTo(_oakWoodItem));
         }

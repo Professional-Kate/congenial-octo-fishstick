@@ -17,7 +17,7 @@ namespace IdelPog.Common.Repository
         /// <exception cref="ArgumentNullException">Will be thrown if the passed value is null</exception>
         /// <exception cref="DuplicateItemException">If the passed key value pair is already in the Repository</exception>
         public void Add(TID key, T value);
-        
+
         /// <summary>
         /// Removes a Key Value pair from the Repository
         /// </summary>
@@ -35,7 +35,7 @@ namespace IdelPog.Common.Repository
         /// This will return a clone. To update state use <see cref="Update"/>  
         /// </remarks>
         public T Get(TID key);
-        
+
         /// <summary>
         /// Updates a value in the Repository. The passed value will completely replace the one inside the Repository
         /// </summary>
@@ -44,7 +44,7 @@ namespace IdelPog.Common.Repository
         /// <exception cref="ArgumentNullException">Will be thrown if the passed value is null</exception>
         /// <exception cref="DuplicateItemException">Will be thrown if the key cannot be found in the Repository</exception>
         public void Update(TID key, T value);
-        
+
         /// <summary>
         /// Will check if the passed key is inside the Repository
         /// </summary>

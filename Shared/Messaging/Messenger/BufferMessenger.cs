@@ -7,17 +7,17 @@ namespace IdelPog.Messaging.Messenger
     public class BufferMessenger(IAssertNotNull assertNotNull, IAssertListenerFound assertListenerFound) : IBufferMessenger, IBufferDispatcher
     {
         private readonly Dictionary<Type, List<IListener>> _listeners = new();
-        
+
         public void Subscribe(IListener listener)
         {
             assertNotNull.AssertObjectNotNull(listener);
-            
+
             if (_listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners) == false)
             {
                 listeners = [];
                 _listeners.Add(listener.ListenerType, listeners);
             }
-            
+
             listeners.Add(listener);
         }
 
@@ -27,7 +27,7 @@ namespace IdelPog.Messaging.Messenger
 
             bool contains = _listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners);
             assertListenerFound.AssertFound(listener, contains);
-            
+
             listeners!.Remove(listener);
         }
 
@@ -56,7 +56,7 @@ namespace IdelPog.Messaging.Messenger
                     {
                         continue;
                     }
-                    
+
                     if (listener is ISingleListener<T> singleListener)
                     {
                         singleListener.Handle(buffer[0]);

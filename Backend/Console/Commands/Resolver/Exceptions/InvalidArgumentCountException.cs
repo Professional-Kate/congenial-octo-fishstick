@@ -9,7 +9,7 @@
         public InvalidArgumentCountException(int expected, int actual) : base(string.Format(MESSAGE, expected, actual))
         {
             ExpectedSize = expected;
-            ActualSize = actual;    
+            ActualSize = actual;
         }
     }
 }

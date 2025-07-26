@@ -3,13 +3,13 @@ using IdelPog.Messaging.Assertions.Pipelines;
 
 namespace IdelPog.Messaging.Buffer
 {
-    public class Buffer<T>: IInternalBuffer, IBuffer<T>
+    public class Buffer<T> : IInternalBuffer, IBuffer<T>
     {
         private readonly IBufferAsserter _bufferAsserter;
         private readonly IAssertBufferState _assertBufferState;
-        
+
         private event Action<IInternalBuffer>? Ready;
-        
+
         event Action<IInternalBuffer>? IInternalBuffer.Ready
         {
             add => Ready += value;
@@ -20,7 +20,7 @@ namespace IdelPog.Messaging.Buffer
 
         private readonly T[] _data;
         public IReadOnlyList<T> Data => _data;
-        
+
         internal Buffer(IBufferAsserter bufferAsserter, IAssertBufferState assertBufferState, BufferRequest request)
         {
             _bufferAsserter = bufferAsserter;
@@ -32,7 +32,7 @@ namespace IdelPog.Messaging.Buffer
         {
             _assertBufferState.AssertState(BufferState.FILLED, State);
             State = BufferState.READY;
-            
+
             Ready?.Invoke(this);
         }
 
@@ -42,7 +42,7 @@ namespace IdelPog.Messaging.Buffer
             _bufferAsserter.AssertCollection(Data.Count, source);
 
             CopyIntoInternalArray(source);
-            
+
             State = BufferState.FILLED;
         }
 

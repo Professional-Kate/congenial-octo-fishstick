@@ -9,7 +9,7 @@ namespace IdelPog.SimulationEngine.Inventory
         public readonly ItemID ID = id;
         public readonly Information Information = information;
         public readonly int SellPrice = sellPrice;
-        
+
         public int Amount { get; private set; } = amount;
 
         public void AddAmount(int amount)

@@ -16,7 +16,7 @@ namespace Console.Tests.Resolver
     {
         private ICommandResolverMediator _commandResolverMediator { get; set; }
         private Mock<IAssetRepository<Domain, ICommandDomainResolver>> _repositoryMock { get; set; }
-        private Mock<ICommandDomainResolver>  _commandDomainResolverMock { get; set; }
+        private Mock<ICommandDomainResolver> _commandDomainResolverMock { get; set; }
         private Mock<IDomainPermissionChecker> _domainPermissionCheckerMock { get; set; }
 
         [OneTimeSetUp]
@@ -25,7 +25,8 @@ namespace Console.Tests.Resolver
             _repositoryMock = new Mock<IAssetRepository<Domain, ICommandDomainResolver>>();
             _commandDomainResolverMock = new Mock<ICommandDomainResolver>();
             _domainPermissionCheckerMock = new Mock<IDomainPermissionChecker>();
-            _commandResolverMediator = new CommandResolverMediator(_repositoryMock.Object, _domainPermissionCheckerMock.Object, new AssertFound(new ThrowHandler()), new AssertSpanNotEmpty(new ThrowHandler()), new AssertHasPermission(new ThrowHandler()));
+            _commandResolverMediator = new CommandResolverMediator(_repositoryMock.Object, _domainPermissionCheckerMock.Object,
+                new AssertFound(new ThrowHandler()), new AssertSpanNotEmpty(new ThrowHandler()), new AssertHasPermission(new ThrowHandler()));
         }
 
         [SetUp]
@@ -34,13 +35,13 @@ namespace Console.Tests.Resolver
             _repositoryMock.Reset();
             _commandDomainResolverMock.Reset();
         }
-        
+
         [Test]
         public void Negative_ResolveCommand_EmptyArgsArray_Throws()
         {
             Assert.Throws<EmptySpanException>(() => _commandResolverMediator.ResolveCommand(Domain.CURRENCY, []));
         }
-        
+
         [Test]
         public void Negative_ResolveCommand_NullArgsArray_Throws()
         {

@@ -4,7 +4,7 @@ namespace Console.Commands.Resolver
 {
     public class IntResolver : IArgumentResolver<int>
     {
-        private readonly IAssertCanParseType  _assertCanParseType;
+        private readonly IAssertCanParseType _assertCanParseType;
 
         public IntResolver(IAssertCanParseType assertCanParseType)
         {

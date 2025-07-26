@@ -10,10 +10,10 @@ namespace Console.Commands.Resolver
         {
             _assertCanParse = assertCanParse;
         }
-        
+
         public TEnum Resolve(string argument)
         {
-            bool successfulParse = Enum.TryParse(argument, ignoreCase: true, out TEnum result);
+            bool successfulParse = Enum.TryParse(argument, true, out TEnum result);
             _assertCanParse.Handle(successfulParse, argument, nameof(TEnum));
 
             return result;

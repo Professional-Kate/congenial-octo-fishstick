@@ -10,9 +10,9 @@ namespace IdelPog.Messaging.Orchestration
         public IBuffer<T> RequestBuffer<T>(BufferRequest request)
         {
             assertNotNull.AssertObjectNotNull(request);
-            
+
             Buffer<T> buffer = bufferFactory.CreateBuffer<T>(request);
-            
+
             if (buffer is IInternalBuffer internalBuffer)
             {
                 internalBuffer.Ready += _ => HandleBufferReady(buffer.Data);

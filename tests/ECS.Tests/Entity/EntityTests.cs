@@ -34,10 +34,10 @@ namespace IdelPog.ECS.Tests
         {
             _repositoryMock.Setup(library => library.Contains(typeof(TestComponent)))
                 .Returns(true);
-            
+
             _repositoryMock.Setup(library => library.Get(typeof(TestComponent)))
                 .Returns(_testComponent);
-            
+
             bool contains = _entity.TryGetComponent(out TestComponent component);
             Assert.Multiple(() =>
             {
@@ -51,9 +51,9 @@ namespace IdelPog.ECS.Tests
         {
             _repositoryMock.Setup(library => library.Contains(It.Is<Type>(type => ReferenceEquals(type, _testComponent.GetType()))))
                 .Returns(false);
-            
+
             _entity.AddComponent(_testComponent);
-            
+
             _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
             _repositoryMock.Verify(library => library.Add(typeof(TestComponent), _testComponent), Times.Once);
         }
@@ -63,12 +63,12 @@ namespace IdelPog.ECS.Tests
         {
             _repositoryMock.Setup(library => library.Contains(typeof(TestComponent)))
                 .Returns(true);
-            
+
             _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentAlreadyExistsException>()))
                 .Throws(new ComponentAlreadyExistsException(_testComponent));
-            
+
             Assert.Throws<ComponentAlreadyExistsException>(() => _entity.AddComponent(_testComponent));
-            
+
             _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
             _repositoryMock.Verify(library => library.Add(typeof(TestComponent), _testComponent), Times.Never);
         }
@@ -78,9 +78,9 @@ namespace IdelPog.ECS.Tests
         {
             _repositoryMock.Setup(library => library.Contains(typeof(TestComponent)))
                 .Returns(true);
-            
+
             _entity.RemoveComponent<TestComponent>();
-            
+
             _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
             _repositoryMock.Verify(library => library.Remove(typeof(TestComponent)), Times.Once);
         }
@@ -92,11 +92,11 @@ namespace IdelPog.ECS.Tests
                 .Returns(true);
 
             bool contains = _entity.ContainsComponent<TestComponent>();
-            
+
             Assert.That(contains, Is.True);
             _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
         }
-        
+
         [Test]
         public void Positive_GetComponent_DoesNotComponent_ShouldReturnFalse()
         {
@@ -104,7 +104,7 @@ namespace IdelPog.ECS.Tests
                 .Returns(false);
 
             bool contains = _entity.ContainsComponent<TestComponent>();
-            
+
             Assert.That(contains, Is.False);
             _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
         }
@@ -119,7 +119,7 @@ namespace IdelPog.ECS.Tests
                 .Throws(new ComponentNotFoundException(typeof(TestComponent)));
 
             Assert.Throws<ComponentNotFoundException>(() => _entity.RemoveComponent<TestComponent>());
-            
+
             _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
             _repositoryMock.Verify(library => library.Remove(typeof(TestComponent)), Times.Never);
         }
@@ -129,14 +129,14 @@ namespace IdelPog.ECS.Tests
         {
             _repositoryMock.Setup(library => library.Contains(typeof(TestComponent)))
                 .Returns(true);
-            
+
             _repositoryMock.Setup(library => library.Get(typeof(TestComponent)))
                 .Returns(_testComponent);
-            
+
             IComponent component = _entity.GetComponent<TestComponent>();
-            
+
             Assert.That(component, Is.EqualTo(_testComponent));
-            
+
             _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
             _repositoryMock.Verify(library => library.Get(typeof(TestComponent)), Times.Once);
         }
@@ -146,12 +146,12 @@ namespace IdelPog.ECS.Tests
         {
             _repositoryMock.Setup(library => library.Contains(typeof(TestComponent)))
                 .Returns(false);
-            
+
             _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentNotFoundException>()))
                 .Throws(new ComponentNotFoundException(typeof(TestComponent)));
-            
+
             Assert.Throws<ComponentNotFoundException>(() => _entity.GetComponent<TestComponent>());
-            
+
             _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
             _repositoryMock.Verify(library => library.Get(typeof(TestComponent)), Times.Never);
         }
@@ -161,17 +161,17 @@ namespace IdelPog.ECS.Tests
         {
             _repositoryMock.Setup(library => library.Contains(typeof(TestComponent)))
                 .Returns(true);
-            
+
             _repositoryMock.Setup(library => library.Get(typeof(TestComponent)))
                 .Returns(_testComponent);
-            
+
             bool contains = _entity.TryGetComponent(out TestComponent component);
             Assert.Multiple(() =>
             {
                 Assert.That(contains, Is.True);
                 Assert.That(component, Is.EqualTo(_testComponent));
             });
-            
+
             _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
             _repositoryMock.Verify(library => library.Get(typeof(TestComponent)), Times.Once);
         }
@@ -181,10 +181,10 @@ namespace IdelPog.ECS.Tests
         {
             _repositoryMock.Setup(library => library.Contains(typeof(TestComponent)))
                 .Returns(false);
-            
+
             bool contains = _entity.TryGetComponent(out TestComponent _);
             Assert.That(contains, Is.False);
-            
+
             _repositoryMock.Verify(library => library.Contains(typeof(TestComponent)), Times.Once);
             _repositoryMock.Verify(library => library.Get(typeof(TestComponent)), Times.Never);
         }

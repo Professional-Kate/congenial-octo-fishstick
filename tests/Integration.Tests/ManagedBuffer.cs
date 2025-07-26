@@ -23,7 +23,7 @@ namespace Integration.Tests
             IAssertCollectionSize assertCollectionSize = new AssertCollectionSize(new ThrowHandler());
             IAssertValidCollectionSize assertValidCollectionSize = new AssertValidCollectionSize(new ThrowHandler());
             IAssertBufferState assertBufferState = new AssertBufferState(new ThrowHandler());
-            
+
             IBufferAsserter bufferAsserter = new BufferAsserter(_assertNotNull, assertCollectionSize, assertValidCollectionSize);
             _bufferFactory = new BufferFactory(bufferAsserter, assertBufferState, _assertNotNull);
         }
@@ -32,7 +32,7 @@ namespace Integration.Tests
         protected void BaseSetUp()
         {
             IAssertListenerFound assertListenerFound = new AssertListenerFound(new ThrowHandler());
-            
+
             BufferMessenger bufferMessenger = new(_assertNotNull, assertListenerFound);
             BufferMessenger = bufferMessenger;
             IBufferDispatcher bufferDispatcher = bufferMessenger;

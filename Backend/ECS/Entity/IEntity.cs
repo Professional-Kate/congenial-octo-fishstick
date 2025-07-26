@@ -25,14 +25,14 @@ namespace IdelPog.ECS
         /// <typeparam name="T">The component type to remove</typeparam>
         /// <exception cref="ComponentNotFoundException"> Thrown if the component of type <typeparamref name="T"/> does not exist on this entity </exception>
         public void RemoveComponent<T>() where T : IComponent;
-        
+
         /// <summary>
         /// Returns if a component was found in the Entity
         /// </summary>
         /// <typeparam name="T">The component type</typeparam>
         /// <returns>if the component is found</returns>
         public bool ContainsComponent<T>() where T : IComponent;
-        
+
         /// <summary>
         /// Retrieves a component from this entity by type
         /// </summary>

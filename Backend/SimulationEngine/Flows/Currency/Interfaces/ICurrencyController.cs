@@ -20,7 +20,7 @@ namespace IdelPog.SimulationEngine.Currency
         /// <exception cref="ArgumentNullException">Will be thrown if the collection is null</exception>
         /// <remarks>The collection is simulated first only being committed into the Repository if each command passes all validation</remarks>
         public void UpdateCurrency(IReadOnlyList<CurrencyUpdate> trades);
-        
+
         /// <summary>
         /// Creates a new <see cref="CurrencyType"/>:<see cref="Currency"/> pair in the Repository
         /// </summary>

@@ -9,7 +9,7 @@
         {
             _timer = new Timer(_ => callback(), null, Timeout.Infinite, Timeout.Infinite);
         }
-        
+
         ~ThreadingTimer()
         {
             Dispose(false);
@@ -24,7 +24,7 @@
         {
             _timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         }
-        
+
         public void Dispose()
         {
             Dispose(true);
@@ -43,7 +43,7 @@
             {
                 _timer.Dispose();
             }
-            
+
             _disposed = true;
         }
     }

@@ -24,7 +24,7 @@ namespace IdelPogTests.Models
         [Test]
         public void Positive_LevelUp_CallsAction()
         {
-            _levelable.LevelUp();      
+            _levelable.LevelUp();
         }
     }
 }

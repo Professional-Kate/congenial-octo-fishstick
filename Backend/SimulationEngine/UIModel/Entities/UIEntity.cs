@@ -6,10 +6,9 @@ namespace IdelPog.SimulationEngine.UIModel.Entities
 {
     public sealed record UIEntity : Entity
     {
-        public UIEntity(TextureID textureID, Transform transform) 
-            : base(new RenderableComponent {TextureID = textureID}, new TransformComponent {Transform = transform})
+        public UIEntity(TextureID textureID, Transform transform)
+            : base(new RenderableComponent { TextureID = textureID }, new TransformComponent { Transform = transform })
         {
-            
         }
     }
 }

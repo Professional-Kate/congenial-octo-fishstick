@@ -10,10 +10,10 @@ namespace IdelPog.ContentHydrator.Readers
         {
             string fileText = File.ReadAllText(filePath);
             JsonDocument document = JsonDocument.Parse(fileText);
-            
+
             JsonDocument? objects = JsonSerializer.Deserialize<JsonDocument>(document.RootElement.GetRawText());
             assertNotNull.AssertObjectNotNull(objects);
-                
+
             return objects!;
         }
     }
