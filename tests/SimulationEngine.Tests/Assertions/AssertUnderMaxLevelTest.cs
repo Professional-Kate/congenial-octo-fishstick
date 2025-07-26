@@ -20,7 +20,7 @@ namespace IdelPogTests.Assertions
         public void Positive_AssertLevelIsUnderMax_LevelUnderMax()
         {
             ILevelable levelable = new Levelable(99, 1, 10, 0);
-            
+
             Assert.DoesNotThrow(() => _assertUnderMaxLevel.AssertLevelIsUnderMax(levelable));
         }
 
@@ -28,7 +28,7 @@ namespace IdelPogTests.Assertions
         public void Negative_AssertLevelIsUnderMax_LevelIsMax_Throws()
         {
             ILevelable levelable = new Levelable(100, 1, 1, 1);
-            
+
             Assert.Throws<MaxLevelException>(() => _assertUnderMaxLevel.AssertLevelIsUnderMax(levelable));
         }
     }

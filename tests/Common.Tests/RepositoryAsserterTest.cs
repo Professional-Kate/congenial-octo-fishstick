@@ -18,7 +18,7 @@ namespace IdelPog.Common.Tests
             IAssertFound assertFound = new AssertFound(handler);
             IAssertNotNull assertNotNull = new AssertNotNull(handler);
             IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(handler);
-            
+
             _repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
         }
 

@@ -12,14 +12,14 @@ namespace IdelPog.SimulationEngine.Skill
         {
             IAssertNotNull assertNotNull = new AssertNotNull(new ThrowHandler());
             IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(new ThrowHandler());
-            
+
             IDispatchOne<SkillChangeDTO> skillChangeDTODispatcher = new ManagedDispatcher<SkillChangeDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
             ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();
-            
+
             ISkillChangeMediator skillChangeMediator = new SkillChangeMediator(currentSkillSetter, skillChangeFactory, skillChangeDTODispatcher);
             ISkillController skillController = new SkillController(skillChangeMediator);
             SkillChangeListener skillChangeListener = new(skillController);
-            
+
             bufferMessenger.Subscribe(skillChangeListener);
         }
     }

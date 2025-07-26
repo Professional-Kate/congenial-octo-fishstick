@@ -16,7 +16,7 @@ namespace IdelPog.Messaging.Dispatch
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
         }
-        
+
         public void Dispatch(T payload)
         {
             Dispatch([payload]);

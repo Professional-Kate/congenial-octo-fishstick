@@ -1,4 +1,6 @@
-﻿namespace IdelPog.Common.Enums
+﻿using IdelPog.Common.Enums;
+
+namespace IdelPog.Common.Commands
 {
     /// <summary>
     /// This command is used to update a Currency model
@@ -8,8 +10,8 @@
         /// <summary>
         /// What <see cref="Common.Enums.CurrencyType"/> the action should perform on
         /// </summary>
-        public required CurrencyType CurrencyType { get; init; } 
-        
+        public required CurrencyType CurrencyType { get; init; }
+
         /// <summary>
         /// The amount that should be Removed/Added to the <see cref="Common.Enums.CurrencyType"/>
         /// </summary>

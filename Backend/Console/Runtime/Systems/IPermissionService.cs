@@ -1,4 +1,4 @@
-﻿using Console.Types;
+﻿using Console.Commands.Domains.Arguments;
 
 namespace Console.Runtime.Systems
 {

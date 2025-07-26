@@ -8,12 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Validation\Validation.csproj" />
+        <ProjectReference Include="..\Validation\Validation.csproj"/>
     </ItemGroup>
 
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Messaging.Tests" />
+        <InternalsVisibleTo Include="Messaging.Tests"/>
     </ItemGroup>
 
 </Project>

@@ -6,10 +6,7 @@ namespace IdelPog.Validation.Assertions
     {
         public void AssertObjectNotNull(object? objectToAssert)
         {
-            Assert(() =>
-            {
-                ArgumentNullException.ThrowIfNull(objectToAssert);
-            });
+            Assert(() => { ArgumentNullException.ThrowIfNull(objectToAssert); });
         }
     }
 }

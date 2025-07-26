@@ -1,4 +1,4 @@
-﻿using IdelPog.Common.Enums;
+﻿using IdelPog.Common.Commands;
 using IdelPog.SimulationEngine.Currency.Assertions;
 
 namespace IdelPog.SimulationEngine.Currency
@@ -11,7 +11,7 @@ namespace IdelPog.SimulationEngine.Currency
         private readonly IAssertPositive _assertPositive;
         private readonly IAssertEnoughCurrency _assertEnoughCurrency;
 
-        public CurrencyService(IAssertPositive assertPositive,  IAssertEnoughCurrency assertEnoughCurrency)
+        public CurrencyService(IAssertPositive assertPositive, IAssertEnoughCurrency assertEnoughCurrency)
         {
             _assertPositive = assertPositive;
             _assertEnoughCurrency = assertEnoughCurrency;
@@ -20,7 +20,7 @@ namespace IdelPog.SimulationEngine.Currency
         public void AddAmount(Currency currency, int amount)
         {
             _assertPositive.AssertNumberIsPositive<CurrencyUpdate>(amount);
-            
+
             int newAmount = currency.Amount + amount;
             currency.SetAmount(newAmount);
         }
@@ -28,7 +28,7 @@ namespace IdelPog.SimulationEngine.Currency
         public void RemoveAmount(Currency currency, int amount)
         {
             _assertPositive.AssertNumberIsPositive<CurrencyUpdate>(amount);
-            
+
             _assertEnoughCurrency.Handle(currency.Amount, amount, currency.CurrencyType);
             int newAmount = currency.Amount - amount;
             currency.SetAmount(newAmount);

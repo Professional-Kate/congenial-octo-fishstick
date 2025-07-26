@@ -10,7 +10,7 @@
     public interface ILevelable
     {
         public byte Level { get; }
-        public int Experience { get; } 
+        public int Experience { get; }
         public int NextLevelExperience { get; }
         public int ExperiencePerAction { get; }
         public event Action<byte> OnLevelUp;
@@ -21,9 +21,9 @@
         public void LevelUp();
 
         public void SetExperience(int experience);
-        
+
         public void SetExperiencePerAction(int experiencePerAction);
-        
+
         public void SetNextLevelExperience(int nextLevelExperience);
     }
 }

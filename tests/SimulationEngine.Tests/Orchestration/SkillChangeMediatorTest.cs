@@ -1,4 +1,6 @@
-﻿using IdelPog.Messaging.Dispatch;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Enums;
+using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Skill;
 using Moq;
 
@@ -18,11 +20,11 @@ namespace IdelPogTests.Orchestration
         public void OneTimeSetUp()
         {
             _skillChange = new SkillChange { SkillID = SkillID.MINING };
-            
+
             _currentSkillSetterMock = new Mock<ICurrentSkillSetter>();
             _skillChangeFactoryMock = new Mock<ISkillChangeFactory>();
             _skillChangeDispatcherMock = new Mock<IDispatchOne<SkillChangeDTO>>();
-            
+
             _skillChangeMediator = new SkillChangeMediator(_currentSkillSetterMock.Object, _skillChangeFactoryMock.Object, _skillChangeDispatcherMock.Object);
         }
 
@@ -39,9 +41,9 @@ namespace IdelPogTests.Orchestration
         {
             SkillChangeDTO dto = new() { SkillID = _skillChange.SkillID };
             _skillChangeFactoryMock.Setup(library => library.CreateSkillChangeDTO(_skillChange)).Returns(dto);
-            
+
             Assert.DoesNotThrow(() => _skillChangeMediator.ChangeSkill(_skillChange));
-            
+
             _currentSkillSetterMock.Verify(library => library.SetCurrentSkill(_skillChange.SkillID), Times.Once);
             _skillChangeFactoryMock.Verify(library => library.CreateSkillChangeDTO(_skillChange), Times.Once);
             _skillChangeDispatcherMock.Verify(library => library.Dispatch(dto), Times.Once);
@@ -51,7 +53,7 @@ namespace IdelPogTests.Orchestration
         public void Positive_ChangeSkill_DoesNotSuppressExceptions()
         {
             _skillChangeFactoryMock.Setup(library => library.CreateSkillChangeDTO(_skillChange)).Throws<Exception>();
-            
+
             Assert.Throws<Exception>(() => _skillChangeMediator.ChangeSkill(_skillChange));
         }
     }

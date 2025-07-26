@@ -1,4 +1,5 @@
-﻿using IdelPog.Common.Enums;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Enums;
 using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.Validation.Assertions;
@@ -14,13 +15,13 @@ namespace IdelPogTests.Service
     {
         private ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory { get; set; }
         private IReadOnlyList<CurrencyUpdate> _currencyTrades { get; set; }
-        
+
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             IHandler throwHandler = new ThrowHandler();
             _currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(new AssertNotNull(throwHandler), new AssertCollectionNotEmpty(throwHandler));
-            
+
             _currencyTrades =
             [
                 TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD),
@@ -39,7 +40,7 @@ namespace IdelPogTests.Service
             {
                 CurrencyUpdateDTO currencyUpdateDTO = currencyUpdateDTOs[i];
                 CurrencyUpdate currencyUpdate = currencyTrades[i];
-                
+
                 Assert.Multiple(() =>
                 {
                     Assert.That(currencyUpdateDTO.Action, Is.EqualTo(currencyUpdate.Action));
@@ -52,10 +53,10 @@ namespace IdelPogTests.Service
         [Test]
         public void Positive_CreateFrom_ConvertsTradeIntoUpdate()
         {
-            IReadOnlyList<CurrencyUpdateDTO> updateDTOs =_currencyUpdateDTOFactory.CreateFrom(_currencyTrades);
-            
+            IReadOnlyList<CurrencyUpdateDTO> updateDTOs = _currencyUpdateDTOFactory.CreateFrom(_currencyTrades);
+
             Assert.That(updateDTOs, Has.Count.EqualTo(_currencyTrades.Count));
-            
+
             AssertCollection(updateDTOs, _currencyTrades);
         }
 
@@ -63,10 +64,10 @@ namespace IdelPogTests.Service
         public void Negative_CreateFrom_EmptyTrades_Throws()
         {
             EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateDTOFactory.CreateFrom([]));
-            
+
             Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
         }
-        
+
         [Test]
         public void Negative_CreateFrom_NullTrades_Throws()
         {

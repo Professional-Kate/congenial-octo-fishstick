@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj" />
-      <ProjectReference Include="..\ECS\ECS.csproj" />
+        <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj"/>
+        <ProjectReference Include="..\ECS\ECS.csproj"/>
     </ItemGroup>
 
 </Project>

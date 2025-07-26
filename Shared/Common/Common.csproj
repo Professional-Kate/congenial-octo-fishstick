@@ -8,12 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Validation\Validation.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Commands\" />
-      <Folder Include="Enums\" />
+        <ProjectReference Include="..\Validation\Validation.csproj"/>
     </ItemGroup>
 
 </Project>

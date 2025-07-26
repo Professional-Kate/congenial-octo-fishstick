@@ -2,8 +2,8 @@
 {
     public enum BufferState : byte
     {
-        CREATED, 
-        FILLED, 
+        CREATED,
+        FILLED,
         READY
     }
 }

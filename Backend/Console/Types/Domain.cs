@@ -4,6 +4,7 @@
     {
         PERMISSION,
         CURRENCY,
-        SKILL
+        SKILL,
+        SCHEDULE
     }
 }

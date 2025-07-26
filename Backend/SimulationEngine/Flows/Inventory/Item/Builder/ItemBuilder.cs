@@ -32,14 +32,14 @@ namespace IdelPog.SimulationEngine.Inventory
         public IItemBuilder SellPrice(int sellPrice)
         {
             _sellPrice = sellPrice;
-            
+
             return this;
         }
 
         public IItemBuilder Amount(int amount)
         {
             _amount = amount;
-            
+
             return this;
         }
 

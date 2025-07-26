@@ -1,6 +1,7 @@
-﻿using IdelPog.Common.Enums;
+﻿using Console.Types;
+using IdelPog.Common.Enums;
 
-namespace Console.Types
+namespace Console.Commands.Domains.Arguments
 {
     public readonly record struct PermissionUpdateArguments
     {

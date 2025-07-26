@@ -18,7 +18,7 @@ namespace IdelPog.ECS
             _componentMap = new AssetRepository<Type, IComponent>();
             _assertComponentFound = new AssertComponentFound(new ThrowHandler());
             _assertComponentDoesNotExist = new AssertComponentDoesNotExist(new ThrowHandler());
-            
+
             foreach (IComponent requiredComponent in requiredComponents)
             {
                 AddComponent(requiredComponent);
@@ -28,7 +28,7 @@ namespace IdelPog.ECS
         protected Entity(IAssetRepository<Type, IComponent> componentMap, IHandler handler)
         {
             _componentMap = componentMap;
-            
+
             _assertComponentDoesNotExist = new AssertComponentDoesNotExist(handler);
             _assertComponentFound = new AssertComponentFound(handler);
         }
@@ -36,14 +36,14 @@ namespace IdelPog.ECS
         public void AddComponent(IComponent component)
         {
             _assertComponentDoesNotExist.Handle(_componentMap.Contains(component.GetType()), component);
-            
+
             _componentMap.Add(component.GetType(), component);
         }
 
         public void RemoveComponent<T>() where T : IComponent
         {
             _assertComponentFound.Handle(_componentMap.Contains(typeof(T)), typeof(T));
-            
+
             _componentMap.Remove(typeof(T));
         }
 
@@ -56,7 +56,7 @@ namespace IdelPog.ECS
         {
             _assertComponentFound.Handle(_componentMap.Contains(typeof(T)), typeof(T));
 
-            return (T) _componentMap.Get(typeof(T));
+            return (T)_componentMap.Get(typeof(T));
         }
 
         public bool TryGetComponent<T>([NotNullWhen(true)] out T? component) where T : IComponent
@@ -68,8 +68,8 @@ namespace IdelPog.ECS
                 component = default;
                 return false;
             }
-            
-            component = (T) _componentMap.Get(typeof(T));
+
+            component = (T)_componentMap.Get(typeof(T));
             return true;
         }
     }

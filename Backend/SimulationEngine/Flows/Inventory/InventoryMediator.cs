@@ -14,22 +14,23 @@ namespace IdelPog.SimulationEngine.Inventory
         private readonly IInventoryUpdateDTOFactory _inventoryUpdateDTOFactory;
         private readonly IDispatchMany<InventoryUpdateDTO> _inventoryUpdateDispatcher;
 
-        public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateDTOFactory inventoryUpdateDTOFactory, IDispatchMany<InventoryUpdateDTO>  inventoryUpdateDispatcher)
+        public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateDTOFactory inventoryUpdateDTOFactory,
+            IDispatchMany<InventoryUpdateDTO> inventoryUpdateDispatcher)
         {
             _inventory = inventory;
             _itemFactory = itemFactory;
             _inventoryUpdateDTOFactory = inventoryUpdateDTOFactory;
             _inventoryUpdateDispatcher = inventoryUpdateDispatcher;
         }
-        
+
         public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
         {
             List<InventoryUpdateDTO> updateDTOs = new(updates.Count);
-            
+
             foreach (InventoryUpdate update in updates)
             {
                 MutateType mutateType;
-                
+
                 switch (update.Action)
                 {
                     case ActionType.ADD:
@@ -45,7 +46,7 @@ namespace IdelPog.SimulationEngine.Inventory
                 Item item = _inventory.GetItem(update.ItemID);
                 updateDTOs.Add(_inventoryUpdateDTOFactory.CreateInventoryUpdateDTO(item, update, mutateType));
             }
-            
+
             _inventoryUpdateDispatcher.Dispatch(updateDTOs.ToArray());
         }
 
@@ -62,7 +63,7 @@ namespace IdelPog.SimulationEngine.Inventory
                 _inventory.AddAmount(itemID, amount);
                 return MutateType.CHANGED;
             }
-            
+
             // if an Item doesn't exist then we create one
             Item createdItem = _itemFactory.CreateItem(itemID, amount);
             _inventory.AddItem(createdItem);

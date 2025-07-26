@@ -2,7 +2,8 @@
 
 namespace IdelPog.Messaging.Assertions.Pipelines
 {
-    public class BufferAsserter(IAssertNotNull assertNotNull, IAssertCollectionSize assertCollectionSize, IAssertValidCollectionSize assertValidCollectionSize) : IBufferAsserter
+    public class BufferAsserter(IAssertNotNull assertNotNull, IAssertCollectionSize assertCollectionSize, IAssertValidCollectionSize assertValidCollectionSize)
+        : IBufferAsserter
     {
         public void AssertCollection<T>(int expectedCount, IReadOnlyList<T> source)
         {

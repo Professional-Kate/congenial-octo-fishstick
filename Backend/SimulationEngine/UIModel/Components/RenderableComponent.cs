@@ -6,7 +6,7 @@ namespace IdelPog.SimulationEngine.UIModel.Components
     public readonly record struct RenderableComponent : IComponent<RenderableComponent>
     {
         public required TextureID TextureID { get; init; }
-        
+
         public RenderableComponent DeepClone()
         {
             return new RenderableComponent { TextureID = TextureID };

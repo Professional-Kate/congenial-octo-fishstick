@@ -10,7 +10,8 @@ namespace IdelPog.SimulationEngine.Currency.Exceptions
         public readonly int CurrencyAmount;
         public readonly int RemoveAmount;
 
-        public NotEnoughCurrencyException(CurrencyType currencyTypeContext, int currencyAmount, int removeAmount) : base(string.Format(MESSAGE, currencyTypeContext.ToString(), currencyAmount, removeAmount))
+        public NotEnoughCurrencyException(CurrencyType currencyTypeContext, int currencyAmount, int removeAmount) : base(string.Format(MESSAGE,
+            currencyTypeContext.ToString(), currencyAmount, removeAmount))
         {
             CurrencyTypeContext = currencyTypeContext;
             CurrencyAmount = currencyAmount;

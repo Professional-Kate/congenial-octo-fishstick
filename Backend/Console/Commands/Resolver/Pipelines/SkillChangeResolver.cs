@@ -1,5 +1,5 @@
-﻿using Console.Types;
-using IdelPog.SimulationEngine.Skill;
+﻿using Console.Commands.Domains.Arguments;
+using IdelPog.Common.Enums;
 
 namespace Console.Commands.Resolver.Pipelines
 {

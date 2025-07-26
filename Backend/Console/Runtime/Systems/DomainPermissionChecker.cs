@@ -21,8 +21,8 @@ namespace Console.Runtime.Systems
         {
             bool contains = _allowedDomainEntity.TryGetComponent(out ComponentStore<DomainComponent> componentStore);
             _assertComponentFound.Handle(contains, typeof(ComponentStore<DomainComponent>));
-            
+
             return componentStore.ContainsComponent(component => component.AllowedDomain == domain);
         }
     }
-} 
+}

@@ -2,7 +2,7 @@
 {
     public sealed record TestDTO
     {
-        public required string TestString { get; init; } 
+        public required string TestString { get; init; }
 
         public required int TestInt { get; init; }
     }

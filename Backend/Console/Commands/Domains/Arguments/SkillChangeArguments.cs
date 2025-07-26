@@ -1,6 +1,6 @@
-﻿using IdelPog.SimulationEngine.Skill;
+﻿using IdelPog.Common.Enums;
 
-namespace Console.Types
+namespace Console.Commands.Domains.Arguments
 {
     public readonly record struct SkillChangeArguments
     {

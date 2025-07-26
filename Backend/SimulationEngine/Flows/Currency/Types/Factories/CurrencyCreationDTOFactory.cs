@@ -14,12 +14,12 @@ namespace IdelPog.SimulationEngine.Currency.Factories
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
         }
-        
+
         public CurrencyCreationDTO[] CreateFrom(IReadOnlyList<CurrencyCreation> trades)
         {
             _assertNotNull.AssertObjectNotNull(trades);
             _assertCollectionNotEmpty.Handle(trades);
-            
+
             List<CurrencyCreationDTO> result = new(trades.Count);
 
             foreach (CurrencyCreation currencyCreation in trades)
@@ -30,7 +30,7 @@ namespace IdelPog.SimulationEngine.Currency.Factories
                     Amount = currencyCreation.StartingAmount
                 });
             }
-            
+
             return result.ToArray();
         }
     }

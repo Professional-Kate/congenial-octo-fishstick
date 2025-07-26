@@ -8,10 +8,11 @@ namespace Console.Runtime.Input
     public sealed class InputHandler : IInputHandler
     {
         private readonly ICommandResolverMediator _commandResolverMediator;
-        private readonly IArgumentResolver<Domain>  _commandDomainResolver;
-        private readonly IAssertSpanNotEmpty  _assertSpanNotEmpty;
+        private readonly IArgumentResolver<Domain> _commandDomainResolver;
+        private readonly IAssertSpanNotEmpty _assertSpanNotEmpty;
 
-        public InputHandler(ICommandResolverMediator commandResolverMediator, IArgumentResolver<Domain> commandDomainResolver, IAssertSpanNotEmpty  assertSpanNotEmpty)
+        public InputHandler(ICommandResolverMediator commandResolverMediator, IArgumentResolver<Domain> commandDomainResolver,
+            IAssertSpanNotEmpty assertSpanNotEmpty)
         {
             _commandResolverMediator = commandResolverMediator;
             _commandDomainResolver = commandDomainResolver;

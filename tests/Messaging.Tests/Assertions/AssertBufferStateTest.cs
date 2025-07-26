@@ -37,7 +37,7 @@ namespace IdelPog.Messaging.Tests.Assertions
         {
             _handlerMock.Setup(library => library.Handle(It.IsAny<InvalidBufferStateException>()))
                 .Throws(new InvalidBufferStateException(BufferState.FILLED, BufferState.CREATED));
-            
+
             Assert.Throws<InvalidBufferStateException>(() => _assertBufferState.AssertState(BufferState.FILLED, BufferState.CREATED));
             _handlerMock.Verify(library => library.Handle(It.IsAny<InvalidBufferStateException>()), Times.Once);
         }

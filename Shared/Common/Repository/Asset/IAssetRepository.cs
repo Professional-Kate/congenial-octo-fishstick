@@ -9,16 +9,16 @@
     {
         /// <inheritdoc cref="IStateRepository{TID,T}.Add"/>
         public void Add(TID key, T value);
-        
+
         /// <inheritdoc cref="IStateRepository{TID,T}.Remove"/>
         public void Remove(TID key);
-        
+
         /// <inheritdoc cref="IStateRepository{TID,T}.Get"/>
         /// <remarks>
         /// The objects are not expected to be mutated
         /// </remarks>
         public T Get(TID key);
-        
+
         /// <inheritdoc cref="IStateRepository{TID,T}.Contains"/>
         public bool Contains(TID key);
     }

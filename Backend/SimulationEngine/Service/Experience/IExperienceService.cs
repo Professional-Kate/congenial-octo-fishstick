@@ -16,6 +16,6 @@ namespace IdelPog.SimulationEngine.Service
         /// <remarks>
         /// The passed <see cref="ILevelable"/> is expected to be a reference. The new state of the <see cref="ILevelable"/> won't be returned
         /// </remarks>
-        public void AddExperience(ILevelable levelable); 
+        public void AddExperience(ILevelable levelable);
     }
 }

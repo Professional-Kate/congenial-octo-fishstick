@@ -6,7 +6,7 @@ namespace IdelPog.ECS.Tests
 {
     internal record TestEntity : Entity
     {
-        public TestEntity(IAssetRepository<Type, IComponent> components, IHandler handler) 
+        public TestEntity(IAssetRepository<Type, IComponent> components, IHandler handler)
             : base(components, handler)
         {
         }

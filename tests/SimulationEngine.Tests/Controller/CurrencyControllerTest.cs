@@ -1,4 +1,5 @@
-﻿using IdelPog.Common.Enums;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Enums;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPogTests.Utils;
@@ -29,8 +30,8 @@ namespace IdelPogTests.Controller
 
             _currencyCreations =
             [
-                new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = 10},
-                new CurrencyCreation { CurrencyType = CurrencyType.GEMS, StartingAmount = 10}
+                new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = 10 },
+                new CurrencyCreation { CurrencyType = CurrencyType.GEMS, StartingAmount = 10 }
             ];
         }
 
@@ -46,7 +47,7 @@ namespace IdelPogTests.Controller
         public void Positive_UpdateCurrency_InvokesMediator()
         {
             _currencyController.UpdateCurrency(_currencyTrades);
-            
+
             _currencyUpdateMediatorMock.Verify(library => library.ProcessCurrencyUpdate(_currencyTrades), Times.Once);
         }
 
@@ -55,15 +56,15 @@ namespace IdelPogTests.Controller
         {
             _currencyUpdateMediatorMock.Setup(library => library.ProcessCurrencyUpdate(_currencyTrades))
                 .Throws<Exception>();
-            
+
             Assert.Throws<Exception>(() => _currencyController.UpdateCurrency(_currencyTrades));
         }
-        
+
         [Test]
         public void Positive_CreateCurrency_InvokesMediator()
         {
             _currencyController.CreateCurrency(_currencyCreations);
-            
+
             _currencyCreationMediatorMock.Verify(library => library.CreateCurrency(_currencyCreations), Times.Once);
         }
 
@@ -72,7 +73,7 @@ namespace IdelPogTests.Controller
         {
             _currencyCreationMediatorMock.Setup(library => library.CreateCurrency(_currencyCreations))
                 .Throws<Exception>();
-            
+
             Assert.Throws<Exception>(() => _currencyController.CreateCurrency(_currencyCreations));
         }
     }

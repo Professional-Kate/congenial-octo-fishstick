@@ -6,10 +6,9 @@ namespace Console.Runtime.ECS
 {
     public record AllowedDomainsEntity : Entity
     {
-        public AllowedDomainsEntity(DomainComponent[] allowedDomains) 
+        public AllowedDomainsEntity(DomainComponent[] allowedDomains)
             : base(new ComponentStore<DomainComponent>(allowedDomains, new ThrowHandler()))
         {
-            
         }
     }
 }

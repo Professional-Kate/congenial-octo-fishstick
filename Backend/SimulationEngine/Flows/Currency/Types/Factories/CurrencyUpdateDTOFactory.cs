@@ -1,4 +1,4 @@
-﻿using IdelPog.Common.Enums;
+﻿using IdelPog.Common.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.Validation.Assertions;
 
@@ -14,12 +14,12 @@ namespace IdelPog.SimulationEngine.Currency.Factories
             _assertNotNull = assertNotNull;
             _assertCollectionNotEmpty = assertCollectionNotEmpty;
         }
-        
+
         public CurrencyUpdateDTO[] CreateFrom(IReadOnlyList<CurrencyUpdate> trades)
         {
             _assertNotNull.AssertObjectNotNull(trades);
             _assertCollectionNotEmpty.Handle(trades);
-            
+
             List<CurrencyUpdateDTO> result = new(trades.Count);
 
             foreach (CurrencyUpdate currencyTrade in trades)
@@ -31,7 +31,7 @@ namespace IdelPog.SimulationEngine.Currency.Factories
                     Amount = currencyTrade.Amount
                 });
             }
-            
+
             return result.ToArray();
         }
     }

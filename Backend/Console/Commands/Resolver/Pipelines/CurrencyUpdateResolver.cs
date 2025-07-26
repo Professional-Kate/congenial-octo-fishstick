@@ -1,15 +1,16 @@
-﻿using Console.Types;
+﻿using Console.Commands.Domains.Arguments;
 using IdelPog.Common.Enums;
 
 namespace Console.Commands.Resolver.Pipelines
 {
     public class CurrencyUpdateResolver : IArgumentResolverPipeline<CurrencyUpdateArguments>
     {
-        private readonly IArgumentResolver<ActionType>  _actionTypeResolver;
+        private readonly IArgumentResolver<ActionType> _actionTypeResolver;
         private readonly IArgumentResolver<int> _intResolver;
         private readonly IArgumentResolver<CurrencyType> _currencyTypeResolver;
 
-        public CurrencyUpdateResolver(IArgumentResolver<ActionType> actionTypeResolver, IArgumentResolver<int> intResolver, IArgumentResolver<CurrencyType> currencyTypeResolver)
+        public CurrencyUpdateResolver(IArgumentResolver<ActionType> actionTypeResolver, IArgumentResolver<int> intResolver,
+            IArgumentResolver<CurrencyType> currencyTypeResolver)
         {
             _actionTypeResolver = actionTypeResolver;
             _intResolver = intResolver;

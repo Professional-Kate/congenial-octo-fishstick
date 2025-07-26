@@ -12,23 +12,23 @@ namespace IdelPog.ContentHydrator.Service
         public IEnumerable<T> ConvertDirectory<T>(string directoryPath)
         {
             directoryAsserter.AssertDirectory(directoryPath);
-            
+
             string[] filePaths = Directory.EnumerateFiles(directoryPath, "*.json").ToArray();
-            
+
             directoryAsserter.AssertFiles(filePaths, directoryPath);
-            
+
             return EnumerateFiles<T>(filePaths);
         }
 
         private IEnumerable<T> EnumerateFiles<T>(string[] files)
         {
             IJsonConverter<T> converter = provider.CreateConverter<T>();
-            
+
             foreach (string file in files)
             {
                 using JsonDocument document = jsonReader.Read(file);
                 T convertedDTO = converter.Convert(document);
-                
+
                 yield return convertedDTO;
             }
         }

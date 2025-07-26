@@ -1,5 +1,5 @@
-﻿using IdelPog.Messaging.Listeners;
-using IdelPog.SimulationEngine.Skill;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Messaging.Listeners;
 
 namespace Integration.Tests.SkillCommands.Switch
 {

@@ -1,6 +1,7 @@
 ﻿using Console.Assertions;
 using Console.Commands;
 using Console.Commands.Domains;
+using Console.Commands.Domains.Arguments;
 using Console.Commands.Resolver;
 using Console.Commands.Resolver.Assertions;
 using Console.Commands.Resolver.Pipelines;
@@ -9,6 +10,7 @@ using Console.Runtime.Factory;
 using Console.Runtime.Input;
 using Console.Runtime.Systems;
 using Console.Types;
+using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
 using IdelPog.Common.Repository;
@@ -17,7 +19,6 @@ using IdelPog.ECS.Assertions;
 using IdelPog.ECS.Factory;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Orchestration;
-using IdelPog.SimulationEngine.Skill;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
@@ -41,8 +42,8 @@ namespace Console
             IAssertComponentDoesNotExist assertComponentDoesNotExist = new AssertComponentDoesNotExist(throwHandler);
             IAssertHasPermission assertHasPermission = new AssertHasPermission(throwHandler);
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
-            
-            DomainComponent permissionDomain = new() { AllowedDomain = Domain.PERMISSION};
+
+            DomainComponent permissionDomain = new() { AllowedDomain = Domain.PERMISSION };
             IEntity allowedDomainEntity = new AllowedDomainsEntity([permissionDomain]);
 
             IAssetRepository<Domain, ICommandDomainResolver> commandRepository = new AssetRepository<Domain, ICommandDomainResolver>(repositoryAsserter);
@@ -51,37 +52,55 @@ namespace Console
             IArgumentResolver<CurrencyType> currencyTypeResolver = new EnumResolver<CurrencyType>(assertCanParseEnum);
             IArgumentResolver<SkillID> skillIDResolver = new EnumResolver<SkillID>(assertCanParseEnum);
             IArgumentResolver<Domain> commandDomainResolver = new EnumResolver<Domain>(assertCanParseEnum);
+            IArgumentResolver<ControlAction> controlActionResolver = new EnumResolver<ControlAction>(assertCanParseEnum);
             IArgumentResolver<int> intResolver = new IntResolver(assertCanParseType);
-            
+
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
             IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdate>(bufferManager, assertNotNull, assertCollectionNotEmpty);
-                
-            IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline = new CurrencyUpdateResolver(actionTypeResolver, intResolver, currencyTypeResolver);
-            ICommandDomainResolver currencyDomainResolver = new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateFactory, currencyUpdateDispatcher, assertArgumentLength);
 
-            ISkillChangeFactory skillChangeFactory = new SkillChangeFactory(); 
+            IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline =
+                new CurrencyUpdateResolver(actionTypeResolver, intResolver, currencyTypeResolver);
+
+            ICommandDomainResolver currencyDomainResolver =
+                new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateFactory, currencyUpdateDispatcher, assertArgumentLength);
+
+            ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();
             IDispatchOne<SkillChange> skillChangeDispatcher = new ManagedDispatcher<SkillChange>(bufferManager, assertNotNull, assertCollectionNotEmpty);
-            
+
             IArgumentResolverPipeline<SkillChangeArguments> skillChangePipeline = new SkillChangeResolver(skillIDResolver);
-            ICommandDomainResolver skillDomainResolver = new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, skillChangeFactory, assertArgumentLength);
+            ICommandDomainResolver skillDomainResolver =
+                new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, skillChangeFactory, assertArgumentLength);
 
             IComponentStoreFactory componentStoreFactory = new ComponentStoreFactory();
             IDomainComponentFactory domainComponentFactory = new DomainComponentFactory();
-            
-            IPermissionService permissionService = new PermissionService(allowedDomainEntity, domainComponentFactory, componentStoreFactory, assertComponentFound, assertComponentDoesNotExist);
 
-            IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline = new PermissionUpdateResolver(actionTypeResolver,commandDomainResolver);
+            IPermissionService permissionService = new PermissionService(allowedDomainEntity, domainComponentFactory, componentStoreFactory, assertComponentFound,
+                assertComponentDoesNotExist);
+
+            IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline =
+                new PermissionUpdateResolver(actionTypeResolver, commandDomainResolver);
+
             ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(permissionUpdatePipeline, permissionService, assertArgumentLength);
-            
+
+            IScheduleControlFactory scheduleControlFactory = new ScheduleControlFactory();
+            IDispatchOne<ScheduleControl> scheduleControlDispatcher =
+                new ManagedDispatcher<ScheduleControl>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+
+            IArgumentResolverPipeline<ScheduleControlArguments> scheduleControlPipeline = new ScheduleControlResolver(controlActionResolver);
+            ICommandDomainResolver scheduleDomainResolver =
+                new ScheduleDomainResolver(scheduleControlPipeline, scheduleControlDispatcher, scheduleControlFactory, assertArgumentLength);
+
             commandRepository.Add(Domain.CURRENCY, currencyDomainResolver);
             commandRepository.Add(Domain.SKILL, skillDomainResolver);
             commandRepository.Add(Domain.PERMISSION, permissionDomainResolver);
-           
-            IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, assertComponentFound);            
-            ICommandResolverMediator commandResolverMediator = new CommandResolverMediator(commandRepository, domainPermissionChecker, assertFound, assertSpanNotEmpty, assertHasPermission);
+            commandRepository.Add(Domain.SCHEDULE, scheduleDomainResolver);
+
+            IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, assertComponentFound);
+            ICommandResolverMediator commandResolverMediator =
+                new CommandResolverMediator(commandRepository, domainPermissionChecker, assertFound, assertSpanNotEmpty, assertHasPermission);
 
             IArgumentResolver<Domain> commandArgumentResolver = new EnumResolver<Domain>(assertCanParseEnum);
-            
+
             return new InputHandler(commandResolverMediator, commandArgumentResolver, assertSpanNotEmpty);
         }
     }

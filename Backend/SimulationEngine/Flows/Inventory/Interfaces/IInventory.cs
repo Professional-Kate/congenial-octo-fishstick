@@ -20,7 +20,7 @@ namespace IdelPog.SimulationEngine.Inventory
         /// <exception cref="ArgumentException">Will be thrown if the passed or amount is 0 or less</exception>
         /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="Item"/> is not in the Inventory</exception>
         public void AddAmount(ItemID id, int amount);
-        
+
         /// <summary>
         /// Remove an amount from an <see cref="Item"/> using its linked <see cref="ItemID"/>
         /// </summary>
@@ -39,7 +39,7 @@ namespace IdelPog.SimulationEngine.Inventory
         /// <exception cref="ArgumentException">Will be thrown if the passed <see cref="Item"/>'s amount is 0 or less</exception>
         /// <exception cref="ArgumentException">Will be thrown if the passed <see cref="ItemID"/> already exists</exception>
         public void AddItem(Item item);
-        
+
         /// <summary>
         /// Uses the passed <see cref="ItemID"/> to see if an <see cref="Item"/> is within the Repository
         /// </summary>

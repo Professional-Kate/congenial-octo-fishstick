@@ -6,17 +6,17 @@
         <Nullable>enable</Nullable>
         <RootNamespace>IdelPog.SimulationEngine</RootNamespace>
     </PropertyGroup>
-	
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-			<_Parameter1>IdelPogTests</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Shared\Common\Common.csproj" />
-	  <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj" />
-	  <ProjectReference Include="..\ECS\ECS.csproj" />
-	</ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>IdelPogTests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Shared\Common\Common.csproj"/>
+        <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj"/>
+        <ProjectReference Include="..\ECS\ECS.csproj"/>
+    </ItemGroup>
 
 </Project>

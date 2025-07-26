@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Skill
+﻿namespace IdelPog.Common.Enums
 {
     public enum SkillID : byte
     {

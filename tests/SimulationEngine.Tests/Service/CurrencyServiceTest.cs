@@ -19,19 +19,19 @@ namespace IdelPogTests.Service
         {
             _currencyService = new CurrencyService(new AssertPositive(new ThrowHandler()), new AssertEnoughCurrency(new ThrowHandler()));
         }
-        
+
         [SetUp]
         public void Setup()
         {
             _goldCurrency = CurrencyFactory.CreateGold();
         }
-        
+
         [Test]
         public void Positive_AddAmount_AddsAmountToCurrency()
         {
-            Assert.DoesNotThrow(() =>_currencyService.AddAmount(_goldCurrency, Amount));
-            
-            Assert.That(_goldCurrency.Amount, Is.EqualTo(Amount)); 
+            Assert.DoesNotThrow(() => _currencyService.AddAmount(_goldCurrency, Amount));
+
+            Assert.That(_goldCurrency.Amount, Is.EqualTo(Amount));
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace IdelPogTests.Service
         {
             for (int i = 1; i <= 10; i++)
             {
-                Assert.DoesNotThrow(() =>_currencyService.AddAmount(_goldCurrency, Amount));
+                Assert.DoesNotThrow(() => _currencyService.AddAmount(_goldCurrency, Amount));
                 Assert.That(_goldCurrency.Amount, Is.EqualTo(Amount * i));
             }
         }
@@ -55,7 +55,7 @@ namespace IdelPogTests.Service
         public void Positive_RemoveAmount_RemovesAmountFromCurrency()
         {
             _goldCurrency.SetAmount(Amount);
-            
+
             Assert.DoesNotThrow(() => _currencyService.RemoveAmount(_goldCurrency, Amount));
 
             Assert.That(_goldCurrency.Amount, Is.EqualTo(0));

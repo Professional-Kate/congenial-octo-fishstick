@@ -21,9 +21,9 @@ namespace IdelPog.Common.Tests.Repository
         public void Positive_DefaultConstruction_CreatesRepositoryAsserter()
         {
             _repository = new AssetRepository<int, string>();
-            
+
             _repository.Add(1, "10");
-            
+
             Assert.Throws<DuplicateItemException>(() => _repository.Add(1, "10"));
             Assert.Throws<NotFoundException>(() => _repository.Get(2));
             Assert.Throws<NotFoundException>(() => _repository.Remove(2));
@@ -42,7 +42,7 @@ namespace IdelPog.Common.Tests.Repository
         public void Positive_Remove_RemovesIntPair()
         {
             _repository.Add(1, "1");
-            
+
             _repository.Remove(1);
             bool contains = _repository.Contains(1);
             Assert.That(contains, Is.False);
@@ -53,9 +53,9 @@ namespace IdelPog.Common.Tests.Repository
         {
             _repository.Add(1, "1");
             _repository.Add(2, "2");
-            
+
             _repository.Remove(1);
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(_repository.Contains(2), Is.True);
@@ -68,7 +68,7 @@ namespace IdelPog.Common.Tests.Repository
         {
             _repository.Add(1, "1");
             _repository.Add(2, "2");
-            
+
             string value = _repository.Get(1);
             Assert.That(value, Is.EqualTo("1"));
         }
@@ -77,7 +77,7 @@ namespace IdelPog.Common.Tests.Repository
         public void Positive_Contains_ReturnsTrue()
         {
             _repository.Add(1, "1");
-            
+
             bool contains = _repository.Contains(1);
             Assert.That(contains, Is.True);
         }
@@ -94,7 +94,7 @@ namespace IdelPog.Common.Tests.Repository
         {
             _asserterMock.Setup(library => library.AssertUnique(It.IsAny<object>(), It.IsAny<Func<bool>>()))
                 .Throws(new DuplicateItemException("1"));
-            
+
             Assert.Throws<DuplicateItemException>(() => _repository.Add(1, "1"));
         }
 
@@ -103,7 +103,7 @@ namespace IdelPog.Common.Tests.Repository
         {
             _asserterMock.Setup(library => library.AssertUnique(It.IsAny<object>(), It.IsAny<Func<bool>>()))
                 .Throws<ArgumentNullException>();
-            
+
             Assert.Throws<ArgumentNullException>(() => _repository.Add(1, null!));
         }
 
@@ -112,7 +112,7 @@ namespace IdelPog.Common.Tests.Repository
         {
             _asserterMock.Setup(library => library.AssertFound(It.IsAny<object>(), It.IsAny<Func<bool>>()))
                 .Throws(new KeyNotFoundException("1"));
-            
+
             Assert.Throws<KeyNotFoundException>(() => _repository.Remove(1));
         }
 
@@ -120,9 +120,9 @@ namespace IdelPog.Common.Tests.Repository
         public void Negative_Remove_GetAfterRemove_Throws()
         {
             _repository.Add(1, "1");
-            
+
             _repository.Remove(1);
-            
+
             Assert.Throws<KeyNotFoundException>(() => _repository.Get(1));
         }
 

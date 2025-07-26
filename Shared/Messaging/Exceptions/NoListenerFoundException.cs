@@ -7,7 +7,7 @@ namespace IdelPog.Messaging.Exceptions
     {
         private const string BASE_MESSAGE = ExceptionConstants.NO_LISTENER_FOUND_MESSAGE;
 
-        public NoListenerFoundException(IListener listener) 
+        public NoListenerFoundException(IListener listener)
             : base(string.Format(BASE_MESSAGE, listener, listener.GetType()))
         {
             // TODO 

@@ -10,9 +10,9 @@ namespace IdelPog.Messaging.Factory
         public Buffer<T> CreateBuffer<T>(BufferRequest request)
         {
             assertNotNull.AssertObjectNotNull(request);
-            
+
             Buffer<T> createdBuffer = new(bufferAsserter, assertBufferState, request);
-            
+
             return createdBuffer;
         }
     }

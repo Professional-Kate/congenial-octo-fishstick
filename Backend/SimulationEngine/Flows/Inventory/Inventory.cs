@@ -24,14 +24,15 @@ namespace IdelPog.SimulationEngine.Inventory
             _assertNonDuplicate = new AssertNonDuplicate(new ThrowHandler());
         }
 
-        public Inventory(IStateRepository<ItemID, Item> itemRepository, IAssertFound assertFound, IAssertPositive assertPositive, IAssertNonDuplicate assertNonDuplicate)
+        public Inventory(IStateRepository<ItemID, Item> itemRepository, IAssertFound assertFound, IAssertPositive assertPositive,
+            IAssertNonDuplicate assertNonDuplicate)
         {
             _itemRepository = itemRepository;
             _assertFound = assertFound;
             _assertPositive = assertPositive;
             _assertNonDuplicate = assertNonDuplicate;
         }
-        
+
         public void AddAmount(ItemID id, int amount)
         {
             AssertAmountIsPositive(amount);
@@ -50,8 +51,8 @@ namespace IdelPog.SimulationEngine.Inventory
 
             Item item = RepositoryGet(id);
             int itemAmount = item.Amount;
-            
-           AssertAmountIsPositive(itemAmount - amount);
+
+            AssertAmountIsPositive(itemAmount - amount);
             if (itemAmount - amount == 0)
             {
                 _itemRepository.Remove(item.ID);
@@ -98,7 +99,7 @@ namespace IdelPog.SimulationEngine.Inventory
         private void AssertItemExists(ItemID id)
         {
             _assertFound.AssertItemIsFound(id, () => Contains(id));
-        } 
+        }
 
         private Item RepositoryGet(ItemID id)
         {

@@ -4,8 +4,8 @@ namespace IdelPog.SimulationEngine.Inventory
 {
     public class InventoryUpdateListener(IInventoryController inventoryController) : IBufferListener<InventoryUpdate>
     {
-        public Type ListenerType { get; } =  typeof(InventoryUpdate);
-        
+        public Type ListenerType { get; } = typeof(InventoryUpdate);
+
         public void Handle(IReadOnlyList<InventoryUpdate> buffer)
         {
             inventoryController.UpdateInventory(buffer);

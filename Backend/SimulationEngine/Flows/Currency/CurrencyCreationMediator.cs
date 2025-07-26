@@ -13,13 +13,16 @@ namespace IdelPog.SimulationEngine.Currency
     {
         private readonly IStateRepository<CurrencyType, Currency> _currencyRepository;
         private readonly IDispatchMany<CurrencyCreationDTO> _currencyCreationDTODispatcher;
-        private readonly ICurrencyCreationDTOFactory  _currencyCreationDTOFactory;
+        private readonly ICurrencyCreationDTOFactory _currencyCreationDTOFactory;
         private readonly IAssertNotNull _assertNotNull;
         private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
         private readonly IAssertNonDuplicate _assertNonDuplicate;
         private readonly IAssertPositive _assertPositive;
 
-        public CurrencyCreationMediator(IStateRepository<CurrencyType, Currency> currencyRepository,  IDispatchMany<CurrencyCreationDTO> currencyCreationDTODispatcher, ICurrencyCreationDTOFactory currencyCreationDTOFactory, IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty,  IAssertNonDuplicate assertNonDuplicate, IAssertPositive assertPositive)
+        public CurrencyCreationMediator(IStateRepository<CurrencyType, Currency> currencyRepository,
+            IDispatchMany<CurrencyCreationDTO> currencyCreationDTODispatcher, ICurrencyCreationDTOFactory currencyCreationDTOFactory,
+            IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertNonDuplicate assertNonDuplicate,
+            IAssertPositive assertPositive)
         {
             _currencyRepository = currencyRepository;
             _currencyCreationDTODispatcher = currencyCreationDTODispatcher;
@@ -29,21 +32,21 @@ namespace IdelPog.SimulationEngine.Currency
             _assertNonDuplicate = assertNonDuplicate;
             _assertPositive = assertPositive;
         }
-        
+
         public void CreateCurrency(IReadOnlyList<CurrencyCreation> currencies)
         {
             _assertNotNull.AssertObjectNotNull(currencies);
             _assertCollectionNotEmpty.Handle(currencies);
 
-            Dictionary<CurrencyType, Currency> createdCurrencies =  new(currencies.Count);
+            Dictionary<CurrencyType, Currency> createdCurrencies = new(currencies.Count);
             foreach (CurrencyCreation currencyCreation in currencies)
             {
                 _assertPositive.AssertNumberIsPositive<CurrencyCreation>(currencyCreation.StartingAmount);
                 _assertNonDuplicate.AssertContains(currencyCreation, () => _currencyRepository.Contains(currencyCreation.CurrencyType));
-                
+
                 // TODO: currency factory
                 Currency currency = new(currencyCreation.CurrencyType, currencyCreation.StartingAmount);
-                
+
                 _assertNonDuplicate.AssertContains(currencyCreation, () => !createdCurrencies.TryAdd(currency.CurrencyType, currency));
             }
 
@@ -51,7 +54,7 @@ namespace IdelPog.SimulationEngine.Currency
             {
                 _currencyRepository.Add(keyValuePair.Key, keyValuePair.Value);
             }
-            
+
             _currencyCreationDTODispatcher.Dispatch(_currencyCreationDTOFactory.CreateFrom(currencies));
         }
     }

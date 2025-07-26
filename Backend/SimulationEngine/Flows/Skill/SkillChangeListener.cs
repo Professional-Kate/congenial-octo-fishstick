@@ -1,4 +1,5 @@
-﻿using IdelPog.Messaging.Listeners;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Messaging.Listeners;
 
 namespace IdelPog.SimulationEngine.Skill
 {

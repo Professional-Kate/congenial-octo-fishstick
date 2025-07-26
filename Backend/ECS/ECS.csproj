@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Shared\Common\Common.csproj" />
+        <ProjectReference Include="..\..\Shared\Common\Common.csproj"/>
     </ItemGroup>
 
 </Project>

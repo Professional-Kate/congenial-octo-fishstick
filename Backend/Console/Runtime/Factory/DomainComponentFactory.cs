@@ -7,7 +7,7 @@ namespace Console.Runtime.Factory
     {
         public DomainComponent CreateDomainComponent(Domain domain)
         {
-            return new  DomainComponent { AllowedDomain = domain };
+            return new DomainComponent { AllowedDomain = domain };
         }
     }
 }

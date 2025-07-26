@@ -4,6 +4,7 @@ using Console.Exceptions;
 using Console.Runtime.Input;
 using Console.Runtime.Input.Exceptions;
 using Console.Types;
+using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using Integration.Tests.Console.Permission;
 
@@ -13,7 +14,7 @@ namespace Integration.Tests.Console
     public class CurrencyDomainFlowTest : ManagedBuffer
     {
         private IInputHandler _inputHandler;
-        
+
         private CurrencyUpdateListener _currencyUpdateListener;
 
         [SetUp]
@@ -21,7 +22,7 @@ namespace Integration.Tests.Console
         {
             _inputHandler = ConsoleBootstrapper.Initialize(BufferManager);
             TestPermissionService.SendAddPermissionCall(_inputHandler, Domain.CURRENCY);
-            
+
             _currencyUpdateListener = new CurrencyUpdateListener();
             ManagedSubscribe(_currencyUpdateListener);
         }
@@ -53,7 +54,7 @@ namespace Integration.Tests.Console
         {
             return _currencyUpdateListener.Buffer[0];
         }
-        
+
         private static IEnumerable<TestCaseData> ValidCurrencyCases()
         {
             yield return new TestCaseData(
@@ -84,16 +85,20 @@ namespace Integration.Tests.Console
             AssertUpdateListener(true);
             AssertCurrencyUpdate(expectedUpdate, GetListenerCurrencyUpdate());
         }
-        
-        [TestCase(new[] {"UNKNOWN", "REMOVE", "1", "GOLD"}, typeof(FailedEnumParseException), TestName = "UnknownDomain_ThrowsFailedEnumParse")]
-        [TestCase(new[] {"currency", "remove", "100F", "GOLD"}, typeof(FailedTypeParseException), TestName = "InvalidAmount_Float__ThrowsFailedTypeParseException")]
-        [TestCase(new[] {"currency", "remove", "10+10", "GOLD"}, typeof(FailedTypeParseException), TestName = "InvalidAmount_Expression_ThrowsFailedTypeParseException")]
-        [TestCase(new[] {"CURRENCY", "ADD", "1232", "WOOD"}, typeof(FailedEnumParseException), TestName = "UnknownCurrency_ThrowsFailedEnumParse")]
-        [TestCase(new[] {"CURRENCY", "UPDATE", "42", "GOLD"}, typeof(FailedEnumParseException), TestName = "UnknownAction_ThrowsFailedEnumParse")]
-        [TestCase(new[] {"CURRENCY", "UPDATE"}, typeof(InvalidArgumentCountException), TestName = "MissingAmountAndCurrency_ThrowsInvalidArgumentCountException")]
-        [TestCase(new[] {"CURRENCY", "UPDATE", "5"}, typeof(InvalidArgumentCountException), TestName = "MissingCurrency_ThrowsInvalidArgumentCountException")]
-        [TestCase(new[] {"CURRENCY", "REMOVE", "23", "GOLD", "please"}, typeof(InvalidArgumentCountException), TestName = "AddedArgument_ThrowsInvalidArgumentCountException")]
-        [TestCase(new string[] {}, typeof(EmptySpanException), TestName = "NoArguments_ThrowsEmptySpanException")]
+
+        [TestCase(new[] { "UNKNOWN", "REMOVE", "1", "GOLD" }, typeof(FailedEnumParseException), TestName = "UnknownDomain_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "currency", "remove", "100F", "GOLD" }, typeof(FailedTypeParseException),
+            TestName = "InvalidAmount_Float__ThrowsFailedTypeParseException")]
+        [TestCase(new[] { "currency", "remove", "10+10", "GOLD" }, typeof(FailedTypeParseException),
+            TestName = "InvalidAmount_Expression_ThrowsFailedTypeParseException")]
+        [TestCase(new[] { "CURRENCY", "ADD", "1232", "WOOD" }, typeof(FailedEnumParseException), TestName = "UnknownCurrency_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "CURRENCY", "UPDATE", "42", "GOLD" }, typeof(FailedEnumParseException), TestName = "UnknownAction_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "CURRENCY", "UPDATE" }, typeof(InvalidArgumentCountException),
+            TestName = "MissingAmountAndCurrency_ThrowsInvalidArgumentCountException")]
+        [TestCase(new[] { "CURRENCY", "UPDATE", "5" }, typeof(InvalidArgumentCountException), TestName = "MissingCurrency_ThrowsInvalidArgumentCountException")]
+        [TestCase(new[] { "CURRENCY", "REMOVE", "23", "GOLD", "please" }, typeof(InvalidArgumentCountException),
+            TestName = "AddedArgument_ThrowsInvalidArgumentCountException")]
+        [TestCase(new string[] { }, typeof(EmptySpanException), TestName = "NoArguments_ThrowsEmptySpanException")]
         public void Negative_BadArguments_Throws(string[] arguments, Type exception)
         {
             Assert.Throws(exception, () => _inputHandler.Input(new ReadOnlySpan<string>(arguments)));
