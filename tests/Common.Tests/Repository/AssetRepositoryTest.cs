@@ -1,6 +1,7 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
-using Moq;
 
 namespace IdelPog.Common.Tests.Repository
 {
@@ -8,13 +9,13 @@ namespace IdelPog.Common.Tests.Repository
     public class AssetRepositoryTest
     {
         private IAssetRepository<int, string> _repository { get; set; }
-        private Mock<IRepositoryAsserter> _asserterMock { get; set; }
+        private IRepositoryAsserter _asserterMock { get; set; }
 
         [SetUp]
         public void Setup()
         {
-            _asserterMock = new Mock<IRepositoryAsserter>();
-            _repository = new AssetRepository<int, string>(_asserterMock.Object);
+            _asserterMock = new RepositoryAsserter(new FoundAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()), new UniqueAssertion(new  ThrowHandler()));
+            _repository = new AssetRepository<int, string>(_asserterMock);
         }
 
         [Test]
@@ -92,28 +93,20 @@ namespace IdelPog.Common.Tests.Repository
         [Test]
         public void Negative_Add_KeyAlreadyExists_Throws()
         {
-            _asserterMock.Setup(library => library.AssertUnique(It.IsAny<object>(), It.IsAny<Func<bool>>()))
-                .Throws(new DuplicateItemException("1"));
-
+            _repository.Add(1, "1");
             Assert.Throws<DuplicateItemException>(() => _repository.Add(1, "1"));
         }
 
         [Test]
         public void Negative_Add_KeyNull_Throws()
         {
-            _asserterMock.Setup(library => library.AssertUnique(It.IsAny<object>(), It.IsAny<Func<bool>>()))
-                .Throws<ArgumentNullException>();
-
             Assert.Throws<ArgumentNullException>(() => _repository.Add(1, null!));
         }
 
         [Test]
         public void Negative_Remove_NoKeyFound_Throws()
         {
-            _asserterMock.Setup(library => library.AssertFound(It.IsAny<object>(), It.IsAny<Func<bool>>()))
-                .Throws(new KeyNotFoundException("1"));
-
-            Assert.Throws<KeyNotFoundException>(() => _repository.Remove(1));
+            Assert.Throws<NotFoundException>(() => _repository.Remove(1));
         }
 
         [Test]
@@ -123,13 +116,13 @@ namespace IdelPog.Common.Tests.Repository
 
             _repository.Remove(1);
 
-            Assert.Throws<KeyNotFoundException>(() => _repository.Get(1));
+            Assert.Throws<NotFoundException>(() => _repository.Get(1));
         }
 
         [Test]
         public void Negative_Get_NoKeyFound_Throws()
         {
-            Assert.Throws<KeyNotFoundException>(() => _repository.Get(1));
+            Assert.Throws<NotFoundException>(() => _repository.Get(1));
         }
     }
 }

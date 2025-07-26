@@ -38,7 +38,7 @@ namespace IdelPog.Messaging.Tests.Assertions
         [TestCase(-1)]
         public void Negative_AssertSizeIsValid_InvalidSize_Throws(int amount)
         {
-            Assert.Throws<InvalidBufferStateException>(() => _bufferAssertion.AssertSizeIsValid(amount));
+            Assert.Throws<BufferSizeInvalidException>(() => _bufferAssertion.AssertSizeIsValid(amount));
         }
         
         [Test]
@@ -50,7 +50,7 @@ namespace IdelPog.Messaging.Tests.Assertions
         [Test]
         public void Negative_AssertCountEquals_CountDoesNotEqual_Throws()
         {
-            Assert.Throws<InvalidBufferStateException>(() => _bufferAssertion.AssertCountEquals(1, 2));
+            Assert.Throws<BufferSizeMismatchException>(() => _bufferAssertion.AssertCountEquals(1, 2));
         }
     }
 }

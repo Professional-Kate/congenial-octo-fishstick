@@ -24,7 +24,7 @@ namespace IdelPog.ECS.Tests.Assertions
         [Test]
         public void Negative_AssertNotNull_NullArray_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _assertion.AssertNotNull<int>(null!));
+            Assert.Throws<ComponentArrayNullException>(() => _assertion.AssertNotNull<int>(null!));
         }
 
         [Test]
@@ -48,13 +48,13 @@ namespace IdelPog.ECS.Tests.Assertions
         [Test]
         public void Negative_AssertHasElements_ArrayHasNoElements_Throws()
         {
-            Assert.DoesNotThrow(() => _assertion.AssertHasElements<int>([]));
+            Assert.Throws<ComponentArrayEmptyException>(() => _assertion.AssertHasElements<int>([]));
         }
         
         [Test]
         public void Negative_AssertHasElements_NullArray_Throws()
         {
-            Assert.DoesNotThrow(() => _assertion.AssertHasElements<int>(null!));
+            Assert.Throws<ComponentArrayNullException>(() => _assertion.AssertHasElements<int>(null!));
         }
     }
 }

@@ -30,7 +30,7 @@ namespace IdelPog.Messaging.Buffer
 
         public void MarkReady()
         {
-            _bufferAssertion.AssertStateEquals(BufferState.FILLED, State);
+            _bufferAssertion.AssertStateEquals(State, BufferState.FILLED);
             State = BufferState.READY;
 
             Ready?.Invoke(this);
@@ -39,7 +39,7 @@ namespace IdelPog.Messaging.Buffer
         public void Assign(IReadOnlyList<T> source)
         {
             _objectNullAssertion.AssertNotNull(source, nameof(source));
-            _bufferAssertion.AssertStateEquals(BufferState.CREATED, State);
+            _bufferAssertion.AssertStateEquals(State, BufferState.CREATED);
             _bufferAssertion.AssertCountEquals(source.Count, Data.Count);
 
             CopyIntoInternalArray(source);

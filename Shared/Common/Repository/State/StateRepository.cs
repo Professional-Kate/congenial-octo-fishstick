@@ -23,7 +23,7 @@ namespace IdelPog.Common.Repository
 
         public void Add(TID key, T value)
         {
-            _repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertUnique(value, _repository.ContainsKey(key));
 
             _repository.Add(key, value);
         }
@@ -46,6 +46,7 @@ namespace IdelPog.Common.Repository
 
         public void Update(TID key, T value)
         {
+            _repositoryAsserter.AssertNotNull(value);
             AssertKeyExists(key);
 
             _repository[key] = value;
@@ -64,7 +65,7 @@ namespace IdelPog.Common.Repository
         /// <param name="key">The key you want to check if it's in the Repository</param>
         private void AssertKeyExists(TID key)
         {
-            _repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertFound(key, _repository.ContainsKey(key));
         }
     }
 }

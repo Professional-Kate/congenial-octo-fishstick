@@ -151,7 +151,7 @@ namespace IdelPogTests.Orchestration
             _stateRepositoryMock.VerifyNoOtherCalls();
             _currencyCreationDispatcherMock.VerifyNoOtherCalls();
 
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyCreation[])));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyCreation)));
         }
     }
 }

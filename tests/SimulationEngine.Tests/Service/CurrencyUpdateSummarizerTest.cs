@@ -173,7 +173,7 @@ namespace IdelPogTests.Service
             _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()),
                 Times.Never);
 
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
 
         [Test]

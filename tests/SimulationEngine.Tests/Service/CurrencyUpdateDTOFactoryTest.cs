@@ -65,7 +65,7 @@ namespace IdelPogTests.Service
         {
             EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateDTOFactory.CreateFrom([]));
 
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
 
         [Test]

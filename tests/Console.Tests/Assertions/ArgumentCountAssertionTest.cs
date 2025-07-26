@@ -1,4 +1,5 @@
 ﻿using Console.Assertions;
+using Console.Commands.Resolver.Exceptions;
 using IdelPog.Validation.Assertions.Handlers;
 
 namespace Console.Tests.Assertions
@@ -23,7 +24,7 @@ namespace Console.Tests.Assertions
         [Test]
         public void Negative_AssertCount_DifferentCount_Throws()
         {
-            Assert.DoesNotThrow(() => _assertion.AssertCount(1, 2));
+            Assert.Throws<InvalidArgumentCountException>(() => _assertion.AssertCount(1, 2));
         }
     }
 }

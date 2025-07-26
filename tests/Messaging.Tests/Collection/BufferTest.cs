@@ -22,7 +22,7 @@ namespace IdelPog.Messaging.Tests.Collection
         {
             _readyCalled = false;
 
-            _bufferAssertion = new BufferAssertion(new Mock<IHandler>().Object);
+            _bufferAssertion = new BufferAssertion(new ThrowHandler());
             _buffer = new Buffer<int>(_bufferAssertion, new ObjectNullAssertion(new ThrowHandler()), new BufferRequest(3));
 
             if (_buffer is IInternalBuffer internalBuffer)
@@ -75,6 +75,7 @@ namespace IdelPog.Messaging.Tests.Collection
         [Test]
         public void Positive_MarkReady_CallsEvent()
         {
+            _buffer.Assign(_data);
             _buffer.MarkReady();
 
             Assert.That(_readyCalled, Is.True);

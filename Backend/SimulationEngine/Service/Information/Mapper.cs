@@ -25,7 +25,7 @@ namespace IdelPog.SimulationEngine.Service
         public Structures.Types.Information GetInformation(T key)
         {
             bool contains = _information.TryGetValue(key, out Structures.Types.Information information);
-            _foundAssertion.AssertFound(key,contains == false);
+            _foundAssertion.AssertFound(key, contains);
 
             return information;
         }

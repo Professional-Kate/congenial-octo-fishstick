@@ -25,37 +25,37 @@ namespace IdelPog.Common.Tests
         [Test]
         public void Positive_AssertUnique_PassedFalse()
         {
-            Assert.DoesNotThrow(() => _repositoryAsserter.AssertUnique(1, () => false));
+            Assert.DoesNotThrow(() => _repositoryAsserter.AssertUnique(1, false));
         }
 
         [Test]
         public void Negative_AssertUnique_PassedTrue_Throws()
         {
-            Assert.Throws<DuplicateItemException>(() => _repositoryAsserter.AssertUnique(1, () => true));
+            Assert.Throws<DuplicateItemException>(() => _repositoryAsserter.AssertUnique(1, true));
         }
 
         [Test]
         public void Negative_AssertUnique_PassedNull_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _repositoryAsserter.AssertUnique(null, () => false));
+            Assert.Throws<ArgumentNullException>(() => _repositoryAsserter.AssertUnique(null!, false));
         }
 
         [Test]
         public void Positive_AssertFound_PassedTrue()
         {
-            Assert.DoesNotThrow(() => _repositoryAsserter.AssertFound(1, () => true));
+            Assert.DoesNotThrow(() => _repositoryAsserter.AssertFound(1, true));
         }
 
         [Test]
         public void Negative_AssertFound_PassedFalse_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _repositoryAsserter.AssertFound(1, () => false));
+            Assert.Throws<NotFoundException>(() => _repositoryAsserter.AssertFound(1, false));
         }
 
         [Test]
         public void Negative_AssertFound_PassedNull_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _repositoryAsserter.AssertFound(null, () => true));
+            Assert.Throws<ArgumentNullException>(() => _repositoryAsserter.AssertFound(null, true));
         }
     }
 }

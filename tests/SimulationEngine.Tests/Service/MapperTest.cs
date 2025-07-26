@@ -1,6 +1,7 @@
 ﻿using IdelPog.SimulationEngine.Service;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
 using Moq;
 
@@ -10,8 +11,8 @@ namespace IdelPogTests.Service
     public class MapperTest
     {
         private Mapper<int> _informationMapper { get; set; }
-        private Mock<IFoundAssertion> _assertFoundMock { get; set; }
-        private Mock<IUniqueAssertion> _assertUniqueMock { get; set; }
+        private IFoundAssertion _assertFound { get; set; }
+        private IUniqueAssertion _assertUnique { get; set; }
 
         private readonly Information _informationOne = new("TEST", "TESTING");
         private readonly Information _informationTwo = new("HELLO", "WORLD");
@@ -19,10 +20,10 @@ namespace IdelPogTests.Service
         [SetUp]
         public void Setup()
         {
-            _assertFoundMock = new Mock<IFoundAssertion>();
-            _assertUniqueMock = new Mock<IUniqueAssertion>();
+            _assertFound = new FoundAssertion(new ThrowHandler());
+            _assertUnique = new UniqueAssertion(new ThrowHandler());
 
-            _informationMapper = new Mapper<int>(_assertFoundMock.Object, _assertUniqueMock.Object);
+            _informationMapper = new Mapper<int>(_assertFound, _assertUnique);
             _informationMapper.AddInformation(1, _informationOne);
             _informationMapper.AddInformation(2, _informationTwo);
         }
@@ -41,9 +42,6 @@ namespace IdelPogTests.Service
         public void Negative_GetInformation_NotFound_Throws()
         {
             const int badId = -1;
-
-            _assertFoundMock.Setup(library => library.AssertFound(badId, false))
-                .Throws(new NotFoundException(badId));
 
             Assert.Throws<NotFoundException>(() => _informationMapper.GetInformation(badId));
         }
@@ -64,9 +62,6 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_AddInformation_KeyAlreadyExists_Throws()
         {
-            _assertUniqueMock.Setup(library => library.AssertUnique(1, true))
-                .Throws(new DuplicateItemException(1));
-
             Assert.Throws<DuplicateItemException>(() => _informationMapper.AddInformation(1, _informationOne));
         }
     }
