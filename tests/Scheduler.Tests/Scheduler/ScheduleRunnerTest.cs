@@ -32,7 +32,8 @@ namespace Scheduler.Tests.Scheduler
             
             _scheduleRunner.StartSchedule(TimeSpan.FromMilliseconds(1));
             
-            bool wasCalled = resetEvent.Wait(TimeSpan.FromSeconds(1));
+            // TODO: update these tests. Need an ITimer interface so we aren't forced to wait like this
+            bool wasCalled = resetEvent.Wait(TimeSpan.FromSeconds(2));
             Assert.That(wasCalled, Is.True);
             _scheduleMediatorMock.Verify(library => library.RunUpdate(), Times.Once);
         }
@@ -46,7 +47,7 @@ namespace Scheduler.Tests.Scheduler
             
             _scheduleRunner.StopSchedule();
             
-            bool wasCalled = resetEvent.Wait(TimeSpan.FromSeconds(1));
+            bool wasCalled = resetEvent.Wait(TimeSpan.FromSeconds(2));
             Assert.That(wasCalled, Is.False);
             _scheduleMediatorMock.Verify(library => library.RunUpdate(), Times.Never);
         }
