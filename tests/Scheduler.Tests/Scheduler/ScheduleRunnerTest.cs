@@ -8,48 +8,37 @@ namespace Scheduler.Tests.Scheduler
     public class ScheduleRunnerTest
     {
         private IScheduleRunner _scheduleRunner;
-        private Mock<IScheduleMediator>  _scheduleMediatorMock;
+        private Mock<IManagedTimer> _managedTimerMock;
 
-        [OneTimeSetUp]
-        public void OneTimeSetup()
+        [SetUp]
+        public void Setup()
         {
-            _scheduleMediatorMock = new Mock<IScheduleMediator>();
-            _scheduleRunner = new ScheduleRunner(_scheduleMediatorMock.Object);
+            _managedTimerMock = new Mock<IManagedTimer>();
+            _scheduleRunner = new ScheduleRunner(_managedTimerMock.Object);
         }
 
         [SetUp]
         public void SetUp()
         {
-            _scheduleMediatorMock.Reset();
+            _managedTimerMock.Reset();
         }
 
         [Test]
-        public void Positive_StartSchedule_InvokesMediatorAfterTimeSpan()
+        public void Positive_StartSchedule_InvokesTimerStart()
         {
-            ManualResetEventSlim resetEvent = new(false);
-            
-            _scheduleMediatorMock.Setup(library => library.RunUpdate()).Callback(() => resetEvent.Set());
-            
             _scheduleRunner.StartSchedule(TimeSpan.FromMilliseconds(1));
             
-            // TODO: update these tests. Need an ITimer interface so we aren't forced to wait like this
-            bool wasCalled = resetEvent.Wait(TimeSpan.FromSeconds(2));
-            Assert.That(wasCalled, Is.True);
-            _scheduleMediatorMock.Verify(library => library.RunUpdate(), Times.Once);
+            _managedTimerMock.Verify(library => library.Start(TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(1)),  Times.Once);
+            _managedTimerMock.Verify(library => library.Stop(),  Times.Never);
         }
 
         [Test]
-        public void Positive_StopSchedule_DoesNotInvokeMediatorAfterTimeSpan()
+        public void Positive_StopSchedule_InvokesTimerStop()
         {
-            ManualResetEventSlim resetEvent = new(false);
-            
-            _scheduleMediatorMock.Setup(library => library.RunUpdate()).Callback(() => resetEvent.Set());
-            
             _scheduleRunner.StopSchedule();
             
-            bool wasCalled = resetEvent.Wait(TimeSpan.FromSeconds(2));
-            Assert.That(wasCalled, Is.False);
-            _scheduleMediatorMock.Verify(library => library.RunUpdate(), Times.Never);
+            _managedTimerMock.Verify(library => library.Start(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>()),  Times.Never);
+            _managedTimerMock.Verify(library => library.Stop(),  Times.Once);
         }
     }
 }

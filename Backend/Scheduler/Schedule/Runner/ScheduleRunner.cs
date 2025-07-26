@@ -1,24 +1,22 @@
-﻿using Scheduler.Mediator;
-
-namespace Scheduler.Runner
+﻿namespace Scheduler.Runner
 {
     public class ScheduleRunner : IScheduleRunner
     {
-        private readonly Timer _timer;
+        private readonly IManagedTimer _managedTimer;
 
-        public ScheduleRunner(IScheduleMediator scheduleMediator)
+        public ScheduleRunner(IManagedTimer managedTimer)
         {
-            _timer = new Timer(_ => scheduleMediator.RunUpdate(), null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+            _managedTimer = managedTimer;
         }
 
         public void StartSchedule(TimeSpan interval)
         {
-            _timer.Change(interval, interval);
+            _managedTimer.Start(interval, interval);
         }
 
         public void StopSchedule()
         {
-            _timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+            _managedTimer.Stop();
         }
     }
 }
