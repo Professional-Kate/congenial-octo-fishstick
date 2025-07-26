@@ -1,4 +1,4 @@
-﻿namespace Scheduler.Mediator
+﻿namespace Scheduler.Core.Mediator
 {
     public interface IScheduleMediator
     {

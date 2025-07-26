@@ -1,4 +1,4 @@
-﻿namespace Scheduler.Runner
+﻿namespace Scheduler.Core.Runner
 {
     public class ScheduleRunner : IScheduleRunner
     {

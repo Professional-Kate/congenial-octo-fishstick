@@ -1,4 +1,4 @@
-﻿namespace Scheduler.Controller
+﻿namespace Scheduler.Core.Controller
 {
     public interface IScheduleController
     {

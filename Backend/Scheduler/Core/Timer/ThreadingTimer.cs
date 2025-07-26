@@ -1,4 +1,4 @@
-﻿namespace Scheduler
+﻿namespace Scheduler.Core
 {
     public sealed class ThreadingTimer : IManagedTimer
     {

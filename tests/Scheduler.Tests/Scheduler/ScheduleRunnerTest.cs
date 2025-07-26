@@ -1,6 +1,6 @@
 ﻿using Moq;
-using Scheduler.Mediator;
-using Scheduler.Runner;
+using Scheduler.Core;
+using Scheduler.Core.Runner;
 
 namespace Scheduler.Tests.Scheduler
 {

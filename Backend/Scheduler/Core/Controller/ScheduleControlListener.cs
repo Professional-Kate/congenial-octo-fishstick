@@ -2,7 +2,7 @@
 using IdelPog.Common.Enums;
 using IdelPog.Messaging.Listeners;
 
-namespace Scheduler.Controller
+namespace Scheduler.Core.Controller
 {
     public class ScheduleControlListener : ISingleListener<ScheduleControl>   
     {

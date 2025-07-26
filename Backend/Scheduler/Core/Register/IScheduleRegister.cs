@@ -1,6 +1,6 @@
 ﻿using IdelPog.Common.Structures;
 
-namespace Scheduler.Register
+namespace Scheduler.Core.Register
 {
     public interface IScheduleRegister
     {

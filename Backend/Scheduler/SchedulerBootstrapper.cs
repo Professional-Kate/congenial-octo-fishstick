@@ -7,11 +7,12 @@ using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
-using Scheduler.Controller;
+using Scheduler.Core;
+using Scheduler.Core.Controller;
+using Scheduler.Core.Mediator;
+using Scheduler.Core.Register;
+using Scheduler.Core.Runner;
 using Scheduler.Factory;
-using Scheduler.Mediator;
-using Scheduler.Register;
-using Scheduler.Runner;
 using Scheduler.Types;
 
 namespace Scheduler

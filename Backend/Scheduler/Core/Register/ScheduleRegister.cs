@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Structures;
 using IdelPog.Validation.Assertions;
 
-namespace Scheduler.Register
+namespace Scheduler.Core.Register
 {
     public sealed class ScheduleRegister : IScheduleRegister, IScheduleReader
     {

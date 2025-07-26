@@ -4,9 +4,9 @@ using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
 using Moq;
+using Scheduler.Core.Mediator;
+using Scheduler.Core.Register;
 using Scheduler.Factory;
-using Scheduler.Mediator;
-using Scheduler.Register;
 using Scheduler.Types;
 
 namespace Scheduler.Tests.Scheduler

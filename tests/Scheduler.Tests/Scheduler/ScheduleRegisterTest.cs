@@ -2,7 +2,7 @@
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
-using Scheduler.Register;
+using Scheduler.Core.Register;
 
 namespace Scheduler.Tests.Scheduler
 {

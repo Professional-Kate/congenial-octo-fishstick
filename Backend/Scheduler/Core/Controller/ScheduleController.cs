@@ -1,6 +1,6 @@
-﻿using Scheduler.Runner;
+﻿using Scheduler.Core.Runner;
 
-namespace Scheduler.Controller
+namespace Scheduler.Core.Controller
 {
     public class ScheduleController : IScheduleController
     {

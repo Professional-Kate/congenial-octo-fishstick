@@ -1,11 +1,11 @@
 ﻿using IdelPog.Common.Structures;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Validation.Assertions;
+using Scheduler.Core.Register;
 using Scheduler.Factory;
-using Scheduler.Register;
 using Scheduler.Types;
 
-namespace Scheduler.Mediator
+namespace Scheduler.Core.Mediator
 {
     public class ScheduleMediator : IScheduleMediator
     {
