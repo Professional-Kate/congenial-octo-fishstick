@@ -2,7 +2,6 @@
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
-using Moq;
 
 namespace IdelPog.Common.Tests.Repository
 {

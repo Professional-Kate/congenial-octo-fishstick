@@ -16,7 +16,7 @@ namespace IdelPog.SimulationEngine.Currency.Assertions
             {
                 if (number < 0)
                 {
-                    throw new NegativeNumberException();
+                    throw new NegativeNumberException(number);
                 }
             });
         }
@@ -29,7 +29,7 @@ namespace IdelPog.SimulationEngine.Currency.Assertions
                 {
                     if (number < 0)
                     {
-                        throw new NegativeNumberException();
+                        throw new NegativeNumberException(number);
                     }
                 }
             });

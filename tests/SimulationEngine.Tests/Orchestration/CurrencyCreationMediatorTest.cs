@@ -119,7 +119,8 @@ namespace IdelPogTests.Orchestration
         {
             CurrencyCreation[] creation = [new() { CurrencyType = CurrencyType.GOLD, StartingAmount = -1 }];
 
-            Assert.Throws<NegativeNumberException>(() => _currencyCreationMediator.CreateCurrency(creation));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _currencyCreationMediator.CreateCurrency(creation));
+            Assert.That(exception.Number, Is.EqualTo(-1));
 
             _stateRepositoryMock.VerifyNoOtherCalls();
             _currencyCreationDispatcherMock.VerifyNoOtherCalls();

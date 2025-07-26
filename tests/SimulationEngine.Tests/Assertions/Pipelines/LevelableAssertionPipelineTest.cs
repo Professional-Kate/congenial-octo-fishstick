@@ -54,7 +54,8 @@ namespace IdelPogTests.Assertions.Pipelines
         {
             ILevelable levelable = new Levelable(0, 0, 0, -1);
 
-            Assert.Throws<NegativeNumberException>(() => _levelableAssertionPipeline.AssertLevelable(levelable));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _levelableAssertionPipeline.AssertLevelable(levelable));
+            Assert.That(exception.Number, Is.EqualTo(-1));
         }
     }
 }

@@ -187,10 +187,12 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_GetSummary_TradeContainsNegativeNumber_Throws()
         {
-            Assert.Throws<NegativeNumberException>(() =>
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() =>
                 _currencyUpdateSummarizer.GetSummary([
                     _addGoldUpdate, new CurrencyUpdate { Action = ActionType.ADD, Amount = -10, CurrencyType = CurrencyType.GOLD }
                 ]));
+            
+            Assert.That(exception.Number, Is.EqualTo(-10));
 
             _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()),
                 Times.Never);

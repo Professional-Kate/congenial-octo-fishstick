@@ -3,8 +3,6 @@ using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Exceptions;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Assertions.Handlers.Interfaces;
-using Moq;
 
 namespace IdelPog.Messaging.Tests.Collection
 {

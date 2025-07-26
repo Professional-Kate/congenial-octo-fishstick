@@ -3,7 +3,6 @@ using IdelPog.SimulationEngine.Structures.Types;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
-using Moq;
 
 namespace IdelPogTests.Service
 {

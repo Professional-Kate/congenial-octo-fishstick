@@ -48,7 +48,8 @@ namespace IdelPogTests.Service
         [TestCase(-10)]
         public void Negative_AddAmount_NegativeAmount_Throws(int amount)
         {
-            Assert.Throws<NegativeNumberException>(() => _currencyService.AddAmount(_goldCurrency, amount));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _currencyService.AddAmount(_goldCurrency, amount));
+            Assert.That(exception.Number, Is.EqualTo(amount));
         }
 
         [Test]
@@ -65,7 +66,8 @@ namespace IdelPogTests.Service
         [TestCase(-10)]
         public void Negative_RemoveAmount_NegativeAmount_Throws(int amount)
         {
-            Assert.Throws<NegativeNumberException>(() => _currencyService.RemoveAmount(_goldCurrency, amount));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _currencyService.RemoveAmount(_goldCurrency, amount));
+            Assert.That(exception.Number, Is.EqualTo(amount));
         }
     }
 }

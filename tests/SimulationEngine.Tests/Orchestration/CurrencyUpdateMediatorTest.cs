@@ -190,7 +190,8 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_NegativeAmount_Throws()
         {
-            Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = -10 }]));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = -10 }]));
+            Assert.That(exception.Number, Is.EqualTo(-10));
         }
 
         [Test]

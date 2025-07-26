@@ -96,7 +96,8 @@ namespace IdelPogTests
         [TestCase(-10)]
         public void Negative_AddAmount_NegativeAmount_Throws(int amount)
         {
-            Assert.Throws<NegativeNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
+            NegativeNumberException negativeNumberException = Assert.Throws<NegativeNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
+            Assert.That(negativeNumberException.Number, Is.EqualTo(amount));
         }
 
 
@@ -134,14 +135,16 @@ namespace IdelPogTests
         [Test]
         public void Negative_RemoveAmount_AmountUnderZero_Throws()
         {
-            Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
+            Assert.That(exception.Number, Is.EqualTo(-10));
         }
 
         [TestCase(-1)]
         [TestCase(-10)]
         public void Negative_RemoveAmount_NegativeAmount_Throws(int amount)
         {
-            Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
+            Assert.That(exception.Number, Is.EqualTo(amount));
         }
 
         [Test]
@@ -185,7 +188,8 @@ namespace IdelPogTests
         {
             Item itemWithBadAmount = new(ItemID.WILLOW_WOOD, new Information("", ""), 1, amount);
 
-            Assert.Throws<NegativeNumberException>(() => _inventory.AddItem(itemWithBadAmount));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.AddItem(itemWithBadAmount));
+            Assert.That(exception.Number, Is.EqualTo(amount));
         }
 
         [Test]
