@@ -24,7 +24,7 @@ namespace IdelPog.Messaging.Tests.Orchestration
             _bufferDispatcherMock = new Mock<IBufferDispatcher>();
 
             _bufferRequest = new BufferRequest(3);
-            _bufferManager = new BufferManager(_bufferFactoryMock.Object, _bufferDispatcherMock.Object, new AssertNotNull(new ThrowHandler()));
+            _bufferManager = new BufferManager(_bufferFactoryMock.Object, _bufferDispatcherMock.Object, new ObjectNullAssertion(new ThrowHandler()));
         }
 
         [SetUp]
@@ -39,7 +39,7 @@ namespace IdelPog.Messaging.Tests.Orchestration
         private void SetupMock()
         {
             _bufferFactoryMock.Setup(library => library.CreateBuffer<int>(_bufferRequest))
-                .Returns(new Buffer<int>(new BufferAssertion(new ThrowHandler()), new AssertNotNull(new ThrowHandler()), _bufferRequest));
+                .Returns(new Buffer<int>(new BufferAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()), _bufferRequest));
         }
 
         [Test]

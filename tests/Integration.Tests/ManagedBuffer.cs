@@ -13,15 +13,15 @@ namespace Integration.Tests
         protected IBufferMessenger BufferMessenger { get; private set; }
         protected IBufferManager BufferManager { get; private set; }
         private IBufferFactory _bufferFactory;
-        private IAssertNotNull _assertNotNull;
+        private IObjectNullAssertion _objectNullAssertion;
 
         [OneTimeSetUp]
         protected void BaseOneTimeSetUp()
         {
-            _assertNotNull = new AssertNotNull(new ThrowHandler());
+            _objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
             IBufferAssertion bufferAssertion = new BufferAssertion(new ThrowHandler());
 
-            _bufferFactory = new BufferFactory(bufferAssertion, _assertNotNull);
+            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion);
         }
 
         [SetUp]
@@ -29,10 +29,10 @@ namespace Integration.Tests
         {
             IListenerAssertion listenerAssertion = new ListenerAssertion(new ThrowHandler());
 
-            BufferMessenger bufferMessenger = new(_assertNotNull, listenerAssertion);
+            BufferMessenger bufferMessenger = new(_objectNullAssertion, listenerAssertion);
             BufferMessenger = bufferMessenger;
             IBufferDispatcher bufferDispatcher = bufferMessenger;
-            BufferManager = new BufferManager(_bufferFactory, bufferDispatcher, _assertNotNull);
+            BufferManager = new BufferManager(_bufferFactory, bufferDispatcher, _objectNullAssertion);
         }
 
         protected void ManagedSubscribe(IListener listener)

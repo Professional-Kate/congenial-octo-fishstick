@@ -4,13 +4,13 @@ using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Messaging.Factory
 {
-    public class BufferFactory(IBufferAssertion bufferAssertion, IAssertNotNull assertNotNull) : IBufferFactory
+    public class BufferFactory(IBufferAssertion bufferAssertion, IObjectNullAssertion objectNullAssertion) : IBufferFactory
     {
         public Buffer<T> CreateBuffer<T>(BufferRequest request)
         {
-            assertNotNull.AssertObjectNotNull(request);
+            objectNullAssertion.AssertNotNull(request, nameof(request));
 
-            Buffer<T> createdBuffer = new(bufferAssertion, assertNotNull, request);
+            Buffer<T> createdBuffer = new(bufferAssertion, objectNullAssertion, request);
 
             return createdBuffer;
         }

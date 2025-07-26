@@ -19,7 +19,7 @@ namespace IdelPog.Messaging.Tests.Factory
         {
             _bufferAssertion = new BufferAssertion(new ThrowHandler());
 
-            _bufferFactory = new BufferFactory(_bufferAssertion, new AssertNotNull(new ThrowHandler()));
+            _bufferFactory = new BufferFactory(_bufferAssertion, new ObjectNullAssertion(new ThrowHandler()));
             _bufferRequest = new BufferRequest(5);
         }
 

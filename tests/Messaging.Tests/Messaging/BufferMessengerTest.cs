@@ -33,7 +33,7 @@ namespace IdelPog.Messaging.Tests.Messaging
         private void Setup()
         {
             _handlerMock = new Mock<IHandler>();
-            _bufferMessenger = new BufferMessenger(new AssertNotNull(_handlerMock.Object), new ListenerAssertion(_handlerMock.Object));
+            _bufferMessenger = new BufferMessenger(new ObjectNullAssertion(_handlerMock.Object), new ListenerAssertion(_handlerMock.Object));
 
             _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
                 .Throws<ArgumentNullException>();

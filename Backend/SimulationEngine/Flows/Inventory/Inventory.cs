@@ -12,25 +12,25 @@ namespace IdelPog.SimulationEngine.Inventory
     public sealed class Inventory : IInventory
     {
         private readonly IStateRepository<ItemID, Item> _itemRepository;
-        private readonly IAssertFound _assertFound;
+        private readonly IFoundAssertion _foundAssertion;
         private readonly INumberAssertion _numberAssertion;
-        private readonly IAssertNonDuplicate _assertNonDuplicate;
+        private readonly IUniqueAssertion _uniqueAssertion;
 
         public Inventory()
         {
             _itemRepository = new StateRepository<ItemID, Item>();
-            _assertFound = new AssertFound(new ThrowHandler());
+            _foundAssertion = new FoundAssertion(new ThrowHandler());
             _numberAssertion = new NumberAssertion(new ThrowHandler());
-            _assertNonDuplicate = new AssertNonDuplicate(new ThrowHandler());
+            _uniqueAssertion = new UniqueAssertion(new ThrowHandler());
         }
 
-        public Inventory(IStateRepository<ItemID, Item> itemRepository, IAssertFound assertFound, INumberAssertion numberAssertion,
-            IAssertNonDuplicate assertNonDuplicate)
+        public Inventory(IStateRepository<ItemID, Item> itemRepository, IFoundAssertion foundAssertion, INumberAssertion numberAssertion,
+            IUniqueAssertion uniqueAssertion)
         {
             _itemRepository = itemRepository;
-            _assertFound = assertFound;
+            _foundAssertion = foundAssertion;
             _numberAssertion = numberAssertion;
-            _assertNonDuplicate = assertNonDuplicate;
+            _uniqueAssertion = uniqueAssertion;
         }
 
         public void AddAmount(ItemID id, int amount)
@@ -67,7 +67,7 @@ namespace IdelPog.SimulationEngine.Inventory
         public void AddItem(Item item)
         {
             AssertAmountIsPositive(item.Amount);
-            _assertNonDuplicate.AssertContains(item, () => Contains(item.ID));
+            _uniqueAssertion.AssertUnique(item.ID, Contains(item.ID));
 
             _itemRepository.Add(item.ID, item);
         }
@@ -98,7 +98,7 @@ namespace IdelPog.SimulationEngine.Inventory
         /// <param name="id">The id you want to check</param>
         private void AssertItemExists(ItemID id)
         {
-            _assertFound.AssertItemIsFound(id, () => Contains(id));
+            _foundAssertion.AssertFound(id,Contains(id));
         }
 
         private Item RepositoryGet(ItemID id)

@@ -1,5 +1,4 @@
 ﻿using IdelPog.Messaging.Assertions;
-using IdelPog.Messaging.Assertions.Pipelines;
 using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Exceptions;
 using IdelPog.Validation.Assertions;
@@ -14,7 +13,6 @@ namespace IdelPog.Messaging.Tests.Collection
     {
         private Buffer<int> _buffer { get; set; }
         private int[] _data = [];
-        private Mock<IBufferPipelineAssertion> _bufferAsserterPipelineMock { get; set; }
         private IBufferAssertion _bufferAssertion { get; set; }
 
         private bool _readyCalled;
@@ -25,8 +23,7 @@ namespace IdelPog.Messaging.Tests.Collection
             _readyCalled = false;
 
             _bufferAssertion = new BufferAssertion(new Mock<IHandler>().Object);
-            _bufferAsserterPipelineMock = new Mock<IBufferPipelineAssertion>();
-            _buffer = new Buffer<int>(_bufferAssertion, new AssertNotNull(new ThrowHandler()), new BufferRequest(3));
+            _buffer = new Buffer<int>(_bufferAssertion, new ObjectNullAssertion(new ThrowHandler()), new BufferRequest(3));
 
             if (_buffer is IInternalBuffer internalBuffer)
             {
@@ -45,7 +42,7 @@ namespace IdelPog.Messaging.Tests.Collection
         [Test]
         public void Positive_OnConstruct_SetsState()
         {
-            Buffer<int> createdBuffer = new(_bufferAssertion, new AssertNotNull(new ThrowHandler()), new BufferRequest(3));
+            Buffer<int> createdBuffer = new(_bufferAssertion, new ObjectNullAssertion(new ThrowHandler()), new BufferRequest(3));
 
             Assert.That(createdBuffer.State, Is.EqualTo(BufferState.CREATED));
         }
@@ -117,9 +114,6 @@ namespace IdelPog.Messaging.Tests.Collection
         [Test]
         public void Negative_Assign_Null_Throws()
         {
-            _bufferAsserterPipelineMock.Setup(library => library.AssertCollectionSize<int>(It.IsAny<IReadOnlyList<int>>(), 3))
-                .Throws(new ArgumentNullException());
-
             Assert.Throws<ArgumentNullException>(() => _buffer.Assign(null!));
         }
 

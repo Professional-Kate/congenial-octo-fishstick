@@ -5,24 +5,24 @@ namespace IdelPog.ContentHydrator.Assertions.Pipelines
     public class DirectoryAssertionPipeline : IDirectoryAssertionPipeline
     {
         private readonly IDirectoryAssertion _directoryAssertion;
-        private readonly IAssertNotNull _assertNotNull;
+        private readonly IObjectNullAssertion _objectNullAssertion;
 
-        public DirectoryAssertionPipeline(IDirectoryAssertion directoryAssertion, IAssertNotNull assertNotNull)
+        public DirectoryAssertionPipeline(IDirectoryAssertion directoryAssertion, IObjectNullAssertion objectNullAssertion)
         {
             _directoryAssertion = directoryAssertion;
-            _assertNotNull = assertNotNull;
+            _objectNullAssertion = objectNullAssertion;
         }
 
         public void AssertDirectory(string directoryPath)
         {
-            _assertNotNull.AssertObjectNotNull(directoryPath);
+            _objectNullAssertion.AssertNotNull(directoryPath, nameof(directoryPath));
             _directoryAssertion.AssertDirectoryIsFound(directoryPath);
         }
 
-        public void AssertFiles(int itemCount, string directoryPathContext)
+        public void AssertFiles(int itemCount, string directoryPath)
         {
-            _assertNotNull.AssertObjectNotNull(directoryPathContext);
-            _directoryAssertion.AssertDirectoryNotEmpty(itemCount, directoryPathContext);
+            _objectNullAssertion.AssertNotNull(directoryPath, nameof(directoryPath));
+            _directoryAssertion.AssertDirectoryNotEmpty(itemCount, directoryPath);
         }
     }
 }

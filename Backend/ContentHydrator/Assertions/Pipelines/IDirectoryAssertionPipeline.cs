@@ -4,6 +4,6 @@
     {
         public void AssertDirectory(string directoryPath);
 
-        public void AssertFiles(int itemCount, string directoryPathContext);
+        public void AssertFiles(int itemCount, string directoryPath);
     }
 }

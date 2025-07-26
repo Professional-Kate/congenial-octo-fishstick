@@ -26,7 +26,7 @@ namespace Console.Tests.Resolver
             _commandDomainResolverMock = new Mock<ICommandDomainResolver>();
             _domainPermissionCheckerMock = new Mock<IDomainPermissionChecker>();
             _commandResolverMediator = new CommandResolverMediator(_repositoryMock.Object, _domainPermissionCheckerMock.Object,
-                new AssertFound(new ThrowHandler()), new SpanAssertion(new ThrowHandler()), new DomainPermissionAssertion(new ThrowHandler()));
+                new FoundAssertion(new ThrowHandler()), new SpanAssertion(new ThrowHandler()), new DomainPermissionAssertion(new ThrowHandler()));
         }
 
         [SetUp]

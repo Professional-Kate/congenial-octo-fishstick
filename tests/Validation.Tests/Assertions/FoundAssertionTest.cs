@@ -5,26 +5,26 @@ using IdelPog.Validation.Exceptions;
 namespace IdelPog.Validation.Tests.Assertions
 {
     [TestFixture]
-    public class AssertFoundTest
+    public class FoundAssertionTest
     {
-        private IAssertFound _assertFound { get; set; }
+        private IFoundAssertion _foundAssertion { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _assertFound = new AssertFound(new ThrowHandler());
+            _foundAssertion = new FoundAssertion(new ThrowHandler());
         }
 
         [Test]
-        public void Positive_AssertItemIsFound_PassedTrue()
+        public void Positive_AssertItemIsFound_PassedTrue_NoThrow()
         {
-            Assert.DoesNotThrow(() => _assertFound.AssertItemIsFound(1, () => true));
+            Assert.DoesNotThrow(() => _foundAssertion.AssertFound(1, true));
         }
 
         [Test]
         public void Negative_AssertItemIsFound_PassedFalse_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _assertFound.AssertItemIsFound(1, () => false));
+            Assert.Throws<NotFoundException>(() => _foundAssertion.AssertFound(1, false));
         }
     }
 }

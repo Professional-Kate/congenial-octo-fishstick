@@ -15,7 +15,7 @@ namespace ContentHydratorTests.Assertions
         public void SetUp()
         {
             _directoryAssertionPipeline = new DirectoryAssertionPipeline(
-                new DirectoryAssertion(new ThrowHandler()), new AssertNotNull(new ThrowHandler()));
+                new DirectoryAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()));
         }
 
         [Test]

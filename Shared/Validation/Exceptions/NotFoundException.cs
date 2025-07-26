@@ -6,8 +6,8 @@ namespace IdelPog.Validation.Exceptions
     {
         private static readonly string _baseMessage = ExceptionConstants.NOT_FOUND_MESSAGE;
 
-        public NotFoundException(object id)
-            : base(string.Format(_baseMessage, id))
+        public NotFoundException(object key)
+            : base(string.Format(_baseMessage, key))
         {
             // TODO: This needs to be logged to file.
         }

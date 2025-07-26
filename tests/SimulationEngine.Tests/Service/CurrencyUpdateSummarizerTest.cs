@@ -26,7 +26,7 @@ namespace IdelPogTests.Service
         {
             _currencyUpdateFactoryMock = new Mock<ICurrencyUpdateFactory>();
             _currencyUpdateSummarizer = new CurrencyUpdateSummarizer(_currencyUpdateFactoryMock.Object, new NumberAssertion(new ThrowHandler()),
-                new AssertNotNull(new ThrowHandler()), new AssertCollectionNotEmpty(new ThrowHandler()));
+                new ObjectNullAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()));
 
             _addGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
             _removeGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.REMOVE);

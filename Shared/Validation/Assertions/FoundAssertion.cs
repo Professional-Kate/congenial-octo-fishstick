@@ -3,13 +3,17 @@ using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.Validation.Assertions
 {
-    public class AssertFound(IHandler handler) : BaseAssertion<NotFoundException>(handler), IAssertFound
+    public class FoundAssertion : BaseAssertion, IFoundAssertion
     {
-        public void AssertItemIsFound(object key, Func<bool> itemNotFound)
+        public FoundAssertion(IHandler handler) : base(handler)
         {
-            Assert(() =>
+        }
+
+        public void AssertFound<TKey>(TKey key, bool found)
+        {
+            Assert<NotFoundException>(() =>
             {
-                if (itemNotFound() == false)
+                if (found == false)
                 {
                     throw new NotFoundException(key);
                 }

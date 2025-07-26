@@ -7,14 +7,14 @@ namespace IdelPog.Messaging.Dispatch
     public sealed class ManagedDispatcher<T> : IDispatchOne<T>, IDispatchMany<T>
     {
         private readonly IBufferManager _bufferManager;
-        private readonly IAssertNotNull _assertNotNull;
-        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
+        private readonly IObjectNullAssertion _objectNullAssertion;
+        private readonly ICollectionAssertion _collectionAssertion;
 
-        public ManagedDispatcher(IBufferManager bufferManager, IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public ManagedDispatcher(IBufferManager bufferManager, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion)
         {
             _bufferManager = bufferManager;
-            _assertNotNull = assertNotNull;
-            _assertCollectionNotEmpty = assertCollectionNotEmpty;
+            _objectNullAssertion = objectNullAssertion;
+            _collectionAssertion = collectionAssertion;
         }
 
         public void Dispatch(T payload)
@@ -24,8 +24,8 @@ namespace IdelPog.Messaging.Dispatch
 
         public void Dispatch(IReadOnlyList<T> payload)
         {
-            _assertNotNull.AssertObjectNotNull(payload);
-            _assertCollectionNotEmpty.Handle(payload);
+            _objectNullAssertion.AssertNotNull(payload, nameof(payload));
+            _collectionAssertion.AssertNotEmpty(payload);
             CreateAndDispatchBuffer(payload);
         }
 

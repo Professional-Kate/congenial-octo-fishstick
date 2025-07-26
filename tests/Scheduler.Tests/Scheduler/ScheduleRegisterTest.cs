@@ -15,8 +15,8 @@ namespace Scheduler.Tests.Scheduler
         [SetUp]
         public void Setup()
         {
-            ScheduleRegister scheduleRegister = new(new AssertNonDuplicate(new ThrowHandler()), new AssertFound(new ThrowHandler()),
-                new AssertNotNull(new ThrowHandler()));
+            ScheduleRegister scheduleRegister = new(new UniqueAssertion(new ThrowHandler()), new FoundAssertion(new ThrowHandler()),
+                new ObjectNullAssertion(new ThrowHandler()));
 
             _scheduleReader = scheduleRegister;
             _scheduleRegister = scheduleRegister;

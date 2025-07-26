@@ -15,11 +15,11 @@ namespace IdelPog.Common.Tests
         public void OneTimeSetUp()
         {
             IHandler handler = new ThrowHandler();
-            IAssertFound assertFound = new AssertFound(handler);
-            IAssertNotNull assertNotNull = new AssertNotNull(handler);
-            IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(handler);
+            IFoundAssertion foundAssertion = new FoundAssertion(handler);
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(handler);
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion(handler);
 
-            _repositoryAsserter = new RepositoryAsserter(assertFound, assertNotNull, assertNonDuplicate);
+            _repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
         }
 
         [Test]

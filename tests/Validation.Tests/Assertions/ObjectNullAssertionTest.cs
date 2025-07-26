@@ -4,26 +4,26 @@ using IdelPog.Validation.Assertions.Handlers;
 namespace IdelPog.Validation.Tests.Assertions
 {
     [TestFixture]
-    public class AssertNotNullTest
+    public class ObjectNullAssertionTest
     {
-        private IAssertNotNull _assertNotNull { get; set; }
+        private IObjectNullAssertion _objectNullAssertion { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _assertNotNull = new AssertNotNull(new ThrowHandler());
+            _objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
         }
 
         [Test]
         public void Positive_AssertObjectNotNull_NotNull()
         {
-            Assert.DoesNotThrow(() => _assertNotNull.AssertObjectNotNull(10));
+            Assert.DoesNotThrow(() => _objectNullAssertion.AssertNotNull(10, "int"));
         }
 
         [Test]
         public void Negative_AssertObjectNotNull_Null_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _assertNotNull.AssertObjectNotNull(null));
+            Assert.Throws<ArgumentNullException>(() => _objectNullAssertion.AssertNotNull<string>(null, "null"));
         }
     }
 }

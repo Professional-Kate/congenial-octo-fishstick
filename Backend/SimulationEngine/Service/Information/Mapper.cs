@@ -7,32 +7,32 @@ namespace IdelPog.SimulationEngine.Service
     {
         private readonly Dictionary<T, Structures.Types.Information> _information = new();
 
-        private readonly IAssertFound _assertFound;
-        private readonly IAssertNonDuplicate _assertNonDuplicate;
+        private readonly IFoundAssertion _foundAssertion;
+        private readonly IUniqueAssertion _uniqueAssertion;
 
         public Mapper()
         {
-            _assertFound = new AssertFound(new ThrowHandler());
-            _assertNonDuplicate = new AssertNonDuplicate(new ThrowHandler());
+            _foundAssertion = new FoundAssertion(new ThrowHandler());
+            _uniqueAssertion = new UniqueAssertion(new ThrowHandler());
         }
 
-        public Mapper(IAssertFound assertFound, IAssertNonDuplicate assertUnique)
+        public Mapper(IFoundAssertion foundAssertion, IUniqueAssertion unique)
         {
-            _assertFound = assertFound;
-            _assertNonDuplicate = assertUnique;
+            _foundAssertion = foundAssertion;
+            _uniqueAssertion = unique;
         }
 
         public Structures.Types.Information GetInformation(T key)
         {
             bool contains = _information.TryGetValue(key, out Structures.Types.Information information);
-            _assertFound.AssertItemIsFound(key, () => contains == false);
+            _foundAssertion.AssertFound(key,contains == false);
 
             return information;
         }
 
         public void AddInformation(T key, Structures.Types.Information information)
         {
-            _assertNonDuplicate.AssertContains(key, () => _information.ContainsKey(key));
+            _uniqueAssertion.AssertUnique(key,_information.ContainsKey(key));
 
             _information.Add(key, information);
         }

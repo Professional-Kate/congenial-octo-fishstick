@@ -18,15 +18,15 @@ namespace IdelPog.SimulationEngine.Currency
         private readonly ICurrencyUpdateSummarizer _currencyUpdateSummarizer;
         private readonly ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory;
         private readonly INumberAssertion _numberAssertion;
-        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
-        private readonly IAssertFound _assertFound;
-        private readonly IAssertNotNull _assertNotNull;
+        private readonly ICollectionAssertion _collectionAssertion;
+        private readonly IFoundAssertion _foundAssertion;
+        private readonly IObjectNullAssertion _objectNullAssertion;
 
         public CurrencyUpdateMediator(
             IStateRepository<CurrencyType, Currency> stateRepository,
             ICurrencyService currencyService, IDispatchMany<CurrencyUpdateDTO> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer,
             ICurrencyUpdateDTOFactory currencyUpdateDTOFactory,
-            INumberAssertion numberAssertion, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertFound assertFound, IAssertNotNull assertNotNull)
+            INumberAssertion numberAssertion, ICollectionAssertion collectionAssertion, IFoundAssertion foundAssertion, IObjectNullAssertion objectNullAssertion)
         {
             _currencyService = currencyService;
             _currencyRepository = stateRepository;
@@ -34,18 +34,18 @@ namespace IdelPog.SimulationEngine.Currency
             _currencyUpdateSummarizer = currencyUpdateSummarizer;
             _currencyUpdateDTOFactory = currencyUpdateDTOFactory;
             _numberAssertion = numberAssertion;
-            _assertCollectionNotEmpty = assertCollectionNotEmpty;
-            _assertFound = assertFound;
-            _assertNotNull = assertNotNull;
+            _collectionAssertion = collectionAssertion;
+            _foundAssertion = foundAssertion;
+            _objectNullAssertion = objectNullAssertion;
         }
 
         public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyUpdate> updates)
         {
-            _assertNotNull.AssertObjectNotNull(updates);
+            _objectNullAssertion.AssertNotNull(updates, nameof(updates));
             AssertUpdates(updates);
 
             CurrencyUpdate[] summarizedUpdates = _currencyUpdateSummarizer.GetSummary(updates);
-            _assertCollectionNotEmpty.Handle(summarizedUpdates);
+            _collectionAssertion.AssertNotEmpty(summarizedUpdates);
 
             AllCurrenciesExist(summarizedUpdates);
             List<Currency> currencies = GetAllCurrencies(summarizedUpdates);
@@ -56,7 +56,7 @@ namespace IdelPog.SimulationEngine.Currency
 
         private void AssertUpdates(IReadOnlyList<CurrencyUpdate> updates)
         {
-            _assertCollectionNotEmpty.Handle(updates);
+            _collectionAssertion.AssertNotEmpty(updates);
             _numberAssertion.AssertAllNonNegative(updates.Select(entry => entry.Amount).ToArray());
         }
 
@@ -64,7 +64,7 @@ namespace IdelPog.SimulationEngine.Currency
         {
             foreach (CurrencyUpdate currencyTrade in trades)
             {
-                _assertFound.AssertItemIsFound(currencyTrade.CurrencyType, () => _currencyRepository.Contains(currencyTrade.CurrencyType));
+                _foundAssertion.AssertFound(currencyTrade.CurrencyType,_currencyRepository.Contains(currencyTrade.CurrencyType));
             }
         }
 

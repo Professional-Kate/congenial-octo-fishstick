@@ -12,21 +12,21 @@ namespace Scheduler.Core.Mediator
         private readonly IScheduleReader _scheduleReader;
         private readonly IDispatchOne<ScheduledTaskErrorDTO> _taskErrorDispatcher;
         private readonly ITaskErrorDTOFactory _taskErrorDTOFactory;
-        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
+        private readonly ICollectionAssertion _collectionAssertion;
 
         public ScheduleMediator(IScheduleReader scheduleReader, IDispatchOne<ScheduledTaskErrorDTO> taskErrorDispatcher, ITaskErrorDTOFactory taskErrorDTOFactory,
-            IAssertCollectionNotEmpty assertCollectionNotEmpty)
+            ICollectionAssertion collectionAssertion)
         {
             _scheduleReader = scheduleReader;
             _taskErrorDispatcher = taskErrorDispatcher;
             _taskErrorDTOFactory = taskErrorDTOFactory;
-            _assertCollectionNotEmpty = assertCollectionNotEmpty;
+            _collectionAssertion = collectionAssertion;
         }
 
         public void RunUpdate()
         {
             IReadOnlyList<IScheduledTask> tasks = _scheduleReader.GetScheduledTasks();
-            _assertCollectionNotEmpty.Handle(tasks);
+            _collectionAssertion.AssertNotEmpty(tasks);
 
             foreach (IScheduledTask task in tasks)
             {

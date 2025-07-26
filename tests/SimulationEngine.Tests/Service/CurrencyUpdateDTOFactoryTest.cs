@@ -20,7 +20,7 @@ namespace IdelPogTests.Service
         public void OneTimeSetup()
         {
             IHandler throwHandler = new ThrowHandler();
-            _currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(new AssertNotNull(throwHandler), new AssertCollectionNotEmpty(throwHandler));
+            _currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(new ObjectNullAssertion(throwHandler), new CollectionAssertion(throwHandler));
 
             _currencyTrades =
             [

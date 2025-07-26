@@ -5,11 +5,11 @@ using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Messaging.Orchestration
 {
-    public class BufferManager(IBufferFactory bufferFactory, IBufferDispatcher bufferDispatcher, IAssertNotNull assertNotNull) : IBufferManager
+    public class BufferManager(IBufferFactory bufferFactory, IBufferDispatcher bufferDispatcher, IObjectNullAssertion objectNullAssertion) : IBufferManager
     {
         public IBuffer<T> RequestBuffer<T>(BufferRequest request)
         {
-            assertNotNull.AssertObjectNotNull(request);
+            objectNullAssertion.AssertNotNull(request, nameof(request));
 
             Buffer<T> buffer = bufferFactory.CreateBuffer<T>(request);
 

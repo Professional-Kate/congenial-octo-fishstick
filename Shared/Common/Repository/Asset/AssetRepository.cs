@@ -11,8 +11,8 @@ namespace IdelPog.Common.Repository
 
         public AssetRepository()
         {
-            _repositoryAsserter = new RepositoryAsserter(new AssertFound(new ThrowHandler()), new AssertNotNull(new ThrowHandler()),
-                new AssertNonDuplicate(new ThrowHandler()));
+            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()),
+                new UniqueAssertion(new ThrowHandler()));
         }
 
         public AssetRepository(IRepositoryAsserter repositoryAsserter)

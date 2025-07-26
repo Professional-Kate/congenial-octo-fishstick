@@ -22,18 +22,18 @@ namespace Scheduler
         public void Initialize(IBufferMessenger bufferMessenger, IBufferManager bufferManager)
         {
             IHandler throwHandler = new ThrowHandler();
-            IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(throwHandler);
-            IAssertFound assertFound = new AssertFound(throwHandler);
-            IAssertNotNull assertNotNull = new AssertNotNull(throwHandler);
-            IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(throwHandler);
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
 
             IErrorDTOFactory errorDTOFactory = new ErrorDTOFactory();
             ITaskErrorDTOFactory taskErrorDTOFactory = new TaskErrorDTOFactory(errorDTOFactory);
             IDispatchOne<ScheduledTaskErrorDTO> errorDTODispatcher =
-                new ManagedDispatcher<ScheduledTaskErrorDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+                new ManagedDispatcher<ScheduledTaskErrorDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            IScheduleReader scheduleReader = new ScheduleRegister(assertNonDuplicate, assertFound, assertNotNull);
-            IScheduleMediator scheduleMediator = new ScheduleMediator(scheduleReader, errorDTODispatcher, taskErrorDTOFactory, assertCollectionNotEmpty);
+            IScheduleReader scheduleReader = new ScheduleRegister(uniqueAssertion, foundAssertion, objectNullAssertion);
+            IScheduleMediator scheduleMediator = new ScheduleMediator(scheduleReader, errorDTODispatcher, taskErrorDTOFactory, collectionAssertion);
 
             IManagedTimer threadingManagedTimer = new ThreadingTimer(scheduleMediator.RunUpdate);
             IScheduleRunner scheduleRunner = new ScheduleRunner(threadingManagedTimer);

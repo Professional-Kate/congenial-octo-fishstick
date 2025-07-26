@@ -42,7 +42,7 @@ namespace IdelPogTests.Orchestration
             IHandler throwHandler = new ThrowHandler();
             _currencyUpdateMediator = new CurrencyUpdateMediator(_repositoryMock.Object, _currencyServiceMock.Object, _dispatcherMock.Object,
                 _currencyUpdateSummarizerMock.Object, _currencyUpdateDTOFactoryMock.Object, new NumberAssertion(throwHandler),
-                new AssertCollectionNotEmpty(throwHandler), new AssertFound(throwHandler), new AssertNotNull(throwHandler));
+                new CollectionAssertion(throwHandler), new FoundAssertion(throwHandler), new ObjectNullAssertion(throwHandler));
 
             _addGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
             _removeGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.REMOVE);

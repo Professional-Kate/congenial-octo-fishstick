@@ -10,22 +10,22 @@ namespace IdelPog.SimulationEngine.Currency
     {
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
         private readonly INumberAssertion _numberAssertion;
-        private readonly IAssertNotNull _assertNotNull;
-        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
+        private readonly IObjectNullAssertion _objectNullAssertion;
+        private readonly ICollectionAssertion _collectionAssertion;
 
-        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, INumberAssertion numberAssertion, IAssertNotNull assertNotNull,
-            IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, INumberAssertion numberAssertion, IObjectNullAssertion objectNullAssertion,
+            ICollectionAssertion collectionAssertion)
         {
             _currencyUpdateFactory = currencyUpdateFactory;
             _numberAssertion = numberAssertion;
-            _assertNotNull = assertNotNull;
-            _assertCollectionNotEmpty = assertCollectionNotEmpty;
+            _objectNullAssertion = objectNullAssertion;
+            _collectionAssertion = collectionAssertion;
         }
 
         public CurrencyUpdate[] GetSummary(IReadOnlyList<CurrencyUpdate> updates)
         {
-            _assertNotNull.AssertObjectNotNull(updates);
-            _assertCollectionNotEmpty.Handle(updates);
+            _objectNullAssertion.AssertNotNull(updates, nameof(updates));
+            _collectionAssertion.AssertNotEmpty(updates);
 
             Dictionary<CurrencyType, int> amounts = SummarizeAmounts(updates);
             List<CurrencyUpdate> summaryUpdates = CreateSummaryUpdates(amounts);

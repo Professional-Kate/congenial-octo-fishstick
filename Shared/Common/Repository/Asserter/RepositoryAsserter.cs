@@ -3,19 +3,19 @@
 namespace IdelPog.Common.Repository
 {
     /// <seealso cref="IRepositoryAsserter"/>
-    public class RepositoryAsserter(IAssertFound assertFound, IAssertNotNull assertNotNull, IAssertNonDuplicate assertNonDuplicate)
+    public class RepositoryAsserter(IFoundAssertion foundAssertion, IObjectNullAssertion objectNullAssertion, IUniqueAssertion uniqueAssertion)
         : IRepositoryAsserter
     {
         public void AssertUnique(object context, Func<bool> alreadyExists)
         {
-            assertNotNull.AssertObjectNotNull(context);
-            assertNonDuplicate.AssertContains(context, alreadyExists);
+            objectNullAssertion.AssertNotNull(context, nameof(context));
+            uniqueAssertion.AssertUnique<object>(alreadyExists);
         }
 
         public void AssertFound(object context, Func<bool> notFound)
         {
-            assertNotNull.AssertObjectNotNull(context);
-            assertFound.AssertItemIsFound(context, notFound);
+            objectNullAssertion.AssertNotNull(context, nameof(context));
+            foundAssertion.AssertFound(context, notFound);
         }
     }
 }

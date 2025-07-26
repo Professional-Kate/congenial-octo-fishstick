@@ -6,7 +6,7 @@ namespace IdelPog.Messaging.Buffer
     public class Buffer<T> : IInternalBuffer, IBuffer<T>
     {
         private readonly IBufferAssertion _bufferAssertion;
-        private readonly IAssertNotNull _assertNotNull;
+        private readonly IObjectNullAssertion _objectNullAssertion;
 
         private event Action<IInternalBuffer>? Ready;
 
@@ -21,10 +21,10 @@ namespace IdelPog.Messaging.Buffer
         private readonly T[] _data;
         public IReadOnlyList<T> Data => _data;
 
-        internal Buffer(IBufferAssertion bufferAssertion, IAssertNotNull assertNotNull, BufferRequest request)
+        internal Buffer(IBufferAssertion bufferAssertion, IObjectNullAssertion objectNullAssertion, BufferRequest request)
         {
             _bufferAssertion = bufferAssertion;
-            _assertNotNull = assertNotNull;
+            _objectNullAssertion = objectNullAssertion;
             _data = new T[request.Length];
         }
 
@@ -38,7 +38,7 @@ namespace IdelPog.Messaging.Buffer
 
         public void Assign(IReadOnlyList<T> source)
         {
-            _assertNotNull.AssertObjectNotNull(source);
+            _objectNullAssertion.AssertNotNull(source, nameof(source));
             _bufferAssertion.AssertStateEquals(BufferState.CREATED, State);
             _bufferAssertion.AssertCountEquals(source.Count, Data.Count);
 

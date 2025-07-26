@@ -40,8 +40,8 @@ namespace IdelPogTests
             _repositoryMock = new Mock<IStateRepository<ItemID, Item>>();
             IHandler throwHandler = new ThrowHandler();
 
-            _inventory = new Inventory(_repositoryMock.Object, new AssertFound(throwHandler), new NumberAssertion(throwHandler),
-                new AssertNonDuplicate(throwHandler));
+            _inventory = new Inventory(_repositoryMock.Object, new FoundAssertion(throwHandler), new NumberAssertion(throwHandler),
+                new UniqueAssertion(throwHandler));
 
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);

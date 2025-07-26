@@ -33,8 +33,8 @@ namespace IdelPogTests.Orchestration
             _currencyCreationDispatcherMock = new Mock<IDispatchMany<CurrencyCreationDTO>>();
             _currencyCreationDTOFactoryMock = new Mock<ICurrencyCreationDTOFactory>();
             _currencyCreationMediator = new CurrencyCreationMediator(_stateRepositoryMock.Object, _currencyCreationDispatcherMock.Object,
-                _currencyCreationDTOFactoryMock.Object, new AssertNotNull(new ThrowHandler()), new AssertCollectionNotEmpty(new ThrowHandler()),
-                new AssertNonDuplicate(new ThrowHandler()), new NumberAssertion(new ThrowHandler()));
+                _currencyCreationDTOFactoryMock.Object, new ObjectNullAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()),
+                new UniqueAssertion(new ThrowHandler()), new NumberAssertion(new ThrowHandler()));
 
             _createGold = new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = 10 };
             _createGems = new CurrencyCreation { CurrencyType = CurrencyType.GEMS, StartingAmount = 15 };

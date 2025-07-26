@@ -23,7 +23,7 @@ namespace IdelPogTests.Service
         public void OneTimeSetUp()
         {
             IHandler throwHandler = new ThrowHandler();
-            _experienceService = new ExperienceService(new LevelableAssertionPipeline(new LevelAssertion(throwHandler), new AssertNotNull(throwHandler),
+            _experienceService = new ExperienceService(new LevelableAssertionPipeline(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler),
                 new NumberAssertion(throwHandler)));
         }
 

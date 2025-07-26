@@ -23,10 +23,10 @@ namespace IdelPogTests.Assertions.Pipelines
 
             IHandler handler = new ThrowHandler();
             ILevelAssertion levelAssertion = new LevelAssertion(handler);
-            IAssertNotNull assertNotNull = new AssertNotNull(handler);
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(handler);
             INumberAssertion numberAssertion = new NumberAssertion(handler);
 
-            _levelableAssertionPipeline = new LevelableAssertionPipeline(levelAssertion, assertNotNull, numberAssertion);
+            _levelableAssertionPipeline = new LevelableAssertionPipeline(levelAssertion, objectNullAssertion, numberAssertion);
         }
 
         [Test]
