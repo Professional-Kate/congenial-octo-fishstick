@@ -18,7 +18,7 @@ namespace ContentHydratorTests.Service
         private Mock<IJsonReader> _jsonReaderMock { get; set; }
         private Mock<IConverterProvider> _converterProviderMock { get; set; }
         private Mock<IJsonConverter<TestDTO>> _jsonConverterMock { get; set; }
-        private Mock<IDirectoryAsserter> _directoryAsserter { get; set; }
+        private Mock<IDirectoryPipelineAssertion> _directoryAsserter { get; set; }
 
         private const string DIRECTORY_PATH = "Resources/DirectoryConverterFiles";
 
@@ -27,7 +27,7 @@ namespace ContentHydratorTests.Service
         {
             _jsonReaderMock = new Mock<IJsonReader>();
             _jsonConverterMock = new Mock<IJsonConverter<TestDTO>>();
-            _directoryAsserter = new Mock<IDirectoryAsserter>();
+            _directoryAsserter = new Mock<IDirectoryPipelineAssertion>();
             _converterProviderMock = new Mock<IConverterProvider>();
             _directoryConverter = new DirectoryConverter(_jsonReaderMock.Object, _converterProviderMock.Object, _directoryAsserter.Object);
 
@@ -84,7 +84,7 @@ namespace ContentHydratorTests.Service
         [Test]
         public void Negative_ConvertDirectory_EmptyDirectory_Throws()
         {
-            _directoryAsserter.Setup(library => library.AssertFiles(It.IsAny<string[]>(), It.IsAny<string>()))
+            _directoryAsserter.Setup(library => library.AssertFiles(It.IsAny<int>(), It.IsAny<string>()))
                 .Throws(new EmptyDirectoryException(DIRECTORY_PATH));
 
             string emptyDirectory = Path.Combine(DIRECTORY_PATH, "TEMP");
