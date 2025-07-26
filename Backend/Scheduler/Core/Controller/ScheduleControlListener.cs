@@ -6,7 +6,7 @@ namespace Scheduler.Core.Controller
 {
     public class ScheduleControlListener : ISingleListener<ScheduleControl>   
     {
-        private readonly IScheduleController  _scheduleController;
+        private readonly IScheduleController _scheduleController;
 
         public ScheduleControlListener(IScheduleController scheduleController)
         {

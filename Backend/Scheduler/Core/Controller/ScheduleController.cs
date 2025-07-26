@@ -4,7 +4,7 @@ namespace Scheduler.Core.Controller
 {
     public class ScheduleController : IScheduleController
     {
-        private IScheduleRunner  _scheduleRunner;
+        private readonly IScheduleRunner _scheduleRunner;
 
         public ScheduleController(IScheduleRunner scheduleRunner)
         {
