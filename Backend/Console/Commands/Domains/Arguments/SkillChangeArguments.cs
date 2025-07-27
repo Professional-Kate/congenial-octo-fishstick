@@ -5,5 +5,6 @@ namespace Console.Commands.Domains.Arguments
     public readonly record struct SkillChangeArguments
     {
         public required SkillID SkillID { get; init; }
+        public required ResourceID ResourceID { get; init; }
     }
 }

@@ -17,7 +17,7 @@ namespace Integration.Tests.SkillCommands.Switch
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _skillChange = new SkillChange { SkillID = SkillID.FARMING };
+            _skillChange = new SkillChange { SkillID = SkillID.FARMING, ResourceID = ResourceID.STONE};
 
             CurrentSkillProvider currentSkillProvider = new();
             _currentSkillSetter = currentSkillProvider;
@@ -63,7 +63,7 @@ namespace Integration.Tests.SkillCommands.Switch
             Assert.DoesNotThrow(() => SendChangeSkillBuffer(_skillChange));
             AssertListener(_skillChange);
 
-            SkillChange secondSkillChange = new() { SkillID = SkillID.MINING };
+            SkillChange secondSkillChange = new() { SkillID = SkillID.MINING, ResourceID = ResourceID.STONE};
             Assert.DoesNotThrow(() => SendChangeSkillBuffer(secondSkillChange));
             AssertListener(secondSkillChange);
         }

@@ -29,17 +29,17 @@ namespace Integration.Tests.Console
         private static IEnumerable<TestCaseData> ValidSkillChanges()
         {
             yield return new TestCaseData(
-                new[] { "SKILL", "change", "wood_cutting" },
+                new[] { "SKILL", "change", "wood_cutting", "stone" },
                 SkillID.WOOD_CUTTING
             ).SetName("WOOD_CUTTING");
 
             yield return new TestCaseData(
-                new[] { "skill", "CHANGE", "mining" },
+                new[] { "skill", "CHANGE", "mining", "gold" },
                 SkillID.MINING
             ).SetName("MINING");
 
             yield return new TestCaseData(
-                new[] { "skill", "change", "FARMING" },
+                new[] { "skill", "change", "FARMING", "COPPER" },
                 SkillID.FARMING
             ).SetName("FARMING");
         }
@@ -57,12 +57,14 @@ namespace Integration.Tests.Console
             });
         }
 
-        [TestCase(new[] { "UNKNOWN", "change", "wood_cutting" }, typeof(FailedEnumParseException), TestName = "UnknownDomain_ThrowsFailedEnumParse")]
-        [TestCase(new[] { "skill", "change", "WOOD CUTTING" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
-        [TestCase(new[] { "skill", "change", "wood-cutting" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
-        [TestCase(new[] { "skill", "change", "woodcutting" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
-        [TestCase(new[] { "skill", "change" }, typeof(InvalidArgumentCountException), TestName = "MissingSkill_ThrowsInvalidArgumentCountException")]
-        [TestCase(new[] { "skill" }, typeof(EmptySpanException), TestName = "MissingChangeAndSkill_ThrowsEmptySpanException")]
+        [TestCase(new[] { "UNKNOWN", "change", "wood_cutting", "gold" }, typeof(FailedEnumParseException), TestName = "UnknownDomain_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "skill", "change", "WOOD CUTTING", "gold" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "skill", "change", "WOOD CUTTING", "TestStone" }, typeof(FailedEnumParseException), TestName = "UnknownSkillNode_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "skill", "change", "wood-cutting", "gold" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "skill", "change", "woodcutting", "gold" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "skill", "change", "wood-cutting" }, typeof(InvalidArgumentCountException), TestName = "MissingSkillNode_ThrowsInvalidArgumentCountException")]
+        [TestCase(new[] { "skill", "change" }, typeof(InvalidArgumentCountException), TestName = "MissingSkillAndNode_ThrowsInvalidArgumentCountException")]
+        [TestCase(new[] { "skill" }, typeof(EmptySpanException), TestName = "MissingMost_ThrowsEmptySpanException")]
         [TestCase(new string[] { }, typeof(EmptySpanException), TestName = "NoArguments_ThrowsEmptySpanException")]
         public void Negative_ChangeSkill_BadArguments_Throws(string[] arguments, Type exception)
         {

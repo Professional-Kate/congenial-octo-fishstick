@@ -11,8 +11,7 @@ namespace Console.Commands.Domains
     public class SkillDomainResolver : ICommandDomainResolver
     {
         public Domain HandledDomain => Domain.SKILL;
-        public CommandDocumentation CommandDocumentation { get; } =
-            new() { Syntax = "skill change <SkillID>", Description = "Change to another skill!!! Exciting times!" };
+        public CommandDocumentation CommandDocumentation => new() { Syntax = "skill change <SkillID> <ResourceID>", Description = "Change to another skill!!! Exciting times!" };
 
         private readonly IArgumentResolverPipeline<SkillChangeArguments> _argumentResolverPipeline;
         private readonly IDispatchOne<SkillChange> _skillChangeDispatcher;
@@ -30,10 +29,10 @@ namespace Console.Commands.Domains
 
         public void Resolve(ReadOnlySpan<string> arguments)
         {
-            _argumentCountAssertion.AssertCount(arguments.Length, 2);
+            _argumentCountAssertion.AssertCount(arguments.Length, 3);
             SkillChangeArguments skillChangeArguments = _argumentResolverPipeline.Resolve(arguments);
 
-            _skillChangeDispatcher.Dispatch(_skillChangeFactory.CreateSkillChange(skillChangeArguments.SkillID));
+            _skillChangeDispatcher.Dispatch(_skillChangeFactory.CreateSkillChange(skillChangeArguments.SkillID, skillChangeArguments.ResourceID));
         }
     }
 }

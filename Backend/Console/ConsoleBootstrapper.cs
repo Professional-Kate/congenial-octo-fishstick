@@ -51,6 +51,7 @@ namespace Console
             IArgumentResolver<ActionType> actionTypeResolver = new EnumResolver<ActionType>(enumParseAssertion);
             IArgumentResolver<CurrencyType> currencyTypeResolver = new EnumResolver<CurrencyType>(enumParseAssertion);
             IArgumentResolver<SkillID> skillIDResolver = new EnumResolver<SkillID>(enumParseAssertion);
+            IArgumentResolver<ResourceID>  resourceIDResolver = new EnumResolver<ResourceID>(enumParseAssertion);
             IArgumentResolver<Domain> commandDomainResolver = new EnumResolver<Domain>(enumParseAssertion);
             IArgumentResolver<ControlAction> controlActionResolver = new EnumResolver<ControlAction>(enumParseAssertion);
             IArgumentResolver<uint> uIntResolver = new UIntResolver(typeParseAssertion, numberAssertion);
@@ -68,7 +69,7 @@ namespace Console
             ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();
             IDispatchOne<SkillChange> skillChangeDispatcher = new ManagedDispatcher<SkillChange>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            IArgumentResolverPipeline<SkillChangeArguments> skillChangePipeline = new SkillChangeResolver(skillIDResolver);
+            IArgumentResolverPipeline<SkillChangeArguments> skillChangePipeline = new SkillChangeResolver(skillIDResolver, resourceIDResolver);
             ICommandDomainResolver skillDomainResolver =
                 new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, skillChangeFactory, argumentCountAssertion);
 
