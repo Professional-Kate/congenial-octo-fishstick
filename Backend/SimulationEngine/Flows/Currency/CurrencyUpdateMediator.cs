@@ -12,7 +12,7 @@ namespace IdelPog.SimulationEngine.Currency
     public class CurrencyUpdateMediator : ICurrencyUpdateMediator
     {
         private readonly ICurrencyService _currencyService;
-        private readonly IStateRepository<CurrencyType, Currency> _currencyRepository;
+        private readonly IStateRepository<CurrencyType, Models.Currency> _currencyRepository;
         private readonly IDispatchMany<CurrencyUpdateDTO> _currencyUpdateDispatcher;
         private readonly ICurrencyUpdateSummarizer _currencyUpdateSummarizer;
         private readonly ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory;
@@ -21,7 +21,7 @@ namespace IdelPog.SimulationEngine.Currency
         private readonly IObjectNullAssertion _objectNullAssertion;
 
         public CurrencyUpdateMediator(
-            IStateRepository<CurrencyType, Currency> stateRepository,
+            IStateRepository<CurrencyType, Models.Currency> stateRepository,
             ICurrencyService currencyService, IDispatchMany<CurrencyUpdateDTO> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer,
             ICurrencyUpdateDTOFactory currencyUpdateDTOFactory,
             ICollectionAssertion collectionAssertion, IFoundAssertion foundAssertion, IObjectNullAssertion objectNullAssertion)
@@ -45,7 +45,7 @@ namespace IdelPog.SimulationEngine.Currency
             _collectionAssertion.AssertNotEmpty(summarizedUpdates);
 
             AllCurrenciesExist(summarizedUpdates);
-            List<Currency> currencies = GetAllCurrencies(summarizedUpdates);
+            List<Models.Currency> currencies = GetAllCurrencies(summarizedUpdates);
             UpdateCurrencies(MapUpdates(summarizedUpdates, currencies));
 
             _currencyUpdateDispatcher.Dispatch(_currencyUpdateDTOFactory.CreateFrom(summarizedUpdates));
@@ -64,9 +64,9 @@ namespace IdelPog.SimulationEngine.Currency
             }
         }
 
-        private List<Currency> GetAllCurrencies(CurrencyUpdate[] updates)
+        private List<Models.Currency> GetAllCurrencies(CurrencyUpdate[] updates)
         {
-            List<Currency> currencies = new(updates.Length);
+            List<Models.Currency> currencies = new(updates.Length);
             foreach (CurrencyUpdate currencyUpdate in updates)
             {
                 currencies.Add(_currencyRepository.Get(currencyUpdate.CurrencyType));
@@ -75,22 +75,22 @@ namespace IdelPog.SimulationEngine.Currency
             return currencies;
         }
 
-        private static Dictionary<Currency, CurrencyUpdate> MapUpdates(CurrencyUpdate[] updates, List<Currency> currencies)
+        private static Dictionary<Models.Currency, CurrencyUpdate> MapUpdates(CurrencyUpdate[] updates, List<Models.Currency> currencies)
         {
-            Dictionary<Currency, CurrencyUpdate> map = new();
+            Dictionary<Models.Currency, CurrencyUpdate> map = new();
 
             foreach (CurrencyUpdate currencyUpdate in updates)
             {
-                Currency currency = currencies.Find(currency => currency.CurrencyType == currencyUpdate.CurrencyType)!;
+                Models.Currency currency = currencies.Find(currency => currency.CurrencyType == currencyUpdate.CurrencyType)!;
                 map.Add(currency, currencyUpdate);
             }
 
             return map;
         }
 
-        private void UpdateCurrencies(Dictionary<Currency, CurrencyUpdate> mappedUpdates)
+        private void UpdateCurrencies(Dictionary<Models.Currency, CurrencyUpdate> mappedUpdates)
         {
-            foreach ((Currency currency, CurrencyUpdate currencyUpdate) in mappedUpdates)
+            foreach ((Models.Currency currency, CurrencyUpdate currencyUpdate) in mappedUpdates)
             {
                 switch (currencyUpdate.Action)
                 {

@@ -14,13 +14,13 @@ namespace IdelPog.SimulationEngine.Currency
             _currencyAssertion = currencyAssertion;
         }
 
-        public void AddAmount(Currency currency, uint amount)
+        public void AddAmount(Models.Currency currency, uint amount)
         {
             uint newAmount = currency.Amount + amount;
             currency.Amount = newAmount;
         }
 
-        public void RemoveAmount(Currency currency, uint amount)
+        public void RemoveAmount(Models.Currency currency, uint amount)
         {
             _currencyAssertion.AssertSufficientCurrency(currency.Amount, amount, currency.CurrencyType);
             uint newAmount = currency.Amount - amount;

@@ -1,5 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPogTests.Utils;
 

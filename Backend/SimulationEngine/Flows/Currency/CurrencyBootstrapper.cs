@@ -25,7 +25,7 @@ namespace IdelPog.SimulationEngine.Currency
             IFoundAssertion foundAssertion = new FoundAssertion(new ThrowHandler());
             ICurrencyAssertion currencyAssertion = new CurrencyAssertion(new ThrowHandler());
 
-            IStateRepository<CurrencyType, Currency> currencyRepository = new StateRepository<CurrencyType, Currency>();
+            IStateRepository<CurrencyType, Models.Currency> currencyRepository = new StateRepository<CurrencyType, Models.Currency>();
 
             ICurrencyService currencyService = new CurrencyService(currencyAssertion);
             ICurrencyUpdateDTOFactory currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(objectNullAssertion, collectionAssertion);

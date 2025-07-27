@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Inventory
+﻿using IdelPog.SimulationEngine.Models;
+
+namespace IdelPog.SimulationEngine.Inventory
 {
     public interface IItemFactory
     {

@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Service;
+﻿using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Service;
 
 namespace IdelPog.SimulationEngine.Inventory
 {
@@ -6,10 +7,7 @@ namespace IdelPog.SimulationEngine.Inventory
     {
         public Item CreateItem(ItemID itemID, uint amount)
         {
-            return ItemBuilder
-                .Create(itemID, itemMapper.GetInformation(itemID))
-                .Amount(amount)
-                .Build();
+            return new Item(itemID, amount, 1, itemMapper.GetInformation(itemID));
         }
     }
 }

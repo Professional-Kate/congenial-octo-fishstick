@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Common.Structures;
 
-namespace IdelPog.SimulationEngine.Currency
+namespace IdelPog.SimulationEngine.Models
 {
     public sealed class Currency : ICloneable<Currency>
     {

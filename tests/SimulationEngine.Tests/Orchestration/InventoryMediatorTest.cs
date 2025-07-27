@@ -1,6 +1,7 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Inventory;
+using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPogTests.Utils;
@@ -45,7 +46,7 @@ namespace IdelPogTests.Orchestration
                 {
                     Amount = AMOUNT,
                     ItemID = ItemID.OAK_WOOD,
-                    SellPrice = 1
+                    BaseSellPrice = 1
                 },
                 ActionType = ActionType.ADD,
                 MutateType = MutateType.CHANGED
@@ -115,7 +116,7 @@ namespace IdelPogTests.Orchestration
         public void Positive_AddAmount_NoFoundItem_CreatesItem()
         {
             Item item = TestItemFactory.CreateOakWood();
-            item.AddAmount(AMOUNT);
+            item.Amount += AMOUNT;
 
             _repositoryMock.Setup(library => library.Contains(_inventoryUpdate.ItemID)).Returns(false);
             _itemFactoryMock.Setup(library => library.CreateItem(_inventoryUpdate.ItemID, AMOUNT))

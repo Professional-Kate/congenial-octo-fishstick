@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -35,7 +36,7 @@ namespace IdelPog.SimulationEngine.Inventory
 
             Item finalItem = RepositoryGet(id);
 
-            finalItem.AddAmount(amount);
+            finalItem.Amount += amount;
             RepositoryUpdate(id, finalItem);
         }
 
@@ -48,20 +49,20 @@ namespace IdelPog.SimulationEngine.Inventory
 
             if (itemAmount - amount == 0)
             {
-                _itemRepository.Remove(item.ID);
+                _itemRepository.Remove(item.ItemID);
                 return MutateType.DELETED;
             }
 
-            item.RemoveAmount(amount);
-            RepositoryUpdate(item.ID, item);
+            item.Amount -= amount;
+            RepositoryUpdate(item.ItemID, item);
             return MutateType.CHANGED;
         }
 
         public void AddItem(Item item)
         {
-            _uniqueAssertion.AssertUnique(item.ID, Contains(item.ID));
+            _uniqueAssertion.AssertUnique(item.ItemID, Contains(item.ItemID));
 
-            _itemRepository.Add(item.ID, item);
+            _itemRepository.Add(item.ItemID, item);
         }
 
         public bool Contains(ItemID item)

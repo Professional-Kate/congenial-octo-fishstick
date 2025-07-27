@@ -10,14 +10,14 @@ namespace IdelPog.SimulationEngine.Currency
 {
     public class CurrencyCreationMediator : ICurrencyCreationMediator
     {
-        private readonly IStateRepository<CurrencyType, Currency> _currencyRepository;
+        private readonly IStateRepository<CurrencyType, Models.Currency> _currencyRepository;
         private readonly IDispatchMany<CurrencyCreationDTO> _currencyCreationDTODispatcher;
         private readonly ICurrencyCreationDTOFactory _currencyCreationDTOFactory;
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IUniqueAssertion _uniqueAssertion;
 
-        public CurrencyCreationMediator(IStateRepository<CurrencyType, Currency> currencyRepository,
+        public CurrencyCreationMediator(IStateRepository<CurrencyType, Models.Currency> currencyRepository,
             IDispatchMany<CurrencyCreationDTO> currencyCreationDTODispatcher, ICurrencyCreationDTOFactory currencyCreationDTOFactory,
             IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion)
         {
@@ -34,18 +34,18 @@ namespace IdelPog.SimulationEngine.Currency
             _objectNullAssertion.AssertNotNull(currencies, nameof(currencies));
             _collectionAssertion.AssertNotEmpty(currencies);
 
-            Dictionary<CurrencyType, Currency> createdCurrencies = new(currencies.Count);
+            Dictionary<CurrencyType, Models.Currency> createdCurrencies = new(currencies.Count);
             foreach (CurrencyCreation currencyCreation in currencies)
             {
                 _uniqueAssertion.AssertUnique(currencyCreation, _currencyRepository.Contains(currencyCreation.CurrencyType));
 
                 // TODO: currency factory
-                Currency currency = new(currencyCreation.CurrencyType, currencyCreation.StartingAmount);
+                Models.Currency currency = new(currencyCreation.CurrencyType, currencyCreation.StartingAmount);
 
                 _uniqueAssertion.AssertUnique(currencyCreation, !createdCurrencies.TryAdd(currency.CurrencyType, currency));
             }
 
-            foreach (KeyValuePair<CurrencyType, Currency> keyValuePair in createdCurrencies)
+            foreach (KeyValuePair<CurrencyType, Models.Currency> keyValuePair in createdCurrencies)
             {
                 _currencyRepository.Add(keyValuePair.Key, keyValuePair.Value);
             }
