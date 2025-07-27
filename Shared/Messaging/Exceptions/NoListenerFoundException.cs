@@ -1,4 +1,5 @@
 ﻿using IdelPog.Messaging.Listeners;
+using IdelPog.Messaging.Listeners.Single;
 
 namespace IdelPog.Messaging.Exceptions
 {

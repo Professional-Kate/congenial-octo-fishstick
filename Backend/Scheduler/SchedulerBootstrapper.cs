@@ -2,6 +2,7 @@
 using IdelPog.Common.Factories;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Listeners;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;

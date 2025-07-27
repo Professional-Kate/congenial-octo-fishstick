@@ -1,4 +1,5 @@
 ﻿using IdelPog.Messaging.Listeners;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency.DTO;
 
 namespace Integration.Tests.CurrencyCommands.Update

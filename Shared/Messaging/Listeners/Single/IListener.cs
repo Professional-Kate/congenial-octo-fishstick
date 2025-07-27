@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Messaging.Listeners
+﻿namespace IdelPog.Messaging.Listeners.Single
 {
     public interface IListener
     {
