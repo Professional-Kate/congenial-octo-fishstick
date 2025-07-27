@@ -11,9 +11,9 @@ namespace IdelPog.SimulationEngine.Skill
             _skillChangeMediator = skillChangeMediator;
         }
 
-        public void ChangeSkill(SkillChange skillChange)
+        public void ChangeSkill(SetSkill setSkill)
         {
-            _skillChangeMediator.ChangeSkill(skillChange);
+            _skillChangeMediator.ChangeSkill(setSkill);
         }
     }
 }

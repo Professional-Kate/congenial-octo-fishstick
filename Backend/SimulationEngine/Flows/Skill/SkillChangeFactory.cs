@@ -4,11 +4,11 @@ namespace IdelPog.SimulationEngine.Skill
 {
     public class SkillChangeFactory : ISkillChangeFactory
     {
-        public SkillChangeDTO CreateSkillChangeDTO(SkillChange skillChange)
+        public SkillChangeDTO CreateSkillChangeDTO(SetSkill setSkill)
         {
             return new SkillChangeDTO
             {
-                SkillID = skillChange.SkillID,
+                SkillID = setSkill.SkillID,
             };
         }
     }

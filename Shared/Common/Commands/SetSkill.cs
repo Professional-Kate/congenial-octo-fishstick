@@ -2,7 +2,7 @@
 
 namespace IdelPog.Common.Commands
 {
-    public readonly record struct SkillChange
+    public readonly record struct SetSkill
     {
         public required SkillID SkillID { get; init; }
     }

@@ -66,7 +66,7 @@ namespace Console
                 new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateFactory, currencyUpdateDispatcher, argumentCountAssertion);
 
             ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();
-            IDispatchOne<SkillChange> skillChangeDispatcher = new ManagedDispatcher<SkillChange>(bufferManager, objectNullAssertion, collectionAssertion);
+            IDispatchOne<SetSkill> skillChangeDispatcher = new ManagedDispatcher<SetSkill>(bufferManager, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<SkillChangeArguments> skillChangePipeline = new SkillChangeResolver(skillIDResolver);
             ICommandDomainResolver skillDomainResolver =

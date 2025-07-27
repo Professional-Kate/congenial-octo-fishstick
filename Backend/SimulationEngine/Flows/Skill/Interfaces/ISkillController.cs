@@ -9,7 +9,7 @@ namespace IdelPog.SimulationEngine.Skill
         /// <summary>
         /// Switches the currently active skill
         /// </summary>
-        /// <param name="skillChange">This command will contain the <see cref="SkillID"/> you want to switch to</param>
-        public void ChangeSkill(SkillChange skillChange);
+        /// <param name="setSkill">This command will contain the <see cref="SkillID"/> you want to switch to</param>
+        public void ChangeSkill(SetSkill setSkill);
     }
 }

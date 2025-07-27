@@ -12,12 +12,12 @@ namespace Integration.Tests.SkillCommands.Switch
         private ICurrentSkillSetter _currentSkillSetter;
         private ICurrentSkillProvider _currentSkillProvider;
 
-        private SkillChange _skillChange;
+        private SetSkill _setSkill;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _skillChange = new SkillChange { SkillID = SkillID.FARMING };
+            _setSkill = new SetSkill { SkillID = SkillID.FARMING };
 
             CurrentSkillProvider currentSkillProvider = new();
             _currentSkillSetter = currentSkillProvider;
@@ -33,39 +33,39 @@ namespace Integration.Tests.SkillCommands.Switch
             ManagedSubscribe(_listener);
         }
 
-        private void SendChangeSkillBuffer(SkillChange skillChange)
+        private void SendChangeSkillBuffer(SetSkill setSkill)
         {
-            IBuffer<SkillChange> buffer = BufferManager.RequestBuffer<SkillChange>(new BufferRequest(1));
-            buffer.Assign([skillChange]);
+            IBuffer<SetSkill> buffer = BufferManager.RequestBuffer<SetSkill>(new BufferRequest(1));
+            buffer.Assign([setSkill]);
             buffer.MarkReady();
         }
 
-        private void AssertListener(SkillChange skillChange)
+        private void AssertListener(SetSkill setSkill)
         {
             Assert.Multiple(() =>
             {
                 Assert.That(_listener.WasCalled, Is.True);
-                Assert.That(_currentSkillProvider.GetCurrentSkill(), Is.EqualTo(skillChange.SkillID));
-                Assert.That(_listener.SkillChangeDTO.SkillID, Is.EqualTo(skillChange.SkillID));
+                Assert.That(_currentSkillProvider.GetCurrentSkill(), Is.EqualTo(setSkill.SkillID));
+                Assert.That(_listener.SetSkillDTO.SkillID, Is.EqualTo(setSkill.SkillID));
             });
         }
 
         [Test]
         public void Positive_SendChangeSkill_SwitchesSkill_DispatchesSkillChangeDTO()
         {
-            Assert.DoesNotThrow(() => SendChangeSkillBuffer(_skillChange));
-            AssertListener(_skillChange);
+            Assert.DoesNotThrow(() => SendChangeSkillBuffer(_setSkill));
+            AssertListener(_setSkill);
         }
 
         [Test]
         public void Positive_SendSequentialCommands_SwitchesSkill_DispatchesSkillChangeDTO()
         {
-            Assert.DoesNotThrow(() => SendChangeSkillBuffer(_skillChange));
-            AssertListener(_skillChange);
+            Assert.DoesNotThrow(() => SendChangeSkillBuffer(_setSkill));
+            AssertListener(_setSkill);
 
-            SkillChange secondSkillChange = new() { SkillID = SkillID.MINING };
-            Assert.DoesNotThrow(() => SendChangeSkillBuffer(secondSkillChange));
-            AssertListener(secondSkillChange);
+            SetSkill secondSetSkill = new() { SkillID = SkillID.MINING };
+            Assert.DoesNotThrow(() => SendChangeSkillBuffer(secondSetSkill));
+            AssertListener(secondSetSkill);
         }
     }
 }

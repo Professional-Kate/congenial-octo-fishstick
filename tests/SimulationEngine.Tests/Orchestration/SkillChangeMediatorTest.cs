@@ -14,12 +14,12 @@ namespace IdelPogTests.Orchestration
         private Mock<ISkillChangeFactory> _skillChangeFactoryMock;
         private Mock<IDispatchOne<SkillChangeDTO>> _skillChangeDispatcherMock;
 
-        private SkillChange _skillChange;
+        private SetSkill _setSkill;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _skillChange = new SkillChange { SkillID = SkillID.MINING };
+            _setSkill = new SetSkill { SkillID = SkillID.MINING };
 
             _currentSkillSetterMock = new Mock<ICurrentSkillSetter>();
             _skillChangeFactoryMock = new Mock<ISkillChangeFactory>();
@@ -39,22 +39,22 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Positive_ChangeSkill_InvokesDependencies()
         {
-            SkillChangeDTO dto = new() { SkillID = _skillChange.SkillID };
-            _skillChangeFactoryMock.Setup(library => library.CreateSkillChangeDTO(_skillChange)).Returns(dto);
+            SkillChangeDTO dto = new() { SkillID = _setSkill.SkillID };
+            _skillChangeFactoryMock.Setup(library => library.CreateSkillChangeDTO(_setSkill)).Returns(dto);
 
-            Assert.DoesNotThrow(() => _skillChangeMediator.ChangeSkill(_skillChange));
+            Assert.DoesNotThrow(() => _skillChangeMediator.ChangeSkill(_setSkill));
 
-            _currentSkillSetterMock.Verify(library => library.SetCurrentSkill(_skillChange.SkillID), Times.Once);
-            _skillChangeFactoryMock.Verify(library => library.CreateSkillChangeDTO(_skillChange), Times.Once);
+            _currentSkillSetterMock.Verify(library => library.SetCurrentSkill(_setSkill.SkillID), Times.Once);
+            _skillChangeFactoryMock.Verify(library => library.CreateSkillChangeDTO(_setSkill), Times.Once);
             _skillChangeDispatcherMock.Verify(library => library.Dispatch(dto), Times.Once);
         }
 
         [Test]
         public void Positive_ChangeSkill_DoesNotSuppressExceptions()
         {
-            _skillChangeFactoryMock.Setup(library => library.CreateSkillChangeDTO(_skillChange)).Throws<Exception>();
+            _skillChangeFactoryMock.Setup(library => library.CreateSkillChangeDTO(_setSkill)).Throws<Exception>();
 
-            Assert.Throws<Exception>(() => _skillChangeMediator.ChangeSkill(_skillChange));
+            Assert.Throws<Exception>(() => _skillChangeMediator.ChangeSkill(_setSkill));
         }
     }
 }

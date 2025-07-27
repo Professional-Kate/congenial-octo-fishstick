@@ -5,9 +5,9 @@ namespace IdelPog.Common.Factories
 {
     public class SkillChangeFactory : ISkillChangeFactory
     {
-        public SkillChange CreateSkillChange(SkillID skillID)
+        public SetSkill CreateSkillChange(SkillID skillID)
         {
-            return new SkillChange
+            return new SetSkill
             {
                 SkillID = skillID,
             };

@@ -14,11 +14,11 @@ namespace Console.Commands.Domains
         public CommandDocumentation CommandDocumentation => new() { Syntax = "skill change <SkillID>", Description = "Change to another skill!!! Exciting times!" };
 
         private readonly IArgumentResolverPipeline<SkillChangeArguments> _argumentResolverPipeline;
-        private readonly IDispatchOne<SkillChange> _skillChangeDispatcher;
+        private readonly IDispatchOne<SetSkill> _skillChangeDispatcher;
         private readonly ISkillChangeFactory _skillChangeFactory;
         private readonly IArgumentCountAssertion _argumentCountAssertion;
 
-        public SkillDomainResolver(IArgumentResolverPipeline<SkillChangeArguments> argumentResolverPipeline, IDispatchOne<SkillChange> skillChangeDispatcher,
+        public SkillDomainResolver(IArgumentResolverPipeline<SkillChangeArguments> argumentResolverPipeline, IDispatchOne<SetSkill> skillChangeDispatcher,
             ISkillChangeFactory skillChangeFactory, IArgumentCountAssertion argumentCountAssertion)
         {
             _argumentResolverPipeline = argumentResolverPipeline;

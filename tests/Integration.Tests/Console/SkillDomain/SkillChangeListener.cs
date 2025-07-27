@@ -3,16 +3,16 @@ using IdelPog.Messaging.Listeners;
 
 namespace Integration.Tests.Console
 {
-    public class SkillChangeListener : ISingleListener<SkillChange>
+    public class SkillChangeListener : ISingleListener<SetSkill>
     {
-        public Type ListenerType => typeof(SkillChange);
+        public Type ListenerType => typeof(SetSkill);
         public bool WasCalled { get; private set; }
-        public SkillChange SkillChange { get; private set; }
+        public SetSkill SetSkill { get; private set; }
 
-        public void Handle(SkillChange item)
+        public void Handle(SetSkill item)
         {
             WasCalled = true;
-            SkillChange = item;
+            SetSkill = item;
         }
     }
 }

@@ -3,15 +3,15 @@ using IdelPog.Messaging.Listeners;
 
 namespace Integration.Tests.SkillCommands.Switch
 {
-    public class SkillChangeDTOListener : ISingleListener<SkillChange>
+    public class SkillChangeDTOListener : ISingleListener<SetSkill>
     {
-        public Type ListenerType { get; } = typeof(SkillChange);
-        public SkillChange SkillChangeDTO { get; private set; }
+        public Type ListenerType { get; } = typeof(SetSkill);
+        public SetSkill SetSkillDTO { get; private set; }
         public bool WasCalled { get; private set; }
 
-        public void Handle(SkillChange item)
+        public void Handle(SetSkill item)
         {
-            SkillChangeDTO = item;
+            SetSkillDTO = item;
             WasCalled = true;
         }
     }

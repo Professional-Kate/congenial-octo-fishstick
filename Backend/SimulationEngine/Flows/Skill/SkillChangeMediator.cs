@@ -17,10 +17,10 @@ namespace IdelPog.SimulationEngine.Skill
             _skillChangeDTODispatcher = skillChangeDTODispatcher;
         }
 
-        public void ChangeSkill(SkillChange skillChange)
+        public void ChangeSkill(SetSkill setSkill)
         {
-            _currentSkillSetter.SetCurrentSkill(skillChange.SkillID);
-            _skillChangeDTODispatcher.Dispatch(_skillChangeFactory.CreateSkillChangeDTO(skillChange));
+            _currentSkillSetter.SetCurrentSkill(setSkill.SkillID);
+            _skillChangeDTODispatcher.Dispatch(_skillChangeFactory.CreateSkillChangeDTO(setSkill));
         }
     }
 }

@@ -52,8 +52,8 @@ namespace Integration.Tests.Console
             Assert.That(_skillChangeListener.WasCalled, Is.True);
             Assert.Multiple(() =>
             {
-                SkillChange skillChange = _skillChangeListener.SkillChange;
-                Assert.That(skillChange.SkillID, Is.EqualTo(skillID));
+                SetSkill setSkill = _skillChangeListener.SetSkill;
+                Assert.That(setSkill.SkillID, Is.EqualTo(skillID));
             });
         }
 
