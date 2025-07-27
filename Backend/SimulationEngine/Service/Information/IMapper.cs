@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Models;
 
 namespace IdelPog.SimulationEngine.Service
 {

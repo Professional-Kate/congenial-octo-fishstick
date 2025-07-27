@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Structures.Types
+﻿namespace IdelPog.SimulationEngine.Models
 {
     /// <summary>
     /// Contains two readonly strings that describes an objects readable name and readable description

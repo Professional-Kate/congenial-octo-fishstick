@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Models
+﻿using IdelPog.SimulationEngine.Models;
+
+namespace IdelPog.SimulationEngine.Structures
 {
     public interface ILevelableUpdateFactory
     {

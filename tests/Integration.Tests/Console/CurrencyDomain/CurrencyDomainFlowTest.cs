@@ -86,8 +86,8 @@ namespace Integration.Tests.Console
             AssertCurrencyUpdate(expectedUpdate, GetListenerCurrencyUpdate());
         }
 
-        [TestCase(new[] { "currency", "remove", "-100", "gold" }, typeof(FailedTypeParseException), TestName = "NegativeAmount_ThrowsFailedTypeParseException")]
-        [TestCase(new[] { "currency", "add", "-100", "gold" }, typeof(FailedTypeParseException), TestName = "NegativeAmount_ThrowsFailedTypeParseException")]
+        [TestCase(new[] { "currency", "remove", "-100", "gold" }, typeof(NegativeNumberException), TestName = "NegativeAmount_ThrowsNegativeNumberException")]
+        [TestCase(new[] { "currency", "add", "-100", "gold" }, typeof(NegativeNumberException), TestName = "NegativeAmount_ThrowsNegativeNumberException")]
         [TestCase(new[] { "UNKNOWN", "REMOVE", "1", "GOLD" }, typeof(FailedEnumParseException), TestName = "UnknownDomain_ThrowsFailedEnumParse")]
         [TestCase(new[] { "currency", "remove", "100F", "GOLD" }, typeof(FailedTypeParseException), TestName = "InvalidAmount_Float__ThrowsFailedTypeParseException")]
         [TestCase(new[] { "currency", "remove", "10+10", "GOLD" }, typeof(FailedTypeParseException), TestName = "InvalidAmount_Expression_ThrowsFailedTypeParseException")]

@@ -1,6 +1,5 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Common.Structures;
-using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPog.SimulationEngine.Models
 {

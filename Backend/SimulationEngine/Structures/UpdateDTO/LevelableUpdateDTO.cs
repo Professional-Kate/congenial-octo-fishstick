@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Models
+﻿namespace IdelPog.SimulationEngine.Structures
 {
     public readonly record struct LevelableUpdateDTO
     {

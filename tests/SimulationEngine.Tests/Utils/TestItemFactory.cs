@@ -1,6 +1,5 @@
 ﻿using IdelPog.SimulationEngine.Inventory;
 using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Structures.Types;
 
 namespace IdelPogTests.Utils
 {

@@ -1,4 +1,5 @@
-﻿using Console.Assertions;
+﻿using System.Numerics;
+using Console.Assertions;
 using Console.Commands;
 using Console.Commands.Domains;
 using Console.Commands.Domains.Arguments;
@@ -40,6 +41,7 @@ namespace Console
             IComponentAssertion componentAssertion = new ComponentAssertion(throwHandler);
             IDomainPermissionAssertion domainPermissionAssertion = new DomainPermissionAssertion(throwHandler);
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
+            INumberAssertion numberAssertion = new NumberAssertion(throwHandler);
 
             DomainComponent permissionDomain = new() { AllowedDomain = Domain.PERMISSION };
             IEntity allowedDomainEntity = new AllowedDomainsEntity([permissionDomain]);
@@ -51,14 +53,14 @@ namespace Console
             IArgumentResolver<SkillID> skillIDResolver = new EnumResolver<SkillID>(enumParseAssertion);
             IArgumentResolver<Domain> commandDomainResolver = new EnumResolver<Domain>(enumParseAssertion);
             IArgumentResolver<ControlAction> controlActionResolver = new EnumResolver<ControlAction>(enumParseAssertion);
-            IArgumentResolver<int> intResolver = new IntResolver(typeParseAssertion);
+            IArgumentResolver<uint> uIntResolver = new UIntResolver(typeParseAssertion, numberAssertion);
 
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
             IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher =
                 new ManagedDispatcher<CurrencyUpdate>(bufferManager, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline =
-                new CurrencyUpdateResolver(actionTypeResolver, intResolver, currencyTypeResolver);
+                new CurrencyUpdateResolver(actionTypeResolver, uIntResolver, currencyTypeResolver);
 
             ICommandDomainResolver currencyDomainResolver =
                 new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateFactory, currencyUpdateDispatcher, argumentCountAssertion);

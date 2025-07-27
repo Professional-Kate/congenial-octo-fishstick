@@ -3,7 +3,6 @@ using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Inventory;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures;
-using IdelPog.SimulationEngine.Structures.Types;
 using IdelPogTests.Utils;
 using Moq;
 

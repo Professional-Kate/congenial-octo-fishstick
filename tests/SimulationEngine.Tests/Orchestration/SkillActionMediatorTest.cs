@@ -5,6 +5,7 @@ using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.SimulationEngine.Skill;
+using IdelPog.SimulationEngine.Structures;
 using IdelPogTests.Utils;
 using Moq;
 
