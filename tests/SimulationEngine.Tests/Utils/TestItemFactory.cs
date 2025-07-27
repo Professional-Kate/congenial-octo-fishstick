@@ -1,5 +1,4 @@
-﻿using IdelPog.SimulationEngine.Constants;
-using IdelPog.SimulationEngine.Inventory;
+﻿using IdelPog.SimulationEngine.Inventory;
 
 namespace IdelPogTests.Utils
 {

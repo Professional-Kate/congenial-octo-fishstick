@@ -12,11 +12,11 @@ namespace IdelPog.SimulationEngine.Assertions
         {
         }
 
-        public void AssertBelowMaxLevel(ILevelable levelable)
+        public void AssertBelowMaxLevel(Levelable levelable)
         {
             Assert<MaxLevelException>(() =>
             {
-                if (levelable.Level == SkillConstants.MAX_SKILL_LEVEL)
+                if (levelable.Level >= SkillConstants.MAX_SKILL_LEVEL)
                 {
                     throw new MaxLevelException(levelable, nameof(levelable));
                 }

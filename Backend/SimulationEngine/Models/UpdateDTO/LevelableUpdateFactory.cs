@@ -2,7 +2,7 @@
 {
     public class LevelableUpdateFactory : ILevelableUpdateFactory
     {
-        public LevelableUpdateDTO CreateLevelableUpdate(ILevelable levelable)
+        public LevelableUpdateDTO CreateLevelableUpdate(Levelable levelable)
         {
             return new LevelableUpdateDTO
             {

@@ -2,8 +2,8 @@
 {
     public interface INumberAssertion
     {
-        public void AssertNonNegative(int number);
+        public void AssertNonNegative(uint number);
 
-        public void AssertAllNonNegative(int[] numbers);
+        public void AssertAllNonNegative(uint[] numbers);
     }
 }

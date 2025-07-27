@@ -3,11 +3,9 @@
     /// <summary>
     /// Contains two readonly strings that describes an objects readable name and readable description
     /// </summary>
-    /// <seealso cref="Name"/>
-    /// <seealso cref="Description"/>
-    public readonly struct Information(string name, string description)
+    public readonly record struct Information
     {
-        public readonly string Name = name;
-        public readonly string Description = description;
+        public required string Name { get; init; }
+        public required string Description { get; init; }
     }
 }

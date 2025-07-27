@@ -2,6 +2,6 @@
 {
     public interface ILevelableUpdateFactory
     {
-        public LevelableUpdateDTO CreateLevelableUpdate(ILevelable levelable);
+        public LevelableUpdateDTO CreateLevelableUpdate(Levelable levelable);
     }
 }

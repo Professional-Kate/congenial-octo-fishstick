@@ -1,28 +1,29 @@
 ﻿using IdelPog.SimulationEngine.Models;
+using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Service
 {
     public interface ILevelService
     {
         /// <summary>
-        /// Calculate and return if the passed <see cref="ILevelable"/> can level up
+        /// Calculate and return if the passed <see cref="Levelable"/> can level up
         /// </summary>
-        /// <param name="levelable">The <see cref="ILevelable"/> you want to check if it can level up</param>
-        /// <returns>If the <see cref="ILevelable"/> can level up</returns>
-        public bool CanSkillLevel(ILevelable levelable)
+        /// <param name="levelable">The <see cref="Levelable"/> you want to check if it can level up</param>
+        /// <returns>If the <see cref="Levelable"/> can level up</returns>
+        public bool CanSkillLevel(Levelable levelable)
         {
             return levelable.Experience >= levelable.NextLevelExperience;
         }
 
         /// <summary>
-        /// Invoke this to level up the passed <see cref="ILevelable"/>
+        /// Invoke this to level up the passed <see cref="Levelable"/>
         /// </summary>
-        /// <param name="levelable">The <see cref="ILevelable"/> you want to level</param>
-        /// <exception cref="ArgumentNullException">Will be thrown if the passed <see cref="ILevelable"/> is null</exception>
-        /// <exception cref="MaxLevelException">Will be thrown if the passed <see cref="ILevelable"/> is at max level</exception>
+        /// <param name="levelable">The <see cref="Levelable"/> you want to level</param>
+        /// <exception cref="ArgumentNullException">Will be thrown if the passed <see cref="Levelable"/> is null</exception>
+        /// <exception cref="MaxLevelException">Will be thrown if the passed <see cref="Levelable"/> is at max level</exception>
         /// <remarks>
-        /// This method will calculate a new <see cref="ILevelable.NextLevelExperience"/>
+        /// This method will calculate a new <see cref="Levelable.NextLevelExperience"/>
         /// </remarks>
-        public void LevelUpSkill(ILevelable levelable);
+        public void LevelUpSkill(Levelable levelable);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.SimulationEngine.Constants;
 using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Skill;
 
 namespace IdelPogTests.Utils
 {
