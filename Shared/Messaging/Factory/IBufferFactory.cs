@@ -4,6 +4,6 @@ namespace IdelPog.Messaging.Factory
 {
     public interface IBufferFactory
     {
-        public Buffer<T> CreateBuffer<T>(BufferRequest request);
+        public IBuffer<T> CreateBuffer<T>(BufferRequest request);
     }
 }

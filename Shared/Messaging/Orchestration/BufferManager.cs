@@ -1,29 +1,18 @@
 ﻿using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Factory;
-using IdelPog.Messaging.Messenger;
 using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Messaging.Orchestration
 {
-    public class BufferManager(IBufferFactory bufferFactory, IBufferDispatcher bufferDispatcher, IObjectNullAssertion objectNullAssertion) : IBufferManager
+    public class BufferManager(IBufferFactory bufferFactory, IObjectNullAssertion objectNullAssertion) : IBufferManager
     {
         public IBuffer<T> RequestBuffer<T>(BufferRequest request)
         {
             objectNullAssertion.AssertNotNull(request, nameof(request));
 
-            Buffer<T> buffer = bufferFactory.CreateBuffer<T>(request);
-
-            if (buffer is IInternalBuffer internalBuffer)
-            {
-                internalBuffer.Ready += _ => HandleBufferReady(buffer.Data);
-            }
+            IBuffer<T> buffer = bufferFactory.CreateBuffer<T>(request);
 
             return buffer;
-        }
-
-        private void HandleBufferReady<T>(IReadOnlyList<T> buffer)
-        {
-            bufferDispatcher.DispatchMessage(buffer);
         }
     }
 }

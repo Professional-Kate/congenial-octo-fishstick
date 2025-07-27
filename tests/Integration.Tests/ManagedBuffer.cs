@@ -19,20 +19,17 @@ namespace Integration.Tests
         protected void BaseOneTimeSetUp()
         {
             _objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
-            IBufferAssertion bufferAssertion = new BufferAssertion(new ThrowHandler());
-
-            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion);
         }
 
         [SetUp]
         protected void BaseSetUp()
         {
             IListenerAssertion listenerAssertion = new ListenerAssertion(new ThrowHandler());
+            IBufferAssertion bufferAssertion = new BufferAssertion(new ThrowHandler());
 
-            BufferMessenger bufferMessenger = new(_objectNullAssertion, listenerAssertion);
-            BufferMessenger = bufferMessenger;
-            IBufferDispatcher bufferDispatcher = bufferMessenger;
-            BufferManager = new BufferManager(_bufferFactory, bufferDispatcher, _objectNullAssertion);
+            BufferMessenger = new BufferMessenger(_objectNullAssertion, listenerAssertion);
+            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher) BufferMessenger);
+            BufferManager = new BufferManager(_bufferFactory, _objectNullAssertion);
         }
 
         protected void ManagedSubscribe(IListener listener)

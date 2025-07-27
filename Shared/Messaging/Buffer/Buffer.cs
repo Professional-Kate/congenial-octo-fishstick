@@ -1,29 +1,24 @@
 ﻿using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Messenger;
 using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Messaging.Buffer
 {
-    public class Buffer<T> : IInternalBuffer, IBuffer<T>
+    public class Buffer<T> : IBuffer<T>
     {
         private readonly IBufferAssertion _bufferAssertion;
+        private readonly IBufferDispatcher _bufferDispatcher;
         private readonly IObjectNullAssertion _objectNullAssertion;
-
-        private event Action<IInternalBuffer>? Ready;
-
-        event Action<IInternalBuffer>? IInternalBuffer.Ready
-        {
-            add => Ready += value;
-            remove => Ready -= value;
-        }
 
         public BufferState State { get; private set; } = BufferState.CREATED;
 
         private readonly T[] _data;
         public IReadOnlyList<T> Data => _data;
 
-        public Buffer(IBufferAssertion bufferAssertion, IObjectNullAssertion objectNullAssertion, BufferRequest request)
+        public Buffer(IBufferAssertion bufferAssertion, IBufferDispatcher bufferDispatcher, IObjectNullAssertion objectNullAssertion, BufferRequest request)
         {
             _bufferAssertion = bufferAssertion;
+            _bufferDispatcher = bufferDispatcher;
             _objectNullAssertion = objectNullAssertion;
             _data = new T[request.Length];
         }
@@ -32,8 +27,7 @@ namespace IdelPog.Messaging.Buffer
         {
             _bufferAssertion.AssertStateEquals(State, BufferState.FILLED);
             State = BufferState.READY;
-
-            Ready?.Invoke(this);
+            _bufferDispatcher.DispatchMessage(Data);
         }
 
         public void Assign(IReadOnlyList<T> source)
