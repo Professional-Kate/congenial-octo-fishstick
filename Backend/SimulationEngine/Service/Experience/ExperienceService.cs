@@ -5,12 +5,12 @@ namespace IdelPog.SimulationEngine.Service
 {
     public class ExperienceService(ILevelableAssertionPipeline levelableAssertionPipeline) : IExperienceService
     {
-        public void AddExperience(ILevelable levelable)
+        public void AddExperience(Levelable levelable)
         {
             levelableAssertionPipeline.AssertLevelable(levelable);
 
-            int experienceToAdd = levelable.ExperiencePerAction + levelable.Experience;
-            levelable.SetExperience(experienceToAdd);
+            uint newExperience = levelable.ExperiencePerAction + levelable.Experience;
+            levelable.Experience = newExperience;
         }
     }
 }

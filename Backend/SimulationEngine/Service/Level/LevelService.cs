@@ -5,18 +5,18 @@ namespace IdelPog.SimulationEngine.Service
 {
     public class LevelService(ILevelableAssertionPipeline levelableAssertionPipeline) : ILevelService
     {
-        public void LevelUpSkill(ILevelable levelable)
+        public void LevelUpSkill(Levelable levelable)
         {
             levelableAssertionPipeline.AssertLevelable(levelable);
 
-            int total = 0;
-            for (int i = 1; i < levelable.Level; i++)
+            uint total = 0;
+            for (uint i = 1; i < levelable.Level; i++)
             {
-                total += Convert.ToInt32(Math.Floor(i + 83 * Math.Pow(2, i / 7.0)));
+                total += Convert.ToUInt32(Math.Floor(i + 83 * Math.Pow(2, i / 7.0)));
             }
 
-            levelable.LevelUp();
-            levelable.SetNextLevelExperience(total);
+            levelable.Level++;
+            levelable.NextLevelExperience = total;
         }
     }
 }

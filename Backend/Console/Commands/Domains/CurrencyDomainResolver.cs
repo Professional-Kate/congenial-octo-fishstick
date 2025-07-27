@@ -33,8 +33,7 @@ namespace Console.Commands.Domains
             _argumentCountAssertion.AssertCount(arguments.Length, 3);
 
             CurrencyUpdateArguments currencyUpdateArguments = _currencyUpdatePipeline.Resolve(arguments);
-            CurrencyUpdate currencyUpdate = _currencyUpdateFactory.CreateCurrencyUpdate(currencyUpdateArguments.ActionType, currencyUpdateArguments.Amount,
-                currencyUpdateArguments.CurrencyType);
+            CurrencyUpdate currencyUpdate = _currencyUpdateFactory.CreateCurrencyUpdate(currencyUpdateArguments.ActionType, currencyUpdateArguments.Amount, currencyUpdateArguments.CurrencyType);
 
             _currencyUpdateDispatcher.Dispatch(currencyUpdate);
         }

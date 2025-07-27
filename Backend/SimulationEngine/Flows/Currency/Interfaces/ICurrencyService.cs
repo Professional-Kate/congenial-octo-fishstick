@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Currency
+﻿using IdelPog.SimulationEngine.Models;
+
+namespace IdelPog.SimulationEngine.Currency
 {
     /// <summary>
     /// This class will handle modifying any data of the <see cref="Currency"/> model. 
@@ -19,7 +21,7 @@
         /// <remarks>
         /// This method will do no verification of the passed arguments
         /// </remarks>
-        public void AddAmount(Currency currency, int amount);
+        public void AddAmount(Models.Currency currency, uint amount);
 
         /// <summary>
         /// Removed the passed int amount from the passed <see cref="Currency"/> model
@@ -29,6 +31,6 @@
         /// <remarks>
         /// This method will do no verification of the passed arguments
         /// </remarks>
-        public void RemoveAmount(Currency currency, int amount);
+        public void RemoveAmount(Models.Currency currency, uint amount);
     }
 }

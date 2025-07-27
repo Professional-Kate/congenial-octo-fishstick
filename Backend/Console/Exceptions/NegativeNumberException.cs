@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Currency.Exceptions
+﻿namespace Console.Exceptions
 {
     public class NegativeNumberException : Exception
     {

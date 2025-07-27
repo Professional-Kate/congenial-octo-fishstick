@@ -1,5 +1,5 @@
-﻿using IdelPog.SimulationEngine.Constants;
-using IdelPog.SimulationEngine.Inventory;
+﻿using IdelPog.SimulationEngine.Inventory;
+using IdelPog.SimulationEngine.Models;
 
 namespace IdelPogTests.Utils
 {
@@ -7,10 +7,7 @@ namespace IdelPogTests.Utils
     {
         internal static Item CreateOakWood()
         {
-            return ItemBuilder.Create(ItemID.OAK_WOOD, ItemConstants.OAK_WOOD)
-                .SellPrice(1)
-                .Amount(0)
-                .Build();
+            return new Item(ItemID.OAK_WOOD, 0, new Information { Description = "Oak Wood", Name = "Oak, Wood." }, 0);
         }
     }
 }

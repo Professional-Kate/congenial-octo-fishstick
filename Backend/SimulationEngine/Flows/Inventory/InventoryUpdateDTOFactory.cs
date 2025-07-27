@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Structures;
+﻿using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Structures;
 
 namespace IdelPog.SimulationEngine.Inventory
 {
@@ -11,8 +12,8 @@ namespace IdelPog.SimulationEngine.Inventory
                 ItemDTO = new ItemDTO
                 {
                     Amount = item.Amount,
-                    ItemID = item.ID,
-                    SellPrice = item.SellPrice
+                    ItemID = item.ItemID,
+                    BaseSellPrice = item.BaseSellPrice
                 },
                 ActionType = inventoryUpdate.Action,
                 MutateType = mutateType

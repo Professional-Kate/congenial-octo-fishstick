@@ -1,8 +1,10 @@
-﻿namespace IdelPog.SimulationEngine.Models
+﻿using IdelPog.SimulationEngine.Models;
+
+namespace IdelPog.SimulationEngine.Structures
 {
     public class LevelableUpdateFactory : ILevelableUpdateFactory
     {
-        public LevelableUpdateDTO CreateLevelableUpdate(ILevelable levelable)
+        public LevelableUpdateDTO CreateLevelableUpdate(Levelable levelable)
         {
             return new LevelableUpdateDTO
             {

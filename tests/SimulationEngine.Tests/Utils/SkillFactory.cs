@@ -1,7 +1,5 @@
 ﻿using IdelPog.Common.Enums;
-using IdelPog.SimulationEngine.Constants;
 using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Skill;
 
 namespace IdelPogTests.Utils
 {
@@ -9,9 +7,14 @@ namespace IdelPogTests.Utils
     {
         internal static Skill CreateMining()
         {
-            ILevelable levelable = new Levelable(1, 0, 10, 0);
+            Levelable levelable = new(1, 0, 10, 0);
 
-            return new Skill(levelable, SkillID.MINING, SkillConstants.MINING_INFO);
+            return new Skill
+            {
+                Information = new Information { Description = "Created", Name = "pog" },
+                Levelable = levelable,
+                SkillID = SkillID.MINING
+            };
         }
     }
 }

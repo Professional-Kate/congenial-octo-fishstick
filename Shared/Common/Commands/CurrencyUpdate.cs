@@ -16,7 +16,7 @@ namespace IdelPog.Common.Commands
         /// The amount that should be Removed/Added to the <see cref="Common.Enums.CurrencyType"/>
         /// </summary>
         /// <remarks>This number should be positive. We do not accept zero</remarks>
-        public required int Amount { get; init; }
+        public required uint Amount { get; init; }
 
         /// <summary>
         /// <inheritdoc cref="ActionType"/>

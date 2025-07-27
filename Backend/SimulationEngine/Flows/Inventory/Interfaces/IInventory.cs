@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Structures;
+﻿using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Structures;
 
 namespace IdelPog.SimulationEngine.Inventory
 {
@@ -18,7 +19,7 @@ namespace IdelPog.SimulationEngine.Inventory
         /// <param name="amount">The amount you want to add</param>
         /// <exception cref="ArgumentException">Will be thrown if the passed or amount is 0 or less</exception>
         /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="Item"/> is not in the Inventory</exception>
-        public void AddAmount(ItemID id, int amount);
+        public void AddAmount(ItemID id, uint amount);
 
         /// <summary>
         /// Remove an amount from an <see cref="Item"/> using its linked <see cref="ItemID"/>
@@ -29,7 +30,7 @@ namespace IdelPog.SimulationEngine.Inventory
         /// <exception cref="ArgumentException">Will be thrown if the passed amount would cause the <see cref="Item"/>'s amount to be less than zero</exception>
         /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="Item"/> is not in the Inventory</exception>
         /// <remarks>If the <see cref="Item"/>'s amount is exactly 0, after removing the passed amount, it will be removed from the Repository</remarks>
-        public MutateType RemoveAmount(ItemID id, int amount);
+        public MutateType RemoveAmount(ItemID id, uint amount);
 
         /// <summary>
         /// Adds a passed <see cref="Item"/> into the Inventory

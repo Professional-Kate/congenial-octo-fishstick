@@ -2,11 +2,10 @@
 using IdelPog.Common.Repository;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency;
-using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
-using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Currency.Factories;
+using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
@@ -34,7 +33,7 @@ namespace IdelPogTests.Orchestration
             _currencyCreationDTOFactoryMock = new Mock<ICurrencyCreationDTOFactory>();
             _currencyCreationMediator = new CurrencyCreationMediator(_stateRepositoryMock.Object, _currencyCreationDispatcherMock.Object,
                 _currencyCreationDTOFactoryMock.Object, new ObjectNullAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()),
-                new UniqueAssertion(new ThrowHandler()), new NumberAssertion(new ThrowHandler()));
+                new UniqueAssertion(new ThrowHandler()));
 
             _createGold = new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = 10 };
             _createGems = new CurrencyCreation { CurrencyType = CurrencyType.GEMS, StartingAmount = 15 };
@@ -59,10 +58,10 @@ namespace IdelPogTests.Orchestration
             return currencyCreationDTOs.ToArray();
         }
 
-        [TestCase(0)]
-        [TestCase(10)]
-        [TestCase(int.MaxValue)]
-        public void Positive_CreateCurrency_SingleValidCommand_CreatesCurrency(int amount)
+        [TestCase(0u)]
+        [TestCase(10u)]
+        [TestCase(uint.MaxValue)]
+        public void Positive_CreateCurrency_SingleValidCommand_CreatesCurrency(uint amount)
         {
             CurrencyCreation currencyCreation = new() { CurrencyType = CurrencyType.GOLD, StartingAmount = amount };
             CurrencyCreationDTO[] currencyCreationDTOs = CurrencyCreationConverter([currencyCreation]);
@@ -112,18 +111,6 @@ namespace IdelPogTests.Orchestration
 
             _stateRepositoryMock.Verify(library => library.Add(CurrencyType.GOLD, It.IsAny<Currency>()), Times.Exactly(1));
             _stateRepositoryMock.Verify(library => library.Contains(CurrencyType.GOLD), Times.Exactly(2));
-            _currencyCreationDispatcherMock.VerifyNoOtherCalls();
-        }
-
-        [Test]
-        public void Negative_CreateCurrency_SingleCommand_NegativeNumber_Throws()
-        {
-            CurrencyCreation[] creation = [new() { CurrencyType = CurrencyType.GOLD, StartingAmount = -1 }];
-
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _currencyCreationMediator.CreateCurrency(creation));
-            Assert.That(exception.Number, Is.EqualTo(-1));
-
-            _stateRepositoryMock.VerifyNoOtherCalls();
             _currencyCreationDispatcherMock.VerifyNoOtherCalls();
         }
 

@@ -1,5 +1,5 @@
-﻿using IdelPog.SimulationEngine.Service;
-using IdelPog.SimulationEngine.Structures.Types;
+﻿using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Service;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
@@ -13,8 +13,8 @@ namespace IdelPogTests.Service
         private IFoundAssertion _assertFound { get; set; }
         private IUniqueAssertion _assertUnique { get; set; }
 
-        private readonly Information _informationOne = new("TEST", "TESTING");
-        private readonly Information _informationTwo = new("HELLO", "WORLD");
+        private readonly Information _informationOne = new() { Description = "AA", Name = "scream" };
+        private readonly Information _informationTwo = new() { Description = "SDSD", Name = "wooo" };
 
         [SetUp]
         public void Setup()
@@ -49,7 +49,7 @@ namespace IdelPogTests.Service
         [Test]
         public void Positive_AddInformation_Adds_Information()
         {
-            Information newInformation = new("AAAAA", "AAA");
+            Information newInformation = new() { Description = "Hello", Name = "World!!!!!!" };
             _informationMapper.AddInformation(3, newInformation);
 
             Information returnedInfo = _informationMapper.GetInformation(3);

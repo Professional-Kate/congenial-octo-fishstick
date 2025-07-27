@@ -4,6 +4,6 @@ namespace IdelPog.SimulationEngine.Assertions
 {
     public interface ILevelAssertion
     {
-        public void AssertBelowMaxLevel(ILevelable levelable);
+        public void AssertBelowMaxLevel(Levelable levelable);
     }
 }

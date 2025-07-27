@@ -1,18 +1,24 @@
-﻿using IdelPog.SimulationEngine.Currency.Assertions;
-using IdelPog.SimulationEngine.Models;
+﻿using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Assertions.Pipelines
 {
     /// <inheritdoc cref="ILevelableAssertionPipeline"/>
-    public class LevelableAssertionPipeline(ILevelAssertion levelAssertion, IObjectNullAssertion objectNullAssertion, INumberAssertion numberAssertion)
-        : ILevelableAssertionPipeline
+    public class LevelableAssertionPipeline : ILevelableAssertionPipeline
     {
-        public void AssertLevelable(ILevelable levelable)
+        private readonly ILevelAssertion _levelAssertion;
+        private readonly IObjectNullAssertion _objectNullAssertion;
+
+        public LevelableAssertionPipeline(ILevelAssertion levelAssertion, IObjectNullAssertion objectNullAssertion)
         {
-            objectNullAssertion.AssertNotNull(levelable, nameof(levelable));
-            levelAssertion.AssertBelowMaxLevel(levelable);
-            numberAssertion.AssertNonNegative(levelable.ExperiencePerAction);
+            _levelAssertion = levelAssertion;
+            _objectNullAssertion = objectNullAssertion;
+        }
+
+        public void AssertLevelable(Levelable levelable)
+        {
+            _objectNullAssertion.AssertNotNull(levelable, nameof(levelable));
+            _levelAssertion.AssertBelowMaxLevel(levelable);
         }
     }
 }

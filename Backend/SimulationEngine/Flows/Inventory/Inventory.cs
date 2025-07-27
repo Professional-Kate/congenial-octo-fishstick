@@ -1,5 +1,5 @@
 ﻿using IdelPog.Common.Repository;
-using IdelPog.SimulationEngine.Currency.Assertions;
+using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -13,63 +13,56 @@ namespace IdelPog.SimulationEngine.Inventory
     {
         private readonly IStateRepository<ItemID, Item> _itemRepository;
         private readonly IFoundAssertion _foundAssertion;
-        private readonly INumberAssertion _numberAssertion;
         private readonly IUniqueAssertion _uniqueAssertion;
 
         public Inventory()
         {
             _itemRepository = new StateRepository<ItemID, Item>();
             _foundAssertion = new FoundAssertion(new ThrowHandler());
-            _numberAssertion = new NumberAssertion(new ThrowHandler());
             _uniqueAssertion = new UniqueAssertion(new ThrowHandler());
         }
 
-        public Inventory(IStateRepository<ItemID, Item> itemRepository, IFoundAssertion foundAssertion, INumberAssertion numberAssertion,
+        public Inventory(IStateRepository<ItemID, Item> itemRepository, IFoundAssertion foundAssertion,
             IUniqueAssertion uniqueAssertion)
         {
             _itemRepository = itemRepository;
             _foundAssertion = foundAssertion;
-            _numberAssertion = numberAssertion;
             _uniqueAssertion = uniqueAssertion;
         }
 
-        public void AddAmount(ItemID id, int amount)
+        public void AddAmount(ItemID id, uint amount)
         {
-            AssertAmountIsPositive(amount);
             AssertItemExists(id);
 
             Item finalItem = RepositoryGet(id);
 
-            finalItem.AddAmount(amount);
+            finalItem.Amount += amount;
             RepositoryUpdate(id, finalItem);
         }
 
-        public MutateType RemoveAmount(ItemID id, int amount)
+        public MutateType RemoveAmount(ItemID id, uint amount)
         {
-            AssertAmountIsPositive(amount);
             AssertItemExists(id);
 
             Item item = RepositoryGet(id);
-            int itemAmount = item.Amount;
+            uint itemAmount = item.Amount;
 
-            AssertAmountIsPositive(itemAmount - amount);
             if (itemAmount - amount == 0)
             {
-                _itemRepository.Remove(item.ID);
+                _itemRepository.Remove(item.ItemID);
                 return MutateType.DELETED;
             }
 
-            item.RemoveAmount(amount);
-            RepositoryUpdate(item.ID, item);
+            item.Amount -= amount;
+            RepositoryUpdate(item.ItemID, item);
             return MutateType.CHANGED;
         }
 
         public void AddItem(Item item)
         {
-            AssertAmountIsPositive(item.Amount);
-            _uniqueAssertion.AssertUnique(item.ID, Contains(item.ID));
+            _uniqueAssertion.AssertUnique(item.ItemID, Contains(item.ItemID));
 
-            _itemRepository.Add(item.ID, item);
+            _itemRepository.Add(item.ItemID, item);
         }
 
         public bool Contains(ItemID item)
@@ -81,15 +74,6 @@ namespace IdelPog.SimulationEngine.Inventory
         {
             AssertItemExists(item);
             return _itemRepository.Get(item);
-        }
-
-        /// <summary>
-        /// Asserts that the passed amount is greater than zero
-        /// </summary>
-        /// <param name="amount">The amount you want to verify</param>
-        private void AssertAmountIsPositive(int amount)
-        {
-            _numberAssertion.AssertNonNegative(amount);
         }
 
         /// <summary>

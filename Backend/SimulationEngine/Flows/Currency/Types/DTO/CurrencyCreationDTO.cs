@@ -5,6 +5,6 @@ namespace IdelPog.SimulationEngine.Currency.DTO
     public readonly record struct CurrencyCreationDTO
     {
         public required CurrencyType CurrencyType { get; init; }
-        public required int Amount { get; init; }
+        public required uint Amount { get; init; }
     }
 }

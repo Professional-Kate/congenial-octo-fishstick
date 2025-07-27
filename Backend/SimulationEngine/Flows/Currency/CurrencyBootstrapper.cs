@@ -19,33 +19,32 @@ namespace IdelPog.SimulationEngine.Currency
     {
         public void Initialize(IBufferMessenger bufferMessenger, IBufferManager bufferManager)
         {
-            INumberAssertion numberAssertion = new NumberAssertion(new ThrowHandler());
             ICollectionAssertion collectionAssertion = new CollectionAssertion(new ThrowHandler());
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(new ThrowHandler());
             IFoundAssertion foundAssertion = new FoundAssertion(new ThrowHandler());
             ICurrencyAssertion currencyAssertion = new CurrencyAssertion(new ThrowHandler());
 
-            IStateRepository<CurrencyType, Currency> currencyRepository = new StateRepository<CurrencyType, Currency>();
+            IStateRepository<CurrencyType, Models.Currency> currencyRepository = new StateRepository<CurrencyType, Models.Currency>();
 
-            ICurrencyService currencyService = new CurrencyService(numberAssertion, currencyAssertion);
+            ICurrencyService currencyService = new CurrencyService(currencyAssertion);
             ICurrencyUpdateDTOFactory currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(objectNullAssertion, collectionAssertion);
             IDispatchMany<CurrencyUpdateDTO> currencyUpdateDispatcher =
                 new ManagedDispatcher<CurrencyUpdateDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
             ICurrencyUpdateSummarizer currencyUpdateSummarizer =
-                new CurrencyUpdateSummarizer(currencyUpdateFactory, numberAssertion, objectNullAssertion, collectionAssertion);
+                new CurrencyUpdateSummarizer(currencyUpdateFactory, objectNullAssertion, collectionAssertion);
 
             ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, currencyUpdateDispatcher,
-                currencyUpdateSummarizer, currencyUpdateDTOFactory, numberAssertion, collectionAssertion, foundAssertion, objectNullAssertion);
+                currencyUpdateSummarizer, currencyUpdateDTOFactory, collectionAssertion, foundAssertion, objectNullAssertion);
 
             ICurrencyCreationDTOFactory currencyCreationDTOFactory = new CurrencyCreationDTOFactory(objectNullAssertion, collectionAssertion);
             IDispatchMany<CurrencyCreationDTO> currencyCreationDispatcher =
                 new ManagedDispatcher<CurrencyCreationDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 
             ICurrencyCreationMediator currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationDispatcher,
-                currencyCreationDTOFactory, objectNullAssertion, collectionAssertion, uniqueAssertion, numberAssertion);
+                currencyCreationDTOFactory, objectNullAssertion, collectionAssertion, uniqueAssertion);
 
             ICurrencyController currencyController = new CurrencyController(currencyUpdateMediator, currencyCreationMediator);
             IErrorDTOFactory errorDTOFactory = new ErrorDTOFactory();

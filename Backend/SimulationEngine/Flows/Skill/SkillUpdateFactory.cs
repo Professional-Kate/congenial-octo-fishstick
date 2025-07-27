@@ -1,10 +1,11 @@
 ﻿using IdelPog.SimulationEngine.Models;
+using IdelPog.SimulationEngine.Structures;
 
 namespace IdelPog.SimulationEngine.Skill
 {
     public class SkillUpdateFactory(ILevelableUpdateFactory levelableUpdateFactory) : ISkillUpdateFactory
     {
-        public SkillUpdateDTO CreateSkillUpdate(Skill skill, bool hasLeveled)
+        public SkillUpdateDTO CreateSkillUpdate(Models.Skill skill, bool hasLeveled)
         {
             return new SkillUpdateDTO
             {

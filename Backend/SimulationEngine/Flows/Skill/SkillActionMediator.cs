@@ -11,12 +11,12 @@ namespace IdelPog.SimulationEngine.Skill
     {
         private readonly IExperienceService _experienceService;
         private readonly ILevelService _levelService;
-        private readonly IStateRepository<SkillID, Skill> _skillRepository;
+        private readonly IStateRepository<SkillID, Models.Skill> _skillRepository;
         private readonly ICurrentSkillProvider _currentSkillProvider;
         private readonly IDispatchOne<SkillUpdateDTO> _skillUpdateDTODispatcher;
         private readonly ISkillUpdateFactory _skillUpdateFactory;
 
-        public SkillActionMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Skill> skillRepository,
+        public SkillActionMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Models.Skill> skillRepository,
             ICurrentSkillProvider currentSkillProvider, IDispatchOne<SkillUpdateDTO> skillUpdateDTODispatcher, ISkillUpdateFactory skillUpdateFactory)
         {
             _experienceService = experienceService;
@@ -31,8 +31,8 @@ namespace IdelPog.SimulationEngine.Skill
         {
             SkillID currentSkillID = _currentSkillProvider.GetCurrentSkill();
 
-            Skill skill = _skillRepository.Get(currentSkillID);
-            ILevelable levelable = skill.Levelable;
+            Models.Skill skill = _skillRepository.Get(currentSkillID);
+            Levelable levelable = skill.Levelable;
 
             _experienceService.AddExperience(levelable);
             bool canSkillLevel = _levelService.CanSkillLevel(levelable);

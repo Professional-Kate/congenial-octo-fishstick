@@ -26,11 +26,9 @@ namespace IdelPogTests.Service
             [
                 TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD),
                 TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.REMOVE),
-                TestUtils.CreateTrade(int.MaxValue, CurrencyType.GOLD, ActionType.REMOVE),
+                TestUtils.CreateTrade(uint.MaxValue, CurrencyType.GOLD, ActionType.REMOVE),
                 // The factory doesn't care about negatives. It should be verified elsewhere if negative numbers are an issue
-                TestUtils.CreateTrade(-10, CurrencyType.GOLD, ActionType.ADD),
-                TestUtils.CreateTrade(-10, CurrencyType.GOLD, ActionType.REMOVE),
-                TestUtils.CreateTrade(int.MinValue, CurrencyType.GOLD, ActionType.REMOVE)
+                TestUtils.CreateTrade(uint.MinValue, CurrencyType.GOLD, ActionType.REMOVE)
             ];
         }
 

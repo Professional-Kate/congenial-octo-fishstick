@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Currency.Assertions
+﻿namespace Console.Assertions
 {
     public interface INumberAssertion
     {

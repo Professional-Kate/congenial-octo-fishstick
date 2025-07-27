@@ -5,7 +5,7 @@ namespace IdelPog.SimulationEngine.Currency.Factories
 {
     public class CurrencyUpdateFactory : ICurrencyUpdateFactory
     {
-        public CurrencyUpdate CreateCurrencyUpdate(CurrencyType currencyType, ActionType actionType, int amount)
+        public CurrencyUpdate CreateCurrencyUpdate(CurrencyType currencyType, ActionType actionType, uint amount)
         {
             return new CurrencyUpdate
             {

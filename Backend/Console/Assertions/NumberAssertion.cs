@@ -1,8 +1,8 @@
-﻿using IdelPog.SimulationEngine.Currency.Exceptions;
+﻿using Console.Exceptions;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
-namespace IdelPog.SimulationEngine.Currency.Assertions
+namespace Console.Assertions
 {
     public class NumberAssertion : BaseAssertion, INumberAssertion
     {

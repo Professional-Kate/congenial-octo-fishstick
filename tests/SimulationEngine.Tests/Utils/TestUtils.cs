@@ -16,7 +16,7 @@ namespace IdelPogTests.Utils
         /// <param name="type">The <see cref="CurrencyType"/> you want to modify</param>
         /// <param name="action">The <see cref="ActionType"/></param>
         /// <returns>The created <see cref="CurrencyUpdate"/></returns>
-        internal static CurrencyUpdate CreateTrade(int amount, CurrencyType type, ActionType action)
+        internal static CurrencyUpdate CreateTrade(uint amount, CurrencyType type, ActionType action)
         {
             return new CurrencyUpdate
             {
