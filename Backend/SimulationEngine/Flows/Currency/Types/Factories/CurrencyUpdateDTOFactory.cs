@@ -24,15 +24,27 @@ namespace IdelPog.SimulationEngine.Currency.Factories
 
             foreach (CurrencyUpdate currencyTrade in trades)
             {
-                result.Add(new CurrencyUpdateDTO
-                {
-                    Action = currencyTrade.Action,
-                    CurrencyType = currencyTrade.CurrencyType,
-                    Amount = currencyTrade.Amount
-                });
+                result.Add(Create(currencyTrade));
             }
 
             return result.ToArray();
+        }
+        
+        public CurrencyUpdateDTO CreateFrom(CurrencyUpdate trade)
+        {
+            _objectNullAssertion.AssertNotNull(trade, nameof(trade));
+
+            return Create(trade);
+        }
+
+        private static CurrencyUpdateDTO Create(CurrencyUpdate trade)
+        {
+            return new CurrencyUpdateDTO
+            {
+                Action = trade.Action,
+                Amount = trade.Amount,
+                CurrencyType = trade.CurrencyType
+            };
         }
     }
 }

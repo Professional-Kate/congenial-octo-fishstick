@@ -1,5 +1,4 @@
-﻿using IdelPog.Messaging.Listeners;
-using IdelPog.Messaging.Listeners.Single;
+﻿using IdelPog.Messaging.Listeners.Single;
 
 namespace IdelPog.Messaging.Messenger
 {

@@ -33,5 +33,16 @@ namespace IdelPog.SimulationEngine.Currency.Factories
 
             return result.ToArray();
         }
+
+        public CurrencyCreationDTO CreateFrom(CurrencyCreation trade)
+        {
+            _objectNullAssertion.AssertNotNull(trade, nameof(trade));
+
+            return new CurrencyCreationDTO
+            {
+                Amount = trade.StartingAmount,
+                CurrencyType = trade.CurrencyType
+            };
+        }
     }
 }

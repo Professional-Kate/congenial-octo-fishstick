@@ -56,7 +56,7 @@ namespace Integration.Tests.CurrencyCommands.Create
             });
         }
 
-        private void AssertCurrencyCreationErrorListener(CurrencyCreation[] currencyCreations, bool wasCalled)
+        private void AssertCurrencyCreationErrorListener(bool wasCalled)
         {
             if (wasCalled == false)
             {
@@ -64,12 +64,7 @@ namespace Integration.Tests.CurrencyCommands.Create
                 return;
             }
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(_currencyCreationErrorListener.WasCalled, Is.True);
-                Assert.That(_currencyCreationErrorListener.CurrencyUpdateErrorDTO.CurrencyCreations, Is.Not.Null);
-                Assert.That(_currencyCreationErrorListener.CurrencyUpdateErrorDTO.CurrencyCreations, Has.Length.EqualTo(currencyCreations.Length));
-            });
+            Assert.That(_currencyCreationErrorListener.WasCalled, Is.True);
         }
 
         private void AssertCreationErrorDTO<T>(CurrencyCreationDTO creationDTO, CurrencyCreation creation)
@@ -101,7 +96,7 @@ namespace Integration.Tests.CurrencyCommands.Create
             CurrencyCreation[] currencyCreations = [_createGold];
             Assert.DoesNotThrow(() => SendCurrencyCreationBuffer(currencyCreations));
             AssertCurrencyCreationDTOListener(currencyCreations, true);
-            AssertCurrencyCreationErrorListener(currencyCreations, false);
+            AssertCurrencyCreationErrorListener(false);
 
             CurrencyCreationDTO creationDTO = _currencyCreationDTOListener.Buffer![0];
             Assert.Multiple(() =>
@@ -117,7 +112,7 @@ namespace Integration.Tests.CurrencyCommands.Create
             CurrencyCreation[] currencyCreations = [_createGold, _createGems];
             Assert.DoesNotThrow(() => SendCurrencyCreationBuffer(currencyCreations));
             AssertCurrencyCreationDTOListener(currencyCreations, true);
-            AssertCurrencyCreationErrorListener(currencyCreations, false);
+            AssertCurrencyCreationErrorListener(false);
 
             IReadOnlyList<CurrencyCreationDTO> creationDTOs = _currencyCreationDTOListener.Buffer!;
             foreach (CurrencyCreationDTO currencyCreationDTO in creationDTOs)
@@ -144,9 +139,9 @@ namespace Integration.Tests.CurrencyCommands.Create
             CurrencyCreation[] currencyCreations = [_createGold, _createGems, _createGold];
             Assert.DoesNotThrow(() => SendCurrencyCreationBuffer(currencyCreations));
             AssertCurrencyCreationDTOListener(currencyCreations, false);
-            AssertCurrencyCreationErrorListener(currencyCreations, true);
+            AssertCurrencyCreationErrorListener(true);
 
-            CurrencyCreationDTO creationDTO = _currencyCreationErrorListener.CurrencyUpdateErrorDTO.CurrencyCreations[0];
+            CurrencyCreationDTO creationDTO = _currencyCreationErrorListener.CurrencyUpdateErrorDTO.CurrencyCreation;
             AssertCreationErrorDTO<DuplicateEntityException>(creationDTO, _createGold);
         }
     }

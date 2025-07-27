@@ -1,8 +1,13 @@
-﻿using IdelPog.Messaging.Dispatch;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Listeners.Buffer;
+using IdelPog.Messaging.Listeners.Single;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.SimulationEngine.Skill
 {
@@ -10,17 +15,18 @@ namespace IdelPog.SimulationEngine.Skill
     {
         public void Initialize(IBufferMessenger bufferMessenger, IBufferManager bufferManager, ICurrentSkillSetter currentSkillSetter)
         {
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(new ThrowHandler());
+            IHandler throwHandler = new ThrowHandler();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IThrowingAssertion throwingAssertion = new ThrowingAssertion(throwHandler);
 
-            IDispatchOne<SkillChangeDTO> skillChangeDTODispatcher =
-                new ManagedDispatcher<SkillChangeDTO>(bufferManager, objectNullAssertion, collectionAssertion);
+            IDispatchOne<SkillChangeDTO> skillChangeDTODispatcher = new ManagedDispatcher<SkillChangeDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 
             ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();
 
             ISkillChangeMediator skillChangeMediator = new SkillChangeMediator(currentSkillSetter, skillChangeFactory, skillChangeDTODispatcher);
-            ISkillController skillController = new SkillController(skillChangeMediator);
-            SkillChangeListener skillChangeListener = new(skillController);
+            ISingleController<SkillChange> skillController = new SkillController(skillChangeMediator);
+            ISingleListener<SkillChange> skillChangeListener = new ManagedSingleListener<SkillChange>(skillController, throwingAssertion);
 
             bufferMessenger.Subscribe(skillChangeListener);
         }

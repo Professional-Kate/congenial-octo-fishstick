@@ -1,5 +1,4 @@
-﻿using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Structures;
+﻿using IdelPog.SimulationEngine.Structures;
 
 namespace IdelPog.SimulationEngine.Skill
 {

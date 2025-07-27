@@ -1,0 +1,20 @@
+﻿using IdelPog.Messaging.Listeners.Buffer;
+using IdelPog.SimulationEngine.Currency.Commands;
+
+namespace IdelPog.SimulationEngine.Currency
+{
+    public class CurrencyCreationController : IBatchedController<CurrencyCreation>
+    {
+        private readonly ICurrencyCreationMediator _currencyCreationMediator;
+        
+        public CurrencyCreationController(ICurrencyCreationMediator currencyCreationMediator)
+        {
+            _currencyCreationMediator = currencyCreationMediator;
+        }
+        
+        public void HandleMessages(IReadOnlyList<CurrencyCreation> message)
+        {
+            _currencyCreationMediator.CreateCurrency(message);
+        }
+    }
+}

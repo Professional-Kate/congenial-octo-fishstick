@@ -1,5 +1,6 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPogTests.Utils;
@@ -8,9 +9,10 @@ using Moq;
 namespace IdelPogTests.Controller
 {
     [TestFixture]
-    public class CurrencyControllerTest
+    public class CurrencyUpdateControllerTest
     {
-        private ICurrencyController _currencyController { get; set; }
+        private IBatchedController<CurrencyUpdate> _currencyUpdateController { get; set; }
+        private IBatchedController<CurrencyCreation> _currencyCreationController { get; set; }
         private Mock<ICurrencyUpdateMediator> _currencyUpdateMediatorMock { get; set; }
         private Mock<ICurrencyCreationMediator> _currencyCreationMediatorMock { get; set; }
 
@@ -40,13 +42,14 @@ namespace IdelPogTests.Controller
         {
             _currencyUpdateMediatorMock = new Mock<ICurrencyUpdateMediator>();
             _currencyCreationMediatorMock = new Mock<ICurrencyCreationMediator>();
-            _currencyController = new CurrencyController(_currencyUpdateMediatorMock.Object, _currencyCreationMediatorMock.Object);
+            _currencyUpdateController = new CurrencyUpdateController(_currencyUpdateMediatorMock.Object);
+            _currencyCreationController = new CurrencyCreationController(_currencyCreationMediatorMock.Object);
         }
 
         [Test]
         public void Positive_UpdateCurrency_InvokesMediator()
         {
-            _currencyController.UpdateCurrency(_currencyTrades);
+            _currencyUpdateController.HandleMessages(_currencyTrades);
 
             _currencyUpdateMediatorMock.Verify(library => library.ProcessCurrencyUpdate(_currencyTrades), Times.Once);
         }
@@ -57,13 +60,13 @@ namespace IdelPogTests.Controller
             _currencyUpdateMediatorMock.Setup(library => library.ProcessCurrencyUpdate(_currencyTrades))
                 .Throws<Exception>();
 
-            Assert.Throws<Exception>(() => _currencyController.UpdateCurrency(_currencyTrades));
+            Assert.Throws<Exception>(() => _currencyUpdateController.HandleMessages(_currencyTrades));
         }
 
         [Test]
         public void Positive_CreateCurrency_InvokesMediator()
         {
-            _currencyController.CreateCurrency(_currencyCreations);
+            _currencyCreationController.HandleMessages(_currencyCreations);
 
             _currencyCreationMediatorMock.Verify(library => library.CreateCurrency(_currencyCreations), Times.Once);
         }
@@ -74,7 +77,7 @@ namespace IdelPogTests.Controller
             _currencyCreationMediatorMock.Setup(library => library.CreateCurrency(_currencyCreations))
                 .Throws<Exception>();
 
-            Assert.Throws<Exception>(() => _currencyController.CreateCurrency(_currencyCreations));
+            Assert.Throws<Exception>(() => _currencyCreationController.HandleMessages(_currencyCreations));
         }
     }
 }

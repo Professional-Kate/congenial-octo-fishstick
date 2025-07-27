@@ -4,10 +4,10 @@ namespace IdelPog.Messaging.Listeners.Buffer
 {
     public sealed class ManagedBufferListener<T> : IBufferListener<T>
     {
-        private readonly IBatchedController _controller;
+        private readonly IBatchedController<T> _controller;
         private readonly IThrowingAssertion _throwingAssertion;
 
-        public ManagedBufferListener(IBatchedController controller, IThrowingAssertion throwingAssertion)
+        public ManagedBufferListener(IBatchedController<T> controller, IThrowingAssertion throwingAssertion)
         {
             _controller = controller;
             _throwingAssertion = throwingAssertion;

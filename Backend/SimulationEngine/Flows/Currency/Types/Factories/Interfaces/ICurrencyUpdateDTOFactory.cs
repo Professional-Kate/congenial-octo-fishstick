@@ -6,5 +6,7 @@ namespace IdelPog.SimulationEngine.Currency.Factories
     public interface ICurrencyUpdateDTOFactory
     {
         public CurrencyUpdateDTO[] CreateFrom(IReadOnlyList<CurrencyUpdate> trades);
+        
+        public CurrencyUpdateDTO CreateFrom(CurrencyUpdate trade);
     }
 }

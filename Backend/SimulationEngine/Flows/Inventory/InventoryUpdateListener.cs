@@ -1,5 +1,4 @@
-﻿using IdelPog.Messaging.Listeners;
-using IdelPog.Messaging.Listeners.Buffer;
+﻿using IdelPog.Messaging.Listeners.Buffer;
 
 namespace IdelPog.SimulationEngine.Inventory
 {

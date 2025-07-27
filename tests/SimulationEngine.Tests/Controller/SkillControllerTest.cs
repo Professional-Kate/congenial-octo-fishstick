@@ -1,5 +1,6 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
+using IdelPog.Messaging.Listeners.Single;
 using IdelPog.SimulationEngine.Skill;
 using Moq;
 
@@ -8,7 +9,7 @@ namespace IdelPogTests.Controller
     [TestFixture]
     public class SkillControllerTest
     {
-        private ISkillController _controller { get; set; }
+        private ISingleController<SkillChange> _controller { get; set; }
         private Mock<ISkillChangeMediator> _skillChangeMediatorMock { get; set; }
         private SkillChange _skillChange { get; set; }
 
@@ -23,7 +24,7 @@ namespace IdelPogTests.Controller
         [Test]
         public void Positive_SwitchSkill_InvokesMediator()
         {
-            _controller.ChangeSkill(_skillChange);
+            _controller.HandleMessage(_skillChange);
 
             _skillChangeMediatorMock.Verify(library => library.ChangeSkill(_skillChange), Times.Once());
         }
@@ -34,7 +35,7 @@ namespace IdelPogTests.Controller
             _skillChangeMediatorMock.Setup(library => library.ChangeSkill(_skillChange))
                 .Throws<Exception>();
 
-            Assert.Throws<Exception>(() => _controller.ChangeSkill(_skillChange));
+            Assert.Throws<Exception>(() => _controller.HandleMessage(_skillChange));
         }
     }
 }
