@@ -1,6 +1,5 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Common.Structures;
-using Microsoft.VisualBasic;
 
 namespace ContentEngine.Models
 {
