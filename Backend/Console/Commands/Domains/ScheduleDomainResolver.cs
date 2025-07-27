@@ -20,7 +20,8 @@ namespace Console.Commands.Domains
         private readonly IArgumentCountAssertion _argumentCountAssertion;
 
         public ScheduleDomainResolver(IArgumentResolverPipeline<ScheduleControlArguments> controlActionResolver,
-            IDispatchOne<ScheduleControl> scheduleControlDispatcher, IScheduleControlFactory scheduleControlFactory, IArgumentCountAssertion argumentCountAssertion)
+            IDispatchOne<ScheduleControl> scheduleControlDispatcher, IScheduleControlFactory scheduleControlFactory,
+            IArgumentCountAssertion argumentCountAssertion)
         {
             _controlActionResolver = controlActionResolver;
             _scheduleControlDispatcher = scheduleControlDispatcher;

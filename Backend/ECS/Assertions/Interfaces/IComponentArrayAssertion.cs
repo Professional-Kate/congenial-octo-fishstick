@@ -5,9 +5,9 @@ namespace IdelPog.ECS.Assertions
     public interface IComponentArrayAssertion
     {
         public void AssertNotNull<T>(T[]? array);
-        
+
         public void AssertNotEmpty<T>(T[] array);
-        
+
         /// <summary>
         /// Verifies that <paramref name="array"/> is non-null and contains at least one element
         /// </summary>

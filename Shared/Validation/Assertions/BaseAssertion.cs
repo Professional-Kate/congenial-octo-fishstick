@@ -5,7 +5,7 @@ namespace IdelPog.Validation.Assertions
     /// <summary>
     /// Base assertion class. This class contains a method for handling thrown exceptions using a passed <see cref="IHandler"/>
     /// </summary>
-    public abstract class BaseAssertion 
+    public abstract class BaseAssertion
     {
         private readonly IHandler _handler;
 

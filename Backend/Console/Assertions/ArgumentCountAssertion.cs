@@ -9,7 +9,7 @@ namespace Console.Assertions
         public ArgumentCountAssertion(IHandler handler) : base(handler)
         {
         }
-        
+
         public void AssertCount(int actualCount, int expectedCount)
         {
             Assert<InvalidArgumentCountException>(() =>

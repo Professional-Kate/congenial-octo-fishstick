@@ -47,7 +47,7 @@ namespace IdelPog.SimulationEngine.Currency
                 // TODO: currency factory
                 Currency currency = new(currencyCreation.CurrencyType, currencyCreation.StartingAmount);
 
-                _uniqueAssertion.AssertUnique(currencyCreation,!createdCurrencies.TryAdd(currency.CurrencyType, currency));
+                _uniqueAssertion.AssertUnique(currencyCreation, !createdCurrencies.TryAdd(currency.CurrencyType, currency));
             }
 
             foreach (KeyValuePair<CurrencyType, Currency> keyValuePair in createdCurrencies)

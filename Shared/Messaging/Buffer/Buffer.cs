@@ -21,7 +21,7 @@ namespace IdelPog.Messaging.Buffer
         private readonly T[] _data;
         public IReadOnlyList<T> Data => _data;
 
-        internal Buffer(IBufferAssertion bufferAssertion, IObjectNullAssertion objectNullAssertion, BufferRequest request)
+        public Buffer(IBufferAssertion bufferAssertion, IObjectNullAssertion objectNullAssertion, BufferRequest request)
         {
             _bufferAssertion = bufferAssertion;
             _objectNullAssertion = objectNullAssertion;

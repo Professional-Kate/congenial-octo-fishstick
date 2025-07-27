@@ -51,7 +51,9 @@ namespace Console.Tests.Resolver
         [Test]
         public void Negative_ResolveCommand_NoResolverFound_Throws()
         {
-            NotFoundException<Domain> exception = Assert.Throws<NotFoundException<Domain>>(() => _commandResolverMediator.ResolveCommand(Domain.CURRENCY, ["10, 10, 10"]));
+            NotFoundException<Domain> exception =
+                Assert.Throws<NotFoundException<Domain>>(() => _commandResolverMediator.ResolveCommand(Domain.CURRENCY, ["10, 10, 10"]));
+
             Assert.That(exception.Key, Is.EqualTo(Domain.CURRENCY));
         }
     }

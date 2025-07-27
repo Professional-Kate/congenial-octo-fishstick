@@ -32,7 +32,7 @@ namespace IdelPog.ECS.Tests.Assertions
         {
             Assert.DoesNotThrow(() => _assertion.AssertNotEmpty([1, 2, 3]));
         }
-        
+
         [Test]
         public void Negative_AssertNotEmpty_EmptyArray_Throws()
         {
@@ -44,13 +44,13 @@ namespace IdelPog.ECS.Tests.Assertions
         {
             Assert.DoesNotThrow(() => _assertion.AssertHasElements([1, 2, 3]));
         }
-        
+
         [Test]
         public void Negative_AssertHasElements_ArrayHasNoElements_Throws()
         {
             Assert.Throws<ComponentArrayEmptyException>(() => _assertion.AssertHasElements<int>([]));
         }
-        
+
         [Test]
         public void Negative_AssertHasElements_NullArray_Throws()
         {

@@ -9,7 +9,7 @@ namespace IdelPog.SimulationEngine.Currency.Assertions
         public NumberAssertion(IHandler handler) : base(handler)
         {
         }
-        
+
         public void AssertNonNegative(int number)
         {
             Assert<NegativeNumberException>(() =>

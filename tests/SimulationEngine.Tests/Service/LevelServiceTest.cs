@@ -22,7 +22,8 @@ namespace IdelPogTests.Service
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _levelableAsserter = new LevelableAssertionPipeline(new LevelAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()), new NumberAssertion(new ThrowHandler()));
+            _levelableAsserter = new LevelableAssertionPipeline(new LevelAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()),
+                new NumberAssertion(new ThrowHandler()));
 
             _service = new LevelService(_levelableAsserter);
         }
@@ -98,8 +99,8 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_LeveUpSkill_MaxLevel_Throws()
         {
-            ILevelable levelable = new Levelable(SkillConstants.MAX_SKILL_LEVEL,0, 100, 1);
-            
+            ILevelable levelable = new Levelable(SkillConstants.MAX_SKILL_LEVEL, 0, 100, 1);
+
             MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _service.LevelUpSkill(levelable));
             Assert.Multiple(() =>
             {

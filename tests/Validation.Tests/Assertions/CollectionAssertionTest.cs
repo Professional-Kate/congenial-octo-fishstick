@@ -20,7 +20,7 @@ namespace IdelPog.Validation.Tests.Assertions
         {
             Assert.DoesNotThrow(() => _assertion.AssertNotNull(new List<int>()));
         }
-        
+
         [Test]
         public void Negative_AssertNotNull_NullCollection_Throws()
         {
@@ -30,9 +30,9 @@ namespace IdelPog.Validation.Tests.Assertions
         [Test]
         public void Positive_AssertNotEmpty_NotEmptyCollection_NoThrow()
         {
-            Assert.DoesNotThrow(() => _assertion.AssertNotEmpty(new List<int> {1, 2, 3}));
+            Assert.DoesNotThrow(() => _assertion.AssertNotEmpty(new List<int> { 1, 2, 3 }));
         }
-        
+
         [Test]
         public void Negative_AssertNotEmpty_EmptyCollection_Throws()
         {
@@ -42,15 +42,15 @@ namespace IdelPog.Validation.Tests.Assertions
         [Test]
         public void Positive_AssertHasElements_CollectionHasElements_NoThrow()
         {
-            Assert.DoesNotThrow(() => _assertion.AssertHasElements(new List<int> {1, 2, 3}));
+            Assert.DoesNotThrow(() => _assertion.AssertHasElements(new List<int> { 1, 2, 3 }));
         }
-        
+
         [Test]
         public void Negative_AssertHasElements_NullCollection_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _assertion.AssertHasElements<int>(null));
         }
-        
+
         [Test]
         public void Negative_AssertHasElements_EmptyCollection_Throws()
         {

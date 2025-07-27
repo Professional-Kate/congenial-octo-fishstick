@@ -8,7 +8,7 @@ namespace IdelPog.Validation.Assertions
         public UniqueAssertion(IHandler handler) : base(handler)
         {
         }
-        
+
         public void AssertUnique<TKey>(TKey key, bool exists)
         {
             Assert<DuplicateEntityException>(() =>

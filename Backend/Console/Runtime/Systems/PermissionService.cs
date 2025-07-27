@@ -17,7 +17,8 @@ namespace Console.Runtime.Systems
         private readonly IComponentStoreFactory _componentStoreFactory;
         private readonly IComponentAssertion _componentAssertion;
 
-        public PermissionService(IEntity allowedDomainEntity, IDomainComponentFactory domainComponentFactory, IComponentStoreFactory componentStoreFactory, IComponentAssertion componentAssertion)
+        public PermissionService(IEntity allowedDomainEntity, IDomainComponentFactory domainComponentFactory, IComponentStoreFactory componentStoreFactory,
+            IComponentAssertion componentAssertion)
         {
             _allowedDomainEntity = allowedDomainEntity;
             _domainComponentFactory = domainComponentFactory;

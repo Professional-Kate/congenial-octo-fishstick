@@ -64,7 +64,7 @@ namespace IdelPog.SimulationEngine.Currency
         {
             foreach (CurrencyUpdate currencyTrade in trades)
             {
-                _foundAssertion.AssertFound(currencyTrade.CurrencyType,_currencyRepository.Contains(currencyTrade.CurrencyType));
+                _foundAssertion.AssertFound(currencyTrade.CurrencyType, _currencyRepository.Contains(currencyTrade.CurrencyType));
             }
         }
 

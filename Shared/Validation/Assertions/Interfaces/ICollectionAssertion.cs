@@ -5,9 +5,9 @@ namespace IdelPog.Validation.Assertions
     public interface ICollectionAssertion
     {
         public void AssertNotNull<T>(IReadOnlyCollection<T>? collection);
-        
+
         public void AssertNotEmpty<T>(IReadOnlyCollection<T> collection);
-        
+
         /// <summary>
         /// Verifies that <paramref name="collection"/> is non-null and contains at least one element
         /// </summary>

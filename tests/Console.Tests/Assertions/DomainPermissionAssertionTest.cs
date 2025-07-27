@@ -21,7 +21,7 @@ namespace Console.Tests.Assertions
         {
             Assert.DoesNotThrow(() => _assertion.AssertHasPermission(true, Domain.SCHEDULE));
         }
-        
+
         [Test]
         public void Negative_AssertHasPermission_PassesFalse_Throws()
         {

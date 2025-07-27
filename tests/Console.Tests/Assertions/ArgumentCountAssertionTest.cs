@@ -20,7 +20,7 @@ namespace Console.Tests.Assertions
         {
             Assert.DoesNotThrow(() => _assertion.AssertCount(1, 1));
         }
-        
+
         [Test]
         public void Negative_AssertCount_DifferentCount_Throws()
         {

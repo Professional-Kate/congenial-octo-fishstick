@@ -9,7 +9,7 @@ namespace Console.Assertions
         public EnumParseAssertion(IHandler handler) : base(handler)
         {
         }
-        
+
         public void AssertCanParse(bool canParse, string argument, string enumName)
         {
             Assert<FailedEnumParseException>(() =>

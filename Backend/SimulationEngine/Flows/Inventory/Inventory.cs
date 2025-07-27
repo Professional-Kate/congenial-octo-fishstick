@@ -98,7 +98,7 @@ namespace IdelPog.SimulationEngine.Inventory
         /// <param name="id">The id you want to check</param>
         private void AssertItemExists(ItemID id)
         {
-            _foundAssertion.AssertFound(id,Contains(id));
+            _foundAssertion.AssertFound(id, Contains(id));
         }
 
         private Item RepositoryGet(ItemID id)

@@ -54,7 +54,8 @@ namespace Console
             IArgumentResolver<int> intResolver = new IntResolver(typeParseAssertion);
 
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
-            IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdate>(bufferManager, objectNullAssertion, collectionAssertion);
+            IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher =
+                new ManagedDispatcher<CurrencyUpdate>(bufferManager, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline =
                 new CurrencyUpdateResolver(actionTypeResolver, intResolver, currencyTypeResolver);

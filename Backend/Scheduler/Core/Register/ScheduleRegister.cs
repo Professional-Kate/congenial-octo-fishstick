@@ -32,7 +32,7 @@ namespace Scheduler.Core.Register
         public void Unregister(IScheduledTask scheduledTask)
         {
             _objectNullAssertion.AssertNotNull(scheduledTask, nameof(scheduledTask));
-            _foundAssertion.AssertFound(scheduledTask,_taskList.Contains(scheduledTask));
+            _foundAssertion.AssertFound(scheduledTask, _taskList.Contains(scheduledTask));
             _taskList.Remove(scheduledTask);
         }
     }

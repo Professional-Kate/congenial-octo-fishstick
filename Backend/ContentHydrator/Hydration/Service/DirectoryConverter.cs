@@ -7,7 +7,8 @@ using IdelPog.ContentHydrator.Readers;
 namespace IdelPog.ContentHydrator.Service
 {
     /// <inheritdoc cref="IDirectoryConverter"/>
-    public class DirectoryConverter(IJsonReader jsonReader, IConverterProvider provider, IDirectoryAssertionPipeline directoryAssertionPipeline) : IDirectoryConverter
+    public class DirectoryConverter(IJsonReader jsonReader, IConverterProvider provider, IDirectoryAssertionPipeline directoryAssertionPipeline)
+        : IDirectoryConverter
     {
         public IEnumerable<T> ConvertDirectory<T>(string directoryPath)
         {

@@ -11,10 +11,7 @@ namespace IdelPog.Validation.Assertions
 
         public void AssertNotNull<T>(IReadOnlyCollection<T>? collection)
         {
-            Assert<ArgumentNullException>(() =>
-            { 
-                ArgumentNullException.ThrowIfNull(collection);
-            });
+            Assert<ArgumentNullException>(() => { ArgumentNullException.ThrowIfNull(collection); });
         }
 
         public void AssertNotEmpty<T>(IReadOnlyCollection<T> collection)

@@ -50,8 +50,8 @@ namespace IdelPog.Common.Tests
         [Test]
         public void Negative_AssertFound_PassedFalse_Throws()
         {
-             NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _repositoryAsserter.AssertFound(1, false));
-             Assert.That(exception.Key, Is.EqualTo(1));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _repositoryAsserter.AssertFound(1, false));
+            Assert.That(exception.Key, Is.EqualTo(1));
         }
 
         [Test]

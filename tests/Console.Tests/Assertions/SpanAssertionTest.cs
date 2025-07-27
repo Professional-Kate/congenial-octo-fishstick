@@ -20,7 +20,7 @@ namespace Console.Tests.Assertions
         {
             Assert.DoesNotThrow(() => _spanAssertion.AssertNotEmpty(new ReadOnlySpan<int>([1, 2, 3])));
         }
-        
+
         [Test]
         public void Negative_AssertNotEmpty_PassesEmptySpan_Throws()
         {

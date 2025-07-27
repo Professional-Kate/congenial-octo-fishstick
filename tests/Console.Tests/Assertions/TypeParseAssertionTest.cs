@@ -20,7 +20,7 @@ namespace Console.Tests.Assertions
         {
             Assert.DoesNotThrow(() => _assertion.AssertCanParse(true, "12", typeof(int)));
         }
-        
+
         [Test]
         public void Positive_AssertCanParse_PassesFalse_Throws()
         {

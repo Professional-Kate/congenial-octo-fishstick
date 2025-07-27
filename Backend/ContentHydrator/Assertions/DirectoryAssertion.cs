@@ -9,7 +9,7 @@ namespace IdelPog.ContentHydrator.Assertions
         public DirectoryAssertion(IHandler handler) : base(handler)
         {
         }
-        
+
         public void AssertDirectoryIsFound(string path)
         {
             Assert<DirectoryNotFoundException>(() =>

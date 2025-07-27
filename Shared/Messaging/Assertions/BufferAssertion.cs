@@ -10,7 +10,7 @@ namespace IdelPog.Messaging.Assertions
         public BufferAssertion(IHandler handler) : base(handler)
         {
         }
-        
+
         public void AssertStateEquals(BufferState actual, BufferState expected)
         {
             Assert<InvalidBufferStateException>(() =>

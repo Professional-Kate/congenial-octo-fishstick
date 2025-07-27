@@ -190,7 +190,9 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_NegativeAmount_Throws()
         {
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = -10 }]));
+            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() =>
+                _currencyUpdateMediator.ProcessCurrencyUpdate([new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = -10 }]));
+
             Assert.That(exception.Number, Is.EqualTo(-10));
         }
 
@@ -200,7 +202,9 @@ namespace IdelPogTests.Orchestration
             _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(false);
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(new[] { _addGoldUpdate })).Returns([_addGoldUpdate]);
 
-            NotFoundException<CurrencyType> exception = Assert.Throws<NotFoundException<CurrencyType>>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_addGoldUpdate]));
+            NotFoundException<CurrencyType> exception =
+                Assert.Throws<NotFoundException<CurrencyType>>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_addGoldUpdate]));
+
             Assert.That(exception.Key, Is.EqualTo(_addGoldUpdate.CurrencyType));
         }
 

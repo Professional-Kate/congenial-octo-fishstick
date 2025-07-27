@@ -20,7 +20,7 @@ namespace IdelPog.ECS.Tests.Assertions
         {
             Assert.DoesNotThrow(() => _assertion.AssertUnique<int>(false));
         }
-        
+
         [Test]
         public void Negative_AssertUnique_PassesTrue_Throws()
         {
@@ -32,7 +32,7 @@ namespace IdelPog.ECS.Tests.Assertions
         {
             Assert.DoesNotThrow(() => _assertion.AssertFound<int>(true));
         }
-        
+
         [Test]
         public void Negative_AssertFound_PassesFalse_Throws()
         {

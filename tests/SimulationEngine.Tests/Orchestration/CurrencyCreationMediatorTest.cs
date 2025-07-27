@@ -130,7 +130,9 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_CreateCurrency_DuplicatedRequest_Throws()
         {
-            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _currencyCreationMediator.CreateCurrency([_createGold, _createGold]));
+            DuplicateEntityException exception =
+                Assert.Throws<DuplicateEntityException>(() => _currencyCreationMediator.CreateCurrency([_createGold, _createGold]));
+
             Assert.That(exception.ID, Is.EqualTo(_createGold));
 
             _stateRepositoryMock.Verify(library => library.Contains(CurrencyType.GOLD), Times.Exactly(2));

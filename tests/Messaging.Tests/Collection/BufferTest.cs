@@ -152,7 +152,7 @@ namespace IdelPog.Messaging.Tests.Collection
         {
             int[] numbers = Enumerable.Range(0, size).ToArray();
 
-            BufferSizeMismatchException exception =  Assert.Throws<BufferSizeMismatchException>(() => _buffer.Assign(numbers));
+            BufferSizeMismatchException exception = Assert.Throws<BufferSizeMismatchException>(() => _buffer.Assign(numbers));
             Assert.Multiple(() =>
             {
                 Assert.That(exception.ActualSize, Is.EqualTo(numbers.Length));

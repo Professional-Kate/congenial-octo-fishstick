@@ -14,7 +14,9 @@ namespace IdelPog.Common.Tests.Repository
         [SetUp]
         public void Setup()
         {
-            _asserterMock = new RepositoryAsserter(new FoundAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()), new UniqueAssertion(new  ThrowHandler()));
+            _asserterMock = new RepositoryAsserter(new FoundAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()),
+                new UniqueAssertion(new ThrowHandler()));
+
             _repository = new AssetRepository<int, string>(_asserterMock);
         }
 

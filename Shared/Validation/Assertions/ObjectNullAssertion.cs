@@ -10,10 +10,7 @@ namespace IdelPog.Validation.Assertions
 
         public void AssertNotNull<T>(T? value, string paramName)
         {
-            Assert<ArgumentNullException>(() =>
-            {
-                ArgumentNullException.ThrowIfNull(value, paramName);
-            });
+            Assert<ArgumentNullException>(() => { ArgumentNullException.ThrowIfNull(value, paramName); });
         }
     }
 }

@@ -9,7 +9,7 @@ namespace IdelPog.ECS.Assertions
         public ComponentArrayAssertion(IHandler handler) : base(handler)
         {
         }
-        
+
         public void AssertNotNull<T>(T[]? array)
         {
             Assert<ComponentArrayNullException>(() =>
@@ -20,7 +20,7 @@ namespace IdelPog.ECS.Assertions
                 }
             });
         }
-        
+
         public void AssertNotEmpty<T>(T[] array)
         {
             Assert<ComponentArrayEmptyException>(() =>

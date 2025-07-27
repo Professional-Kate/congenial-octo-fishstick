@@ -9,7 +9,7 @@ namespace Console.Assertions
         public TypeParseAssertion(IHandler handler) : base(handler)
         {
         }
-        
+
         public void AssertCanParse(bool canParse, string argument, Type targetType)
         {
             Assert<FailedTypeParseException>(() =>

@@ -50,7 +50,7 @@ namespace ContentHydratorTests.Assertions
             EmptyDirectoryException exception = Assert.Throws<EmptyDirectoryException>(() => _directoryAssertionPipeline.AssertFiles(0, "no"));
             Assert.That(exception.Path, Is.EqualTo("no"));
         }
-        
+
         [Test]
         public void Negative_AssertFiles_NullDirectoryPathContext_Throws()
         {
