@@ -7,7 +7,7 @@ namespace IdelPog.SimulationEngine.Inventory
     {
         public Item CreateItem(ItemID itemID, uint amount)
         {
-            return new Item(itemID, amount, 1, itemMapper.GetInformation(itemID));
+            return new Item(itemID, 1, itemMapper.GetInformation(itemID), amount);
         }
     }
 }

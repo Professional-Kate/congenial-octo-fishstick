@@ -8,7 +8,7 @@ namespace IdelPogTests.Utils
     {
         internal static Item CreateOakWood()
         {
-            return new Item(ItemID.OAK_WOOD, 0, 1, new Information { Description = "Oak Wood", Name = "Oak, Wood." });
+            return new Item(ItemID.OAK_WOOD, 0, new Information { Description = "Oak Wood", Name = "Oak, Wood." }, 0);
         }
     }
 }

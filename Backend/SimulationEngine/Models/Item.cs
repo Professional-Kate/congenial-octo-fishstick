@@ -11,17 +11,17 @@ namespace IdelPog.SimulationEngine.Models
         public readonly Information Information;
         public uint Amount { get; set; }
         
-        public Item(ItemID itemID, uint amount, uint baseSellPrice, Information information)
+        public Item(ItemID itemID, uint baseSellPrice, Information information, uint amount)
         {
             ItemID = itemID;
-            Amount = amount;
             BaseSellPrice = baseSellPrice;
             Information = information;
+            Amount = amount;
         }
 
         public Item DeepClone()
         {
-            return new Item(ItemID, Amount,  BaseSellPrice, Information);
+            return new Item(ItemID, BaseSellPrice, Information, Amount);
         }
     }
 }
