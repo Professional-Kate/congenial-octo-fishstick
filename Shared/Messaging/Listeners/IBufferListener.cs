@@ -7,6 +7,6 @@
 
     public interface ISingleListener<in T> : IListener
     {
-        void Handle(T item);
+        void Handle(T harvestNode);
     }
 }

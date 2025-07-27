@@ -1,4 +1,4 @@
-﻿using IdelPog.Common.Factories;
+﻿using IdelPog.Common.DTO.Factories;
 using Scheduler.Types;
 
 namespace Scheduler.Factory

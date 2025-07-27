@@ -1,5 +1,5 @@
-﻿using IdelPog.Common.Enums;
-using IdelPog.Common.Factories;
+﻿using IdelPog.Common.DTO.Factories;
+using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Messenger;

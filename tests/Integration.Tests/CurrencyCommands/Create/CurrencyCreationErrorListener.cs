@@ -9,9 +9,9 @@ namespace Integration.Tests.CurrencyCommands.Create
         public CurrencyCreationErrorDTO CurrencyUpdateErrorDTO { get; private set; }
         public bool WasCalled { get; private set; }
 
-        public void Handle(CurrencyCreationErrorDTO item)
+        public void Handle(CurrencyCreationErrorDTO harvestNode)
         {
-            CurrencyUpdateErrorDTO = item;
+            CurrencyUpdateErrorDTO = harvestNode;
             WasCalled = true;
         }
     }

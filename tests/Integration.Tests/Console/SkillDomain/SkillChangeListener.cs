@@ -9,10 +9,10 @@ namespace Integration.Tests.Console
         public bool WasCalled { get; private set; }
         public SetSkill SetSkill { get; private set; }
 
-        public void Handle(SetSkill item)
+        public void Handle(SetSkill harvestNode)
         {
             WasCalled = true;
-            SetSkill = item;
+            SetSkill = harvestNode;
         }
     }
 }

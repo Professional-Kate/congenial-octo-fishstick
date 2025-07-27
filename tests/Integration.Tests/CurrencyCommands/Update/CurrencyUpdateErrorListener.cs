@@ -9,10 +9,10 @@ namespace Integration.Tests.CurrencyCommands.Update
         public CurrencyUpdateErrorDTO CurrencyUpdateErrorDTO { get; private set; }
         public bool WasCalled { get; private set; }
 
-        public void Handle(CurrencyUpdateErrorDTO currencyUpdateErrorDTO)
+        public void Handle(CurrencyUpdateErrorDTO harvestNode)
         {
             WasCalled = true;
-            CurrencyUpdateErrorDTO = currencyUpdateErrorDTO;
+            CurrencyUpdateErrorDTO = harvestNode;
         }
     }
 }

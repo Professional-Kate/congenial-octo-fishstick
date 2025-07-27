@@ -1,6 +1,4 @@
-﻿using IdelPog.Common.DTO;
-
-namespace IdelPog.Common.Factories
+﻿namespace IdelPog.Common.DTO.Factories
 {
     public class ErrorDTOFactory : IErrorDTOFactory
     {

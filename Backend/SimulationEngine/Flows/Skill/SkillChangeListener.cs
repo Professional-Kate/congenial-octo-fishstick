@@ -7,9 +7,9 @@ namespace IdelPog.SimulationEngine.Skill
     {
         public Type ListenerType { get; } = typeof(SetSkill);
 
-        public void Handle(SetSkill setSkill)
+        public void Handle(SetSkill harvestNode)
         {
-            skillController.ChangeSkill(setSkill);
+            skillController.ChangeSkill(harvestNode);
         }
     }
 }

@@ -15,9 +15,9 @@ namespace Scheduler.Core.Controller
 
         public Type ListenerType => typeof(ScheduleControl);
 
-        public void Handle(ScheduleControl scheduleControl)
+        public void Handle(ScheduleControl harvestNode)
         {
-            switch (scheduleControl.ControlAction)
+            switch (harvestNode.ControlAction)
             {
                 case ControlAction.START:
                     _scheduleController.StartSchedule();
@@ -26,7 +26,7 @@ namespace Scheduler.Core.Controller
                     _scheduleController.StopSchedule();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(scheduleControl));
+                    throw new ArgumentOutOfRangeException(nameof(harvestNode));
             }
         }
     }

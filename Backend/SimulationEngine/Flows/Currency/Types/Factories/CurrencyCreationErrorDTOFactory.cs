@@ -1,4 +1,4 @@
-﻿using IdelPog.Common.Factories;
+﻿using IdelPog.Common.DTO.Factories;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
 

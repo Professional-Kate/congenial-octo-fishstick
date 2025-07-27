@@ -9,9 +9,9 @@ namespace Integration.Tests.SkillCommands.Switch
         public SetSkill SetSkillDTO { get; private set; }
         public bool WasCalled { get; private set; }
 
-        public void Handle(SetSkill item)
+        public void Handle(SetSkill harvestNode)
         {
-            SetSkillDTO = item;
+            SetSkillDTO = harvestNode;
             WasCalled = true;
         }
     }
