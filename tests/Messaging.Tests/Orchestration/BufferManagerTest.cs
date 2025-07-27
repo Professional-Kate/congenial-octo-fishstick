@@ -15,36 +15,30 @@ namespace IdelPog.Messaging.Tests.Orchestration
         private IBufferManager _bufferManager { get; set; }
         private BufferRequest _bufferRequest { get; set; }
         private Mock<IBufferFactory> _bufferFactoryMock { get; set; }
-        private Mock<IBufferDispatcher> _bufferDispatcherMock { get; set; }
+        private IBuffer<int> _intBuffer;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             _bufferFactoryMock = new Mock<IBufferFactory>();
-            _bufferDispatcherMock = new Mock<IBufferDispatcher>();
-
             _bufferRequest = new BufferRequest(3);
-            _bufferManager = new BufferManager(_bufferFactoryMock.Object, _bufferDispatcherMock.Object, new ObjectNullAssertion(new ThrowHandler()));
+            _bufferManager = new BufferManager(_bufferFactoryMock.Object, new ObjectNullAssertion(new ThrowHandler()));
+            
+            _intBuffer = new Buffer<int>(new Mock<IBufferAssertion>().Object, new Mock<IBufferDispatcher>().Object, new ObjectNullAssertion(new  ThrowHandler()), _bufferRequest);
         }
 
         [SetUp]
-        public void SetUp()
+        public void Setup()
         {
-            _bufferDispatcherMock.Reset();
             _bufferFactoryMock.Reset();
-
-            SetupMock();
-        }
-
-        private void SetupMock()
-        {
-            _bufferFactoryMock.Setup(library => library.CreateBuffer<int>(_bufferRequest))
-                .Returns(new Buffer<int>(new BufferAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()), _bufferRequest));
         }
 
         [Test]
         public void Positive_RequestBuffer_ReturnsBuffer()
         {
+            _bufferFactoryMock.Setup(library => library.CreateBuffer<int>(_bufferRequest))
+                .Returns(_intBuffer);
+            
             IBuffer<int> buffer = _bufferManager.RequestBuffer<int>(_bufferRequest);
 
             Assert.That(buffer, Is.Not.Null);
@@ -54,18 +48,22 @@ namespace IdelPog.Messaging.Tests.Orchestration
         [Test]
         public void Positive_RequestBuffer_SetsOnReady()
         {
+            _bufferFactoryMock.Setup(library => library.CreateBuffer<int>(_bufferRequest))
+                .Returns(_intBuffer);
+            
             IBuffer<int> buffer = _bufferManager.RequestBuffer<int>(_bufferRequest);
 
             buffer.Assign([1, 2, 3]);
             buffer.MarkReady();
-
-            _bufferDispatcherMock.Verify(library => library.DispatchMessage(It.IsAny<IReadOnlyList<int>>()), Times.Once);
+            _bufferFactoryMock.Verify(library => library.CreateBuffer<int>(_bufferRequest), Times.Once);
         }
 
         [Test]
         public void Negative_RequestBuffer_NullRequest_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _bufferManager.RequestBuffer<int>(null!));
+            _bufferFactoryMock.Verify(library => library.CreateBuffer<int>(_bufferRequest), Times.Never);
+            
         }
     }
 }

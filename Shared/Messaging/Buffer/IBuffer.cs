@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.Messaging.Buffer
 {
-    public interface IBuffer<in T>
+    public interface IBuffer<T>
     {
         /// <summary>
         /// Assign the passed array of data into the internal collection of the Buffer
@@ -12,5 +12,7 @@
         /// Mark this buffer ready for consuming. After marking ready you will no longer be able to <see cref="Assign"/>
         /// </summary>
         public void MarkReady();
+
+        public IReadOnlyList<T> Data { get; }
     }
 }

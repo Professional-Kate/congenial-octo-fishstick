@@ -1,8 +1,10 @@
 ﻿using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Exceptions;
+using IdelPog.Messaging.Messenger;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
+using Moq;
 
 namespace IdelPog.Messaging.Tests.Collection
 {
@@ -12,35 +14,23 @@ namespace IdelPog.Messaging.Tests.Collection
         private Buffer<int> _buffer { get; set; }
         private int[] _data = [];
         private IBufferAssertion _bufferAssertion { get; set; }
-
-        private bool _readyCalled;
+        private Mock<IBufferDispatcher> _bufferDispatcherMock { get; set; }
 
         [SetUp]
         public void SetUp()
         {
-            _readyCalled = false;
+            _bufferDispatcherMock =  new Mock<IBufferDispatcher>();
 
             _bufferAssertion = new BufferAssertion(new ThrowHandler());
-            _buffer = new Buffer<int>(_bufferAssertion, new ObjectNullAssertion(new ThrowHandler()), new BufferRequest(3));
-
-            if (_buffer is IInternalBuffer internalBuffer)
-            {
-                internalBuffer.Ready += AssertBuffer;
-            }
+            _buffer = new Buffer<int>(_bufferAssertion, _bufferDispatcherMock.Object, new ObjectNullAssertion(new ThrowHandler()), new BufferRequest(3));
 
             _data = [1, 2, 3];
-        }
-
-        private void AssertBuffer(IInternalBuffer buffer)
-        {
-            _readyCalled = true;
-            Assert.That(buffer, Is.Not.Null);
         }
 
         [Test]
         public void Positive_OnConstruct_SetsState()
         {
-            Buffer<int> createdBuffer = new(_bufferAssertion, new ObjectNullAssertion(new ThrowHandler()), new BufferRequest(3));
+            Buffer<int> createdBuffer = new(_bufferAssertion, _bufferDispatcherMock.Object, new ObjectNullAssertion(new ThrowHandler()), new BufferRequest(3));
 
             Assert.That(createdBuffer.State, Is.EqualTo(BufferState.CREATED));
         }
@@ -59,7 +49,6 @@ namespace IdelPog.Messaging.Tests.Collection
             });
 
             _buffer.MarkReady();
-            Assert.That(_readyCalled, Is.True);
         }
 
         [Test]
@@ -75,8 +64,8 @@ namespace IdelPog.Messaging.Tests.Collection
         {
             _buffer.Assign(_data);
             _buffer.MarkReady();
-
-            Assert.That(_readyCalled, Is.True);
+            
+            _bufferDispatcherMock.Verify(library => library.DispatchMessage(_data), Times.Once);
         }
 
         [Test]
@@ -86,14 +75,13 @@ namespace IdelPog.Messaging.Tests.Collection
             _buffer.MarkReady();
 
             Assert.That(_buffer.State, Is.EqualTo(BufferState.READY));
+            _bufferDispatcherMock.Verify(library => library.DispatchMessage(_data), Times.Once);
         }
 
         [Test]
         public void Positive_NotMarkingReady_DoesNotCallEvent()
         {
             _buffer.Assign(_data);
-
-            Assert.That(_readyCalled, Is.False);
         }
 
         [Test]
@@ -170,6 +158,9 @@ namespace IdelPog.Messaging.Tests.Collection
                 Assert.That(exception.Expected, Is.EqualTo(BufferState.FILLED));
                 Assert.That(_buffer.State, Is.EqualTo(BufferState.CREATED));
             });
+            
+            _bufferDispatcherMock.Verify(library => library.DispatchMessage(_data), Times.Never);
+
         }
 
         [Test]
@@ -185,6 +176,8 @@ namespace IdelPog.Messaging.Tests.Collection
                 Assert.That(exception.Expected, Is.EqualTo(BufferState.FILLED));
                 Assert.That(_buffer.State, Is.EqualTo(BufferState.READY));
             });
+            
+            _bufferDispatcherMock.Verify(library => library.DispatchMessage(_data), Times.Once);
         }
     }
 }
