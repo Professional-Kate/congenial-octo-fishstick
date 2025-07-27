@@ -1,5 +1,5 @@
+using IdelPog.Common.Structures;
 using IdelPog.SimulationEngine.Assertions.Pipelines;
-using IdelPog.SimulationEngine.Models;
 
 namespace IdelPog.SimulationEngine.Service
 {

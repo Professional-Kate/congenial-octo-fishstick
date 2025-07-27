@@ -15,7 +15,7 @@ namespace IdelPogTests.Controller
         [SetUp]
         public void SetUp()
         {
-            _skillChange = new SkillChange { SkillID = SkillID.MINING, ResourceID = ResourceID.COPPER};
+            _skillChange = new SkillChange { SkillID = SkillID.MINING };
             _skillChangeMediatorMock = new Mock<ISkillChangeMediator>();
             _controller = new SkillController(_skillChangeMediatorMock.Object);
         }

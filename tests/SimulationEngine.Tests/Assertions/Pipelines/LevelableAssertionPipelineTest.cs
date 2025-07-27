@@ -1,6 +1,6 @@
-﻿using IdelPog.SimulationEngine.Assertions;
+﻿using IdelPog.Common.Structures;
+using IdelPog.SimulationEngine.Assertions;
 using IdelPog.SimulationEngine.Assertions.Pipelines;
-using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;

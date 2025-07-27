@@ -1,7 +1,7 @@
-﻿using IdelPog.SimulationEngine.Assertions;
+﻿using IdelPog.Common.Structures;
+using IdelPog.SimulationEngine.Assertions;
 using IdelPog.SimulationEngine.Assertions.Pipelines;
 using IdelPog.SimulationEngine.Constants;
-using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;

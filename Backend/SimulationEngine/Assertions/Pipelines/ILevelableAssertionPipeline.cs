@@ -1,5 +1,5 @@
-﻿using IdelPog.SimulationEngine.Constants;
-using IdelPog.SimulationEngine.Models;
+﻿using IdelPog.Common.Structures;
+using IdelPog.SimulationEngine.Constants;
 using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Assertions.Pipelines

@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Console.Assertions;
+﻿using Console.Assertions;
 using Console.Commands;
 using Console.Commands.Domains;
 using Console.Commands.Domains.Arguments;
@@ -69,7 +68,7 @@ namespace Console
             ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();
             IDispatchOne<SkillChange> skillChangeDispatcher = new ManagedDispatcher<SkillChange>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            IArgumentResolverPipeline<SkillChangeArguments> skillChangePipeline = new SkillChangeResolver(skillIDResolver, resourceIDResolver);
+            IArgumentResolverPipeline<SkillChangeArguments> skillChangePipeline = new SkillChangeResolver(skillIDResolver);
             ICommandDomainResolver skillDomainResolver =
                 new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, skillChangeFactory, argumentCountAssertion);
 

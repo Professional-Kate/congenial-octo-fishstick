@@ -9,7 +9,6 @@ namespace IdelPog.SimulationEngine.Skill
             return new SkillChangeDTO
             {
                 SkillID = skillChange.SkillID,
-                ResourceID = skillChange.ResourceID,
             };
         }
     }

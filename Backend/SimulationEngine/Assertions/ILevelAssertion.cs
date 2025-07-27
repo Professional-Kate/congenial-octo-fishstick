@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Models;
+﻿using IdelPog.Common.Structures;
 
 namespace IdelPog.SimulationEngine.Assertions
 {

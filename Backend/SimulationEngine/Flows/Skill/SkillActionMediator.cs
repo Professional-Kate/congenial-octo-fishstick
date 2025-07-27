@@ -2,7 +2,6 @@
 using IdelPog.Common.Repository;
 using IdelPog.Common.Structures;
 using IdelPog.Messaging.Dispatch;
-using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 
 namespace IdelPog.SimulationEngine.Skill

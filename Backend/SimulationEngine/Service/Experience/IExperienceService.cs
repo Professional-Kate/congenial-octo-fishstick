@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Models;
+﻿using IdelPog.Common.Structures;
 using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Service

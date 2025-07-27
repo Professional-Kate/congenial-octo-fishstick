@@ -1,6 +1,4 @@
-﻿using IdelPog.Common.Structures;
-
-namespace IdelPog.SimulationEngine.Models
+﻿namespace IdelPog.Common.Structures
 {
     public sealed class Levelable : ICloneable<Levelable>
     {

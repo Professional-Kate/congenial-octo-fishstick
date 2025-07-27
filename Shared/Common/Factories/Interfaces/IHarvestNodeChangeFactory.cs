@@ -3,8 +3,8 @@ using IdelPog.Common.Enums;
 
 namespace IdelPog.Common.Factories
 {
-    public interface ISkillChangeFactory
+    public interface IHarvestNodeChangeFactory
     {
-        public SkillChange CreateSkillChange(SkillID skillID);
+        public HarvestNodeChange Create(ResourceID resourceID);
     }
 }

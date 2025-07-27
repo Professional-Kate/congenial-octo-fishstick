@@ -1,15 +1,16 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Common.Structures;
+using Microsoft.VisualBasic;
 
-namespace IdelPog.SimulationEngine.Models
+namespace ContentEngine.Models
 {
-    public readonly record struct SkillNode : ICloneable<SkillNode>
+    public readonly record struct HarvestNode : ICloneable<HarvestNode>
     {
         public required ResourceID ResourceID { get; init; }
         public required Levelable Levelable { get; init; }
         public required Information Information { get; init; }
 
-        public SkillNode DeepClone()
+        public HarvestNode DeepClone()
         {
             return this with { Levelable = Levelable };
         }

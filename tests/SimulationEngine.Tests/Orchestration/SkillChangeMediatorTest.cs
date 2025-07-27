@@ -19,7 +19,7 @@ namespace IdelPogTests.Orchestration
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _skillChange = new SkillChange { SkillID = SkillID.MINING, ResourceID = ResourceID.GOLD};
+            _skillChange = new SkillChange { SkillID = SkillID.MINING };
 
             _currentSkillSetterMock = new Mock<ICurrentSkillSetter>();
             _skillChangeFactoryMock = new Mock<ISkillChangeFactory>();
@@ -39,7 +39,7 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Positive_ChangeSkill_InvokesDependencies()
         {
-            SkillChangeDTO dto = new() { SkillID = _skillChange.SkillID, ResourceID = _skillChange.ResourceID };
+            SkillChangeDTO dto = new() { SkillID = _skillChange.SkillID };
             _skillChangeFactoryMock.Setup(library => library.CreateSkillChangeDTO(_skillChange)).Returns(dto);
 
             Assert.DoesNotThrow(() => _skillChangeMediator.ChangeSkill(_skillChange));
