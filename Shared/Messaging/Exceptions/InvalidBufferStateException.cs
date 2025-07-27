@@ -1,16 +1,18 @@
 ﻿using IdelPog.Messaging.Buffer;
-using IdelPog.Validation.Constants;
 
 namespace IdelPog.Messaging.Exceptions
 {
     public class InvalidBufferStateException : Exception
     {
-        private const string BASE_MESSAGE = ExceptionConstants.BUFFER_STATE_INVALID_MESSAGE;
+        private const string MESSAGE = "Expected BufferState was {0}, actual was {1}... Why would you do this :(";
+        
+        public readonly BufferState Expected;
+        public readonly BufferState Actual;
 
-        public InvalidBufferStateException(BufferState actual, BufferState expected)
-            : base(string.Format(BASE_MESSAGE, actual, expected))
+        public InvalidBufferStateException(BufferState actual, BufferState expected) : base(string.Format(MESSAGE, expected, actual))
         {
-            // TODO : I will get to it
+            Expected = expected;
+            Actual = actual;
         }
     }
 }

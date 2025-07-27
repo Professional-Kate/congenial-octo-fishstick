@@ -1,15 +1,14 @@
-﻿using IdelPog.Validation.Constants;
-
-namespace IdelPog.Messaging.Exceptions
+﻿namespace IdelPog.Messaging.Exceptions
 {
     public class BufferSizeInvalidException : Exception
     {
-        private const string BASE_MESSAGE = ExceptionConstants.BUFFER_SIZE_INVALID_MESSAGE;
+        private const string MESSAGE = "The passed collection size is 0 or negative! {0} is not valid!!!!";
 
-        public BufferSizeInvalidException(int size)
-            : base(string.Format(BASE_MESSAGE, size))
+        public readonly int Size;
+
+        public BufferSizeInvalidException(int size) : base(string.Format(MESSAGE, size))
         {
-            // TODO : hoo hee ha ha
+            Size = size;
         }
     }
 }

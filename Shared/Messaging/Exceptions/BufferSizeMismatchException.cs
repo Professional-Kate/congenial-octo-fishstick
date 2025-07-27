@@ -1,15 +1,16 @@
-﻿using IdelPog.Validation.Constants;
-
-namespace IdelPog.Messaging.Exceptions
+﻿namespace IdelPog.Messaging.Exceptions
 {
     public class BufferSizeMismatchException : Exception
     {
-        private const string BASE_MESSAGE = ExceptionConstants.BUFFER_SIZE_MISMATCH_MESSAGE;
+        private const string MESSAGE = "The passed collection is not the correct size! Expected {0}, got {1}!";
 
-        public BufferSizeMismatchException(int actual, int expected)
-            : base(string.Format(BASE_MESSAGE, actual, expected))
+        public readonly int ActualSize;
+        public readonly int ExpectedSize;
+
+        public BufferSizeMismatchException(int actual, int expected) : base(string.Format(MESSAGE, expected, actual))
         {
-            // TODO : don't say it
+            ActualSize = actual;
+            ExpectedSize = expected;
         }
     }
 }

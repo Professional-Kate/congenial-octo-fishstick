@@ -25,7 +25,7 @@ namespace IdelPog.Common.Tests.Repository
 
             _repository.Add(1, "10");
 
-            Assert.Throws<DuplicateItemException>(() => _repository.Add(1, "10"));
+            Assert.Throws<DuplicateEntityException>(() => _repository.Add(1, "10"));
             NotFoundException<int> getException = Assert.Throws<NotFoundException<int>>(() => _repository.Get(2));
             Assert.That(getException.Key, Is.EqualTo(2));
             NotFoundException<int> removeException = Assert.Throws<NotFoundException<int>>(() => _repository.Remove(2));
@@ -95,8 +95,10 @@ namespace IdelPog.Common.Tests.Repository
         [Test]
         public void Negative_Add_KeyAlreadyExists_Throws()
         {
-            _repository.Add(1, "1");
-            Assert.Throws<DuplicateItemException>(() => _repository.Add(1, "1"));
+            const int key = 1;
+            _repository.Add(key, "1");
+            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _repository.Add(key, "1"));
+            Assert.That(exception.ID, Is.EqualTo("1"));
         }
 
         [Test]

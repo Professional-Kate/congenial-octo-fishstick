@@ -1,5 +1,6 @@
 ﻿using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Exceptions;
+using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Tests.Messaging;
 using IdelPog.Validation.Assertions.Handlers;
 
@@ -25,7 +26,13 @@ namespace IdelPog.Messaging.Tests.Assertions
         [Test]
         public void Negative_AssertFound_False_Throws()
         {
-            Assert.Throws<NoListenerFoundException>(() => _listenerAssertion.AssertListenerFound(false, new TestListener<int>()));
+            IListener testListener = new TestListener<int>();
+            NoListenerFoundException exception = Assert.Throws<NoListenerFoundException>(() => _listenerAssertion.AssertListenerFound(false, testListener));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Listener, Is.EqualTo(testListener));
+                Assert.That(exception.ListenerType, Is.EqualTo(typeof(int)));
+            });
         }
     }
 }

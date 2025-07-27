@@ -18,7 +18,7 @@ namespace IdelPog.SimulationEngine.Assertions
             {
                 if (levelable.Level == SkillConstants.MAX_SKILL_LEVEL)
                 {
-                    throw new MaxLevelException(levelable);
+                    throw new MaxLevelException(levelable, nameof(levelable));
                 }
             });
         }

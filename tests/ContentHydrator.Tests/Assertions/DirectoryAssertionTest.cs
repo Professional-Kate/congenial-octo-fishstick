@@ -37,7 +37,8 @@ namespace ContentHydratorTests.Assertions
         [TestCase(-1)]
         public void Negative_AssertDirectoryNotEmpty_PassesBadNumber_Throws(int number)
         {
-            Assert.Throws<EmptyDirectoryException>(() => _directoryAssertion.AssertDirectoryNotEmpty(number, "Error404"));
+            EmptyDirectoryException exception = Assert.Throws<EmptyDirectoryException>(() => _directoryAssertion.AssertDirectoryNotEmpty(number, "Error404"));
+            Assert.That(exception.Path, Is.EqualTo("Error404"));
         }
     }
 }

@@ -25,7 +25,7 @@ namespace IdelPog.SimulationEngine.Currency
         /// Creates a new <see cref="CurrencyType"/>:<see cref="Currency"/> pair in the Repository
         /// </summary>
         /// <param name="commands">A collection of valid <see cref="CurrencyCreation"/> commands</param>
-        /// <exception cref="DuplicateItemException">Will be thrown if any <see cref="CurrencyType"/> already exists in the Repository</exception>
+        /// <exception cref="DuplicateEntityException">Will be thrown if any <see cref="CurrencyType"/> already exists in the Repository</exception>
         /// <exception cref="CollectionEmptyException">Will be thrown if the collection has zero elements</exception>
         /// <exception cref="ArgumentNullException">Will be thrown if the collection is null</exception>
         /// <remarks>The collection is simulated first only being committed into the Repository if each command passes all validation</remarks>

@@ -1,7 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Constants;
 using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Models;
-using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Assertions.Pipelines
 {

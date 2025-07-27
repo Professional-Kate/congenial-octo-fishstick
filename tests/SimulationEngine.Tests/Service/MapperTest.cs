@@ -62,7 +62,8 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_AddInformation_KeyAlreadyExists_Throws()
         {
-            Assert.Throws<DuplicateItemException>(() => _informationMapper.AddInformation(1, _informationOne));
+            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _informationMapper.AddInformation(1, _informationOne));
+            Assert.That(exception.ID, Is.EqualTo(1));
         }
     }
 }

@@ -11,11 +11,11 @@ namespace IdelPog.Validation.Assertions
         
         public void AssertUnique<TKey>(TKey key, bool exists)
         {
-            Assert<DuplicateItemException>(() =>
+            Assert<DuplicateEntityException>(() =>
             {
                 if (exists)
                 {
-                    throw new DuplicateItemException(key);
+                    throw new DuplicateEntityException(key!);
                 }
             });
         }

@@ -121,8 +121,13 @@ namespace IdelPog.Messaging.Tests.Collection
         {
             _buffer.Assign(_data);
 
-            Assert.Throws<InvalidBufferStateException>(() => _buffer.Assign(_data));
-            Assert.That(_buffer.State, Is.EqualTo(BufferState.FILLED));
+            InvalidBufferStateException exception = Assert.Throws<InvalidBufferStateException>(() => _buffer.Assign(_data));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Actual, Is.EqualTo(BufferState.FILLED));
+                Assert.That(exception.Expected, Is.EqualTo(BufferState.CREATED));
+                Assert.That(_buffer.State, Is.EqualTo(BufferState.FILLED));
+            });
         }
 
         [Test]
@@ -131,8 +136,13 @@ namespace IdelPog.Messaging.Tests.Collection
             _buffer.Assign(_data);
             _buffer.MarkReady();
 
-            Assert.Throws<InvalidBufferStateException>(() => _buffer.Assign(_data));
-            Assert.That(_buffer.State, Is.EqualTo(BufferState.READY));
+            InvalidBufferStateException exception = Assert.Throws<InvalidBufferStateException>(() => _buffer.Assign(_data));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Actual, Is.EqualTo(BufferState.READY));
+                Assert.That(exception.Expected, Is.EqualTo(BufferState.CREATED));
+                Assert.That(_buffer.State, Is.EqualTo(BufferState.READY));
+            });
         }
 
         [TestCase(4)]
@@ -142,14 +152,24 @@ namespace IdelPog.Messaging.Tests.Collection
         {
             int[] numbers = Enumerable.Range(0, size).ToArray();
 
-            Assert.Throws<BufferSizeMismatchException>(() => _buffer.Assign(numbers));
+            BufferSizeMismatchException exception =  Assert.Throws<BufferSizeMismatchException>(() => _buffer.Assign(numbers));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.ActualSize, Is.EqualTo(numbers.Length));
+                Assert.That(exception.ExpectedSize, Is.EqualTo(3));
+            });
         }
 
         [Test]
         public void Negative_MarkReady_NotFilledState_Throws()
         {
-            Assert.Throws<InvalidBufferStateException>(() => _buffer.MarkReady());
-            Assert.That(_buffer.State, Is.EqualTo(BufferState.CREATED));
+            InvalidBufferStateException exception = Assert.Throws<InvalidBufferStateException>(() => _buffer.MarkReady());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Actual, Is.EqualTo(BufferState.CREATED));
+                Assert.That(exception.Expected, Is.EqualTo(BufferState.FILLED));
+                Assert.That(_buffer.State, Is.EqualTo(BufferState.CREATED));
+            });
         }
 
         [Test]
@@ -158,8 +178,13 @@ namespace IdelPog.Messaging.Tests.Collection
             _buffer.Assign(_data);
             _buffer.MarkReady();
 
-            Assert.Throws<InvalidBufferStateException>(() => _buffer.MarkReady());
-            Assert.That(_buffer.State, Is.EqualTo(BufferState.READY));
+            InvalidBufferStateException exception = Assert.Throws<InvalidBufferStateException>(() => _buffer.MarkReady());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Actual, Is.EqualTo(BufferState.READY));
+                Assert.That(exception.Expected, Is.EqualTo(BufferState.FILLED));
+                Assert.That(_buffer.State, Is.EqualTo(BufferState.READY));
+            });
         }
     }
 }

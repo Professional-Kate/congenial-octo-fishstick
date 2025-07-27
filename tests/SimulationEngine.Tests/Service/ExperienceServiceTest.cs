@@ -61,7 +61,12 @@ namespace IdelPogTests.Service
         {
             ILevelable levelable = new Levelable(SkillConstants.MAX_SKILL_LEVEL, 100, 10, 1);
 
-            Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(levelable));
+            MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(levelable));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.ID, Is.EqualTo(levelable));
+                Assert.That(exception.SourceName, Is.EqualTo(nameof(levelable)));
+            });
         }
 
         [TestCase(-10)]

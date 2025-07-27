@@ -29,7 +29,12 @@ namespace IdelPogTests.Assertions
         {
             ILevelable levelable = new Levelable(100, 1, 1, 1);
 
-            Assert.Throws<MaxLevelException>(() => _levelAssertion.AssertBelowMaxLevel(levelable));
+            MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _levelAssertion.AssertBelowMaxLevel(levelable));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.ID, Is.EqualTo(levelable));
+                Assert.That(exception.SourceName, Is.EqualTo(nameof(levelable)));
+            });
         }
     }
 }

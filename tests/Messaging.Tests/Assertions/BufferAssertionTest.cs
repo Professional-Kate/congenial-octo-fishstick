@@ -25,7 +25,12 @@ namespace IdelPog.Messaging.Tests.Assertions
         [Test]
         public void Negative_AssertStateEquals_DifferentState_Throws()
         {
-            Assert.Throws<InvalidBufferStateException>(() => _bufferAssertion.AssertStateEquals(BufferState.FILLED, BufferState.CREATED));
+            InvalidBufferStateException exception = Assert.Throws<InvalidBufferStateException>(() => _bufferAssertion.AssertStateEquals(BufferState.FILLED, BufferState.CREATED));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Actual, Is.EqualTo(BufferState.FILLED));
+                Assert.That(exception.Expected, Is.EqualTo(BufferState.CREATED));
+            });
         }
         
         [Test]
@@ -38,7 +43,8 @@ namespace IdelPog.Messaging.Tests.Assertions
         [TestCase(-1)]
         public void Negative_AssertSizeIsValid_InvalidSize_Throws(int amount)
         {
-            Assert.Throws<BufferSizeInvalidException>(() => _bufferAssertion.AssertSizeIsValid(amount));
+            BufferSizeInvalidException exception = Assert.Throws<BufferSizeInvalidException>(() => _bufferAssertion.AssertSizeIsValid(amount));
+            Assert.That(exception.Size,  Is.EqualTo(amount));
         }
         
         [Test]
@@ -50,7 +56,12 @@ namespace IdelPog.Messaging.Tests.Assertions
         [Test]
         public void Negative_AssertCountEquals_CountDoesNotEqual_Throws()
         {
-            Assert.Throws<BufferSizeMismatchException>(() => _bufferAssertion.AssertCountEquals(1, 2));
+            BufferSizeMismatchException exception = Assert.Throws<BufferSizeMismatchException>(() => _bufferAssertion.AssertCountEquals(1, 2));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.ActualSize, Is.EqualTo(1));
+                Assert.That(exception.ExpectedSize, Is.EqualTo(2));
+            });
         }
     }
 }

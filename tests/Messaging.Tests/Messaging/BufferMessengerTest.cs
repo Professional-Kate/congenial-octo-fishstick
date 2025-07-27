@@ -2,6 +2,7 @@
 using IdelPog.Messaging.Exceptions;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
@@ -12,7 +13,6 @@ namespace IdelPog.Messaging.Tests.Messaging
     {
         private BufferMessenger _bufferMessenger { get; set; }
         private TestListener<int> _intListener { get; set; }
-        private Mock<IHandler> _handlerMock { get; set; }
 
         private readonly IReadOnlyList<int> _bufferData = [1, 2, 3];
 
@@ -32,11 +32,7 @@ namespace IdelPog.Messaging.Tests.Messaging
 
         private void Setup()
         {
-            _handlerMock = new Mock<IHandler>();
-            _bufferMessenger = new BufferMessenger(new ObjectNullAssertion(_handlerMock.Object), new ListenerAssertion(_handlerMock.Object));
-
-            _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
-                .Throws<ArgumentNullException>();
+            _bufferMessenger = new BufferMessenger(new ObjectNullAssertion(new ThrowHandler()), new ListenerAssertion(new ThrowHandler()));
         }
 
         [Test]
@@ -210,10 +206,12 @@ namespace IdelPog.Messaging.Tests.Messaging
         [Test]
         public void Negative_Unsubscribe_NotSubscribed_Throws()
         {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<NoListenerFoundException>()))
-                .Throws(new NoListenerFoundException(_intListener));
-
-            Assert.Throws<NoListenerFoundException>(() => _bufferMessenger.Unsubscribe(_intListener));
+            NoListenerFoundException exception = Assert.Throws<NoListenerFoundException>(() => _bufferMessenger.Unsubscribe(_intListener));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Listener, Is.EqualTo(_intListener));
+                Assert.That(exception.ListenerType, Is.EqualTo(typeof(int)));
+            });
         }
     }
 }

@@ -148,7 +148,7 @@ namespace Integration.Tests.CurrencyCommands.Create
             AssertCurrencyCreationErrorListener(currencyCreations, true);
 
             CurrencyCreationDTO creationDTO = _currencyCreationErrorListener.CurrencyUpdateErrorDTO.CurrencyCreations[0];
-            AssertCreationErrorDTO<DuplicateItemException>(creationDTO, _createGold);
+            AssertCreationErrorDTO<DuplicateEntityException>(creationDTO, _createGold);
         }
 
         [Test]

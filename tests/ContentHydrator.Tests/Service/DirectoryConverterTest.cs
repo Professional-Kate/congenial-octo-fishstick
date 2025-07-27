@@ -9,7 +9,6 @@ using IdelPog.ContentHydrator.Readers;
 using IdelPog.ContentHydrator.Service;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Exceptions;
 using Moq;
 
 namespace ContentHydratorTests.Service
@@ -87,7 +86,8 @@ namespace ContentHydratorTests.Service
             string emptyDirectory = Path.Combine(DIRECTORY_PATH, "TEMP");
             Directory.CreateDirectory(emptyDirectory);
 
-            Assert.Throws<EmptyDirectoryException>(() => _directoryConverter.ConvertDirectory<TestDTO>(emptyDirectory));
+            EmptyDirectoryException exception = Assert.Throws<EmptyDirectoryException>(() => _directoryConverter.ConvertDirectory<TestDTO>(emptyDirectory));
+            Assert.That(exception.Path, Is.EqualTo(emptyDirectory));
 
             Directory.Delete(emptyDirectory, true);
         }

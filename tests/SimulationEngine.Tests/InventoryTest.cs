@@ -178,7 +178,8 @@ namespace IdelPogTests
         [Test]
         public void Negative_AddItem_ItemExists_Throws()
         {
-            Assert.Throws<DuplicateItemException>(() => _inventory.AddItem(_oakWoodItem));
+            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _inventory.AddItem(_oakWoodItem));
+            Assert.That(exception.ID, Is.EqualTo(_oakWoodItem.ID));
         }
 
         [TestCase(-1)]

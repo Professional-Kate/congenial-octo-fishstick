@@ -32,7 +32,7 @@ namespace IdelPog.SimulationEngine.Service
 
         public void AddInformation(T key, Structures.Types.Information information)
         {
-            _uniqueAssertion.AssertUnique(key,_information.ContainsKey(key));
+            _uniqueAssertion.AssertUnique(key, _information.ContainsKey(key));
 
             _information.Add(key, information);
         }

@@ -24,7 +24,8 @@ namespace IdelPog.Validation.Tests.Assertions
         [Test]
         public void Negative_AssertUnique_PassedTrue_Throws()
         {
-            Assert.Throws<DuplicateItemException>(() => _uniqueAssertion.AssertUnique(1, true));
+            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _uniqueAssertion.AssertUnique(1, true));
+            Assert.That(exception.ID, Is.EqualTo(1));
         }
     }
 }

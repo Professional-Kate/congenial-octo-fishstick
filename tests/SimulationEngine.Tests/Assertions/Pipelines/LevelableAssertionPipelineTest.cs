@@ -46,7 +46,12 @@ namespace IdelPogTests.Assertions.Pipelines
         {
             ILevelable levelable = new Levelable(100, 0, 10, 0);
 
-            Assert.Throws<MaxLevelException>(() => _levelableAssertionPipeline.AssertLevelable(levelable));
+            MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _levelableAssertionPipeline.AssertLevelable(levelable));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.ID, Is.EqualTo(levelable));
+                Assert.That(exception.SourceName, Is.EqualTo(nameof(levelable)));
+            });
         }
 
         [Test]

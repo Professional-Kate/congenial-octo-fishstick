@@ -30,7 +30,7 @@ namespace IdelPog.Common.Tests.Repository
 
             _stateRepository.Add(1, _cloneableTestObject);
 
-            Assert.Throws<DuplicateItemException>(() => _stateRepository.Add(1, _cloneableTestObject));
+            Assert.Throws<DuplicateEntityException>(() => _stateRepository.Add(1, _cloneableTestObject));
             Assert.Throws<NotFoundException<int>>(() => _stateRepository.Get(2));
             Assert.Throws<NotFoundException<int>>(() => _stateRepository.Remove(2));
             Assert.Throws<NotFoundException<int>>(() => _stateRepository.Update(2, _cloneableTestObject));
@@ -50,7 +50,8 @@ namespace IdelPog.Common.Tests.Repository
         public void Negative_Add_DuplicateKey_Throws()
         {
             _stateRepository.Add(KEY, _cloneableTestObject);
-            Assert.Throws<DuplicateItemException>(() => _stateRepository.Add(KEY, _cloneableTestObject));
+            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _stateRepository.Add(KEY, _cloneableTestObject));
+            Assert.That(exception.ID, Is.EqualTo(_cloneableTestObject));
         }
 
         [Test]

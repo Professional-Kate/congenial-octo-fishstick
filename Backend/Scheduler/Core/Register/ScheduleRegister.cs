@@ -25,7 +25,7 @@ namespace Scheduler.Core.Register
         public void Register(IScheduledTask scheduledTask)
         {
             _objectNullAssertion.AssertNotNull(scheduledTask, nameof(scheduledTask));
-            _uniqueAssertion.AssertUnique(scheduledTask,_taskList.Contains(scheduledTask));
+            _uniqueAssertion.AssertUnique(scheduledTask, _taskList.Contains(scheduledTask));
             _taskList.Add(scheduledTask);
         }
 

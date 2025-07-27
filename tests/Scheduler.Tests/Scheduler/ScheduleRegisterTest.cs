@@ -36,7 +36,8 @@ namespace Scheduler.Tests.Scheduler
             TestScheduledTask task = new();
 
             _scheduleRegister.Register(task);
-            Assert.Throws<DuplicateItemException>(() => _scheduleRegister.Register(task));
+            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _scheduleRegister.Register(task));
+            Assert.That(exception.ID, Is.EqualTo(task));
         }
 
         [Test]
