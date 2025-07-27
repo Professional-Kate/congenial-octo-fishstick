@@ -4,13 +4,13 @@ using IdelPog.Validation.Assertions;
 
 namespace IdelPog.ContentHydrator.Converters
 {
-    public class JsonSourceConverter<T>(JsonTypeInfo<T> typeInfo, IAssertNotNull assertNotNull) : IJsonConverter<T>
+    public class JsonSourceConverter<T>(JsonTypeInfo<T> typeInfo, IObjectNullAssertion objectNullAssertion) : IJsonConverter<T>
     {
         public T Convert(JsonDocument jsonDocument)
         {
             T? deserializedObject = jsonDocument.Deserialize(typeInfo);
 
-            assertNotNull.AssertObjectNotNull(deserializedObject);
+            objectNullAssertion.AssertNotNull(deserializedObject, nameof(jsonDocument));
 
             return deserializedObject!;
         }

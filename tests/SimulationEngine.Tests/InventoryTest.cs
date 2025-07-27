@@ -40,14 +40,11 @@ namespace IdelPogTests
             _repositoryMock = new Mock<IStateRepository<ItemID, Item>>();
             IHandler throwHandler = new ThrowHandler();
 
-            _inventory = new Inventory(_repositoryMock.Object, new AssertFound(throwHandler), new AssertPositive(throwHandler),
-                new AssertNonDuplicate(throwHandler));
+            _inventory = new Inventory(_repositoryMock.Object, new FoundAssertion(throwHandler), new NumberAssertion(throwHandler),
+                new UniqueAssertion(throwHandler));
 
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
-
-            _repositoryMock.Setup(library => library.Get(ItemID.BIRCH_WOOD))
-                .Throws(new NotFoundException(ItemID.BIRCH_WOOD));
         }
 
         private void ModifyAmountTestRunner(int amount, ActionType action)
@@ -89,15 +86,16 @@ namespace IdelPogTests
         {
             _repositoryMock.Setup(library => library.Contains(ItemID.BIRCH_WOOD)).Returns(false);
 
-            Assert.Throws<NotFoundException>(() => _inventory.AddAmount(ItemID.BIRCH_WOOD, 5));
+            NotFoundException<ItemID> exception = Assert.Throws<NotFoundException<ItemID>>(() => _inventory.AddAmount(ItemID.BIRCH_WOOD, 5));
+            Assert.That(exception.Key, Is.EqualTo(ItemID.BIRCH_WOOD));
         }
 
         [TestCase(-1)]
         [TestCase(-10)]
         public void Negative_AddAmount_NegativeAmount_Throws(int amount)
         {
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
+            NegativeNumberException negativeNumberException = Assert.Throws<NegativeNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
+            Assert.That(negativeNumberException.Number, Is.EqualTo(amount));
         }
 
 
@@ -129,14 +127,15 @@ namespace IdelPogTests
         {
             _repositoryMock.Setup(library => library.Contains(ItemID.BIRCH_WOOD)).Returns(false);
 
-            Assert.Throws<NotFoundException>(() => _inventory.RemoveAmount(ItemID.BIRCH_WOOD, 1));
+            NotFoundException<ItemID> exception = Assert.Throws<NotFoundException<ItemID>>(() => _inventory.RemoveAmount(ItemID.BIRCH_WOOD, 1));
+            Assert.That(exception.Key, Is.EqualTo(ItemID.BIRCH_WOOD));
         }
 
         [Test]
         public void Negative_RemoveAmount_AmountUnderZero_Throws()
         {
             NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
+            Assert.That(exception.Number, Is.EqualTo(-10));
         }
 
         [TestCase(-1)]
@@ -144,7 +143,7 @@ namespace IdelPogTests
         public void Negative_RemoveAmount_NegativeAmount_Throws(int amount)
         {
             NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
+            Assert.That(exception.Number, Is.EqualTo(amount));
         }
 
         [Test]
@@ -179,7 +178,8 @@ namespace IdelPogTests
         [Test]
         public void Negative_AddItem_ItemExists_Throws()
         {
-            Assert.Throws<DuplicateItemException>(() => _inventory.AddItem(_oakWoodItem));
+            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _inventory.AddItem(_oakWoodItem));
+            Assert.That(exception.ID, Is.EqualTo(_oakWoodItem.ID));
         }
 
         [TestCase(-1)]
@@ -189,7 +189,7 @@ namespace IdelPogTests
             Item itemWithBadAmount = new(ItemID.WILLOW_WOOD, new Information("", ""), 1, amount);
 
             NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.AddItem(itemWithBadAmount));
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(Item)));
+            Assert.That(exception.Number, Is.EqualTo(amount));
         }
 
         [Test]
@@ -218,7 +218,8 @@ namespace IdelPogTests
         [Test]
         public void Negative_GetItem_NoItemFound_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _inventory.GetItem(ItemID.WILLOW_WOOD));
+            NotFoundException<ItemID> exception = Assert.Throws<NotFoundException<ItemID>>(() => _inventory.GetItem(ItemID.WILLOW_WOOD));
+            Assert.That(exception.Key, Is.EqualTo(ItemID.WILLOW_WOOD));
         }
     }
 }

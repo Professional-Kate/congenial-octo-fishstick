@@ -14,40 +14,40 @@ namespace IdelPog.SimulationEngine.Currency
         private readonly IStateRepository<CurrencyType, Currency> _currencyRepository;
         private readonly IDispatchMany<CurrencyCreationDTO> _currencyCreationDTODispatcher;
         private readonly ICurrencyCreationDTOFactory _currencyCreationDTOFactory;
-        private readonly IAssertNotNull _assertNotNull;
-        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
-        private readonly IAssertNonDuplicate _assertNonDuplicate;
-        private readonly IAssertPositive _assertPositive;
+        private readonly IObjectNullAssertion _objectNullAssertion;
+        private readonly ICollectionAssertion _collectionAssertion;
+        private readonly IUniqueAssertion _uniqueAssertion;
+        private readonly INumberAssertion _numberAssertion;
 
         public CurrencyCreationMediator(IStateRepository<CurrencyType, Currency> currencyRepository,
             IDispatchMany<CurrencyCreationDTO> currencyCreationDTODispatcher, ICurrencyCreationDTOFactory currencyCreationDTOFactory,
-            IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty, IAssertNonDuplicate assertNonDuplicate,
-            IAssertPositive assertPositive)
+            IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion,
+            INumberAssertion numberAssertion)
         {
             _currencyRepository = currencyRepository;
             _currencyCreationDTODispatcher = currencyCreationDTODispatcher;
             _currencyCreationDTOFactory = currencyCreationDTOFactory;
-            _assertNotNull = assertNotNull;
-            _assertCollectionNotEmpty = assertCollectionNotEmpty;
-            _assertNonDuplicate = assertNonDuplicate;
-            _assertPositive = assertPositive;
+            _objectNullAssertion = objectNullAssertion;
+            _collectionAssertion = collectionAssertion;
+            _uniqueAssertion = uniqueAssertion;
+            _numberAssertion = numberAssertion;
         }
 
         public void CreateCurrency(IReadOnlyList<CurrencyCreation> currencies)
         {
-            _assertNotNull.AssertObjectNotNull(currencies);
-            _assertCollectionNotEmpty.Handle(currencies);
+            _objectNullAssertion.AssertNotNull(currencies, nameof(currencies));
+            _collectionAssertion.AssertNotEmpty(currencies);
 
             Dictionary<CurrencyType, Currency> createdCurrencies = new(currencies.Count);
             foreach (CurrencyCreation currencyCreation in currencies)
             {
-                _assertPositive.AssertNumberIsPositive<CurrencyCreation>(currencyCreation.StartingAmount);
-                _assertNonDuplicate.AssertContains(currencyCreation, () => _currencyRepository.Contains(currencyCreation.CurrencyType));
+                _numberAssertion.AssertNonNegative(currencyCreation.StartingAmount);
+                _uniqueAssertion.AssertUnique(currencyCreation, _currencyRepository.Contains(currencyCreation.CurrencyType));
 
                 // TODO: currency factory
                 Currency currency = new(currencyCreation.CurrencyType, currencyCreation.StartingAmount);
 
-                _assertNonDuplicate.AssertContains(currencyCreation, () => !createdCurrencies.TryAdd(currency.CurrencyType, currency));
+                _uniqueAssertion.AssertUnique(currencyCreation, !createdCurrencies.TryAdd(currency.CurrencyType, currency));
             }
 
             foreach (KeyValuePair<CurrencyType, Currency> keyValuePair in createdCurrencies)

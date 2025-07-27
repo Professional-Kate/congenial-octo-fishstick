@@ -3,11 +3,11 @@ using IdelPog.SimulationEngine.Models;
 
 namespace IdelPog.SimulationEngine.Service
 {
-    public class LevelService(ILevelableAsserter levelableAsserter) : ILevelService
+    public class LevelService(ILevelableAssertionPipeline levelableAssertionPipeline) : ILevelService
     {
         public void LevelUpSkill(ILevelable levelable)
         {
-            levelableAsserter.AssertLevelable(levelable);
+            levelableAssertionPipeline.AssertLevelable(levelable);
 
             int total = 0;
             for (int i = 1; i < levelable.Level; i++)

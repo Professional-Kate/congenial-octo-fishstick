@@ -20,7 +20,7 @@ namespace IdelPogTests.Service
         public void OneTimeSetup()
         {
             IHandler throwHandler = new ThrowHandler();
-            _currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(new AssertNotNull(throwHandler), new AssertCollectionNotEmpty(throwHandler));
+            _currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(new ObjectNullAssertion(throwHandler), new CollectionAssertion(throwHandler));
 
             _currencyTrades =
             [
@@ -65,13 +65,13 @@ namespace IdelPogTests.Service
         {
             EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateDTOFactory.CreateFrom([]));
 
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
 
         [Test]
         public void Negative_CreateFrom_NullTrades_Throws()
         {
-            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => _currencyUpdateDTOFactory.CreateFrom(null!));
+            Assert.Throws<ArgumentNullException>(() => _currencyUpdateDTOFactory.CreateFrom(null!));
         }
     }
 }

@@ -2,13 +2,13 @@
 {
     public class NegativeNumberException : Exception
     {
-        private const string MESSAGE = "The passed {0} contains a negative number! This is not allowed, we are positive here...";
+        private const string MESSAGE = "The passed number: {0} is negative! This is not allowed, we are positive here...";
 
-        public readonly Type NumberSource;
+        public readonly int Number;
 
-        public NegativeNumberException(Type numberSource) : base(string.Format(MESSAGE, numberSource.Name))
+        public NegativeNumberException(int number) : base(string.Format(MESSAGE, number))
         {
-            NumberSource = numberSource;
+            Number = number;
         }
     }
 }

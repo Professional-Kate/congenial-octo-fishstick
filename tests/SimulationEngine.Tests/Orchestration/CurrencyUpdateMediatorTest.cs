@@ -41,8 +41,8 @@ namespace IdelPogTests.Orchestration
 
             IHandler throwHandler = new ThrowHandler();
             _currencyUpdateMediator = new CurrencyUpdateMediator(_repositoryMock.Object, _currencyServiceMock.Object, _dispatcherMock.Object,
-                _currencyUpdateSummarizerMock.Object, _currencyUpdateDTOFactoryMock.Object, new AssertPositive(throwHandler),
-                new AssertCollectionNotEmpty(throwHandler), new AssertFound(throwHandler), new AssertNotNull(throwHandler));
+                _currencyUpdateSummarizerMock.Object, _currencyUpdateDTOFactoryMock.Object, new NumberAssertion(throwHandler),
+                new CollectionAssertion(throwHandler), new FoundAssertion(throwHandler), new ObjectNullAssertion(throwHandler));
 
             _addGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
             _removeGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.REMOVE);
@@ -170,7 +170,7 @@ namespace IdelPogTests.Orchestration
 
             EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(currencyUpdates));
 
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
 
         [Test]
@@ -184,7 +184,7 @@ namespace IdelPogTests.Orchestration
         {
             EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([]));
 
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
 
         [Test]
@@ -193,7 +193,7 @@ namespace IdelPogTests.Orchestration
             NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() =>
                 _currencyUpdateMediator.ProcessCurrencyUpdate([new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = -10 }]));
 
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyUpdate)));
+            Assert.That(exception.Number, Is.EqualTo(-10));
         }
 
         [Test]
@@ -202,7 +202,10 @@ namespace IdelPogTests.Orchestration
             _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(false);
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(new[] { _addGoldUpdate })).Returns([_addGoldUpdate]);
 
-            Assert.Throws<NotFoundException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_addGoldUpdate]));
+            NotFoundException<CurrencyType> exception =
+                Assert.Throws<NotFoundException<CurrencyType>>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_addGoldUpdate]));
+
+            Assert.That(exception.Key, Is.EqualTo(_addGoldUpdate.CurrencyType));
         }
 
         [Test]

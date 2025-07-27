@@ -11,11 +11,11 @@ namespace IdelPog.SimulationEngine.Inventory
     {
         public void Initialize(IBufferMessenger bufferMessenger, IBufferManager bufferManager)
         {
-            IAssertNotNull assertNotNull = new AssertNotNull(new ThrowHandler());
-            IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(new ThrowHandler());
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(new ThrowHandler());
 
             IDispatchMany<InventoryUpdateDTO> inventoryUpdateDispatcher =
-                new ManagedDispatcher<InventoryUpdateDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+                new ManagedDispatcher<InventoryUpdateDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 
             IInventoryUpdateDTOFactory inventoryUpdateDTOFactory = new InventoryUpdateDTOFactory();
             IMapper<ItemID> itemMapper = new Mapper<ItemID>();

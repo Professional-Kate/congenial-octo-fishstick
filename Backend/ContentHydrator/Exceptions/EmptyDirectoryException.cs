@@ -1,15 +1,14 @@
-﻿using IdelPog.Validation.Constants;
-
-namespace IdelPog.ContentHydrator.Exceptions
+﻿namespace IdelPog.ContentHydrator.Exceptions
 {
     public class EmptyDirectoryException : Exception
     {
-        private static readonly string _baseMessage = ExceptionConstants.EMPTY_DIRECTORY_MESSAGE;
+        private const string MESSAGE = "The passed Directory path '{0}' is empty!!!";
 
-        public EmptyDirectoryException(string path)
-            : base(string.Format(_baseMessage, path))
+        public readonly string Path;
+
+        public EmptyDirectoryException(string path) : base(string.Format(MESSAGE, path))
         {
-            // TODO: whenever will I get a logging framework
+            Path = path;
         }
     }
 }

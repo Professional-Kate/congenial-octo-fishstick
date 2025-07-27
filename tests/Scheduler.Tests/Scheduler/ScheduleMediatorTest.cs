@@ -26,7 +26,7 @@ namespace Scheduler.Tests.Scheduler
             _dispatcherMock = new Mock<IDispatchOne<ScheduledTaskErrorDTO>>();
             _taskErrorDTOFactoryMock = new Mock<ITaskErrorDTOFactory>();
             _scheduleMediator = new ScheduleMediator(_scheduleReaderMock.Object, _dispatcherMock.Object, _taskErrorDTOFactoryMock.Object,
-                new AssertCollectionNotEmpty(new ThrowHandler()));
+                new CollectionAssertion(new ThrowHandler()));
         }
 
         [SetUp]

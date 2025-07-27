@@ -25,8 +25,8 @@ namespace IdelPogTests.Service
         public void OneTimeSetUp()
         {
             _currencyUpdateFactoryMock = new Mock<ICurrencyUpdateFactory>();
-            _currencyUpdateSummarizer = new CurrencyUpdateSummarizer(_currencyUpdateFactoryMock.Object, new AssertPositive(new ThrowHandler()),
-                new AssertNotNull(new ThrowHandler()), new AssertCollectionNotEmpty(new ThrowHandler()));
+            _currencyUpdateSummarizer = new CurrencyUpdateSummarizer(_currencyUpdateFactoryMock.Object, new NumberAssertion(new ThrowHandler()),
+                new ObjectNullAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()));
 
             _addGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
             _removeGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.REMOVE);
@@ -173,7 +173,7 @@ namespace IdelPogTests.Service
             _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()),
                 Times.Never);
 
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate[])));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
 
         [Test]
@@ -192,10 +192,10 @@ namespace IdelPogTests.Service
                     _addGoldUpdate, new CurrencyUpdate { Action = ActionType.ADD, Amount = -10, CurrencyType = CurrencyType.GOLD }
                 ]));
 
+            Assert.That(exception.Number, Is.EqualTo(-10));
+
             _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()),
                 Times.Never);
-
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyUpdate)));
         }
     }
 }

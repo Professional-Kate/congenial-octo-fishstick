@@ -19,7 +19,7 @@ namespace ContentHydratorTests.Providers
         public void OneTimeSetUp()
         {
             _handlerMock = new Mock<IHandler>();
-            _converterProvider = new ConverterProvider(TestContext.Default, new AssertNotNull(_handlerMock.Object));
+            _converterProvider = new ConverterProvider(TestContext.Default, new ObjectNullAssertion(_handlerMock.Object));
         }
 
         [Test]

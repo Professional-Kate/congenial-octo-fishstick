@@ -27,11 +27,9 @@ namespace IdelPog.ECS.Component
         public ComponentStore(T[] components, IHandler handler)
         {
             _handler = handler;
-            AssertArrayNotEmpty assertArrayNotEmpty = new(_handler);
-            AssertArrayNotNull assertArrayNotNull = new(_handler);
+            ComponentArrayAssertion componentArrayAssertion = new(_handler);
 
-            assertArrayNotNull.Handle(components);
-            assertArrayNotEmpty.Handle(components.Length > 0);
+            componentArrayAssertion.AssertHasElements(components);
 
             _components = components;
         }

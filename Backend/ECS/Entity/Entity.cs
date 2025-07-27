@@ -10,14 +10,12 @@ namespace IdelPog.ECS
     public abstract record Entity : IEntity
     {
         private readonly IAssetRepository<Type, IComponent> _componentMap;
-        private readonly AssertComponentDoesNotExist _assertComponentDoesNotExist;
-        private readonly AssertComponentFound _assertComponentFound;
+        private readonly IComponentAssertion _componentAssertion;
 
         protected Entity(params IComponent[] requiredComponents)
         {
             _componentMap = new AssetRepository<Type, IComponent>();
-            _assertComponentFound = new AssertComponentFound(new ThrowHandler());
-            _assertComponentDoesNotExist = new AssertComponentDoesNotExist(new ThrowHandler());
+            _componentAssertion = new ComponentAssertion(new ThrowHandler());
 
             foreach (IComponent requiredComponent in requiredComponents)
             {
@@ -29,34 +27,33 @@ namespace IdelPog.ECS
         {
             _componentMap = componentMap;
 
-            _assertComponentDoesNotExist = new AssertComponentDoesNotExist(handler);
-            _assertComponentFound = new AssertComponentFound(handler);
+            _componentAssertion = new ComponentAssertion(handler);
         }
 
         public void AddComponent(IComponent component)
         {
-            _assertComponentDoesNotExist.Handle(_componentMap.Contains(component.GetType()), component);
+            _componentAssertion.AssertUnique<IComponent>(_componentMap.Contains(component.GetType()));
 
             _componentMap.Add(component.GetType(), component);
         }
 
-        public void RemoveComponent<T>() where T : IComponent
+        public void RemoveComponent<TComponent>() where TComponent : IComponent
         {
-            _assertComponentFound.Handle(_componentMap.Contains(typeof(T)), typeof(T));
+            _componentAssertion.AssertFound<TComponent>(_componentMap.Contains(typeof(TComponent)));
 
-            _componentMap.Remove(typeof(T));
+            _componentMap.Remove(typeof(TComponent));
         }
 
-        public bool ContainsComponent<T>() where T : IComponent
+        public bool ContainsComponent<TComponent>() where TComponent : IComponent
         {
-            return _componentMap.Contains(typeof(T));
+            return _componentMap.Contains(typeof(TComponent));
         }
 
-        public T GetComponent<T>() where T : IComponent
+        public TComponent GetComponent<TComponent>() where TComponent : IComponent
         {
-            _assertComponentFound.Handle(_componentMap.Contains(typeof(T)), typeof(T));
+            _componentAssertion.AssertFound<TComponent>(_componentMap.Contains(typeof(TComponent)));
 
-            return (T)_componentMap.Get(typeof(T));
+            return (TComponent)_componentMap.Get(typeof(TComponent));
         }
 
         public bool TryGetComponent<T>([NotNullWhen(true)] out T? component) where T : IComponent

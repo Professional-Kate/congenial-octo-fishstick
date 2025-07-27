@@ -1,6 +1,7 @@
 ﻿using IdelPog.Common.Repository;
+using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
-using Moq;
 
 namespace IdelPog.Common.Tests.Repository
 {
@@ -8,7 +9,7 @@ namespace IdelPog.Common.Tests.Repository
     public class StateRepositoryTest
     {
         private IStateRepository<int, CloneableTestObject> _stateRepository;
-        private Mock<IRepositoryAsserter> _repositoryAsserterMock;
+        private IRepositoryAsserter _asserterMock;
 
         private CloneableTestObject _cloneableTestObject { get; set; }
         private const string VALUE = "VALUE";
@@ -17,8 +18,10 @@ namespace IdelPog.Common.Tests.Repository
         [SetUp]
         public void Setup()
         {
-            _repositoryAsserterMock = new Mock<IRepositoryAsserter>();
-            _stateRepository = new StateRepository<int, CloneableTestObject>(_repositoryAsserterMock.Object);
+            _asserterMock = new RepositoryAsserter(new FoundAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()),
+                new UniqueAssertion(new ThrowHandler()));
+
+            _stateRepository = new StateRepository<int, CloneableTestObject>(_asserterMock);
             _cloneableTestObject = new CloneableTestObject(VALUE);
         }
 
@@ -29,10 +32,10 @@ namespace IdelPog.Common.Tests.Repository
 
             _stateRepository.Add(1, _cloneableTestObject);
 
-            Assert.Throws<DuplicateItemException>(() => _stateRepository.Add(1, _cloneableTestObject));
-            Assert.Throws<NotFoundException>(() => _stateRepository.Get(2));
-            Assert.Throws<NotFoundException>(() => _stateRepository.Remove(2));
-            Assert.Throws<NotFoundException>(() => _stateRepository.Update(2, _cloneableTestObject));
+            Assert.Throws<DuplicateEntityException>(() => _stateRepository.Add(1, _cloneableTestObject));
+            Assert.Throws<NotFoundException<int>>(() => _stateRepository.Get(2));
+            Assert.Throws<NotFoundException<int>>(() => _stateRepository.Remove(2));
+            Assert.Throws<NotFoundException<int>>(() => _stateRepository.Update(2, _cloneableTestObject));
         }
 
         [Test]
@@ -48,18 +51,14 @@ namespace IdelPog.Common.Tests.Repository
         [Test]
         public void Negative_Add_DuplicateKey_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertUnique(It.IsAny<object>(), It.IsAny<Func<bool>>()))
-                .Throws(new DuplicateItemException(KEY));
-
-            Assert.Throws<DuplicateItemException>(() => _stateRepository.Add(KEY, _cloneableTestObject));
+            _stateRepository.Add(KEY, _cloneableTestObject);
+            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _stateRepository.Add(KEY, _cloneableTestObject));
+            Assert.That(exception.ID, Is.EqualTo(_cloneableTestObject));
         }
 
         [Test]
         public void Negative_Add_NullValue_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertUnique(null!, It.IsAny<Func<bool>>()))
-                .Throws<ArgumentNullException>();
-
             Assert.Throws<ArgumentNullException>(() => _stateRepository.Add(KEY, null!));
         }
 
@@ -76,10 +75,8 @@ namespace IdelPog.Common.Tests.Repository
         [Test]
         public void Negative_Remove_NonExisting_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertFound(KEY, It.IsAny<Func<bool>>()))
-                .Throws(new NotFoundException(KEY));
-
-            Assert.Throws<NotFoundException>(() => _stateRepository.Remove(KEY));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _stateRepository.Remove(KEY));
+            Assert.That(exception.Key, Is.EqualTo(KEY));
         }
 
         [Test]
@@ -95,10 +92,8 @@ namespace IdelPog.Common.Tests.Repository
         [Test]
         public void Negative_Get_NonExisting_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertFound(KEY, It.IsAny<Func<bool>>()))
-                .Throws(new NotFoundException(KEY));
-
-            Assert.Throws<NotFoundException>(() => _stateRepository.Get(KEY));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _stateRepository.Get(KEY));
+            Assert.That(exception.Key, Is.EqualTo(KEY));
         }
 
         [Test]
@@ -117,18 +112,14 @@ namespace IdelPog.Common.Tests.Repository
         [Test]
         public void Negative_Update_NonExisting_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertFound(KEY, It.IsAny<Func<bool>>()))
-                .Throws(new NotFoundException(KEY));
-
-            Assert.Throws<NotFoundException>(() => _stateRepository.Update(KEY, _cloneableTestObject));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _stateRepository.Update(KEY, _cloneableTestObject));
+            Assert.That(exception.Key, Is.EqualTo(KEY));
         }
 
         [Test]
         public void Negative_Update_NullValue_Throws()
         {
-            _repositoryAsserterMock.Setup(library => library.AssertFound(KEY, It.IsAny<Func<bool>>()))
-                .Throws<ArgumentNullException>();
-
+            _stateRepository.Add(KEY, _cloneableTestObject);
             Assert.Throws<ArgumentNullException>(() => _stateRepository.Update(KEY, null!));
         }
 

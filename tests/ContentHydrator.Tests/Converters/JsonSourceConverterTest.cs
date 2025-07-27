@@ -19,7 +19,7 @@ namespace ContentHydratorTests.Converters
         public void OneTimeSetUp()
         {
             _handlerMock = new Mock<IHandler>();
-            _converter = new JsonSourceConverter<TestDTO>(TestHydrationContext.Default.TestDTO, new AssertNotNull(_handlerMock.Object));
+            _converter = new JsonSourceConverter<TestDTO>(TestHydrationContext.Default.TestDTO, new ObjectNullAssertion(_handlerMock.Object));
         }
 
         private static IEnumerable<string> PositiveFlowDataSource()

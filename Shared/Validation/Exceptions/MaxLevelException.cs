@@ -1,15 +1,16 @@
-﻿using IdelPog.Validation.Constants;
-
-namespace IdelPog.Validation.Exceptions
+﻿namespace IdelPog.Validation.Exceptions
 {
     public class MaxLevelException : Exception
     {
-        private static readonly string _baseMessage = ExceptionConstants.MAX_LEVEL_MESSAGE;
+        private const string MESSAGE = "The passed entity {0} (from '{1}') is at max level! No more levels for now!!!";
 
-        public MaxLevelException(object id)
-            : base(string.Format(_baseMessage, id))
+        public readonly object ID;
+        public readonly string SourceName;
+
+        public MaxLevelException(object id, string sourceName) : base(string.Format(MESSAGE, id, sourceName))
         {
-            // TODO: This needs to be logged to file.
+            ID = id;
+            SourceName = sourceName;
         }
     }
 }

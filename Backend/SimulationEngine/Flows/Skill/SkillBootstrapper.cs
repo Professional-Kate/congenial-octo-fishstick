@@ -10,10 +10,12 @@ namespace IdelPog.SimulationEngine.Skill
     {
         public void Initialize(IBufferMessenger bufferMessenger, IBufferManager bufferManager, ICurrentSkillSetter currentSkillSetter)
         {
-            IAssertNotNull assertNotNull = new AssertNotNull(new ThrowHandler());
-            IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(new ThrowHandler());
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(new ThrowHandler());
 
-            IDispatchOne<SkillChangeDTO> skillChangeDTODispatcher = new ManagedDispatcher<SkillChangeDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+            IDispatchOne<SkillChangeDTO> skillChangeDTODispatcher =
+                new ManagedDispatcher<SkillChangeDTO>(bufferManager, objectNullAssertion, collectionAssertion);
+
             ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();
 
             ISkillChangeMediator skillChangeMediator = new SkillChangeMediator(currentSkillSetter, skillChangeFactory, skillChangeDTODispatcher);

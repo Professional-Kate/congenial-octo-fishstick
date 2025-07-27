@@ -9,23 +9,23 @@ namespace IdelPog.SimulationEngine.Currency
     public class CurrencyUpdateSummarizer : ICurrencyUpdateSummarizer
     {
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
-        private readonly IAssertPositive _assertPositive;
-        private readonly IAssertNotNull _assertNotNull;
-        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
+        private readonly INumberAssertion _numberAssertion;
+        private readonly IObjectNullAssertion _objectNullAssertion;
+        private readonly ICollectionAssertion _collectionAssertion;
 
-        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, IAssertPositive assertPositive, IAssertNotNull assertNotNull,
-            IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, INumberAssertion numberAssertion, IObjectNullAssertion objectNullAssertion,
+            ICollectionAssertion collectionAssertion)
         {
             _currencyUpdateFactory = currencyUpdateFactory;
-            _assertPositive = assertPositive;
-            _assertNotNull = assertNotNull;
-            _assertCollectionNotEmpty = assertCollectionNotEmpty;
+            _numberAssertion = numberAssertion;
+            _objectNullAssertion = objectNullAssertion;
+            _collectionAssertion = collectionAssertion;
         }
 
         public CurrencyUpdate[] GetSummary(IReadOnlyList<CurrencyUpdate> updates)
         {
-            _assertNotNull.AssertObjectNotNull(updates);
-            _assertCollectionNotEmpty.Handle(updates);
+            _objectNullAssertion.AssertNotNull(updates, nameof(updates));
+            _collectionAssertion.AssertNotEmpty(updates);
 
             Dictionary<CurrencyType, int> amounts = SummarizeAmounts(updates);
             List<CurrencyUpdate> summaryUpdates = CreateSummaryUpdates(amounts);
@@ -39,7 +39,7 @@ namespace IdelPog.SimulationEngine.Currency
 
             foreach (CurrencyUpdate currencyUpdate in updates)
             {
-                _assertPositive.AssertNumberIsPositive<CurrencyUpdate>(currencyUpdate.Amount);
+                _numberAssertion.AssertNonNegative(currencyUpdate.Amount);
 
                 if (amounts.ContainsKey(currencyUpdate.CurrencyType) == false)
                 {

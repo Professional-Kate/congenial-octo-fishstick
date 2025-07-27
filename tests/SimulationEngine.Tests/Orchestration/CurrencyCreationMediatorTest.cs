@@ -33,8 +33,8 @@ namespace IdelPogTests.Orchestration
             _currencyCreationDispatcherMock = new Mock<IDispatchMany<CurrencyCreationDTO>>();
             _currencyCreationDTOFactoryMock = new Mock<ICurrencyCreationDTOFactory>();
             _currencyCreationMediator = new CurrencyCreationMediator(_stateRepositoryMock.Object, _currencyCreationDispatcherMock.Object,
-                _currencyCreationDTOFactoryMock.Object, new AssertNotNull(new ThrowHandler()), new AssertCollectionNotEmpty(new ThrowHandler()),
-                new AssertNonDuplicate(new ThrowHandler()), new AssertPositive(new ThrowHandler()));
+                _currencyCreationDTOFactoryMock.Object, new ObjectNullAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()),
+                new UniqueAssertion(new ThrowHandler()), new NumberAssertion(new ThrowHandler()));
 
             _createGold = new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = 10 };
             _createGems = new CurrencyCreation { CurrencyType = CurrencyType.GEMS, StartingAmount = 15 };
@@ -107,7 +107,8 @@ namespace IdelPogTests.Orchestration
             _currencyCreationMediator.CreateCurrency([_createGold]);
             _currencyCreationDispatcherMock.Verify(library => library.Dispatch(currencyCreationDTOs), Times.Once);
 
-            Assert.Throws<DuplicateItemException>(() => _currencyCreationMediator.CreateCurrency([_createGold]));
+            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _currencyCreationMediator.CreateCurrency([_createGold]));
+            Assert.That(exception.ID, Is.EqualTo(_createGold));
 
             _stateRepositoryMock.Verify(library => library.Add(CurrencyType.GOLD, It.IsAny<Currency>()), Times.Exactly(1));
             _stateRepositoryMock.Verify(library => library.Contains(CurrencyType.GOLD), Times.Exactly(2));
@@ -120,7 +121,7 @@ namespace IdelPogTests.Orchestration
             CurrencyCreation[] creation = [new() { CurrencyType = CurrencyType.GOLD, StartingAmount = -1 }];
 
             NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _currencyCreationMediator.CreateCurrency(creation));
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(CurrencyCreation)));
+            Assert.That(exception.Number, Is.EqualTo(-1));
 
             _stateRepositoryMock.VerifyNoOtherCalls();
             _currencyCreationDispatcherMock.VerifyNoOtherCalls();
@@ -129,7 +130,10 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_CreateCurrency_DuplicatedRequest_Throws()
         {
-            Assert.Throws<DuplicateItemException>(() => _currencyCreationMediator.CreateCurrency([_createGold, _createGold]));
+            DuplicateEntityException exception =
+                Assert.Throws<DuplicateEntityException>(() => _currencyCreationMediator.CreateCurrency([_createGold, _createGold]));
+
+            Assert.That(exception.ID, Is.EqualTo(_createGold));
 
             _stateRepositoryMock.Verify(library => library.Contains(CurrencyType.GOLD), Times.Exactly(2));
             _currencyCreationDispatcherMock.VerifyNoOtherCalls();
@@ -152,7 +156,7 @@ namespace IdelPogTests.Orchestration
             _stateRepositoryMock.VerifyNoOtherCalls();
             _currencyCreationDispatcherMock.VerifyNoOtherCalls();
 
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyCreation[])));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyCreation)));
         }
     }
 }

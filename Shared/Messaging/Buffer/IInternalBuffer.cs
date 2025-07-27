@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.Messaging.Buffer
 {
-    internal interface IInternalBuffer
+    public interface IInternalBuffer
     {
         public event Action<IInternalBuffer> Ready;
     }

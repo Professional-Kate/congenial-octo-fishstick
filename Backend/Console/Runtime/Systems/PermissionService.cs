@@ -15,17 +15,15 @@ namespace Console.Runtime.Systems
         private readonly IEntity _allowedDomainEntity;
         private readonly IDomainComponentFactory _domainComponentFactory;
         private readonly IComponentStoreFactory _componentStoreFactory;
-        private readonly IAssertComponentFound _assertComponentFound;
-        private readonly IAssertComponentDoesNotExist _assertComponentDoesNotExist;
+        private readonly IComponentAssertion _componentAssertion;
 
         public PermissionService(IEntity allowedDomainEntity, IDomainComponentFactory domainComponentFactory, IComponentStoreFactory componentStoreFactory,
-            IAssertComponentFound assertComponentFound, IAssertComponentDoesNotExist assertComponentDoesNotExist)
+            IComponentAssertion componentAssertion)
         {
             _allowedDomainEntity = allowedDomainEntity;
             _domainComponentFactory = domainComponentFactory;
             _componentStoreFactory = componentStoreFactory;
-            _assertComponentFound = assertComponentFound;
-            _assertComponentDoesNotExist = assertComponentDoesNotExist;
+            _componentAssertion = componentAssertion;
         }
 
         public void PermissionUpdate(PermissionUpdateArguments arguments)
@@ -46,7 +44,7 @@ namespace Console.Runtime.Systems
         private void AddAllowedDomain(Domain domain)
         {
             ComponentStore<DomainComponent> componentStore = TryGetComponentStore();
-            _assertComponentDoesNotExist.Handle(componentStore.ContainsComponent(component => component.AllowedDomain == domain), typeof(DomainComponent));
+            _componentAssertion.AssertUnique<DomainComponent>(componentStore.ContainsComponent(component => component.AllowedDomain == domain));
 
             DomainComponent[] commandDomainComponents = componentStore.GetAllComponents();
 
@@ -61,7 +59,7 @@ namespace Console.Runtime.Systems
         private void RemoveAllowedDomain(Domain domain)
         {
             ComponentStore<DomainComponent> componentStore = TryGetComponentStore();
-            _assertComponentFound.Handle(componentStore.ContainsComponent(component => component.AllowedDomain == domain), typeof(DomainComponent));
+            _componentAssertion.AssertFound<DomainComponent>(componentStore.ContainsComponent(component => component.AllowedDomain == domain));
 
             DomainComponent[] commandDomainComponents = componentStore.GetAllComponents();
             DomainComponent[] newCommandDomainComponents = new DomainComponent[commandDomainComponents.Length - 1];
@@ -86,7 +84,7 @@ namespace Console.Runtime.Systems
         private ComponentStore<DomainComponent> TryGetComponentStore()
         {
             bool contains = _allowedDomainEntity.TryGetComponent(out ComponentStore<DomainComponent> componentStore);
-            _assertComponentFound.Handle(contains, typeof(ComponentStore<DomainComponent>));
+            _componentAssertion.AssertFound<ComponentStore<DomainComponent>>(contains);
 
             return componentStore;
         }

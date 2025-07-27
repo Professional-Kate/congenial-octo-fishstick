@@ -11,8 +11,8 @@ namespace IdelPog.Common.Repository
 
         public AssetRepository()
         {
-            _repositoryAsserter = new RepositoryAsserter(new AssertFound(new ThrowHandler()), new AssertNotNull(new ThrowHandler()),
-                new AssertNonDuplicate(new ThrowHandler()));
+            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()),
+                new UniqueAssertion(new ThrowHandler()));
         }
 
         public AssetRepository(IRepositoryAsserter repositoryAsserter)
@@ -22,21 +22,21 @@ namespace IdelPog.Common.Repository
 
         public void Add(TID key, T value)
         {
-            _repositoryAsserter.AssertUnique(value, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertUnique(value, _repository.ContainsKey(key));
 
             _repository.Add(key, value);
         }
 
         public void Remove(TID key)
         {
-            _repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertFound(key, _repository.ContainsKey(key));
 
             _repository.Remove(key);
         }
 
         public T Get(TID key)
         {
-            _repositoryAsserter.AssertFound(key, () => _repository.ContainsKey(key));
+            _repositoryAsserter.AssertFound(key, _repository.ContainsKey(key));
 
             return _repository[key];
         }

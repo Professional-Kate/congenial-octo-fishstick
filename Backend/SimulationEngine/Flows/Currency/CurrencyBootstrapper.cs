@@ -19,46 +19,46 @@ namespace IdelPog.SimulationEngine.Currency
     {
         public void Initialize(IBufferMessenger bufferMessenger, IBufferManager bufferManager)
         {
-            IAssertPositive assertPositive = new AssertPositive(new ThrowHandler());
-            IAssertCollectionNotEmpty assertCollectionNotEmpty = new AssertCollectionNotEmpty(new ThrowHandler());
-            IAssertNotNull assertNotNull = new AssertNotNull(new ThrowHandler());
-            IAssertNonDuplicate assertNonDuplicate = new AssertNonDuplicate(new ThrowHandler());
-            IAssertFound assertFound = new AssertFound(new ThrowHandler());
-            IAssertEnoughCurrency assertEnoughCurrency = new AssertEnoughCurrency(new ThrowHandler());
+            INumberAssertion numberAssertion = new NumberAssertion(new ThrowHandler());
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(new ThrowHandler());
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion(new ThrowHandler());
+            IFoundAssertion foundAssertion = new FoundAssertion(new ThrowHandler());
+            ICurrencyAssertion currencyAssertion = new CurrencyAssertion(new ThrowHandler());
 
             IStateRepository<CurrencyType, Currency> currencyRepository = new StateRepository<CurrencyType, Currency>();
 
-            ICurrencyService currencyService = new CurrencyService(assertPositive, assertEnoughCurrency);
-            ICurrencyUpdateDTOFactory currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(assertNotNull, assertCollectionNotEmpty);
+            ICurrencyService currencyService = new CurrencyService(numberAssertion, currencyAssertion);
+            ICurrencyUpdateDTOFactory currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(objectNullAssertion, collectionAssertion);
             IDispatchMany<CurrencyUpdateDTO> currencyUpdateDispatcher =
-                new ManagedDispatcher<CurrencyUpdateDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+                new ManagedDispatcher<CurrencyUpdateDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
             ICurrencyUpdateSummarizer currencyUpdateSummarizer =
-                new CurrencyUpdateSummarizer(currencyUpdateFactory, assertPositive, assertNotNull, assertCollectionNotEmpty);
+                new CurrencyUpdateSummarizer(currencyUpdateFactory, numberAssertion, objectNullAssertion, collectionAssertion);
 
             ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, currencyUpdateDispatcher,
-                currencyUpdateSummarizer, currencyUpdateDTOFactory, assertPositive, assertCollectionNotEmpty, assertFound, assertNotNull);
+                currencyUpdateSummarizer, currencyUpdateDTOFactory, numberAssertion, collectionAssertion, foundAssertion, objectNullAssertion);
 
-            ICurrencyCreationDTOFactory currencyCreationDTOFactory = new CurrencyCreationDTOFactory(assertNotNull, assertCollectionNotEmpty);
+            ICurrencyCreationDTOFactory currencyCreationDTOFactory = new CurrencyCreationDTOFactory(objectNullAssertion, collectionAssertion);
             IDispatchMany<CurrencyCreationDTO> currencyCreationDispatcher =
-                new ManagedDispatcher<CurrencyCreationDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+                new ManagedDispatcher<CurrencyCreationDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 
             ICurrencyCreationMediator currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationDispatcher,
-                currencyCreationDTOFactory, assertNotNull, assertCollectionNotEmpty, assertNonDuplicate, assertPositive);
+                currencyCreationDTOFactory, objectNullAssertion, collectionAssertion, uniqueAssertion, numberAssertion);
 
             ICurrencyController currencyController = new CurrencyController(currencyUpdateMediator, currencyCreationMediator);
             IErrorDTOFactory errorDTOFactory = new ErrorDTOFactory();
 
             ICurrencyUpdateErrorDTOFactory currencyUpdateErrorDTOFactory = new CurrencyUpdateErrorDTOFactory(errorDTOFactory, currencyUpdateDTOFactory);
             IDispatchOne<CurrencyUpdateErrorDTO> currencyUpdateErrorDispatcher =
-                new ManagedDispatcher<CurrencyUpdateErrorDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+                new ManagedDispatcher<CurrencyUpdateErrorDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 
             CurrencyUpdateListener currencyUpdateListener = new(currencyController, currencyUpdateErrorDispatcher, currencyUpdateErrorDTOFactory);
 
             ICurrencyCreationErrorDTOFactory currencyCreationErrorDTOFactory = new CurrencyCreationErrorDTOFactory(errorDTOFactory, currencyCreationDTOFactory);
             IDispatchOne<CurrencyCreationErrorDTO> currencyCreationErrorDispatcher =
-                new ManagedDispatcher<CurrencyCreationErrorDTO>(bufferManager, assertNotNull, assertCollectionNotEmpty);
+                new ManagedDispatcher<CurrencyCreationErrorDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 
             CurrencyCreationListener currencyCreationListener = new(currencyController, currencyCreationErrorDispatcher, currencyCreationErrorDTOFactory);
 

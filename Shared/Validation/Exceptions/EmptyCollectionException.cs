@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace IdelPog.Validation.Exceptions
+﻿namespace IdelPog.Validation.Exceptions
 {
     public class EmptyCollectionException : Exception
     {
@@ -8,9 +6,9 @@ namespace IdelPog.Validation.Exceptions
 
         public readonly Type CollectionType;
 
-        public EmptyCollectionException(IEnumerable collection) : base(string.Format(MESSAGE, collection.GetType()))
+        public EmptyCollectionException(Type collection) : base(string.Format(MESSAGE, collection))
         {
-            CollectionType = collection.GetType();
+            CollectionType = collection;
         }
     }
 }

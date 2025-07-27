@@ -26,7 +26,7 @@ namespace Console.Tests.Resolver
             _commandDomainResolverMock = new Mock<ICommandDomainResolver>();
             _domainPermissionCheckerMock = new Mock<IDomainPermissionChecker>();
             _commandResolverMediator = new CommandResolverMediator(_repositoryMock.Object, _domainPermissionCheckerMock.Object,
-                new AssertFound(new ThrowHandler()), new AssertSpanNotEmpty(new ThrowHandler()), new AssertHasPermission(new ThrowHandler()));
+                new FoundAssertion(new ThrowHandler()), new SpanAssertion(new ThrowHandler()), new DomainPermissionAssertion(new ThrowHandler()));
         }
 
         [SetUp]
@@ -51,7 +51,10 @@ namespace Console.Tests.Resolver
         [Test]
         public void Negative_ResolveCommand_NoResolverFound_Throws()
         {
-            Assert.Throws<NotFoundException>(() => _commandResolverMediator.ResolveCommand(Domain.CURRENCY, ["10, 10, 10"]));
+            NotFoundException<Domain> exception =
+                Assert.Throws<NotFoundException<Domain>>(() => _commandResolverMediator.ResolveCommand(Domain.CURRENCY, ["10, 10, 10"]));
+
+            Assert.That(exception.Key, Is.EqualTo(Domain.CURRENCY));
         }
     }
 }

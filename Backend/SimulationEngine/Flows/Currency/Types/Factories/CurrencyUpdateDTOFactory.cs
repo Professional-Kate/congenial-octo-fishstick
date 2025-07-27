@@ -6,19 +6,19 @@ namespace IdelPog.SimulationEngine.Currency.Factories
 {
     public class CurrencyUpdateDTOFactory : ICurrencyUpdateDTOFactory
     {
-        private readonly IAssertNotNull _assertNotNull;
-        private readonly IAssertCollectionNotEmpty _assertCollectionNotEmpty;
+        private readonly IObjectNullAssertion _objectNullAssertion;
+        private readonly ICollectionAssertion _collectionAssertion;
 
-        public CurrencyUpdateDTOFactory(IAssertNotNull assertNotNull, IAssertCollectionNotEmpty assertCollectionNotEmpty)
+        public CurrencyUpdateDTOFactory(IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion)
         {
-            _assertNotNull = assertNotNull;
-            _assertCollectionNotEmpty = assertCollectionNotEmpty;
+            _objectNullAssertion = objectNullAssertion;
+            _collectionAssertion = collectionAssertion;
         }
 
         public CurrencyUpdateDTO[] CreateFrom(IReadOnlyList<CurrencyUpdate> trades)
         {
-            _assertNotNull.AssertObjectNotNull(trades);
-            _assertCollectionNotEmpty.Handle(trades);
+            _objectNullAssertion.AssertNotNull(trades, nameof(trades));
+            _collectionAssertion.AssertNotEmpty(trades);
 
             List<CurrencyUpdateDTO> result = new(trades.Count);
 

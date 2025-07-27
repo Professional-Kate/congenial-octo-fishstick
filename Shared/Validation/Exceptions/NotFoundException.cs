@@ -1,15 +1,14 @@
-﻿using IdelPog.Validation.Constants;
-
-namespace IdelPog.Validation.Exceptions
+﻿namespace IdelPog.Validation.Exceptions
 {
-    public class NotFoundException : Exception
+    public class NotFoundException<TKey> : Exception
     {
-        private static readonly string _baseMessage = ExceptionConstants.NOT_FOUND_MESSAGE;
+        private const string MESSAGE = "Error! The passed ID {0} was not found!";
 
-        public NotFoundException(object id)
-            : base(string.Format(_baseMessage, id))
+        public readonly TKey Key;
+
+        public NotFoundException(TKey key) : base(string.Format(MESSAGE, key))
         {
-            // TODO: This needs to be logged to file.
+            Key = key;
         }
     }
 }

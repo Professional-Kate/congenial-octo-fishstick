@@ -1,5 +1,5 @@
-﻿using Console.Commands.Domains.Arguments;
-using Console.Commands.Resolver.Assertions;
+﻿using Console.Assertions;
+using Console.Commands.Domains.Arguments;
 using Console.Commands.Resolver.Pipelines;
 using Console.Runtime.Systems;
 using Console.Types;
@@ -13,20 +13,20 @@ namespace Console.Commands.Domains
             { Syntax = "permission <ActionType> <CommandDomain>", Description = "Add or Remove permission for a domain" };
 
         private readonly IArgumentResolverPipeline<PermissionUpdateArguments> _permissionUpdatePipeline;
-        private readonly IAssertArgumentLength _assertArgumentLength;
+        private readonly IArgumentCountAssertion _argumentCountAssertion;
         private readonly IPermissionService _permissionService;
 
         public PermissionDomainResolver(IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline, IPermissionService permissionService,
-            IAssertArgumentLength assertArgumentLength)
+            IArgumentCountAssertion argumentCountAssertion)
         {
             _permissionUpdatePipeline = permissionUpdatePipeline;
             _permissionService = permissionService;
-            _assertArgumentLength = assertArgumentLength;
+            _argumentCountAssertion = argumentCountAssertion;
         }
 
         public void Resolve(ReadOnlySpan<string> arguments)
         {
-            _assertArgumentLength.Handle(arguments.Length, 2);
+            _argumentCountAssertion.AssertCount(arguments.Length, 2);
 
             PermissionUpdateArguments permissionUpdateArguments = _permissionUpdatePipeline.Resolve(arguments);
             _permissionService.PermissionUpdate(permissionUpdateArguments);

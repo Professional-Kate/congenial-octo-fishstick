@@ -5,25 +5,28 @@ namespace IdelPog.Validation.Assertions
     /// <summary>
     /// Base assertion class. This class contains a method for handling thrown exceptions using a passed <see cref="IHandler"/>
     /// </summary>
-    /// <typeparam name="T">The type of the <see cref="Exception"/> to be handled</typeparam>
-    /// <seealso cref="Assert"/>
-    /// <seealso cref="IHandler"/>
-    public abstract class BaseAssertion<T>(IHandler handler)
-        where T : Exception
+    public abstract class BaseAssertion
     {
+        private readonly IHandler _handler;
+
+        protected BaseAssertion(IHandler handler)
+        {
+            _handler = handler;
+        }
+
         /// <summary>
         /// Executes the passed action, automatically handling the thrown exception
         /// </summary>
         /// <param name="action">The assertion code. This should contain a throw statement</param>
-        protected void Assert(Action action)
+        protected void Assert<TException>(Action action) where TException : Exception
         {
             try
             {
                 action();
             }
-            catch (T exception)
+            catch (TException exception)
             {
-                handler.Handle(exception);
+                _handler.Handle(exception);
             }
         }
     }

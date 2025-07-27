@@ -23,8 +23,8 @@ namespace IdelPogTests.Service
         public void OneTimeSetUp()
         {
             IHandler throwHandler = new ThrowHandler();
-            _experienceService = new ExperienceService(new LevelableAsserter(new AssertUnderMaxLevel(throwHandler), new AssertNotNull(throwHandler),
-                new AssertPositive(throwHandler)));
+            _experienceService = new ExperienceService(new LevelableAssertionPipeline(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler),
+                new NumberAssertion(throwHandler)));
         }
 
         [SetUp]
@@ -61,7 +61,12 @@ namespace IdelPogTests.Service
         {
             ILevelable levelable = new Levelable(SkillConstants.MAX_SKILL_LEVEL, 100, 10, 1);
 
-            Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(levelable));
+            MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(levelable));
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.ID, Is.EqualTo(levelable));
+                Assert.That(exception.SourceName, Is.EqualTo(nameof(levelable)));
+            });
         }
 
         [TestCase(-10)]
@@ -71,14 +76,13 @@ namespace IdelPogTests.Service
             _levelable.SetExperiencePerAction(experiencePerAction);
 
             NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _experienceService.AddExperience(_levelable));
-
-            Assert.That(exception.NumberSource, Is.EqualTo(typeof(ILevelable)));
+            Assert.That(exception.Number, Is.EqualTo(experiencePerAction));
         }
 
         [Test]
         public void Negative_AddExperience_NullSkill_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _experienceService.AddExperience(null));
+            Assert.Throws<ArgumentNullException>(() => _experienceService.AddExperience(null!));
         }
     }
 }

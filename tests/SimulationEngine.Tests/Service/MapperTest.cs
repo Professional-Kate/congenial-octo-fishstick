@@ -1,8 +1,8 @@
 ﻿using IdelPog.SimulationEngine.Service;
 using IdelPog.SimulationEngine.Structures.Types;
 using IdelPog.Validation.Assertions;
+using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;
-using Moq;
 
 namespace IdelPogTests.Service
 {
@@ -10,8 +10,8 @@ namespace IdelPogTests.Service
     public class MapperTest
     {
         private Mapper<int> _informationMapper { get; set; }
-        private Mock<IAssertFound> _assertFoundMock { get; set; }
-        private Mock<IAssertNonDuplicate> _assertUniqueMock { get; set; }
+        private IFoundAssertion _assertFound { get; set; }
+        private IUniqueAssertion _assertUnique { get; set; }
 
         private readonly Information _informationOne = new("TEST", "TESTING");
         private readonly Information _informationTwo = new("HELLO", "WORLD");
@@ -19,10 +19,10 @@ namespace IdelPogTests.Service
         [SetUp]
         public void Setup()
         {
-            _assertFoundMock = new Mock<IAssertFound>();
-            _assertUniqueMock = new Mock<IAssertNonDuplicate>();
+            _assertFound = new FoundAssertion(new ThrowHandler());
+            _assertUnique = new UniqueAssertion(new ThrowHandler());
 
-            _informationMapper = new Mapper<int>(_assertFoundMock.Object, _assertUniqueMock.Object);
+            _informationMapper = new Mapper<int>(_assertFound, _assertUnique);
             _informationMapper.AddInformation(1, _informationOne);
             _informationMapper.AddInformation(2, _informationTwo);
         }
@@ -42,10 +42,8 @@ namespace IdelPogTests.Service
         {
             const int badId = -1;
 
-            _assertFoundMock.Setup(library => library.AssertItemIsFound(badId, It.IsAny<Func<bool>>()))
-                .Throws(new NotFoundException(badId));
-
-            Assert.Throws<NotFoundException>(() => _informationMapper.GetInformation(badId));
+            NotFoundException<int> exception = Assert.Throws<NotFoundException<int>>(() => _informationMapper.GetInformation(badId));
+            Assert.That(exception.Key, Is.EqualTo(badId));
         }
 
         [Test]
@@ -64,10 +62,8 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_AddInformation_KeyAlreadyExists_Throws()
         {
-            _assertUniqueMock.Setup(library => library.AssertContains(1, It.IsAny<Func<bool>>()))
-                .Throws(new DuplicateItemException(1));
-
-            Assert.Throws<DuplicateItemException>(() => _informationMapper.AddInformation(1, _informationOne));
+            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _informationMapper.AddInformation(1, _informationOne));
+            Assert.That(exception.ID, Is.EqualTo(1));
         }
     }
 }

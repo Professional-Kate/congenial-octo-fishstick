@@ -4,13 +4,13 @@ using IdelPog.Validation.Assertions;
 
 namespace IdelPog.Messaging.Messenger
 {
-    public class BufferMessenger(IAssertNotNull assertNotNull, IAssertListenerFound assertListenerFound) : IBufferMessenger, IBufferDispatcher
+    public class BufferMessenger(IObjectNullAssertion objectNullAssertion, IListenerAssertion listenerAssertion) : IBufferMessenger, IBufferDispatcher
     {
         private readonly Dictionary<Type, List<IListener>> _listeners = new();
 
         public void Subscribe(IListener listener)
         {
-            assertNotNull.AssertObjectNotNull(listener);
+            objectNullAssertion.AssertNotNull(listener, nameof(listener));
 
             if (_listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners) == false)
             {
@@ -23,17 +23,17 @@ namespace IdelPog.Messaging.Messenger
 
         public void Unsubscribe(IListener listener)
         {
-            assertNotNull.AssertObjectNotNull(listener);
+            objectNullAssertion.AssertNotNull(listener, nameof(listener));
 
             bool contains = _listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners);
-            assertListenerFound.AssertFound(listener, contains);
+            listenerAssertion.AssertListenerFound(contains, listener);
 
             listeners!.Remove(listener);
         }
 
         public void DispatchMessage<T>(IReadOnlyList<T> buffer)
         {
-            assertNotNull.AssertObjectNotNull(buffer);
+            objectNullAssertion.AssertNotNull(buffer, nameof(buffer));
 
             Type type = typeof(T);
 
@@ -62,7 +62,7 @@ namespace IdelPog.Messaging.Messenger
                         singleListener.Handle(buffer[0]);
                     }
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
                     // ignored
                 }

@@ -4,7 +4,7 @@ using IdelPog.Validation.Assertions;
 namespace IdelPog.ContentHydrator.Readers
 {
     /// <inheritdoc cref="IJsonReader"/>
-    public class JsonReader(IAssertNotNull assertNotNull) : IJsonReader
+    public class JsonReader(IObjectNullAssertion objectNullAssertion) : IJsonReader
     {
         public JsonDocument Read(string filePath)
         {
@@ -12,7 +12,7 @@ namespace IdelPog.ContentHydrator.Readers
             JsonDocument document = JsonDocument.Parse(fileText);
 
             JsonDocument? objects = JsonSerializer.Deserialize<JsonDocument>(document.RootElement.GetRawText());
-            assertNotNull.AssertObjectNotNull(objects);
+            objectNullAssertion.AssertNotNull(objects, nameof(objects));
 
             return objects!;
         }

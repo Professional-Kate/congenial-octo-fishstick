@@ -1,20 +1,20 @@
-﻿using Console.Commands.Resolver.Assertions;
+﻿using Console.Assertions;
 
 namespace Console.Commands.Resolver
 {
     public class IntResolver : IArgumentResolver<int>
     {
-        private readonly IAssertCanParseType _assertCanParseType;
+        private readonly ITypeParseAssertion _typeParseAssertion;
 
-        public IntResolver(IAssertCanParseType assertCanParseType)
+        public IntResolver(ITypeParseAssertion typeParseAssertion)
         {
-            _assertCanParseType = assertCanParseType;
+            _typeParseAssertion = typeParseAssertion;
         }
 
         public int Resolve(string argument)
         {
             bool successfulParse = int.TryParse(argument, out int result);
-            _assertCanParseType.Handle(successfulParse, argument, typeof(int));
+            _typeParseAssertion.AssertCanParse(successfulParse, argument, typeof(int));
 
             return result;
         }

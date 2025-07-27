@@ -1,5 +1,5 @@
-﻿using Console.Commands.Domains.Arguments;
-using Console.Commands.Resolver.Assertions;
+﻿using Console.Assertions;
+using Console.Commands.Domains.Arguments;
 using Console.Commands.Resolver.Pipelines;
 using Console.Types;
 using IdelPog.Common.Commands;
@@ -17,20 +17,20 @@ namespace Console.Commands.Domains
         private readonly IArgumentResolverPipeline<SkillChangeArguments> _argumentResolverPipeline;
         private readonly IDispatchOne<SkillChange> _skillChangeDispatcher;
         private readonly ISkillChangeFactory _skillChangeFactory;
-        private readonly IAssertArgumentLength _assertArgumentLength;
+        private readonly IArgumentCountAssertion _argumentCountAssertion;
 
         public SkillDomainResolver(IArgumentResolverPipeline<SkillChangeArguments> argumentResolverPipeline, IDispatchOne<SkillChange> skillChangeDispatcher,
-            ISkillChangeFactory skillChangeFactory, IAssertArgumentLength assertArgumentLength)
+            ISkillChangeFactory skillChangeFactory, IArgumentCountAssertion argumentCountAssertion)
         {
             _argumentResolverPipeline = argumentResolverPipeline;
             _skillChangeDispatcher = skillChangeDispatcher;
             _skillChangeFactory = skillChangeFactory;
-            _assertArgumentLength = assertArgumentLength;
+            _argumentCountAssertion = argumentCountAssertion;
         }
 
         public void Resolve(ReadOnlySpan<string> arguments)
         {
-            _assertArgumentLength.Handle(arguments.Length, 2);
+            _argumentCountAssertion.AssertCount(arguments.Length, 2);
             SkillChangeArguments skillChangeArguments = _argumentResolverPipeline.Resolve(arguments);
 
             _skillChangeDispatcher.Dispatch(_skillChangeFactory.CreateSkillChange(skillChangeArguments.SkillID));

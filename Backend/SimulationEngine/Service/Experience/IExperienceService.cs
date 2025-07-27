@@ -1,5 +1,4 @@
 ﻿using IdelPog.SimulationEngine.Models;
-using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Service
 {

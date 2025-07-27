@@ -16,7 +16,7 @@ namespace ContentHydratorTests.Readers
         public void OneTimeSetUp()
         {
             _handlerMock = new Mock<IHandler>();
-            _jsonFileJsonReader = new JsonReader(new AssertNotNull(_handlerMock.Object));
+            _jsonFileJsonReader = new JsonReader(new ObjectNullAssertion(_handlerMock.Object));
         }
 
         private JsonDocument ReadFromTestFile(string fileName = "TwoKeys.json")

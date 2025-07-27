@@ -5,15 +5,15 @@ using IdelPog.Validation.Assertions;
 
 namespace IdelPog.ContentHydrator.Providers
 {
-    public class ConverterProvider(JsonSerializerContext context, IAssertNotNull assertNotNull) : IConverterProvider
+    public class ConverterProvider(JsonSerializerContext context, IObjectNullAssertion objectNullAssertion) : IConverterProvider
     {
         public IJsonConverter<T> CreateConverter<T>()
         {
             JsonTypeInfo? typeInfo = context.GetTypeInfo(typeof(T));
 
-            assertNotNull.AssertObjectNotNull(typeInfo);
+            objectNullAssertion.AssertNotNull(typeInfo, nameof(typeInfo));
 
-            return new JsonSourceConverter<T>((JsonTypeInfo<T>)typeInfo!, assertNotNull);
+            return new JsonSourceConverter<T>((JsonTypeInfo<T>)typeInfo!, objectNullAssertion);
         }
     }
 }
