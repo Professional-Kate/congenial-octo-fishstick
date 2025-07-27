@@ -1,7 +1,6 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Currency

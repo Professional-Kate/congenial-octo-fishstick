@@ -1,5 +1,4 @@
 ﻿using IdelPog.SimulationEngine.Constants;
-using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Exceptions;
 

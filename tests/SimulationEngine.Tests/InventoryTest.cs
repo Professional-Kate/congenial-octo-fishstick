@@ -1,9 +1,6 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
-using IdelPog.SimulationEngine.Currency.Assertions;
-using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Inventory;
-using IdelPog.SimulationEngine.Structures.Types;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
@@ -40,16 +37,15 @@ namespace IdelPogTests
             _repositoryMock = new Mock<IStateRepository<ItemID, Item>>();
             IHandler throwHandler = new ThrowHandler();
 
-            _inventory = new Inventory(_repositoryMock.Object, new FoundAssertion(throwHandler), new NumberAssertion(throwHandler),
-                new UniqueAssertion(throwHandler));
+            _inventory = new Inventory(_repositoryMock.Object, new FoundAssertion(throwHandler), new UniqueAssertion(throwHandler));
 
             _repositoryMock.Setup(library => library.Get(_oakWoodItem.ID)).Returns(_oakWoodItem);
             _repositoryMock.Setup(library => library.Contains(_oakWoodItem.ID)).Returns(true);
         }
 
-        private void ModifyAmountTestRunner(int amount, ActionType action)
+        private void ModifyAmountTestRunner(uint amount, ActionType action)
         {
-            int finalAmount = 0;
+            uint finalAmount = 0;
 
             switch (action)
             {
@@ -71,12 +67,12 @@ namespace IdelPogTests
             _repositoryMock.Verify(library => library.Remove(_oakWoodItem.ID), Times.Never());
         }
 
-        [TestCase(1)]
-        [TestCase(10)]
-        [TestCase(30)]
-        [TestCase(100)]
-        [TestCase(5000)]
-        public void Positive_AddAmount_AddsToItem(int amount)
+        [TestCase(1u)]
+        [TestCase(10u)]
+        [TestCase(30u)]
+        [TestCase(100u)]
+        [TestCase(5000u)]
+        public void Positive_AddAmount_AddsToItem(uint amount)
         {
             ModifyAmountTestRunner(amount, ActionType.ADD);
         }
@@ -90,21 +86,12 @@ namespace IdelPogTests
             Assert.That(exception.Key, Is.EqualTo(ItemID.BIRCH_WOOD));
         }
 
-        [TestCase(-1)]
-        [TestCase(-10)]
-        public void Negative_AddAmount_NegativeAmount_Throws(int amount)
-        {
-            NegativeNumberException negativeNumberException = Assert.Throws<NegativeNumberException>(() => _inventory.AddAmount(_oakWoodItem.ID, amount));
-            Assert.That(negativeNumberException.Number, Is.EqualTo(amount));
-        }
-
-
-        [TestCase(1)]
-        [TestCase(10)]
-        [TestCase(30)]
-        [TestCase(100)]
-        [TestCase(4999)]
-        public void Positive_RemoveAmount_RemovesAmount(int amount)
+        [TestCase(1u)]
+        [TestCase(10u)]
+        [TestCase(30u)]
+        [TestCase(100u)]
+        [TestCase(4999u)]
+        public void Positive_RemoveAmount_RemovesAmount(uint amount)
         {
             _oakWoodItem.AddAmount(amount + 1);
             ModifyAmountTestRunner(amount, ActionType.REMOVE);
@@ -129,21 +116,6 @@ namespace IdelPogTests
 
             NotFoundException<ItemID> exception = Assert.Throws<NotFoundException<ItemID>>(() => _inventory.RemoveAmount(ItemID.BIRCH_WOOD, 1));
             Assert.That(exception.Key, Is.EqualTo(ItemID.BIRCH_WOOD));
-        }
-
-        [Test]
-        public void Negative_RemoveAmount_AmountUnderZero_Throws()
-        {
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, 10));
-            Assert.That(exception.Number, Is.EqualTo(-10));
-        }
-
-        [TestCase(-1)]
-        [TestCase(-10)]
-        public void Negative_RemoveAmount_NegativeAmount_Throws(int amount)
-        {
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.RemoveAmount(_oakWoodItem.ID, amount));
-            Assert.That(exception.Number, Is.EqualTo(amount));
         }
 
         [Test]
@@ -180,16 +152,6 @@ namespace IdelPogTests
         {
             DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _inventory.AddItem(_oakWoodItem));
             Assert.That(exception.ID, Is.EqualTo(_oakWoodItem.ID));
-        }
-
-        [TestCase(-1)]
-        [TestCase(-10)]
-        public void Negative_AddItem_NegativeAmount_Throws(int amount)
-        {
-            Item itemWithBadAmount = new(ItemID.WILLOW_WOOD, new Information("", ""), 1, amount);
-
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _inventory.AddItem(itemWithBadAmount));
-            Assert.That(exception.Number, Is.EqualTo(amount));
         }
 
         [Test]

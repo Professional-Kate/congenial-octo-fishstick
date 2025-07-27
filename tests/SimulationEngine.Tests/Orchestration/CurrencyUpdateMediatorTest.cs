@@ -3,7 +3,6 @@ using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency;
-using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Currency.Factories;
@@ -41,7 +40,7 @@ namespace IdelPogTests.Orchestration
 
             IHandler throwHandler = new ThrowHandler();
             _currencyUpdateMediator = new CurrencyUpdateMediator(_repositoryMock.Object, _currencyServiceMock.Object, _dispatcherMock.Object,
-                _currencyUpdateSummarizerMock.Object, _currencyUpdateDTOFactoryMock.Object, new NumberAssertion(throwHandler),
+                _currencyUpdateSummarizerMock.Object, _currencyUpdateDTOFactoryMock.Object,
                 new CollectionAssertion(throwHandler), new FoundAssertion(throwHandler), new ObjectNullAssertion(throwHandler));
 
             _addGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
@@ -56,7 +55,7 @@ namespace IdelPogTests.Orchestration
             _currencyServiceMock.Reset();
             _dispatcherMock.Reset();
             _currencyUpdateSummarizerMock.Reset();
-            _goldCurrency.SetAmount(0);
+            _goldCurrency.Amount = 0;
         }
 
         private void TestRunner(IReadOnlyList<CurrencyUpdate> updates, CurrencyUpdate[] summaryUpdates)
@@ -85,12 +84,12 @@ namespace IdelPogTests.Orchestration
             _currencyUpdateSummarizerMock.VerifyNoOtherCalls();
         }
 
-        [TestCase(1)]
-        [TestCase(10)]
-        [TestCase(100)]
-        public void Positive_ProcessCurrencyUpdate_MultipleAddUpdates_AddAmountToCurrency(int amountOfUpdates)
+        [TestCase(1u)]
+        [TestCase(10u)]
+        [TestCase(100u)]
+        public void Positive_ProcessCurrencyUpdate_MultipleAddUpdates_AddAmountToCurrency(uint amountOfUpdates)
         {
-            IReadOnlyList<CurrencyUpdate> currencyUpdate = Enumerable.Repeat(_addGoldUpdate, amountOfUpdates).ToList();
+            IReadOnlyList<CurrencyUpdate> currencyUpdate = Enumerable.Repeat(_addGoldUpdate, (int) amountOfUpdates).ToList();
             CurrencyUpdate[] summaryUpdate =
                 [new() { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = _addGoldUpdate.Amount * amountOfUpdates }];
 
@@ -100,13 +99,13 @@ namespace IdelPogTests.Orchestration
             _currencyServiceMock.VerifyNoOtherCalls();
         }
 
-        [TestCase(1)]
-        [TestCase(10)]
-        [TestCase(100)]
-        public void Positive_ProcessCurrencyUpdate_MultipleRemoveUpdates_RemovesAmountFromCurrency(int amountOfUpdates)
+        [TestCase(1u)]
+        [TestCase(10u)]
+        [TestCase(100u)]
+        public void Positive_ProcessCurrencyUpdate_MultipleRemoveUpdates_RemovesAmountFromCurrency(uint amountOfUpdates)
         {
-            _goldCurrency.SetAmount(_addGoldUpdate.Amount * amountOfUpdates);
-            IReadOnlyList<CurrencyUpdate> currencyUpdate = Enumerable.Repeat(_removeGoldUpdate, amountOfUpdates).ToList();
+            _goldCurrency.Amount = _addGoldUpdate.Amount * amountOfUpdates;
+            IReadOnlyList<CurrencyUpdate> currencyUpdate = Enumerable.Repeat(_removeGoldUpdate, (int) amountOfUpdates).ToList();
             CurrencyUpdate[] summaryUpdate =
                 [new() { Action = ActionType.REMOVE, CurrencyType = CurrencyType.GOLD, Amount = _addGoldUpdate.Amount * amountOfUpdates }];
 
@@ -116,14 +115,14 @@ namespace IdelPogTests.Orchestration
             _currencyServiceMock.VerifyNoOtherCalls();
         }
 
-        [TestCase(1)]
-        [TestCase(10)]
-        [TestCase(100)]
-        public void Positive_ProcessCurrencyUpdate_MixedUpdates(int amountOfUpdates)
+        [TestCase(1u)]
+        [TestCase(10u)]
+        [TestCase(100u)]
+        public void Positive_ProcessCurrencyUpdate_MixedUpdates(uint amountOfUpdates)
         {
             List<CurrencyUpdate> currencyUpdates = [];
-            currencyUpdates.AddRange(Enumerable.Repeat(_addGoldUpdate, amountOfUpdates));
-            currencyUpdates.AddRange(Enumerable.Repeat(_removeGoldUpdate, amountOfUpdates));
+            currencyUpdates.AddRange(Enumerable.Repeat(_addGoldUpdate, (int) amountOfUpdates));
+            currencyUpdates.AddRange(Enumerable.Repeat(_removeGoldUpdate, (int) amountOfUpdates));
             currencyUpdates.Add(new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = 10 });
 
             CurrencyUpdate[] summaryUpdates = [new() { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = 10 }];
@@ -188,15 +187,6 @@ namespace IdelPogTests.Orchestration
         }
 
         [Test]
-        public void Negative_ProcessCurrencyUpdate_NegativeAmount_Throws()
-        {
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() =>
-                _currencyUpdateMediator.ProcessCurrencyUpdate([new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = -10 }]));
-
-            Assert.That(exception.Number, Is.EqualTo(-10));
-        }
-
-        [Test]
         public void Negative_ProcessCurrencyUpdate_CurrencyNotFound_Throws()
         {
             _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(false);
@@ -211,7 +201,7 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_Remove_NotEnoughCurrency_Throws()
         {
-            _goldCurrency.SetAmount(1);
+            _goldCurrency.Amount = 1;
             _repositoryMock.Setup(library => library.Contains(_removeGoldUpdate.CurrencyType)).Returns(true);
             _repositoryMock.Setup(library => library.Get(_removeGoldUpdate.CurrencyType)).Returns(_goldCurrency);
 

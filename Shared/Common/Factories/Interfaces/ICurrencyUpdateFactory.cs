@@ -5,6 +5,6 @@ namespace IdelPog.Common.Factories
 {
     public interface ICurrencyUpdateFactory
     {
-        public CurrencyUpdate CreateCurrencyUpdate(ActionType actionType, int amount, CurrencyType currencyType);
+        public CurrencyUpdate CreateCurrencyUpdate(ActionType actionType, uint amount, CurrencyType currencyType);
     }
 }

@@ -4,7 +4,7 @@ namespace IdelPog.SimulationEngine.Inventory
 {
     public class ItemFactory(IMapper<ItemID> itemMapper) : IItemFactory
     {
-        public Item CreateItem(ItemID itemID, int amount)
+        public Item CreateItem(ItemID itemID, uint amount)
         {
             return ItemBuilder
                 .Create(itemID, itemMapper.GetInformation(itemID))

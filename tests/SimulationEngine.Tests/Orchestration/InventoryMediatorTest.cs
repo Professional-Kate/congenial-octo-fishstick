@@ -30,7 +30,7 @@ namespace IdelPogTests.Orchestration
             _factoryMock = new Mock<IInventoryUpdateDTOFactory>();
             _dispatcherMock = new Mock<IDispatchMany<InventoryUpdateDTO>>();
             _inventoryMediator = new InventoryMediator(_repositoryMock.Object, _itemFactoryMock.Object, _factoryMock.Object, _dispatcherMock.Object);
-            _information = new Information("", "");
+            _information = new Information { Description = "", Name = ""};
 
             _inventoryUpdate = new InventoryUpdate
             {

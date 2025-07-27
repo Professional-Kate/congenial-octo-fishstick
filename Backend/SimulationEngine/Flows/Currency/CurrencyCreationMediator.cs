@@ -1,7 +1,6 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
 using IdelPog.Messaging.Dispatch;
-using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Factories;
@@ -17,12 +16,10 @@ namespace IdelPog.SimulationEngine.Currency
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IUniqueAssertion _uniqueAssertion;
-        private readonly INumberAssertion _numberAssertion;
 
         public CurrencyCreationMediator(IStateRepository<CurrencyType, Currency> currencyRepository,
             IDispatchMany<CurrencyCreationDTO> currencyCreationDTODispatcher, ICurrencyCreationDTOFactory currencyCreationDTOFactory,
-            IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion,
-            INumberAssertion numberAssertion)
+            IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion)
         {
             _currencyRepository = currencyRepository;
             _currencyCreationDTODispatcher = currencyCreationDTODispatcher;
@@ -30,7 +27,6 @@ namespace IdelPog.SimulationEngine.Currency
             _objectNullAssertion = objectNullAssertion;
             _collectionAssertion = collectionAssertion;
             _uniqueAssertion = uniqueAssertion;
-            _numberAssertion = numberAssertion;
         }
 
         public void CreateCurrency(IReadOnlyList<CurrencyCreation> currencies)
@@ -41,7 +37,6 @@ namespace IdelPog.SimulationEngine.Currency
             Dictionary<CurrencyType, Currency> createdCurrencies = new(currencies.Count);
             foreach (CurrencyCreation currencyCreation in currencies)
             {
-                _numberAssertion.AssertNonNegative(currencyCreation.StartingAmount);
                 _uniqueAssertion.AssertUnique(currencyCreation, _currencyRepository.Contains(currencyCreation.CurrencyType));
 
                 // TODO: currency factory

@@ -3,22 +3,14 @@ using IdelPog.Common.Structures;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    /// <summary>
-    /// The Currency model.
-    /// </summary>
-    public class Currency : ICloneable<Currency>
+    public sealed class Currency : ICloneable<Currency>
     {
         public readonly CurrencyType CurrencyType;
-        public int Amount { get; private set; }
+        public uint Amount { get; set; }
 
-        public Currency(CurrencyType currencyType, int amount)
+        public Currency(CurrencyType currencyType, uint amount)
         {
             CurrencyType = currencyType;
-            Amount = amount;
-        }
-
-        public void SetAmount(int amount)
-        {
             Amount = amount;
         }
 

@@ -1,6 +1,5 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
-using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.Validation.Assertions;
 
@@ -9,15 +8,13 @@ namespace IdelPog.SimulationEngine.Currency
     public class CurrencyUpdateSummarizer : ICurrencyUpdateSummarizer
     {
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
-        private readonly INumberAssertion _numberAssertion;
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, INumberAssertion numberAssertion, IObjectNullAssertion objectNullAssertion,
+        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, IObjectNullAssertion objectNullAssertion,
             ICollectionAssertion collectionAssertion)
         {
             _currencyUpdateFactory = currencyUpdateFactory;
-            _numberAssertion = numberAssertion;
             _objectNullAssertion = objectNullAssertion;
             _collectionAssertion = collectionAssertion;
         }
@@ -27,65 +24,84 @@ namespace IdelPog.SimulationEngine.Currency
             _objectNullAssertion.AssertNotNull(updates, nameof(updates));
             _collectionAssertion.AssertNotEmpty(updates);
 
-            Dictionary<CurrencyType, int> amounts = SummarizeAmounts(updates);
+            Dictionary<CurrencyType, CurrencyRunningUpdate> amounts = SummarizeAmounts(updates);
             List<CurrencyUpdate> summaryUpdates = CreateSummaryUpdates(amounts);
 
             return summaryUpdates.ToArray();
         }
 
-        private Dictionary<CurrencyType, int> SummarizeAmounts(IReadOnlyList<CurrencyUpdate> updates)
+        private Dictionary<CurrencyType, CurrencyRunningUpdate> SummarizeAmounts(IReadOnlyList<CurrencyUpdate> updates)
         {
-            Dictionary<CurrencyType, int> amounts = new();
+            Dictionary<CurrencyType, CurrencyRunningUpdate> amounts = new();
 
             foreach (CurrencyUpdate currencyUpdate in updates)
             {
-                _numberAssertion.AssertNonNegative(currencyUpdate.Amount);
-
-                if (amounts.ContainsKey(currencyUpdate.CurrencyType) == false)
-                {
-                    amounts.Add(currencyUpdate.CurrencyType, 0);
-                }
-
-                switch (currencyUpdate.Action)
-                {
-                    case ActionType.ADD:
-                        amounts[currencyUpdate.CurrencyType] += currencyUpdate.Amount;
-                        break;
-                    case ActionType.REMOVE:
-                        amounts[currencyUpdate.CurrencyType] -= currencyUpdate.Amount;
-                        break;
-                }
+                amounts.TryAdd(currencyUpdate.CurrencyType, new CurrencyRunningUpdate());
+                amounts[currencyUpdate.CurrencyType].Apply(currencyUpdate.Action, currencyUpdate.Amount);
             }
 
             return amounts;
         }
 
-        private List<CurrencyUpdate> CreateSummaryUpdates(Dictionary<CurrencyType, int> amounts)
+        private List<CurrencyUpdate> CreateSummaryUpdates(Dictionary<CurrencyType, CurrencyRunningUpdate> amounts)
         {
             List<CurrencyUpdate> updates = [];
 
-            foreach ((CurrencyType currencyType, int amount) in amounts)
+            foreach ((CurrencyType currencyType, CurrencyRunningUpdate runningAmount) in amounts)
             {
-                if (amount == 0)
+                if (runningAmount.AddAmount == runningAmount.RemoveAmount)
                 {
                     continue;
                 }
 
                 ActionType action;
+                uint currencyUpdateAmount = runningAmount.AddAmount;
 
-                if (amount < 0)
+                if (runningAmount.RemoveAmount > currencyUpdateAmount)
                 {
                     action = ActionType.REMOVE;
+                    currencyUpdateAmount = runningAmount.RemoveAmount - runningAmount.AddAmount;
                 }
                 else
                 {
                     action = ActionType.ADD;
+                    currencyUpdateAmount -=  runningAmount.RemoveAmount;
                 }
-
-                updates.Add(_currencyUpdateFactory.CreateCurrencyUpdate(currencyType, action, Math.Abs(amount)));
+                
+                updates.Add(_currencyUpdateFactory.CreateCurrencyUpdate(currencyType, action, currencyUpdateAmount));
             }
 
             return updates;
+        }
+    }
+
+    /// <summary>
+    /// Internal helper class for tracking the running total of add/remove calls
+    /// </summary>
+    internal sealed class CurrencyRunningUpdate
+    {
+        internal uint AddAmount { get; private set; }
+        internal uint RemoveAmount { get; private set; }
+        
+        /// <summary>
+        /// Add an amount to the internal properties
+        /// </summary>
+        /// <param name="action">If this is a remove / add amount update</param>
+        /// <param name="amount">The amount you want to add</param>
+        /// <exception cref="ArgumentOutOfRangeException">If the action isn't ADD/REMOVE</exception>
+        internal void Apply(ActionType action, uint amount)
+        {
+            switch (action)
+            {
+                case ActionType.ADD:
+                    AddAmount += amount;
+                    break;
+                case ActionType.REMOVE:
+                    RemoveAmount += amount;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(action), action, null);
+            }
         }
     }
 }

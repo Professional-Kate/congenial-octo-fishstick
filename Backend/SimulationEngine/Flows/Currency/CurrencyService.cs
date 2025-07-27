@@ -7,30 +7,24 @@ namespace IdelPog.SimulationEngine.Currency
     /// </summary>
     public class CurrencyService : ICurrencyService
     {
-        private readonly INumberAssertion _numberAssertion;
         private readonly ICurrencyAssertion _currencyAssertion;
 
-        public CurrencyService(INumberAssertion numberAssertion, ICurrencyAssertion currencyAssertion)
+        public CurrencyService(ICurrencyAssertion currencyAssertion)
         {
-            _numberAssertion = numberAssertion;
             _currencyAssertion = currencyAssertion;
         }
 
-        public void AddAmount(Currency currency, int amount)
+        public void AddAmount(Currency currency, uint amount)
         {
-            _numberAssertion.AssertNonNegative(amount);
-
-            int newAmount = currency.Amount + amount;
-            currency.SetAmount(newAmount);
+            uint newAmount = currency.Amount + amount;
+            currency.Amount = newAmount;
         }
 
-        public void RemoveAmount(Currency currency, int amount)
+        public void RemoveAmount(Currency currency, uint amount)
         {
-            _numberAssertion.AssertNonNegative(amount);
-
             _currencyAssertion.AssertSufficientCurrency(currency.Amount, amount, currency.CurrencyType);
-            int newAmount = currency.Amount - amount;
-            currency.SetAmount(newAmount);
+            uint newAmount = currency.Amount - amount;
+            currency.Amount = newAmount;
         }
     }
 }

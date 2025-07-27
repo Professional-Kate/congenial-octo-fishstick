@@ -8,9 +8,9 @@
     /// <seealso cref="Build"/>
     public interface IItemBuilder
     {
-        public IItemBuilder SellPrice(int sellPrice);
+        public IItemBuilder SellPrice(uint sellPrice);
 
-        public IItemBuilder Amount(int amount);
+        public IItemBuilder Amount(uint amount);
 
         public Item Build();
     }

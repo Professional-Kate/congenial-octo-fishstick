@@ -1,7 +1,5 @@
 ﻿using IdelPog.SimulationEngine.Assertions;
 using IdelPog.SimulationEngine.Assertions.Pipelines;
-using IdelPog.SimulationEngine.Currency.Assertions;
-using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -14,7 +12,7 @@ namespace IdelPogTests.Assertions.Pipelines
     public class LevelableAssertionPipelineTest
     {
         private ILevelableAssertionPipeline _levelableAssertionPipeline { get; set; }
-        private ILevelable _levelable { get; set; }
+        private Levelable _levelable { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -24,9 +22,8 @@ namespace IdelPogTests.Assertions.Pipelines
             IHandler handler = new ThrowHandler();
             ILevelAssertion levelAssertion = new LevelAssertion(handler);
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(handler);
-            INumberAssertion numberAssertion = new NumberAssertion(handler);
 
-            _levelableAssertionPipeline = new LevelableAssertionPipeline(levelAssertion, objectNullAssertion, numberAssertion);
+            _levelableAssertionPipeline = new LevelableAssertionPipeline(levelAssertion, objectNullAssertion);
         }
 
         [Test]
@@ -44,7 +41,7 @@ namespace IdelPogTests.Assertions.Pipelines
         [Test]
         public void Negative_AssertLevelable_MaxLevel_Throws()
         {
-            ILevelable levelable = new Levelable(100, 0, 10, 0);
+            Levelable levelable = new(100, 0, 10, 0);
 
             MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _levelableAssertionPipeline.AssertLevelable(levelable));
             Assert.Multiple(() =>
@@ -52,15 +49,6 @@ namespace IdelPogTests.Assertions.Pipelines
                 Assert.That(exception.ID, Is.EqualTo(levelable));
                 Assert.That(exception.SourceName, Is.EqualTo(nameof(levelable)));
             });
-        }
-
-        [Test]
-        public void Positive_AssertLevelable_NegativeExperiencePerAction_Throws()
-        {
-            ILevelable levelable = new Levelable(0, 0, 0, -1);
-
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _levelableAssertionPipeline.AssertLevelable(levelable));
-            Assert.That(exception.Number, Is.EqualTo(-1));
         }
     }
 }

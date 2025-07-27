@@ -1,8 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Assertions;
 using IdelPog.SimulationEngine.Assertions.Pipelines;
 using IdelPog.SimulationEngine.Constants;
-using IdelPog.SimulationEngine.Currency.Assertions;
-using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.Validation.Assertions;
@@ -17,14 +15,13 @@ namespace IdelPogTests.Service
     public class ExperienceServiceTest
     {
         private IExperienceService _experienceService { get; set; }
-        private ILevelable _levelable { get; set; }
+        private Levelable _levelable { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             IHandler throwHandler = new ThrowHandler();
-            _experienceService = new ExperienceService(new LevelableAssertionPipeline(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler),
-                new NumberAssertion(throwHandler)));
+            _experienceService = new ExperienceService(new LevelableAssertionPipeline(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler)));
         }
 
         [SetUp]
@@ -33,12 +30,12 @@ namespace IdelPogTests.Service
             _levelable = LevelableFactory.CreateLevelable();
         }
 
-        [TestCase(10)]
-        [TestCase(1)]
-        [TestCase(1000)]
-        public void Positive_AddExperience_AddsExperience(int experiencePerAction)
+        [TestCase(10u)]
+        [TestCase(1u)]
+        [TestCase(1000u)]
+        public void Positive_AddExperience_AddsExperience(uint experiencePerAction)
         {
-            _levelable.SetExperiencePerAction(experiencePerAction);
+            _levelable.ExperiencePerAction =  experiencePerAction;
 
             _experienceService.AddExperience(_levelable);
 
@@ -48,18 +45,18 @@ namespace IdelPogTests.Service
         [Test]
         public void Positive_AddExperience_WillCauseLevelUp_ReturnsTrue()
         {
-            _levelable.SetExperiencePerAction(10000);
+            _levelable.ExperiencePerAction = 10000;
 
             _experienceService.AddExperience(_levelable);
 
-            Assert.That(10000, Is.EqualTo(_levelable.Experience));
-            Assert.That(0, Is.EqualTo(_levelable.Level));
+            Assert.That(_levelable.Experience, Is.EqualTo(_levelable.ExperiencePerAction));
+            Assert.That(_levelable.Level, Is.EqualTo(0));
         }
 
         [Test]
         public void Negative_AddExperience_MaxLevel_Throws()
         {
-            ILevelable levelable = new Levelable(SkillConstants.MAX_SKILL_LEVEL, 100, 10, 1);
+            Levelable levelable = new(SkillConstants.MAX_SKILL_LEVEL, 100, 10, 1);
 
             MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(levelable));
             Assert.Multiple(() =>
@@ -67,16 +64,6 @@ namespace IdelPogTests.Service
                 Assert.That(exception.ID, Is.EqualTo(levelable));
                 Assert.That(exception.SourceName, Is.EqualTo(nameof(levelable)));
             });
-        }
-
-        [TestCase(-10)]
-        [TestCase(-1000)]
-        public void Negative_AddExperience_BadExperiencePerAction_Throws(int experiencePerAction)
-        {
-            _levelable.SetExperiencePerAction(experiencePerAction);
-
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() => _experienceService.AddExperience(_levelable));
-            Assert.That(exception.Number, Is.EqualTo(experiencePerAction));
         }
 
         [Test]

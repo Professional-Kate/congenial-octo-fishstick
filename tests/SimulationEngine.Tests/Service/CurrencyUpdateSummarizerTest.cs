@@ -1,8 +1,6 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.SimulationEngine.Currency;
-using IdelPog.SimulationEngine.Currency.Assertions;
-using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -25,7 +23,7 @@ namespace IdelPogTests.Service
         public void OneTimeSetUp()
         {
             _currencyUpdateFactoryMock = new Mock<ICurrencyUpdateFactory>();
-            _currencyUpdateSummarizer = new CurrencyUpdateSummarizer(_currencyUpdateFactoryMock.Object, new NumberAssertion(new ThrowHandler()),
+            _currencyUpdateSummarizer = new CurrencyUpdateSummarizer(_currencyUpdateFactoryMock.Object,
                 new ObjectNullAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()));
 
             _addGoldUpdate = TestUtils.CreateTrade(10, CurrencyType.GOLD, ActionType.ADD);
@@ -64,7 +62,7 @@ namespace IdelPogTests.Service
             });
         }
 
-        private void GetSummary_GoldCurrency_TestRunner(IReadOnlyList<CurrencyUpdate> updates, int finalAmount, ActionType actionType)
+        private void GetSummary_GoldCurrency_TestRunner(IReadOnlyList<CurrencyUpdate> updates, uint finalAmount, ActionType actionType)
         {
             CurrencyUpdate finalUpdate = new() { Action = actionType, Amount = finalAmount, CurrencyType = CurrencyType.GOLD };
 
@@ -101,7 +99,7 @@ namespace IdelPogTests.Service
             CurrencyUpdate[] updates = _currencyUpdateSummarizer.GetSummary([_addGoldUpdate, _removeGoldUpdate]);
 
             Assert.That(updates, Has.Length.EqualTo(0));
-            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()),
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<uint>()),
                 Times.Never);
         }
 
@@ -162,15 +160,15 @@ namespace IdelPogTests.Service
                 Assert.That(summarizedUpdates[0].Amount, Is.EqualTo(addGemsUpdate.Amount));
             });
 
-            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(CurrencyType.GOLD, It.IsAny<ActionType>(), It.IsAny<int>()), Times.Never);
-            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(CurrencyType.GEMS, It.IsAny<ActionType>(), It.IsAny<int>()), Times.Once);
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(CurrencyType.GOLD, It.IsAny<ActionType>(), It.IsAny<uint>()), Times.Never);
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(CurrencyType.GEMS, It.IsAny<ActionType>(), It.IsAny<uint>()), Times.Once);
         }
 
         [Test]
         public void Negative_GetSummary_EmptyList_Throws()
         {
             EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateSummarizer.GetSummary([]));
-            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()),
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<uint>()),
                 Times.Never);
 
             Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
@@ -180,21 +178,7 @@ namespace IdelPogTests.Service
         public void Negative_GetSummary_NullList_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _currencyUpdateSummarizer.GetSummary(null!));
-            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()),
-                Times.Never);
-        }
-
-        [Test]
-        public void Negative_GetSummary_TradeContainsNegativeNumber_Throws()
-        {
-            NegativeNumberException exception = Assert.Throws<NegativeNumberException>(() =>
-                _currencyUpdateSummarizer.GetSummary([
-                    _addGoldUpdate, new CurrencyUpdate { Action = ActionType.ADD, Amount = -10, CurrencyType = CurrencyType.GOLD }
-                ]));
-
-            Assert.That(exception.Number, Is.EqualTo(-10));
-
-            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<int>()),
+            _currencyUpdateFactoryMock.Verify(library => library.CreateCurrencyUpdate(It.IsAny<CurrencyType>(), It.IsAny<ActionType>(), It.IsAny<uint>()),
                 Times.Never);
         }
     }

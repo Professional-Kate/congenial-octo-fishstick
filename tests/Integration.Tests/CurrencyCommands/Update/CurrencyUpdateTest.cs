@@ -48,7 +48,7 @@ namespace Integration.Tests.CurrencyCommands.Update
             ManagedSubscribe(_currencyUpdateErrorListener);
         }
 
-        private void SendGoldCreationBuffer(int startingAmount = 0)
+        private void SendGoldCreationBuffer(uint startingAmount = 0)
         {
             IBuffer<CurrencyCreation> buffer = BufferManager.RequestBuffer<CurrencyCreation>(new BufferRequest(1));
             buffer.Assign([new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = startingAmount }]);
@@ -118,7 +118,7 @@ namespace Integration.Tests.CurrencyCommands.Update
 
             CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateDTOListener.Buffer!.ToArray();
             AssertUpdateResponse(currencyUpdate[0],
-                new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = _addGoldCommand.Amount * amount });
+                new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = _addGoldCommand.Amount * (uint) amount });
         }
 
         [TestCase(1)]
@@ -128,14 +128,14 @@ namespace Integration.Tests.CurrencyCommands.Update
         {
             CurrencyUpdate[] currencyUpdates = Enumerable.Repeat(_removeGoldCommand, amount).ToArray();
 
-            SendGoldCreationBuffer(_removeGoldCommand.Amount * amount);
+            SendGoldCreationBuffer(_removeGoldCommand.Amount * (uint) amount);
             SendCurrencyTradeBuffer(currencyUpdates);
             AssertErrorListener(0, false);
             AssertUpdateListener(true);
 
             CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateDTOListener.Buffer!.ToArray();
             AssertUpdateResponse(currencyUpdate[0],
-                new CurrencyUpdate { Action = ActionType.REMOVE, Amount = _removeGoldCommand.Amount * amount, CurrencyType = CurrencyType.GOLD });
+                new CurrencyUpdate { Action = ActionType.REMOVE, Amount = _removeGoldCommand.Amount * (uint) amount, CurrencyType = CurrencyType.GOLD });
         }
 
         [TestCase(1)]
@@ -147,13 +147,13 @@ namespace Integration.Tests.CurrencyCommands.Update
             currencyUpdates.AddRange(Enumerable.Repeat(_removeGoldCommand, amount));
             currencyUpdates.AddRange(Enumerable.Repeat(_addGoldCommand, amount));
 
-            SendGoldCreationBuffer(_removeGoldCommand.Amount * amount);
+            SendGoldCreationBuffer(_removeGoldCommand.Amount * (uint) amount);
             SendCurrencyTradeBuffer(currencyUpdates.ToArray());
             AssertErrorListener(0, false);
             AssertUpdateListener(true);
 
             CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateDTOListener.Buffer!.ToArray();
-            int finalAmount = _addGoldCommand.Amount * amount - _removeGoldCommand.Amount * amount;
+            uint finalAmount = _addGoldCommand.Amount * (uint) amount - _removeGoldCommand.Amount * (uint) amount;
             AssertUpdateResponse(currencyUpdate[0], new CurrencyUpdate { Action = ActionType.ADD, Amount = finalAmount, CurrencyType = CurrencyType.GOLD });
         }
 
@@ -169,36 +169,7 @@ namespace Integration.Tests.CurrencyCommands.Update
 
             Assert.Multiple(() => { Assert.That(errorDTO.ErrorDetails.Exception, Is.TypeOf<NotFoundException<CurrencyType>>()); });
         }
-
-        [Test]
-        public void Negative_OneCommand_NegativeNumber_NoUpdate_SendsErrorDTO()
-        {
-            SendGoldCreationBuffer();
-
-            CurrencyUpdate negativeNumberUpdate = new()
-            {
-                Action = ActionType.ADD,
-                Amount = -1,
-                CurrencyType = CurrencyType.GOLD
-            };
-
-            Assert.DoesNotThrow(() => SendCurrencyTradeBuffer([negativeNumberUpdate]));
-            AssertErrorListener(1, true);
-            AssertUpdateListener(false);
-
-            CurrencyUpdateErrorDTO errorDTO = _currencyUpdateErrorListener.CurrencyUpdateErrorDTO;
-            AssertUpdateResponse(errorDTO.CurrencyUpdates[0], negativeNumberUpdate);
-
-            Assert.Multiple(() =>
-            {
-                if (errorDTO.ErrorDetails.Exception is NegativeNumberException exception)
-                {
-                    Assert.That(exception, Is.TypeOf<NegativeNumberException>());
-                    Assert.That(exception.Number, Is.EqualTo(negativeNumberUpdate.Amount));
-                }
-            });
-        }
-
+        
         [Test]
         public void Negative_OneCommand_NotEnoughCurrency_NoUpdate_SendsErrorDTO()
         {

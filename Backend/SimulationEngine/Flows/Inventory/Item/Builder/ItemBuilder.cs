@@ -7,10 +7,10 @@ namespace IdelPog.SimulationEngine.Inventory
     {
         private readonly ItemID _itemID;
         private readonly Information _information;
-        private int _sellPrice { get; set; }
-        private int _amount { get; set; }
+        private uint _sellPrice { get; set; }
+        private uint _amount { get; set; }
 
-        private ItemBuilder(ItemID itemID, Information information, int sellPrice, int amount)
+        private ItemBuilder(ItemID itemID, Information information, uint sellPrice, uint amount)
         {
             _itemID = itemID;
             _information = information;
@@ -29,14 +29,14 @@ namespace IdelPog.SimulationEngine.Inventory
             return new ItemBuilder(id, information, 1, 1);
         }
 
-        public IItemBuilder SellPrice(int sellPrice)
+        public IItemBuilder SellPrice(uint sellPrice)
         {
             _sellPrice = sellPrice;
 
             return this;
         }
 
-        public IItemBuilder Amount(int amount)
+        public IItemBuilder Amount(uint amount)
         {
             _amount = amount;
 

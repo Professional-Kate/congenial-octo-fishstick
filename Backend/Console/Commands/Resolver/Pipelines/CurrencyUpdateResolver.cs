@@ -26,7 +26,7 @@ namespace Console.Commands.Resolver.Pipelines
             return new CurrencyUpdateArguments
             {
                 ActionType = actionType,
-                Amount = amount,
+                Amount = (uint) amount,
                 CurrencyType = currencyType
             };
         }

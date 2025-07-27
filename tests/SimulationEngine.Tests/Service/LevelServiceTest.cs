@@ -1,7 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Assertions;
 using IdelPog.SimulationEngine.Assertions.Pipelines;
 using IdelPog.SimulationEngine.Constants;
-using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.Validation.Assertions;
@@ -17,13 +16,12 @@ namespace IdelPogTests.Service
         private ILevelService _service { get; set; }
         private ILevelableAssertionPipeline _levelableAsserter { get; set; }
 
-        private ILevelable _levelable { get; set; }
+        private Levelable _levelable { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _levelableAsserter = new LevelableAssertionPipeline(new LevelAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()),
-                new NumberAssertion(new ThrowHandler()));
+            _levelableAsserter = new LevelableAssertionPipeline(new LevelAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()));
 
             _service = new LevelService(_levelableAsserter);
         }
@@ -45,7 +43,7 @@ namespace IdelPogTests.Service
         [Test]
         public void Positive_CanSkillLevel_ReturnsTrue()
         {
-            ILevelable levelable = new Levelable(1, 10, 10, 1);
+            Levelable levelable = new(1, 10, 10, 1);
 
             bool canSkillLevel = _service.CanSkillLevel(levelable);
             Assert.That(canSkillLevel, Is.True);
@@ -54,7 +52,7 @@ namespace IdelPogTests.Service
         [Test]
         public void Positive_CanSkillLevel_ReturnsFalse()
         {
-            ILevelable levelable = new Levelable(1, 5, 10, 1);
+            Levelable levelable = new(1, 5, 10, 1);
 
             bool canSkillLevel = _service.CanSkillLevel(levelable);
             Assert.That(canSkillLevel, Is.False);
@@ -82,7 +80,7 @@ namespace IdelPogTests.Service
 
             for (int i = 1; i < SkillConstants.MAX_SKILL_LEVEL; i++)
             {
-                levelable.SetExperience(levelable.NextLevelExperience + levelable.Experience); // this is here to sum the total experience
+                levelable.Experience = levelable.NextLevelExperience + levelable.Experience; // this is here to sum the total experience
 
                 _service.LevelUpSkill(levelable);
             }
@@ -99,7 +97,7 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_LeveUpSkill_MaxLevel_Throws()
         {
-            ILevelable levelable = new Levelable(SkillConstants.MAX_SKILL_LEVEL, 0, 100, 1);
+            Levelable levelable = new(SkillConstants.MAX_SKILL_LEVEL, 0, 100, 1);
 
             MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _service.LevelUpSkill(levelable));
             Assert.Multiple(() =>

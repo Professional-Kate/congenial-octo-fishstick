@@ -4,7 +4,6 @@ using IdelPog.Messaging.Buffer;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
-using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.Validation.Exceptions;
 
 namespace Integration.Tests.CurrencyCommands.Create
@@ -149,19 +148,6 @@ namespace Integration.Tests.CurrencyCommands.Create
 
             CurrencyCreationDTO creationDTO = _currencyCreationErrorListener.CurrencyUpdateErrorDTO.CurrencyCreations[0];
             AssertCreationErrorDTO<DuplicateEntityException>(creationDTO, _createGold);
-        }
-
-        [Test]
-        public void Negative_SendCommand_WithNegativeStartingAmount_NoCreation_SendsErrorDTO()
-        {
-            CurrencyCreation negativeNumberCommand = new() { CurrencyType = CurrencyType.GOLD, StartingAmount = -10 };
-            CurrencyCreation[] currencyCreations = [negativeNumberCommand];
-            Assert.DoesNotThrow(() => SendCurrencyCreationBuffer(currencyCreations));
-            AssertCurrencyCreationDTOListener(currencyCreations, false);
-            AssertCurrencyCreationErrorListener(currencyCreations, true);
-
-            CurrencyCreationDTO creationDTO = _currencyCreationErrorListener.CurrencyUpdateErrorDTO.CurrencyCreations[0];
-            AssertCreationErrorDTO<NegativeNumberException>(creationDTO, negativeNumberCommand);
         }
     }
 }

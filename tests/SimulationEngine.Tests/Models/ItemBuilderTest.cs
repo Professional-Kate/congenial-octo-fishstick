@@ -7,7 +7,7 @@ namespace IdelPogTests.Models
     public class ItemBuilderTest
     {
         private const ItemID INVENTORY_ID = ItemID.OAK_WOOD;
-        private readonly Information _information = ItemConstants.OAK_WOOD;
+        private readonly Information _information = new() { Description = "hi", Name = "there" };
 
         private IItemBuilder GetBuilder()
         {

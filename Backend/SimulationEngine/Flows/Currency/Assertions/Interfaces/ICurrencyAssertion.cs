@@ -4,6 +4,6 @@ namespace IdelPog.SimulationEngine.Currency.Assertions
 {
     public interface ICurrencyAssertion
     {
-        public void AssertSufficientCurrency(int currencyAmount, int removeAmount, CurrencyType currencyType);
+        public void AssertSufficientCurrency(uint currencyAmount, uint removeAmount, CurrencyType currencyType);
     }
 }
