@@ -2,7 +2,6 @@
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
 using IdelPog.Common.Repository;
-using IdelPog.Common.Structures;
 using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Listeners.Buffer;

@@ -4,7 +4,6 @@ using IdelPog.Messaging.Buffer;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.DTO;
-using IdelPog.Validation.Exceptions;
 
 namespace Integration.Tests.CurrencyCommands.Create
 {
@@ -140,9 +139,6 @@ namespace Integration.Tests.CurrencyCommands.Create
             Assert.DoesNotThrow(() => SendCurrencyCreationBuffer(currencyCreations));
             AssertCurrencyCreationDTOListener(currencyCreations, false);
             AssertCurrencyCreationErrorListener(true);
-
-            CurrencyCreationDTO[] creationDTOs = _currencyCreationErrorListener.CurrencyUpdateErrorDTO.CurrencyCreations;
-            // AssertCreationErrorDTO<DuplicateEntityException>(creationDTOs, _createGold);
         }
     }
 }

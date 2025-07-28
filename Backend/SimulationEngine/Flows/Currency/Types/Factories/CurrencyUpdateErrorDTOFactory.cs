@@ -1,7 +1,5 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Factories;
-using IdelPog.Common.Structures;
-using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency.DTO;
 
 namespace IdelPog.SimulationEngine.Currency.Factories
