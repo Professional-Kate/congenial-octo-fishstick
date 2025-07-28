@@ -1,5 +1,6 @@
 ﻿using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures;
+using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Inventory
 {
@@ -18,7 +19,7 @@ namespace IdelPog.SimulationEngine.Inventory
         /// <param name="id">The <see cref="Item"/> you want to add to will have this <see cref="ItemID"/></param>
         /// <param name="amount">The amount you want to add</param>
         /// <exception cref="ArgumentException">Will be thrown if the passed or amount is 0 or less</exception>
-        /// <exception cref="NotFoundException">Will be thrown if the passed <see cref="Item"/> is not in the Inventory</exception>
+        /// <exception cref="NotFoundException{TKey}">Will be thrown if the passed <see cref="Item"/> is not in the Inventory</exception>
         public void AddAmount(ItemID id, uint amount);
 
         /// <summary>

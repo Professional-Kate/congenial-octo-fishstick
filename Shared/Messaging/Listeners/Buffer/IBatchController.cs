@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.Messaging.Listeners.Buffer
 {
-    public interface IBatchedController<in T>
+    public interface IBatchController<in T>
     {
         public void HandleMessages(IReadOnlyList<T> message);
     }

@@ -1,11 +1,12 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Factories;
-using IdelPog.Messaging.Factory;
+using IdelPog.Common.Structures;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency.DTO;
 
 namespace IdelPog.SimulationEngine.Currency.Factories
 {
-    public class CurrencyUpdateErrorDTOFactory : IErrorFactory<CurrencyUpdateErrorDTO, CurrencyUpdate>
+    public class CurrencyUpdateErrorDTOFactory : IErrorFactory<CurrencyUpdateErrorDTO, IReadOnlyList<CurrencyUpdate>>
     {
         private readonly IErrorDTOFactory _errorDTOFactory;
         private readonly ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory;
@@ -15,12 +16,12 @@ namespace IdelPog.SimulationEngine.Currency.Factories
             _errorDTOFactory = errorDTOFactory;
             _currencyUpdateDTOFactory = currencyUpdateDTOFactory;
         }
-        
-        public CurrencyUpdateErrorDTO Create(CurrencyUpdate context, Exception exception)
+
+        public CurrencyUpdateErrorDTO Create<TException>(IReadOnlyList<CurrencyUpdate> context, TException exception) where TException : Exception
         {
             return new CurrencyUpdateErrorDTO
             {
-                CurrencyUpdate = _currencyUpdateDTOFactory.CreateFrom(context),
+                CurrencyUpdates = _currencyUpdateDTOFactory.CreateFrom(context),
                 ErrorDetails = _errorDTOFactory.Create(exception)
             };
         }

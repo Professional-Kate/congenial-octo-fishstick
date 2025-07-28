@@ -1,6 +1,6 @@
 ﻿using IdelPog.Common.Enums;
 
-namespace IdelPog.SimulationEngine.Skill
+namespace IdelPog.Common.DTO
 {
     public readonly record struct SkillChangeDTO
     {

@@ -8,16 +8,12 @@ namespace IdelPog.Validation.Assertions
     public abstract class BaseAssertion
     {
         private readonly IHandler _handler;
-
+        
         protected BaseAssertion(IHandler handler)
         {
             _handler = handler;
         }
 
-        /// <summary>
-        /// Executes the passed action, automatically handling the thrown exception
-        /// </summary>
-        /// <param name="action">The assertion code. This should contain a throw statement</param>
         protected void Assert<TException>(Action action) where TException : Exception
         {
             try

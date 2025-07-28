@@ -3,7 +3,7 @@ using IdelPog.SimulationEngine.Currency.Commands;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    public class CurrencyCreationController : IBatchedController<CurrencyCreation>
+    public class CurrencyCreationController : IBatchController<CurrencyCreation>
     {
         private readonly ICurrencyCreationMediator _currencyCreationMediator;
         

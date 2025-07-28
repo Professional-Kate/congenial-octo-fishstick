@@ -4,20 +4,20 @@ namespace IdelPog.Messaging.Listeners.Buffer
 {
     public sealed class ManagedBufferListener<T> : IBufferListener<T>
     {
-        private readonly IBatchedController<T> _controller;
-        private readonly IThrowingAssertion _throwingAssertion;
+        private readonly IBatchController<T> _controller;
+        private readonly IBatchControllerExecutionAssertion<T> _singleControllerExecutionAssertion;
 
-        public ManagedBufferListener(IBatchedController<T> controller, IThrowingAssertion throwingAssertion)
+        public ManagedBufferListener(IBatchController<T> controller, IBatchControllerExecutionAssertion<T> singleControllerExecutionAssertion)
         {
             _controller = controller;
-            _throwingAssertion = throwingAssertion;
+            _singleControllerExecutionAssertion = singleControllerExecutionAssertion;
         }
 
         public Type ListenerType => typeof(T);
         
         public void Handle(IReadOnlyList<T> buffer)
         {
-            _throwingAssertion.AssertDoesNotThrow(buffer, _controller);
+            _singleControllerExecutionAssertion.AssertBatchExecutesWithoutError(_controller, buffer);
         }
 
     }

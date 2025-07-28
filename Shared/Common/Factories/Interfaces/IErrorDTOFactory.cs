@@ -1,4 +1,4 @@
-﻿using IdelPog.Common.DTO;
+﻿using IdelPog.Common.DTO.Error;
 
 namespace IdelPog.Common.Factories
 {

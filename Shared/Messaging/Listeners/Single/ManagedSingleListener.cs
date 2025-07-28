@@ -6,19 +6,19 @@ namespace IdelPog.Messaging.Listeners.Single
     public sealed class ManagedSingleListener<T> : ISingleListener<T>
     {
         private readonly ISingleController<T> _controller;
-        private readonly IThrowingAssertion _throwingAssertion;
+        private readonly ISingleControllerExecutionAssertion<T> _singleControllerExecutionAssertion;
 
-        public ManagedSingleListener(ISingleController<T> controller, IThrowingAssertion throwingAssertion)
+        public ManagedSingleListener(ISingleController<T> controller, ISingleControllerExecutionAssertion<T> singleControllerExecutionAssertion)
         {
             _controller = controller;
-            _throwingAssertion = throwingAssertion;
+            _singleControllerExecutionAssertion = singleControllerExecutionAssertion;
         }
 
         public Type ListenerType => typeof(T);
         
         public void Handle(T item)
         {
-            _throwingAssertion.AssertDoesNotThrow(item, _controller);
+            _singleControllerExecutionAssertion.AssertExecutesWithoutError(_controller, item);
         }
     }
 }

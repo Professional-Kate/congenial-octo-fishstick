@@ -1,4 +1,7 @@
 ﻿using IdelPog.Common.Commands;
+using IdelPog.Common.DTO;
+using IdelPog.Common.DTO.Error;
+using IdelPog.Common.Factories;
 using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Listeners.Buffer;
@@ -18,15 +21,20 @@ namespace IdelPog.SimulationEngine.Skill
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IThrowingAssertion throwingAssertion = new ThrowingAssertion(throwHandler);
 
             IDispatchOne<SkillChangeDTO> skillChangeDTODispatcher = new ManagedDispatcher<SkillChangeDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();
+            ISkillChangeDTOFactory skillChangeDTOFactory = new SkillChangeDTOFactory();
 
-            ISkillChangeMediator skillChangeMediator = new SkillChangeMediator(currentSkillSetter, skillChangeFactory, skillChangeDTODispatcher);
+            ISkillChangeMediator skillChangeMediator = new SkillChangeMediator(currentSkillSetter, skillChangeDTOFactory, skillChangeDTODispatcher);
             ISingleController<SkillChange> skillController = new SkillController(skillChangeMediator);
-            ISingleListener<SkillChange> skillChangeListener = new ManagedSingleListener<SkillChange>(skillController, throwingAssertion);
+
+            IErrorDTOFactory errorDTOFactory = new ErrorDTOFactory();
+            IErrorFactory<SkillChangeErrorDTO, SkillChange> skillChangeErrorFactory = new SkillChangeErrorDTOFactory(errorDTOFactory, skillChangeDTOFactory);
+            IDispatchOne<SkillChangeErrorDTO> skillChangeDispatcher = new ManagedDispatcher<SkillChangeErrorDTO>(bufferManager,  objectNullAssertion, collectionAssertion);
+            IContextualHandler<SkillChange> changeDispatchHandler = new DispatchingHandler<SkillChangeErrorDTO, SkillChange>(skillChangeDispatcher, skillChangeErrorFactory);
+            ISingleControllerExecutionAssertion<SkillChange> singleControllerExecutionAssertion = new SingleControllerExecutionAssertion<SkillChange>(changeDispatchHandler);
+            ISingleListener<SkillChange> skillChangeListener = new ManagedSingleListener<SkillChange>(skillController, singleControllerExecutionAssertion);
 
             bufferMessenger.Subscribe(skillChangeListener);
         }

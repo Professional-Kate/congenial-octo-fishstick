@@ -11,8 +11,8 @@ namespace IdelPogTests.Controller
     [TestFixture]
     public class CurrencyUpdateControllerTest
     {
-        private IBatchedController<CurrencyUpdate> _currencyUpdateController { get; set; }
-        private IBatchedController<CurrencyCreation> _currencyCreationController { get; set; }
+        private IBatchController<CurrencyUpdate> _currencyUpdateController { get; set; }
+        private IBatchController<CurrencyCreation> _currencyCreationController { get; set; }
         private Mock<ICurrencyUpdateMediator> _currencyUpdateMediatorMock { get; set; }
         private Mock<ICurrencyCreationMediator> _currencyCreationMediatorMock { get; set; }
 

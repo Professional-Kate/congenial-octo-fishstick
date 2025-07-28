@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Common.DTO
+﻿namespace IdelPog.Common.DTO.Error
 {
     public readonly record struct ErrorDTO
     {

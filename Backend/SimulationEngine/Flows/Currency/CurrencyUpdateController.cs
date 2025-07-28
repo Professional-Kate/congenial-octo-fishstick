@@ -3,7 +3,7 @@ using IdelPog.Messaging.Listeners.Buffer;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    public class CurrencyUpdateController : IBatchedController<CurrencyUpdate>
+    public class CurrencyUpdateController : IBatchController<CurrencyUpdate>
     {
         private readonly ICurrencyUpdateMediator _currencyUpdateMediator;
         
