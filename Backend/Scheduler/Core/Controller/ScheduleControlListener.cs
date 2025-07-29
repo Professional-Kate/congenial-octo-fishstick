@@ -1,6 +1,6 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
-using IdelPog.Messaging.Listeners.Buffer;
+using IdelPog.Messaging.Listeners;
 
 namespace Scheduler.Core.Controller
 {

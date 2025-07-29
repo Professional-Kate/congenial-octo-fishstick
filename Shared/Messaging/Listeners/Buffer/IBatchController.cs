@@ -2,6 +2,6 @@
 {
     public interface IBatchController<in T>
     {
-        public void HandleMessages(IReadOnlyList<T> message);
+        public void HandleMessages(IReadOnlyList<T> messages);
     }
 }

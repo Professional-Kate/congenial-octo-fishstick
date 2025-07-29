@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Exceptions;
-using IdelPog.Messaging.Listeners.Single;
+using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Tests.Messaging;
 using IdelPog.Validation.Assertions.Handlers;
 

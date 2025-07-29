@@ -1,6 +1,4 @@
-﻿using IdelPog.Messaging.Listeners.Single;
-
-namespace IdelPog.Messaging.Listeners.Buffer
+﻿namespace IdelPog.Messaging.Listeners
 {
     public interface IBufferListener<in T> : IListener
     {

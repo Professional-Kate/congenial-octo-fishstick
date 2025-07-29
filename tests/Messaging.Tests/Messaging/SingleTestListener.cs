@@ -1,4 +1,4 @@
-﻿using IdelPog.Messaging.Listeners.Buffer;
+﻿using IdelPog.Messaging.Listeners;
 
 namespace IdelPog.Messaging.Tests.Messaging
 {

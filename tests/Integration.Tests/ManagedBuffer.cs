@@ -1,6 +1,6 @@
 ﻿using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Factory;
-using IdelPog.Messaging.Listeners.Single;
+using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;

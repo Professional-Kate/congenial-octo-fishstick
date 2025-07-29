@@ -4,7 +4,7 @@ using IdelPog.Common.DTO.Error;
 using IdelPog.Common.Factories;
 using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Dispatch;
-using IdelPog.Messaging.Listeners.Buffer;
+using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Listeners.Single;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;

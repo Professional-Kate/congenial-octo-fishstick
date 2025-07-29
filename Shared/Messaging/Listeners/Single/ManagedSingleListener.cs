@@ -1,5 +1,4 @@
 ﻿using IdelPog.Messaging.Assertions;
-using IdelPog.Messaging.Listeners.Buffer;
 
 namespace IdelPog.Messaging.Listeners.Single
 {

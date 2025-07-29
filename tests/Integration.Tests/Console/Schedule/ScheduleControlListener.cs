@@ -1,5 +1,5 @@
 ﻿using IdelPog.Common.Commands;
-using IdelPog.Messaging.Listeners.Buffer;
+using IdelPog.Messaging.Listeners;
 
 namespace Integration.Tests.Console
 {

@@ -12,9 +12,9 @@ namespace IdelPog.SimulationEngine.Currency
             _currencyUpdateMediator = currencyUpdateMediator;
         }
         
-        public void HandleMessages(IReadOnlyList<CurrencyUpdate> message)
+        public void HandleMessages(IReadOnlyList<CurrencyUpdate> messages)
         {
-            _currencyUpdateMediator.ProcessCurrencyUpdate(message);
+            _currencyUpdateMediator.ProcessCurrencyUpdate(messages);
         }
     }
 }

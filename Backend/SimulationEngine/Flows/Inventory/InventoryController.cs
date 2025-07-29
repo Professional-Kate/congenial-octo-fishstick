@@ -1,6 +1,8 @@
-﻿namespace IdelPog.SimulationEngine.Inventory
+﻿using IdelPog.Messaging.Listeners.Buffer;
+
+namespace IdelPog.SimulationEngine.Inventory
 {
-    public class InventoryController : IInventoryController
+    public class InventoryController : IBatchController<InventoryUpdate>
     {
         private readonly IInventoryMediator _inventoryMediator;
 
@@ -8,10 +10,9 @@
         {
             _inventoryMediator = inventoryMediator;
         }
-
-        public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
+        public void HandleMessages(IReadOnlyList<InventoryUpdate> messages)
         {
-            _inventoryMediator.UpdateInventory(updates);
+            _inventoryMediator.UpdateInventory(messages);
         }
     }
 }
