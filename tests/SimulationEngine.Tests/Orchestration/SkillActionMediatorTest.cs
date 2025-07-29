@@ -5,7 +5,7 @@ using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.SimulationEngine.Skill;
-using IdelPog.SimulationEngine.Structures;
+using IdelPog.SimulationEngine.Structures.Level;
 using IdelPogTests.Utils;
 using Moq;
 
@@ -19,11 +19,11 @@ namespace IdelPogTests.Orchestration
         private Mock<IStateRepository<SkillID, Skill>> _repositoryMock { get; set; }
         private Mock<ILevelService> _levelServiceMock { get; set; }
         private Mock<ICurrentSkillProvider> _currentSkillProviderMock { get; set; }
-        private Mock<IDispatchOne<SkillUpdateDTO>> _skillUpdateDispatcherMock { get; set; }
+        private Mock<IDispatchOne<SkillUpdateResponse>> _skillUpdateDispatcherMock { get; set; }
         private Mock<ISkillUpdateFactory> _skillUpdateFactoryMock { get; set; }
 
         private Skill _miningSkill { get; set; }
-        private SkillUpdateDTO _miningSkillUpdateDTO { get; set; }
+        private SkillUpdateResponse _miningSkillUpdateResponse { get; set; }
 
         [SetUp]
         public void SetUp()
@@ -34,7 +34,7 @@ namespace IdelPogTests.Orchestration
             _repositoryMock = new Mock<IStateRepository<SkillID, Skill>>();
             _levelServiceMock = new Mock<ILevelService>();
             _currentSkillProviderMock = new Mock<ICurrentSkillProvider>();
-            _skillUpdateDispatcherMock = new Mock<IDispatchOne<SkillUpdateDTO>>();
+            _skillUpdateDispatcherMock = new Mock<IDispatchOne<SkillUpdateResponse>>();
             _skillUpdateFactoryMock = new Mock<ISkillUpdateFactory>();
             _skillActionMediator = new SkillActionMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object,
                 _currentSkillProviderMock.Object, _skillUpdateDispatcherMock.Object, _skillUpdateFactoryMock.Object);
@@ -46,11 +46,11 @@ namespace IdelPogTests.Orchestration
 
         private void SetupUpdateDTO(Skill skill, bool hasLeveled)
         {
-            _miningSkillUpdateDTO = new SkillUpdateDTO
+            _miningSkillUpdateResponse = new SkillUpdateResponse
             {
                 HasLeveled = hasLeveled,
                 SkillID = skill.SkillID,
-                LevelableUpdateDTO = new LevelableUpdateDTO
+                LevelProgress = new LevelProgress
                 {
                     Experience = skill.Levelable.Experience,
                     ExperiencePerAction = skill.Levelable.ExperiencePerAction,
@@ -75,12 +75,12 @@ namespace IdelPogTests.Orchestration
             SetupUpdateDTO(_miningSkill, false);
 
             _skillUpdateFactoryMock.Setup(library => library.CreateSkillUpdate(_miningSkill, false))
-                .Returns(_miningSkillUpdateDTO);
+                .Returns(_miningSkillUpdateResponse);
 
             Assert.DoesNotThrow(() => _skillActionMediator.Run());
 
             VerifyDependencyCalls(1, 1, 1);
-            _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateDTO));
+            _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateResponse));
             _skillUpdateFactoryMock.Verify(library => library.CreateSkillUpdate(_miningSkill, false));
         }
 
@@ -90,7 +90,7 @@ namespace IdelPogTests.Orchestration
             SetupUpdateDTO(_miningSkill, true);
 
             _skillUpdateFactoryMock.Setup(library => library.CreateSkillUpdate(_miningSkill, true))
-                .Returns(_miningSkillUpdateDTO);
+                .Returns(_miningSkillUpdateResponse);
 
             _levelServiceMock.Setup(library => library.CanSkillLevel(_miningSkill.Levelable))
                 .Returns(true);
@@ -98,7 +98,7 @@ namespace IdelPogTests.Orchestration
             Assert.DoesNotThrow(() => _skillActionMediator.Run());
 
             VerifyDependencyCalls(1, 1, 1, 1);
-            _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateDTO));
+            _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateResponse));
             _skillUpdateFactoryMock.Verify(library => library.CreateSkillUpdate(_miningSkill, true));
         }
 

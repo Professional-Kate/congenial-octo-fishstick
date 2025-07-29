@@ -4,8 +4,8 @@ using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Exceptions;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Exceptions;
+using IdelPog.SimulationEngine.Currency.Responses;
 using IdelPog.Validation.Exceptions;
 
 namespace Integration.Tests.CurrencyCommands.Update
@@ -13,7 +13,7 @@ namespace Integration.Tests.CurrencyCommands.Update
     [TestFixture]
     public class CurrencyFlowTest : ManagedBuffer
     {
-        private CurrencyUpdateDTOListener _currencyUpdateDTOListener;
+        private CurrencyUpdateResponseListener _currencyUpdateResponseListener;
         private CurrencyUpdateErrorListener _currencyUpdateErrorListener;
 
         private CurrencyUpdate _addGoldCommand;
@@ -42,10 +42,10 @@ namespace Integration.Tests.CurrencyCommands.Update
         {
             new CurrencyBootstrapper().Initialize(BufferMessenger, BufferManager);
 
-            _currencyUpdateDTOListener = new CurrencyUpdateDTOListener();
+            _currencyUpdateResponseListener = new CurrencyUpdateResponseListener();
             _currencyUpdateErrorListener = new CurrencyUpdateErrorListener();
 
-            ManagedSubscribe(_currencyUpdateDTOListener);
+            ManagedSubscribe(_currencyUpdateResponseListener);
             ManagedSubscribe(_currencyUpdateErrorListener);
         }
 
@@ -67,15 +67,15 @@ namespace Integration.Tests.CurrencyCommands.Update
         {
             Assert.Multiple(() =>
             {
-                Assert.That(_currencyUpdateDTOListener.WasCalled, Is.EqualTo(wasCalled));
+                Assert.That(_currencyUpdateResponseListener.WasCalled, Is.EqualTo(wasCalled));
 
                 if (wasCalled == false)
                 {
                     return;
                 }
 
-                Assert.That(_currencyUpdateDTOListener.Buffer, Is.Not.Null);
-                Assert.That(_currencyUpdateDTOListener.Buffer!, Has.Count.EqualTo(1));
+                Assert.That(_currencyUpdateResponseListener.Buffer, Is.Not.Null);
+                Assert.That(_currencyUpdateResponseListener.Buffer!, Has.Count.EqualTo(1));
             });
         }
 
@@ -84,13 +84,13 @@ namespace Integration.Tests.CurrencyCommands.Update
             Assert.That(_currencyUpdateErrorListener.WasCalled, Is.EqualTo(wasCalled));
         }
 
-        private void AssertUpdateResponse(CurrencyUpdateDTO dto, CurrencyUpdate expected)
+        private void AssertUpdateResponse(CurrencyUpdateResponse response, CurrencyUpdate expected)
         {
             Assert.Multiple(() =>
             {
-                Assert.That(dto.Amount, Is.EqualTo(expected.Amount));
-                Assert.That(dto.CurrencyType, Is.EqualTo(expected.CurrencyType));
-                Assert.That(dto.Action, Is.EqualTo(expected.Action));
+                Assert.That(response.Amount, Is.EqualTo(expected.Amount));
+                Assert.That(response.CurrencyType, Is.EqualTo(expected.CurrencyType));
+                Assert.That(response.Action, Is.EqualTo(expected.Action));
             });
         }
 
@@ -106,7 +106,7 @@ namespace Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(false);
             AssertUpdateListener(true);
 
-            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateDTOListener.Buffer!.ToArray();
+            CurrencyUpdateResponse[] currencyUpdate = _currencyUpdateResponseListener.Buffer!.ToArray();
             AssertUpdateResponse(currencyUpdate[0],
                 new CurrencyUpdate { Action = ActionType.ADD, CurrencyType = CurrencyType.GOLD, Amount = _addGoldCommand.Amount * (uint) amount });
         }
@@ -123,7 +123,7 @@ namespace Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(false);
             AssertUpdateListener(true);
 
-            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateDTOListener.Buffer!.ToArray();
+            CurrencyUpdateResponse[] currencyUpdate = _currencyUpdateResponseListener.Buffer!.ToArray();
             AssertUpdateResponse(currencyUpdate[0],
                 new CurrencyUpdate { Action = ActionType.REMOVE, Amount = _removeGoldCommand.Amount * (uint) amount, CurrencyType = CurrencyType.GOLD });
         }
@@ -142,7 +142,7 @@ namespace Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(false);
             AssertUpdateListener(true);
 
-            CurrencyUpdateDTO[] currencyUpdate = _currencyUpdateDTOListener.Buffer!.ToArray();
+            CurrencyUpdateResponse[] currencyUpdate = _currencyUpdateResponseListener.Buffer!.ToArray();
             uint finalAmount = _addGoldCommand.Amount * (uint) amount - _removeGoldCommand.Amount * (uint) amount;
             AssertUpdateResponse(currencyUpdate[0], new CurrencyUpdate { Action = ActionType.ADD, Amount = finalAmount, CurrencyType = CurrencyType.GOLD });
         }
@@ -154,12 +154,12 @@ namespace Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(true);
             AssertUpdateListener(false);
 
-            CurrencyUpdateErrorDTO errorDTO = _currencyUpdateErrorListener.CurrencyUpdateErrorDTO;
+            CurrencyUpdateError error = _currencyUpdateErrorListener.CurrencyUpdateError;
             
-            ControllerThrownException controllerException = (ControllerThrownException) errorDTO.ErrorDetails.Exception;
+            ControllerThrownException controllerException = (ControllerThrownException) error.BaseErrorDetails.Exception;
             Assert.Multiple(() =>
             {
-                Assert.That(errorDTO.ErrorDetails.Exception, Is.TypeOf<ControllerThrownException>());
+                Assert.That(error.BaseErrorDetails.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(controllerException.InnerException, Is.TypeOf<NotFoundException<CurrencyType>>());
             });
         }
@@ -181,11 +181,11 @@ namespace Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(true);
             AssertUpdateListener(false);
 
-            CurrencyUpdateErrorDTO errorDTO = _currencyUpdateErrorListener.CurrencyUpdateErrorDTO;
+            CurrencyUpdateError error = _currencyUpdateErrorListener.CurrencyUpdateError;
 
             Assert.Multiple(() =>
             {
-                if (errorDTO.ErrorDetails.Exception is NotEnoughCurrencyException exception)
+                if (error.BaseErrorDetails.Exception is NotEnoughCurrencyException exception)
                 {
                     Assert.That(exception, Is.TypeOf<NotEnoughCurrencyException>());
                     Assert.That(exception.CurrencyTypeContext, Is.EqualTo(notEnoughGoldUpdate.CurrencyType));
@@ -211,13 +211,13 @@ namespace Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(true);
             AssertUpdateListener(false);
 
-            CurrencyUpdateErrorDTO errorDTO = _currencyUpdateErrorListener.CurrencyUpdateErrorDTO;
-            ControllerThrownException controllerException = (ControllerThrownException) errorDTO.ErrorDetails.Exception;
+            CurrencyUpdateError error = _currencyUpdateErrorListener.CurrencyUpdateError;
+            ControllerThrownException controllerException = (ControllerThrownException) error.BaseErrorDetails.Exception;
             Assert.Multiple(() =>
             {
-                Assert.That(_currencyUpdateDTOListener.WasCalled, Is.False);
+                Assert.That(_currencyUpdateResponseListener.WasCalled, Is.False);
                 Assert.That(_currencyUpdateErrorListener.WasCalled, Is.True);
-                Assert.That(_currencyUpdateErrorListener.CurrencyUpdateErrorDTO.ErrorDetails.Exception, Is.TypeOf<ControllerThrownException>());
+                Assert.That(_currencyUpdateErrorListener.CurrencyUpdateError.BaseErrorDetails.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(controllerException.InnerException, Is.TypeOf<NotFoundException<CurrencyType>>());
             });
         }

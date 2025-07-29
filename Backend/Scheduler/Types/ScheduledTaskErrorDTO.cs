@@ -1,10 +1,10 @@
-﻿using IdelPog.Common.DTO.Error;
+﻿using IdelPog.Common.Errors;
 
 namespace Scheduler.Types
 {
     public readonly record struct ScheduledTaskErrorDTO
     {
-        public required ErrorDTO ErrorDTO { get; init; }
+        public required BaseError BaseError { get; init; }
         public required Type TaskType { get; init; }
     }
 }

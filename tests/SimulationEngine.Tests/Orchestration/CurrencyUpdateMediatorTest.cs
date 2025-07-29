@@ -3,9 +3,9 @@ using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Currency;
-using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Currency.Factories;
+using IdelPog.SimulationEngine.Currency.Responses;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -22,9 +22,9 @@ namespace IdelPogTests.Orchestration
         private ICurrencyUpdateMediator _currencyUpdateMediator { get; set; }
         private Mock<IStateRepository<CurrencyType, Currency>> _repositoryMock { get; set; }
         private Mock<ICurrencyService> _currencyServiceMock { get; set; }
-        private Mock<IDispatchMany<CurrencyUpdateDTO>> _dispatcherMock { get; set; }
+        private Mock<IDispatchMany<CurrencyUpdateResponse>> _dispatcherMock { get; set; }
         private Mock<ICurrencyUpdateSummarizer> _currencyUpdateSummarizerMock { get; set; }
-        private Mock<ICurrencyUpdateDTOFactory> _currencyUpdateDTOFactoryMock { get; set; }
+        private Mock<ICurrencyUpdateResponseFactory> _currencyUpdateDTOFactoryMock { get; set; }
 
         private Currency _goldCurrency;
         private CurrencyUpdate _addGoldUpdate;
@@ -35,9 +35,9 @@ namespace IdelPogTests.Orchestration
         {
             _repositoryMock = new Mock<IStateRepository<CurrencyType, Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
-            _dispatcherMock = new Mock<IDispatchMany<CurrencyUpdateDTO>>();
+            _dispatcherMock = new Mock<IDispatchMany<CurrencyUpdateResponse>>();
             _currencyUpdateSummarizerMock = new Mock<ICurrencyUpdateSummarizer>();
-            _currencyUpdateDTOFactoryMock = new Mock<ICurrencyUpdateDTOFactory>();
+            _currencyUpdateDTOFactoryMock = new Mock<ICurrencyUpdateResponseFactory>();
 
             IHandler throwHandler = new ThrowHandler();
             _currencyUpdateMediator = new CurrencyUpdateMediator(_repositoryMock.Object, _currencyServiceMock.Object, _dispatcherMock.Object,
@@ -61,7 +61,7 @@ namespace IdelPogTests.Orchestration
 
         private void TestRunner(IReadOnlyList<CurrencyUpdate> updates, CurrencyUpdate[] summaryUpdates)
         {
-            CurrencyUpdateDTO[] currencyUpdateDTOs = [];
+            CurrencyUpdateResponse[] currencyUpdateDTOs = [];
 
             _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(true);
 

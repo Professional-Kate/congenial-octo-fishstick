@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Commands;
-using IdelPog.Common.DTO;
-using IdelPog.Common.DTO.Error;
+using IdelPog.Common.Errors;
 using IdelPog.Common.Factories;
+using IdelPog.Common.Responses;
 using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Listeners;
@@ -22,17 +22,17 @@ namespace IdelPog.SimulationEngine.Skill
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
 
-            IDispatchOne<SkillChangeDTO> skillChangeDTODispatcher = new ManagedDispatcher<SkillChangeDTO>(bufferManager, objectNullAssertion, collectionAssertion);
+            IDispatchOne<SkillChangeResponse> skillChangeDTODispatcher = new ManagedDispatcher<SkillChangeResponse>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            ISkillChangeDTOFactory skillChangeDTOFactory = new SkillChangeDTOFactory();
+            ISkillChangeResponseFactory skillChangeResponseFactory = new SkillChangeResponseFactory();
 
-            ISkillChangeMediator skillChangeMediator = new SkillChangeMediator(currentSkillSetter, skillChangeDTOFactory, skillChangeDTODispatcher);
+            ISkillChangeMediator skillChangeMediator = new SkillChangeMediator(currentSkillSetter, skillChangeResponseFactory, skillChangeDTODispatcher);
             ISingleController<SkillChange> skillController = new SkillController(skillChangeMediator);
 
-            IErrorDTOFactory errorDTOFactory = new ErrorDTOFactory();
-            IErrorFactory<SkillChangeErrorDTO, SkillChange> skillChangeErrorFactory = new SkillChangeErrorDTOFactory(errorDTOFactory, skillChangeDTOFactory);
-            IDispatchOne<SkillChangeErrorDTO> skillChangeDispatcher = new ManagedDispatcher<SkillChangeErrorDTO>(bufferManager,  objectNullAssertion, collectionAssertion);
-            IContextualHandler<SkillChange> changeDispatchHandler = new DispatchingHandler<SkillChangeErrorDTO, SkillChange>(skillChangeDispatcher, skillChangeErrorFactory);
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            IErrorFactory<SkillChangeError, SkillChange> skillChangeErrorFactory = new SkillChangeErrorDTOFactory(baseErrorFactory, skillChangeResponseFactory);
+            IDispatchOne<SkillChangeError> skillChangeDispatcher = new ManagedDispatcher<SkillChangeError>(bufferManager,  objectNullAssertion, collectionAssertion);
+            IContextualHandler<SkillChange> changeDispatchHandler = new DispatchingHandler<SkillChangeError, SkillChange>(skillChangeDispatcher, skillChangeErrorFactory);
             ISingleControllerExecutionAssertion<SkillChange> singleControllerExecutionAssertion = new SingleControllerExecutionAssertion<SkillChange>(changeDispatchHandler);
             ISingleListener<SkillChange> skillChangeListener = new ManagedSingleListener<SkillChange>(skillController, singleControllerExecutionAssertion);
 

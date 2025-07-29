@@ -10,8 +10,8 @@ using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Factories;
+using IdelPog.SimulationEngine.Currency.Responses;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
@@ -32,30 +32,30 @@ namespace IdelPog.SimulationEngine.Currency
             IStateRepository<CurrencyType, Models.Currency> currencyRepository = new StateRepository<CurrencyType, Models.Currency>();
 
             ICurrencyService currencyService = new CurrencyService(currencyAssertion);
-            ICurrencyUpdateDTOFactory currencyUpdateDTOFactory = new CurrencyUpdateDTOFactory(objectNullAssertion, collectionAssertion);
-            IDispatchMany<CurrencyUpdateDTO> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdateDTO>(bufferManager, objectNullAssertion, collectionAssertion);
+            ICurrencyUpdateResponseFactory currencyUpdateResponseFactory = new CurrencyUpdateResponseFactory(objectNullAssertion, collectionAssertion);
+            IDispatchMany<CurrencyUpdateResponse> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
 
             ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
             ICurrencyUpdateSummarizer currencyUpdateSummarizer = new CurrencyUpdateSummarizer(currencyUpdateFactory, objectNullAssertion, collectionAssertion);
 
-            ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, currencyUpdateDispatcher, currencyUpdateSummarizer, currencyUpdateDTOFactory, collectionAssertion, foundAssertion, objectNullAssertion);
+            ICurrencyUpdateMediator currencyUpdateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, currencyUpdateDispatcher, currencyUpdateSummarizer, currencyUpdateResponseFactory, collectionAssertion, foundAssertion, objectNullAssertion);
 
-            ICurrencyCreationDTOFactory currencyCreationDTOFactory = new CurrencyCreationDTOFactory(objectNullAssertion, collectionAssertion);
-            IDispatchMany<CurrencyCreationDTO> currencyCreationDispatcher = new ManagedDispatcher<CurrencyCreationDTO>(bufferManager, objectNullAssertion, collectionAssertion);
+            ICurrencyCreationResponseFactory currencyCreationResponseFactory = new CurrencyCreationResponseFactory(objectNullAssertion, collectionAssertion);
+            IDispatchMany<CurrencyCreationResponse> currencyCreationDispatcher = new ManagedDispatcher<CurrencyCreationResponse>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            ICurrencyCreationMediator currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationDispatcher, currencyCreationDTOFactory, objectNullAssertion, collectionAssertion, uniqueAssertion);
+            ICurrencyCreationMediator currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationDispatcher, currencyCreationResponseFactory, objectNullAssertion, collectionAssertion, uniqueAssertion);
             
-            IErrorDTOFactory errorDTOFactory = new ErrorDTOFactory();
-            IErrorFactory<CurrencyUpdateErrorDTO, IReadOnlyList<CurrencyUpdate>> currencyUpdateErrorDTOFactory = new CurrencyUpdateErrorDTOFactory(errorDTOFactory, currencyUpdateDTOFactory);
-            IDispatchOne<CurrencyUpdateErrorDTO> currencyUpdateErrorDispatcher = new ManagedDispatcher<CurrencyUpdateErrorDTO>(bufferManager, objectNullAssertion, collectionAssertion);
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            IErrorFactory<CurrencyUpdateError, IReadOnlyList<CurrencyUpdate>> currencyUpdateErrorDTOFactory = new CurrencyUpdateErrorFactory(baseErrorFactory, currencyUpdateResponseFactory);
+            IDispatchOne<CurrencyUpdateError> currencyUpdateErrorDispatcher = new ManagedDispatcher<CurrencyUpdateError>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            IErrorFactory<CurrencyCreationErrorDTO, IReadOnlyList<CurrencyCreation>> currencyCreationErrorDTOFactory = new CurrencyCreationErrorDTOFactory(errorDTOFactory, currencyCreationDTOFactory);
-            IDispatchOne<CurrencyCreationErrorDTO> currencyCreationErrorDispatcher = new ManagedDispatcher<CurrencyCreationErrorDTO>(bufferManager, objectNullAssertion, collectionAssertion);
+            IErrorFactory<CurrencyCreationError, IReadOnlyList<CurrencyCreation>> currencyCreationErrorDTOFactory = new CurrencyCreationErrorFactory(baseErrorFactory, currencyCreationResponseFactory);
+            IDispatchOne<CurrencyCreationError> currencyCreationErrorDispatcher = new ManagedDispatcher<CurrencyCreationError>(bufferManager, objectNullAssertion, collectionAssertion);
             
-            IContextualHandler<IReadOnlyList<CurrencyUpdate>> updateDispatchHandler = new DispatchingHandler<CurrencyUpdateErrorDTO, IReadOnlyList<CurrencyUpdate>>(currencyUpdateErrorDispatcher, currencyUpdateErrorDTOFactory);
+            IContextualHandler<IReadOnlyList<CurrencyUpdate>> updateDispatchHandler = new DispatchingHandler<CurrencyUpdateError, IReadOnlyList<CurrencyUpdate>>(currencyUpdateErrorDispatcher, currencyUpdateErrorDTOFactory);
             IBatchControllerExecutionAssertion<CurrencyUpdate> updateExecutionAssertion = new BatchControllerExecutionAssertion<CurrencyUpdate>(updateDispatchHandler);
             
-            IContextualHandler<IReadOnlyList<CurrencyCreation>> createDispatchHandler = new DispatchingHandler<CurrencyCreationErrorDTO, IReadOnlyList<CurrencyCreation>>(currencyCreationErrorDispatcher, currencyCreationErrorDTOFactory);
+            IContextualHandler<IReadOnlyList<CurrencyCreation>> createDispatchHandler = new DispatchingHandler<CurrencyCreationError, IReadOnlyList<CurrencyCreation>>(currencyCreationErrorDispatcher, currencyCreationErrorDTOFactory);
             IBatchControllerExecutionAssertion<CurrencyCreation> createExecutionAssertion = new BatchControllerExecutionAssertion<CurrencyCreation>(createDispatchHandler);
             
             IBatchController<CurrencyUpdate> currencyController = new CurrencyUpdateController(currencyUpdateMediator);

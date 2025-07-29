@@ -12,21 +12,21 @@ namespace IdelPog.SimulationEngine.Inventory
     {
         private readonly IInventory _inventory;
         private readonly IItemFactory _itemFactory;
-        private readonly IInventoryUpdateDTOFactory _inventoryUpdateDTOFactory;
-        private readonly IDispatchMany<InventoryUpdateDTO> _inventoryUpdateDispatcher;
+        private readonly IInventoryUpdateResponseFactory _inventoryUpdateResponseFactory;
+        private readonly IDispatchMany<InventoryUpdateResponse> _inventoryUpdateDispatcher;
 
-        public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateDTOFactory inventoryUpdateDTOFactory,
-            IDispatchMany<InventoryUpdateDTO> inventoryUpdateDispatcher)
+        public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateResponseFactory inventoryUpdateResponseFactory,
+            IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher)
         {
             _inventory = inventory;
             _itemFactory = itemFactory;
-            _inventoryUpdateDTOFactory = inventoryUpdateDTOFactory;
+            _inventoryUpdateResponseFactory = inventoryUpdateResponseFactory;
             _inventoryUpdateDispatcher = inventoryUpdateDispatcher;
         }
 
         public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
         {
-            List<InventoryUpdateDTO> updateDTOs = new(updates.Count);
+            List<InventoryUpdateResponse> updateDTOs = new(updates.Count);
 
             foreach (InventoryUpdate update in updates)
             {
@@ -45,7 +45,7 @@ namespace IdelPog.SimulationEngine.Inventory
                 }
 
                 Item item = _inventory.GetItem(update.ItemID);
-                updateDTOs.Add(_inventoryUpdateDTOFactory.CreateInventoryUpdateDTO(item, update, mutateType));
+                updateDTOs.Add(_inventoryUpdateResponseFactory.CreateInventoryUpdateDTO(item, update, mutateType));
             }
 
             _inventoryUpdateDispatcher.Dispatch(updateDTOs.ToArray());

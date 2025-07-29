@@ -1,25 +1,25 @@
 ﻿using IdelPog.Common.Commands;
-using IdelPog.Common.DTO.Error;
+using IdelPog.Common.Errors;
 
 namespace IdelPog.Common.Factories
 {
-    public class SkillChangeErrorDTOFactory : IErrorFactory<SkillChangeErrorDTO, SkillChange>
+    public class SkillChangeErrorDTOFactory : IErrorFactory<SkillChangeError, SkillChange>
     {
-        private readonly IErrorDTOFactory _errorDTOFactory;
-        private readonly ISkillChangeDTOFactory _skillChangeDTOFactory;
+        private readonly IBaseErrorFactory _baseErrorFactory;
+        private readonly ISkillChangeResponseFactory _skillChangeResponseFactory;
 
-        public SkillChangeErrorDTOFactory(IErrorDTOFactory errorDTOFactory, ISkillChangeDTOFactory skillChangeDTOFactory)
+        public SkillChangeErrorDTOFactory(IBaseErrorFactory baseErrorFactory, ISkillChangeResponseFactory skillChangeResponseFactory)
         {
-            _errorDTOFactory = errorDTOFactory;
-            _skillChangeDTOFactory = skillChangeDTOFactory;
+            _baseErrorFactory = baseErrorFactory;
+            _skillChangeResponseFactory = skillChangeResponseFactory;
         }
 
-        public SkillChangeErrorDTO Create<TException>(SkillChange context, TException exception) where TException : Exception
+        public SkillChangeError Create<TException>(SkillChange context, TException exception) where TException : Exception
         {
-            return new SkillChangeErrorDTO
+            return new SkillChangeError
             {
-                ErrorDTO = _errorDTOFactory.Create(exception),
-                SkillChangeDTO = _skillChangeDTOFactory.Create(context)
+                BaseError = _baseErrorFactory.Create(exception),
+                SkillChangeResponse = _skillChangeResponseFactory.Create(context)
             };
         }
     }

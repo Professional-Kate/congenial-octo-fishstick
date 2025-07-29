@@ -14,11 +14,11 @@ namespace IdelPogTests.Orchestration
         private IInventoryMediator _inventoryMediator { get; set; }
         private Mock<IInventory> _repositoryMock { get; set; }
         private Mock<IItemFactory> _itemFactoryMock { get; set; }
-        private Mock<IInventoryUpdateDTOFactory> _factoryMock { get; set; }
-        private Mock<IDispatchMany<InventoryUpdateDTO>> _dispatcherMock { get; set; }
+        private Mock<IInventoryUpdateResponseFactory> _factoryMock { get; set; }
+        private Mock<IDispatchMany<InventoryUpdateResponse>> _dispatcherMock { get; set; }
 
         private InventoryUpdate _inventoryUpdate { get; set; }
-        private InventoryUpdateDTO _inventoryUpdateDTO { get; set; }
+        private InventoryUpdateResponse _inventoryUpdateResponse { get; set; }
         private Information _information { get; set; }
         private const int AMOUNT = 9;
 
@@ -27,8 +27,8 @@ namespace IdelPogTests.Orchestration
         {
             _repositoryMock = new Mock<IInventory>();
             _itemFactoryMock = new Mock<IItemFactory>();
-            _factoryMock = new Mock<IInventoryUpdateDTOFactory>();
-            _dispatcherMock = new Mock<IDispatchMany<InventoryUpdateDTO>>();
+            _factoryMock = new Mock<IInventoryUpdateResponseFactory>();
+            _dispatcherMock = new Mock<IDispatchMany<InventoryUpdateResponse>>();
             _inventoryMediator = new InventoryMediator(_repositoryMock.Object, _itemFactoryMock.Object, _factoryMock.Object, _dispatcherMock.Object);
             _information = new Information { Description = "", Name = ""};
 
@@ -39,9 +39,9 @@ namespace IdelPogTests.Orchestration
                 Amount = AMOUNT
             };
 
-            _inventoryUpdateDTO = new InventoryUpdateDTO
+            _inventoryUpdateResponse = new InventoryUpdateResponse
             {
-                ItemDTO = new ItemDTO
+                ItemInfo = new ItemInfo
                 {
                     Amount = AMOUNT,
                     ItemID = ItemID.OAK_WOOD,
@@ -60,7 +60,7 @@ namespace IdelPogTests.Orchestration
             _repositoryMock.Setup(library => library.Contains(_inventoryUpdate.ItemID)).Returns(true);
 
             _factoryMock.Setup(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), _inventoryUpdate, MutateType.CHANGED))
-                .Returns(_inventoryUpdateDTO);
+                .Returns(_inventoryUpdateResponse);
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace IdelPogTests.Orchestration
             _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT));
             _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.ItemID));
             _factoryMock.Verify(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), _inventoryUpdate, MutateType.CHANGED));
-            _dispatcherMock.Verify(library => library.Dispatch(new[] { _inventoryUpdateDTO, _inventoryUpdateDTO }), Times.Once);
+            _dispatcherMock.Verify(library => library.Dispatch(new[] { _inventoryUpdateResponse, _inventoryUpdateResponse }), Times.Once);
             _itemFactoryMock.Verify(library => library.CreateItem(ItemID.OAK_WOOD, AMOUNT), Times.Never);
         }
 
@@ -89,7 +89,7 @@ namespace IdelPogTests.Orchestration
 
             _repositoryMock.Verify(library => library.RemoveAmount(_inventoryUpdate.ItemID, AMOUNT));
             _factoryMock.Verify(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), removeUpdate, MutateType.CHANGED));
-            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<InventoryUpdateDTO[]>()), Times.Once);
+            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<InventoryUpdateResponse[]>()), Times.Once);
             _itemFactoryMock.Verify(library => library.CreateItem(ItemID.OAK_WOOD, AMOUNT), Times.Never);
         }
 
@@ -127,7 +127,7 @@ namespace IdelPogTests.Orchestration
             _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.ItemID));
             _factoryMock.Verify(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), _inventoryUpdate, MutateType.CREATED));
             _itemFactoryMock.Verify(library => library.CreateItem(ItemID.OAK_WOOD, AMOUNT), Times.Once);
-            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<InventoryUpdateDTO[]>()), Times.Once);
+            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<InventoryUpdateResponse[]>()), Times.Once);
         }
     }
 }

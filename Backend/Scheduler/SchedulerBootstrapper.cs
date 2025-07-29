@@ -27,8 +27,8 @@ namespace Scheduler
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
 
-            IErrorDTOFactory errorDTOFactory = new ErrorDTOFactory();
-            ITaskErrorDTOFactory taskErrorDTOFactory = new TaskErrorDTOFactory(errorDTOFactory);
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            ITaskErrorDTOFactory taskErrorDTOFactory = new TaskErrorDTOFactory(baseErrorFactory);
             IDispatchOne<ScheduledTaskErrorDTO> errorDTODispatcher =
                 new ManagedDispatcher<ScheduledTaskErrorDTO>(bufferManager, objectNullAssertion, collectionAssertion);
 

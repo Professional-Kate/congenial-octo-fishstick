@@ -19,18 +19,18 @@ namespace IdelPog.SimulationEngine.Inventory
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
             ICollectionAssertion collectionAssertion = new CollectionAssertion(new ThrowHandler());
 
-            IDispatchMany<InventoryUpdateDTO> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateDTO>(bufferManager, objectNullAssertion, collectionAssertion);
+            IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            IInventoryUpdateDTOFactory inventoryUpdateDTOFactory = new InventoryUpdateDTOFactory();
+            IInventoryUpdateResponseFactory inventoryUpdateResponseFactory = new InventoryUpdateResposneFactory();
             IMapper<ItemID> itemMapper = new Mapper<ItemID>();
             IItemFactory itemFactory = new ItemFactory(itemMapper);
             IInventory inventory = new Inventory();
-            IInventoryMediator inventoryMediator = new InventoryMediator(inventory, itemFactory, inventoryUpdateDTOFactory, inventoryUpdateDispatcher);
+            IInventoryMediator inventoryMediator = new InventoryMediator(inventory, itemFactory, inventoryUpdateResponseFactory, inventoryUpdateDispatcher);
 
-            IErrorDTOFactory errorDTOFactory = new ErrorDTOFactory();
-            IErrorFactory<InventoryUpdateErrorDTO, IReadOnlyList<InventoryUpdate>> inventoryUpdateErrorFactory = new InventoryUpdateErrorDTOFactory(errorDTOFactory);
-            IDispatchOne<InventoryUpdateErrorDTO> updateErrorDispatcher = new ManagedDispatcher<InventoryUpdateErrorDTO>(bufferManager, objectNullAssertion, collectionAssertion);
-            IContextualHandler<IReadOnlyList<InventoryUpdate>> updateDispatchHandler = new DispatchingHandler<InventoryUpdateErrorDTO, IReadOnlyList<InventoryUpdate>>(updateErrorDispatcher, inventoryUpdateErrorFactory);
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            IErrorFactory<InventoryUpdateError, IReadOnlyList<InventoryUpdate>> inventoryUpdateErrorFactory = new InventoryUpdateErrorFactory(baseErrorFactory);
+            IDispatchOne<InventoryUpdateError> updateErrorDispatcher = new ManagedDispatcher<InventoryUpdateError>(bufferManager, objectNullAssertion, collectionAssertion);
+            IContextualHandler<IReadOnlyList<InventoryUpdate>> updateDispatchHandler = new DispatchingHandler<InventoryUpdateError, IReadOnlyList<InventoryUpdate>>(updateErrorDispatcher, inventoryUpdateErrorFactory);
             IBatchControllerExecutionAssertion<InventoryUpdate> updateExecutionAssertion = new BatchControllerExecutionAssertion<InventoryUpdate>(updateDispatchHandler);
             IBatchController<InventoryUpdate> inventoryController = new InventoryController(inventoryMediator);
             IBufferListener<InventoryUpdate> inventoryUpdateListener = new ManagedBufferListener<InventoryUpdate>(inventoryController, updateExecutionAssertion);

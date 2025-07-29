@@ -5,18 +5,18 @@ namespace Scheduler.Factory
 {
     public class TaskErrorDTOFactory : ITaskErrorDTOFactory
     {
-        private readonly IErrorDTOFactory _errorDTOFactory;
+        private readonly IBaseErrorFactory _baseErrorFactory;
 
-        public TaskErrorDTOFactory(IErrorDTOFactory errorDTOFactory)
+        public TaskErrorDTOFactory(IBaseErrorFactory baseErrorFactory)
         {
-            _errorDTOFactory = errorDTOFactory;
+            _baseErrorFactory = baseErrorFactory;
         }
 
         public ScheduledTaskErrorDTO Create(Exception exception, Type taskType)
         {
             return new ScheduledTaskErrorDTO
             {
-                ErrorDTO = _errorDTOFactory.Create(exception),
+                BaseError = _baseErrorFactory.Create(exception),
                 TaskType = taskType
             };
         }

@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Commands;
-using IdelPog.Common.DTO;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
+using IdelPog.Common.Responses;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.SimulationEngine.Skill;
 using Moq;
@@ -13,8 +13,8 @@ namespace IdelPogTests.Orchestration
     {
         private ISkillChangeMediator _skillChangeMediator;
         private Mock<ICurrentSkillSetter> _currentSkillSetterMock;
-        private Mock<ISkillChangeDTOFactory> _skillChangeFactoryMock;
-        private Mock<IDispatchOne<SkillChangeDTO>> _skillChangeDispatcherMock;
+        private Mock<ISkillChangeResponseFactory> _skillChangeFactoryMock;
+        private Mock<IDispatchOne<SkillChangeResponse>> _skillChangeDispatcherMock;
 
         private SkillChange _skillChange;
 
@@ -24,8 +24,8 @@ namespace IdelPogTests.Orchestration
             _skillChange = new SkillChange { SkillID = SkillID.MINING };
 
             _currentSkillSetterMock = new Mock<ICurrentSkillSetter>();
-            _skillChangeFactoryMock = new Mock<ISkillChangeDTOFactory>();
-            _skillChangeDispatcherMock = new Mock<IDispatchOne<SkillChangeDTO>>();
+            _skillChangeFactoryMock = new Mock<ISkillChangeResponseFactory>();
+            _skillChangeDispatcherMock = new Mock<IDispatchOne<SkillChangeResponse>>();
 
             _skillChangeMediator = new SkillChangeMediator(_currentSkillSetterMock.Object, _skillChangeFactoryMock.Object, _skillChangeDispatcherMock.Object);
         }
@@ -41,14 +41,14 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Positive_ChangeSkill_InvokesDependencies()
         {
-            SkillChangeDTO dto = new() { SkillID = _skillChange.SkillID };
-            _skillChangeFactoryMock.Setup(library => library.Create(_skillChange)).Returns(dto);
+            SkillChangeResponse response = new() { SkillID = _skillChange.SkillID };
+            _skillChangeFactoryMock.Setup(library => library.Create(_skillChange)).Returns(response);
 
             Assert.DoesNotThrow(() => _skillChangeMediator.ChangeSkill(_skillChange));
 
             _currentSkillSetterMock.Verify(library => library.SetCurrentSkill(_skillChange.SkillID), Times.Once);
             _skillChangeFactoryMock.Verify(library => library.Create(_skillChange), Times.Once);
-            _skillChangeDispatcherMock.Verify(library => library.Dispatch(dto), Times.Once);
+            _skillChangeDispatcherMock.Verify(library => library.Dispatch(response), Times.Once);
         }
 
         [Test]
