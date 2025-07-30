@@ -2,7 +2,8 @@
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
 using IdelPog.Common.Responses;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
+using IdelPog.Messaging.Listeners.Single;
 using IdelPog.SimulationEngine.Skill;
 using Moq;
 
@@ -11,7 +12,7 @@ namespace IdelPogTests.Orchestration
     [TestFixture]
     public class SkillChangeMediatorTest
     {
-        private ISkillChangeMediator _skillChangeMediator;
+        private ISingleMediator<SkillChange> _skillChangeMediator;
         private Mock<ICurrentSkillSetter> _currentSkillSetterMock;
         private Mock<ISkillChangeResponseFactory> _skillChangeFactoryMock;
         private Mock<IDispatchOne<SkillChangeResponse>> _skillChangeDispatcherMock;
@@ -44,7 +45,7 @@ namespace IdelPogTests.Orchestration
             SkillChangeResponse response = new() { SkillID = _skillChange.SkillID };
             _skillChangeFactoryMock.Setup(library => library.Create(_skillChange)).Returns(response);
 
-            Assert.DoesNotThrow(() => _skillChangeMediator.ChangeSkill(_skillChange));
+            Assert.DoesNotThrow(() => _skillChangeMediator.HandleMessage(_skillChange));
 
             _currentSkillSetterMock.Verify(library => library.SetCurrentSkill(_skillChange.SkillID), Times.Once);
             _skillChangeFactoryMock.Verify(library => library.Create(_skillChange), Times.Once);
@@ -56,7 +57,7 @@ namespace IdelPogTests.Orchestration
         {
             _skillChangeFactoryMock.Setup(library => library.Create(_skillChange)).Throws<Exception>();
 
-            Assert.Throws<Exception>(() => _skillChangeMediator.ChangeSkill(_skillChange));
+            Assert.Throws<Exception>(() => _skillChangeMediator.HandleMessage(_skillChange));
         }
     }
 }

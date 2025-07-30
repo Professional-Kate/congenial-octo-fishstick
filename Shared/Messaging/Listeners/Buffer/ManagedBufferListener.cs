@@ -5,19 +5,19 @@ namespace IdelPog.Messaging.Listeners.Buffer
     public sealed class ManagedBufferListener<T> : IBufferListener<T>
     {
         private readonly IBatchController<T> _controller;
-        private readonly IBatchControllerExecutionAssertion<T> _singleControllerExecutionAssertion;
+        private readonly IBatchControllerExecutionAssertion<T> _batchControllerExecutionAssertion;
 
-        public ManagedBufferListener(IBatchController<T> controller, IBatchControllerExecutionAssertion<T> singleControllerExecutionAssertion)
+        public ManagedBufferListener(IBatchController<T> controller, IBatchControllerExecutionAssertion<T> batchControllerExecutionAssertion)
         {
             _controller = controller;
-            _singleControllerExecutionAssertion = singleControllerExecutionAssertion;
+            _batchControllerExecutionAssertion = batchControllerExecutionAssertion;
         }
 
         public Type ListenerType => typeof(T);
         
         public void Handle(IReadOnlyList<T> buffer)
         {
-            _singleControllerExecutionAssertion.AssertBatchExecutesWithoutError(_controller, buffer);
+            _batchControllerExecutionAssertion.AssertBatchExecutesWithoutError(_controller, buffer);
         }
 
     }

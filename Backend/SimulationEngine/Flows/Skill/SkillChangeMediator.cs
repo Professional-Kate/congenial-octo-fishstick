@@ -1,11 +1,12 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Factories;
 using IdelPog.Common.Responses;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
+using IdelPog.Messaging.Listeners.Single;
 
 namespace IdelPog.SimulationEngine.Skill
 {
-    public class SkillChangeMediator : ISkillChangeMediator
+    public class SkillChangeMediator : ISingleMediator<SkillChange>
     {
         private readonly ICurrentSkillSetter _currentSkillSetter;
         private readonly ISkillChangeResponseFactory _skillChangeResponseFactory;
@@ -19,7 +20,7 @@ namespace IdelPog.SimulationEngine.Skill
             _skillChangeDTODispatcher = skillChangeDTODispatcher;
         }
 
-        public void ChangeSkill(SkillChange skillChange)
+        public void HandleMessage(SkillChange skillChange)
         {
             _currentSkillSetter.SetCurrentSkill(skillChange.SkillID);
             _skillChangeDTODispatcher.Dispatch(_skillChangeResponseFactory.Create(skillChange));

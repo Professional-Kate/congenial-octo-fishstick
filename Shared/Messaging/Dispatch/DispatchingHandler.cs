@@ -1,14 +1,15 @@
 ﻿using IdelPog.Common.Factories;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.Messaging.Dispatch
 {
-    public sealed class DispatchingHandler<TErrorDTO, TContext> : IContextualHandler<TContext>
+    public sealed class DispatchingHandler<TError, TContext> : IContextualHandler<TContext>
     {
-        private readonly IDispatchOne<TErrorDTO> _dispatcher;
-        private readonly IErrorFactory<TErrorDTO, TContext> _errorFactory;
+        private readonly IDispatchOne<TError> _dispatcher;
+        private readonly IErrorFactory<TError, TContext> _errorFactory;
 
-        public DispatchingHandler(IDispatchOne<TErrorDTO> dispatcher, IErrorFactory<TErrorDTO, TContext> errorFactory)
+        public DispatchingHandler(IDispatchOne<TError> dispatcher, IErrorFactory<TError, TContext> errorFactory)
         {
             _dispatcher = dispatcher;
             _errorFactory = errorFactory;

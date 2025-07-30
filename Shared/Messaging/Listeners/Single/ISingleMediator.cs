@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.Messaging.Listeners.Single
 {
-    public interface ISingleController<in T> : IController
+    public interface ISingleMediator<in T> : IMediator
     {
         public void HandleMessage(T message);
     }

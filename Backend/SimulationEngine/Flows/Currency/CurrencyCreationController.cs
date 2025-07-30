@@ -5,16 +5,16 @@ namespace IdelPog.SimulationEngine.Currency
 {
     public class CurrencyCreationController : IBatchController<CurrencyCreation>
     {
-        private readonly ICurrencyCreationMediator _currencyCreationMediator;
+        private readonly IBatchMediator<CurrencyCreation> _currencyCreationMediator;
         
-        public CurrencyCreationController(ICurrencyCreationMediator currencyCreationMediator)
+        public CurrencyCreationController(IBatchMediator<CurrencyCreation> currencyCreationMediator)
         {
             _currencyCreationMediator = currencyCreationMediator;
         }
         
         public void HandleMessages(IReadOnlyList<CurrencyCreation> messages)
         {
-            _currencyCreationMediator.CreateCurrency(messages);
+            _currencyCreationMediator.HandleMessages(messages);
         }
     }
 }

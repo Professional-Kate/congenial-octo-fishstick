@@ -4,7 +4,7 @@ using Console.Commands.Resolver.Pipelines;
 using Console.Types;
 using IdelPog.Common.Commands;
 using IdelPog.Common.Factories;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 
 namespace Console.Commands.Domains
 {

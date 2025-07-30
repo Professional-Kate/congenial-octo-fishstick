@@ -1,6 +1,7 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Buffer;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Currency.Responses;
@@ -8,7 +9,7 @@ using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    public class CurrencyCreationMediator : ICurrencyCreationMediator
+    public class CurrencyCreationMediator : IBatchMediator<CurrencyCreation>
     {
         private readonly IStateRepository<CurrencyType, Models.Currency> _currencyRepository;
         private readonly IDispatchMany<CurrencyCreationResponse> _currencyCreationDTODispatcher;
@@ -29,13 +30,13 @@ namespace IdelPog.SimulationEngine.Currency
             _uniqueAssertion = uniqueAssertion;
         }
 
-        public void CreateCurrency(IReadOnlyList<CurrencyCreation> currencies)
+        public void HandleMessages(IReadOnlyList<CurrencyCreation> currencyCreations)
         {
-            _objectNullAssertion.AssertNotNull(currencies, nameof(currencies));
-            _collectionAssertion.AssertNotEmpty(currencies);
+            _objectNullAssertion.AssertNotNull(currencyCreations, nameof(currencyCreations));
+            _collectionAssertion.AssertNotEmpty(currencyCreations);
 
-            Dictionary<CurrencyType, Models.Currency> createdCurrencies = new(currencies.Count);
-            foreach (CurrencyCreation currencyCreation in currencies)
+            Dictionary<CurrencyType, Models.Currency> createdCurrencies = new(currencyCreations.Count);
+            foreach (CurrencyCreation currencyCreation in currencyCreations)
             {
                 _uniqueAssertion.AssertUnique(currencyCreation, _currencyRepository.Contains(currencyCreation.CurrencyType));
 
@@ -50,7 +51,7 @@ namespace IdelPog.SimulationEngine.Currency
                 _currencyRepository.Add(keyValuePair.Key, keyValuePair.Value);
             }
 
-            _currencyCreationDTODispatcher.Dispatch(_currencyCreationResponseFactory.CreateFrom(currencies));
+            _currencyCreationDTODispatcher.Dispatch(_currencyCreationResponseFactory.CreateFrom(currencyCreations));
         }
     }
 }

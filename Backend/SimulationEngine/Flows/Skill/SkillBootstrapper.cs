@@ -4,6 +4,7 @@ using IdelPog.Common.Factories;
 using IdelPog.Common.Responses;
 using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Listeners.Single;
 using IdelPog.Messaging.Messenger;
@@ -26,7 +27,7 @@ namespace IdelPog.SimulationEngine.Skill
 
             ISkillChangeResponseFactory skillChangeResponseFactory = new SkillChangeResponseFactory();
 
-            ISkillChangeMediator skillChangeMediator = new SkillChangeMediator(currentSkillSetter, skillChangeResponseFactory, skillChangeDTODispatcher);
+            ISingleMediator<SkillChange> skillChangeMediator = new SkillChangeMediator(currentSkillSetter, skillChangeResponseFactory, skillChangeDTODispatcher);
             ISingleController<SkillChange> skillController = new SkillController(skillChangeMediator);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();

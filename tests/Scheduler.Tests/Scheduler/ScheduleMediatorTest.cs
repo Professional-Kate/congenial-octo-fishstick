@@ -1,5 +1,5 @@
 ﻿using IdelPog.Common.Structures;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Exceptions;

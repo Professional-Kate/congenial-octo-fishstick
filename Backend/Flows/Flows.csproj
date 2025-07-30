@@ -7,4 +7,9 @@
         <RootNamespace>IdelPog.Flows</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Shared\Common\Common.csproj" />
+      <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj" />
+    </ItemGroup>
+
 </Project>

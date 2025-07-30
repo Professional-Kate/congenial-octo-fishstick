@@ -1,5 +1,5 @@
 ﻿using IdelPog.Common.Structures;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Validation.Assertions;
 using Scheduler.Core.Register;
 using Scheduler.Factory;

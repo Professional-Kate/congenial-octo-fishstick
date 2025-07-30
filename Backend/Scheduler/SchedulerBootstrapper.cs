@@ -1,6 +1,7 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Factories;
 using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;

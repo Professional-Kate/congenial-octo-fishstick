@@ -13,8 +13,8 @@ namespace IdelPogTests.Controller
     {
         private IBatchController<CurrencyUpdate> _currencyUpdateController { get; set; }
         private IBatchController<CurrencyCreation> _currencyCreationController { get; set; }
-        private Mock<ICurrencyUpdateMediator> _currencyUpdateMediatorMock { get; set; }
-        private Mock<ICurrencyCreationMediator> _currencyCreationMediatorMock { get; set; }
+        private Mock<IBatchMediator<CurrencyUpdate>> _currencyUpdateMediatorMock { get; set; }
+        private Mock<IBatchMediator<CurrencyCreation>> _currencyCreationMediatorMock { get; set; }
 
         private List<CurrencyUpdate> _currencyTrades { get; set; }
         private List<CurrencyCreation> _currencyCreations { get; set; }
@@ -40,8 +40,8 @@ namespace IdelPogTests.Controller
         [SetUp]
         public void Setup()
         {
-            _currencyUpdateMediatorMock = new Mock<ICurrencyUpdateMediator>();
-            _currencyCreationMediatorMock = new Mock<ICurrencyCreationMediator>();
+            _currencyUpdateMediatorMock = new Mock<IBatchMediator<CurrencyUpdate>>();
+            _currencyCreationMediatorMock = new Mock<IBatchMediator<CurrencyCreation>>();
             _currencyUpdateController = new CurrencyUpdateController(_currencyUpdateMediatorMock.Object);
             _currencyCreationController = new CurrencyCreationController(_currencyCreationMediatorMock.Object);
         }
@@ -51,13 +51,13 @@ namespace IdelPogTests.Controller
         {
             _currencyUpdateController.HandleMessages(_currencyTrades);
 
-            _currencyUpdateMediatorMock.Verify(library => library.ProcessCurrencyUpdate(_currencyTrades), Times.Once);
+            _currencyUpdateMediatorMock.Verify(library => library.HandleMessages(_currencyTrades), Times.Once);
         }
 
         [Test]
         public void Positive_UpdateCurrency_DoesNotSuppressExceptions()
         {
-            _currencyUpdateMediatorMock.Setup(library => library.ProcessCurrencyUpdate(_currencyTrades))
+            _currencyUpdateMediatorMock.Setup(library => library.HandleMessages(_currencyTrades))
                 .Throws<Exception>();
 
             Assert.Throws<Exception>(() => _currencyUpdateController.HandleMessages(_currencyTrades));
@@ -68,13 +68,13 @@ namespace IdelPogTests.Controller
         {
             _currencyCreationController.HandleMessages(_currencyCreations);
 
-            _currencyCreationMediatorMock.Verify(library => library.CreateCurrency(_currencyCreations), Times.Once);
+            _currencyCreationMediatorMock.Verify(library => library.HandleMessages(_currencyCreations), Times.Once);
         }
 
         [Test]
         public void Positive_CreateCurrency_DoesNotSuppressExceptions()
         {
-            _currencyCreationMediatorMock.Setup(library => library.CreateCurrency(_currencyCreations))
+            _currencyCreationMediatorMock.Setup(library => library.HandleMessages(_currencyCreations))
                 .Throws<Exception>();
 
             Assert.Throws<Exception>(() => _currencyCreationController.HandleMessages(_currencyCreations));

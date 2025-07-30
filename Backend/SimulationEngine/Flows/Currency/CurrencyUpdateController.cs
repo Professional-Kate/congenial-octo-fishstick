@@ -5,16 +5,16 @@ namespace IdelPog.SimulationEngine.Currency
 {
     public class CurrencyUpdateController : IBatchController<CurrencyUpdate>
     {
-        private readonly ICurrencyUpdateMediator _currencyUpdateMediator;
+        private readonly IBatchMediator<CurrencyUpdate> _currencyUpdateMediator;
         
-        public CurrencyUpdateController(ICurrencyUpdateMediator currencyUpdateMediator)
+        public CurrencyUpdateController(IBatchMediator<CurrencyUpdate> currencyUpdateMediator)
         {
             _currencyUpdateMediator = currencyUpdateMediator;
         }
         
         public void HandleMessages(IReadOnlyList<CurrencyUpdate> messages)
         {
-            _currencyUpdateMediator.ProcessCurrencyUpdate(messages);
+            _currencyUpdateMediator.HandleMessages(messages);
         }
     }
 }

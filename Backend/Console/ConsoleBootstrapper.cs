@@ -17,6 +17,7 @@ using IdelPog.ECS;
 using IdelPog.ECS.Assertions;
 using IdelPog.ECS.Factory;
 using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;

@@ -5,16 +5,16 @@ namespace IdelPog.SimulationEngine.Skill
 {
     public class SkillController : ISingleController<SkillChange>
     {
-        private readonly ISkillChangeMediator _skillChangeMediator;
+        private readonly ISingleMediator<SkillChange> _skillChangeMediator;
 
-        public SkillController(ISkillChangeMediator skillChangeMediator)
+        public SkillController(ISingleMediator<SkillChange> skillChangeMediator)
         {
             _skillChangeMediator = skillChangeMediator;
         }
 
         public void HandleMessage(SkillChange message)
         {
-            _skillChangeMediator.ChangeSkill(message);
+            _skillChangeMediator.HandleMessage(message);
         }
     }
 }

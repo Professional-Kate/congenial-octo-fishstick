@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
 using IdelPog.Common.Structures;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 

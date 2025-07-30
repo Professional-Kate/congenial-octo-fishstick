@@ -10,14 +10,14 @@ namespace IdelPogTests.Controller
     public class SkillControllerTest
     {
         private ISingleController<SkillChange> _controller { get; set; }
-        private Mock<ISkillChangeMediator> _skillChangeMediatorMock { get; set; }
+        private Mock<ISingleMediator<SkillChange>> _skillChangeMediatorMock { get; set; }
         private SkillChange _skillChange { get; set; }
 
         [SetUp]
         public void SetUp()
         {
             _skillChange = new SkillChange { SkillID = SkillID.MINING };
-            _skillChangeMediatorMock = new Mock<ISkillChangeMediator>();
+            _skillChangeMediatorMock = new Mock<ISingleMediator<SkillChange>>();
             _controller = new SkillController(_skillChangeMediatorMock.Object);
         }
 
@@ -26,13 +26,13 @@ namespace IdelPogTests.Controller
         {
             _controller.HandleMessage(_skillChange);
 
-            _skillChangeMediatorMock.Verify(library => library.ChangeSkill(_skillChange), Times.Once());
+            _skillChangeMediatorMock.Verify(library => library.HandleMessage(_skillChange), Times.Once());
         }
 
         [Test]
         public void Positive_ChangeSkill_NoExceptionSuppression()
         {
-            _skillChangeMediatorMock.Setup(library => library.ChangeSkill(_skillChange))
+            _skillChangeMediatorMock.Setup(library => library.HandleMessage(_skillChange))
                 .Throws<Exception>();
 
             Assert.Throws<Exception>(() => _controller.HandleMessage(_skillChange));

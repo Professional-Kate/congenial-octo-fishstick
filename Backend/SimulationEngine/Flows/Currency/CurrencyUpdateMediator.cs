@@ -1,15 +1,15 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Buffer;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Currency.Responses;
 using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    /// <inheritdoc cref="ICurrencyUpdateMediator"/>
-    public class CurrencyUpdateMediator : ICurrencyUpdateMediator
+    public class CurrencyUpdateMediator : IBatchMediator<CurrencyUpdate>
     {
         private readonly ICurrencyService _currencyService;
         private readonly IStateRepository<CurrencyType, Models.Currency> _currencyRepository;
@@ -36,12 +36,13 @@ namespace IdelPog.SimulationEngine.Currency
             _objectNullAssertion = objectNullAssertion;
         }
 
-        public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyUpdate> updates)
+        
+        public void HandleMessages(IReadOnlyList<CurrencyUpdate> currencyUpdates)
         {
-            _objectNullAssertion.AssertNotNull(updates, nameof(updates));
-            AssertUpdates(updates);
+            _objectNullAssertion.AssertNotNull(currencyUpdates, nameof(currencyUpdates));
+            AssertUpdates(currencyUpdates);
 
-            CurrencyUpdate[] summarizedUpdates = _currencyUpdateSummarizer.GetSummary(updates);
+            CurrencyUpdate[] summarizedUpdates = _currencyUpdateSummarizer.GetSummary(currencyUpdates);
             _collectionAssertion.AssertNotEmpty(summarizedUpdates);
 
             AllCurrenciesExist(summarizedUpdates);
