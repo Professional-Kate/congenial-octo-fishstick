@@ -1,5 +1,4 @@
 ﻿using Moq;
-using Scheduler.Core;
 using Scheduler.Flows.Control;
 using Scheduler.Flows.Control.Runner;
 

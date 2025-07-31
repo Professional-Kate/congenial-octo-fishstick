@@ -5,6 +5,6 @@ namespace IdelPog.Flows.Register
 {
     public interface IFlowRegister
     {
-        public IListener CreateFromDescriptor<TCommand, TError>(DispatchMode dispatchMode);
+        public IListener ConstructFlow<TCommand, TError>(DispatchMode dispatchMode);
     }
 }

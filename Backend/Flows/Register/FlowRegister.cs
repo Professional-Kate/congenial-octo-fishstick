@@ -24,7 +24,7 @@ namespace IdelPog.Flows.Register
             _errorFactoryRepository = errorFactoryRepository;
         }
 
-        public IListener CreateFromDescriptor<TCommand, TError>(DispatchMode dispatchMode)
+        public IListener ConstructFlow<TCommand, TError>(DispatchMode dispatchMode)
         {
             if (dispatchMode == DispatchMode.SINGLE)
             {
