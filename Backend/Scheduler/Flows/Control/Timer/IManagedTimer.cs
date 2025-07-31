@@ -1,4 +1,4 @@
-﻿namespace Scheduler.Core
+﻿namespace Scheduler.Flows.Control
 {
     public interface IManagedTimer : IDisposable
     {

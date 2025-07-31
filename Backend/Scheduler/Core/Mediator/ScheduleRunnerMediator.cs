@@ -7,14 +7,14 @@ using Scheduler.Types;
 
 namespace Scheduler.Core.Mediator
 {
-    public class ScheduleMediator : IScheduleMediator
+    public class ScheduleRunnerMediator : IScheduleRunnerMediator
     {
         private readonly IScheduleReader _scheduleReader;
         private readonly IDispatchOne<ScheduledTaskErrorDTO> _taskErrorDispatcher;
         private readonly ITaskErrorDTOFactory _taskErrorDTOFactory;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public ScheduleMediator(IScheduleReader scheduleReader, IDispatchOne<ScheduledTaskErrorDTO> taskErrorDispatcher, ITaskErrorDTOFactory taskErrorDTOFactory,
+        public ScheduleRunnerMediator(IScheduleReader scheduleReader, IDispatchOne<ScheduledTaskErrorDTO> taskErrorDispatcher, ITaskErrorDTOFactory taskErrorDTOFactory,
             ICollectionAssertion collectionAssertion)
         {
             _scheduleReader = scheduleReader;

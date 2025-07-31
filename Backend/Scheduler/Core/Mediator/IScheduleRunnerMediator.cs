@@ -1,6 +1,6 @@
 ﻿namespace Scheduler.Core.Mediator
 {
-    public interface IScheduleMediator
+    public interface IScheduleRunnerMediator
     {
         public void RunUpdate();
     }

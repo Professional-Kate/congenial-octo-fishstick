@@ -1,9 +1,9 @@
-﻿namespace Scheduler.Core.Runner
+﻿namespace Scheduler.Flows.Control.Runner
 {
     public class ScheduleRunner : IScheduleRunner
     {
         private readonly IManagedTimer _managedTimer;
-
+        
         public ScheduleRunner(IManagedTimer managedTimer)
         {
             _managedTimer = managedTimer;

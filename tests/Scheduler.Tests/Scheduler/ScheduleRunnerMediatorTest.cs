@@ -12,9 +12,9 @@ using Scheduler.Types;
 namespace Scheduler.Tests.Scheduler
 {
     [TestFixture]
-    public class ScheduleMediatorTest
+    public class ScheduleRunnerMediatorTest
     {
-        private IScheduleMediator _scheduleMediator;
+        private IScheduleRunnerMediator _scheduleRunnerMediator;
         private Mock<IScheduleReader> _scheduleReaderMock;
         private Mock<IDispatchOne<ScheduledTaskErrorDTO>> _dispatcherMock;
         private Mock<ITaskErrorDTOFactory> _taskErrorDTOFactoryMock;
@@ -25,7 +25,7 @@ namespace Scheduler.Tests.Scheduler
             _scheduleReaderMock = new Mock<IScheduleReader>();
             _dispatcherMock = new Mock<IDispatchOne<ScheduledTaskErrorDTO>>();
             _taskErrorDTOFactoryMock = new Mock<ITaskErrorDTOFactory>();
-            _scheduleMediator = new ScheduleMediator(_scheduleReaderMock.Object, _dispatcherMock.Object, _taskErrorDTOFactoryMock.Object,
+            _scheduleRunnerMediator = new ScheduleRunnerMediator(_scheduleReaderMock.Object, _dispatcherMock.Object, _taskErrorDTOFactoryMock.Object,
                 new CollectionAssertion(new ThrowHandler()));
         }
 
@@ -45,7 +45,7 @@ namespace Scheduler.Tests.Scheduler
             _scheduleReaderMock.Setup(library => library.GetScheduledTasks())
                 .Returns(tasks);
 
-            _scheduleMediator.RunUpdate();
+            _scheduleRunnerMediator.RunUpdate();
 
             _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<ScheduledTaskErrorDTO>()), Times.Never);
             _scheduleReaderMock.Verify(library => library.GetScheduledTasks(), Times.Once);
@@ -75,7 +75,7 @@ namespace Scheduler.Tests.Scheduler
             _scheduleReaderMock.Setup(library => library.GetScheduledTasks())
                 .Returns(tasks);
 
-            Assert.DoesNotThrow(() => _scheduleMediator.RunUpdate());
+            Assert.DoesNotThrow(() => _scheduleRunnerMediator.RunUpdate());
 
             _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<ScheduledTaskErrorDTO>()), Times.Once);
             _scheduleReaderMock.Verify(library => library.GetScheduledTasks(), Times.Once);
@@ -105,7 +105,7 @@ namespace Scheduler.Tests.Scheduler
             _scheduleReaderMock.Setup(library => library.GetScheduledTasks())
                 .Returns(tasks);
 
-            Assert.DoesNotThrow(() => _scheduleMediator.RunUpdate());
+            Assert.DoesNotThrow(() => _scheduleRunnerMediator.RunUpdate());
 
             _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<ScheduledTaskErrorDTO>()), Times.Exactly(tasks.Count));
             _scheduleReaderMock.Verify(library => library.GetScheduledTasks(), Times.Once);
@@ -118,7 +118,7 @@ namespace Scheduler.Tests.Scheduler
             _scheduleReaderMock.Setup(library => library.GetScheduledTasks())
                 .Returns(new List<IScheduledTask>());
 
-            Assert.Throws<EmptyCollectionException>(() => _scheduleMediator.RunUpdate());
+            Assert.Throws<EmptyCollectionException>(() => _scheduleRunnerMediator.RunUpdate());
             _scheduleReaderMock.Verify(library => library.GetScheduledTasks(), Times.Once);
             _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<ScheduledTaskErrorDTO>()), Times.Never);
             _taskErrorDTOFactoryMock.Verify(library => library.Create(It.IsAny<Exception>(), typeof(TestScheduledTask)), Times.Never);

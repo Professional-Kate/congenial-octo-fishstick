@@ -1,13 +1,23 @@
-﻿namespace Scheduler.Core
+﻿using Scheduler.Core.Mediator;
+
+namespace Scheduler.Flows.Control
 {
     public sealed class ThreadingTimer : IManagedTimer
     {
+        private readonly IScheduleRunnerMediator _scheduleRunnerMediator;
+        
         private readonly Timer _timer;
         private bool _disposed;
 
-        public ThreadingTimer(Action callback)
+        public ThreadingTimer(IScheduleRunnerMediator scheduleRunnerMediator)
         {
-            _timer = new Timer(_ => callback(), null, Timeout.Infinite, Timeout.Infinite);
+            _scheduleRunnerMediator = scheduleRunnerMediator;
+            _timer = new Timer(Callback, null, Timeout.Infinite, Timeout.Infinite);
+        }
+
+        private void Callback(object? state)
+        {
+            _scheduleRunnerMediator.RunUpdate();
         }
 
         ~ThreadingTimer()

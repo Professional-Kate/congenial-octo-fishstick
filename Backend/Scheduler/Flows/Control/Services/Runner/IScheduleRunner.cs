@@ -1,4 +1,4 @@
-﻿namespace Scheduler.Core.Runner
+﻿namespace Scheduler.Flows.Control.Runner
 {
     public interface IScheduleRunner
     {
