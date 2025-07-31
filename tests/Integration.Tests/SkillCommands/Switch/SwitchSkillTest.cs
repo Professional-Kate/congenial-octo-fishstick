@@ -1,5 +1,6 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
+using IdelPog.Flows;
 using IdelPog.Messaging.Buffer;
 using IdelPog.SimulationEngine.Skill;
 
@@ -27,7 +28,9 @@ namespace Integration.Tests.SkillCommands.Switch
         [SetUp]
         public void Setup()
         {
-            new SkillBootstrapper().Initialize(BufferMessenger, BufferManager, _currentSkillSetter);
+            FlowBootstrapper.Initialize(BufferMessenger);
+            SkillBootstrapper.RegisterSkillChange(BufferManager, FlowDescriptorDispatcher, _currentSkillSetter);
+            FlowBootstrapper.InitializeFlows(BufferMessenger);
 
             _listener = new SkillChangeDTOListener();
             ManagedSubscribe(_listener);

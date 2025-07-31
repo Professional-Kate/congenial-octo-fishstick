@@ -1,48 +1,58 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using IdelPog.Common.Factories;
+using IdelPog.Flows.Types;
+using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Listeners;
 
 namespace IdelPog.Flows.Builder
 {
     public class FlowBuilder
     {
         private Type? _commandType;
-        private Type? _controllerType;
-        private Type? _resultType;
-        private Type? _errorType;
-        private Type? _mediatorType;
-        private DispatchMode _dispatchMode;
+        private IController? _controller;
+        private IDispatcher? _responseDispatcher;
+        private IErrorFactory? _errorFactory;
+        private string? _description;
+        private BufferMode _bufferMode;
+
+        public FlowBuilder ForCommand(Type commandType)
+        {
+            _commandType = commandType;
+            return this;
+        }
         
-        public FlowBuilder ForCommand<TCommand>(DispatchMode dispatchMode)
+        public FlowBuilder WithController(IController controller)
         {
-            _dispatchMode = dispatchMode;
-            _commandType =  typeof(TCommand);
+            _controller = controller;
+            return this;
+        }
+
+        public FlowBuilder WithResponseDispatcher(IDispatcher responseDispatcher)
+        {
+            _responseDispatcher = responseDispatcher;
+            return this;
+        }
+
+        public FlowBuilder WithErrorFactory(IErrorFactory errorFactory)
+        {
+            _errorFactory = errorFactory;
             return this;
         }
         
-        public FlowBuilder WithController<TController>()
+        public FlowBuilder SetDispatchMode(BufferMode bufferMode)
         {
-            _controllerType = typeof(TController);
+            _bufferMode = bufferMode;
             return this;
         }
 
-        public FlowBuilder WithMediator<TMediator>()
+        public FlowBuilder SetDescription(Type commandName, Type responseName, Type errorName)
         {
-            _mediatorType = typeof(TMediator);
+            const string baseString = "Handles {0}. Success {1}. Failure {2}.";
+            _description = string.Format(baseString, commandName.Name, responseName.Name, errorName.Name);
             return this;
         }
-
-        public FlowBuilder OnSuccess<TResult>()
-        {
-            _resultType = typeof(TResult);
-            return this;
-        }
-
-        public FlowBuilder OnError<TError>()
-        {
-            _errorType = typeof(TError);
-            return this;
-        }
-
+        
         public FlowDescriptor Build()
         {
             Validate();
@@ -50,23 +60,22 @@ namespace IdelPog.Flows.Builder
             return new FlowDescriptor
             {
                 CommandType = _commandType,
-                DispatchMode = _dispatchMode,
-                ControllerType = _controllerType,
-                MediatorType = _mediatorType,
-                SuccessResultType = _resultType,
-                ErrorResultType = _errorType,
+                ListeningMode = _bufferMode,
+                Controller = _controller,
+                ResponseDispatcher = _responseDispatcher,
+                ErrorFactory = _errorFactory,
+                Description = _description
             };
         }
 
-        [MemberNotNull(nameof(_commandType), nameof(_controllerType), nameof(_resultType), nameof(_errorType), nameof(_mediatorType))]
+        [MemberNotNull(nameof(_controller), nameof(_errorFactory), nameof(_description),  nameof(_responseDispatcher), nameof(_commandType))]
         private void Validate()
         {
             Debug.Assert(_commandType != null, nameof(_commandType) + " != null");
-            Debug.Assert(_controllerType != null, nameof(_controllerType) + " != null");
-            Debug.Assert(_resultType != null, nameof(_resultType) + " != null");
-            Debug.Assert(_errorType != null, nameof(_errorType) + " != null");
-            Debug.Assert(_mediatorType != null, nameof(_mediatorType) + " != null");
-
+            Debug.Assert(_controller != null, nameof(_controller) + " != null");
+            Debug.Assert(_errorFactory != null, nameof(_errorFactory) + " != null");
+            Debug.Assert(_description != null, nameof(_description) + " != null");
+            Debug.Assert(_responseDispatcher != null, nameof(_responseDispatcher) + " != null");
         }
     }
 }

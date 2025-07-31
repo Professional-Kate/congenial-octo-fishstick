@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.Flows.Builder
 {
-    public enum DispatchMode : byte
+    public enum BufferMode : byte
     {
         BATCH,
         SINGLE

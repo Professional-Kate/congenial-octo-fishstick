@@ -1,4 +1,7 @@
-﻿using IdelPog.Messaging.Assertions;
+﻿using IdelPog.Flows.Types;
+using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Factory;
 using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Messenger;
@@ -12,6 +15,7 @@ namespace Integration.Tests
     {
         protected IBufferMessenger BufferMessenger { get; private set; }
         protected IBufferManager BufferManager { get; private set; }
+        protected IDispatchOne<FlowDescriptor> FlowDescriptorDispatcher { get; private set; }
         private IBufferFactory _bufferFactory;
         private IObjectNullAssertion _objectNullAssertion;
 
@@ -30,6 +34,8 @@ namespace Integration.Tests
             BufferMessenger = new BufferMessenger(_objectNullAssertion, listenerAssertion);
             _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher) BufferMessenger);
             BufferManager = new BufferManager(_bufferFactory, _objectNullAssertion);
+            
+            FlowDescriptorDispatcher = new ManagedDispatcher<FlowDescriptor>(BufferManager, _objectNullAssertion, new CollectionAssertion(new ThrowHandler()));
         }
 
         protected void ManagedSubscribe(IListener listener)
