@@ -46,10 +46,10 @@ namespace IdelPog.Flows.Builder
             return this;
         }
 
-        public FlowBuilder SetDescription(Type commandName, Type responseName, Type errorName)
+        public FlowBuilder SetDescription(Type commandType, Type responseType, Type errorType)
         {
             const string baseString = "Handles {0}. Success {1}. Failure {2}.";
-            _description = string.Format(baseString, commandName.Name, responseName.Name, errorName.Name);
+            _description = string.Format(baseString, commandType.Name, responseType.Name, errorType.Name);
             return this;
         }
         
