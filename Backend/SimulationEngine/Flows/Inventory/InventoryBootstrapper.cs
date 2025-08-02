@@ -1,5 +1,6 @@
 ﻿using IdelPog.Common.Factories;
 using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Controller;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Dispatch.Buffer;
 using IdelPog.Messaging.Dispatch.Single;
@@ -27,14 +28,14 @@ namespace IdelPog.SimulationEngine.Inventory
             IMapper<ItemID> itemMapper = new Mapper<ItemID>();
             IItemFactory itemFactory = new ItemFactory(itemMapper);
             IInventory inventory = new Inventory();
-            IInventoryMediator inventoryMediator = new InventoryMediator(inventory, itemFactory, inventoryUpdateResponseFactory, inventoryUpdateDispatcher);
+            IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryMediator(inventory, itemFactory, inventoryUpdateResponseFactory, inventoryUpdateDispatcher);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<InventoryUpdateError, IReadOnlyList<InventoryUpdate>> inventoryUpdateErrorFactory = new InventoryUpdateErrorFactory(baseErrorFactory);
             IDispatchOne<InventoryUpdateError> updateErrorDispatcher = new ManagedDispatcher<InventoryUpdateError>(bufferManager, objectNullAssertion, collectionAssertion);
             IContextualHandler<IReadOnlyList<InventoryUpdate>> updateDispatchHandler = new DispatchingHandler<InventoryUpdateError, IReadOnlyList<InventoryUpdate>>(updateErrorDispatcher, inventoryUpdateErrorFactory);
             IBatchControllerExecutionAssertion<InventoryUpdate> updateExecutionAssertion = new BatchControllerExecutionAssertion<InventoryUpdate>(updateDispatchHandler);
-            IBatchController<InventoryUpdate> inventoryController = new InventoryController(inventoryMediator);
+            IBatchController<InventoryUpdate> inventoryController = new ManagedBatchController<InventoryUpdate>(inventoryMediator);
             IBufferListener<InventoryUpdate> inventoryUpdateListener = new ManagedBufferListener<InventoryUpdate>(inventoryController, updateExecutionAssertion);
 
             bufferMessenger.Subscribe(inventoryUpdateListener);

@@ -1,5 +1,6 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Messaging.Dispatch.Buffer;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Inventory;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures;
@@ -11,7 +12,7 @@ namespace IdelPogTests.Orchestration
     [TestFixture]
     public class InventoryMediatorTest
     {
-        private IInventoryMediator _inventoryMediator { get; set; }
+        private IBatchMediator<InventoryUpdate> _inventoryMediator { get; set; }
         private Mock<IInventory> _repositoryMock { get; set; }
         private Mock<IItemFactory> _itemFactoryMock { get; set; }
         private Mock<IInventoryUpdateResponseFactory> _factoryMock { get; set; }
@@ -66,7 +67,7 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Positive_AddAmount_AddsAmount()
         {
-            _inventoryMediator.UpdateInventory([_inventoryUpdate, _inventoryUpdate]);
+            _inventoryMediator.HandleMessages([_inventoryUpdate, _inventoryUpdate]);
 
             _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT));
             _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.ItemID));
@@ -85,7 +86,7 @@ namespace IdelPogTests.Orchestration
                 Amount = AMOUNT
             };
 
-            _inventoryMediator.UpdateInventory([removeUpdate, removeUpdate]);
+            _inventoryMediator.HandleMessages([removeUpdate, removeUpdate]);
 
             _repositoryMock.Verify(library => library.RemoveAmount(_inventoryUpdate.ItemID, AMOUNT));
             _factoryMock.Verify(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), removeUpdate, MutateType.CHANGED));
@@ -99,7 +100,7 @@ namespace IdelPogTests.Orchestration
             _repositoryMock.Setup(repo => repo.RemoveAmount(_inventoryUpdate.ItemID, AMOUNT))
                 .Throws<Exception>();
 
-            _inventoryMediator.UpdateInventory([_inventoryUpdate, _inventoryUpdate]);
+            _inventoryMediator.HandleMessages([_inventoryUpdate, _inventoryUpdate]);
         }
 
         [Test]
@@ -108,7 +109,7 @@ namespace IdelPogTests.Orchestration
             _repositoryMock.Setup(repo => repo.AddAmount(_inventoryUpdate.ItemID, AMOUNT))
                 .Throws<Exception>();
 
-            Assert.Throws<Exception>(() => _inventoryMediator.UpdateInventory([_inventoryUpdate, _inventoryUpdate]));
+            Assert.Throws<Exception>(() => _inventoryMediator.HandleMessages([_inventoryUpdate, _inventoryUpdate]));
         }
 
         [Test]
@@ -121,7 +122,7 @@ namespace IdelPogTests.Orchestration
             _itemFactoryMock.Setup(library => library.CreateItem(_inventoryUpdate.ItemID, AMOUNT))
                 .Returns(item);
 
-            _inventoryMediator.UpdateInventory([_inventoryUpdate]);
+            _inventoryMediator.HandleMessages([_inventoryUpdate]);
 
             _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT), Times.Never);
             _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.ItemID));

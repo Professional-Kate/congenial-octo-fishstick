@@ -1,14 +1,12 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Messaging.Dispatch.Buffer;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Structures;
 
 namespace IdelPog.SimulationEngine.Inventory
 {
-    /// <summary>
-    /// See <see cref="IInventoryMediator"/> for documentation
-    /// </summary>
-    public class InventoryMediator : IInventoryMediator
+    public class InventoryMediator : IBatchMediator<InventoryUpdate>
     {
         private readonly IInventory _inventory;
         private readonly IItemFactory _itemFactory;
@@ -24,7 +22,7 @@ namespace IdelPog.SimulationEngine.Inventory
             _inventoryUpdateDispatcher = inventoryUpdateDispatcher;
         }
 
-        public void UpdateInventory(IReadOnlyList<InventoryUpdate> updates)
+        public void HandleMessages(IReadOnlyList<InventoryUpdate> updates)
         {
             List<InventoryUpdateResponse> updateDTOs = new(updates.Count);
 
