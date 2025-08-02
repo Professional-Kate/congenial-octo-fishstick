@@ -1,10 +1,9 @@
 ﻿using IdelPog.Common.Structures;
-using IdelPog.SimulationEngine.Constants;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.SimulationEngine.Assertions
+namespace IdelPog.Common.Level.Assertions
 {
     public class LevelAssertion : BaseAssertion, ILevelAssertion
     {
@@ -16,7 +15,7 @@ namespace IdelPog.SimulationEngine.Assertions
         {
             Assert<MaxLevelException>(() =>
             {
-                if (levelable.Level >= SkillConstants.MAX_SKILL_LEVEL)
+                if (levelable.Level >= LevelConstants.MAX_LEVEL)
                 {
                     throw new MaxLevelException(levelable, nameof(levelable));
                 }

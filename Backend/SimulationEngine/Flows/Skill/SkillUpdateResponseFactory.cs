@@ -1,18 +1,18 @@
-﻿using IdelPog.Common.Responses;
-using IdelPog.SimulationEngine.Structures.Level;
+﻿using IdelPog.Common.Factories;
+using IdelPog.Common.Responses;
 
 namespace IdelPog.SimulationEngine.Skill
 {
-    public class SkillUpdateFactory : ISkillUpdateFactory
+    public class SkillUpdateResponseFactory : ISkillUpdateResponseFactory
     {
         private readonly ILevelProgressFactory _levelProgressFactory;
 
-        public SkillUpdateFactory(ILevelProgressFactory levelProgressFactory)
+        public SkillUpdateResponseFactory(ILevelProgressFactory levelProgressFactory)
         {
             _levelProgressFactory = levelProgressFactory;
         }
 
-        public SkillUpdateResponse CreateSkillUpdate(Models.Skill skill, bool hasLeveled)
+        public SkillUpdateResponse Create(Models.Skill skill, bool hasLeveled)
         {
             return new SkillUpdateResponse
             {

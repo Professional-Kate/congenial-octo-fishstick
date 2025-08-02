@@ -1,7 +1,8 @@
-﻿using IdelPog.Common.Structures;
+﻿using IdelPog.Common.Level.Assertions;
+using IdelPog.Common.Structures;
 using IdelPog.Validation.Assertions;
 
-namespace IdelPog.SimulationEngine.Assertions.Pipelines
+namespace IdelPog.Common.Level.Pipelines
 {
     /// <inheritdoc cref="ILevelableAssertionPipeline"/>
     public class LevelableAssertionPipeline : ILevelableAssertionPipeline

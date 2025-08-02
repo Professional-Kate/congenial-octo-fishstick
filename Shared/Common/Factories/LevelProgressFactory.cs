@@ -1,6 +1,6 @@
 ﻿using IdelPog.Common.Structures;
 
-namespace IdelPog.SimulationEngine.Structures.Level
+namespace IdelPog.Common.Factories
 {
     public class LevelProgressFactory : ILevelProgressFactory
     {

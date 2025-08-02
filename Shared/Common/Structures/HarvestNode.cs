@@ -1,7 +1,6 @@
 ﻿using IdelPog.Common.Enums;
-using IdelPog.Common.Structures;
 
-namespace ContentEngine.Models
+namespace IdelPog.Common.Structures
 {
     public readonly record struct HarvestNode : ICloneable<HarvestNode>
     {

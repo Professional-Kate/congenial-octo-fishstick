@@ -1,6 +1,6 @@
 ﻿using IdelPog.Common.Structures;
 
-namespace IdelPog.SimulationEngine.Assertions
+namespace IdelPog.Common.Level.Assertions
 {
     public interface ILevelAssertion
     {

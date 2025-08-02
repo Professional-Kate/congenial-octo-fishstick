@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Enums;
+using IdelPog.Common.Level;
 using IdelPog.Common.Repository;
 using IdelPog.Common.Responses;
 using IdelPog.Common.Structures;
@@ -14,17 +15,17 @@ namespace IdelPog.SimulationEngine.Skill
         private readonly IStateRepository<SkillID, Models.Skill> _skillRepository;
         private readonly ICurrentSkillProvider _currentSkillProvider;
         private readonly IDispatchOne<SkillUpdateResponse> _skillUpdateDTODispatcher;
-        private readonly ISkillUpdateFactory _skillUpdateFactory;
+        private readonly ISkillUpdateResponseFactory _skillUpdateResponseFactory;
 
         public SkillActionMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Models.Skill> skillRepository,
-            ICurrentSkillProvider currentSkillProvider, IDispatchOne<SkillUpdateResponse> skillUpdateDTODispatcher, ISkillUpdateFactory skillUpdateFactory)
+            ICurrentSkillProvider currentSkillProvider, IDispatchOne<SkillUpdateResponse> skillUpdateDTODispatcher, ISkillUpdateResponseFactory skillUpdateResponseFactory)
         {
             _experienceService = experienceService;
             _levelService = levelService;
             _skillRepository = skillRepository;
             _currentSkillProvider = currentSkillProvider;
             _skillUpdateDTODispatcher = skillUpdateDTODispatcher;
-            _skillUpdateFactory = skillUpdateFactory;
+            _skillUpdateResponseFactory = skillUpdateResponseFactory;
         }
 
         public void Run()
@@ -35,15 +36,15 @@ namespace IdelPog.SimulationEngine.Skill
             Levelable levelable = skill.Levelable;
 
             _experienceService.AddExperience(levelable);
-            bool canSkillLevel = _levelService.CanSkillLevel(levelable);
+            bool canSkillLevel = _levelService.CanLevel(levelable);
 
             if (canSkillLevel)
             {
-                _levelService.LevelUpSkill(levelable);
+                _levelService.LevelUp(levelable);
             }
 
             _skillRepository.Update(currentSkillID, skill);
-            _skillUpdateDTODispatcher.Dispatch(_skillUpdateFactory.CreateSkillUpdate(skill, canSkillLevel));
+            _skillUpdateDTODispatcher.Dispatch(_skillUpdateResponseFactory.Create(skill, canSkillLevel));
         }
     }
 }

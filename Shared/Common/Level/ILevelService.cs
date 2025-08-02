@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Structures;
 using IdelPog.Validation.Exceptions;
 
-namespace IdelPog.SimulationEngine.Service
+namespace IdelPog.Common.Level
 {
     public interface ILevelService
     {
@@ -10,7 +10,7 @@ namespace IdelPog.SimulationEngine.Service
         /// </summary>
         /// <param name="levelable">The <see cref="Levelable"/> you want to check if it can level up</param>
         /// <returns>If the <see cref="Levelable"/> can level up</returns>
-        public bool CanSkillLevel(Levelable levelable)
+        public bool CanLevel(Levelable levelable)
         {
             return levelable.Experience >= levelable.NextLevelExperience;
         }
@@ -24,6 +24,6 @@ namespace IdelPog.SimulationEngine.Service
         /// <remarks>
         /// This method will calculate a new <see cref="Levelable.NextLevelExperience"/>
         /// </remarks>
-        public void LevelUpSkill(Levelable levelable);
+        public void LevelUp(Levelable levelable);
     }
 }
