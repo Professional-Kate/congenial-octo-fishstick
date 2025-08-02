@@ -16,10 +16,10 @@ namespace Integration.Tests
 {
     public class ManagedBuffer
     {
-        protected IBufferMessenger BufferMessenger { get; private set; }
         protected IBufferManager BufferManager { get; private set; }
-        protected IDispatchOne<FlowDescriptor> FlowDescriptorDispatcher { get; private set; }
         protected ICurrentSkillProvider CurrentSkillProvider;
+        private IBufferMessenger _bufferMessenger { get; set; }
+        private IDispatchOne<FlowDescriptor> _flowDescriptorDispatcher { get; set; }
         private IBufferFactory _bufferFactory;
         private IObjectNullAssertion _objectNullAssertion;
 
@@ -32,29 +32,37 @@ namespace Integration.Tests
         [SetUp]
         protected void BaseSetUp()
         {
+            Setup();
+            Register();
+        }
+        
+        private void Setup()
+        {
             IListenerAssertion listenerAssertion = new ListenerAssertion(new ThrowHandler());
             IBufferAssertion bufferAssertion = new BufferAssertion(new ThrowHandler());
 
-            BufferMessenger = new BufferMessenger(_objectNullAssertion, listenerAssertion);
-            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher) BufferMessenger);
+            _bufferMessenger = new BufferMessenger(_objectNullAssertion, listenerAssertion);
+            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher)_bufferMessenger);
             BufferManager = new BufferManager(_bufferFactory, _objectNullAssertion);
-            
-            FlowDescriptorDispatcher = new ManagedDispatcher<FlowDescriptor>(BufferManager, _objectNullAssertion, new CollectionAssertion(new ThrowHandler()));
-            
-            CurrentSkillProvider currentSkillProvider = new();
-            ICurrentSkillSetter currentSkillSetter = currentSkillProvider;
-            ICurrentSkillProvider skillProvider = currentSkillProvider;
-            CurrentSkillProvider = skillProvider;
-            
-            FlowBootstrapper.Initialize(BufferMessenger);
-            CurrencyBootstrapper.InitializeFlows(BufferManager, FlowDescriptorDispatcher);
-            SkillBootstrapper.RegisterSkillChange(BufferManager, FlowDescriptorDispatcher, currentSkillSetter);
-            FlowBootstrapper.InitializeFlows(BufferMessenger);
+
+            _flowDescriptorDispatcher = new ManagedDispatcher<FlowDescriptor>(BufferManager, _objectNullAssertion, new CollectionAssertion(new ThrowHandler()));
+        }
+
+        private void Register()
+        {
+            CurrentSkillProvider provider = new();
+            ICurrentSkillSetter setter = provider;
+            CurrentSkillProvider = provider;
+
+            FlowBootstrapper.Initialize(_bufferMessenger);
+            CurrencyBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher);
+            SkillBootstrapper.RegisterSkillChange(BufferManager, _flowDescriptorDispatcher, setter);
+            FlowBootstrapper.InitializeFlows(_bufferMessenger);
         }
 
         protected void ManagedSubscribe(IListener listener)
         {
-            BufferMessenger.Subscribe(listener);
+            _bufferMessenger.Subscribe(listener);
         }
     }
 }

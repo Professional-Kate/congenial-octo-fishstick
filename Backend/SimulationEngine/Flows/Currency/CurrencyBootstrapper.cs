@@ -34,7 +34,7 @@ namespace IdelPog.SimulationEngine.Currency
         /// <param name="flowDescriptorDispatcher">Used to dispatch a <see cref="FlowDescriptor"/></param>
         /// <seealso cref="RegisterCurrencyCreation"/>
         /// <seealso cref="RegisterCurrencyUpdate"/>
-        public static void InitializeFlows(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher)
+        public static void RegisterFlows(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher)
         {
             IStateRepository<CurrencyType, Models.Currency> currencyRepository = new StateRepository<CurrencyType, Models.Currency>();
 
