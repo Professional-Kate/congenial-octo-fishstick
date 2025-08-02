@@ -1,4 +1,6 @@
-﻿using IdelPog.Flows;
+﻿using ContentEngine;
+using ContentEngine.Services;
+using IdelPog.Flows;
 using IdelPog.Flows.Types;
 using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Dispatch;
@@ -18,7 +20,8 @@ namespace Integration.Tests
     {
         protected IBufferManager BufferManager { get; private set; }
         protected ICurrentSkillProvider CurrentSkillProvider;
-        protected IBufferMessenger BufferMessenger { get; set; }
+        protected ICurrentResourceProvider CurrentResourceProvider;
+        private IBufferMessenger _bufferMessenger { get; set; }
         private IDispatchOne<FlowDescriptor> _flowDescriptorDispatcher { get; set; }
         private IBufferFactory _bufferFactory;
         private IObjectNullAssertion _objectNullAssertion;
@@ -41,8 +44,8 @@ namespace Integration.Tests
             IListenerAssertion listenerAssertion = new ListenerAssertion(new ThrowHandler());
             IBufferAssertion bufferAssertion = new BufferAssertion(new ThrowHandler());
 
-            BufferMessenger = new BufferMessenger(_objectNullAssertion, listenerAssertion);
-            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher)BufferMessenger);
+            _bufferMessenger = new BufferMessenger(_objectNullAssertion, listenerAssertion);
+            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher)_bufferMessenger);
             BufferManager = new BufferManager(_bufferFactory, _objectNullAssertion);
 
             _flowDescriptorDispatcher = new ManagedDispatcher<FlowDescriptor>(BufferManager, _objectNullAssertion, new CollectionAssertion(new ThrowHandler()));
@@ -50,19 +53,24 @@ namespace Integration.Tests
 
         private void Register()
         {
-            CurrentSkillProvider provider = new();
-            ICurrentSkillSetter setter = provider;
-            CurrentSkillProvider = provider;
+            CurrentSkillProvider skillProvider = new();
+            ICurrentSkillSetter skillSetter = skillProvider;
+            CurrentSkillProvider = skillProvider;
 
-            FlowBootstrapper.Initialize(BufferMessenger);
+            CurrentResourceProvider resourceProvider = new();
+            ICurrentResourceSetter resourceSetter = resourceProvider;
+            CurrentResourceProvider = resourceProvider;
+
+            FlowBootstrapper.Initialize(_bufferMessenger);
             CurrencyBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher);
-            SkillBootstrapper.RegisterSetSkill(BufferManager, _flowDescriptorDispatcher, setter);
-            FlowBootstrapper.InitializeFlows(BufferMessenger);
+            SkillBootstrapper.RegisterSetSkill(BufferManager, _flowDescriptorDispatcher, skillSetter);
+            EngineBootstrapper.RegisterSetHarvestNode(BufferManager, _flowDescriptorDispatcher, resourceSetter);
+            FlowBootstrapper.InitializeFlows(_bufferMessenger);
         }
 
         protected void ManagedSubscribe(IListener listener)
         {
-            BufferMessenger.Subscribe(listener);
+            _bufferMessenger.Subscribe(listener);
         }
     }
 }

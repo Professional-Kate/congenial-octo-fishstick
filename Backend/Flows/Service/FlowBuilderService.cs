@@ -25,7 +25,7 @@ namespace IdelPog.Flows
 
         private IListener ConstructSingleFlow<TCommand, TError>(FlowDescriptor flowDescriptor)
         {
-            IContextualHandler<TCommand> contextualHandler = new DispatchingHandler<TError, TCommand>((IDispatchOne<TError>) flowDescriptor.ResponseDispatcher, (IErrorFactory<TError, TCommand>) flowDescriptor.ErrorFactory);
+            IContextualHandler<TCommand> contextualHandler = new DispatchingHandler<TError, TCommand>((IDispatchOne<TError>) flowDescriptor.ErrorDispatcher, (IErrorFactory<TError, TCommand>) flowDescriptor.ErrorFactory);
             ISingleControllerExecutionAssertion<TCommand> executionAssertion = new SingleControllerExecutionAssertion<TCommand>(contextualHandler);
             ISingleListener<TCommand> singleListener = new ManagedSingleListener<TCommand>((ISingleController<TCommand>) flowDescriptor.Controller, executionAssertion);
 
@@ -34,7 +34,7 @@ namespace IdelPog.Flows
 
         private IListener ConstructBufferedFlow<TCommand, TError>(FlowDescriptor flowDescriptor)
         {
-            IContextualHandler<IReadOnlyList<TCommand>> contextualHandler = new DispatchingHandler<TError, IReadOnlyList<TCommand>>((IDispatchOne<TError>) flowDescriptor.ResponseDispatcher, (IErrorFactory<TError, IReadOnlyList<TCommand>>) flowDescriptor.ErrorFactory);
+            IContextualHandler<IReadOnlyList<TCommand>> contextualHandler = new DispatchingHandler<TError, IReadOnlyList<TCommand>>((IDispatchOne<TError>) flowDescriptor.ErrorDispatcher, (IErrorFactory<TError, IReadOnlyList<TCommand>>) flowDescriptor.ErrorFactory);
             IBatchControllerExecutionAssertion<TCommand> executionAssertion = new BatchControllerExecutionAssertion<TCommand>(contextualHandler);
             IBufferListener<TCommand> bufferListener = new ManagedBufferListener<TCommand>((IBatchController<TCommand>) flowDescriptor.Controller, executionAssertion);
 

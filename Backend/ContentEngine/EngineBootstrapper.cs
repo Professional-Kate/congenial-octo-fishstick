@@ -7,9 +7,12 @@ using IdelPog.Common.Errors;
 using IdelPog.Common.Factories;
 using IdelPog.Common.Repository;
 using IdelPog.Common.Responses;
+using IdelPog.Flows.Builder;
+using IdelPog.Flows.Types;
+using IdelPog.Messaging.Controller;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Dispatch.Single;
-using IdelPog.Messaging.Messenger;
+using IdelPog.Messaging.Listeners.Single;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -19,7 +22,7 @@ namespace ContentEngine
 {
     public class EngineBootstrapper
     {
-        public void Initialize(IBufferMessenger messenger, IBufferManager bufferManager, ICurrentResourceSetter currentResourceSetter)
+        public static void RegisterSetHarvestNode(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, ICurrentResourceSetter currentResourceSetter)
         {
             IHandler throwHandler = new ThrowHandler();
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
@@ -27,7 +30,7 @@ namespace ContentEngine
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<SetHarvestNodeError, SetHarvestNode> nodeChangeDTOFactory = new SetHarvestNodeErrorFactory(baseErrorFactory);
+            IErrorFactory<SetHarvestNodeError, SetHarvestNode> setHarvestNodeErrorFactory = new SetHarvestNodeErrorFactory(baseErrorFactory);
             IDispatchOne<SetHarvestNodeError> harvestNodeErrorDispatcher = new ManagedDispatcher<SetHarvestNodeError>(bufferManager, objectNullAssertion, collectionAssertion);
             IAssetRepository<SkillID, SkillNodeEntity> skillNodeRepository = new AssetRepository<SkillID, SkillNodeEntity>();
 
@@ -39,10 +42,19 @@ namespace ContentEngine
             
             IDispatchOne<SetHarvestNodeResponse> setHarvestNodeResponseDispatcher = new ManagedDispatcher<SetHarvestNodeResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             ISetHarvestNodeResponseFactory nodeChangeResponseFactor = new SetHarvestNodeResponseFactory();
-            IHarvestNodeAccessSystem harvestNodeAccessSystem = new HarvestNodeAccessSystem(skillNodeRepository, currentResourceSetter, setHarvestNodeResponseDispatcher, nodeChangeResponseFactor, foundAssertion);
-            SetHarvestNodeListener harvestNodeListener = new(harvestNodeAccessSystem);
+            ISingleMediator<SetHarvestNode> setHarvestNodeMediator = new SetHarvestNodeMediator(skillNodeRepository, currentResourceSetter, setHarvestNodeResponseDispatcher, nodeChangeResponseFactor, foundAssertion);
+            ISingleController<SetHarvestNode> setHarvestNodeController = new ManagedSingleController<SetHarvestNode>(setHarvestNodeMediator);
             
-            messenger.Subscribe(harvestNodeListener);
+            FlowDescriptor flowDescriptor = new FlowBuilder()
+                .ForCommand(typeof(SetHarvestNode))
+                .SetDispatchMode(BufferMode.SINGLE)
+                .SetDescription(typeof(SetHarvestNode), typeof(SetHarvestNodeResponse), typeof(SetHarvestNodeError))
+                .WithController(setHarvestNodeController)
+                .WithErrorDispatcher(harvestNodeErrorDispatcher)
+                .WithErrorFactory(setHarvestNodeErrorFactory)
+                .Build();
+            
+            flowDescriptorDispatcher.Dispatch(flowDescriptor);
         }
     }
 }

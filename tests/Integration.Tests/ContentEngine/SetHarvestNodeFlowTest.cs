@@ -22,7 +22,6 @@ namespace Integration.Tests.ContentEngine
             _currentResourceSetter = currentResourceProvider;
             _currentResourceProvider = currentResourceProvider;
             
-            new EngineBootstrapper().Initialize(BufferMessenger, BufferManager, _currentResourceSetter);
 
 
             _setHarvestNode = new SetHarvestNode

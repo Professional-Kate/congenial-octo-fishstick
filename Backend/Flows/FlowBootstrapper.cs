@@ -45,6 +45,7 @@ namespace IdelPog.Flows
             flowSubscriptionMediator.ConstructAndSubscribe<CurrencyUpdate, CurrencyUpdateError>();
             flowSubscriptionMediator.ConstructAndSubscribe<CurrencyCreation, CurrencyCreationError>();
             flowSubscriptionMediator.ConstructAndSubscribe<SetSkill, SetSkillError>();
+            flowSubscriptionMediator.ConstructAndSubscribe<SetHarvestNode, SetHarvestNodeError>();
         }
 
         [MemberNotNull(nameof(_flowRepository))]

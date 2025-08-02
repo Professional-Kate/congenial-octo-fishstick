@@ -10,7 +10,7 @@ namespace IdelPog.Flows.Types
         public required Type CommandType { get; init; }
         public required BufferMode ListeningMode { get; init; }
         public required IController Controller { get; init; }
-        public required IDispatcher ResponseDispatcher { get; init; }
+        public required IDispatcher ErrorDispatcher { get; init; }
         public required IErrorFactory ErrorFactory { get; init; }
         public required string Description { get; init; }
     }

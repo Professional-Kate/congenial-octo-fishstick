@@ -75,7 +75,7 @@ namespace IdelPog.SimulationEngine.Currency
                 .SetDispatchMode(BufferMode.BATCH)
                 .SetDescription(typeof(CurrencyCreation), typeof(CurrencyCreationResponse), typeof(CurrencyCreationError))
                 .WithController(currencyCreationController)
-                .WithResponseDispatcher(currencyCreationErrorDispatcher)
+                .WithErrorDispatcher(currencyCreationErrorDispatcher)
                 .WithErrorFactory(currencyCreationErrorFactory)
                 .Build();
             
@@ -120,7 +120,7 @@ namespace IdelPog.SimulationEngine.Currency
                 .SetDispatchMode(BufferMode.BATCH)
                 .SetDescription(typeof(CurrencyUpdate), typeof(CurrencyUpdateResponse), typeof(CurrencyUpdateError))
                 .WithController(updateController)
-                .WithResponseDispatcher(updateErrorDispatcher)
+                .WithErrorDispatcher(updateErrorDispatcher)
                 .WithErrorFactory(currencyCreationErrorFactory)
                 .Build();
             

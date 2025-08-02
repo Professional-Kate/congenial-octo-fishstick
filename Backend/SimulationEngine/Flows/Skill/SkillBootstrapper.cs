@@ -47,7 +47,7 @@ namespace IdelPog.SimulationEngine.Skill
                 .SetDispatchMode(BufferMode.SINGLE)
                 .SetDescription(typeof(SetSkill), typeof(SetSkillResponse), typeof(SetSkillError))
                 .WithController(setSkillController)
-                .WithResponseDispatcher(setSkillErrorDispatcher)
+                .WithErrorDispatcher(setSkillErrorDispatcher)
                 .WithErrorFactory(setSkillErrorFactory)
                 .Build();
             
