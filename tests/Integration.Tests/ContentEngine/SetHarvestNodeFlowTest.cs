@@ -1,9 +1,10 @@
-﻿using ContentEngine;
-using ContentEngine.Services;
+﻿using ContentEngine.Services;
 using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
+using IdelPog.Common.Errors;
 using IdelPog.Common.Responses;
 using IdelPog.Messaging.Buffer;
+using IdelPog.Messaging.Exceptions;
 
 namespace Integration.Tests.ContentEngine
 {
@@ -11,18 +12,15 @@ namespace Integration.Tests.ContentEngine
     public class SetHarvestNodeFlowTest : ManagedBuffer
     {
         private SetHarvestNode _setHarvestNode;
-        private HarvestNodeChangeDTOListener _harvestNodeChangeDTOListener;
-        private ICurrentResourceSetter _currentResourceSetter;
+        private HarvestNodeChangeResponseListener _harvestNodeChangeResponseListener;
+        private HarvestNodeErrorListener  _harvestNodeErrorListener;
         private ICurrentResourceProvider _currentResourceProvider;
         
         [SetUp]
         public void Setup()
         {
             CurrentResourceProvider currentResourceProvider = new();
-            _currentResourceSetter = currentResourceProvider;
             _currentResourceProvider = currentResourceProvider;
-            
-
 
             _setHarvestNode = new SetHarvestNode
             {
@@ -30,8 +28,10 @@ namespace Integration.Tests.ContentEngine
                 SkillID = SkillID.MINING
             };
             
-            _harvestNodeChangeDTOListener = new HarvestNodeChangeDTOListener();
-            ManagedSubscribe(_harvestNodeChangeDTOListener);
+            _harvestNodeChangeResponseListener = new HarvestNodeChangeResponseListener();
+            _harvestNodeErrorListener = new  HarvestNodeErrorListener();
+            ManagedSubscribe(_harvestNodeChangeResponseListener);
+            ManagedSubscribe(_harvestNodeErrorListener);
         }
 
         private void DispatchSetHarvestNode(SetHarvestNode setHarvestNode)
@@ -43,15 +43,29 @@ namespace Integration.Tests.ContentEngine
 
         private void AssertListenerWasCalled(SetHarvestNode setHarvestNode)
         {
-            Assert.That(_harvestNodeChangeDTOListener.WasCalled, Is.True);
-            SetHarvestNodeResponse setHarvestNodeResponse = _harvestNodeChangeDTOListener.SetHarvestNodeResponse;
+            Assert.That(_harvestNodeChangeResponseListener.WasCalled, Is.True);
+            SetHarvestNodeResponse setHarvestNodeResponse = _harvestNodeChangeResponseListener.SetHarvestNodeResponse;
             
             Assert.That(setHarvestNodeResponse.SetHarvestNode, Is.EqualTo(setHarvestNode));
+        }
+
+        private void AssertErrorListenerWasCalled(SetHarvestNode expected, Type expectedExceptionType)
+        {
+            Assert.That(_harvestNodeErrorListener.WasCalled, Is.True);
+            SetHarvestNode result = _harvestNodeErrorListener.SetHarvestNodeError.SetHarvestNode;
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ResourceID, Is.EqualTo(expected.ResourceID));
+                Assert.That(result.SkillID, Is.EqualTo(expected.SkillID));
+            });
+            
+            BaseError baseError = _harvestNodeErrorListener.SetHarvestNodeError.BaseError;
+            Assert.That(baseError.Exception.GetType(), Is.EqualTo(expectedExceptionType));
         }
         
         private void AssertListenerWasNotCalled()
         {
-            Assert.That(_harvestNodeChangeDTOListener.WasCalled, Is.False);
+            Assert.That(_harvestNodeChangeResponseListener.WasCalled, Is.False);
         }
 
         private void AssertCurrentResourceProvider_Equals(ResourceID expected)
@@ -74,7 +88,7 @@ namespace Integration.Tests.ContentEngine
         }
 
         [Test]
-        public void Positive_SendSameCommandMultipleTimes_SendsSameDTO()
+        public void Positive_SendSameCommandMultipleTimes_SendsSameResponse()
         {
             const int times = 5;
             for (int i = 0; i < times; i++)
@@ -86,23 +100,23 @@ namespace Integration.Tests.ContentEngine
         }
 
         [Test]
-        public void Negative_SendMissingSkillID_SendsErrorDTO()
+        public void Negative_SendMissingSkillID_SendsError()
         {
-            Assert.DoesNotThrow(() => DispatchSetHarvestNode(new SetHarvestNode { ResourceID = ResourceID.GOLD, SkillID = SkillID.WOOD_CUTTING }));
+            SetHarvestNode missingSkill = new() { ResourceID = ResourceID.GOLD, SkillID = SkillID.WOOD_CUTTING };
+            Assert.DoesNotThrow(() => DispatchSetHarvestNode(missingSkill));
             AssertListenerWasNotCalled();
             AssertCurrencyResourceProvider_DoesNotEqual(ResourceID.GOLD);
-            
-            // TODO: add tests for the ErrorDTO listener
+            AssertErrorListenerWasCalled(missingSkill, typeof(ControllerThrownException));
         } 
         
         [Test]
-        public void Negative_SendMissingResourceID_SendsErrorDTO()
+        public void Negative_SendMissingResourceID_SendsError()
         {
-            Assert.DoesNotThrow(() => DispatchSetHarvestNode(new SetHarvestNode { ResourceID = ResourceID.GOLD, SkillID = SkillID.MINING }));
+            SetHarvestNode missingResourceCommand = new() { ResourceID = ResourceID.GOLD, SkillID = SkillID.MINING };
+            Assert.DoesNotThrow(() => DispatchSetHarvestNode(missingResourceCommand));
             AssertListenerWasNotCalled();
             AssertCurrencyResourceProvider_DoesNotEqual(ResourceID.GOLD);
-            
-            // TODO: add tests for the ErrorDTO listener
+            AssertErrorListenerWasCalled(missingResourceCommand, typeof(ControllerThrownException));
         } 
     }
 }

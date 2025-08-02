@@ -3,7 +3,7 @@ using IdelPog.Messaging.Listeners;
 
 namespace Integration.Tests.ContentEngine
 {
-    public class HarvestNodeChangeDTOListener : ISingleListener<SetHarvestNodeResponse>
+    public class HarvestNodeChangeResponseListener : ISingleListener<SetHarvestNodeResponse>
     {
         public Type ListenerType => typeof(SetHarvestNodeResponse);
         public bool WasCalled { get; private set; }
