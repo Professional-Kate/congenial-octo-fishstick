@@ -9,10 +9,10 @@ namespace Integration.Tests.Console
         public bool WasCalled { get; private set; }
         public ScheduleControl ScheduleControl { get; private set; }
 
-        public void Handle(ScheduleControl harvestNode)
+        public void Handle(ScheduleControl message)
         {
             WasCalled = true;
-            ScheduleControl = harvestNode;
+            ScheduleControl = message;
         }
     }
 }

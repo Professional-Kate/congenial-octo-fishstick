@@ -17,6 +17,7 @@
         <ProjectReference Include="..\..\Shared\Common\Common.csproj"/>
         <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj"/>
         <ProjectReference Include="..\ECS\ECS.csproj"/>
+        <ProjectReference Include="..\Flows\Flows.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,8 +1,14 @@
-﻿using IdelPog.Messaging.Assertions;
+﻿using IdelPog.Flows;
+using IdelPog.Flows.Types;
+using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Factory;
 using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
+using IdelPog.SimulationEngine.Currency;
+using IdelPog.SimulationEngine.Skill;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 
@@ -10,8 +16,10 @@ namespace Integration.Tests
 {
     public class ManagedBuffer
     {
-        protected IBufferMessenger BufferMessenger { get; private set; }
         protected IBufferManager BufferManager { get; private set; }
+        protected ICurrentSkillProvider CurrentSkillProvider;
+        protected IBufferMessenger BufferMessenger { get; set; }
+        private IDispatchOne<FlowDescriptor> _flowDescriptorDispatcher { get; set; }
         private IBufferFactory _bufferFactory;
         private IObjectNullAssertion _objectNullAssertion;
 
@@ -24,12 +32,32 @@ namespace Integration.Tests
         [SetUp]
         protected void BaseSetUp()
         {
+            Setup();
+            Register();
+        }
+        
+        private void Setup()
+        {
             IListenerAssertion listenerAssertion = new ListenerAssertion(new ThrowHandler());
             IBufferAssertion bufferAssertion = new BufferAssertion(new ThrowHandler());
 
             BufferMessenger = new BufferMessenger(_objectNullAssertion, listenerAssertion);
-            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher) BufferMessenger);
+            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher)BufferMessenger);
             BufferManager = new BufferManager(_bufferFactory, _objectNullAssertion);
+
+            _flowDescriptorDispatcher = new ManagedDispatcher<FlowDescriptor>(BufferManager, _objectNullAssertion, new CollectionAssertion(new ThrowHandler()));
+        }
+
+        private void Register()
+        {
+            CurrentSkillProvider provider = new();
+            ICurrentSkillSetter setter = provider;
+            CurrentSkillProvider = provider;
+
+            FlowBootstrapper.Initialize(BufferMessenger);
+            CurrencyBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher);
+            SkillBootstrapper.RegisterSetSkill(BufferManager, _flowDescriptorDispatcher, setter);
+            FlowBootstrapper.InitializeFlows(BufferMessenger);
         }
 
         protected void ManagedSubscribe(IListener listener)

@@ -1,4 +1,6 @@
 ﻿using IdelPog.Messaging.Buffer;
+using IdelPog.Messaging.Dispatch.Buffer;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;
 

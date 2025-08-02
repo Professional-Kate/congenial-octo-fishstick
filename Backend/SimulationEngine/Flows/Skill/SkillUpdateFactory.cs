@@ -1,16 +1,23 @@
-﻿using IdelPog.SimulationEngine.Structures;
+﻿using IdelPog.SimulationEngine.Structures.Level;
 
 namespace IdelPog.SimulationEngine.Skill
 {
-    public class SkillUpdateFactory(ILevelableUpdateFactory levelableUpdateFactory) : ISkillUpdateFactory
+    public class SkillUpdateFactory : ISkillUpdateFactory
     {
-        public SkillUpdateDTO CreateSkillUpdate(Models.Skill skill, bool hasLeveled)
+        private readonly ILevelProgressFactory _levelProgressFactory;
+
+        public SkillUpdateFactory(ILevelProgressFactory levelProgressFactory)
         {
-            return new SkillUpdateDTO
+            _levelProgressFactory = levelProgressFactory;
+        }
+
+        public SkillUpdateResponse CreateSkillUpdate(Models.Skill skill, bool hasLeveled)
+        {
+            return new SkillUpdateResponse
             {
                 SkillID = skill.SkillID,
                 HasLeveled = hasLeveled,
-                LevelableUpdateDTO = levelableUpdateFactory.CreateLevelableUpdate(skill.Levelable)
+                LevelProgress = _levelProgressFactory.CreateLevelProgress(skill.Levelable)
             };
         }
     }

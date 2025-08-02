@@ -1,18 +1,18 @@
-﻿using IdelPog.Common.DTO;
+﻿using IdelPog.Common.Responses;
 using IdelPog.Messaging.Listeners;
 
 namespace Integration.Tests.ContentEngine
 {
-    public class HarvestNodeChangeDTOListener : ISingleListener<ResourceChangeDTO>
+    public class HarvestNodeChangeDTOListener : ISingleListener<SetHarvestNodeResponse>
     {
-        public Type ListenerType => typeof(ResourceChangeDTO);
+        public Type ListenerType => typeof(SetHarvestNodeResponse);
         public bool WasCalled { get; private set; }
-        public ResourceChangeDTO ResourceChangeDTO { get; private set; } 
+        public SetHarvestNodeResponse SetHarvestNodeResponse { get; private set; } 
         
-        public void Handle(ResourceChangeDTO resource)
+        public void Handle(SetHarvestNodeResponse message)
         {
             WasCalled = true;
-            ResourceChangeDTO = resource;
+            SetHarvestNodeResponse = message;
         }
 
     }

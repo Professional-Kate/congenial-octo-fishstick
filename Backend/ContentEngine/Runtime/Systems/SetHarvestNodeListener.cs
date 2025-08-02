@@ -14,9 +14,9 @@ namespace ContentEngine.Runtime.Systems
 
         public Type ListenerType => typeof(SetHarvestNode);
         
-        public void Handle(SetHarvestNode harvestNode)
+        public void Handle(SetHarvestNode message)
         {
-            _harvestNodeAccessSystem.UpdateHarvestNode(harvestNode);
+            _harvestNodeAccessSystem.UpdateHarvestNode(message);
         }
     }
 }

@@ -17,6 +17,7 @@ using IdelPog.ECS;
 using IdelPog.ECS.Assertions;
 using IdelPog.ECS.Factory;
 using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -65,12 +66,12 @@ namespace Console
             ICommandDomainResolver currencyDomainResolver =
                 new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateFactory, currencyUpdateDispatcher, argumentCountAssertion);
 
-            ISkillChangeFactory skillChangeFactory = new SkillChangeFactory();
+            ISetSkillFactory setSkillFactory = new SetSkillFactory();
             IDispatchOne<SetSkill> skillChangeDispatcher = new ManagedDispatcher<SetSkill>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            IArgumentResolverPipeline<SkillChangeArguments> skillChangePipeline = new SkillChangeResolver(skillIDResolver);
+            IArgumentResolverPipeline<SetSkillArguments> skillChangePipeline = new SetSkillResolver(skillIDResolver);
             ICommandDomainResolver skillDomainResolver =
-                new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, skillChangeFactory, argumentCountAssertion);
+                new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, setSkillFactory, argumentCountAssertion);
 
             IComponentStoreFactory componentStoreFactory = new ComponentStoreFactory();
             IDomainComponentFactory domainComponentFactory = new DomainComponentFactory();

@@ -14,7 +14,7 @@ namespace Integration.Tests.Console
     public class SkillDomainFlowTest : ManagedBuffer
     {
         private IInputHandler _inputHandler;
-        private SkillChangeListener _skillChangeListener;
+        private SetSkillListener _setSkillListener;
 
         [SetUp]
         public void Setup()
@@ -22,8 +22,8 @@ namespace Integration.Tests.Console
             _inputHandler = ConsoleBootstrapper.Initialize(BufferManager);
             TestPermissionService.SendAddPermissionCall(_inputHandler, Domain.SKILL);
 
-            _skillChangeListener = new SkillChangeListener();
-            ManagedSubscribe(_skillChangeListener);
+            _setSkillListener = new SetSkillListener();
+            ManagedSubscribe(_setSkillListener);
         }
 
         private static IEnumerable<TestCaseData> ValidSkillChanges()
@@ -49,10 +49,10 @@ namespace Integration.Tests.Console
         {
             Assert.DoesNotThrow(() => _inputHandler.Input(arguments));
 
-            Assert.That(_skillChangeListener.WasCalled, Is.True);
+            Assert.That(_setSkillListener.WasCalled, Is.True);
             Assert.Multiple(() =>
             {
-                SetSkill setSkill = _skillChangeListener.SetSkill;
+                SetSkill setSkill = _setSkillListener.SetSkill;
                 Assert.That(setSkill.SkillID, Is.EqualTo(skillID));
             });
         }
@@ -67,7 +67,7 @@ namespace Integration.Tests.Console
         public void Negative_ChangeSkill_BadArguments_Throws(string[] arguments, Type exception)
         {
             Assert.Throws(exception, () => _inputHandler.Input(arguments));
-            Assert.That(_skillChangeListener.WasCalled, Is.False);
+            Assert.That(_setSkillListener.WasCalled, Is.False);
         }
 
         [Test]

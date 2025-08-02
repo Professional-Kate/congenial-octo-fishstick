@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Structures;
+using IdelPog.Validation.Exceptions;
 
 namespace IdelPog.SimulationEngine.Service
 {
@@ -14,7 +15,7 @@ namespace IdelPog.SimulationEngine.Service
         /// </summary>
         /// <param name="key">The <see cref="Information"/> object you want will have this key</param>
         /// <returns>The found <see cref="Information"/> object</returns>
-        /// <exception cref="NotFoundException">Will be thrown if the passed key is not found in the Dictionary</exception>
+        /// <exception cref="NotFoundException{TKey}">Will be thrown if the passed key is not found in the Dictionary</exception>
         public Information GetInformation(T key);
 
         /// <summary>

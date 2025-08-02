@@ -1,54 +1,55 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
-using IdelPog.Messaging.Dispatch;
-using IdelPog.SimulationEngine.Currency.DTO;
+using IdelPog.Messaging.Dispatch.Single;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency.Factories;
+using IdelPog.SimulationEngine.Currency.Responses;
 using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    /// <inheritdoc cref="ICurrencyUpdateMediator"/>
-    public class CurrencyUpdateMediator : ICurrencyUpdateMediator
+    public class CurrencyUpdateMediator : IBatchMediator<CurrencyUpdate>
     {
         private readonly ICurrencyService _currencyService;
         private readonly IStateRepository<CurrencyType, Models.Currency> _currencyRepository;
-        private readonly IDispatchMany<CurrencyUpdateDTO> _currencyUpdateDispatcher;
+        private readonly IDispatchOne<CurrencyUpdateResponse> _currencyUpdateDispatcher;
         private readonly ICurrencyUpdateSummarizer _currencyUpdateSummarizer;
-        private readonly ICurrencyUpdateDTOFactory _currencyUpdateDTOFactory;
+        private readonly ICurrencyUpdateResponseFactory _currencyUpdateResponseFactory;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IFoundAssertion _foundAssertion;
         private readonly IObjectNullAssertion _objectNullAssertion;
 
         public CurrencyUpdateMediator(
             IStateRepository<CurrencyType, Models.Currency> stateRepository,
-            ICurrencyService currencyService, IDispatchMany<CurrencyUpdateDTO> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer,
-            ICurrencyUpdateDTOFactory currencyUpdateDTOFactory,
+            ICurrencyService currencyService, IDispatchOne<CurrencyUpdateResponse> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer,
+            ICurrencyUpdateResponseFactory currencyUpdateResponseFactory,
             ICollectionAssertion collectionAssertion, IFoundAssertion foundAssertion, IObjectNullAssertion objectNullAssertion)
         {
             _currencyService = currencyService;
             _currencyRepository = stateRepository;
             _currencyUpdateDispatcher = currencyUpdateDispatcher;
             _currencyUpdateSummarizer = currencyUpdateSummarizer;
-            _currencyUpdateDTOFactory = currencyUpdateDTOFactory;
+            _currencyUpdateResponseFactory = currencyUpdateResponseFactory;
             _collectionAssertion = collectionAssertion;
             _foundAssertion = foundAssertion;
             _objectNullAssertion = objectNullAssertion;
         }
 
-        public void ProcessCurrencyUpdate(IReadOnlyList<CurrencyUpdate> updates)
+        
+        public void HandleMessages(IReadOnlyList<CurrencyUpdate> currencyUpdates)
         {
-            _objectNullAssertion.AssertNotNull(updates, nameof(updates));
-            AssertUpdates(updates);
+            _objectNullAssertion.AssertNotNull(currencyUpdates, nameof(currencyUpdates));
+            AssertUpdates(currencyUpdates);
 
-            CurrencyUpdate[] summarizedUpdates = _currencyUpdateSummarizer.GetSummary(updates);
+            CurrencyUpdate[] summarizedUpdates = _currencyUpdateSummarizer.GetSummary(currencyUpdates);
             _collectionAssertion.AssertNotEmpty(summarizedUpdates);
 
             AllCurrenciesExist(summarizedUpdates);
             List<Models.Currency> currencies = GetAllCurrencies(summarizedUpdates);
             UpdateCurrencies(MapUpdates(summarizedUpdates, currencies));
 
-            _currencyUpdateDispatcher.Dispatch(_currencyUpdateDTOFactory.CreateFrom(summarizedUpdates));
+            _currencyUpdateDispatcher.Dispatch(_currencyUpdateResponseFactory.CreateFrom(summarizedUpdates));
         }
 
         private void AssertUpdates(IReadOnlyList<CurrencyUpdate> updates)

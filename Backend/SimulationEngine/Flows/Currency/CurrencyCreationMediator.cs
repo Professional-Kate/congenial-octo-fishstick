@@ -1,41 +1,42 @@
-﻿using IdelPog.Common.Enums;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
-using IdelPog.Messaging.Dispatch;
-using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.DTO;
+using IdelPog.Messaging.Dispatch.Single;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency.Factories;
+using IdelPog.SimulationEngine.Currency.Responses;
 using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    public class CurrencyCreationMediator : ICurrencyCreationMediator
+    public class CurrencyCreationMediator : IBatchMediator<CurrencyCreation>
     {
         private readonly IStateRepository<CurrencyType, Models.Currency> _currencyRepository;
-        private readonly IDispatchMany<CurrencyCreationDTO> _currencyCreationDTODispatcher;
-        private readonly ICurrencyCreationDTOFactory _currencyCreationDTOFactory;
+        private readonly IDispatchOne<CurrencyCreationResponse> _currencyCreationDTODispatcher;
+        private readonly ICurrencyCreationResponseFactory _currencyCreationResponseFactory;
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IUniqueAssertion _uniqueAssertion;
 
         public CurrencyCreationMediator(IStateRepository<CurrencyType, Models.Currency> currencyRepository,
-            IDispatchMany<CurrencyCreationDTO> currencyCreationDTODispatcher, ICurrencyCreationDTOFactory currencyCreationDTOFactory,
+            IDispatchOne<CurrencyCreationResponse> currencyCreationDTODispatcher, ICurrencyCreationResponseFactory currencyCreationResponseFactory,
             IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion)
         {
             _currencyRepository = currencyRepository;
             _currencyCreationDTODispatcher = currencyCreationDTODispatcher;
-            _currencyCreationDTOFactory = currencyCreationDTOFactory;
+            _currencyCreationResponseFactory = currencyCreationResponseFactory;
             _objectNullAssertion = objectNullAssertion;
             _collectionAssertion = collectionAssertion;
             _uniqueAssertion = uniqueAssertion;
         }
 
-        public void CreateCurrency(IReadOnlyList<CurrencyCreation> currencies)
+        public void HandleMessages(IReadOnlyList<CurrencyCreation> currencyCreations)
         {
-            _objectNullAssertion.AssertNotNull(currencies, nameof(currencies));
-            _collectionAssertion.AssertNotEmpty(currencies);
+            _objectNullAssertion.AssertNotNull(currencyCreations, nameof(currencyCreations));
+            _collectionAssertion.AssertNotEmpty(currencyCreations);
 
-            Dictionary<CurrencyType, Models.Currency> createdCurrencies = new(currencies.Count);
-            foreach (CurrencyCreation currencyCreation in currencies)
+            Dictionary<CurrencyType, Models.Currency> createdCurrencies = new(currencyCreations.Count);
+            foreach (CurrencyCreation currencyCreation in currencyCreations)
             {
                 _uniqueAssertion.AssertUnique(currencyCreation, _currencyRepository.Contains(currencyCreation.CurrencyType));
 
@@ -50,7 +51,7 @@ namespace IdelPog.SimulationEngine.Currency
                 _currencyRepository.Add(keyValuePair.Key, keyValuePair.Value);
             }
 
-            _currencyCreationDTODispatcher.Dispatch(_currencyCreationDTOFactory.CreateFrom(currencies));
+            _currencyCreationDTODispatcher.Dispatch(_currencyCreationResponseFactory.CreateFrom(currencyCreations));
         }
     }
 }

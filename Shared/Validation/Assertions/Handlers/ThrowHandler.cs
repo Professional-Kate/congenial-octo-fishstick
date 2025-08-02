@@ -7,7 +7,7 @@ namespace IdelPog.Validation.Assertions.Handlers
     /// </summary>
     public class ThrowHandler : IHandler
     {
-        public void Handle(Exception exception)
+        public void Handle<TException>(TException exception) where TException : Exception
         {
             throw exception;
         }

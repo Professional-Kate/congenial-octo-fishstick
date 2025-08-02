@@ -1,8 +1,8 @@
 ﻿using ContentEngine;
 using ContentEngine.Services;
 using IdelPog.Common.Commands;
-using IdelPog.Common.DTO;
 using IdelPog.Common.Enums;
+using IdelPog.Common.Responses;
 using IdelPog.Messaging.Buffer;
 
 namespace Integration.Tests.ContentEngine
@@ -45,9 +45,9 @@ namespace Integration.Tests.ContentEngine
         private void AssertListenerWasCalled(SetHarvestNode setHarvestNode)
         {
             Assert.That(_harvestNodeChangeDTOListener.WasCalled, Is.True);
-            ResourceChangeDTO resourceChangeDTO = _harvestNodeChangeDTOListener.ResourceChangeDTO;
+            SetHarvestNodeResponse setHarvestNodeResponse = _harvestNodeChangeDTOListener.SetHarvestNodeResponse;
             
-            Assert.That(resourceChangeDTO.ResourceID, Is.EqualTo(setHarvestNode.ResourceID));
+            Assert.That(setHarvestNodeResponse.SetHarvestNode, Is.EqualTo(setHarvestNode));
         }
         
         private void AssertListenerWasNotCalled()

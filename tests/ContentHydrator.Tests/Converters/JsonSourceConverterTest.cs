@@ -10,7 +10,7 @@ namespace ContentHydratorTests.Converters
     [TestFixture]
     public class JsonSourceConverterTest
     {
-        private JsonSourceConverter<TestDTO> _converter { get; set; }
+        private JsonSourceConverter<TestObject> _converter { get; set; }
         private Mock<IHandler> _handlerMock { get; set; }
         private const string TEST_STRING = "testing";
         private const int TEST_NUMBER = 21;
@@ -19,7 +19,7 @@ namespace ContentHydratorTests.Converters
         public void OneTimeSetUp()
         {
             _handlerMock = new Mock<IHandler>();
-            _converter = new JsonSourceConverter<TestDTO>(TestHydrationContext.Default.TestDTO, new ObjectNullAssertion(_handlerMock.Object));
+            _converter = new JsonSourceConverter<TestObject>(TestHydrationContext.Default.TestObject, new ObjectNullAssertion(_handlerMock.Object));
         }
 
         private static IEnumerable<string> PositiveFlowDataSource()
@@ -41,12 +41,12 @@ namespace ContentHydratorTests.Converters
         public void Positive_Convert_TestRunner(string json)
         {
             JsonDocument jsonDocument = JsonDocument.Parse(json);
-            TestDTO testDTO = _converter.Convert(jsonDocument);
+            TestObject testObject = _converter.Convert(jsonDocument);
 
             Assert.Multiple(() =>
             {
-                Assert.That(testDTO.TestInt, Is.EqualTo(TEST_NUMBER));
-                Assert.That(testDTO.TestString, Is.EqualTo(TEST_STRING));
+                Assert.That(testObject.TestInt, Is.EqualTo(TEST_NUMBER));
+                Assert.That(testObject.TestString, Is.EqualTo(TEST_STRING));
             });
         }
 

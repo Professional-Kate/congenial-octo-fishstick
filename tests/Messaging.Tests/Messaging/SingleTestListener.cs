@@ -8,10 +8,10 @@ namespace IdelPog.Messaging.Tests.Messaging
         public bool WasCalled { get; private set; }
         public T Data { get; private set; }
 
-        public void Handle(T harvestNode)
+        public void Handle(T message)
         {
             WasCalled = true;
-            Data = harvestNode;
+            Data = message;
         }
 
         public void ResetObject()

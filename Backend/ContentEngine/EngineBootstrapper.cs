@@ -1,11 +1,14 @@
 ﻿using ContentEngine.Runtime.ECS;
 using ContentEngine.Runtime.Systems;
 using ContentEngine.Services;
-using IdelPog.Common.DTO;
-using IdelPog.Common.DTO.Factories;
+using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
+using IdelPog.Common.Errors;
+using IdelPog.Common.Factories;
 using IdelPog.Common.Repository;
+using IdelPog.Common.Responses;
 using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.Validation.Assertions;
@@ -23,8 +26,9 @@ namespace ContentEngine
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
 
-            INodeChangeDTOFactory nodeChangeDTOFactory = new NodeChangeDTOFactory();
-            IDispatchOne<ResourceChangeDTO> harvestNodeChangeDispatcher = new ManagedDispatcher<ResourceChangeDTO>(bufferManager, objectNullAssertion, collectionAssertion);
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            IErrorFactory<SetHarvestNodeError, SetHarvestNode> nodeChangeDTOFactory = new SetHarvestNodeErrorFactory(baseErrorFactory);
+            IDispatchOne<SetHarvestNodeError> harvestNodeErrorDispatcher = new ManagedDispatcher<SetHarvestNodeError>(bufferManager, objectNullAssertion, collectionAssertion);
             IAssetRepository<SkillID, SkillNodeEntity> skillNodeRepository = new AssetRepository<SkillID, SkillNodeEntity>();
 
             ResourceComponent stoneResourceComponent = new() { ResourceID = ResourceID.STONE }; 
@@ -33,7 +37,9 @@ namespace ContentEngine
             SkillComponent skillComponent = new() { SkillID = SkillID.MINING };
             skillNodeRepository.Add(SkillID.MINING, new SkillNodeEntity(skillComponent, resourceComponents));
             
-            IHarvestNodeAccessSystem harvestNodeAccessSystem = new HarvestNodeAccessSystem(skillNodeRepository, currentResourceSetter, harvestNodeChangeDispatcher, nodeChangeDTOFactory, foundAssertion);
+            IDispatchOne<SetHarvestNodeResponse> setHarvestNodeResponseDispatcher = new ManagedDispatcher<SetHarvestNodeResponse>(bufferManager, objectNullAssertion, collectionAssertion);
+            ISetHarvestNodeResponseFactory nodeChangeResponseFactor = new SetHarvestNodeResponseFactory();
+            IHarvestNodeAccessSystem harvestNodeAccessSystem = new HarvestNodeAccessSystem(skillNodeRepository, currentResourceSetter, setHarvestNodeResponseDispatcher, nodeChangeResponseFactor, foundAssertion);
             SetHarvestNodeListener harvestNodeListener = new(harvestNodeAccessSystem);
             
             messenger.Subscribe(harvestNodeListener);

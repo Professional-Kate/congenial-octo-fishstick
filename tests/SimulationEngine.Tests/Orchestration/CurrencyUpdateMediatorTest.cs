@@ -1,11 +1,12 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency;
-using IdelPog.SimulationEngine.Currency.DTO;
 using IdelPog.SimulationEngine.Currency.Exceptions;
 using IdelPog.SimulationEngine.Currency.Factories;
+using IdelPog.SimulationEngine.Currency.Responses;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
@@ -19,12 +20,12 @@ namespace IdelPogTests.Orchestration
     [TestFixture]
     public class CurrencyUpdateMediatorTest
     {
-        private ICurrencyUpdateMediator _currencyUpdateMediator { get; set; }
+        private IBatchMediator<CurrencyUpdate> _currencyUpdateMediator { get; set; }
         private Mock<IStateRepository<CurrencyType, Currency>> _repositoryMock { get; set; }
         private Mock<ICurrencyService> _currencyServiceMock { get; set; }
-        private Mock<IDispatchMany<CurrencyUpdateDTO>> _dispatcherMock { get; set; }
+        private Mock<IDispatchOne<CurrencyUpdateResponse>> _dispatcherMock { get; set; }
         private Mock<ICurrencyUpdateSummarizer> _currencyUpdateSummarizerMock { get; set; }
-        private Mock<ICurrencyUpdateDTOFactory> _currencyUpdateDTOFactoryMock { get; set; }
+        private Mock<ICurrencyUpdateResponseFactory> _currencyUpdateDTOFactoryMock { get; set; }
 
         private Currency _goldCurrency;
         private CurrencyUpdate _addGoldUpdate;
@@ -35,9 +36,9 @@ namespace IdelPogTests.Orchestration
         {
             _repositoryMock = new Mock<IStateRepository<CurrencyType, Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
-            _dispatcherMock = new Mock<IDispatchMany<CurrencyUpdateDTO>>();
+            _dispatcherMock = new Mock<IDispatchOne<CurrencyUpdateResponse>>();
             _currencyUpdateSummarizerMock = new Mock<ICurrencyUpdateSummarizer>();
-            _currencyUpdateDTOFactoryMock = new Mock<ICurrencyUpdateDTOFactory>();
+            _currencyUpdateDTOFactoryMock = new Mock<ICurrencyUpdateResponseFactory>();
 
             IHandler throwHandler = new ThrowHandler();
             _currencyUpdateMediator = new CurrencyUpdateMediator(_repositoryMock.Object, _currencyServiceMock.Object, _dispatcherMock.Object,
@@ -61,7 +62,7 @@ namespace IdelPogTests.Orchestration
 
         private void TestRunner(IReadOnlyList<CurrencyUpdate> updates, CurrencyUpdate[] summaryUpdates)
         {
-            CurrencyUpdateDTO[] currencyUpdateDTOs = [];
+            CurrencyUpdateResponse currencyUpdateDTOs = new CurrencyUpdateResponse { CurrencyUpdates = summaryUpdates };
 
             _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(true);
 
@@ -72,7 +73,7 @@ namespace IdelPogTests.Orchestration
             _currencyUpdateDTOFactoryMock.Setup(library => library.CreateFrom(summaryUpdates))
                 .Returns(currencyUpdateDTOs);
 
-            Assert.DoesNotThrow(() => _currencyUpdateMediator.ProcessCurrencyUpdate(updates));
+            Assert.DoesNotThrow(() => _currencyUpdateMediator.HandleMessages(updates));
 
             _repositoryMock.Verify(library => library.Contains(_addGoldUpdate.CurrencyType), Times.Once);
             _repositoryMock.Verify(library => library.Get(_addGoldUpdate.CurrencyType), Times.Once);
@@ -168,7 +169,7 @@ namespace IdelPogTests.Orchestration
 
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(currencyUpdates)).Returns([]);
 
-            EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(currencyUpdates));
+            EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.HandleMessages(currencyUpdates));
 
             Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
@@ -176,13 +177,13 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_ProcessCurrencyUpdate_NullCollection_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate(null!));
+            Assert.Throws<ArgumentNullException>(() => _currencyUpdateMediator.HandleMessages(null!));
         }
 
         [Test]
         public void Negative_ProcessCurrencyUpdate_EmptyCollection_Throws()
         {
-            EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([]));
+            EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.HandleMessages([]));
 
             Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
         }
@@ -194,7 +195,7 @@ namespace IdelPogTests.Orchestration
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(new[] { _addGoldUpdate })).Returns([_addGoldUpdate]);
 
             NotFoundException<CurrencyType> exception =
-                Assert.Throws<NotFoundException<CurrencyType>>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_addGoldUpdate]));
+                Assert.Throws<NotFoundException<CurrencyType>>(() => _currencyUpdateMediator.HandleMessages([_addGoldUpdate]));
 
             Assert.That(exception.Key, Is.EqualTo(_addGoldUpdate.CurrencyType));
         }
@@ -213,7 +214,7 @@ namespace IdelPogTests.Orchestration
                 .Throws(new NotEnoughCurrencyException(_goldCurrency.CurrencyType, _goldCurrency.Amount, _removeGoldUpdate.Amount));
 
             NotEnoughCurrencyException exception =
-                Assert.Throws<NotEnoughCurrencyException>(() => _currencyUpdateMediator.ProcessCurrencyUpdate([_removeGoldUpdate]));
+                Assert.Throws<NotEnoughCurrencyException>(() => _currencyUpdateMediator.HandleMessages([_removeGoldUpdate]));
 
             Assert.Multiple(() =>
             {

@@ -2,6 +2,6 @@
 {
     public interface ISkillUpdateFactory
     {
-        public SkillUpdateDTO CreateSkillUpdate(Models.Skill skill, bool hasLeveled);
+        public SkillUpdateResponse CreateSkillUpdate(Models.Skill skill, bool hasLeveled);
     }
 }

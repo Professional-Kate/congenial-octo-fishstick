@@ -1,18 +1,18 @@
-﻿using IdelPog.Messaging.Listeners;
-using IdelPog.SimulationEngine.Currency.DTO;
+﻿using IdelPog.Common.Errors;
+using IdelPog.Messaging.Listeners;
 
 namespace Integration.Tests.CurrencyCommands.Update
 {
-    internal class CurrencyUpdateErrorListener : ISingleListener<CurrencyUpdateErrorDTO>
+    internal class CurrencyUpdateErrorListener : ISingleListener<CurrencyUpdateError>
     {
-        public Type ListenerType { get; } = typeof(CurrencyUpdateErrorDTO);
-        public CurrencyUpdateErrorDTO CurrencyUpdateErrorDTO { get; private set; }
+        public Type ListenerType { get; } = typeof(CurrencyUpdateError);
+        public CurrencyUpdateError CurrencyUpdateError { get; private set; }
         public bool WasCalled { get; private set; }
 
-        public void Handle(CurrencyUpdateErrorDTO harvestNode)
+        public void Handle(CurrencyUpdateError message)
         {
             WasCalled = true;
-            CurrencyUpdateErrorDTO = harvestNode;
+            CurrencyUpdateError = message;
         }
     }
 }
