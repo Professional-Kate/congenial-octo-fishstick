@@ -1,6 +1,6 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
-using IdelPog.SimulationEngine.Currency.Factories;
+using IdelPog.Common.Factories;
 using IdelPog.Validation.Assertions;
 
 namespace IdelPog.SimulationEngine.Currency
@@ -68,7 +68,7 @@ namespace IdelPog.SimulationEngine.Currency
                     currencyUpdateAmount -=  runningAmount.RemoveAmount;
                 }
                 
-                updates.Add(_currencyUpdateFactory.CreateCurrencyUpdate(currencyType, action, currencyUpdateAmount));
+                updates.Add(_currencyUpdateFactory.CreateCurrencyUpdate(action, currencyUpdateAmount, currencyType));
             }
 
             return updates;

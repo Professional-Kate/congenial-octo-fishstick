@@ -1,9 +1,17 @@
-﻿using IdelPog.Messaging.Dispatch;
+﻿using IdelPog.Common.Factories;
+using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Controller;
+using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Buffer;
+using IdelPog.Messaging.Dispatch.Single;
+using IdelPog.Messaging.Listeners;
+using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.SimulationEngine.Inventory
 {
@@ -14,17 +22,21 @@ namespace IdelPog.SimulationEngine.Inventory
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
             ICollectionAssertion collectionAssertion = new CollectionAssertion(new ThrowHandler());
 
-            IDispatchMany<InventoryUpdateDTO> inventoryUpdateDispatcher =
-                new ManagedDispatcher<InventoryUpdateDTO>(bufferManager, objectNullAssertion, collectionAssertion);
+            IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            IInventoryUpdateDTOFactory inventoryUpdateDTOFactory = new InventoryUpdateDTOFactory();
+            IInventoryUpdateResponseFactory inventoryUpdateResponseFactory = new InventoryUpdateResposneFactory();
             IMapper<ItemID> itemMapper = new Mapper<ItemID>();
             IItemFactory itemFactory = new ItemFactory(itemMapper);
             IInventory inventory = new Inventory();
-            IInventoryMediator inventoryMediator = new InventoryMediator(inventory, itemFactory, inventoryUpdateDTOFactory, inventoryUpdateDispatcher);
+            IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryMediator(inventory, itemFactory, inventoryUpdateResponseFactory, inventoryUpdateDispatcher);
 
-            IInventoryController inventoryController = new InventoryController(inventoryMediator);
-            InventoryUpdateListener inventoryUpdateListener = new(inventoryController);
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            IErrorFactory<InventoryUpdateError, IReadOnlyList<InventoryUpdate>> inventoryUpdateErrorFactory = new InventoryUpdateErrorFactory(baseErrorFactory);
+            IDispatchOne<InventoryUpdateError> updateErrorDispatcher = new ManagedDispatcher<InventoryUpdateError>(bufferManager, objectNullAssertion, collectionAssertion);
+            IContextualHandler<IReadOnlyList<InventoryUpdate>> updateDispatchHandler = new DispatchingHandler<InventoryUpdateError, IReadOnlyList<InventoryUpdate>>(updateErrorDispatcher, inventoryUpdateErrorFactory);
+            IBatchControllerExecutionAssertion<InventoryUpdate> updateExecutionAssertion = new BatchControllerExecutionAssertion<InventoryUpdate>(updateDispatchHandler);
+            IBatchController<InventoryUpdate> inventoryController = new ManagedBatchController<InventoryUpdate>(inventoryMediator);
+            IBufferListener<InventoryUpdate> inventoryUpdateListener = new ManagedBufferListener<InventoryUpdate>(inventoryController, updateExecutionAssertion);
 
             bufferMessenger.Subscribe(inventoryUpdateListener);
         }

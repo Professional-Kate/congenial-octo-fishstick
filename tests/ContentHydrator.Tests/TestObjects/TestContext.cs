@@ -2,6 +2,6 @@
 
 namespace ContentHydratorTests.TestObjects
 {
-    [JsonSerializable(typeof(TestDTO))]
+    [JsonSerializable(typeof(TestObject))]
     public partial class TestContext : JsonSerializerContext;
 }

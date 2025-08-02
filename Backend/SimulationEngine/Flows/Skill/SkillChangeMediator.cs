@@ -1,26 +1,29 @@
 ﻿using IdelPog.Common.Commands;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Common.Factories;
+using IdelPog.Common.Responses;
+using IdelPog.Messaging.Dispatch.Single;
+using IdelPog.Messaging.Listeners.Single;
 
 namespace IdelPog.SimulationEngine.Skill
 {
-    public class SkillChangeMediator : ISkillChangeMediator
+    public class SkillChangeMediator : ISingleMediator<SkillChange>
     {
         private readonly ICurrentSkillSetter _currentSkillSetter;
-        private readonly ISkillChangeFactory _skillChangeFactory;
-        private readonly IDispatchOne<SkillChangeDTO> _skillChangeDTODispatcher;
+        private readonly ISkillChangeResponseFactory _skillChangeResponseFactory;
+        private readonly IDispatchOne<SkillChangeResponse> _skillChangeDTODispatcher;
 
-        public SkillChangeMediator(ICurrentSkillSetter currentSkillSetter, ISkillChangeFactory skillChangeFactory,
-            IDispatchOne<SkillChangeDTO> skillChangeDTODispatcher)
+        public SkillChangeMediator(ICurrentSkillSetter currentSkillSetter, ISkillChangeResponseFactory skillChangeResponseFactory,
+            IDispatchOne<SkillChangeResponse> skillChangeDTODispatcher)
         {
             _currentSkillSetter = currentSkillSetter;
-            _skillChangeFactory = skillChangeFactory;
+            _skillChangeResponseFactory = skillChangeResponseFactory;
             _skillChangeDTODispatcher = skillChangeDTODispatcher;
         }
 
-        public void ChangeSkill(SkillChange skillChange)
+        public void HandleMessage(SkillChange skillChange)
         {
             _currentSkillSetter.SetCurrentSkill(skillChange.SkillID);
-            _skillChangeDTODispatcher.Dispatch(_skillChangeFactory.CreateSkillChangeDTO(skillChange));
+            _skillChangeDTODispatcher.Dispatch(_skillChangeResponseFactory.Create(skillChange));
         }
     }
 }

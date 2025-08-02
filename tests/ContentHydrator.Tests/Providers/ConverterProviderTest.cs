@@ -25,10 +25,10 @@ namespace ContentHydratorTests.Providers
         [Test]
         public void Positive_CreateConverter_CreatesCorrectConverter()
         {
-            IJsonConverter<TestDTO> converter = _converterProvider.CreateConverter<TestDTO>();
+            IJsonConverter<TestObject> converter = _converterProvider.CreateConverter<TestObject>();
 
             Assert.That(converter, Is.Not.Null);
-            Assert.That(converter, Is.InstanceOf<IJsonConverter<TestDTO>>());
+            Assert.That(converter, Is.InstanceOf<IJsonConverter<TestObject>>());
             _handlerMock.Verify(library => library.Handle(It.IsAny<ArgumentNullException>()), Times.Never);
         }
 
@@ -37,8 +37,8 @@ namespace ContentHydratorTests.Providers
         {
             JsonDocument jsonDocument = JsonDocument.Parse("""{"TestString": "TESTING", "TestInt": 10 }""");
 
-            IJsonConverter<TestDTO> converter = _converterProvider.CreateConverter<TestDTO>();
-            TestDTO result = converter.Convert(jsonDocument);
+            IJsonConverter<TestObject> converter = _converterProvider.CreateConverter<TestObject>();
+            TestObject result = converter.Convert(jsonDocument);
 
             Assert.Multiple(() =>
             {

@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
 using IdelPog.Common.Structures;
-using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.SimulationEngine.Models;
 using IdelPog.SimulationEngine.Service;
 
@@ -13,11 +13,11 @@ namespace IdelPog.SimulationEngine.Skill
         private readonly ILevelService _levelService;
         private readonly IStateRepository<SkillID, Models.Skill> _skillRepository;
         private readonly ICurrentSkillProvider _currentSkillProvider;
-        private readonly IDispatchOne<SkillUpdateDTO> _skillUpdateDTODispatcher;
+        private readonly IDispatchOne<SkillUpdateResponse> _skillUpdateDTODispatcher;
         private readonly ISkillUpdateFactory _skillUpdateFactory;
 
         public SkillActionMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Models.Skill> skillRepository,
-            ICurrentSkillProvider currentSkillProvider, IDispatchOne<SkillUpdateDTO> skillUpdateDTODispatcher, ISkillUpdateFactory skillUpdateFactory)
+            ICurrentSkillProvider currentSkillProvider, IDispatchOne<SkillUpdateResponse> skillUpdateDTODispatcher, ISkillUpdateFactory skillUpdateFactory)
         {
             _experienceService = experienceService;
             _levelService = levelService;

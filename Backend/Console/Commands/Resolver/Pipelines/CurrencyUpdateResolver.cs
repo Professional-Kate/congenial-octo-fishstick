@@ -1,5 +1,4 @@
 ﻿using Console.Commands.Domains.Arguments;
-using Console.Commands.Resolver.Exceptions;
 using IdelPog.Common.Enums;
 
 namespace Console.Commands.Resolver.Pipelines

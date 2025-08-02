@@ -1,6 +1,6 @@
 ﻿using Moq;
-using Scheduler.Core;
-using Scheduler.Core.Runner;
+using Scheduler.Flows.Control;
+using Scheduler.Flows.Control.Runner;
 
 namespace Scheduler.Tests.Scheduler
 {
