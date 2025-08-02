@@ -4,6 +4,7 @@ using IdelPog.Common.Errors;
 using IdelPog.Common.Repository;
 using IdelPog.Flows.Registry;
 using IdelPog.Flows.Types;
+using IdelPog.Messaging.Controller;
 using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.Messaging.Messenger;
 using IdelPog.SimulationEngine.Currency.Commands;
@@ -29,7 +30,7 @@ namespace IdelPog.Flows
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(new ThrowHandler());
             
             IBatchMediator<FlowDescriptor> registryMediator = new FlowRegistryMediator(flowRepository, uniqueAssertion);
-            IBatchController<FlowDescriptor> registryController = new FlowRegistryController(registryMediator);
+            IBatchController<FlowDescriptor> registryController = new ManagedBatchController<FlowDescriptor>(registryMediator);
             
             FlowDescriptorListener flowDescriptorListener = new(registryController);
             bufferMessenger.Subscribe(flowDescriptorListener);
