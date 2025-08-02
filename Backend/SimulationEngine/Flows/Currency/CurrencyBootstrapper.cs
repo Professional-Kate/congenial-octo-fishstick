@@ -39,8 +39,14 @@ namespace IdelPog.SimulationEngine.Currency
         {
             IStateRepository<CurrencyType, Models.Currency> currencyRepository = new StateRepository<CurrencyType, Models.Currency>();
 
-            RegisterCurrencyCreation(bufferManager, flowDescriptorDispatcher, currencyRepository);
-            RegisterCurrencyUpdate(bufferManager, flowDescriptorDispatcher,  currencyRepository);
+            IHandler throwHandler = new ThrowHandler();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+
+            RegisterCurrencyCreation(bufferManager, flowDescriptorDispatcher, currencyRepository, baseErrorFactory, throwHandler, objectNullAssertion, collectionAssertion);
+            RegisterCurrencyUpdate(bufferManager, flowDescriptorDispatcher,  currencyRepository, baseErrorFactory, throwHandler, objectNullAssertion, collectionAssertion);
         }
 
         /// <summary>
@@ -49,14 +55,17 @@ namespace IdelPog.SimulationEngine.Currency
         /// <param name="bufferManager">Used to dispatch <see cref="CurrencyCreationResponse"/></param>
         /// <param name="flowDescriptorDispatcher">Used to dispatch a <see cref="FlowDescriptor"/></param>
         /// <param name="currencyRepository">Used to store all <see cref="Currency"/> models</param>
+        /// <param name="throwHandler">The handle used in all assertions</param>
+        /// <param name="baseErrorFactory">Used to construct <see cref="BaseError"/></param>
+        /// <param name="objectNullAssertion">Used to assert if objects are null</param>
+        /// <param name="collectionAssertion">Used to assert if a collection is null or empty</param>
         /// /// <remarks>
         /// Listens to -> <see cref="CurrencyCreation"/>. On Success -> <see cref="CurrencyCreationResponse"/>. On Error -> <see cref="CurrencyCreationError"/>
         /// </remarks>
-        private static void RegisterCurrencyCreation(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, IStateRepository<CurrencyType, Models.Currency> currencyRepository)
+        private static void RegisterCurrencyCreation(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher,
+            IStateRepository<CurrencyType, Models.Currency> currencyRepository, IBaseErrorFactory baseErrorFactory, IHandler throwHandler, IObjectNullAssertion objectNullAssertion,
+            ICollectionAssertion collectionAssertion)
         {
-            IHandler throwHandler = new ThrowHandler();
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
             
             IDispatchOne<CurrencyCreationError> currencyCreationErrorDispatcher = new ManagedDispatcher<CurrencyCreationError>(bufferManager, objectNullAssertion, collectionAssertion);
@@ -66,7 +75,6 @@ namespace IdelPog.SimulationEngine.Currency
             IBatchMediator<CurrencyCreation> currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationResponseDispatcher, currencyCreationResponseFactory, objectNullAssertion,  collectionAssertion, uniqueAssertion);
             IBatchController<CurrencyCreation> currencyCreationController = new ManagedBatchController<CurrencyCreation>(currencyCreationMediator);
             
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<CurrencyCreationError, IReadOnlyList<CurrencyCreation>> currencyCreationErrorFactory = new CurrencyCreationErrorFactory(baseErrorFactory);
             
             FlowDescriptor flowDescriptor = new FlowBuilder()
@@ -87,15 +95,18 @@ namespace IdelPog.SimulationEngine.Currency
         /// <param name="bufferManager">Used to dispatch <see cref="CurrencyUpdateError"/> if anything is thrown</param>
         /// <param name="flowDescriptorDispatcher">Used to dispatch a <see cref="FlowDescriptor"/></param>
         /// <param name="currencyRepository">Used to store all <see cref="Currency"/> models</param>
+        /// <param name="throwHandler">The handle used in all assertions</param>
+        /// <param name="baseErrorFactory">Used to construct <see cref="BaseError"/></param>
+        /// <param name="objectNullAssertion">Used to assert if objects are null</param>
+        /// <param name="collectionAssertion">Used to assert if a collection is null or empty</param>
         /// /// <remarks>
         /// Listens to -> <see cref="CurrencyUpdate"/>. On Success -> <see cref="CurrencyUpdateResponse"/>. On Error -> <see cref="CurrencyUpdateError"/>
         /// </remarks>
-        private static void RegisterCurrencyUpdate(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, IStateRepository<CurrencyType, Models.Currency> currencyRepository)
+        private static void RegisterCurrencyUpdate(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher,
+            IStateRepository<CurrencyType, Models.Currency> currencyRepository, IBaseErrorFactory baseErrorFactory, IHandler throwHandler, IObjectNullAssertion objectNullAssertion,
+            ICollectionAssertion collectionAssertion)
         {
-            IHandler throwHandler = new ThrowHandler();
             ICurrencyAssertion currencyAssertion = new CurrencyAssertion(throwHandler);
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             
             ICurrencyUpdateFactory updateFactory = new CurrencyUpdateFactory();
@@ -109,7 +120,6 @@ namespace IdelPog.SimulationEngine.Currency
             IBatchMediator<CurrencyUpdate> updateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, updateResponseDispatcher, currencyUpdateSummarizer, updateResponseFactory, collectionAssertion, foundAssertion, objectNullAssertion);
             IBatchController<CurrencyUpdate> updateController = new ManagedBatchController<CurrencyUpdate>(updateMediator);
             
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<CurrencyUpdateError, IReadOnlyList<CurrencyUpdate>> currencyCreationErrorFactory = new CurrencyUpdateErrorFactory(baseErrorFactory);
             
             FlowDescriptor flowDescriptor = new FlowBuilder()
