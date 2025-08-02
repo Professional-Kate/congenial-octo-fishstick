@@ -1,10 +1,9 @@
-﻿using IdelPog.Common.Enums;
+﻿using IdelPog.SimulationEngine.Currency.Commands;
 
 namespace IdelPog.SimulationEngine.Currency.Responses
 {
     public readonly record struct CurrencyCreationResponse
     {
-        public required CurrencyType CurrencyType { get; init; }
-        public required uint Amount { get; init; }
+        public required CurrencyCreation[] CurrencyCreations { get; init; }
     }
 }

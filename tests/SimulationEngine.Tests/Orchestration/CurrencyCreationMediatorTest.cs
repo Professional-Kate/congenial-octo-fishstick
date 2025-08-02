@@ -1,6 +1,7 @@
 ﻿using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
 using IdelPog.Messaging.Dispatch.Buffer;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
@@ -20,7 +21,7 @@ namespace IdelPogTests.Orchestration
     {
         private IBatchMediator<CurrencyCreation> _currencyCreationMediator;
         private Mock<IStateRepository<CurrencyType, Currency>> _stateRepositoryMock;
-        private Mock<IDispatchMany<CurrencyCreationResponse>> _currencyCreationDispatcherMock;
+        private Mock<IDispatchOne<CurrencyCreationResponse>> _currencyCreationDispatcherMock;
         private Mock<ICurrencyCreationResponseFactory> _currencyCreationDTOFactoryMock;
 
         private CurrencyCreation _createGold;
@@ -30,7 +31,7 @@ namespace IdelPogTests.Orchestration
         public void OneTimeSetUp()
         {
             _stateRepositoryMock = new Mock<IStateRepository<CurrencyType, Currency>>();
-            _currencyCreationDispatcherMock = new Mock<IDispatchMany<CurrencyCreationResponse>>();
+            _currencyCreationDispatcherMock = new Mock<IDispatchOne<CurrencyCreationResponse>>();
             _currencyCreationDTOFactoryMock = new Mock<ICurrencyCreationResponseFactory>();
             _currencyCreationMediator = new CurrencyCreationMediator(_stateRepositoryMock.Object, _currencyCreationDispatcherMock.Object,
                 _currencyCreationDTOFactoryMock.Object, new ObjectNullAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()),
@@ -47,40 +48,28 @@ namespace IdelPogTests.Orchestration
             _currencyCreationDispatcherMock.Reset();
         }
 
-        public CurrencyCreationResponse[] CurrencyCreationConverter(CurrencyCreation[] currencyCreations)
-        {
-            List<CurrencyCreationResponse> currencyCreationDTOs = new(currencyCreations.Length);
-
-            foreach (CurrencyCreation currencyCreation in currencyCreations)
-            {
-                currencyCreationDTOs.Add(new CurrencyCreationResponse { Amount = currencyCreation.StartingAmount, CurrencyType = currencyCreation.CurrencyType });
-            }
-
-            return currencyCreationDTOs.ToArray();
-        }
-
         [TestCase(0u)]
         [TestCase(10u)]
         [TestCase(uint.MaxValue)]
         public void Positive_CreateCurrency_SingleValidCommand_CreatesCurrency(uint amount)
         {
             CurrencyCreation currencyCreation = new() { CurrencyType = CurrencyType.GOLD, StartingAmount = amount };
-            CurrencyCreationResponse[] currencyCreationDTOs = CurrencyCreationConverter([currencyCreation]);
+            CurrencyCreationResponse currencyResponse = new() { CurrencyCreations = [currencyCreation] };
             _currencyCreationDTOFactoryMock.Setup(library => library.CreateFrom(new[] { currencyCreation }))
-                .Returns(currencyCreationDTOs);
+                .Returns(currencyResponse);
 
             _currencyCreationMediator.HandleMessages([currencyCreation]);
 
             _stateRepositoryMock.Verify(library => library.Add(currencyCreation.CurrencyType, It.IsAny<Currency>()), Times.Once);
             _stateRepositoryMock.Verify(library => library.Contains(currencyCreation.CurrencyType), Times.Once);
-            _currencyCreationDispatcherMock.Verify(library => library.Dispatch(currencyCreationDTOs), Times.Once);
+            _currencyCreationDispatcherMock.Verify(library => library.Dispatch(currencyResponse), Times.Once);
         }
 
         [Test]
         public void Positive_CreateCurrency_MultipleValidCommands_CreatesCurrency()
         {
             CurrencyCreation[] currencyCreations = [_createGold, _createGems];
-            CurrencyCreationResponse[] currencyCreationDTOs = CurrencyCreationConverter(currencyCreations);
+            CurrencyCreationResponse currencyCreationDTOs = new() { CurrencyCreations = [_createGold, _createGems] };
             _currencyCreationDTOFactoryMock.Setup(library => library.CreateFrom(currencyCreations))
                 .Returns(currencyCreationDTOs);
 
@@ -96,7 +85,7 @@ namespace IdelPogTests.Orchestration
         [Test]
         public void Negative_CreateCurrency_CurrencyAlreadyExists_Throws()
         {
-            CurrencyCreationResponse[] currencyCreationDTOs = CurrencyCreationConverter([_createGold]);
+            CurrencyCreationResponse currencyCreationDTOs = new() { CurrencyCreations = [_createGold] };
             _currencyCreationDTOFactoryMock.Setup(library => library.CreateFrom(new[] { _createGold }))
                 .Returns(currencyCreationDTOs);
 

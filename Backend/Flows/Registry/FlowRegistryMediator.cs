@@ -20,6 +20,7 @@ namespace IdelPog.Flows.Registry
         {
             foreach (FlowDescriptor flowDescriptor in flowDescriptors)
             { 
+                Console.WriteLine(flowDescriptor.Description);
                 _uniqueAssertion.AssertUnique(flowDescriptor.CommandType, _flowRepository.Contains(flowDescriptor.CommandType));
                 _flowRepository.Add(flowDescriptor.CommandType, flowDescriptor);
             }

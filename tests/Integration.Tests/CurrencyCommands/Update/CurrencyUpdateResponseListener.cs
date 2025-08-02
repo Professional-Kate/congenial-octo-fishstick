@@ -3,16 +3,16 @@ using IdelPog.SimulationEngine.Currency.Responses;
 
 namespace Integration.Tests.CurrencyCommands.Update
 {
-    internal class CurrencyUpdateResponseListener : IBufferListener<CurrencyUpdateResponse>
+    internal class CurrencyUpdateResponseListener : ISingleListener<CurrencyUpdateResponse>
     {
         public Type ListenerType { get; } = typeof(CurrencyUpdateResponse);
-        public IReadOnlyList<CurrencyUpdateResponse>? Buffer { get; private set; }
+        public CurrencyUpdateResponse Item { get; private set; }
         public bool WasCalled { get; private set; }
 
-        public void Handle(IReadOnlyList<CurrencyUpdateResponse> buffer)
+        public void Handle(CurrencyUpdateResponse item)
         {
             WasCalled = true;
-            Buffer = buffer;
+            Item = item;
         }
     }
 }

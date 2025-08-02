@@ -15,35 +15,26 @@ namespace IdelPog.SimulationEngine.Currency.Factories
             _collectionAssertion = collectionAssertion;
         }
 
-        public CurrencyUpdateResponse[] CreateFrom(IReadOnlyList<CurrencyUpdate> trades)
+        public CurrencyUpdateResponse CreateFrom(IReadOnlyList<CurrencyUpdate> trades)
         {
             _objectNullAssertion.AssertNotNull(trades, nameof(trades));
             _collectionAssertion.AssertNotEmpty(trades);
 
-            List<CurrencyUpdateResponse> result = new(trades.Count);
-
-            foreach (CurrencyUpdate currencyTrade in trades)
-            {
-                result.Add(Create(currencyTrade));
-            }
-
-            return result.ToArray();
+            return Create(trades.ToArray());
         }
         
         public CurrencyUpdateResponse CreateFrom(CurrencyUpdate trade)
         {
             _objectNullAssertion.AssertNotNull(trade, nameof(trade));
 
-            return Create(trade);
+            return Create([trade]);
         }
 
-        private static CurrencyUpdateResponse Create(CurrencyUpdate trade)
+        private static CurrencyUpdateResponse Create(CurrencyUpdate[] trades)
         {
             return new CurrencyUpdateResponse
             {
-                Action = trade.Action,
-                Amount = trade.Amount,
-                CurrencyType = trade.CurrencyType
+                CurrencyUpdates = trades
             };
         }
     }

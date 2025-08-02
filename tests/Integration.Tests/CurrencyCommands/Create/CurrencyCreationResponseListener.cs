@@ -3,15 +3,15 @@ using IdelPog.SimulationEngine.Currency.Responses;
 
 namespace Integration.Tests.CurrencyCommands.Create
 {
-    internal class CurrencyCreationResponseListener : IBufferListener<CurrencyCreationResponse>
+    internal class CurrencyCreationResponseListener : ISingleListener<CurrencyCreationResponse>
     {
         public Type ListenerType { get; } = typeof(CurrencyCreationResponse);
-        public IReadOnlyList<CurrencyCreationResponse>? Buffer { get; private set; }
+        public CurrencyCreationResponse Item { get; private set; }
         public bool WasCalled { get; private set; }
-
-        public void Handle(IReadOnlyList<CurrencyCreationResponse> buffer)
+        
+        public void Handle(CurrencyCreationResponse item)
         {
-            Buffer = buffer;
+            Item = item;
             WasCalled = true;
         }
     }

@@ -32,18 +32,18 @@ namespace IdelPogTests.Service
             ];
         }
 
-        private void AssertCollection(IReadOnlyList<CurrencyUpdateResponse> currencyUpdateDTOs, IReadOnlyList<CurrencyUpdate> currencyTrades)
+        private void AssertCollection(CurrencyUpdateResponse currencyUpdateResponse, IReadOnlyList<CurrencyUpdate> currencyTrades)
         {
-            for (int i = 0; i < currencyUpdateDTOs.Count; i++)
+            for (int i = 0; i < currencyUpdateResponse.CurrencyUpdates.Length; i++)
             {
-                CurrencyUpdateResponse currencyUpdateResponse = currencyUpdateDTOs[i];
+                CurrencyUpdate currencyUpdates = currencyUpdateResponse.CurrencyUpdates[i];
                 CurrencyUpdate currencyUpdate = currencyTrades[i];
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(currencyUpdateResponse.Action, Is.EqualTo(currencyUpdate.Action));
-                    Assert.That(currencyUpdateResponse.Amount, Is.EqualTo(currencyUpdate.Amount));
-                    Assert.That(currencyUpdateResponse.CurrencyType, Is.EqualTo(currencyUpdate.CurrencyType));
+                    Assert.That(currencyUpdates.Action, Is.EqualTo(currencyUpdate.Action));
+                    Assert.That(currencyUpdates.Amount, Is.EqualTo(currencyUpdate.Amount));
+                    Assert.That(currencyUpdates.CurrencyType, Is.EqualTo(currencyUpdate.CurrencyType));
                 });
             }
         }
@@ -51,11 +51,11 @@ namespace IdelPogTests.Service
         [Test]
         public void Positive_CreateFrom_ConvertsTradeIntoUpdate()
         {
-            IReadOnlyList<CurrencyUpdateResponse> updateDTOs = _currencyUpdateResponseFactory.CreateFrom(_currencyTrades);
+            CurrencyUpdateResponse responses = _currencyUpdateResponseFactory.CreateFrom(_currencyTrades);
 
-            Assert.That(updateDTOs, Has.Count.EqualTo(_currencyTrades.Count));
+            Assert.That(responses.CurrencyUpdates, Has.Length.EqualTo(_currencyTrades.Count));
 
-            AssertCollection(updateDTOs, _currencyTrades);
+            AssertCollection(responses, _currencyTrades);
         }
 
         [Test]

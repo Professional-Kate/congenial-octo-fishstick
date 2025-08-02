@@ -7,11 +7,9 @@ using IdelPog.SimulationEngine.Skill;
 namespace Integration.Tests.SkillCommands.Switch
 {
     [TestFixture]
-    public class SwitchSkillTest : ManagedBuffer
+    public class ChangeSkillTest : ManagedBuffer
     {
         private SkillChangeDTOListener _listener;
-        private ICurrentSkillSetter _currentSkillSetter;
-        private ICurrentSkillProvider _currentSkillProvider;
 
         private SkillChange _skillChange;
 
@@ -21,17 +19,11 @@ namespace Integration.Tests.SkillCommands.Switch
             _skillChange = new SkillChange { SkillID = SkillID.FARMING };
 
             CurrentSkillProvider currentSkillProvider = new();
-            _currentSkillSetter = currentSkillProvider;
-            _currentSkillProvider = currentSkillProvider;
         }
 
         [SetUp]
         public void Setup()
         {
-            FlowBootstrapper.Initialize(BufferMessenger);
-            SkillBootstrapper.RegisterSkillChange(BufferManager, FlowDescriptorDispatcher, _currentSkillSetter);
-            FlowBootstrapper.InitializeFlows(BufferMessenger);
-
             _listener = new SkillChangeDTOListener();
             ManagedSubscribe(_listener);
         }
@@ -48,7 +40,7 @@ namespace Integration.Tests.SkillCommands.Switch
             Assert.Multiple(() =>
             {
                 Assert.That(_listener.WasCalled, Is.True);
-                Assert.That(_currentSkillProvider.GetCurrentSkill(), Is.EqualTo(skillChange.SkillID));
+                Assert.That(CurrentSkillProvider.GetCurrentSkill(), Is.EqualTo(skillChange.SkillID));
                 Assert.That(_listener.SkillChangeDTO.SkillID, Is.EqualTo(skillChange.SkillID));
             });
         }

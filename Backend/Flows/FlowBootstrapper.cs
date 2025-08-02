@@ -6,12 +6,14 @@ using IdelPog.Flows.Registry;
 using IdelPog.Flows.Types;
 using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.Messaging.Messenger;
+using IdelPog.SimulationEngine.Currency.Commands;
+using IdelPog.SimulationEngine.Currency.Responses;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.Flows
 {
-    public class FlowBootstrapper
+    public static class FlowBootstrapper
     {
         private static IAssetRepository<Type, FlowDescriptor>? _flowRepository { get; set; }
 
@@ -40,7 +42,9 @@ namespace IdelPog.Flows
             
             IFlowBuilderService flowBuilderService = new FlowBuilderService();
             IFlowSubscriptionMediator flowSubscriptionMediator = new FlowSubscriptionMediator(_flowRepository, flowBuilderService, bufferMessenger, foundAssertion);
-            
+
+            flowSubscriptionMediator.ConstructAndSubscribe<CurrencyUpdate, CurrencyUpdateError>();
+            flowSubscriptionMediator.ConstructAndSubscribe<CurrencyCreation, CurrencyCreationError>();
             flowSubscriptionMediator.ConstructAndSubscribe<SkillChange, SkillChangeError>();
         }
 

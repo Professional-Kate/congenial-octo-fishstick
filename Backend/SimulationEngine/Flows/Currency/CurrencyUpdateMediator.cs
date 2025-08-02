@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Repository;
-using IdelPog.Messaging.Dispatch.Buffer;
+using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Currency.Responses;
@@ -13,7 +13,7 @@ namespace IdelPog.SimulationEngine.Currency
     {
         private readonly ICurrencyService _currencyService;
         private readonly IStateRepository<CurrencyType, Models.Currency> _currencyRepository;
-        private readonly IDispatchMany<CurrencyUpdateResponse> _currencyUpdateDispatcher;
+        private readonly IDispatchOne<CurrencyUpdateResponse> _currencyUpdateDispatcher;
         private readonly ICurrencyUpdateSummarizer _currencyUpdateSummarizer;
         private readonly ICurrencyUpdateResponseFactory _currencyUpdateResponseFactory;
         private readonly ICollectionAssertion _collectionAssertion;
@@ -22,7 +22,7 @@ namespace IdelPog.SimulationEngine.Currency
 
         public CurrencyUpdateMediator(
             IStateRepository<CurrencyType, Models.Currency> stateRepository,
-            ICurrencyService currencyService, IDispatchMany<CurrencyUpdateResponse> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer,
+            ICurrencyService currencyService, IDispatchOne<CurrencyUpdateResponse> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer,
             ICurrencyUpdateResponseFactory currencyUpdateResponseFactory,
             ICollectionAssertion collectionAssertion, IFoundAssertion foundAssertion, IObjectNullAssertion objectNullAssertion)
         {

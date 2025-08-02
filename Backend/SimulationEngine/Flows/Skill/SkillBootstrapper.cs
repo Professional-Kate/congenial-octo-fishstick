@@ -19,7 +19,7 @@ namespace IdelPog.SimulationEngine.Skill
         /// <summary>
         /// Registers the <see cref="SkillChange"/> flow into the messaging system
         /// </summary>
-        /// <param name="bufferManager">Used to dispatch <see cref="SkillChangeError"/> if anything is thrown</param>
+        /// <param name="bufferManager">Used to dispatch <see cref="SkillChangeResponse"/></param>
         /// <param name="flowDescriptorDispatcher">Used to dispatch a <see cref="FlowDescriptor"/></param>
         /// <param name="currentSkillSetter">Used together with <see cref="ICurrentSkillProvider"/></param>
         /// <remarks>

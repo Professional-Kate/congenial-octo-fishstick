@@ -5,8 +5,8 @@ namespace IdelPog.SimulationEngine.Currency.Factories
 {
     public interface ICurrencyCreationResponseFactory
     {
-        public CurrencyCreationResponse[] CreateFrom(IReadOnlyList<CurrencyCreation> trades);
+        public CurrencyCreationResponse CreateFrom(IReadOnlyList<CurrencyCreation> currencyCreations);
 
-        public CurrencyCreationResponse CreateFrom(CurrencyCreation trade);
+        public CurrencyCreationResponse CreateFrom(CurrencyCreation currencyCreation);
     }
 }

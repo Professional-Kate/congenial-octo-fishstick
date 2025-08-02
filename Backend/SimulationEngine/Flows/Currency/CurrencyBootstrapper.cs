@@ -1,7 +1,11 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
+using IdelPog.Common.Errors;
 using IdelPog.Common.Factories;
 using IdelPog.Common.Repository;
+using IdelPog.Common.Responses;
+using IdelPog.Flows.Builder;
+using IdelPog.Flows.Types;
 using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Dispatch.Buffer;
@@ -14,60 +18,109 @@ using IdelPog.SimulationEngine.Currency.Assertions;
 using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Currency.Responses;
+using IdelPog.SimulationEngine.Skill;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace IdelPog.SimulationEngine.Currency
 {
-    public class CurrencyBootstrapper
+    public static class CurrencyBootstrapper
     {
-        public void Initialize(IBufferMessenger bufferMessenger, IBufferManager bufferManager)
+        /// <summary>
+        /// Creates and adds the <see cref="CurrencyCreation"/> and <see cref="CurrencyUpdate"/> flow into the messaging system
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="flowDescriptorDispatcher">Used to dispatch a <see cref="FlowDescriptor"/></param>
+        /// <seealso cref="RegisterCurrencyCreation"/>
+        /// <seealso cref="RegisterCurrencyUpdate"/>
+        public static void InitializeFlows(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher)
         {
-            IHandler throwHandler = new ThrowHandler();
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
-            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
-            ICurrencyAssertion currencyAssertion = new CurrencyAssertion(throwHandler);
-
             IStateRepository<CurrencyType, Models.Currency> currencyRepository = new StateRepository<CurrencyType, Models.Currency>();
 
-            ICurrencyService currencyService = new CurrencyService(currencyAssertion);
-            ICurrencyUpdateResponseFactory currencyUpdateResponseFactory = new CurrencyUpdateResponseFactory(objectNullAssertion, collectionAssertion);
-            IDispatchMany<CurrencyUpdateResponse> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
+            RegisterCurrencyCreation(bufferManager, flowDescriptorDispatcher, currencyRepository);
+            RegisterCurrencyUpdate(bufferManager, flowDescriptorDispatcher,  currencyRepository);
+        }
 
-            ICurrencyUpdateFactory currencyUpdateFactory = new CurrencyUpdateFactory();
-            ICurrencyUpdateSummarizer currencyUpdateSummarizer = new CurrencyUpdateSummarizer(currencyUpdateFactory, objectNullAssertion, collectionAssertion);
-
-            IBatchMediator<CurrencyUpdate> currencyUpdateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, currencyUpdateDispatcher, currencyUpdateSummarizer, currencyUpdateResponseFactory, collectionAssertion, foundAssertion, objectNullAssertion);
-
+        /// <summary>
+        /// Registers the <see cref="CurrencyCreation"/> flow into the messaging system
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch <see cref="CurrencyCreationResponse"/></param>
+        /// <param name="flowDescriptorDispatcher">Used to dispatch a <see cref="FlowDescriptor"/></param>
+        /// <param name="currencyRepository">Used to store all <see cref="Currency"/> models</param>
+        /// /// <remarks>
+        /// Listens to -> <see cref="CurrencyCreation"/>. On Success -> <see cref="CurrencyCreationResponse"/>. On Error -> <see cref="CurrencyCreationError"/>
+        /// </remarks>
+        private static void RegisterCurrencyCreation(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, IStateRepository<CurrencyType, Models.Currency> currencyRepository)
+        {
+            IHandler throwHandler = new ThrowHandler();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            
+            IDispatchOne<CurrencyCreationError> currencyCreationErrorDispatcher = new ManagedDispatcher<CurrencyCreationError>(bufferManager, objectNullAssertion, collectionAssertion);
             ICurrencyCreationResponseFactory currencyCreationResponseFactory = new CurrencyCreationResponseFactory(objectNullAssertion, collectionAssertion);
-            IDispatchMany<CurrencyCreationResponse> currencyCreationDispatcher = new ManagedDispatcher<CurrencyCreationResponse>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            IBatchMediator<CurrencyCreation> currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationDispatcher, currencyCreationResponseFactory, objectNullAssertion, collectionAssertion, uniqueAssertion);
+            IDispatchOne<CurrencyCreationResponse> currencyCreationResponseDispatcher = new ManagedDispatcher<CurrencyCreationResponse>(bufferManager, objectNullAssertion, collectionAssertion);
+            IBatchMediator<CurrencyCreation> currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationResponseDispatcher, currencyCreationResponseFactory, objectNullAssertion,  collectionAssertion, uniqueAssertion);
+            IBatchController<CurrencyCreation> currencyCreationController = new CurrencyCreationController(currencyCreationMediator);
             
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<CurrencyUpdateError, IReadOnlyList<CurrencyUpdate>> currencyUpdateErrorDTOFactory = new CurrencyUpdateErrorFactory(baseErrorFactory, currencyUpdateResponseFactory);
-            IDispatchOne<CurrencyUpdateError> currencyUpdateErrorDispatcher = new ManagedDispatcher<CurrencyUpdateError>(bufferManager, objectNullAssertion, collectionAssertion);
+            IErrorFactory<CurrencyCreationError, IReadOnlyList<CurrencyCreation>> currencyCreationErrorFactory = new CurrencyCreationErrorFactory(baseErrorFactory);
+            
+            FlowDescriptor flowDescriptor = new FlowBuilder()
+                .ForCommand(typeof(CurrencyCreation))
+                .SetDispatchMode(BufferMode.BATCH)
+                .SetDescription(typeof(CurrencyCreation), typeof(CurrencyCreationResponse), typeof(CurrencyCreationError))
+                .WithController(currencyCreationController)
+                .WithResponseDispatcher(currencyCreationErrorDispatcher)
+                .WithErrorFactory(currencyCreationErrorFactory)
+                .Build();
+            
+            flowDescriptorDispatcher.Dispatch(flowDescriptor);
+        }
 
-            IErrorFactory<CurrencyCreationError, IReadOnlyList<CurrencyCreation>> currencyCreationErrorDTOFactory = new CurrencyCreationErrorFactory(baseErrorFactory, currencyCreationResponseFactory);
-            IDispatchOne<CurrencyCreationError> currencyCreationErrorDispatcher = new ManagedDispatcher<CurrencyCreationError>(bufferManager, objectNullAssertion, collectionAssertion);
+        /// <summary>
+        /// Registers the <see cref="CurrencyUpdate"/> flow into the messaging system
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch <see cref="CurrencyUpdateError"/> if anything is thrown</param>
+        /// <param name="flowDescriptorDispatcher">Used to dispatch a <see cref="FlowDescriptor"/></param>
+        /// <param name="currencyRepository">Used to store all <see cref="Currency"/> models</param>
+        /// /// <remarks>
+        /// Listens to -> <see cref="CurrencyUpdate"/>. On Success -> <see cref="CurrencyUpdateResponse"/>. On Error -> <see cref="CurrencyUpdateError"/>
+        /// </remarks>
+        private static void RegisterCurrencyUpdate(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, IStateRepository<CurrencyType, Models.Currency> currencyRepository)
+        {
+            IHandler throwHandler = new ThrowHandler();
+            ICurrencyAssertion currencyAssertion = new CurrencyAssertion(throwHandler);
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             
-            IContextualHandler<IReadOnlyList<CurrencyUpdate>> updateDispatchHandler = new DispatchingHandler<CurrencyUpdateError, IReadOnlyList<CurrencyUpdate>>(currencyUpdateErrorDispatcher, currencyUpdateErrorDTOFactory);
-            IBatchControllerExecutionAssertion<CurrencyUpdate> updateExecutionAssertion = new BatchControllerExecutionAssertion<CurrencyUpdate>(updateDispatchHandler);
+            ICurrencyUpdateFactory updateFactory = new CurrencyUpdateFactory();
             
-            IContextualHandler<IReadOnlyList<CurrencyCreation>> createDispatchHandler = new DispatchingHandler<CurrencyCreationError, IReadOnlyList<CurrencyCreation>>(currencyCreationErrorDispatcher, currencyCreationErrorDTOFactory);
-            IBatchControllerExecutionAssertion<CurrencyCreation> createExecutionAssertion = new BatchControllerExecutionAssertion<CurrencyCreation>(createDispatchHandler);
+            ICurrencyService currencyService = new CurrencyService(currencyAssertion);
+            IDispatchOne<CurrencyUpdateResponse> updateResponseDispatcher = new ManagedDispatcher<CurrencyUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
+            ICurrencyUpdateSummarizer currencyUpdateSummarizer = new CurrencyUpdateSummarizer(updateFactory, objectNullAssertion, collectionAssertion);
+            ICurrencyUpdateResponseFactory updateResponseFactory = new CurrencyUpdateResponseFactory(objectNullAssertion, collectionAssertion);
+            IDispatchOne<CurrencyUpdateError> updateErrorDispatcher = new ManagedDispatcher<CurrencyUpdateError>(bufferManager, objectNullAssertion, collectionAssertion);
             
-            IBatchController<CurrencyUpdate> currencyController = new CurrencyUpdateController(currencyUpdateMediator);
-            IBufferListener<CurrencyUpdate> currencyUpdateListener = new ManagedBufferListener<CurrencyUpdate>(currencyController, updateExecutionAssertion);
+            IBatchMediator<CurrencyUpdate> updateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, updateResponseDispatcher, currencyUpdateSummarizer, updateResponseFactory, collectionAssertion, foundAssertion, objectNullAssertion);
+            IBatchController<CurrencyUpdate> updateController = new CurrencyUpdateController(updateMediator);
             
-            IBatchController<CurrencyCreation> currencyCreationController = new CurrencyCreationController(currencyCreationMediator);
-            IBufferListener<CurrencyCreation> currencyCreationListener = new ManagedBufferListener<CurrencyCreation>(currencyCreationController, createExecutionAssertion);
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            IErrorFactory<CurrencyUpdateError, IReadOnlyList<CurrencyUpdate>> currencyCreationErrorFactory = new CurrencyUpdateErrorFactory(baseErrorFactory);
             
-            bufferMessenger.Subscribe(currencyUpdateListener);
-            bufferMessenger.Subscribe(currencyCreationListener);
+            FlowDescriptor flowDescriptor = new FlowBuilder()
+                .ForCommand(typeof(CurrencyUpdate))
+                .SetDispatchMode(BufferMode.BATCH)
+                .SetDescription(typeof(CurrencyUpdate), typeof(CurrencyUpdateResponse), typeof(CurrencyUpdateError))
+                .WithController(updateController)
+                .WithResponseDispatcher(updateErrorDispatcher)
+                .WithErrorFactory(currencyCreationErrorFactory)
+                .Build();
+            
+            flowDescriptorDispatcher.Dispatch(flowDescriptor);
         }
     }
 }

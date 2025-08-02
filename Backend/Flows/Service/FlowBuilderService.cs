@@ -3,6 +3,7 @@ using IdelPog.Flows.Builder;
 using IdelPog.Flows.Types;
 using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Dispatch;
+using IdelPog.Messaging.Dispatch.Buffer;
 using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Listeners.Buffer;
