@@ -2,6 +2,7 @@
 using IdelPog.Common.Commands;
 using IdelPog.Common.Errors;
 using IdelPog.Common.Repository;
+using IdelPog.Common.Responses;
 using IdelPog.Flows.Registry;
 using IdelPog.Flows.Types;
 using IdelPog.Messaging.Controller;
@@ -46,6 +47,7 @@ namespace IdelPog.Flows
             flowSubscriptionMediator.ConstructAndSubscribe<CurrencyCreation, CurrencyCreationError>();
             flowSubscriptionMediator.ConstructAndSubscribe<SetSkill, SetSkillError>();
             flowSubscriptionMediator.ConstructAndSubscribe<SetHarvestNode, SetHarvestNodeError>();
+            flowSubscriptionMediator.ConstructAndSubscribe<SkillUpdateResponse, HarvestNodeUpdateError>();
         }
 
         [MemberNotNull(nameof(_flowRepository))]

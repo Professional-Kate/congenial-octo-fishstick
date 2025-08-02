@@ -2,7 +2,7 @@
 
 namespace IdelPog.Common.Structures
 {
-    public readonly record struct HarvestNode : ICloneable<HarvestNode>
+    public sealed record HarvestNode : ICloneable<HarvestNode>
     {
         public required ResourceID ResourceID { get; init; }
         public required Levelable Levelable { get; init; }

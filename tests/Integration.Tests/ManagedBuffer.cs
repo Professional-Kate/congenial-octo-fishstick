@@ -57,12 +57,11 @@ namespace Integration.Tests
             CurrentSkillProvider = skillProvider;
 
             CurrentResourceProvider resourceProvider = new();
-            ICurrentResourceSetter resourceSetter = resourceProvider;
 
             FlowBootstrapper.Initialize(_bufferMessenger);
             CurrencyBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher);
             SkillBootstrapper.RegisterSetSkill(BufferManager, _flowDescriptorDispatcher, skillSetter);
-            EngineBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher, resourceSetter);
+            ContentEngineBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher, resourceProvider);
             FlowBootstrapper.InitializeFlows(_bufferMessenger);
         }
 
