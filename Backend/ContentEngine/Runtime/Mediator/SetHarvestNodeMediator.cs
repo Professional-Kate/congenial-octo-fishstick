@@ -1,42 +1,35 @@
-﻿using ContentEngine.Runtime.ECS;
+﻿using ContentEngine.Runtime.Services;
 using ContentEngine.Services;
 using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
-using IdelPog.Common.Repository;
 using IdelPog.Common.Responses;
 using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Listeners.Single;
-using IdelPog.Validation.Assertions;
 
-namespace ContentEngine.Runtime.Systems
+namespace ContentEngine.Runtime.Mediator
 {
     public class SetHarvestNodeMediator : ISingleMediator<SetHarvestNode>
     {
-        private readonly IAssetRepository<SkillID, SkillNodeEntity> _skillNodeEntityRepository;
+        private readonly ISkillNodeAccessValidator _skillNodeAccessValidator;
         private readonly ICurrentResourceSetter _currentResourceSetter;
         private readonly IDispatchOne<SetHarvestNodeResponse> _harvestNodeDispatcher;
         private readonly ISetHarvestNodeResponseFactory _nodeChangeResponseFactory;
-        private readonly IFoundAssertion _foundAssertion;
 
-        public SetHarvestNodeMediator(IAssetRepository<SkillID, SkillNodeEntity> skillNodeEntityRepository, ICurrentResourceSetter currentResourceSetter,
-            IDispatchOne<SetHarvestNodeResponse> harvestNodeDispatcher, ISetHarvestNodeResponseFactory nodeChangeResponseFactory, IFoundAssertion foundAssertion)
+        public SetHarvestNodeMediator(ISkillNodeAccessValidator skillNodeAccessValidator, ICurrentResourceSetter currentResourceSetter,
+            IDispatchOne<SetHarvestNodeResponse> harvestNodeDispatcher, ISetHarvestNodeResponseFactory nodeChangeResponseFactory)
         {
-            _skillNodeEntityRepository = skillNodeEntityRepository;
+            _skillNodeAccessValidator = skillNodeAccessValidator;
             _currentResourceSetter = currentResourceSetter;
             _harvestNodeDispatcher = harvestNodeDispatcher;
             _nodeChangeResponseFactory = nodeChangeResponseFactory;
-            _foundAssertion = foundAssertion;
         }
 
         public void HandleMessage(SetHarvestNode setHarvestNode)
         {
             SkillID skillID = setHarvestNode.SkillID;
-            _foundAssertion.AssertFound(skillID, _skillNodeEntityRepository.Contains(setHarvestNode.SkillID));
-
             ResourceID resourceID = setHarvestNode.ResourceID;
-            SkillNodeEntity skillNodeEntity = _skillNodeEntityRepository.Get(skillID);
-            _foundAssertion.AssertFound(resourceID, skillNodeEntity.Allows(resourceID));
+            _skillNodeAccessValidator.AssertSkillAllows(skillID, resourceID);
 
             _currentResourceSetter.SetCurrentResource(resourceID);
             _harvestNodeDispatcher.Dispatch(_nodeChangeResponseFactory.Create(setHarvestNode));

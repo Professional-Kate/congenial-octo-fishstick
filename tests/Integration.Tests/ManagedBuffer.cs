@@ -62,7 +62,7 @@ namespace Integration.Tests
             FlowBootstrapper.Initialize(_bufferMessenger);
             CurrencyBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher);
             SkillBootstrapper.RegisterSetSkill(BufferManager, _flowDescriptorDispatcher, skillSetter);
-            EngineBootstrapper.RegisterSetHarvestNode(BufferManager, _flowDescriptorDispatcher, resourceSetter);
+            EngineBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher, resourceSetter);
             FlowBootstrapper.InitializeFlows(_bufferMessenger);
         }
 

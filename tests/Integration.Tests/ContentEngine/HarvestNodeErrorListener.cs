@@ -3,7 +3,7 @@ using IdelPog.Messaging.Listeners;
 
 namespace Integration.Tests.ContentEngine
 {
-    public class HarvestNodeErrorListener : ISingleListener<SetHarvestNodeError>
+    internal class HarvestNodeErrorListener : ISingleListener<SetHarvestNodeError>
     {
         public Type ListenerType => typeof(SetHarvestNodeError);
         public bool WasCalled { get; private set; }

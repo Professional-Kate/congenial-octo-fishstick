@@ -1,4 +1,4 @@
-﻿namespace IdelPog.SimulationEngine.Structures.Level
+﻿namespace IdelPog.Common.Structures
 {
     public readonly record struct LevelProgress
     {

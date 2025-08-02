@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Enums;
-using IdelPog.SimulationEngine.Structures.Level;
+using IdelPog.Common.Structures;
 
-namespace IdelPog.SimulationEngine.Skill
+namespace IdelPog.Common.Responses
 {
     public readonly record struct SkillUpdateResponse
     {

@@ -1,4 +1,6 @@
-﻿namespace IdelPog.SimulationEngine.Skill
+﻿using IdelPog.Common.Responses;
+
+namespace IdelPog.SimulationEngine.Skill
 {
     public interface ISkillUpdateFactory
     {

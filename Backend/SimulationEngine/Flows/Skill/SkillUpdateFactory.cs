@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Structures.Level;
+﻿using IdelPog.Common.Responses;
+using IdelPog.SimulationEngine.Structures.Level;
 
 namespace IdelPog.SimulationEngine.Skill
 {

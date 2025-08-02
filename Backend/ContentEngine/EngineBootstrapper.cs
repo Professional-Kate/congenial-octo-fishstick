@@ -1,5 +1,7 @@
-﻿using ContentEngine.Runtime.ECS;
-using ContentEngine.Runtime.Systems;
+﻿using ContentEngine.Runtime;
+using ContentEngine.Runtime.ECS;
+using ContentEngine.Runtime.Mediator;
+using ContentEngine.Runtime.Services;
 using ContentEngine.Services;
 using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
@@ -20,11 +22,38 @@ using IdelPog.Validation.Assertions.Handlers.Interfaces;
 
 namespace ContentEngine
 {
-    public class EngineBootstrapper
+    public static class EngineBootstrapper
     {
-        public static void RegisterSetHarvestNode(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, ICurrentResourceSetter currentResourceSetter)
+        /// <summary>
+        /// Creates and adds the <see cref="SetHarvestNode"/> and <see cref=""/> flow into the messaging system
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="flowDescriptorDispatcher">Used to dispatch a <see cref="FlowDescriptor"/></param>
+        /// <param name="currentResourceSetter">Used together with <see cref="ICurrentResourceProvider"/></param>
+        /// <seealso cref="RegisterSetHarvestNode"/>
+        public static void RegisterFlows(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, ICurrentResourceSetter currentResourceSetter)
         {
-            IHandler throwHandler = new ThrowHandler();
+            RegisterSkillUpdateResponse(bufferManager, flowDescriptorDispatcher, currentResourceSetter);
+            RegisterSetHarvestNode(bufferManager, flowDescriptorDispatcher, currentResourceSetter);
+        }
+
+        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, ICurrentResourceSetter currentResourceSetter)
+        {
+            
+        }
+
+        /// <summary>
+        /// Registers the <see cref="SetHarvestNode"/> flow into the messaging system
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="flowDescriptorDispatcher">Used to dispatch a <see cref="FlowDescriptor"/></param>
+        /// <param name="currentResourceSetter">Used together with <see cref="ICurrentResourceProvider"/></param>
+        /// <remarks>
+        /// Listens to -> <see cref="SetHarvestNode"/>. On Success -> <see cref="SetHarvestNodeResponse"/>. On Error -> <see cref="SetHarvestNodeError"/>
+        /// </remarks>
+        private static void RegisterSetHarvestNode(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, ICurrentResourceSetter currentResourceSetter)
+        {
+             IHandler throwHandler = new ThrowHandler();
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
@@ -39,10 +68,11 @@ namespace ContentEngine
             
             SkillComponent skillComponent = new() { SkillID = SkillID.MINING };
             skillNodeRepository.Add(SkillID.MINING, new SkillNodeEntity(skillComponent, resourceComponents));
-            
+
+            ISkillNodeAccessValidator skillNodeAccessValidator = new SkillNodeAccessValidator(skillNodeRepository, foundAssertion);
             IDispatchOne<SetHarvestNodeResponse> setHarvestNodeResponseDispatcher = new ManagedDispatcher<SetHarvestNodeResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             ISetHarvestNodeResponseFactory nodeChangeResponseFactor = new SetHarvestNodeResponseFactory();
-            ISingleMediator<SetHarvestNode> setHarvestNodeMediator = new SetHarvestNodeMediator(skillNodeRepository, currentResourceSetter, setHarvestNodeResponseDispatcher, nodeChangeResponseFactor, foundAssertion);
+            ISingleMediator<SetHarvestNode> setHarvestNodeMediator = new SetHarvestNodeMediator(skillNodeAccessValidator, currentResourceSetter, setHarvestNodeResponseDispatcher, nodeChangeResponseFactor);
             ISingleController<SetHarvestNode> setHarvestNodeController = new ManagedSingleController<SetHarvestNode>(setHarvestNodeMediator);
             
             FlowDescriptor flowDescriptor = new FlowBuilder()
