@@ -4,6 +4,7 @@ using IdelPog.Common.Factories;
 using IdelPog.Common.Responses;
 using IdelPog.Flows.Builder;
 using IdelPog.Flows.Types;
+using IdelPog.Messaging.Controller;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Dispatch.Single;
 using IdelPog.Messaging.Listeners.Single;
@@ -39,7 +40,7 @@ namespace IdelPog.SimulationEngine.Skill
             
             IDispatchOne<SkillChangeResponse> skillChangeResponseDispatcher = new ManagedDispatcher<SkillChangeResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             ISingleMediator<SkillChange> skillChangeMediator = new SkillChangeMediator(currentSkillSetter, skillChangeResponseFactory, skillChangeResponseDispatcher);
-            ISingleController<SkillChange> skillChangeController = new SkillController(skillChangeMediator);
+            ISingleController<SkillChange> skillChangeController = new ManagedSingleController<SkillChange>(skillChangeMediator);
             
             FlowDescriptor flowDescriptor = new FlowBuilder()
                 .ForCommand(typeof(SkillChange))

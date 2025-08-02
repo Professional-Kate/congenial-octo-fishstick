@@ -1,5 +1,6 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
+using IdelPog.Messaging.Controller;
 using IdelPog.Messaging.Listeners.Single;
 using IdelPog.SimulationEngine.Skill;
 using Moq;
@@ -18,7 +19,7 @@ namespace IdelPogTests.Controller
         {
             _skillChange = new SkillChange { SkillID = SkillID.MINING };
             _skillChangeMediatorMock = new Mock<ISingleMediator<SkillChange>>();
-            _controller = new SkillController(_skillChangeMediatorMock.Object);
+            _controller = new ManagedSingleController<SkillChange>(_skillChangeMediatorMock.Object);
         }
 
         [Test]

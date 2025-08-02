@@ -1,5 +1,6 @@
 ﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
+using IdelPog.Messaging.Controller;
 using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.SimulationEngine.Currency;
 using IdelPog.SimulationEngine.Currency.Commands;
@@ -42,8 +43,8 @@ namespace IdelPogTests.Controller
         {
             _currencyUpdateMediatorMock = new Mock<IBatchMediator<CurrencyUpdate>>();
             _currencyCreationMediatorMock = new Mock<IBatchMediator<CurrencyCreation>>();
-            _currencyUpdateController = new CurrencyUpdateController(_currencyUpdateMediatorMock.Object);
-            _currencyCreationController = new CurrencyCreationController(_currencyCreationMediatorMock.Object);
+            _currencyUpdateController = new ManagedBatchController<CurrencyUpdate>(_currencyUpdateMediatorMock.Object);
+            _currencyCreationController = new ManagedBatchController<CurrencyCreation>(_currencyCreationMediatorMock.Object);
         }
 
         [Test]

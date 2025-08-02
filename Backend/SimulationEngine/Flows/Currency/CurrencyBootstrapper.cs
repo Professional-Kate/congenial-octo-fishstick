@@ -7,6 +7,7 @@ using IdelPog.Common.Responses;
 using IdelPog.Flows.Builder;
 using IdelPog.Flows.Types;
 using IdelPog.Messaging.Assertions;
+using IdelPog.Messaging.Controller;
 using IdelPog.Messaging.Dispatch;
 using IdelPog.Messaging.Dispatch.Buffer;
 using IdelPog.Messaging.Dispatch.Single;
@@ -63,7 +64,7 @@ namespace IdelPog.SimulationEngine.Currency
 
             IDispatchOne<CurrencyCreationResponse> currencyCreationResponseDispatcher = new ManagedDispatcher<CurrencyCreationResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             IBatchMediator<CurrencyCreation> currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationResponseDispatcher, currencyCreationResponseFactory, objectNullAssertion,  collectionAssertion, uniqueAssertion);
-            IBatchController<CurrencyCreation> currencyCreationController = new CurrencyCreationController(currencyCreationMediator);
+            IBatchController<CurrencyCreation> currencyCreationController = new ManagedBatchController<CurrencyCreation>(currencyCreationMediator);
             
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<CurrencyCreationError, IReadOnlyList<CurrencyCreation>> currencyCreationErrorFactory = new CurrencyCreationErrorFactory(baseErrorFactory);
@@ -106,7 +107,7 @@ namespace IdelPog.SimulationEngine.Currency
             IDispatchOne<CurrencyUpdateError> updateErrorDispatcher = new ManagedDispatcher<CurrencyUpdateError>(bufferManager, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<CurrencyUpdate> updateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, updateResponseDispatcher, currencyUpdateSummarizer, updateResponseFactory, collectionAssertion, foundAssertion, objectNullAssertion);
-            IBatchController<CurrencyUpdate> updateController = new CurrencyUpdateController(updateMediator);
+            IBatchController<CurrencyUpdate> updateController = new ManagedBatchController<CurrencyUpdate>(updateMediator);
             
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<CurrencyUpdateError, IReadOnlyList<CurrencyUpdate>> currencyCreationErrorFactory = new CurrencyUpdateErrorFactory(baseErrorFactory);
