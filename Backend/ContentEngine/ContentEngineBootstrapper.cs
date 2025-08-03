@@ -8,6 +8,7 @@ using IdelPog.Common.Errors;
 using IdelPog.Common.Factories;
 using IdelPog.Common.Level;
 using IdelPog.Common.Level.Assertions;
+using IdelPog.Common.Level.Experience;
 using IdelPog.Common.Level.Pipelines;
 using IdelPog.Common.Repository;
 using IdelPog.Common.Responses;
@@ -66,11 +67,23 @@ namespace ContentEngine
             
             IStateRepository<ResourceID, HarvestNode> harvestNodeRepository = new StateRepository<ResourceID, HarvestNode>();
             ILevelService levelService = new LevelService(levelableAssertion);
+            IExperienceService experienceService = new ExperienceService(levelableAssertion);
             ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
             IHarvestNodeUpdateResponseFactory responseFactory = new HarvestNodeUpdateResponseFactory(levelProgressFactory);
+
+            // TODO: HarvestNodeCreation
+            HarvestNode ironHarvestNode = new()
+            {
+                Information = new Information { Description = "", Name = "" }, 
+                ResourceID = ResourceID.IRON, 
+                Levelable = new Levelable(0, 0, 20, 0)
+            };
+
+            harvestNodeRepository.Add(ironHarvestNode.ResourceID, ironHarvestNode);
+                
             
             IDispatchOne<HarvestNodeUpdateResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
-            INodeUpdateService nodeUpdateService = new NodeUpdateService(harvestNodeRepository, levelService, responseFactory, foundAssertion);
+            INodeUpdateService nodeUpdateService = new NodeUpdateService(harvestNodeRepository, levelService, experienceService, responseFactory, foundAssertion);
             ISingleMediator<SkillUpdateResponse> updateMediator = new NodeUpdateMediator(currentResourceProvider, skillNodeAccessValidator, nodeUpdateService, responseDispatcher);
             ISingleController<SkillUpdateResponse> nodeUpdateController = new ManagedSingleController<SkillUpdateResponse>(updateMediator);
 
@@ -111,7 +124,7 @@ namespace ContentEngine
             IErrorFactory<SetHarvestNodeError, SetHarvestNode> setHarvestNodeErrorFactory = new SetHarvestNodeErrorFactory(baseErrorFactory);
             IDispatchOne<SetHarvestNodeError> harvestNodeErrorDispatcher = new ManagedDispatcher<SetHarvestNodeError>(bufferManager, objectNullAssertion, collectionAssertion);
 
-            ResourceComponent stoneResourceComponent = new() { ResourceID = ResourceID.STONE }; 
+            ResourceComponent stoneResourceComponent = new() { ResourceID = ResourceID.IRON }; 
             ResourceComponent[] resourceComponents = [stoneResourceComponent];
             
             SkillComponent skillComponent = new() { SkillID = SkillID.MINING };

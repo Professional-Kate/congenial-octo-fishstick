@@ -2,6 +2,7 @@
 using IdelPog.Common.Enums;
 using IdelPog.Common.Factories;
 using IdelPog.Common.Level;
+using IdelPog.Common.Level.Experience;
 using IdelPog.Common.Repository;
 using IdelPog.Common.Structures;
 using IdelPog.Validation.Assertions;
@@ -17,6 +18,7 @@ namespace ContentEngine.Tests.Service
         private INodeUpdateService _nodeUpdateService;
         private Mock<IStateRepository<ResourceID, HarvestNode>> _nodeRepositoryMock;
         private Mock<ILevelService> _levelServiceMock;
+        private Mock<IExperienceService> _experienceServiceMock;
         private Mock<IHarvestNodeUpdateResponseFactory> _updateResponseFactoryMock;
 
         private HarvestNode _harvestNode;
@@ -26,6 +28,7 @@ namespace ContentEngine.Tests.Service
         {
             _nodeRepositoryMock = new Mock<IStateRepository<ResourceID, HarvestNode>>();
             _levelServiceMock = new Mock<ILevelService>();
+            _experienceServiceMock = new Mock<IExperienceService>();
             _updateResponseFactoryMock = new Mock<IHarvestNodeUpdateResponseFactory>();
 
             _harvestNode = new HarvestNode
@@ -35,7 +38,7 @@ namespace ContentEngine.Tests.Service
                 Levelable = new Levelable(0, 0, 0, 0)
             };
             
-            _nodeUpdateService = new NodeUpdateService(_nodeRepositoryMock.Object, _levelServiceMock.Object, _updateResponseFactoryMock.Object, new FoundAssertion(new ThrowHandler()));
+            _nodeUpdateService = new NodeUpdateService(_nodeRepositoryMock.Object, _levelServiceMock.Object, _experienceServiceMock.Object, _updateResponseFactoryMock.Object, new FoundAssertion(new ThrowHandler()));
         }
 
         [SetUp]

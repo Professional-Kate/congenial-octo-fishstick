@@ -6,7 +6,7 @@ using IdelPog.Common.Responses;
 using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Exceptions;
 
-namespace Integration.Tests.ContentEngine
+namespace Integration.Tests.ContentEngine.Change
 {
     [TestFixture]
     public class SetHarvestNodeFlowTest : ManagedBuffer
@@ -14,17 +14,13 @@ namespace Integration.Tests.ContentEngine
         private SetHarvestNode _setHarvestNode;
         private HarvestNodeChangeResponseListener _harvestNodeChangeResponseListener;
         private HarvestNodeErrorListener  _harvestNodeErrorListener;
-        private ICurrentResourceProvider _currentResourceProvider;
         
         [SetUp]
         public void Setup()
         {
-            CurrentResourceProvider currentResourceProvider = new();
-            _currentResourceProvider = currentResourceProvider;
-
             _setHarvestNode = new SetHarvestNode
             {
-                ResourceID = ResourceID.STONE,
+                ResourceID = ResourceID.IRON,
                 SkillID = SkillID.MINING
             };
             
@@ -70,12 +66,12 @@ namespace Integration.Tests.ContentEngine
 
         private void AssertCurrentResourceProvider_Equals(ResourceID expected)
         {
-            Assert.That(_currentResourceProvider.GetCurrentResource(), Is.EqualTo(expected));
+            Assert.That(currentResourceProvider.GetCurrentResource(), Is.EqualTo(expected));
         }
 
         private void AssertCurrencyResourceProvider_DoesNotEqual(ResourceID expected)
         {
-            Assert.That(_currentResourceProvider.GetCurrentResource(), Is.Not.EqualTo(expected));
+            Assert.That(currentResourceProvider.GetCurrentResource(), Is.Not.EqualTo(expected));
         }
         
         [Test]
