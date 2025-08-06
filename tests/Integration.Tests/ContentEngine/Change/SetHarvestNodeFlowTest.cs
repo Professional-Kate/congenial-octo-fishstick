@@ -1,5 +1,4 @@
-﻿using ContentEngine.Services;
-using IdelPog.Common.Commands;
+﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Errors;
 using IdelPog.Common.Responses;
@@ -66,12 +65,12 @@ namespace Integration.Tests.ContentEngine.Change
 
         private void AssertCurrentResourceProvider_Equals(ResourceID expected)
         {
-            Assert.That(currentResourceProvider.GetCurrentResource(), Is.EqualTo(expected));
+            Assert.That(CurrentResourceProvider.GetCurrentResource(), Is.EqualTo(expected));
         }
 
         private void AssertCurrencyResourceProvider_DoesNotEqual(ResourceID expected)
         {
-            Assert.That(currentResourceProvider.GetCurrentResource(), Is.Not.EqualTo(expected));
+            Assert.That(CurrentResourceProvider.GetCurrentResource(), Is.Not.EqualTo(expected));
         }
         
         [Test]

@@ -3,7 +3,6 @@ using IdelPog.Common.Level.Assertions;
 using IdelPog.Common.Level.Experience;
 using IdelPog.Common.Level.Pipelines;
 using IdelPog.Common.Structures;
-using IdelPog.SimulationEngine.Service;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;

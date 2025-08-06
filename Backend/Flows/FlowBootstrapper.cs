@@ -48,6 +48,7 @@ namespace IdelPog.Flows
             flowSubscriptionMediator.ConstructAndSubscribe<SetSkill, SetSkillError>();
             flowSubscriptionMediator.ConstructAndSubscribe<SetHarvestNode, SetHarvestNodeError>();
             flowSubscriptionMediator.ConstructAndSubscribe<SkillUpdateResponse, HarvestNodeUpdateError>();
+            flowSubscriptionMediator.ConstructAndSubscribe<NodeCreation, NodeCreationError>();
         }
 
         [MemberNotNull(nameof(_flowRepository))]

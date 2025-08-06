@@ -20,7 +20,7 @@ namespace Integration.Tests
     {
         protected IBufferManager BufferManager { get; private set; }
         protected ICurrentSkillProvider CurrentSkillProvider;
-        protected ICurrentResourceProvider currentResourceProvider;
+        protected ICurrentResourceProvider CurrentResourceProvider;
         private IBufferMessenger _bufferMessenger { get; set; }
         private IDispatchOne<FlowDescriptor> _flowDescriptorDispatcher { get; set; }
         private IBufferFactory _bufferFactory;
@@ -58,7 +58,7 @@ namespace Integration.Tests
             CurrentSkillProvider = skillProvider;
 
             CurrentResourceProvider resourceProvider = new();
-            currentResourceProvider = resourceProvider;
+            CurrentResourceProvider = resourceProvider;
 
             FlowBootstrapper.Initialize(_bufferMessenger);
             CurrencyBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher);
