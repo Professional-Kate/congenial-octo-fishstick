@@ -19,7 +19,7 @@ namespace Console.Commands.Resolver.Pipelines
 
             return new SetSkillArguments
             {
-                SkillID = skillID,
+                SkillID = skillID
             };
         }
     }

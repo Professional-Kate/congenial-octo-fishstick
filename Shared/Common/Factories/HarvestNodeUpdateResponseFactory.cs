@@ -18,7 +18,7 @@ namespace IdelPog.Common.Factories
             {
                 HasLeveled = hasLeveled,
                 LevelProgress = _levelProgressFactory.CreateLevelProgress(harvestNode.Levelable),
-                ResourceID = harvestNode.ResourceID,
+                ResourceID = harvestNode.ResourceID
             };
         }
     }

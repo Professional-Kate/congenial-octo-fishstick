@@ -17,7 +17,7 @@ namespace IdelPog.Common.Factories
             return new SetHarvestNodeError
             {
                 SetHarvestNode = context,
-                BaseError = _baseErrorFactory.Create(exception),
+                BaseError = _baseErrorFactory.Create(exception)
             };
         }
     }

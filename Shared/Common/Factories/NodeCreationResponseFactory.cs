@@ -9,7 +9,7 @@ namespace IdelPog.Common.Factories
         {
             return new NodeCreationResponse
             {
-                NodeCreations = nodeCreations,
+                NodeCreations = nodeCreations
             };
         }
     }

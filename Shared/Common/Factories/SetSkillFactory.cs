@@ -9,7 +9,7 @@ namespace IdelPog.Common.Factories
         {
             return new SetSkill
             {
-                SkillID = skillID,
+                SkillID = skillID
             };
         }
     }
