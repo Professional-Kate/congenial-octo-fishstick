@@ -47,7 +47,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flows", "Backend\Flows\Flow
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentEngine", "Backend\ContentEngine\ContentEngine.csproj", "{43874855-5083-469C-AECD-5390740EF9C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentEngine.Tests", "Tests\ContentEngine.Tests\ContentEngine.Tests.csproj", "{73F24E0C-0B02-49C2-9AE8-1B328863DBB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentEngine.Tests", "tests\ContentEngine.Tests\ContentEngine.Tests.csproj", "{73F24E0C-0B02-49C2-9AE8-1B328863DBB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
