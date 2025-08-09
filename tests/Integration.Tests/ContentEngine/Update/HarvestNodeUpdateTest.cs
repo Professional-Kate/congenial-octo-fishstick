@@ -76,7 +76,7 @@ namespace Integration.Tests.ContentEngine
         private void AssertErrorListener<TException>(SkillUpdateResponse skillUpdateResponse)
         {
             HarvestNodeUpdateError error = _updateNodeErrorListener.HarvestNodeUpdateError;
-            Debug.Assert(error.BaseError.Exception.InnerException != null, "error.BaseError.Exception.InnerException != null");
+            Assert.That(error.BaseError.Exception.InnerException, Is.Not.Null);
             
             Assert.Multiple(() =>
             {

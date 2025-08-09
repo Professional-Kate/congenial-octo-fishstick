@@ -30,20 +30,20 @@ namespace Integration.Tests.ContentEngine
             ManagedSubscribe(_nodeCreationErrorListener);
         }
         
-        private void DispatchNodeCreation(NodeCreation nodeCreation)
+        private void DispatchNodeCreation(params NodeCreation[] nodeCreations)
         {
-            IBuffer<NodeCreation> buffer = BufferManager.RequestBuffer<NodeCreation>(new BufferRequest(1));
-            buffer.Assign([nodeCreation]);
+            IBuffer<NodeCreation> buffer = BufferManager.RequestBuffer<NodeCreation>(new BufferRequest(nodeCreations.Length));
+            buffer.Assign(nodeCreations);
             buffer.MarkReady();
         }
 
-        private void AssertResponseListener(NodeCreation nodeCreation)
+        private void AssertResponseListener(params NodeCreation[] nodeCreations)
         {
             Assert.Multiple(() =>
             {
                 NodeCreationResponse response = _nodeCreationResponseListener.NodeCreationResponse;
-                Assert.That(response.NodeCreations.Count, Is.EqualTo(1));
-                Assert.That(response.NodeCreations[0], Is.EqualTo(nodeCreation));
+                Assert.That(response.NodeCreations.Count, Is.EqualTo(nodeCreations.Length));
+                Assert.That(response.NodeCreations, Is.EqualTo(nodeCreations));
             });
         }
 
@@ -53,9 +53,9 @@ namespace Integration.Tests.ContentEngine
             Assert.Multiple(() =>
             {
                 NodeCreationError error = _nodeCreationErrorListener.NodeCreationError;
-                Debug.Assert(error.BaseError.Exception.InnerException != null, "error.BaseError.Exception.InnerException != null");
+                Assert.That(error.BaseError.Exception.InnerException, Is.Not.Null);
             
-                Assert.That(error.BaseError.Exception.InnerException.GetType(), Is.EqualTo(typeof(TException)));
+                Assert.That(error.BaseError.Exception.InnerException!.GetType(), Is.EqualTo(typeof(TException)));
                 Assert.That(error.NodeCreations, Has.Length.EqualTo(1));
                 Assert.That(error.NodeCreations[0], Is.EqualTo(nodeCreation));
             });
@@ -72,6 +72,21 @@ namespace Integration.Tests.ContentEngine
                 Assert.That(_nodeCreationErrorListener.WasCalled, Is.False);
             });
             AssertResponseListener(_nodeCreation);
+        }
+        
+        [Test]
+        public void Positive_SendMultipleCommands_CreatesEachNode_DispatchesResponse()
+        {
+            NodeCreation stoneCreation = new() { LinkedSkill = SkillID.MINING, ResourceIDs = [ResourceID.STONE] };
+            NodeCreation copperCreation = new() { LinkedSkill = SkillID.FARMING, ResourceIDs = [ResourceID.COPPER] };
+            Assert.DoesNotThrow(() => DispatchNodeCreation(stoneCreation, copperCreation));
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(_nodeCreationResponseListener.WasCalled, Is.True);
+                Assert.That(_nodeCreationErrorListener.WasCalled, Is.False);
+            });
+            AssertResponseListener(stoneCreation, copperCreation);
         }
 
         [Test]
