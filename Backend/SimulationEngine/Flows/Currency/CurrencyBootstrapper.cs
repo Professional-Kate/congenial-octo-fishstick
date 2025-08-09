@@ -3,23 +3,16 @@ using IdelPog.Common.Enums;
 using IdelPog.Common.Errors;
 using IdelPog.Common.Factories;
 using IdelPog.Common.Repository;
-using IdelPog.Common.Responses;
 using IdelPog.Flows.Builder;
 using IdelPog.Flows.Types;
-using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Controller;
 using IdelPog.Messaging.Dispatch;
-using IdelPog.Messaging.Dispatch.Buffer;
 using IdelPog.Messaging.Dispatch.Single;
-using IdelPog.Messaging.Listeners;
 using IdelPog.Messaging.Listeners.Buffer;
-using IdelPog.Messaging.Messenger;
 using IdelPog.Messaging.Orchestration;
 using IdelPog.SimulationEngine.Currency.Assertions;
-using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.Factories;
 using IdelPog.SimulationEngine.Currency.Responses;
-using IdelPog.SimulationEngine.Skill;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
@@ -82,7 +75,7 @@ namespace IdelPog.SimulationEngine.Currency
                 .SetDispatchMode(BufferMode.BATCH)
                 .SetDescription(typeof(CurrencyCreation), typeof(CurrencyCreationResponse), typeof(CurrencyCreationError))
                 .WithController(currencyCreationController)
-                .WithResponseDispatcher(currencyCreationErrorDispatcher)
+                .WithErrorDispatcher(currencyCreationErrorDispatcher)
                 .WithErrorFactory(currencyCreationErrorFactory)
                 .Build();
             
@@ -127,7 +120,7 @@ namespace IdelPog.SimulationEngine.Currency
                 .SetDispatchMode(BufferMode.BATCH)
                 .SetDescription(typeof(CurrencyUpdate), typeof(CurrencyUpdateResponse), typeof(CurrencyUpdateError))
                 .WithController(updateController)
-                .WithResponseDispatcher(updateErrorDispatcher)
+                .WithErrorDispatcher(updateErrorDispatcher)
                 .WithErrorFactory(currencyCreationErrorFactory)
                 .Build();
             

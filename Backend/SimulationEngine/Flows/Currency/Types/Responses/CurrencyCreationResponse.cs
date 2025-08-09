@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Currency.Commands;
+﻿using IdelPog.Common.Commands;
 
 namespace IdelPog.SimulationEngine.Currency.Responses
 {

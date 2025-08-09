@@ -11,7 +11,7 @@ namespace IdelPog.Flows.Builder
     {
         private Type? _commandType;
         private IController? _controller;
-        private IDispatcher? _responseDispatcher;
+        private IDispatcher? _errorDispatcher;
         private IErrorFactory? _errorFactory;
         private string? _description;
         private BufferMode _bufferMode;
@@ -28,9 +28,9 @@ namespace IdelPog.Flows.Builder
             return this;
         }
 
-        public FlowBuilder WithResponseDispatcher(IDispatcher responseDispatcher)
+        public FlowBuilder WithErrorDispatcher(IDispatcher responseDispatcher)
         {
-            _responseDispatcher = responseDispatcher;
+            _errorDispatcher = responseDispatcher;
             return this;
         }
 
@@ -62,20 +62,20 @@ namespace IdelPog.Flows.Builder
                 CommandType = _commandType,
                 ListeningMode = _bufferMode,
                 Controller = _controller,
-                ResponseDispatcher = _responseDispatcher,
+                ErrorDispatcher = _errorDispatcher,
                 ErrorFactory = _errorFactory,
                 Description = _description
             };
         }
 
-        [MemberNotNull(nameof(_controller), nameof(_errorFactory), nameof(_description),  nameof(_responseDispatcher), nameof(_commandType))]
+        [MemberNotNull(nameof(_controller), nameof(_errorFactory), nameof(_description),  nameof(_errorDispatcher), nameof(_commandType))]
         private void Validate()
         {
             Debug.Assert(_commandType != null, nameof(_commandType) + " != null");
             Debug.Assert(_controller != null, nameof(_controller) + " != null");
             Debug.Assert(_errorFactory != null, nameof(_errorFactory) + " != null");
             Debug.Assert(_description != null, nameof(_description) + " != null");
-            Debug.Assert(_responseDispatcher != null, nameof(_responseDispatcher) + " != null");
+            Debug.Assert(_errorDispatcher != null, nameof(_errorDispatcher) + " != null");
         }
     }
 }

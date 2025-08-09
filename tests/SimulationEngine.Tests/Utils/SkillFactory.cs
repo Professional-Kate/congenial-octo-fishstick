@@ -1,4 +1,5 @@
 ﻿using IdelPog.Common.Enums;
+using IdelPog.Common.Structures;
 using IdelPog.SimulationEngine.Models;
 
 namespace IdelPogTests.Utils

@@ -1,10 +1,10 @@
-﻿using IdelPog.SimulationEngine.Models;
+﻿using IdelPog.Common.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 
 namespace IdelPog.SimulationEngine.Service
 {
-    public class Mapper<T> : IMapper<T>
+    public class Mapper<T> : IMapper<T> where T : notnull
     {
         private readonly Dictionary<T, Information> _information = new();
 

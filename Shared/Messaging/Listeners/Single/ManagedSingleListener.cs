@@ -15,9 +15,9 @@ namespace IdelPog.Messaging.Listeners.Single
 
         public Type ListenerType => typeof(T);
         
-        public void Handle(T item)
+        public void Handle(T message)
         {
-            _singleControllerExecutionAssertion.AssertExecutesWithoutError(_controller, item);
+            _singleControllerExecutionAssertion.AssertExecutesWithoutError(_controller, message);
         }
     }
 }

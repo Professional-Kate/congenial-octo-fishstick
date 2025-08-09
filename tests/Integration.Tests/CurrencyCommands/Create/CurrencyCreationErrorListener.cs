@@ -1,5 +1,5 @@
-﻿using IdelPog.Messaging.Listeners;
-using IdelPog.SimulationEngine.Currency.Responses;
+﻿using IdelPog.Common.Errors;
+using IdelPog.Messaging.Listeners;
 
 namespace Integration.Tests.CurrencyCommands.Create
 {
@@ -9,9 +9,9 @@ namespace Integration.Tests.CurrencyCommands.Create
         public CurrencyCreationError CurrencyUpdateError { get; private set; }
         public bool WasCalled { get; private set; }
 
-        public void Handle(CurrencyCreationError item)
+        public void Handle(CurrencyCreationError message)
         {
-            CurrencyUpdateError = item;
+            CurrencyUpdateError = message;
             WasCalled = true;
         }
     }

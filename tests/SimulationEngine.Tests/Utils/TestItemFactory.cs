@@ -1,4 +1,5 @@
-﻿using IdelPog.SimulationEngine.Inventory;
+﻿using IdelPog.Common.Structures;
+using IdelPog.SimulationEngine.Inventory;
 using IdelPog.SimulationEngine.Models;
 
 namespace IdelPogTests.Utils

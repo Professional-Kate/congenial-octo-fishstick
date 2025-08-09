@@ -1,4 +1,6 @@
-﻿using IdelPog.Flows;
+﻿using ContentEngine;
+using ContentEngine.Services;
+using IdelPog.Flows;
 using IdelPog.Flows.Types;
 using IdelPog.Messaging.Assertions;
 using IdelPog.Messaging.Dispatch;
@@ -18,6 +20,7 @@ namespace Integration.Tests
     {
         protected IBufferManager BufferManager { get; private set; }
         protected ICurrentSkillProvider CurrentSkillProvider;
+        protected ICurrentResourceProvider CurrentResourceProvider;
         private IBufferMessenger _bufferMessenger { get; set; }
         private IDispatchOne<FlowDescriptor> _flowDescriptorDispatcher { get; set; }
         private IBufferFactory _bufferFactory;
@@ -50,13 +53,17 @@ namespace Integration.Tests
 
         private void Register()
         {
-            CurrentSkillProvider provider = new();
-            ICurrentSkillSetter setter = provider;
-            CurrentSkillProvider = provider;
+            CurrentSkillProvider skillProvider = new();
+            ICurrentSkillSetter skillSetter = skillProvider;
+            CurrentSkillProvider = skillProvider;
+
+            CurrentResourceProvider resourceProvider = new();
+            CurrentResourceProvider = resourceProvider;
 
             FlowBootstrapper.Initialize(_bufferMessenger);
             CurrencyBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher);
-            SkillBootstrapper.RegisterSkillChange(BufferManager, _flowDescriptorDispatcher, setter);
+            SkillBootstrapper.RegisterSetSkill(BufferManager, _flowDescriptorDispatcher, skillSetter);
+            ContentEngineBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher, resourceProvider);
             FlowBootstrapper.InitializeFlows(_bufferMessenger);
         }
 

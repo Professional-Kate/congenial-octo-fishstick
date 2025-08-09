@@ -2,13 +2,12 @@
 using IdelPog.Common.Commands;
 using IdelPog.Common.Errors;
 using IdelPog.Common.Repository;
+using IdelPog.Common.Responses;
 using IdelPog.Flows.Registry;
 using IdelPog.Flows.Types;
 using IdelPog.Messaging.Controller;
 using IdelPog.Messaging.Listeners.Buffer;
 using IdelPog.Messaging.Messenger;
-using IdelPog.SimulationEngine.Currency.Commands;
-using IdelPog.SimulationEngine.Currency.Responses;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 
@@ -46,7 +45,10 @@ namespace IdelPog.Flows
 
             flowSubscriptionMediator.ConstructAndSubscribe<CurrencyUpdate, CurrencyUpdateError>();
             flowSubscriptionMediator.ConstructAndSubscribe<CurrencyCreation, CurrencyCreationError>();
-            flowSubscriptionMediator.ConstructAndSubscribe<SkillChange, SkillChangeError>();
+            flowSubscriptionMediator.ConstructAndSubscribe<SetSkill, SetSkillError>();
+            flowSubscriptionMediator.ConstructAndSubscribe<SetHarvestNode, SetHarvestNodeError>();
+            flowSubscriptionMediator.ConstructAndSubscribe<SkillUpdateResponse, HarvestNodeUpdateError>();
+            flowSubscriptionMediator.ConstructAndSubscribe<NodeCreation, NodeCreationError>();
         }
 
         [MemberNotNull(nameof(_flowRepository))]

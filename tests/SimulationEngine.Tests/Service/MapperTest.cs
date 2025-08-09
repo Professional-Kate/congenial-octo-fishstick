@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Models;
+﻿using IdelPog.Common.Structures;
 using IdelPog.SimulationEngine.Service;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;

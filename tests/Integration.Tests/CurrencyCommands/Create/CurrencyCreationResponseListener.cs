@@ -9,9 +9,9 @@ namespace Integration.Tests.CurrencyCommands.Create
         public CurrencyCreationResponse Item { get; private set; }
         public bool WasCalled { get; private set; }
         
-        public void Handle(CurrencyCreationResponse item)
+        public void Handle(CurrencyCreationResponse message)
         {
-            Item = item;
+            Item = message;
             WasCalled = true;
         }
     }

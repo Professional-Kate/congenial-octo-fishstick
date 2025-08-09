@@ -1,7 +1,6 @@
-﻿using IdelPog.Common.Errors;
-using IdelPog.SimulationEngine.Currency.Commands;
+﻿using IdelPog.Common.Commands;
 
-namespace IdelPog.SimulationEngine.Currency.Responses
+namespace IdelPog.Common.Errors
 {
     public readonly record struct CurrencyCreationError
     {

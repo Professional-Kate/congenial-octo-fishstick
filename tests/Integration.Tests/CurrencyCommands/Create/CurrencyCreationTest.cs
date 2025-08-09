@@ -1,10 +1,8 @@
-﻿using IdelPog.Common.Enums;
+﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Enums;
 using IdelPog.Common.Errors;
-using IdelPog.Flows;
 using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Exceptions;
-using IdelPog.SimulationEngine.Currency;
-using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPog.SimulationEngine.Currency.Responses;
 
 namespace Integration.Tests.CurrencyCommands.Create

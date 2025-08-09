@@ -14,7 +14,7 @@ namespace Integration.Tests.Console
     public class SkillDomainFlowTest : ManagedBuffer
     {
         private IInputHandler _inputHandler;
-        private SkillChangeListener _skillChangeListener;
+        private SetSkillListener _setSkillListener;
 
         [SetUp]
         public void Setup()
@@ -22,8 +22,8 @@ namespace Integration.Tests.Console
             _inputHandler = ConsoleBootstrapper.Initialize(BufferManager);
             TestPermissionService.SendAddPermissionCall(_inputHandler, Domain.SKILL);
 
-            _skillChangeListener = new SkillChangeListener();
-            ManagedSubscribe(_skillChangeListener);
+            _setSkillListener = new SetSkillListener();
+            ManagedSubscribe(_setSkillListener);
         }
 
         private static IEnumerable<TestCaseData> ValidSkillChanges()
@@ -49,11 +49,11 @@ namespace Integration.Tests.Console
         {
             Assert.DoesNotThrow(() => _inputHandler.Input(arguments));
 
-            Assert.That(_skillChangeListener.WasCalled, Is.True);
+            Assert.That(_setSkillListener.WasCalled, Is.True);
             Assert.Multiple(() =>
             {
-                SkillChange skillChange = _skillChangeListener.SkillChange;
-                Assert.That(skillChange.SkillID, Is.EqualTo(skillID));
+                SetSkill setSkill = _setSkillListener.SetSkill;
+                Assert.That(setSkill.SkillID, Is.EqualTo(skillID));
             });
         }
 
@@ -62,12 +62,12 @@ namespace Integration.Tests.Console
         [TestCase(new[] { "skill", "change", "wood-cutting" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
         [TestCase(new[] { "skill", "change", "woodcutting" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
         [TestCase(new[] { "skill", "change" }, typeof(InvalidArgumentCountException), TestName = "MissingSkill_ThrowsInvalidArgumentCountException")]
-        [TestCase(new[] { "skill" }, typeof(EmptySpanException), TestName = "MissingChangeAndSkill_ThrowsEmptySpanException")]
+        [TestCase(new[] { "skill" }, typeof(EmptySpanException), TestName = "MissingMost_ThrowsEmptySpanException")]
         [TestCase(new string[] { }, typeof(EmptySpanException), TestName = "NoArguments_ThrowsEmptySpanException")]
         public void Negative_ChangeSkill_BadArguments_Throws(string[] arguments, Type exception)
         {
             Assert.Throws(exception, () => _inputHandler.Input(arguments));
-            Assert.That(_skillChangeListener.WasCalled, Is.False);
+            Assert.That(_setSkillListener.WasCalled, Is.False);
         }
 
         [Test]

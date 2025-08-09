@@ -1,8 +1,8 @@
-﻿using IdelPog.SimulationEngine.Assertions;
-using IdelPog.SimulationEngine.Assertions.Pipelines;
-using IdelPog.SimulationEngine.Constants;
-using IdelPog.SimulationEngine.Models;
-using IdelPog.SimulationEngine.Service;
+﻿using IdelPog.Common.Level;
+using IdelPog.Common.Level.Assertions;
+using IdelPog.Common.Level.Experience;
+using IdelPog.Common.Level.Pipelines;
+using IdelPog.Common.Structures;
 using IdelPog.Validation.Assertions;
 using IdelPog.Validation.Assertions.Handlers;
 using IdelPog.Validation.Assertions.Handlers.Interfaces;
@@ -56,7 +56,7 @@ namespace IdelPogTests.Service
         [Test]
         public void Negative_AddExperience_MaxLevel_Throws()
         {
-            Levelable levelable = new(SkillConstants.MAX_SKILL_LEVEL, 100, 10, 1);
+            Levelable levelable = new(LevelConstants.MAX_LEVEL, 100, 10, 1);
 
             MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(levelable));
             Assert.Multiple(() =>

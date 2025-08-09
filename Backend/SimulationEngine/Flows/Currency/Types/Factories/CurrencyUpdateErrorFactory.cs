@@ -1,6 +1,6 @@
 ﻿using IdelPog.Common.Commands;
+using IdelPog.Common.Errors;
 using IdelPog.Common.Factories;
-using IdelPog.SimulationEngine.Currency.Responses;
 
 namespace IdelPog.SimulationEngine.Currency.Factories
 {

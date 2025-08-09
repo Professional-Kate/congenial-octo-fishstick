@@ -9,10 +9,10 @@ namespace Integration.Tests.CurrencyCommands.Update
         public CurrencyUpdateResponse Item { get; private set; }
         public bool WasCalled { get; private set; }
 
-        public void Handle(CurrencyUpdateResponse item)
+        public void Handle(CurrencyUpdateResponse message)
         {
             WasCalled = true;
-            Item = item;
+            Item = message;
         }
     }
 }

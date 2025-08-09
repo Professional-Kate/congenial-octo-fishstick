@@ -1,4 +1,4 @@
-﻿using IdelPog.SimulationEngine.Currency.Commands;
+﻿using IdelPog.Common.Commands;
 using IdelPog.SimulationEngine.Currency.Responses;
 using IdelPog.Validation.Assertions;
 

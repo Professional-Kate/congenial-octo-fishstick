@@ -2,8 +2,6 @@
 using IdelPog.Common.Enums;
 using IdelPog.Messaging.Controller;
 using IdelPog.Messaging.Listeners.Buffer;
-using IdelPog.SimulationEngine.Currency;
-using IdelPog.SimulationEngine.Currency.Commands;
 using IdelPogTests.Utils;
 using Moq;
 
