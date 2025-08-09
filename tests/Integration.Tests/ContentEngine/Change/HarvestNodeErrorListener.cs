@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Errors;
 using IdelPog.Messaging.Listeners;
 
-namespace Integration.Tests.ContentEngine.Change
+namespace Integration.Tests.ContentEngine
 {
     internal class HarvestNodeErrorListener : ISingleListener<SetHarvestNodeError>
     {

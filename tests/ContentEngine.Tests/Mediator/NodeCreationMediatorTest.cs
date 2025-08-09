@@ -45,7 +45,7 @@ namespace ContentEngine.Tests.Mediator
                 LinkedSkill = SkillID.MINING
             };
 
-            _nodeCreationMediator = new NodeCreationMediator(_harvestNodeRepositoryMock.Object, _skillNodeEntityRepositoryMock.Object, _skillNodeEntityFactoryMock.Object, _harvestNodeFactoryMock.Object, _nodeCreationResponseFactoryMock.Object, _dispatchOneMock.Object, new UniqueAssertion(new ThrowHandler()));
+            _nodeCreationMediator = new NodeCreationMediator(_harvestNodeRepositoryMock.Object, _skillNodeEntityRepositoryMock.Object, _skillNodeEntityFactoryMock.Object, _harvestNodeFactoryMock.Object, _nodeCreationResponseFactoryMock.Object, _dispatchOneMock.Object, new UniqueAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()));
         }
 
         [SetUp]

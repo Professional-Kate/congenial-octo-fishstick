@@ -21,8 +21,9 @@ namespace ContentEngine.Runtime.Mediator
         private readonly INodeCreationResponseFactory  _nodeCreationResponseFactory;
         private readonly IDispatchOne<NodeCreationResponse> _nodeCreationResponseDispatcher;
         private readonly IUniqueAssertion _uniqueAssertion;
+        private readonly ICollectionAssertion _collectionAssertion;
 
-        public NodeCreationMediator(IStateRepository<ResourceID, HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, SkillNodeEntity> skillNodeEntityRepository, ISkillNodeEntityFactory skillNodeEntityFactory, IHarvestNodeFactory harvestNodeFactory, INodeCreationResponseFactory  nodeCreationResponseFactory, IDispatchOne<NodeCreationResponse> nodeCreationResponseDispatcher, IUniqueAssertion uniqueAssertion)
+        public NodeCreationMediator(IStateRepository<ResourceID, HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, SkillNodeEntity> skillNodeEntityRepository, ISkillNodeEntityFactory skillNodeEntityFactory, IHarvestNodeFactory harvestNodeFactory, INodeCreationResponseFactory  nodeCreationResponseFactory, IDispatchOne<NodeCreationResponse> nodeCreationResponseDispatcher, IUniqueAssertion uniqueAssertion, ICollectionAssertion collectionAssertion)
         {
             _harvestNodeRepository = harvestNodeRepository;
             _skillNodeEntityRepository = skillNodeEntityRepository;
@@ -31,12 +32,17 @@ namespace ContentEngine.Runtime.Mediator
             _nodeCreationResponseFactory = nodeCreationResponseFactory;
             _nodeCreationResponseDispatcher = nodeCreationResponseDispatcher;
             _uniqueAssertion = uniqueAssertion;
+            _collectionAssertion = collectionAssertion;
         }
 
         public void HandleMessages(IReadOnlyList<NodeCreation> nodeCreations)
         {
+            _collectionAssertion.AssertHasElements(nodeCreations);
+            
             foreach (NodeCreation nodeCreation in nodeCreations)
             {
+                _collectionAssertion.AssertHasElements(nodeCreation.ResourceIDs);
+                
                 foreach (ResourceID nodeCreationResourceID in nodeCreation.ResourceIDs)
                 {
                     _uniqueAssertion.AssertUnique(nodeCreationResourceID, _harvestNodeRepository.Contains(nodeCreationResourceID));

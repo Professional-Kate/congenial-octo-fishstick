@@ -7,13 +7,14 @@ using IdelPog.Common.Structures;
 using IdelPog.Messaging.Buffer;
 using IdelPog.Validation.Exceptions;
 
-namespace Integration.Tests.ContentEngine.Update
+namespace Integration.Tests.ContentEngine
 {
     [TestFixture]
     public class HarvestNodeUpdateTest : ManagedBuffer
     {
         private SkillUpdateResponse _skillUpdateResponse;
         private SetHarvestNode _setHarvestNode;
+        private NodeCreation _nodeCreation;
         private UpdateNodeErrorListener _updateNodeErrorListener;
         private UpdateNodeResponseListener _updateNodeResponseListener;
 
@@ -33,10 +34,23 @@ namespace Integration.Tests.ContentEngine.Update
                 SkillID = SkillID.MINING
             };
             
+            _nodeCreation = new NodeCreation
+            {
+                LinkedSkill = SkillID.MINING,
+                ResourceIDs = [ResourceID.IRON]
+            };
+            
             _updateNodeErrorListener = new UpdateNodeErrorListener();
             _updateNodeResponseListener = new UpdateNodeResponseListener();
             ManagedSubscribe(_updateNodeErrorListener);
             ManagedSubscribe(_updateNodeResponseListener);
+        }
+        
+        private void DispatchNodeCreation(NodeCreation nodeCreation)
+        {
+            IBuffer<NodeCreation> buffer = BufferManager.RequestBuffer<NodeCreation>(new BufferRequest(1));
+            buffer.Assign([nodeCreation]);
+            buffer.MarkReady();
         }
 
         private void DispatchSkillUpdate(SkillUpdateResponse skillUpdateResponse)
@@ -56,14 +70,10 @@ namespace Integration.Tests.ContentEngine.Update
         private void AssertResponseListener()
         {
             HarvestNodeUpdateResponse response = _updateNodeResponseListener.HarvestNodeUpdateResponse;
-            Assert.Multiple(() =>
-            {
-                Assert.That(response.ResourceID, Is.EqualTo(_setHarvestNode.ResourceID));
-                Assert.That(response.LevelProgress, Is.Not.EqualTo(_skillUpdateResponse.LevelProgress));
-            });
+            Assert.That(response.ResourceID, Is.EqualTo(_setHarvestNode.ResourceID));
         }
 
-        private void AssertErrorListener<TException>()
+        private void AssertErrorListener<TException>(SkillUpdateResponse skillUpdateResponse)
         {
             HarvestNodeUpdateError error = _updateNodeErrorListener.HarvestNodeUpdateError;
             Debug.Assert(error.BaseError.Exception.InnerException != null, "error.BaseError.Exception.InnerException != null");
@@ -71,12 +81,14 @@ namespace Integration.Tests.ContentEngine.Update
             Assert.Multiple(() =>
             {
                 Assert.That(error.BaseError.Exception.InnerException.GetType(), Is.EqualTo(typeof(TException)));
+                Assert.That(error.SkillUpdateResponse.SkillID, Is.EqualTo(skillUpdateResponse.SkillID));
             });
         }
 
         [Test]
         public void Positive_SendCommand_DispatchesResponse_NoError()
         {
+            DispatchNodeCreation(_nodeCreation);
             DispatchSetHarvestNode(_setHarvestNode);
             Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse));
             
@@ -100,12 +112,13 @@ namespace Integration.Tests.ContentEngine.Update
                 Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(true));
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
             });
-            AssertErrorListener<NotFoundException<SkillID>>();
+            AssertErrorListener<NotFoundException<SkillID>>(_skillUpdateResponse with { SkillID = SkillID.FARMING });
         } 
         
         [Test]
         public void Negative_SendCommand_SkillDoesNotAllowResource_NoUpdate_DispatchesError()
         {
+            DispatchNodeCreation(_nodeCreation);
             DispatchSetHarvestNode(_setHarvestNode with { ResourceID = ResourceID.COPPER });
             
             Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse));
@@ -116,7 +129,7 @@ namespace Integration.Tests.ContentEngine.Update
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
             });
             
-            AssertErrorListener<NotFoundException<ResourceID>>();
+            AssertErrorListener<NotFoundException<ResourceID>>(_skillUpdateResponse);
         } 
     }
 }

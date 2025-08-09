@@ -46,7 +46,7 @@ namespace ContentEngine
             ISkillNodeAccessValidator skillNodeAccessValidator = new SkillNodeAccessValidator(skillNodeRepository, foundAssertion);
             
             RegisterSkillUpdateResponse(bufferManager, flowDescriptorDispatcher, currentResourceProvider, skillNodeAccessValidator);
-            RegisterSetHarvestNode(bufferManager, skillNodeRepository, flowDescriptorDispatcher, currentResourceProvider, skillNodeAccessValidator);
+            RegisterSetHarvestNode(bufferManager, flowDescriptorDispatcher, currentResourceProvider, skillNodeAccessValidator);
             RegisterNodeCreation(bufferManager, flowDescriptorDispatcher, skillNodeRepository);
         }
 
@@ -110,14 +110,13 @@ namespace ContentEngine
         /// Registers the <see cref="SetHarvestNode"/> flow into the messaging system
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
-        /// <param name="skillNodeRepository">Used to store all <see cref="HarvestNode"/> models</param>
         /// <param name="flowDescriptorDispatcher">Used to dispatch a <see cref="FlowDescriptor"/></param>
         /// <param name="currentResourceSetter">Used together with <see cref="ICurrentResourceProvider"/></param>
         /// <param name="skillNodeAccessValidator">Used to validate if a skill can access a node</param>
         /// <remarks>
         /// Listens to -> <see cref="SetHarvestNode"/>. On Success -> <see cref="SetHarvestNodeResponse"/>. On Error -> <see cref="SetHarvestNodeError"/>
         /// </remarks>
-        private static void RegisterSetHarvestNode(IBufferManager bufferManager, IAssetRepository<SkillID, SkillNodeEntity> skillNodeRepository, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, ICurrentResourceSetter currentResourceSetter, ISkillNodeAccessValidator skillNodeAccessValidator)
+        private static void RegisterSetHarvestNode(IBufferManager bufferManager, IDispatchOne<FlowDescriptor> flowDescriptorDispatcher, ICurrentResourceSetter currentResourceSetter, ISkillNodeAccessValidator skillNodeAccessValidator)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -126,12 +125,6 @@ namespace ContentEngine
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<SetHarvestNodeError, SetHarvestNode> setHarvestNodeErrorFactory = new SetHarvestNodeErrorFactory(baseErrorFactory);
             IDispatchOne<SetHarvestNodeError> harvestNodeErrorDispatcher = new ManagedDispatcher<SetHarvestNodeError>(bufferManager, objectNullAssertion, collectionAssertion);
-
-            ResourceComponent stoneResourceComponent = new() { ResourceID = ResourceID.IRON }; 
-            ResourceComponent[] resourceComponents = [stoneResourceComponent];
-            
-            SkillComponent skillComponent = new() { SkillID = SkillID.MINING };
-            skillNodeRepository.Add(SkillID.MINING, new SkillNodeEntity(skillComponent, resourceComponents));
 
             IDispatchOne<SetHarvestNodeResponse> setHarvestNodeResponseDispatcher = new ManagedDispatcher<SetHarvestNodeResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             ISetHarvestNodeResponseFactory nodeChangeResponseFactor = new SetHarvestNodeResponseFactory();
@@ -172,7 +165,7 @@ namespace ContentEngine
             INodeCreationResponseFactory nodeCreationResponseFactory = new NodeCreationResponseFactory();
             IDispatchOne<NodeCreationResponse> nodeCreationResponseDispatcher = new ManagedDispatcher<NodeCreationResponse>(bufferManager,  objectNullAssertion, collectionAssertion);
             
-            IBatchMediator<NodeCreation> creationMediator = new NodeCreationMediator(harvestNodeRepository, skillNodeRepository, skillNodeEntityFactory, harvestNodeFactory, nodeCreationResponseFactory, nodeCreationResponseDispatcher, uniqueAssertion);
+            IBatchMediator<NodeCreation> creationMediator = new NodeCreationMediator(harvestNodeRepository, skillNodeRepository, skillNodeEntityFactory, harvestNodeFactory, nodeCreationResponseFactory, nodeCreationResponseDispatcher, uniqueAssertion, collectionAssertion);
             IBatchController<NodeCreation> creationController = new ManagedBatchController<NodeCreation>(creationMediator);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();

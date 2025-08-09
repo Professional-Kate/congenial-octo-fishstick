@@ -1,7 +1,7 @@
 ﻿using IdelPog.Common.Responses;
 using IdelPog.Messaging.Listeners;
 
-namespace Integration.Tests.ContentEngine.Change
+namespace Integration.Tests.ContentEngine
 {
     public class HarvestNodeChangeResponseListener : ISingleListener<SetHarvestNodeResponse>
     {

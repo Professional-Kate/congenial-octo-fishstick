@@ -5,18 +5,25 @@ using IdelPog.Common.Responses;
 using IdelPog.Messaging.Buffer;
 using IdelPog.Messaging.Exceptions;
 
-namespace Integration.Tests.ContentEngine.Change
+namespace Integration.Tests.ContentEngine
 {
     [TestFixture]
     public class SetHarvestNodeFlowTest : ManagedBuffer
     {
         private SetHarvestNode _setHarvestNode;
+        private NodeCreation _nodeCreation;
         private HarvestNodeChangeResponseListener _harvestNodeChangeResponseListener;
         private HarvestNodeErrorListener  _harvestNodeErrorListener;
         
         [SetUp]
         public void Setup()
         {
+            _nodeCreation = new NodeCreation
+            {
+                LinkedSkill = SkillID.MINING,
+                ResourceIDs = [ResourceID.COPPER, ResourceID.GOLD, ResourceID.IRON, ResourceID.STONE]
+            };
+            
             _setHarvestNode = new SetHarvestNode
             {
                 ResourceID = ResourceID.IRON,
@@ -27,6 +34,13 @@ namespace Integration.Tests.ContentEngine.Change
             _harvestNodeErrorListener = new  HarvestNodeErrorListener();
             ManagedSubscribe(_harvestNodeChangeResponseListener);
             ManagedSubscribe(_harvestNodeErrorListener);
+        }
+        
+        private void DispatchNodeCreation(NodeCreation nodeCreation)
+        {
+            IBuffer<NodeCreation> buffer = BufferManager.RequestBuffer<NodeCreation>(new BufferRequest(1));
+            buffer.Assign([nodeCreation]);
+            buffer.MarkReady();
         }
 
         private void DispatchSetHarvestNode(SetHarvestNode setHarvestNode)
@@ -76,6 +90,7 @@ namespace Integration.Tests.ContentEngine.Change
         [Test]
         public void Positive_SendCommand_SetsCurrentHarvestNode_NoThrow()
         {
+            DispatchNodeCreation(_nodeCreation);
             Assert.DoesNotThrow(() => DispatchSetHarvestNode(_setHarvestNode));
             
             AssertListenerWasCalled(_setHarvestNode);
@@ -85,6 +100,8 @@ namespace Integration.Tests.ContentEngine.Change
         [Test]
         public void Positive_SendSameCommandMultipleTimes_SendsSameResponse()
         {
+            DispatchNodeCreation(_nodeCreation);
+            
             const int times = 5;
             for (int i = 0; i < times; i++)
             {
