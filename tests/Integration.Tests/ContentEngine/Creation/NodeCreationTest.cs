@@ -87,9 +87,9 @@ namespace Integration.Tests.ContentEngine
             });
             AssertResponseListener(stoneCreation, copperCreation);
         }
-
+        
         [Test]
-        public void Negative_SendCommand_DuplicateSkillID_NoUpdate_DispatchesError()
+        public void Negative_SendCommand_DuplicateSkillID_OnlyOneUpdate_SecondCallDispatchesError()
         {
             DispatchNodeCreation(_nodeCreation);
             NodeCreation duplicateNodeCreation = _nodeCreation with { ResourceIDs = [ResourceID.STONE] };
@@ -120,7 +120,7 @@ namespace Integration.Tests.ContentEngine
         }
 
         [Test]
-        public void Negative_SendCommand_DuplicateResource_NoUpdate_DispatchesError()
+        public void Negative_SendCommand_DuplicateResource_OnlyOneUpdate_SecondCallDispatchesError()
         {
             DispatchNodeCreation(_nodeCreation);
             
@@ -134,6 +134,20 @@ namespace Integration.Tests.ContentEngine
             });
             AssertResponseListener(_nodeCreation);
             AssertErrorListener<DuplicateEntityException>(duplicateResourceCreation);
+        }
+        
+        [Test]
+        public void Negative_SendCommand_DuplicateResourceInCommand_NoUpdate_DispatcherError()
+        {
+            NodeCreation duplicateCreation = new() { LinkedSkill = SkillID.MINING, ResourceIDs = [ResourceID.STONE, ResourceID.STONE] };
+            Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateCreation));
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(_nodeCreationResponseListener.WasCalled, Is.False);
+                Assert.That(_nodeCreationErrorListener.WasCalled, Is.True);
+            });
+            AssertErrorListener<DuplicateEntityException>(duplicateCreation);
         }
     }
 }
