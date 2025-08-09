@@ -1,8 +1,11 @@
-﻿using IdelPog.Common.Commands;
+﻿using System.Diagnostics;
+using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
+using IdelPog.Common.Errors;
 using IdelPog.Common.Responses;
 using IdelPog.Common.Structures;
 using IdelPog.Messaging.Buffer;
+using IdelPog.Validation.Exceptions;
 
 namespace Integration.Tests.ContentEngine.Update
 {
@@ -36,10 +39,10 @@ namespace Integration.Tests.ContentEngine.Update
             ManagedSubscribe(_updateNodeResponseListener);
         }
 
-        private void DispatchSkillUpdate()
+        private void DispatchSkillUpdate(SkillUpdateResponse skillUpdateResponse)
         {
             IBuffer<SkillUpdateResponse> buffer = BufferManager.RequestBuffer<SkillUpdateResponse>(new BufferRequest(1));
-            buffer.Assign([_skillUpdateResponse]);
+            buffer.Assign([skillUpdateResponse]);
             buffer.MarkReady();
         }
         
@@ -50,28 +53,70 @@ namespace Integration.Tests.ContentEngine.Update
             buffer.MarkReady();
         }
 
-        private void AssertResponseListener(bool wasCalled)
+        private void AssertResponseListener()
         {
-            Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(wasCalled));
             HarvestNodeUpdateResponse response = _updateNodeResponseListener.HarvestNodeUpdateResponse;
             Assert.Multiple(() =>
             {
                 Assert.That(response.ResourceID, Is.EqualTo(_setHarvestNode.ResourceID));
+                Assert.That(response.LevelProgress, Is.Not.EqualTo(_skillUpdateResponse.LevelProgress));
             });
         }
 
-        private void AssertErrorListener(bool wasCalled)
+        private void AssertErrorListener<TException>()
         {
-            Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(wasCalled));
+            HarvestNodeUpdateError error = _updateNodeErrorListener.HarvestNodeUpdateError;
+            Debug.Assert(error.BaseError.Exception.InnerException != null, "error.BaseError.Exception.InnerException != null");
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(error.BaseError.Exception.InnerException.GetType(), Is.EqualTo(typeof(TException)));
+            });
         }
 
         [Test]
         public void Positive_SendCommand_DispatchesResponse_NoError()
         {
             DispatchSetHarvestNode(_setHarvestNode);
-            Assert.DoesNotThrow(DispatchSkillUpdate);
-            AssertResponseListener(true);
-            AssertErrorListener(false);
+            Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse));
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(false));
+                Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(true));
+            });
+            AssertResponseListener();
         }
+
+        [Test]
+        public void Negative_SendCommand_SkillNotFound_NoUpdate_DispatchesError()
+        {
+            DispatchSetHarvestNode(_setHarvestNode with { SkillID = SkillID.FARMING });
+            
+            Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse with { SkillID = SkillID.FARMING }));
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(true));
+                Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
+            });
+            AssertErrorListener<NotFoundException<SkillID>>();
+        } 
+        
+        [Test]
+        public void Negative_SendCommand_SkillDoesNotAllowResource_NoUpdate_DispatchesError()
+        {
+            DispatchSetHarvestNode(_setHarvestNode with { ResourceID = ResourceID.COPPER });
+            
+            Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse));
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(true));
+                Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
+            });
+            
+            AssertErrorListener<NotFoundException<ResourceID>>();
+        } 
     }
 }
