@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using IdelPog.Common.Commands;
+﻿using IdelPog.Common.Commands;
 using IdelPog.Common.Enums;
 using IdelPog.Common.Errors;
 using IdelPog.Common.Responses;
