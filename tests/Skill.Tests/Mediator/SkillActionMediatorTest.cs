@@ -9,9 +9,10 @@ using IdelPog.Core.Repository.State;
 using IdelPog.Skill.Factory.Interface;
 using IdelPog.Skill.Mediator;
 using IdelPog.Skill.Service;
+using IdelPog.Skills.Tests.Service;
 using Moq;
 
-namespace IdelPog.Skills.Tests
+namespace IdelPog.Skills.Tests.Mediator
 {
     [TestFixture]
     public class SkillActionMediatorTest

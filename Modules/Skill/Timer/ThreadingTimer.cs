@@ -1,18 +1,22 @@
-﻿namespace IdelPog.Skill.Timer
+﻿using IdelPog.Core.Contracts;
+
+namespace IdelPog.Skill.Timer
 {
     public sealed class ThreadingTimer : IManagedTimer
     {
+        private readonly IScheduledTask _skillActionMediator;
         private readonly System.Threading.Timer _timer;
         private bool _disposed;
 
-        public ThreadingTimer()
+        public ThreadingTimer(IScheduledTask skillActionMediator)
         {
+            _skillActionMediator = skillActionMediator;
             _timer = new System.Threading.Timer(Callback, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         private void Callback(object? state)
         {
-            // TODO: call skill boi
+            _skillActionMediator.Run();
         }
 
         ~ThreadingTimer()

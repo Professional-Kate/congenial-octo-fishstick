@@ -2,7 +2,7 @@
 using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Progression;
 
-namespace IdelPog.Skills.Tests
+namespace IdelPog.Skills.Tests.Service
 {
     internal static class SkillFactory
     {
