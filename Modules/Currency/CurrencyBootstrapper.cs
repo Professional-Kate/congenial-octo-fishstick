@@ -32,7 +32,7 @@ namespace IdelPog.Currency
         /// Creates and adds the <see cref="CurrencyCreation"/> and <see cref="CurrencyUpdate"/> flow into the messaging system
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
-        /// <param name="flowRegistry">Used to register the two flows</param>
+        /// <param name="flowRegistry">Used to register the CurrencyCreation and CurrencyUpdate flows</param>
         /// <seealso cref="RegisterCurrencyCreation"/>
         /// <seealso cref="RegisterCurrencyUpdate"/>
         public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister flowRegistry)

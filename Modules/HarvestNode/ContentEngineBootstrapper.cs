@@ -44,7 +44,7 @@ namespace IdelPog.HarvestNode
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="currentResourceProvider">Used together with <see cref="ICurrentResourceProvider"/></param>
         /// <param name="batchRegister">Used to register the NodeCreation flow</param>
-        /// <param name="singleRegister">Used to register other flows</param>
+        /// <param name="singleRegister">Used to register the SkillUpdateResponse and SetHarvestNode flows</param>
         /// <seealso cref="RegisterSetHarvestNode"/>
         public static void RegisterFlows(IBufferManager bufferManager, CurrentResourceProvider currentResourceProvider, IBatchRegister batchRegister, ISingleRegister singleRegister)
         {
@@ -64,6 +64,7 @@ namespace IdelPog.HarvestNode
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="currentResourceProvider">Used together with <see cref="ICurrentResourceSetter"/></param>
         /// <param name="skillNodeAccessValidator">Used to validate if a skill can access a node</param>
+        /// <param name="singleRegister">Used to register the SkillUpdateResponse flow</param>
         /// <remarks>
         /// Listens to -> <see cref="SkillUpdateResponse"/>. On Success -> <see cref="HarvestNodeUpdateResponse"/>. On Error -> <see cref="HarvestNodeUpdateError"/>
         /// </remarks>
@@ -109,6 +110,7 @@ namespace IdelPog.HarvestNode
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="currentResourceSetter">Used together with <see cref="ICurrentResourceProvider"/></param>
         /// <param name="skillNodeAccessValidator">Used to validate if a skill can access a node</param>
+        /// <param name="singleRegister">Used to register the SetHarvestNode flow</param>
         /// <remarks>
         /// Listens to -> <see cref="SetHarvestNode"/>. On Success -> <see cref="SetHarvestNodeResponse"/>. On Error -> <see cref="SetHarvestNodeError"/>
         /// </remarks>
@@ -134,6 +136,7 @@ namespace IdelPog.HarvestNode
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="skillNodeRepository">Used to store all <see cref="HarvestNode"/> models</param>
+        /// <param name="batchRegister">Used to register the NodeCreation flow</param>
         /// <remarks>
         /// Listens to -> <see cref="NodeCreation"/>. On Success -> <see cref="NodeCreationResponse"/>. On Error -> <see cref="NodeCreationError"/>
         /// </remarks>
