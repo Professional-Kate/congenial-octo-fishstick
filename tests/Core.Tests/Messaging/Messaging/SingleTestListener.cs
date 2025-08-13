@@ -6,7 +6,7 @@ namespace IdelPog.Core.Tests.Messaging.Messaging
     {
         public Type ListenerType { get; } = typeof(T);
         public bool WasCalled { get; private set; }
-        public T Data { get; private set; }
+        public T? Data { get; private set; }
 
         public void Handle(T message)
         {

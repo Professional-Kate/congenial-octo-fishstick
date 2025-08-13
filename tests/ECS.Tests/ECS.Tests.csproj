@@ -24,11 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Backend\ECS\ECS.csproj"/>
         <ProjectReference Include="..\..\Core\Core.csproj" />
         <ProjectReference Include="..\..\ECS\ECS.csproj" />
-        <ProjectReference Include="..\..\Shared\Common\Common.csproj"/>
-        <ProjectReference Include="..\..\Shared\Validation\Validation.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using IdelPog.Console;
+﻿using System.Diagnostics;
+using IdelPog.Console;
 using IdelPog.Console.Exceptions;
 using IdelPog.Console.Runtime.Input;
 using IdelPog.Console.Runtime.Input.Exceptions;
@@ -51,7 +52,7 @@ namespace IdelPog.Integration.Tests.Console.CurrencyDomain
 
         private CurrencyUpdate GetListenerCurrencyUpdate()
         {
-            return _currencyUpdateListener.Buffer[0];
+            return _currencyUpdateListener.Buffer![0];
         }
 
         private static IEnumerable<TestCaseData> ValidCurrencyCases()

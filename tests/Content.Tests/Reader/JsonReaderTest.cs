@@ -65,7 +65,7 @@ namespace IdelPog.Content.Tests.Reader
         [Test]
         public void Negative_Read_NullOrEmptyPath_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _jsonFileJsonReader.Read(null));
+            Assert.Throws<ArgumentNullException>(() => _jsonFileJsonReader.Read(null!));
             Assert.Throws<ArgumentException>(() => _jsonFileJsonReader.Read(string.Empty));
         }
 
@@ -75,7 +75,7 @@ namespace IdelPog.Content.Tests.Reader
             _handlerMock.Setup(library => library.Handle(It.IsAny<ArgumentNullException>()))
                 .Throws(new ArgumentNullException());
 
-            Assert.Throws<ArgumentNullException>(() => _jsonFileJsonReader.Read(null));
+            Assert.Throws<ArgumentNullException>(() => _jsonFileJsonReader.Read(null!));
         }
     }
 }

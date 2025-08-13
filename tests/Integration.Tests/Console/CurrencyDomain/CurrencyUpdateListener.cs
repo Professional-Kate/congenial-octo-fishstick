@@ -7,7 +7,7 @@ namespace IdelPog.Integration.Tests.Console.CurrencyDomain
     {
         public Type ListenerType => typeof(CurrencyUpdate);
         public bool WasCalled { get; private set; }
-        public IReadOnlyList<CurrencyUpdate> Buffer { get; private set; }
+        public IReadOnlyList<CurrencyUpdate>? Buffer { get; private set; }
 
         public void Handle(IReadOnlyList<CurrencyUpdate> buffer)
         {

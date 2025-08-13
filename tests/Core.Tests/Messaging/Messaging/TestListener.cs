@@ -7,7 +7,7 @@ namespace IdelPog.Core.Tests.Messaging.Messaging
         public Type ListenerType => typeof(T);
 
         public bool WasCalled { get; private set; }
-        public IReadOnlyList<T> BufferData { get; private set; }
+        public IReadOnlyList<T>? BufferData { get; private set; }
         public int AmountCalled { get; private set; }
         public bool ShouldThrowException { get; set; }
 

@@ -23,16 +23,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Backend\Console\Console.csproj"/>
-        <ProjectReference Include="..\..\Backend\ContentEngine\ContentEngine.csproj" />
-        <ProjectReference Include="..\..\Backend\SimulationEngine\SimulationEngine.csproj"/>
         <ProjectReference Include="..\..\Core\Core.csproj" />
         <ProjectReference Include="..\..\Modules\Console\Console.csproj" />
         <ProjectReference Include="..\..\Modules\Currency\Currency.csproj" />
         <ProjectReference Include="..\..\Modules\HarvestNode\HarvestNode.csproj" />
         <ProjectReference Include="..\..\Modules\Skill\Skill.csproj" />
-        <ProjectReference Include="..\..\Shared\Messaging\Messaging.csproj"/>
-        <ProjectReference Include="..\..\Backend\SimulationEngine\SimulationEngine.csproj"/>
     </ItemGroup>
 
 </Project>

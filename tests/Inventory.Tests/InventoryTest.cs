@@ -141,7 +141,7 @@ namespace IdelPog.Inventory.Tests
                 .Callback<ItemID, Item>((id, item) =>
                 {
                     Assert.That(_oakWoodItem.ItemID, Is.EqualTo(id));
-                    Assert.That(amount, Is.EqualTo(item.Amount));
+                    Assert.That(item.Amount, Is.EqualTo(amount));
                 });
 
             _inventory.AddItem(_oakWoodItem);

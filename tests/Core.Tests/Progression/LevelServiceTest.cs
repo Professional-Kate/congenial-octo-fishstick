@@ -35,7 +35,7 @@ namespace IdelPog.Core.Tests.Progression
         {
             _service.LevelUp(_levelable);
 
-            Assert.That(1, Is.EqualTo(_levelable.Level));
+            Assert.That(_levelable.Level, Is.EqualTo(1));
         }
 
         [Test]
