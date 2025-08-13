@@ -1,4 +1,6 @@
-﻿using IdelPog.Core.Messaging.Assertion;
+﻿using IdelPog.Core.Flows;
+using IdelPog.Core.Flows.Registry;
+using IdelPog.Core.Messaging.Assertion;
 using IdelPog.Core.Messaging.Assertion.Interface;
 using IdelPog.Core.Messaging.Buffer.Factory;
 using IdelPog.Core.Messaging.Buffer.Manager;
@@ -56,9 +58,11 @@ namespace IdelPog.Integration.Tests
             CurrentResourceProvider resourceProvider = new();
             CurrentResourceProvider = resourceProvider;
 
-            CurrencyBootstrapper.RegisterFlows(BufferManager);
-            SkillBootstrapper.RegisterSetSkill(BufferManager, skillSetter);
-            ContentEngineBootstrapper.RegisterFlows(BufferManager, resourceProvider);
+            FlowRegister flowRegister = FlowBootstrapper.CreateFlowRegister(BufferManager);
+            CurrencyBootstrapper.RegisterFlows(BufferManager, flowRegister);
+            SkillBootstrapper.RegisterSetSkill(BufferManager, skillSetter, flowRegister);
+            ContentEngineBootstrapper.RegisterFlows(BufferManager, resourceProvider, flowRegister, flowRegister);
+            FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
         }
 
         protected void ManagedSubscribe(IListener listener)
