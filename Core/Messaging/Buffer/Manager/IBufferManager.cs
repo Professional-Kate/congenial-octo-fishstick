@@ -2,6 +2,6 @@
 {
     public interface IBufferManager
     {
-        public IBuffer<T> RequestBuffer<T>(BufferRequest request);
+        public IBuffer<T> RequestBuffer<T>(BufferRequest request) where T : struct;
     }
 }

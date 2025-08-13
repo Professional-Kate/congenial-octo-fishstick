@@ -6,7 +6,7 @@ using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Core.Messaging.Dispatcher
 {
-    public sealed class ManagedDispatcher<T> : IDispatchOne<T>, IDispatchMany<T>
+    public sealed class ManagedDispatcher<T> : IDispatchOne<T>, IDispatchMany<T> where T : struct
     {
         private readonly IBufferManager _bufferManager;
         private readonly IObjectNullAssertion _objectNullAssertion;
@@ -19,12 +19,12 @@ namespace IdelPog.Core.Messaging.Dispatcher
             _collectionAssertion = collectionAssertion;
         }
 
-        public void Dispatch(T payload)
+        public void Dispatch(T payload) 
         {
             Dispatch([payload]);
         }
 
-        public void Dispatch(IReadOnlyList<T> payload)
+        public void Dispatch(IReadOnlyList<T> payload) 
         {
             _objectNullAssertion.AssertNotNull(payload, nameof(payload));
             _collectionAssertion.AssertNotEmpty(payload);

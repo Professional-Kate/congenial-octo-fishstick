@@ -2,7 +2,7 @@
 
 namespace IdelPog.Core.Messaging.Listener.Single
 {
-    public sealed class ManagedSingleListener<T> : ISingleListener<T>
+    public sealed class ManagedSingleListener<T> : ISingleListener<T> where T : struct
     {
         private readonly ISingleController<T> _controller;
         private readonly ISingleControllerExecutionAssertion<T> _singleControllerExecutionAssertion;

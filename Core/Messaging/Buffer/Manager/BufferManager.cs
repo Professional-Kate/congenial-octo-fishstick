@@ -5,7 +5,7 @@ namespace IdelPog.Core.Messaging.Buffer.Manager
 {
     public class BufferManager(IBufferFactory bufferFactory, IObjectNullAssertion objectNullAssertion) : IBufferManager
     {
-        public IBuffer<T> RequestBuffer<T>(BufferRequest request)
+        public IBuffer<T> RequestBuffer<T>(BufferRequest request) where T : struct
         {
             objectNullAssertion.AssertNotNull(request, nameof(request));
 

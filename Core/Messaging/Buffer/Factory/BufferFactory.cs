@@ -17,7 +17,7 @@ namespace IdelPog.Core.Messaging.Buffer.Factory
             _bufferDispatcher = bufferDispatcher;
         }
         
-        public IBuffer<T> CreateBuffer<T>(BufferRequest request)
+        public IBuffer<T> CreateBuffer<T>(BufferRequest request) where T : struct
         {
             _objectNullAssertion.AssertNotNull(request, nameof(request));
 

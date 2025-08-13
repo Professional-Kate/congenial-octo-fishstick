@@ -4,7 +4,7 @@ using IdelPog.Core.Validation.Handler.Interface;
 
 namespace IdelPog.Core.Messaging.Dispatcher
 {
-    public sealed class DispatchingHandler<TError, TContext> : IContextualHandler<TContext>
+    public sealed class DispatchingHandler<TError, TContext> : IContextualHandler<TContext> where TError : struct
     {
         private readonly IDispatchOne<TError> _dispatcher;
         private readonly IErrorFactory<TError, TContext> _errorFactory;

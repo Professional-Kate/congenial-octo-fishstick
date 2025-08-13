@@ -4,7 +4,7 @@ using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Core.Messaging.Buffer
 {
-    public sealed class Buffer<T> : IBuffer<T>
+    public sealed class Buffer<T> : IBuffer<T> where T : struct
     {
         private readonly IBufferAssertion _bufferAssertion;
         private readonly IBufferDispatcher _bufferDispatcher;

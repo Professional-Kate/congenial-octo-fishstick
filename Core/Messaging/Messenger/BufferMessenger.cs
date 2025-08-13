@@ -33,7 +33,7 @@ namespace IdelPog.Core.Messaging.Messenger
             listeners!.Remove(listener);
         }
 
-        public void DispatchMessage<T>(IReadOnlyList<T> buffer)
+        public void DispatchMessage<T>(IReadOnlyList<T> buffer) where T : struct
         {
             objectNullAssertion.AssertNotNull(buffer, nameof(buffer));
 

@@ -2,7 +2,7 @@
 
 namespace IdelPog.Core.Messaging.Controller
 {
-    public sealed class ManagedBatchController<T> : IBatchController<T>
+    public sealed class ManagedBatchController<T> : IBatchController<T> where T : struct
     {
         private readonly IBatchMediator<T> _batchMediator;
 

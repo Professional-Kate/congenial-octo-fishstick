@@ -2,6 +2,6 @@
 {
     public interface IBufferDispatcher
     {
-        public void DispatchMessage<T>(IReadOnlyList<T> buffer);
+        public void DispatchMessage<T>(IReadOnlyList<T> buffer) where T : struct;
     }
 }

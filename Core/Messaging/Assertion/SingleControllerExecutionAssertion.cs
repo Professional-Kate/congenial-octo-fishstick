@@ -6,7 +6,7 @@ using IdelPog.Core.Validation.Handler.Interface;
 
 namespace IdelPog.Core.Messaging.Assertion
 {
-    public class SingleControllerExecutionAssertion<TContext> : ContextualAssertion<TContext>, ISingleControllerExecutionAssertion<TContext>
+    public class SingleControllerExecutionAssertion<TContext> : ContextualAssertion<TContext>, ISingleControllerExecutionAssertion<TContext> where TContext : struct
     {
         public SingleControllerExecutionAssertion(IContextualHandler<TContext> handler) : base(handler)
         {

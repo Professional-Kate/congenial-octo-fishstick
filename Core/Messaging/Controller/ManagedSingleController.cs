@@ -2,7 +2,7 @@
 
 namespace IdelPog.Core.Messaging.Controller
 {
-    public sealed class ManagedSingleController<T> : ISingleController<T>
+    public sealed class ManagedSingleController<T> : ISingleController<T> where T : struct
     {
         private readonly ISingleMediator<T> _singleMediator;
 

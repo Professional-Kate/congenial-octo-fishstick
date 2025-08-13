@@ -2,7 +2,7 @@
 
 namespace IdelPog.Core.Tests.Messaging.Messaging
 {
-    public class SingleTestListener<T> : ISingleListener<T>
+    public class SingleTestListener<T> : ISingleListener<T> where T : struct
     {
         public Type ListenerType { get; } = typeof(T);
         public bool WasCalled { get; private set; }

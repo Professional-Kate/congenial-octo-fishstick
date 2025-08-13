@@ -81,19 +81,19 @@ namespace IdelPog.Core.Tests.Messaging.Messaging
         [Test]
         public void Positive_DispatchMessage_DispatchesCorrectMessage()
         {
-            TestListener<string> stringListener = new();
+            TestListener<uint> intListener = new();
 
             _bufferMessenger.Subscribe(_intListener);
-            _bufferMessenger.Subscribe(stringListener);
+            _bufferMessenger.Subscribe(intListener);
 
-            _bufferMessenger.DispatchMessage(["Testing!"]);
+            _bufferMessenger.DispatchMessage([10u]);
             _bufferMessenger.DispatchMessage(_bufferData);
 
             Assert.Multiple(() =>
             {
-                Assert.That(stringListener.WasCalled, Is.True);
+                Assert.That(intListener.WasCalled, Is.True);
                 Assert.That(_intListener.WasCalled, Is.True);
-                Assert.That(stringListener.AmountCalled, Is.EqualTo(1));
+                Assert.That(intListener.AmountCalled, Is.EqualTo(1));
                 Assert.That(_intListener.AmountCalled, Is.EqualTo(1));
             });
         }
