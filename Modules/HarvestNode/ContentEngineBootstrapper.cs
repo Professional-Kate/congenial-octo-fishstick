@@ -4,6 +4,7 @@ using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Factory;
 using IdelPog.Core.Factory.Interface;
+using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Messaging.Controller;
@@ -42,17 +43,19 @@ namespace IdelPog.HarvestNode
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="currentResourceProvider">Used together with <see cref="ICurrentResourceProvider"/></param>
+        /// <param name="batchRegister">Used to register the NodeCreation flow</param>
+        /// <param name="singleRegister">Used to register other flows</param>
         /// <seealso cref="RegisterSetHarvestNode"/>
-        public static void RegisterFlows(IBufferManager bufferManager, CurrentResourceProvider currentResourceProvider)
+        public static void RegisterFlows(IBufferManager bufferManager, CurrentResourceProvider currentResourceProvider, IBatchRegister batchRegister, ISingleRegister singleRegister)
         {
             IFoundAssertion foundAssertion = new FoundAssertion(new ThrowHandler());
             
             IAssetRepository<SkillID, SkillNodeEntity> skillNodeRepository = new AssetRepository<SkillID, SkillNodeEntity>();
             ISkillNodeAccessValidator skillNodeAccessValidator = new SkillNodeAccessValidator(skillNodeRepository, foundAssertion);
             
-            RegisterSkillUpdateResponse(bufferManager, currentResourceProvider, skillNodeAccessValidator);
-            RegisterSetHarvestNode(bufferManager, currentResourceProvider, skillNodeAccessValidator);
-            RegisterNodeCreation(bufferManager, skillNodeRepository);
+            RegisterSkillUpdateResponse(bufferManager, currentResourceProvider, skillNodeAccessValidator, singleRegister);
+            RegisterSetHarvestNode(bufferManager, currentResourceProvider, skillNodeAccessValidator, singleRegister);
+            RegisterNodeCreation(bufferManager, skillNodeRepository, batchRegister);
         }
 
         /// <summary>
@@ -64,7 +67,7 @@ namespace IdelPog.HarvestNode
         /// <remarks>
         /// Listens to -> <see cref="SkillUpdateResponse"/>. On Success -> <see cref="HarvestNodeUpdateResponse"/>. On Error -> <see cref="HarvestNodeUpdateError"/>
         /// </remarks>
-        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ICurrentResourceProvider currentResourceProvider, ISkillNodeAccessValidator skillNodeAccessValidator)
+        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ICurrentResourceProvider currentResourceProvider, ISkillNodeAccessValidator skillNodeAccessValidator, ISingleRegister singleRegister)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -96,7 +99,8 @@ namespace IdelPog.HarvestNode
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<HarvestNodeUpdateError, SkillUpdateResponse> harvestNodeErrorFactory = new HarvestNodeUpdateErrorFactory(baseErrorFactory);
-            IDispatchOne<HarvestNodeUpdateError> updateErrorDispatcher = new ManagedDispatcher<HarvestNodeUpdateError>(bufferManager, objectNullAssertion, collectionAssertion);
+
+            singleRegister.Register(nodeUpdateController, harvestNodeErrorFactory);
         }
 
         /// <summary>
@@ -108,7 +112,7 @@ namespace IdelPog.HarvestNode
         /// <remarks>
         /// Listens to -> <see cref="SetHarvestNode"/>. On Success -> <see cref="SetHarvestNodeResponse"/>. On Error -> <see cref="SetHarvestNodeError"/>
         /// </remarks>
-        private static void RegisterSetHarvestNode(IBufferManager bufferManager, ICurrentResourceSetter currentResourceSetter, ISkillNodeAccessValidator skillNodeAccessValidator)
+        private static void RegisterSetHarvestNode(IBufferManager bufferManager, ICurrentResourceSetter currentResourceSetter, ISkillNodeAccessValidator skillNodeAccessValidator, ISingleRegister singleRegister)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -116,12 +120,13 @@ namespace IdelPog.HarvestNode
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<SetHarvestNodeError, SetHarvestNode> setHarvestNodeErrorFactory = new SetNodeErrorFactory(baseErrorFactory);
-            IDispatchOne<SetHarvestNodeError> harvestNodeErrorDispatcher = new ManagedDispatcher<SetHarvestNodeError>(bufferManager, objectNullAssertion, collectionAssertion);
 
             IDispatchOne<SetHarvestNodeResponse> setHarvestNodeResponseDispatcher = new ManagedDispatcher<SetHarvestNodeResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             ISetNodeResponseFactory nodeChangeResponseFactor = new SetNodeResponseFactory();
             ISingleMediator<SetHarvestNode> setHarvestNodeMediator = new SetHarvestNodeMediator(skillNodeAccessValidator, currentResourceSetter, setHarvestNodeResponseDispatcher, nodeChangeResponseFactor);
             ISingleController<SetHarvestNode> setHarvestNodeController = new ManagedSingleController<SetHarvestNode>(setHarvestNodeMediator);
+            
+            singleRegister.Register(setHarvestNodeController, setHarvestNodeErrorFactory);
         }
 
         /// <summary>
@@ -132,7 +137,7 @@ namespace IdelPog.HarvestNode
         /// <remarks>
         /// Listens to -> <see cref="NodeCreation"/>. On Success -> <see cref="NodeCreationResponse"/>. On Error -> <see cref="NodeCreationError"/>
         /// </remarks>
-        private static void RegisterNodeCreation(IBufferManager bufferManager, IAssetRepository<SkillID, SkillNodeEntity> skillNodeRepository)
+        private static void RegisterNodeCreation(IBufferManager bufferManager, IAssetRepository<SkillID, SkillNodeEntity> skillNodeRepository, IBatchRegister batchRegister)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -150,7 +155,8 @@ namespace IdelPog.HarvestNode
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<NodeCreationError, IReadOnlyList<NodeCreation>> errorFactory = new NodeCreationErrorFactory(baseErrorFactory);
-            IDispatchOne<NodeCreationError> creationErrorDispatcher = new ManagedDispatcher<NodeCreationError>(bufferManager,  objectNullAssertion, collectionAssertion);
+
+            batchRegister.Register(creationController, errorFactory);
         }
     }
 }

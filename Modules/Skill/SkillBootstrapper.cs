@@ -3,6 +3,7 @@ using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Factory;
 using IdelPog.Core.Factory.Interface;
+using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
@@ -26,10 +27,11 @@ namespace IdelPog.Skill
         /// </summary>
         /// <param name="bufferManager">Used to dispatch <see cref="SetSkillResponse"/></param>
         /// <param name="currentSkillSetter">Used together with <see cref="ICurrentSkillProvider"/></param>
+        /// <param name="flowRegistry">Used to register the SetSkill flow</param>
         /// <remarks>
         /// Listens to -> <see cref="SetSkill"/>. On Success -> <see cref="SetSkillResponse"/>. On Error -> <see cref="SetSkillError"/>
         /// </remarks>
-        public static void RegisterSetSkill(IBufferManager bufferManager, ICurrentSkillSetter  currentSkillSetter)
+        public static void RegisterSetSkill(IBufferManager bufferManager, ICurrentSkillSetter  currentSkillSetter, ISingleRegister flowRegistry)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -37,13 +39,13 @@ namespace IdelPog.Skill
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<SetSkillError, SetSkill> setSkillErrorFactory = new SetSkillErrorFactory(baseErrorFactory );
-            
-            IDispatchOne<SetSkillError> setSkillErrorDispatcher = new ManagedDispatcher<SetSkillError>(bufferManager, objectNullAssertion, collectionAssertion);
+
             ISetSkillResponseFactory setSkillResponseFactory = new SetSkillResponseFactory();
-            
             IDispatchOne<SetSkillResponse> setSkillResponseDispatcher = new ManagedDispatcher<SetSkillResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             ISingleMediator<SetSkill> setSkillMediator = new SetSkillMediator(currentSkillSetter, setSkillResponseFactory, setSkillResponseDispatcher);
             ISingleController<SetSkill> setSkillController = new ManagedSingleController<SetSkill>(setSkillMediator);
+            
+            flowRegistry.Register(setSkillController, setSkillErrorFactory);
         }
     }
 }
