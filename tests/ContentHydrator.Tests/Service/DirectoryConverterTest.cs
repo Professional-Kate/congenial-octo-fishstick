@@ -1,17 +1,17 @@
 ﻿using System.Text.Json;
-using ContentHydratorTests.TestObjects;
-using IdelPog.ContentHydrator.Assertions;
-using IdelPog.ContentHydrator.Assertions.Pipelines;
-using IdelPog.ContentHydrator.Converters;
-using IdelPog.ContentHydrator.Exceptions;
-using IdelPog.ContentHydrator.Providers;
-using IdelPog.ContentHydrator.Readers;
-using IdelPog.ContentHydrator.Service;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
+using IdelPog.Content.Hydrator.Assertion;
+using IdelPog.Content.Hydrator.Assertion.Pipeline;
+using IdelPog.Content.Hydrator.Exceptions;
+using IdelPog.Content.Hydrator.Hydration.Converter;
+using IdelPog.Content.Hydrator.Hydration.Provider;
+using IdelPog.Content.Hydrator.Hydration.Reader;
+using IdelPog.Content.Hydrator.Hydration.Service;
+using IdelPog.ContentHydrator.Tests.TestObjects;
+using IdelPog.Core.Validation.Assertion;
+using IdelPog.Core.Validation.Handler;
 using Moq;
 
-namespace ContentHydratorTests.Service
+namespace IdelPog.ContentHydrator.Tests.Service
 {
     [TestFixture]
     public class DirectoryConverterTest

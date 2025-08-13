@@ -1,14 +1,13 @@
-﻿using Console;
-using Console.Commands.Resolver.Exceptions;
-using Console.Exceptions;
-using Console.Runtime.Input;
-using Console.Runtime.Input.Exceptions;
-using Console.Types;
-using IdelPog.Common.Commands;
-using IdelPog.Common.Enums;
-using Integration.Tests.Console.Permission;
+﻿using IdelPog.Console;
+using IdelPog.Console.Exceptions;
+using IdelPog.Console.Runtime.Input;
+using IdelPog.Console.Runtime.Input.Exceptions;
+using IdelPog.Console.Types;
+using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Integration.Tests.Console.Permission;
 
-namespace Integration.Tests.Console
+namespace IdelPog.Integration.Tests.Console.CurrencyDomain
 {
     [TestFixture]
     public class CurrencyDomainFlowTest : ManagedBuffer
@@ -44,7 +43,7 @@ namespace Integration.Tests.Console
         {
             Assert.Multiple(() =>
             {
-                Assert.That(actualUpdate.Action, Is.EqualTo(expectedUpdate.Action));
+                Assert.That(actualUpdate.ActionType, Is.EqualTo(expectedUpdate.ActionType));
                 Assert.That(actualUpdate.Amount, Is.EqualTo(expectedUpdate.Amount));
                 Assert.That(actualUpdate.CurrencyType, Is.EqualTo(expectedUpdate.CurrencyType));
             });
@@ -59,22 +58,22 @@ namespace Integration.Tests.Console
         {
             yield return new TestCaseData(
                 new[] { "currency", "add", "10", "gold" },
-                new CurrencyUpdate { Action = ActionType.ADD, Amount = 10, CurrencyType = CurrencyType.GOLD }
+                new CurrencyUpdate { ActionType = ActionType.ADD, Amount = 10, CurrencyType = CurrencyType.GOLD }
             ).SetName("Add_10_Gold");
             
             yield return new TestCaseData(
                 new[] { "currency", "add", "0", "gold" },
-                new CurrencyUpdate { Action = ActionType.ADD, Amount = 0, CurrencyType = CurrencyType.GOLD }
+                new CurrencyUpdate { ActionType = ActionType.ADD, Amount = 0, CurrencyType = CurrencyType.GOLD }
             ).SetName("Add_0_Gold");
 
             yield return new TestCaseData(
                 new[] { "currency", "REMOVE", "0", "gold" },
-                new CurrencyUpdate { Action = ActionType.REMOVE, Amount = 0, CurrencyType = CurrencyType.GOLD }
+                new CurrencyUpdate { ActionType = ActionType.REMOVE, Amount = 0, CurrencyType = CurrencyType.GOLD }
             ).SetName("Remove_0_Gold");
 
             yield return new TestCaseData(
                 new[] { "currency", "remove", "1", "GOLD" },
-                new CurrencyUpdate { Action = ActionType.REMOVE, Amount = 1, CurrencyType = CurrencyType.GOLD }
+                new CurrencyUpdate { ActionType = ActionType.REMOVE, Amount = 1, CurrencyType = CurrencyType.GOLD }
             ).SetName("Remove_1_Gold");
         }
 

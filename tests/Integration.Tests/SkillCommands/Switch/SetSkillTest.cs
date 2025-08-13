@@ -1,8 +1,8 @@
-﻿using IdelPog.Common.Commands;
-using IdelPog.Common.Enums;
-using IdelPog.Messaging.Buffer;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Messaging.Buffer;
 
-namespace Integration.Tests.SkillCommands.Switch
+namespace IdelPog.Integration.Tests.SkillCommands.Switch
 {
     [TestFixture]
     public class SetSkillTest : ManagedBuffer

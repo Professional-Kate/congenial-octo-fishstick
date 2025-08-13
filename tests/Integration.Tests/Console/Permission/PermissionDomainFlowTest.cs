@@ -1,9 +1,9 @@
-﻿using Console;
-using Console.Runtime.Input;
-using Console.Types;
+﻿using IdelPog.Console;
+using IdelPog.Console.Runtime.Input;
+using IdelPog.Console.Types;
 using IdelPog.ECS.Exceptions;
 
-namespace Integration.Tests.Console.Permission
+namespace IdelPog.Integration.Tests.Console.Permission
 {
     [TestFixture]
     public class PermissionDomainFlowTest : ManagedBuffer

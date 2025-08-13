@@ -1,7 +1,7 @@
-﻿using Console.Runtime.Input;
-using Console.Types;
+﻿using IdelPog.Console.Runtime.Input;
+using IdelPog.Console.Types;
 
-namespace Integration.Tests.Console.Permission
+namespace IdelPog.Integration.Tests.Console.Permission
 {
     public abstract class TestPermissionService
     {

@@ -1,7 +1,7 @@
-﻿using IdelPog.Messaging.Listeners;
-using IdelPog.SimulationEngine.Currency.Responses;
+﻿using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Messaging.Listener.Single;
 
-namespace Integration.Tests.CurrencyCommands.Create
+namespace IdelPog.Integration.Tests.CurrencyCommands.Create
 {
     internal class CurrencyCreationResponseListener : ISingleListener<CurrencyCreationResponse>
     {

@@ -1,13 +1,13 @@
-﻿using IdelPog.Common.Commands;
-using IdelPog.Common.Enums;
-using IdelPog.Common.Errors;
-using IdelPog.Messaging.Buffer;
-using IdelPog.Messaging.Exceptions;
-using IdelPog.SimulationEngine.Currency.Exceptions;
-using IdelPog.SimulationEngine.Currency.Responses;
-using IdelPog.Validation.Exceptions;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Contracts.Error;
+using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Messaging.Buffer;
+using IdelPog.Core.Messaging.Exceptions;
+using IdelPog.Core.Validation.Exceptions;
+using IdelPog.Currency.Exceptions;
 
-namespace Integration.Tests.CurrencyCommands.Update
+namespace IdelPog.Integration.Tests.CurrencyCommands.Update
 {
     [TestFixture]
     public class CurrencyFlowTest : ManagedBuffer
@@ -23,14 +23,14 @@ namespace Integration.Tests.CurrencyCommands.Update
         {
             _addGoldCommand = new CurrencyUpdate
             {
-                Action = ActionType.ADD,
+                ActionType = ActionType.ADD,
                 Amount = 10,
                 CurrencyType = CurrencyType.GOLD
             };
 
             _removeGoldCommand = new CurrencyUpdate
             {
-                Action = ActionType.REMOVE,
+                ActionType = ActionType.REMOVE,
                 Amount = 1,
                 CurrencyType = CurrencyType.GOLD
             };
@@ -159,7 +159,7 @@ namespace Integration.Tests.CurrencyCommands.Update
 
             CurrencyUpdate notEnoughGoldUpdate = new()
             {
-                Action = ActionType.REMOVE,
+                ActionType = ActionType.REMOVE,
                 Amount = 20,
                 CurrencyType = CurrencyType.GOLD
             };
@@ -189,7 +189,7 @@ namespace Integration.Tests.CurrencyCommands.Update
 
             CurrencyUpdate notFoundUpdate = new()
             {
-                Action = ActionType.ADD,
+                ActionType = ActionType.ADD,
                 Amount = 10,
                 CurrencyType = CurrencyType.GEMS
             };

@@ -1,7 +1,7 @@
-﻿using IdelPog.Common.Commands;
-using IdelPog.Messaging.Listeners;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Messaging.Listener.Single;
 
-namespace Integration.Tests.Console
+namespace IdelPog.Integration.Tests.Console.Schedule
 {
     public class ScheduleControlListener : ISingleListener<ScheduleControl>
     {

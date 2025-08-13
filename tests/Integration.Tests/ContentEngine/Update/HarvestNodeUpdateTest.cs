@@ -1,12 +1,12 @@
-﻿using IdelPog.Common.Commands;
-using IdelPog.Common.Enums;
-using IdelPog.Common.Errors;
-using IdelPog.Common.Responses;
-using IdelPog.Common.Structures;
-using IdelPog.Messaging.Buffer;
-using IdelPog.Validation.Exceptions;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Contracts.Error;
+using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Messaging.Buffer;
+using IdelPog.Core.Progression;
+using IdelPog.Core.Validation.Exceptions;
 
-namespace Integration.Tests.ContentEngine
+namespace IdelPog.Integration.Tests.ContentEngine.Update
 {
     [TestFixture]
     public class HarvestNodeUpdateTest : ManagedBuffer

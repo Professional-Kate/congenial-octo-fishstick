@@ -1,16 +1,16 @@
-﻿using Console.Assertions;
-using Console.Commands;
-using Console.Commands.Domains;
-using Console.Runtime.Input.Exceptions;
-using Console.Runtime.Systems;
-using Console.Types;
-using IdelPog.Common.Repository;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Exceptions;
+﻿using IdelPog.Console.Assertion;
+using IdelPog.Console.Command.Domain;
+using IdelPog.Console.Command.Mediator;
+using IdelPog.Console.Runtime.Input.Exceptions;
+using IdelPog.Console.Runtime.System;
+using IdelPog.Console.Types;
+using IdelPog.Core.Repository.Asset;
+using IdelPog.Core.Validation.Assertion;
+using IdelPog.Core.Validation.Exceptions;
+using IdelPog.Core.Validation.Handler;
 using Moq;
 
-namespace Console.Tests.Resolver
+namespace IdelPog.Console.Tests.Resolver
 {
     public class CommandResolverMediatorTest
     {

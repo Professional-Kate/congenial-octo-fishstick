@@ -1,14 +1,13 @@
-﻿using Console;
-using Console.Commands.Resolver.Exceptions;
-using Console.Exceptions;
-using Console.Runtime.Input;
-using Console.Runtime.Input.Exceptions;
-using Console.Types;
-using IdelPog.Common.Commands;
-using IdelPog.Common.Enums;
-using Integration.Tests.Console.Permission;
+﻿using IdelPog.Console;
+using IdelPog.Console.Exceptions;
+using IdelPog.Console.Runtime.Input;
+using IdelPog.Console.Runtime.Input.Exceptions;
+using IdelPog.Console.Types;
+using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Integration.Tests.Console.Permission;
 
-namespace Integration.Tests.Console
+namespace IdelPog.Integration.Tests.Console.Schedule
 {
     [TestFixture]
     public class ScheduleDomainFlowTest : ManagedBuffer

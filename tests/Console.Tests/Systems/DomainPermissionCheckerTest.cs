@@ -1,14 +1,14 @@
-﻿using Console.Runtime.ECS;
-using Console.Runtime.Systems;
-using Console.Types;
-using IdelPog.ECS;
-using IdelPog.ECS.Assertions;
+﻿using IdelPog.Console.Runtime.ECS;
+using IdelPog.Console.Runtime.System;
+using IdelPog.Console.Types;
+using IdelPog.Core.Validation.Handler;
+using IdelPog.ECS.Assertion;
 using IdelPog.ECS.Component;
+using IdelPog.ECS.Entity;
 using IdelPog.ECS.Exceptions;
-using IdelPog.Validation.Assertions.Handlers;
 using Moq;
 
-namespace Console.Tests.Systems
+namespace IdelPog.Console.Tests.Systems
 {
     [TestFixture]
     public class DomainPermissionCheckerTest

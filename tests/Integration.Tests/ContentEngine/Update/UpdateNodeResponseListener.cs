@@ -1,7 +1,7 @@
-﻿using IdelPog.Common.Responses;
-using IdelPog.Messaging.Listeners;
+﻿using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Messaging.Listener.Single;
 
-namespace Integration.Tests.ContentEngine
+namespace IdelPog.Integration.Tests.ContentEngine.Update
 {
     internal class UpdateNodeResponseListener : ISingleListener<HarvestNodeUpdateResponse>
     {

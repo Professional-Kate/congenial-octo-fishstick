@@ -1,20 +1,19 @@
-﻿using ContentEngine;
-using ContentEngine.Services;
-using IdelPog.Flows;
-using IdelPog.Flows.Types;
-using IdelPog.Messaging.Assertions;
-using IdelPog.Messaging.Dispatch;
-using IdelPog.Messaging.Dispatch.Single;
-using IdelPog.Messaging.Factory;
-using IdelPog.Messaging.Listeners;
-using IdelPog.Messaging.Messenger;
-using IdelPog.Messaging.Orchestration;
-using IdelPog.SimulationEngine.Currency;
-using IdelPog.SimulationEngine.Skill;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
+﻿using IdelPog.Core.Messaging.Assertion;
+using IdelPog.Core.Messaging.Assertion.Interface;
+using IdelPog.Core.Messaging.Buffer.Factory;
+using IdelPog.Core.Messaging.Buffer.Manager;
+using IdelPog.Core.Messaging.Listener;
+using IdelPog.Core.Messaging.Messenger;
+using IdelPog.Core.Validation.Assertion;
+using IdelPog.Core.Validation.Assertion.Interface;
+using IdelPog.Core.Validation.Handler;
+using IdelPog.Currency;
+using IdelPog.HarvestNode;
+using IdelPog.HarvestNode.Services;
+using IdelPog.Skill;
+using IdelPog.Skill.Service;
 
-namespace Integration.Tests
+namespace IdelPog.Integration.Tests
 {
     public class ManagedBuffer
     {
@@ -22,7 +21,6 @@ namespace Integration.Tests
         protected ICurrentSkillProvider CurrentSkillProvider;
         protected ICurrentResourceProvider CurrentResourceProvider;
         private IBufferMessenger _bufferMessenger { get; set; }
-        private IDispatchOne<FlowDescriptor> _flowDescriptorDispatcher { get; set; }
         private IBufferFactory _bufferFactory;
         private IObjectNullAssertion _objectNullAssertion;
 
@@ -47,8 +45,6 @@ namespace Integration.Tests
             _bufferMessenger = new BufferMessenger(_objectNullAssertion, listenerAssertion);
             _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher)_bufferMessenger);
             BufferManager = new BufferManager(_bufferFactory, _objectNullAssertion);
-
-            _flowDescriptorDispatcher = new ManagedDispatcher<FlowDescriptor>(BufferManager, _objectNullAssertion, new CollectionAssertion(new ThrowHandler()));
         }
 
         private void Register()
@@ -60,11 +56,9 @@ namespace Integration.Tests
             CurrentResourceProvider resourceProvider = new();
             CurrentResourceProvider = resourceProvider;
 
-            FlowBootstrapper.Initialize(_bufferMessenger);
-            CurrencyBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher);
-            SkillBootstrapper.RegisterSetSkill(BufferManager, _flowDescriptorDispatcher, skillSetter);
-            ContentEngineBootstrapper.RegisterFlows(BufferManager, _flowDescriptorDispatcher, resourceProvider);
-            FlowBootstrapper.InitializeFlows(_bufferMessenger);
+            CurrencyBootstrapper.RegisterFlows(BufferManager);
+            SkillBootstrapper.RegisterSetSkill(BufferManager, skillSetter);
+            ContentEngineBootstrapper.RegisterFlows(BufferManager, resourceProvider);
         }
 
         protected void ManagedSubscribe(IListener listener)

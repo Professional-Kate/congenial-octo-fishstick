@@ -1,7 +1,7 @@
-﻿using IdelPog.Common.Errors;
-using IdelPog.Messaging.Listeners;
+﻿using IdelPog.Core.Contracts.Error;
+using IdelPog.Core.Messaging.Listener.Single;
 
-namespace Integration.Tests.CurrencyCommands.Update
+namespace IdelPog.Integration.Tests.CurrencyCommands.Update
 {
     internal class CurrencyUpdateErrorListener : ISingleListener<CurrencyUpdateError>
     {

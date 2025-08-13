@@ -1,11 +1,11 @@
-﻿using IdelPog.Common.Commands;
-using IdelPog.Common.Enums;
-using IdelPog.Common.Errors;
-using IdelPog.Messaging.Buffer;
-using IdelPog.Messaging.Exceptions;
-using IdelPog.SimulationEngine.Currency.Responses;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Contracts.Error;
+using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Messaging.Buffer;
+using IdelPog.Core.Messaging.Exceptions;
 
-namespace Integration.Tests.CurrencyCommands.Create
+namespace IdelPog.Integration.Tests.CurrencyCommands.Create
 {
     [TestFixture]
     public class CurrencyCreationTest : ManagedBuffer

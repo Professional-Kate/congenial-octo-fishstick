@@ -1,10 +1,10 @@
-﻿using IdelPog.Common.Repository;
+﻿using IdelPog.Core.Repository.Asset;
+using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.ECS.Component;
 using IdelPog.ECS.Exceptions;
-using IdelPog.Validation.Assertions.Handlers.Interfaces;
 using Moq;
 
-namespace IdelPog.ECS.Tests
+namespace IdelPog.ECS.Tests.Entity
 {
     [TestFixture]
     public class EntityTests
