@@ -1,4 +1,4 @@
-﻿namespace IdelPog.ContentHydrator.Tests.TestObjects
+﻿namespace IdelPog.Content.Tests.TestObjects
 {
     public sealed record TestObject
     {

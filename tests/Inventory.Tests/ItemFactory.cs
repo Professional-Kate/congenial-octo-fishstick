@@ -2,7 +2,7 @@
 using IdelPog.Core.Information.Contracts;
 using IdelPog.Inventory.Contracts;
 
-namespace Inventory.Tests
+namespace IdelPog.Inventory.Tests
 {
     internal static class ItemFactory
     {

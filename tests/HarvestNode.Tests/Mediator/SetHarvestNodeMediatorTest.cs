@@ -1,15 +1,15 @@
-﻿using ContentEngine.Runtime.Mediator;
-using ContentEngine.Runtime.Services;
-using ContentEngine.Services;
-using IdelPog.Common.Commands;
-using IdelPog.Common.Enums;
-using IdelPog.Common.Factories;
-using IdelPog.Common.Responses;
-using IdelPog.Messaging.Dispatch.Single;
-using IdelPog.Messaging.Listeners.Single;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Listener.Single;
+using IdelPog.HarvestNode.Factory.Interface;
+using IdelPog.HarvestNode.Runtime.Mediator;
+using IdelPog.HarvestNode.Runtime.System.Interface;
+using IdelPog.HarvestNode.Services;
 using Moq;
 
-namespace ContentEngine.Tests.Mediator
+namespace IdelPog.HarvestNode.Tests.Mediator
 {
     [TestFixture]
     public class SetHarvestNodeMediatorTest
@@ -18,7 +18,7 @@ namespace ContentEngine.Tests.Mediator
         private ICurrentResourceProvider  _currentResourceProvider;
         private Mock<ISkillNodeAccessValidator> _skillNodeAccessValidatorMock;
         private Mock<IDispatchOne<SetHarvestNodeResponse>> _setResponseDispatcherMock;
-        private Mock<ISetHarvestNodeResponseFactory> _setResponseFactoryMock;
+        private Mock<ISetNodeResponseFactory> _setResponseFactoryMock;
 
         private SetHarvestNode _setHarvestNode;
         private SetHarvestNodeResponse _expectedResponse;
@@ -28,7 +28,7 @@ namespace ContentEngine.Tests.Mediator
         {
             _skillNodeAccessValidatorMock = new Mock<ISkillNodeAccessValidator>();
             _setResponseDispatcherMock = new Mock<IDispatchOne<SetHarvestNodeResponse>>();
-            _setResponseFactoryMock = new Mock<ISetHarvestNodeResponseFactory>();
+            _setResponseFactoryMock = new Mock<ISetNodeResponseFactory>();
 
             _setHarvestNode = new SetHarvestNode
             {

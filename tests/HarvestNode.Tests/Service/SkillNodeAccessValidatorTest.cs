@@ -1,13 +1,14 @@
-﻿using ContentEngine.Runtime.ECS;
-using ContentEngine.Runtime.Services;
-using IdelPog.Common.Enums;
-using IdelPog.Common.Repository;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Exceptions;
+﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Repository.Asset;
+using IdelPog.Core.Validation.Assertion;
+using IdelPog.Core.Validation.Exceptions;
+using IdelPog.Core.Validation.Handler;
+using IdelPog.HarvestNode.Runtime.ECS;
+using IdelPog.HarvestNode.Runtime.System;
+using IdelPog.HarvestNode.Runtime.System.Interface;
 using Moq;
 
-namespace ContentEngine.Tests.Service
+namespace IdelPog.HarvestNode.Tests.Service
 {
     [TestFixture]
     public class SkillNodeAccessValidatorTest

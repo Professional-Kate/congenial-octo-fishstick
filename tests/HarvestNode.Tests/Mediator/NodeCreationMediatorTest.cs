@@ -1,27 +1,27 @@
-﻿using ContentEngine.Runtime.ECS;
-using ContentEngine.Runtime.Factory.Interfaces;
-using ContentEngine.Runtime.Mediator;
-using IdelPog.Common.Commands;
-using IdelPog.Common.Enums;
-using IdelPog.Common.Factories;
-using IdelPog.Common.Repository;
-using IdelPog.Common.Responses;
-using IdelPog.Common.Structures;
-using IdelPog.Messaging.Dispatch.Single;
-using IdelPog.Messaging.Listeners.Buffer;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Exceptions;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Listener.Buffer;
+using IdelPog.Core.Repository.Asset;
+using IdelPog.Core.Repository.State;
+using IdelPog.Core.Validation.Assertion;
+using IdelPog.Core.Validation.Exceptions;
+using IdelPog.Core.Validation.Handler;
+using IdelPog.HarvestNode.Factory.Interface;
+using IdelPog.HarvestNode.Runtime.ECS;
+using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Mediator;
 using Moq;
 
-namespace ContentEngine.Tests.Mediator
+namespace IdelPog.HarvestNode.Tests.Mediator
 {
     [TestFixture]
     public class NodeCreationMediatorTest
     {
         private IBatchMediator<NodeCreation> _nodeCreationMediator;
         private Mock<IAssetRepository<SkillID, SkillNodeEntity>> _skillNodeEntityRepositoryMock;
-        private Mock<IStateRepository<ResourceID, HarvestNode>> _harvestNodeRepositoryMock;
+        private Mock<IStateRepository<ResourceID, IdelPog.HarvestNode.Contracts.HarvestNode>> _harvestNodeRepositoryMock;
         private Mock<ISkillNodeEntityFactory> _skillNodeEntityFactoryMock;
         private Mock<IHarvestNodeFactory> _harvestNodeFactoryMock;
         private Mock<INodeCreationResponseFactory> _nodeCreationResponseFactoryMock;
@@ -33,7 +33,7 @@ namespace ContentEngine.Tests.Mediator
         public void OneTimeSetup()
         {
             _skillNodeEntityRepositoryMock = new Mock<IAssetRepository<SkillID, SkillNodeEntity>>();
-            _harvestNodeRepositoryMock = new Mock<IStateRepository<ResourceID, HarvestNode>>();
+            _harvestNodeRepositoryMock = new Mock<IStateRepository<ResourceID, IdelPog.HarvestNode.Contracts.HarvestNode>>();
             _skillNodeEntityFactoryMock = new Mock<ISkillNodeEntityFactory>();
             _harvestNodeFactoryMock = new Mock<IHarvestNodeFactory>();
             _nodeCreationResponseFactoryMock = new Mock<INodeCreationResponseFactory>();
@@ -65,7 +65,7 @@ namespace ContentEngine.Tests.Mediator
             Assert.DoesNotThrow(() => _nodeCreationMediator.HandleMessages([_miningCreation]));
             
             _skillNodeEntityRepositoryMock.Verify(library => library.Add(_miningCreation.LinkedSkill, It.IsAny<SkillNodeEntity>()), Times.Once);
-            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(_miningCreation.ResourceIDs), It.IsAny<HarvestNode>()), Times.Exactly(_miningCreation.ResourceIDs.Length));
+            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(_miningCreation.ResourceIDs), It.IsAny<IdelPog.HarvestNode.Contracts.HarvestNode>()), Times.Exactly(_miningCreation.ResourceIDs.Length));
             _skillNodeEntityFactoryMock.Verify(library => library.Create(_miningCreation.LinkedSkill, _miningCreation.ResourceIDs), Times.Once);
             _harvestNodeFactoryMock.Verify(library => library.Create(It.IsIn(_miningCreation.ResourceIDs)), Times.Exactly(_miningCreation.ResourceIDs.Length));
             _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<NodeCreationResponse>()), Times.Once);
@@ -80,7 +80,7 @@ namespace ContentEngine.Tests.Mediator
             
             _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<NodeCreationResponse>()), Times.Never);
             _skillNodeEntityRepositoryMock.Verify(library => library.Add(_miningCreation.LinkedSkill, It.IsAny<SkillNodeEntity>()), Times.Never);
-            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(_miningCreation.ResourceIDs), It.IsAny<HarvestNode>()), Times.Never);
+            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(_miningCreation.ResourceIDs), It.IsAny<IdelPog.HarvestNode.Contracts.HarvestNode>()), Times.Never);
         }
 
         [Test]
@@ -92,7 +92,7 @@ namespace ContentEngine.Tests.Mediator
             
             _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<NodeCreationResponse>()), Times.Never);
             _skillNodeEntityRepositoryMock.Verify(library => library.Add(_miningCreation.LinkedSkill, It.IsAny<SkillNodeEntity>()), Times.Never);
-            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(_miningCreation.ResourceIDs), It.IsAny<HarvestNode>()), Times.Never);
+            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(_miningCreation.ResourceIDs), It.IsAny<IdelPog.HarvestNode.Contracts.HarvestNode>()), Times.Never);
             
             
         }

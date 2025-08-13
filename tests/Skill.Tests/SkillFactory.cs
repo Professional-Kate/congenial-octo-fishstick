@@ -1,17 +1,16 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Progression;
-using IdelPog.Skill.Contracts;
 
-namespace Skills.Tests
+namespace IdelPog.Skills.Tests
 {
     internal static class SkillFactory
     {
-        internal static Skill CreateMining()
+        internal static Skill.Contracts.Skill CreateMining()
         {
             Levelable levelable = new(1, 0, 10, 0);
 
-            return new Skill
+            return new Skill.Contracts.Skill
             {
                 Information = new Information { Description = "Created", Name = "pog" },
                 Levelable = levelable,

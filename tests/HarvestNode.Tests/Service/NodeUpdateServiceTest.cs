@@ -1,37 +1,39 @@
-﻿using ContentEngine.Runtime.Services;
-using IdelPog.Common.Enums;
-using IdelPog.Common.Factories;
-using IdelPog.Common.Level;
-using IdelPog.Common.Level.Experience;
-using IdelPog.Common.Repository;
-using IdelPog.Common.Structures;
-using IdelPog.Validation.Assertions;
-using IdelPog.Validation.Assertions.Handlers;
-using IdelPog.Validation.Exceptions;
+﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Information.Contracts;
+using IdelPog.Core.Progression;
+using IdelPog.Core.Progression.Experience;
+using IdelPog.Core.Progression.Level;
+using IdelPog.Core.Repository.State;
+using IdelPog.Core.Validation.Assertion;
+using IdelPog.Core.Validation.Exceptions;
+using IdelPog.Core.Validation.Handler;
+using IdelPog.HarvestNode.Factory.Interface;
+using IdelPog.HarvestNode.Runtime.System;
+using IdelPog.HarvestNode.Runtime.System.Interface;
 using Moq;
 
-namespace ContentEngine.Tests.Service
+namespace IdelPog.HarvestNode.Tests.Service
 {
     [TestFixture]
     public class NodeUpdateServiceTest
     {
         private INodeUpdateService _nodeUpdateService;
-        private Mock<IStateRepository<ResourceID, HarvestNode>> _nodeRepositoryMock;
+        private Mock<IStateRepository<ResourceID, IdelPog.HarvestNode.Contracts.HarvestNode>> _nodeRepositoryMock;
         private Mock<ILevelService> _levelServiceMock;
         private Mock<IExperienceService> _experienceServiceMock;
-        private Mock<IHarvestNodeUpdateResponseFactory> _updateResponseFactoryMock;
+        private Mock<INodeUpdateResponseFactory> _updateResponseFactoryMock;
 
-        private HarvestNode _harvestNode;
+        private IdelPog.HarvestNode.Contracts.HarvestNode _harvestNode;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _nodeRepositoryMock = new Mock<IStateRepository<ResourceID, HarvestNode>>();
+            _nodeRepositoryMock = new Mock<IStateRepository<ResourceID, IdelPog.HarvestNode.Contracts.HarvestNode>>();
             _levelServiceMock = new Mock<ILevelService>();
             _experienceServiceMock = new Mock<IExperienceService>();
-            _updateResponseFactoryMock = new Mock<IHarvestNodeUpdateResponseFactory>();
+            _updateResponseFactoryMock = new Mock<INodeUpdateResponseFactory>();
 
-            _harvestNode = new HarvestNode
+            _harvestNode = new IdelPog.HarvestNode.Contracts.HarvestNode
             {
                 ResourceID = ResourceID.STONE,
                 Information = new Information { Description = "", Name = "" },

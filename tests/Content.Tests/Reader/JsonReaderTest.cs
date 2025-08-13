@@ -4,7 +4,7 @@ using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Handler.Interface;
 using Moq;
 
-namespace IdelPog.ContentHydrator.Tests.Reader
+namespace IdelPog.Content.Tests.Reader
 {
     [TestFixture]
     public class JsonReaderTest

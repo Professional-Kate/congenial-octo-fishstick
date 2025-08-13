@@ -8,7 +8,7 @@ using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Service;
 using Moq;
 
-namespace Inventory.Tests
+namespace IdelPog.Inventory.Tests
 {
     [TestFixture]
     public class InventoryTest

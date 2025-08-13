@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
 using IdelPog.Content.Hydrator.Hydration.Converter;
 using IdelPog.Content.Hydrator.Hydration.Provider;
-using IdelPog.ContentHydrator.Tests.TestObjects;
+using IdelPog.Content.Tests.TestObjects;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Handler.Interface;
 using Moq;
 
-namespace IdelPog.ContentHydrator.Tests.Provider
+namespace IdelPog.Content.Tests.Provider
 {
     [TestFixture]
     public class ConverterProviderTest

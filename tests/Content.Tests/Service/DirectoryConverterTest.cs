@@ -6,12 +6,12 @@ using IdelPog.Content.Hydrator.Hydration.Converter;
 using IdelPog.Content.Hydrator.Hydration.Provider;
 using IdelPog.Content.Hydrator.Hydration.Reader;
 using IdelPog.Content.Hydrator.Hydration.Service;
-using IdelPog.ContentHydrator.Tests.TestObjects;
+using IdelPog.Content.Tests.TestObjects;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Handler;
 using Moq;
 
-namespace IdelPog.ContentHydrator.Tests.Service
+namespace IdelPog.Content.Tests.Service
 {
     [TestFixture]
     public class DirectoryConverterTest

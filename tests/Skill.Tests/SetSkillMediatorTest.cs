@@ -8,7 +8,7 @@ using IdelPog.Skill.Mediator;
 using IdelPog.Skill.Service;
 using Moq;
 
-namespace Skills.Tests
+namespace IdelPog.Skills.Tests
 {
     [TestFixture]
     public class SetSkillMediatorTest

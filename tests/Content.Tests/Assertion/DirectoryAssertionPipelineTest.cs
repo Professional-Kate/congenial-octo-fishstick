@@ -4,7 +4,7 @@ using IdelPog.Content.Hydrator.Exceptions;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Handler;
 
-namespace IdelPog.ContentHydrator.Tests.Assertion
+namespace IdelPog.Content.Tests.Assertion
 {
     [TestFixture]
     public class DirectoryAssertionPipelineTest

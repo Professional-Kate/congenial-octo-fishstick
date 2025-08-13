@@ -7,7 +7,7 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <RootNamespace>IdelPog.ContentHydrator.Tests</RootNamespace>
+        <RootNamespace>IdelPog.Content.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -24,9 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Backend\ContentHydrator\ContentHydrator.csproj"/>
         <ProjectReference Include="..\..\Modules\Content\Content.csproj" />
-        <ProjectReference Include="..\..\Shared\Validation\Validation.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

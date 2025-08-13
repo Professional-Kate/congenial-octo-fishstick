@@ -6,26 +6,25 @@ using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Repository.State;
-using IdelPog.Skill.Contracts;
 using IdelPog.Skill.Factory.Interface;
 using IdelPog.Skill.Mediator;
 using IdelPog.Skill.Service;
 using Moq;
 
-namespace Skills.Tests
+namespace IdelPog.Skills.Tests
 {
     [TestFixture]
     public class SkillActionMediatorTest
     {
         private IScheduledTask _skillActionMediator { get; set; }
         private Mock<IExperienceService> _experienceServiceMock { get; set; }
-        private Mock<IStateRepository<SkillID, Skill>> _repositoryMock { get; set; }
+        private Mock<IStateRepository<SkillID, Skill.Contracts.Skill>> _repositoryMock { get; set; }
         private Mock<ILevelService> _levelServiceMock { get; set; }
         private Mock<ICurrentSkillProvider> _currentSkillProviderMock { get; set; }
         private Mock<IDispatchOne<SkillUpdateResponse>> _skillUpdateDispatcherMock { get; set; }
         private Mock<ISkillUpdateResponseFactory> _skillUpdateFactoryMock { get; set; }
 
-        private Skill _miningSkill { get; set; }
+        private Skill.Contracts.Skill _miningSkill { get; set; }
         private SkillUpdateResponse _miningSkillUpdateResponse { get; set; }
 
         [SetUp]
@@ -34,7 +33,7 @@ namespace Skills.Tests
             _miningSkill = SkillFactory.CreateMining();
 
             _experienceServiceMock = new Mock<IExperienceService>();
-            _repositoryMock = new Mock<IStateRepository<SkillID, Skill>>();
+            _repositoryMock = new Mock<IStateRepository<SkillID, Skill.Contracts.Skill>>();
             _levelServiceMock = new Mock<ILevelService>();
             _currentSkillProviderMock = new Mock<ICurrentSkillProvider>();
             _skillUpdateDispatcherMock = new Mock<IDispatchOne<SkillUpdateResponse>>();
@@ -47,7 +46,7 @@ namespace Skills.Tests
             _currentSkillProviderMock.Setup(library => library.GetCurrentSkill()).Returns(SkillID.MINING);
         }
 
-        private void SetupUpdateDTO(Skill skill, bool hasLeveled)
+        private void SetupUpdateDTO(Skill.Contracts.Skill skill, bool hasLeveled)
         {
             _miningSkillUpdateResponse = new SkillUpdateResponse
             {

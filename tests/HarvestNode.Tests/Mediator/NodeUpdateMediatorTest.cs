@@ -1,14 +1,14 @@
-﻿using ContentEngine.Runtime.Mediator;
-using ContentEngine.Runtime.Services;
-using ContentEngine.Services;
-using IdelPog.Common.Enums;
-using IdelPog.Common.Responses;
-using IdelPog.Common.Structures;
-using IdelPog.Messaging.Dispatch.Single;
-using IdelPog.Messaging.Listeners.Single;
+﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Listener.Single;
+using IdelPog.Core.Progression;
+using IdelPog.HarvestNode.Runtime.Mediator;
+using IdelPog.HarvestNode.Runtime.System.Interface;
+using IdelPog.HarvestNode.Services;
 using Moq;
 
-namespace ContentEngine.Tests.Mediator
+namespace IdelPog.HarvestNode.Tests.Mediator
 {
     [TestFixture]
     public class NodeUpdateMediatorTest
