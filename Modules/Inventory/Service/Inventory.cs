@@ -1,6 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion.Interface;
+using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
 
 namespace IdelPog.Inventory.Service
@@ -13,12 +14,14 @@ namespace IdelPog.Inventory.Service
         private readonly IStateRepository<ItemID, Item> _itemRepository;
         private readonly IFoundAssertion _foundAssertion;
         private readonly IUniqueAssertion _uniqueAssertion;
+        private readonly IAmountAssertion _amountAssertion;
 
-        public Inventory(IStateRepository<ItemID, Item> itemRepository, IFoundAssertion foundAssertion, IUniqueAssertion uniqueAssertion)
+        public Inventory(IStateRepository<ItemID, Item> itemRepository, IFoundAssertion foundAssertion, IUniqueAssertion uniqueAssertion, IAmountAssertion amountAssertion)
         {
             _itemRepository = itemRepository;
             _foundAssertion = foundAssertion;
             _uniqueAssertion = uniqueAssertion;
+            _amountAssertion = amountAssertion;
         }
 
         public void AddAmount(ItemID id, uint amount)
@@ -37,7 +40,9 @@ namespace IdelPog.Inventory.Service
 
             Item item = RepositoryGet(id);
             uint itemAmount = item.Amount;
-
+            
+            _amountAssertion.AssertEnoughAmount(amount, itemAmount, id);
+            
             if (itemAmount - amount == 0)
             {
                 _itemRepository.Remove(item.ItemID);

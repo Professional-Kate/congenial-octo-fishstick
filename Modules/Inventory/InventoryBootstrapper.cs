@@ -19,6 +19,8 @@ using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Core.Validation.Handler.Interface;
+using IdelPog.Inventory.Assertion;
+using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Factory;
 using IdelPog.Inventory.Factory.Interface;
@@ -36,6 +38,7 @@ namespace IdelPog.Inventory
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
 
             IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
 
@@ -43,7 +46,7 @@ namespace IdelPog.Inventory
             IInventoryUpdateResponseFactory inventoryUpdateResponseFactory = new InventoryUpdateResponseFactory();
             IMapper<ItemID> itemMapper = new Mapper<ItemID>(foundAssertion, uniqueAssertion);
             IItemFactory itemFactory = new ItemFactory(itemMapper);
-            IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion);
+            IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
             IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryMediator(inventory, itemFactory, inventoryUpdateResponseFactory, inventoryUpdateDispatcher);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
