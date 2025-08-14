@@ -1,0 +1,79 @@
+﻿using IdelPog.Console;
+using IdelPog.Console.Exceptions;
+using IdelPog.Console.Runtime.Input;
+using IdelPog.Console.Runtime.Input.Exceptions;
+using IdelPog.Console.Types;
+using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Integration.Tests.Console.Permission;
+
+namespace IdelPog.Integration.Tests.Console.SkillDomain
+{
+    [TestFixture]
+    public class SkillDomainFlowTest : ManagedBuffer
+    {
+        private IInputHandler _inputHandler;
+        private SetSkillListener _setSkillListener;
+
+        [SetUp]
+        public void Setup()
+        {
+            _inputHandler = ConsoleBootstrapper.Initialize(BufferManager);
+            TestPermissionService.SendAddPermissionCall(_inputHandler, Domain.SKILL);
+
+            _setSkillListener = new SetSkillListener();
+            ManagedSubscribe(_setSkillListener);
+        }
+
+        private static IEnumerable<TestCaseData> ValidSkillChanges()
+        {
+            yield return new TestCaseData(
+                new[] { "SKILL", "change", "wood_cutting" },
+                SkillID.WOOD_CUTTING
+            ).SetName("WOOD_CUTTING");
+
+            yield return new TestCaseData(
+                new[] { "skill", "CHANGE", "mining" },
+                SkillID.MINING
+            ).SetName("MINING");
+
+            yield return new TestCaseData(
+                new[] { "skill", "change", "FARMING" },
+                SkillID.FARMING
+            ).SetName("FARMING");
+        }
+
+        [TestCaseSource(nameof(ValidSkillChanges))]
+        public void Positive_ChangeSkill_DispatchesUpdate(string[] arguments, SkillID skillID)
+        {
+            Assert.DoesNotThrow(() => _inputHandler.Input(arguments));
+
+            Assert.That(_setSkillListener.WasCalled, Is.True);
+            Assert.Multiple(() =>
+            {
+                SetSkill setSkill = _setSkillListener.SetSkill;
+                Assert.That(setSkill.SkillID, Is.EqualTo(skillID));
+            });
+        }
+
+        [TestCase(new[] { "UNKNOWN", "change", "wood_cutting" }, typeof(FailedEnumParseException), TestName = "UnknownDomain_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "skill", "change", "WOOD CUTTING" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "skill", "change", "wood-cutting" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "skill", "change", "woodcutting" }, typeof(FailedEnumParseException), TestName = "UnknownSkill_ThrowsFailedEnumParse")]
+        [TestCase(new[] { "skill", "change" }, typeof(InvalidArgumentCountException), TestName = "MissingSkill_ThrowsInvalidArgumentCountException")]
+        [TestCase(new[] { "skill" }, typeof(EmptySpanException), TestName = "MissingMost_ThrowsEmptySpanException")]
+        [TestCase(new string[] { }, typeof(EmptySpanException), TestName = "NoArguments_ThrowsEmptySpanException")]
+        public void Negative_ChangeSkill_BadArguments_Throws(string[] arguments, Type exception)
+        {
+            Assert.Throws(exception, () => _inputHandler.Input(arguments));
+            Assert.That(_setSkillListener.WasCalled, Is.False);
+        }
+
+        [Test]
+        public void Negative_PermissionDenied_NoUpdate_Throws()
+        {
+            TestPermissionService.SendRemovePermissionCall(_inputHandler, Domain.SKILL);
+            Assert.Throws<DomainPermissionDeniedException>(() => _inputHandler.Input(new ReadOnlySpan<string>(["skill", "change", "fishing"])));
+        }
+    }
+}
