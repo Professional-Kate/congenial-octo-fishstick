@@ -7,7 +7,7 @@ using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Integration.Tests.Console.Permission;
 
-namespace IdelPog.Integration.Tests.Console.Schedule
+namespace IdelPog.Integration.Tests.Console
 {
     [TestFixture]
     public class ScheduleDomainFlowTest : ManagedBuffer

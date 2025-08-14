@@ -2,9 +2,9 @@
 
 namespace IdelPog.Core.Contracts.Command
 {
-    public readonly record struct SetHarvestNode
+    public readonly record struct ResourceItemCreation
     {
-        public required SkillID SkillID { get; init; }
         public required ItemID ItemID { get; init; }
+        public required uint Amount { get; init; }
     }
 }

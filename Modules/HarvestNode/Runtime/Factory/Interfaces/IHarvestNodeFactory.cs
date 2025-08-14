@@ -4,6 +4,6 @@ namespace IdelPog.HarvestNode.Runtime.Factory.Interfaces
 {
     public interface IHarvestNodeFactory
     {
-        public Contracts.HarvestNode Create(ResourceID resourceID);
+        public Contracts.HarvestNode Create(ItemID itemID);
     }
 }

@@ -19,7 +19,7 @@ namespace IdelPog.Inventory.Tests
 
         private void AssertionTestRunner(uint requestedAmount, uint actualAmount)
         {
-            _amountAssertion.AssertEnoughAmount(requestedAmount, actualAmount, ItemID.OAK_WOOD);
+            _amountAssertion.AssertEnoughAmount(requestedAmount, actualAmount, ItemID.STONE);
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace IdelPog.Inventory.Tests
             
             Assert.Multiple(() =>
             {
-                Assert.That(exception.ItemID, Is.EqualTo(ItemID.OAK_WOOD));
+                Assert.That(exception.ItemID, Is.EqualTo(ItemID.STONE));
                 Assert.That(exception.RequestedAmount, Is.EqualTo(10));
                 Assert.That(exception.ActualAmount, Is.EqualTo(1));
                 Assert.That(exception.Message, Is.Not.Null.Or.Empty);

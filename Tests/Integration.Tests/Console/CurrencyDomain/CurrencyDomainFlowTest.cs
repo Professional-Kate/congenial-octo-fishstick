@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using IdelPog.Console;
+﻿using IdelPog.Console;
 using IdelPog.Console.Exceptions;
 using IdelPog.Console.Runtime.Input;
 using IdelPog.Console.Runtime.Input.Exceptions;
@@ -8,7 +7,7 @@ using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Integration.Tests.Console.Permission;
 
-namespace IdelPog.Integration.Tests.Console.CurrencyDomain
+namespace IdelPog.Integration.Tests.Console
 {
     [TestFixture]
     public class CurrencyDomainFlowTest : ManagedBuffer

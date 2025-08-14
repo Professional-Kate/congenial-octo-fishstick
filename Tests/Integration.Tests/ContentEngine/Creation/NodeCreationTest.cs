@@ -5,7 +5,7 @@ using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Validation.Exceptions;
 
-namespace IdelPog.Integration.Tests.ContentEngine.Creation
+namespace IdelPog.Integration.Tests.ContentEngine
 {
     [TestFixture]
     public class NodeCreationTest : ManagedBuffer
@@ -20,7 +20,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Creation
             _nodeCreation = new NodeCreation
             {
                 LinkedSkill = SkillID.MINING,
-                ResourceIDs = [ResourceID.COPPER, ResourceID.GOLD, ResourceID.IRON, ResourceID.STONE]
+                ItemIDs = [ItemID.COPPER, ItemID.GOLD, ItemID.IRON, ItemID.STONE]
             };
             
             _nodeCreationResponseListener = new NodeCreationResponseListener();
@@ -76,8 +76,8 @@ namespace IdelPog.Integration.Tests.ContentEngine.Creation
         [Test]
         public void Positive_SendMultipleCommands_CreatesEachNode_DispatchesResponse()
         {
-            NodeCreation stoneCreation = new() { LinkedSkill = SkillID.MINING, ResourceIDs = [ResourceID.STONE] };
-            NodeCreation copperCreation = new() { LinkedSkill = SkillID.FARMING, ResourceIDs = [ResourceID.COPPER] };
+            NodeCreation stoneCreation = new() { LinkedSkill = SkillID.MINING, ItemIDs = [ItemID.STONE] };
+            NodeCreation copperCreation = new() { LinkedSkill = SkillID.FARMING, ItemIDs = [ItemID.COPPER] };
             Assert.DoesNotThrow(() => DispatchNodeCreation(stoneCreation, copperCreation));
             
             Assert.Multiple(() =>
@@ -92,7 +92,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Creation
         public void Negative_SendCommand_DuplicateSkillID_OnlyOneUpdate_SecondCallDispatchesError()
         {
             DispatchNodeCreation(_nodeCreation);
-            NodeCreation duplicateNodeCreation = _nodeCreation with { ResourceIDs = [ResourceID.STONE] };
+            NodeCreation duplicateNodeCreation = _nodeCreation with { ItemIDs = [ItemID.STONE] };
             Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateNodeCreation));
             
             Assert.Multiple(() =>
@@ -108,7 +108,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Creation
         [Test]
         public void Negative_SendCommand_EmptyResourceIDs_NoUpdate_DispatchesError()
         {
-            NodeCreation emptyArrayCreation = _nodeCreation with { ResourceIDs = [] };
+            NodeCreation emptyArrayCreation = _nodeCreation with { ItemIDs = [] };
             Assert.DoesNotThrow(() => DispatchNodeCreation(emptyArrayCreation));
             
             Assert.Multiple(() =>
@@ -124,7 +124,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Creation
         {
             DispatchNodeCreation(_nodeCreation);
             
-            NodeCreation duplicateResourceCreation = new() { LinkedSkill = SkillID.FARMING, ResourceIDs = [ResourceID.IRON] };
+            NodeCreation duplicateResourceCreation = new() { LinkedSkill = SkillID.FARMING, ItemIDs = [ItemID.IRON] };
             Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateResourceCreation));
             
             Assert.Multiple(() =>
@@ -139,7 +139,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Creation
         [Test]
         public void Negative_SendCommand_DuplicateResourceInCommand_NoUpdate_DispatcherError()
         {
-            NodeCreation duplicateCreation = new() { LinkedSkill = SkillID.MINING, ResourceIDs = [ResourceID.STONE, ResourceID.STONE] };
+            NodeCreation duplicateCreation = new() { LinkedSkill = SkillID.MINING, ItemIDs = [ItemID.STONE, ItemID.STONE] };
             Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateCreation));
             
             Assert.Multiple(() =>

@@ -19,7 +19,7 @@ namespace IdelPog.HarvestNode.Factory
             {
                 HasLeveled = hasLeveled,
                 LevelProgress = _levelProgressFactory.CreateLevelProgress(harvestNode.Levelable),
-                ResourceID = harvestNode.ResourceID
+                ItemID = harvestNode.ItemID
             };
         }
     }

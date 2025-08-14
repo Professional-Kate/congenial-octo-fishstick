@@ -6,17 +6,18 @@ using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Factory.Interface;
 using IdelPog.Inventory.Service;
+using IdelPog.Inventory.Service.Interface;
 
 namespace IdelPog.Inventory.Mediator
 {
-    public class InventoryMediator : IBatchMediator<InventoryUpdate>
+    public class InventoryUpdateMediator : IBatchMediator<InventoryUpdate>
     {
         private readonly IInventory _inventory;
         private readonly IItemFactory _itemFactory;
         private readonly IInventoryUpdateResponseFactory _inventoryUpdateResponseFactory;
         private readonly IDispatchMany<InventoryUpdateResponse> _inventoryUpdateDispatcher;
 
-        public InventoryMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateResponseFactory inventoryUpdateResponseFactory,
+        public InventoryUpdateMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateResponseFactory inventoryUpdateResponseFactory,
             IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher)
         {
             _inventory = inventory;
@@ -46,7 +47,7 @@ namespace IdelPog.Inventory.Mediator
                 }
 
                 Item item = _inventory.GetItem(update.ItemID);
-                responses.Add(_inventoryUpdateResponseFactory.CreateInventoryUpdateDTO(item, update, mutateType));
+                responses.Add(_inventoryUpdateResponseFactory.Create(item, update, mutateType));
             }
 
             _inventoryUpdateDispatcher.Dispatch(responses.ToArray());

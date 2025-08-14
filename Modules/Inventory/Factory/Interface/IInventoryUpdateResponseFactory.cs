@@ -7,6 +7,6 @@ namespace IdelPog.Inventory.Factory.Interface
 {
     public interface IInventoryUpdateResponseFactory
     {
-        public InventoryUpdateResponse CreateInventoryUpdateDTO(Item item, InventoryUpdate inventoryUpdate, MutateType mutateType);
+        public InventoryUpdateResponse Create(Item item, InventoryUpdate inventoryUpdate, MutateType mutateType);
     }
 }

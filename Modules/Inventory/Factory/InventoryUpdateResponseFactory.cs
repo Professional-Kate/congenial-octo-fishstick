@@ -9,7 +9,7 @@ namespace IdelPog.Inventory.Factory
 {
     public class InventoryUpdateResponseFactory : IInventoryUpdateResponseFactory
     {
-        public InventoryUpdateResponse CreateInventoryUpdateDTO(Item item, InventoryUpdate inventoryUpdate, MutateType mutateType)
+        public InventoryUpdateResponse Create(Item item, InventoryUpdate inventoryUpdate, MutateType mutateType)
         {
             return new InventoryUpdateResponse
             {

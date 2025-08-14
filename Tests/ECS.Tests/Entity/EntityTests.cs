@@ -4,7 +4,7 @@ using IdelPog.ECS.Component;
 using IdelPog.ECS.Exceptions;
 using Moq;
 
-namespace IdelPog.ECS.Tests.Entity
+namespace IdelPog.ECS.Tests
 {
     [TestFixture]
     public class EntityTests

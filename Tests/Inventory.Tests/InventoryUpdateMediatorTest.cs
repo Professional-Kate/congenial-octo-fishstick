@@ -8,12 +8,13 @@ using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Factory.Interface;
 using IdelPog.Inventory.Mediator;
 using IdelPog.Inventory.Service;
+using IdelPog.Inventory.Service.Interface;
 using Moq;
 
 namespace IdelPog.Inventory.Tests
 {
     [TestFixture]
-    public class InventoryMediatorTest
+    public class InventoryUpdateMediatorTest
     {
         private IBatchMediator<InventoryUpdate> _inventoryMediator { get; set; }
         private Mock<IInventory> _repositoryMock { get; set; }
@@ -33,13 +34,13 @@ namespace IdelPog.Inventory.Tests
             _itemFactoryMock = new Mock<IItemFactory>();
             _factoryMock = new Mock<IInventoryUpdateResponseFactory>();
             _dispatcherMock = new Mock<IDispatchMany<InventoryUpdateResponse>>();
-            _inventoryMediator = new InventoryMediator(_repositoryMock.Object, _itemFactoryMock.Object, _factoryMock.Object, _dispatcherMock.Object);
+            _inventoryMediator = new InventoryUpdateMediator(_repositoryMock.Object, _itemFactoryMock.Object, _factoryMock.Object, _dispatcherMock.Object);
             _information = new Information { Description = "", Name = ""};
 
             _inventoryUpdate = new InventoryUpdate
             {
                 Action = ActionType.ADD,
-                ItemID = ItemID.OAK_WOOD,
+                ItemID = ItemID.STONE,
                 Amount = AMOUNT
             };
 
@@ -48,7 +49,7 @@ namespace IdelPog.Inventory.Tests
                 ItemInfo = new ItemInfo
                 {
                     Amount = AMOUNT,
-                    ItemID = ItemID.OAK_WOOD,
+                    ItemID = ItemID.STONE,
                     BaseSellPrice = 1
                 },
                 ActionType = ActionType.ADD,
@@ -63,7 +64,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock.Setup(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT));
             _repositoryMock.Setup(library => library.Contains(_inventoryUpdate.ItemID)).Returns(true);
 
-            _factoryMock.Setup(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), _inventoryUpdate, MutateType.CHANGED))
+            _factoryMock.Setup(library => library.Create(It.IsAny<Item>(), _inventoryUpdate, MutateType.CHANGED))
                 .Returns(_inventoryUpdateResponse);
         }
 
@@ -74,9 +75,9 @@ namespace IdelPog.Inventory.Tests
 
             _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT));
             _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.ItemID));
-            _factoryMock.Verify(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), _inventoryUpdate, MutateType.CHANGED));
+            _factoryMock.Verify(library => library.Create(It.IsAny<Item>(), _inventoryUpdate, MutateType.CHANGED));
             _dispatcherMock.Verify(library => library.Dispatch(new[] { _inventoryUpdateResponse, _inventoryUpdateResponse }), Times.Once);
-            _itemFactoryMock.Verify(library => library.CreateItem(ItemID.OAK_WOOD, AMOUNT), Times.Never);
+            _itemFactoryMock.Verify(library => library.CreateItem(ItemID.STONE, AMOUNT), Times.Never);
         }
 
         [Test]
@@ -85,16 +86,16 @@ namespace IdelPog.Inventory.Tests
             InventoryUpdate removeUpdate = new()
             {
                 Action = ActionType.REMOVE,
-                ItemID = ItemID.OAK_WOOD,
+                ItemID = ItemID.STONE,
                 Amount = AMOUNT
             };
 
             _inventoryMediator.HandleMessages([removeUpdate, removeUpdate]);
 
             _repositoryMock.Verify(library => library.RemoveAmount(_inventoryUpdate.ItemID, AMOUNT));
-            _factoryMock.Verify(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), removeUpdate, MutateType.CHANGED));
+            _factoryMock.Verify(library => library.Create(It.IsAny<Item>(), removeUpdate, MutateType.CHANGED));
             _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<InventoryUpdateResponse[]>()), Times.Once);
-            _itemFactoryMock.Verify(library => library.CreateItem(ItemID.OAK_WOOD, AMOUNT), Times.Never);
+            _itemFactoryMock.Verify(library => library.CreateItem(ItemID.STONE, AMOUNT), Times.Never);
         }
 
         [Test]
@@ -129,8 +130,8 @@ namespace IdelPog.Inventory.Tests
 
             _repositoryMock.Verify(library => library.AddAmount(_inventoryUpdate.ItemID, AMOUNT), Times.Never);
             _repositoryMock.Verify(library => library.Contains(_inventoryUpdate.ItemID));
-            _factoryMock.Verify(library => library.CreateInventoryUpdateDTO(It.IsAny<Item>(), _inventoryUpdate, MutateType.CREATED));
-            _itemFactoryMock.Verify(library => library.CreateItem(ItemID.OAK_WOOD, AMOUNT), Times.Once);
+            _factoryMock.Verify(library => library.Create(It.IsAny<Item>(), _inventoryUpdate, MutateType.CREATED));
+            _itemFactoryMock.Verify(library => library.CreateItem(ItemID.STONE, AMOUNT), Times.Once);
             _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<InventoryUpdateResponse[]>()), Times.Once);
         }
     }

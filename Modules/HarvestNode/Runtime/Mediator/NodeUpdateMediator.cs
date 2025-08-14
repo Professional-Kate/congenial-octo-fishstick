@@ -9,14 +9,14 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
 {
     public class NodeUpdateMediator : ISingleMediator<SkillUpdateResponse>
     {
-        private readonly ICurrentResourceProvider  _currentResourceProvider;
+        private readonly ICurrentHarvestTargetProvider  _currentHarvestTargetProvider;
         private readonly ISkillNodeAccessValidator _skillNodeAccessValidator;
         private readonly INodeUpdateService _nodeUpdateService;
         private readonly IDispatchOne<HarvestNodeUpdateResponse> _updateResponseDispatcher;
 
-        public NodeUpdateMediator(ICurrentResourceProvider currentResourceProvider, ISkillNodeAccessValidator skillNodeAccessValidator, INodeUpdateService nodeUpdateService, IDispatchOne<HarvestNodeUpdateResponse> updateResponseDispatcher)
+        public NodeUpdateMediator(ICurrentHarvestTargetProvider currentHarvestTargetProvider, ISkillNodeAccessValidator skillNodeAccessValidator, INodeUpdateService nodeUpdateService, IDispatchOne<HarvestNodeUpdateResponse> updateResponseDispatcher)
         {
-            _currentResourceProvider = currentResourceProvider;
+            _currentHarvestTargetProvider = currentHarvestTargetProvider;
             _skillNodeAccessValidator = skillNodeAccessValidator;
             _nodeUpdateService = nodeUpdateService;
             _updateResponseDispatcher = updateResponseDispatcher;
@@ -25,10 +25,10 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
         public void HandleMessage(SkillUpdateResponse skillUpdateResponse)
         {
             SkillID skillID = skillUpdateResponse.SkillID;
-            ResourceID currentResource = _currentResourceProvider.GetCurrentResource();
-            _skillNodeAccessValidator.AssertSkillAllows(skillID, currentResource);
+            ItemID harvestTarget = _currentHarvestTargetProvider.GetCurrentHarvestTarget();
+            _skillNodeAccessValidator.AssertSkillAllows(skillID, harvestTarget);
             
-            HarvestNodeUpdateResponse response = _nodeUpdateService.UpdateHarvestNode(currentResource);
+            HarvestNodeUpdateResponse response = _nodeUpdateService.UpdateHarvestNode(harvestTarget);
             _updateResponseDispatcher.Dispatch(response);
         }
     }

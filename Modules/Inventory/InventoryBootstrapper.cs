@@ -26,6 +26,7 @@ using IdelPog.Inventory.Factory;
 using IdelPog.Inventory.Factory.Interface;
 using IdelPog.Inventory.Mediator;
 using IdelPog.Inventory.Service;
+using IdelPog.Inventory.Service.Interface;
 
 namespace IdelPog.Inventory
 {
@@ -47,7 +48,7 @@ namespace IdelPog.Inventory
             IMapper<ItemID> itemMapper = new Mapper<ItemID>(foundAssertion, uniqueAssertion);
             IItemFactory itemFactory = new ItemFactory(itemMapper);
             IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
-            IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryMediator(inventory, itemFactory, inventoryUpdateResponseFactory, inventoryUpdateDispatcher);
+            IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryUpdateMediator(inventory, itemFactory, inventoryUpdateResponseFactory, inventoryUpdateDispatcher);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<InventoryUpdateError, IReadOnlyList<InventoryUpdate>> inventoryUpdateErrorFactory = new InventoryUpdateErrorFactory(baseErrorFactory);

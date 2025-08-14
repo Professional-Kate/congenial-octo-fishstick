@@ -21,7 +21,7 @@ namespace IdelPog.Integration.Tests
     {
         protected IBufferManager BufferManager { get; private set; }
         protected ICurrentSkillProvider CurrentSkillProvider;
-        protected ICurrentResourceProvider CurrentResourceProvider;
+        protected ICurrentHarvestTargetProvider CurrentHarvestTargetProvider;
         private IBufferMessenger _bufferMessenger { get; set; }
         private IBufferFactory _bufferFactory;
         private IObjectNullAssertion _objectNullAssertion;
@@ -55,13 +55,13 @@ namespace IdelPog.Integration.Tests
             ICurrentSkillSetter skillSetter = skillProvider;
             CurrentSkillProvider = skillProvider;
 
-            CurrentResourceProvider resourceProvider = new();
-            CurrentResourceProvider = resourceProvider;
+            CurrentHarvestTargetProvider harvestTargetProvider = new();
+            CurrentHarvestTargetProvider = harvestTargetProvider;
 
             FlowRegister flowRegister = FlowBootstrapper.CreateFlowRegister(BufferManager);
             CurrencyBootstrapper.RegisterFlows(BufferManager, flowRegister);
             SkillBootstrapper.RegisterSetSkill(BufferManager, skillSetter, flowRegister);
-            ContentEngineBootstrapper.RegisterFlows(BufferManager, resourceProvider, flowRegister, flowRegister);
+            ContentEngineBootstrapper.RegisterFlows(BufferManager, harvestTargetProvider, flowRegister, flowRegister);
             FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
         }
 
