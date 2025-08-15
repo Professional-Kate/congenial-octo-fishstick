@@ -12,6 +12,7 @@ using IdelPog.Core.Validation.Handler;
 using IdelPog.Currency;
 using IdelPog.HarvestNode;
 using IdelPog.HarvestNode.Services;
+using IdelPog.Inventory;
 using IdelPog.Skill;
 using IdelPog.Skill.Service;
 
@@ -62,6 +63,7 @@ namespace IdelPog.Integration.Tests
             CurrencyBootstrapper.RegisterFlows(BufferManager, flowRegister);
             SkillBootstrapper.RegisterSetSkill(BufferManager, skillSetter, flowRegister);
             ContentEngineBootstrapper.RegisterFlows(BufferManager, harvestTargetProvider, flowRegister, flowRegister);
+            InventoryBootstrapper.RegisterInventoryUpdate(BufferManager, flowRegister);
             FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
         }
 

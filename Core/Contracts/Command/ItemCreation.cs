@@ -1,11 +1,10 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Core.Information.Contracts
+namespace IdelPog.Core.Contracts.Command
 {
-    public readonly record struct ItemInfo
+    public readonly record struct ItemCreation
     {
         public required ItemID ItemID { get; init; }
-        public required uint BaseSellPrice { get; init; }
         public required uint Amount { get; init; }
     }
 }

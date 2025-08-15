@@ -8,7 +8,6 @@ using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Exceptions;
-using IdelPog.Inventory.Service;
 using IdelPog.Inventory.Service.Interface;
 using Moq;
 
