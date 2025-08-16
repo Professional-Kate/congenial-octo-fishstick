@@ -55,10 +55,11 @@ namespace IdelPog.Inventory
             itemMapper.AddInformation(ItemID.IRON, new Information { Description = "Your job is to mine Diamonds", Name = "Iron" });
             itemMapper.AddInformation(ItemID.GOLD, new Information { Description = "It's like less cool copper", Name = "Gold" });
             
+            IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
             IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();
             IInventoryUpdateResponseFactory inventoryUpdateResponseFactory = new InventoryUpdateResponseFactory();
             IItemFactory itemFactory = new ItemFactory(itemMapper);
-            IInventoryUpdateSummarizer summarizer = new InventoryUpdateSummarizer();
+            IInventoryUpdateSummarizer summarizer = new InventoryUpdateSummarizer(updateFactory, collectionAssertion);
             IItemInfoFactory itemInfoFactory = new ItemInfoFactory();
             IInventoryUpdateEntryFactory inventoryUpdateEntryFactory = new InventoryUpdateEntryFactory();
             IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);

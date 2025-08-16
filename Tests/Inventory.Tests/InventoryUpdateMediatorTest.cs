@@ -1,5 +1,4 @@
-﻿using System.Timers;
-using IdelPog.Core.Contracts;
+﻿using IdelPog.Core.Contracts;
 using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;

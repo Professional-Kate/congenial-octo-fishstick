@@ -23,8 +23,7 @@ namespace IdelPog.Currency.Tests.Service
         public void OneTimeSetUp()
         {
             _currencyUpdateFactoryMock = new Mock<ICurrencyUpdateFactory>();
-            _currencyUpdateSummarizer = new CurrencyUpdateSummarizer(_currencyUpdateFactoryMock.Object,
-                new ObjectNullAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()));
+            _currencyUpdateSummarizer = new CurrencyUpdateSummarizer(_currencyUpdateFactoryMock.Object, new CollectionAssertion(new ThrowHandler()));
 
             _addGoldUpdate = CurrencyUpdateFactory.Create(10, CurrencyType.GOLD, ActionType.ADD);
             _removeGoldUpdate = CurrencyUpdateFactory.Create(10, CurrencyType.GOLD, ActionType.REMOVE);
