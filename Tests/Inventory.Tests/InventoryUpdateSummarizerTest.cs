@@ -112,6 +112,23 @@ namespace IdelPog.Inventory.Tests
         }
 
         [Test]
+        public void Positive_GetSummary_OneItem_MultipleRemoveUpdates()
+        { 
+            InventoryUpdate removeCopperUpdate = _addCopperUpdate with { Action = ActionType.REMOVE };
+            SetupFactory(removeCopperUpdate, removeCopperUpdate);
+            
+            InventoryUpdate[] updates = _inventoryUpdateSummarizer.GetSummary([removeCopperUpdate]);
+            
+            Assert.Multiple(() =>
+            { 
+                Assert.That(updates, Has.Length.EqualTo(1)); 
+                Assert.That(updates[0], Is.EqualTo(removeCopperUpdate));
+            });
+            
+            VerifyFactoryCalls(1);
+        }
+
+        [Test]
         public void Negative_GetSummary_NullCollection_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _inventoryUpdateSummarizer.GetSummary(null!));
