@@ -42,19 +42,19 @@ namespace IdelPog.HarvestNode
         /// Creates and adds the <see cref="SetHarvestNode"/> and <see cref="SkillUpdateResponse"/> flow into the messaging system
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
-        /// <param name="currentResourceProvider">Used together with <see cref="ICurrentResourceProvider"/></param>
+        /// <param name="currentHarvestTargetProvider">Used together with <see cref="ICurrentHarvestTargetProvider"/></param>
         /// <param name="batchRegister">Used to register the NodeCreation flow</param>
         /// <param name="singleRegister">Used to register the SkillUpdateResponse and SetHarvestNode flows</param>
         /// <seealso cref="RegisterSetHarvestNode"/>
-        public static void RegisterFlows(IBufferManager bufferManager, CurrentResourceProvider currentResourceProvider, IBatchRegister batchRegister, ISingleRegister singleRegister)
+        public static void RegisterFlows(IBufferManager bufferManager, CurrentHarvestTargetProvider currentHarvestTargetProvider, IBatchRegister batchRegister, ISingleRegister singleRegister)
         {
             IFoundAssertion foundAssertion = new FoundAssertion(new ThrowHandler());
             
             IAssetRepository<SkillID, SkillNodeEntity> skillNodeRepository = new AssetRepository<SkillID, SkillNodeEntity>();
             ISkillNodeAccessValidator skillNodeAccessValidator = new SkillNodeAccessValidator(skillNodeRepository, foundAssertion);
             
-            RegisterSkillUpdateResponse(bufferManager, currentResourceProvider, skillNodeAccessValidator, singleRegister);
-            RegisterSetHarvestNode(bufferManager, currentResourceProvider, skillNodeAccessValidator, singleRegister);
+            RegisterSkillUpdateResponse(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister);
+            RegisterSetHarvestNode(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister);
             RegisterNodeCreation(bufferManager, skillNodeRepository, batchRegister);
         }
 
@@ -62,13 +62,13 @@ namespace IdelPog.HarvestNode
         /// Registers the <see cref="SkillUpdateResponse"/> flow into the messaging system
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
-        /// <param name="currentResourceProvider">Used together with <see cref="ICurrentResourceSetter"/></param>
+        /// <param name="currentHarvestTargetProvider">Used together with <see cref="ICurrentHarvestTargetSetter"/></param>
         /// <param name="skillNodeAccessValidator">Used to validate if a skill can access a node</param>
         /// <param name="singleRegister">Used to register the SkillUpdateResponse flow</param>
         /// <remarks>
         /// Listens to -> <see cref="SkillUpdateResponse"/>. On Success -> <see cref="HarvestNodeUpdateResponse"/>. On Error -> <see cref="HarvestNodeUpdateError"/>
         /// </remarks>
-        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ICurrentResourceProvider currentResourceProvider, ISkillNodeAccessValidator skillNodeAccessValidator, ISingleRegister singleRegister)
+        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ICurrentHarvestTargetProvider currentHarvestTargetProvider, ISkillNodeAccessValidator skillNodeAccessValidator, ISingleRegister singleRegister)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -77,7 +77,7 @@ namespace IdelPog.HarvestNode
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             ILevelableAssertionPipeline levelableAssertion = new LevelableAssertionPipeline(levelAssertion, objectNullAssertion);
             
-            IStateRepository<ResourceID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ResourceID, Contracts.HarvestNode>();
+            IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
             ILevelService levelService = new LevelService(levelableAssertion);
             IExperienceService experienceService = new ExperienceService(levelableAssertion);
             ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
@@ -86,16 +86,16 @@ namespace IdelPog.HarvestNode
             Contracts.HarvestNode ironHarvestNode = new()
             {
                 Information = new Information { Description = "", Name = "" }, 
-                ResourceID = ResourceID.IRON, 
+                ItemID = ItemID.IRON, 
                 Levelable = new Levelable(0, 0, 20, 0)
             };
 
-            harvestNodeRepository.Add(ironHarvestNode.ResourceID, ironHarvestNode);
+            harvestNodeRepository.Add(ironHarvestNode.ItemID, ironHarvestNode);
                 
             
             IDispatchOne<HarvestNodeUpdateResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             INodeUpdateService nodeUpdateService = new NodeUpdateService(harvestNodeRepository, levelService, experienceService, responseFactory, foundAssertion);
-            ISingleMediator<SkillUpdateResponse> updateMediator = new NodeUpdateMediator(currentResourceProvider, skillNodeAccessValidator, nodeUpdateService, responseDispatcher);
+            ISingleMediator<SkillUpdateResponse> updateMediator = new NodeUpdateMediator(currentHarvestTargetProvider, skillNodeAccessValidator, nodeUpdateService, responseDispatcher);
             ISingleController<SkillUpdateResponse> nodeUpdateController = new ManagedSingleController<SkillUpdateResponse>(updateMediator);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
@@ -108,13 +108,13 @@ namespace IdelPog.HarvestNode
         /// Registers the <see cref="SetHarvestNode"/> flow into the messaging system
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
-        /// <param name="currentResourceSetter">Used together with <see cref="ICurrentResourceProvider"/></param>
+        /// <param name="currentHarvestTargetSetter">Used together with <see cref="ICurrentHarvestTargetProvider"/></param>
         /// <param name="skillNodeAccessValidator">Used to validate if a skill can access a node</param>
         /// <param name="singleRegister">Used to register the SetHarvestNode flow</param>
         /// <remarks>
         /// Listens to -> <see cref="SetHarvestNode"/>. On Success -> <see cref="SetHarvestNodeResponse"/>. On Error -> <see cref="SetHarvestNodeError"/>
         /// </remarks>
-        private static void RegisterSetHarvestNode(IBufferManager bufferManager, ICurrentResourceSetter currentResourceSetter, ISkillNodeAccessValidator skillNodeAccessValidator, ISingleRegister singleRegister)
+        private static void RegisterSetHarvestNode(IBufferManager bufferManager, ICurrentHarvestTargetSetter currentHarvestTargetSetter, ISkillNodeAccessValidator skillNodeAccessValidator, ISingleRegister singleRegister)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -125,7 +125,7 @@ namespace IdelPog.HarvestNode
 
             IDispatchOne<SetHarvestNodeResponse> setHarvestNodeResponseDispatcher = new ManagedDispatcher<SetHarvestNodeResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             ISetNodeResponseFactory nodeChangeResponseFactor = new SetNodeResponseFactory();
-            ISingleMediator<SetHarvestNode> setHarvestNodeMediator = new SetHarvestNodeMediator(skillNodeAccessValidator, currentResourceSetter, setHarvestNodeResponseDispatcher, nodeChangeResponseFactor);
+            ISingleMediator<SetHarvestNode> setHarvestNodeMediator = new SetHarvestNodeMediator(skillNodeAccessValidator, currentHarvestTargetSetter, setHarvestNodeResponseDispatcher, nodeChangeResponseFactor);
             ISingleController<SetHarvestNode> setHarvestNodeController = new ManagedSingleController<SetHarvestNode>(setHarvestNodeMediator);
             
             singleRegister.Register(setHarvestNodeController, setHarvestNodeErrorFactory);
@@ -147,7 +147,7 @@ namespace IdelPog.HarvestNode
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
 
-            IStateRepository<ResourceID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ResourceID, Contracts.HarvestNode>();
+            IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
             ISkillNodeEntityFactory skillNodeEntityFactory = new SkillNodeEntityFactory();
             IHarvestNodeFactory harvestNodeFactory = new HarvestNodeFactory();
             INodeCreationResponseFactory nodeCreationResponseFactory = new NodeCreationResponseFactory();

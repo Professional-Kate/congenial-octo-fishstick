@@ -1,4 +1,5 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Currency.Factory.Interface;
@@ -9,48 +10,44 @@ namespace IdelPog.Currency.Service
     public class CurrencyUpdateSummarizer : ICurrencyUpdateSummarizer
     {
         private readonly ICurrencyUpdateFactory _currencyUpdateFactory;
-        private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, IObjectNullAssertion objectNullAssertion,
-            ICollectionAssertion collectionAssertion)
+        public CurrencyUpdateSummarizer(ICurrencyUpdateFactory currencyUpdateFactory, ICollectionAssertion collectionAssertion)
         {
             _currencyUpdateFactory = currencyUpdateFactory;
-            _objectNullAssertion = objectNullAssertion;
             _collectionAssertion = collectionAssertion;
         }
 
         public CurrencyUpdate[] GetSummary(IReadOnlyList<CurrencyUpdate> updates)
         {
-            _objectNullAssertion.AssertNotNull(updates, nameof(updates));
-            _collectionAssertion.AssertNotEmpty(updates);
+            _collectionAssertion.AssertHasElements(updates);
 
-            Dictionary<CurrencyType, CurrencyRunningUpdate> amounts = SummarizeAmounts(updates);
+            Dictionary<CurrencyType, RunningUpdate> amounts = SummarizeAmounts(updates);
             List<CurrencyUpdate> summaryUpdates = CreateSummaryUpdates(amounts);
 
             return summaryUpdates.ToArray();
         }
 
-        private Dictionary<CurrencyType, CurrencyRunningUpdate> SummarizeAmounts(IReadOnlyList<CurrencyUpdate> updates)
+        private Dictionary<CurrencyType, RunningUpdate> SummarizeAmounts(IReadOnlyList<CurrencyUpdate> updates)
         {
-            Dictionary<CurrencyType, CurrencyRunningUpdate> amounts = new();
+            Dictionary<CurrencyType, RunningUpdate> amounts = new();
 
             foreach (CurrencyUpdate currencyUpdate in updates)
             {
-                amounts.TryAdd(currencyUpdate.CurrencyType, new CurrencyRunningUpdate());
+                amounts.TryAdd(currencyUpdate.CurrencyType, new RunningUpdate());
                 amounts[currencyUpdate.CurrencyType].Apply(currencyUpdate.ActionType, currencyUpdate.Amount);
             }
 
             return amounts;
         }
 
-        private List<CurrencyUpdate> CreateSummaryUpdates(Dictionary<CurrencyType, CurrencyRunningUpdate> amounts)
+        private List<CurrencyUpdate> CreateSummaryUpdates(Dictionary<CurrencyType, RunningUpdate> amounts)
         {
             List<CurrencyUpdate> updates = [];
 
-            foreach ((CurrencyType currencyType, CurrencyRunningUpdate runningAmount) in amounts)
+            foreach ((CurrencyType currencyType, RunningUpdate runningAmount) in amounts)
             {
-                if (runningAmount.AddAmount == runningAmount.RemoveAmount)
+                if (runningAmount.IsZeroAmount())
                 {
                     continue;
                 }
@@ -73,36 +70,6 @@ namespace IdelPog.Currency.Service
             }
 
             return updates;
-        }
-    }
-
-    /// <summary>
-    /// Internal helper class for tracking the running total of add/remove calls
-    /// </summary>
-    internal sealed class CurrencyRunningUpdate
-    {
-        internal uint AddAmount { get; private set; }
-        internal uint RemoveAmount { get; private set; }
-        
-        /// <summary>
-        /// Add an amount to the internal properties
-        /// </summary>
-        /// <param name="action">If this is a remove / add amount update</param>
-        /// <param name="amount">The amount you want to add</param>
-        /// <exception cref="ArgumentOutOfRangeException">If the action isn't ADD/REMOVE</exception>
-        internal void Apply(ActionType action, uint amount)
-        {
-            switch (action)
-            {
-                case ActionType.ADD:
-                    AddAmount += amount;
-                    break;
-                case ActionType.REMOVE:
-                    RemoveAmount += amount;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(action), action, null);
-            }
         }
     }
 }

@@ -12,15 +12,15 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
     public class SetHarvestNodeMediator : ISingleMediator<SetHarvestNode>
     {
         private readonly ISkillNodeAccessValidator _skillNodeAccessValidator;
-        private readonly ICurrentResourceSetter _currentResourceSetter;
+        private readonly ICurrentHarvestTargetSetter _currentHarvestTargetSetter;
         private readonly IDispatchOne<SetHarvestNodeResponse> _harvestNodeDispatcher;
         private readonly ISetNodeResponseFactory _nodeChangeResponseFactory;
 
-        public SetHarvestNodeMediator(ISkillNodeAccessValidator skillNodeAccessValidator, ICurrentResourceSetter currentResourceSetter,
+        public SetHarvestNodeMediator(ISkillNodeAccessValidator skillNodeAccessValidator, ICurrentHarvestTargetSetter currentHarvestTargetSetter,
             IDispatchOne<SetHarvestNodeResponse> harvestNodeDispatcher, ISetNodeResponseFactory nodeChangeResponseFactory)
         {
             _skillNodeAccessValidator = skillNodeAccessValidator;
-            _currentResourceSetter = currentResourceSetter;
+            _currentHarvestTargetSetter = currentHarvestTargetSetter;
             _harvestNodeDispatcher = harvestNodeDispatcher;
             _nodeChangeResponseFactory = nodeChangeResponseFactory;
         }
@@ -28,10 +28,10 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
         public void HandleMessage(SetHarvestNode setHarvestNode)
         {
             SkillID skillID = setHarvestNode.SkillID;
-            ResourceID resourceID = setHarvestNode.ResourceID;
-            _skillNodeAccessValidator.AssertSkillAllows(skillID, resourceID);
+            ItemID itemID = setHarvestNode.ItemID;
+            _skillNodeAccessValidator.AssertSkillAllows(skillID, itemID);
 
-            _currentResourceSetter.SetCurrentResource(resourceID);
+            _currentHarvestTargetSetter.SetCurrentResource(itemID);
             _harvestNodeDispatcher.Dispatch(_nodeChangeResponseFactory.Create(setHarvestNode));
         }
     }

@@ -6,6 +6,6 @@ namespace IdelPog.Core.Contracts.Command
     {
         public ItemID ItemID { get; init; }
         public uint Amount { get; init; }
-        public ActionType Action { get; init; }
+        public ActionType ActionType { get; init; }
     }
 }

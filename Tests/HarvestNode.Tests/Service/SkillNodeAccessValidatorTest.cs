@@ -21,7 +21,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _skillNodeEntity = new SkillNodeEntity(new SkillComponent() { SkillID = SkillID.FARMING},[new ResourceComponent() { ResourceID = ResourceID.COPPER}]);
+            _skillNodeEntity = new SkillNodeEntity(new SkillComponent() { SkillID = SkillID.FARMING},[new HarvestTargetComponent() { HarvestTarget = ItemID.COPPER}]);
             _repositoryMock = new Mock<IAssetRepository<SkillID, SkillNodeEntity>>();
             _skillNodeAccessValidator = new SkillNodeAccessValidator(_repositoryMock.Object, new FoundAssertion(new ThrowHandler()));
             
@@ -39,7 +39,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         {
             _repositoryMock.Setup(library => library.Contains(SkillID.FARMING)).Returns(true);
             
-            Assert.DoesNotThrow(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FARMING, ResourceID.COPPER));
+            Assert.DoesNotThrow(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FARMING, ItemID.COPPER));
             
             _repositoryMock.Verify(library => library.Get(SkillID.FARMING), Times.Once);
             _repositoryMock.Verify(library => library.Contains(SkillID.FARMING), Times.Once);
@@ -51,7 +51,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         {
             _repositoryMock.Setup(library => library.Contains(SkillID.FARMING)).Returns(false);
             
-            Assert.Throws<NotFoundException<SkillID>>(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FARMING,  ResourceID.COPPER));
+            Assert.Throws<NotFoundException<SkillID>>(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FARMING,  ItemID.COPPER));
             
             _repositoryMock.Verify(library => library.Get(SkillID.FARMING), Times.Never);
             _repositoryMock.Verify(library => library.Contains(SkillID.FARMING), Times.Once);
@@ -63,7 +63,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         {
             _repositoryMock.Setup(library => library.Contains(SkillID.FARMING)).Returns(true);
             
-            Assert.Throws<NotFoundException<ResourceID>>(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FARMING,  ResourceID.IRON));
+            Assert.Throws<NotFoundException<ItemID>>(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FARMING,  ItemID.IRON));
             
             _repositoryMock.Verify(library => library.Get(SkillID.FARMING), Times.Once);
             _repositoryMock.Verify(library => library.Contains(SkillID.FARMING), Times.Once);

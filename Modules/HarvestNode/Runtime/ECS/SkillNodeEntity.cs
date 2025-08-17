@@ -7,17 +7,17 @@ namespace IdelPog.HarvestNode.Runtime.ECS
 {
     public sealed record SkillNodeEntity : Entity
     {
-        private readonly ComponentStore<ResourceComponent> _resourceStore;
+        private readonly ComponentStore<HarvestTargetComponent> _harvestTargetStore;
         
-        public SkillNodeEntity(SkillComponent skillComponent, ResourceComponent[] allowedNodes)
-            : base(skillComponent, new ComponentStore<ResourceComponent>(allowedNodes, new ThrowHandler()))
+        public SkillNodeEntity(SkillComponent skillComponent, HarvestTargetComponent[] allowedNodes)
+            : base(skillComponent, new ComponentStore<HarvestTargetComponent>(allowedNodes, new ThrowHandler()))
         {
-            _resourceStore = GetComponent<ComponentStore<ResourceComponent>>();
+            _harvestTargetStore = GetComponent<ComponentStore<HarvestTargetComponent>>();
         }
 
-        public bool Allows(ResourceID resourceID)
+        public bool Allows(ItemID harvestTarget)
         {
-            bool contains =_resourceStore.ContainsComponent(resource => resource.ResourceID == resourceID);
+            bool contains =_harvestTargetStore.ContainsComponent(resource => resource.HarvestTarget == harvestTarget);
             return contains;
         }
     }

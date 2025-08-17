@@ -5,7 +5,7 @@ using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 
-namespace IdelPog.Integration.Tests.ContentEngine.Change
+namespace IdelPog.Integration.Tests.ContentEngine
 {
     [TestFixture]
     public class SetHarvestNodeFlowTest : ManagedBuffer
@@ -21,12 +21,12 @@ namespace IdelPog.Integration.Tests.ContentEngine.Change
             _nodeCreation = new NodeCreation
             {
                 LinkedSkill = SkillID.MINING,
-                ResourceIDs = [ResourceID.COPPER, ResourceID.GOLD, ResourceID.IRON, ResourceID.STONE]
+                ItemIDs = [ItemID.COPPER, ItemID.GOLD, ItemID.IRON, ItemID.STONE]
             };
             
             _setHarvestNode = new SetHarvestNode
             {
-                ResourceID = ResourceID.IRON,
+                ItemID = ItemID.IRON,
                 SkillID = SkillID.MINING
             };
             
@@ -64,7 +64,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Change
             SetHarvestNode result = _harvestNodeErrorListener.SetHarvestNodeError.SetHarvestNode;
             Assert.Multiple(() =>
             {
-                Assert.That(result.ResourceID, Is.EqualTo(expected.ResourceID));
+                Assert.That(result.ItemID, Is.EqualTo(expected.ItemID));
                 Assert.That(result.SkillID, Is.EqualTo(expected.SkillID));
             });
             
@@ -77,14 +77,14 @@ namespace IdelPog.Integration.Tests.ContentEngine.Change
             Assert.That(_harvestNodeChangeResponseListener.WasCalled, Is.False);
         }
 
-        private void AssertCurrentResourceProvider_Equals(ResourceID expected)
+        private void AssertCurrentResourceProvider_Equals(ItemID expected)
         {
-            Assert.That(CurrentResourceProvider.GetCurrentResource(), Is.EqualTo(expected));
+            Assert.That(CurrentHarvestTargetProvider.GetCurrentHarvestTarget(), Is.EqualTo(expected));
         }
 
-        private void AssertCurrencyResourceProvider_DoesNotEqual(ResourceID expected)
+        private void AssertCurrencyResourceProvider_DoesNotEqual(ItemID expected)
         {
-            Assert.That(CurrentResourceProvider.GetCurrentResource(), Is.Not.EqualTo(expected));
+            Assert.That(CurrentHarvestTargetProvider.GetCurrentHarvestTarget(), Is.Not.EqualTo(expected));
         }
         
         [Test]
@@ -94,7 +94,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Change
             Assert.DoesNotThrow(() => DispatchSetHarvestNode(_setHarvestNode));
             
             AssertListenerWasCalled(_setHarvestNode);
-            AssertCurrentResourceProvider_Equals(_setHarvestNode.ResourceID);
+            AssertCurrentResourceProvider_Equals(_setHarvestNode.ItemID);
         }
 
         [Test]
@@ -107,27 +107,27 @@ namespace IdelPog.Integration.Tests.ContentEngine.Change
             {
                 Assert.DoesNotThrow(() => DispatchSetHarvestNode(_setHarvestNode));
                 AssertListenerWasCalled(_setHarvestNode);
-                AssertCurrentResourceProvider_Equals(_setHarvestNode.ResourceID);
+                AssertCurrentResourceProvider_Equals(_setHarvestNode.ItemID);
             }
         }
 
         [Test]
         public void Negative_SendMissingSkillID_SendsError()
         {
-            SetHarvestNode missingSkill = new() { ResourceID = ResourceID.GOLD, SkillID = SkillID.WOOD_CUTTING };
+            SetHarvestNode missingSkill = new() { ItemID = ItemID.GOLD, SkillID = SkillID.WOOD_CUTTING };
             Assert.DoesNotThrow(() => DispatchSetHarvestNode(missingSkill));
             AssertListenerWasNotCalled();
-            AssertCurrencyResourceProvider_DoesNotEqual(ResourceID.GOLD);
+            AssertCurrencyResourceProvider_DoesNotEqual(ItemID.GOLD);
             AssertErrorListenerWasCalled(missingSkill, typeof(ControllerThrownException));
         } 
         
         [Test]
         public void Negative_SendMissingResourceID_SendsError()
         {
-            SetHarvestNode missingResourceCommand = new() { ResourceID = ResourceID.GOLD, SkillID = SkillID.MINING };
+            SetHarvestNode missingResourceCommand = new() { ItemID = ItemID.GOLD, SkillID = SkillID.MINING };
             Assert.DoesNotThrow(() => DispatchSetHarvestNode(missingResourceCommand));
             AssertListenerWasNotCalled();
-            AssertCurrencyResourceProvider_DoesNotEqual(ResourceID.GOLD);
+            AssertCurrencyResourceProvider_DoesNotEqual(ItemID.GOLD);
             AssertErrorListenerWasCalled(missingResourceCommand, typeof(ControllerThrownException));
         } 
     }

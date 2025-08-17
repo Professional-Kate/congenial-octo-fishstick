@@ -1,10 +1,9 @@
 ﻿using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.ECS.Component;
 using IdelPog.ECS.Exceptions;
-using IdelPog.ECS.Tests.Entity;
 using Moq;
 
-namespace IdelPog.ECS.Tests.Component
+namespace IdelPog.ECS.Tests
 {
     [TestFixture]
     public class ComponentStoreTest

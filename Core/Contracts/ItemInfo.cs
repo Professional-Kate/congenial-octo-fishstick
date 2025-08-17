@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Core.Information.Contracts
+namespace IdelPog.Core.Contracts
 {
     public readonly record struct ItemInfo
     {

@@ -2,7 +2,7 @@
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Inventory.Contracts;
 
-namespace IdelPog.Inventory.Service
+namespace IdelPog.Inventory.Service.Interface
 {
     /// <summary>
     /// Using this interface you can adjust the amount of any <see cref="Item"/> in the Inventory. 

@@ -2,7 +2,7 @@
 using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.ECS.Component;
 
-namespace IdelPog.ECS.Tests.Entity
+namespace IdelPog.ECS.Tests
 {
     internal record TestEntity : ECS.Entity.Entity
     {

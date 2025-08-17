@@ -12,13 +12,13 @@ namespace IdelPog.HarvestNode.Runtime.System
 {
     public class NodeUpdateService : INodeUpdateService
     {
-        private readonly IStateRepository<ResourceID, Contracts.HarvestNode> _harvestNodeRepository;
+        private readonly IStateRepository<ItemID, Contracts.HarvestNode> _harvestNodeRepository;
         private readonly ILevelService _levelService;
         private readonly IExperienceService _experienceService;
         private readonly INodeUpdateResponseFactory _nodeUpdateResponseFactory;
         private readonly IFoundAssertion _foundAssertion;
 
-        public NodeUpdateService(IStateRepository<ResourceID, Contracts.HarvestNode> harvestNodeRepository, ILevelService levelService, IExperienceService experienceService, INodeUpdateResponseFactory nodeUpdateResponseFactory, IFoundAssertion foundAssertion)
+        public NodeUpdateService(IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, ILevelService levelService, IExperienceService experienceService, INodeUpdateResponseFactory nodeUpdateResponseFactory, IFoundAssertion foundAssertion)
         {
             _harvestNodeRepository = harvestNodeRepository;
             _levelService = levelService;
@@ -27,10 +27,10 @@ namespace IdelPog.HarvestNode.Runtime.System
             _foundAssertion = foundAssertion;
         }
 
-        public HarvestNodeUpdateResponse UpdateHarvestNode(ResourceID resourceID)
+        public HarvestNodeUpdateResponse UpdateHarvestNode(ItemID itemID)
         {
-            _foundAssertion.AssertFound(resourceID, _harvestNodeRepository.Contains(resourceID));
-            Contracts.HarvestNode harvestNode = _harvestNodeRepository.Get(resourceID);
+            _foundAssertion.AssertFound(itemID, _harvestNodeRepository.Contains(itemID));
+            Contracts.HarvestNode harvestNode = _harvestNodeRepository.Get(itemID);
 
             Levelable levelable = harvestNode.Levelable;
             _experienceService.AddExperience(levelable);
@@ -41,7 +41,7 @@ namespace IdelPog.HarvestNode.Runtime.System
                 _levelService.LevelUp(levelable);
             }
             
-            _harvestNodeRepository.Update(harvestNode.ResourceID, harvestNode);
+            _harvestNodeRepository.Update(harvestNode.ItemID, harvestNode);
             
             HarvestNodeUpdateResponse updateResponse = _nodeUpdateResponseFactory.Create(harvestNode, canLevel);
             return updateResponse;

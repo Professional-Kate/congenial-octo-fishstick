@@ -15,7 +15,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
     public class SetHarvestNodeMediatorTest
     {
         private ISingleMediator<SetHarvestNode> _setMediator;
-        private ICurrentResourceProvider  _currentResourceProvider;
+        private ICurrentHarvestTargetProvider  _currentHarvestTargetProvider;
         private Mock<ISkillNodeAccessValidator> _skillNodeAccessValidatorMock;
         private Mock<IDispatchOne<SetHarvestNodeResponse>> _setResponseDispatcherMock;
         private Mock<ISetNodeResponseFactory> _setResponseFactoryMock;
@@ -32,18 +32,18 @@ namespace IdelPog.HarvestNode.Tests.Mediator
 
             _setHarvestNode = new SetHarvestNode
             {
-                ResourceID = ResourceID.STONE,
+                ItemID = ItemID.STONE,
                 SkillID = SkillID.MINING
             };
             
             _expectedResponse = new SetHarvestNodeResponse { SetHarvestNode = _setHarvestNode };
             
             
-            CurrentResourceProvider currentResourceProvider = new();
-            ICurrentResourceSetter currentResourceSetter = currentResourceProvider;
-            _currentResourceProvider = currentResourceProvider;
+            CurrentHarvestTargetProvider currentHarvestTargetProvider = new();
+            ICurrentHarvestTargetSetter currentHarvestTargetSetter = currentHarvestTargetProvider;
+            _currentHarvestTargetProvider = currentHarvestTargetProvider;
             
-            _setMediator = new SetHarvestNodeMediator(_skillNodeAccessValidatorMock.Object, currentResourceSetter,  _setResponseDispatcherMock.Object, _setResponseFactoryMock.Object);
+            _setMediator = new SetHarvestNodeMediator(_skillNodeAccessValidatorMock.Object, currentHarvestTargetSetter,  _setResponseDispatcherMock.Object, _setResponseFactoryMock.Object);
         }
 
         [SetUp]
@@ -61,9 +61,9 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             
             Assert.DoesNotThrow(() => _setMediator.HandleMessage(_setHarvestNode));
             
-            Assert.That(_currentResourceProvider.GetCurrentResource(), Is.EqualTo(_setHarvestNode.ResourceID));
+            Assert.That(_currentHarvestTargetProvider.GetCurrentHarvestTarget(), Is.EqualTo(_setHarvestNode.ItemID));
             
-            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_setHarvestNode.SkillID, _setHarvestNode.ResourceID), Times.Once);
+            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_setHarvestNode.SkillID, _setHarvestNode.ItemID), Times.Once);
             _setResponseFactoryMock.Verify(library => library.Create(_setHarvestNode), Times.Once);
             _setResponseDispatcherMock.Verify(library => library.Dispatch(_expectedResponse), Times.Once);
         }
@@ -71,12 +71,12 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         [Test]
         public void Negative_HandleMessage_AssertSkillAllows_Throws_NoSuppress()
         {
-            _skillNodeAccessValidatorMock.Setup(library => library.AssertSkillAllows(_setHarvestNode.SkillID, _setHarvestNode.ResourceID))
+            _skillNodeAccessValidatorMock.Setup(library => library.AssertSkillAllows(_setHarvestNode.SkillID, _setHarvestNode.ItemID))
                 .Throws<Exception>();
             
             Assert.Throws<Exception>(() => _setMediator.HandleMessage(_setHarvestNode));
             
-            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_setHarvestNode.SkillID, _setHarvestNode.ResourceID), Times.Once);
+            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_setHarvestNode.SkillID, _setHarvestNode.ItemID), Times.Once);
             _setResponseFactoryMock.Verify(library => library.Create(_setHarvestNode), Times.Never);
             _setResponseDispatcherMock.Verify(library => library.Dispatch(_expectedResponse), Times.Never);
         }

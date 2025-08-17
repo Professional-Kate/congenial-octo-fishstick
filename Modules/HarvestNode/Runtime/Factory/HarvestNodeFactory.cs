@@ -7,13 +7,13 @@ namespace IdelPog.HarvestNode.Runtime.Factory
 {
     public class HarvestNodeFactory : IHarvestNodeFactory
     {
-        public Contracts.HarvestNode Create(ResourceID resourceID)
+        public Contracts.HarvestNode Create(ItemID itemID)
         {
             // TODO: need a way to fetch these
             Information information = new() { Description = "", Name = "" };
             Levelable levelable = new(0, 0, 0, 0);
             
-            return new Contracts.HarvestNode { ResourceID = resourceID, Information = information, Levelable = levelable };
+            return new Contracts.HarvestNode { ItemID = itemID, Information = information, Levelable = levelable };
         }
     }
 }

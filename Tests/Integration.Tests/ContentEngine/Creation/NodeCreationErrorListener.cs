@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Messaging.Listener.Single;
 
-namespace IdelPog.Integration.Tests.ContentEngine.Creation
+namespace IdelPog.Integration.Tests.ContentEngine
 {
     public class NodeCreationErrorListener : ISingleListener<NodeCreationError>
     {

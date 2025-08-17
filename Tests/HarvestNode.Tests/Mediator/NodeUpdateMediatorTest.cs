@@ -14,7 +14,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
     public class NodeUpdateMediatorTest
     {
         private ISingleMediator<SkillUpdateResponse> _updateMediator;
-        private ICurrentResourceProvider _currentResourceProvider;
+        private ICurrentHarvestTargetProvider _currentHarvestTargetProvider;
         private Mock<ISkillNodeAccessValidator> _skillNodeAccessValidatorMock;
         private Mock<INodeUpdateService> _nodeUpdateServiceMock;
         private Mock<IDispatchOne<HarvestNodeUpdateResponse>> _responseDispatcherMock;
@@ -25,8 +25,8 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            CurrentResourceProvider currentResourceProvider = new();
-            _currentResourceProvider = currentResourceProvider;
+            CurrentHarvestTargetProvider currentHarvestTargetProvider = new();
+            _currentHarvestTargetProvider = currentHarvestTargetProvider;
 
             _skillUpdateResponse = new SkillUpdateResponse
             {
@@ -39,14 +39,14 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             {
                 HasLeveled = false,
                 LevelProgress = new LevelProgress { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
-                ResourceID = ResourceID.STONE
+                ItemID = ItemID.STONE
             };
             
             _skillNodeAccessValidatorMock = new Mock<ISkillNodeAccessValidator>();
             _nodeUpdateServiceMock = new Mock<INodeUpdateService>();
             _responseDispatcherMock = new Mock<IDispatchOne<HarvestNodeUpdateResponse>>();
             
-            _updateMediator = new NodeUpdateMediator(_currentResourceProvider, _skillNodeAccessValidatorMock.Object,  _nodeUpdateServiceMock.Object, _responseDispatcherMock.Object);
+            _updateMediator = new NodeUpdateMediator(_currentHarvestTargetProvider, _skillNodeAccessValidatorMock.Object,  _nodeUpdateServiceMock.Object, _responseDispatcherMock.Object);
         }
         
         [SetUp]
@@ -62,21 +62,21 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         {
             Assert.DoesNotThrow(() => _updateMediator.HandleMessage(_skillUpdateResponse));
             
-            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_skillUpdateResponse.SkillID, _expectedResponse.ResourceID), Times.Once);
-            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ResourceID), Times.Once);
+            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_skillUpdateResponse.SkillID, _expectedResponse.ItemID), Times.Once);
+            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ItemID), Times.Once);
             _responseDispatcherMock.Verify(library => library.Dispatch(_expectedResponse), Times.Once);
         }
         
         [Test]
         public void Negative_HandleMessage_ValidatorThrows_NoSuppress()
         {
-            _skillNodeAccessValidatorMock.Setup(library => library.AssertSkillAllows(_skillUpdateResponse.SkillID, _expectedResponse.ResourceID))
+            _skillNodeAccessValidatorMock.Setup(library => library.AssertSkillAllows(_skillUpdateResponse.SkillID, _expectedResponse.ItemID))
                 .Throws<Exception>();
             
             Assert.Throws<Exception>(() => _updateMediator.HandleMessage(_skillUpdateResponse));
             
-            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_skillUpdateResponse.SkillID, _expectedResponse.ResourceID), Times.Once);
-            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ResourceID), Times.Never);
+            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_skillUpdateResponse.SkillID, _expectedResponse.ItemID), Times.Once);
+            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ItemID), Times.Never);
             _responseDispatcherMock.Verify(library => library.Dispatch(_expectedResponse), Times.Never);
         }
     }

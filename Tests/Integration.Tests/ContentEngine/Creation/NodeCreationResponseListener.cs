@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Listener.Single;
 
-namespace IdelPog.Integration.Tests.ContentEngine.Creation
+namespace IdelPog.Integration.Tests.ContentEngine
 {
     public class NodeCreationResponseListener : ISingleListener<NodeCreationResponse>
     {
