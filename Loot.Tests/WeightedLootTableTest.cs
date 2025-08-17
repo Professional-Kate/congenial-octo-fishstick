@@ -5,6 +5,7 @@ using IdelPog.Core.Validation.Handler;
 using IdelPog.Loot.Assertion;
 using IdelPog.Loot.Contracts;
 using IdelPog.Loot.Exceptions;
+using IdelPog.Loot.Random;
 using Moq;
 // ReSharper disable ObjectCreationAsStatement
 

@@ -2,6 +2,7 @@
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Loot.Assertion;
 using IdelPog.Loot.Assertion.Interface;
+using IdelPog.Loot.Random;
 
 namespace IdelPog.Loot.Contracts
 {

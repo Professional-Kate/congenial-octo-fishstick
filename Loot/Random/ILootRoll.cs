@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Loot.Contracts
+﻿namespace IdelPog.Loot.Random
 {
     public interface ILootRoll
     {
