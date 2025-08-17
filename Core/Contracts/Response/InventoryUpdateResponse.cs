@@ -2,6 +2,6 @@
 {
     public readonly record struct InventoryUpdateResponse
     {
-        public required InventoryUpdateEntry[] InventoryUpdateEntry { get; init; }
+        public required InventoryUpdateEntry[] InventoryUpdateEntries { get; init; }
     }
 }

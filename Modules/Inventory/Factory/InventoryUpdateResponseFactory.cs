@@ -10,7 +10,7 @@ namespace IdelPog.Inventory.Factory
         {
             return new InventoryUpdateResponse
             {
-                InventoryUpdateEntry = inventoryUpdateEntries
+                InventoryUpdateEntries = inventoryUpdateEntries
             };
         }
     }

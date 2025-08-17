@@ -35,7 +35,7 @@ namespace IdelPog.Inventory.Service
             foreach (InventoryUpdate inventoryUpdate in updates)
             {
                 amounts.TryAdd(inventoryUpdate.ItemID, new RunningUpdate());
-                amounts[inventoryUpdate.ItemID].Apply(inventoryUpdate.Action, inventoryUpdate.Amount);
+                amounts[inventoryUpdate.ItemID].Apply(inventoryUpdate.ActionType, inventoryUpdate.Amount);
             }
             
             return amounts;

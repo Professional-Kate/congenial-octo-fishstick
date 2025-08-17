@@ -49,7 +49,7 @@ namespace IdelPog.Inventory.Tests
 
             _addStoneUpdate = new InventoryUpdate
             {
-                Action = ActionType.ADD,
+                ActionType = ActionType.ADD,
                 Amount = 1,
                 ItemID = ItemID.STONE
             };
@@ -153,7 +153,7 @@ namespace IdelPog.Inventory.Tests
         [Test]
         public void Positive_HandleMessages_SingleMessage_RemoveItem()
         {
-            InventoryUpdate removeStoneUpdate = _addStoneUpdate with { Action = ActionType.REMOVE };
+            InventoryUpdate removeStoneUpdate = _addStoneUpdate with { ActionType = ActionType.REMOVE };
             SetupSummarizerMock([removeStoneUpdate], [removeStoneUpdate]);
             SetupRepositoryContains(true);
 
@@ -214,7 +214,7 @@ namespace IdelPog.Inventory.Tests
         [Test]
         public void Negative_HandleMessage_SummarizerReturnsNothing_Throws()
         {
-            InventoryUpdate removeStoneUpdate = _addStoneUpdate with { Action = ActionType.REMOVE };
+            InventoryUpdate removeStoneUpdate = _addStoneUpdate with { ActionType = ActionType.REMOVE };
             SetupSummarizerMock([_addStoneUpdate, removeStoneUpdate], []);
             
             Assert.Throws<EmptyCollectionException>(() => _inventoryMediator.HandleMessages([removeStoneUpdate, _addStoneUpdate]));

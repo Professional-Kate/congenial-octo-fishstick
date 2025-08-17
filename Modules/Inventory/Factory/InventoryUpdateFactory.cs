@@ -12,7 +12,7 @@ namespace IdelPog.Inventory.Factory
             {
                 ItemID = itemID,
                 Amount = amount,
-                Action = actionType
+                ActionType = actionType
             };
         }
     }

@@ -23,7 +23,7 @@ namespace IdelPog.Inventory.Tests
         {
             _addCopperUpdate = new InventoryUpdate
             {
-                Action = ActionType.ADD,
+                ActionType = ActionType.ADD,
                 Amount = 1,
                 ItemID = ItemID.COPPER
             };
@@ -41,7 +41,7 @@ namespace IdelPog.Inventory.Tests
 
         private void SetupFactory(InventoryUpdate expectedUpdate, InventoryUpdate returnValue)
         {
-            _inventoryUpdateFactoryMock.Setup(library => library.Create(expectedUpdate.ItemID, expectedUpdate.Amount, expectedUpdate.Action)).Returns(returnValue);
+            _inventoryUpdateFactoryMock.Setup(library => library.Create(expectedUpdate.ItemID, expectedUpdate.Amount, expectedUpdate.ActionType)).Returns(returnValue);
         }
 
         private void VerifyFactoryCalls(int amountOfCalls)
@@ -85,7 +85,7 @@ namespace IdelPog.Inventory.Tests
         [Test]
         public void Positive_GetSummary_OneItem_FinalAmountIsZero_ReturnsNothing()
         {
-            InventoryUpdate removeCopperUpdate = _addCopperUpdate with { Action = ActionType.REMOVE };
+            InventoryUpdate removeCopperUpdate = _addCopperUpdate with { ActionType = ActionType.REMOVE };
             
             InventoryUpdate[] updates = _inventoryUpdateSummarizer.GetSummary([removeCopperUpdate, _addCopperUpdate]);
             
@@ -114,7 +114,7 @@ namespace IdelPog.Inventory.Tests
         [Test]
         public void Positive_GetSummary_OneItem_MultipleRemoveUpdates()
         { 
-            InventoryUpdate removeCopperUpdate = _addCopperUpdate with { Action = ActionType.REMOVE };
+            InventoryUpdate removeCopperUpdate = _addCopperUpdate with { ActionType = ActionType.REMOVE };
             SetupFactory(removeCopperUpdate, removeCopperUpdate);
             
             InventoryUpdate[] updates = _inventoryUpdateSummarizer.GetSummary([removeCopperUpdate]);

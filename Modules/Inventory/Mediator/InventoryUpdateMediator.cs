@@ -46,7 +46,7 @@ namespace IdelPog.Inventory.Mediator
             {
                 MutateType mutateType;
 
-                switch (update.Action)
+                switch (update.ActionType)
                 {
                     case ActionType.ADD:
                         mutateType = CreateOrIncreaseAmount(update.ItemID, update.Amount);
@@ -55,7 +55,7 @@ namespace IdelPog.Inventory.Mediator
                         mutateType = _inventory.RemoveAmount(update.ItemID, update.Amount);
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(update.Action.ToString());
+                        throw new ArgumentOutOfRangeException(update.ActionType.ToString());
                 }
 
                 ItemInfo itemInfo;
