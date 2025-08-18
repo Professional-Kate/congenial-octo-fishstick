@@ -33,6 +33,10 @@ using IdelPog.HarvestNode.Runtime.Mediator;
 using IdelPog.HarvestNode.Runtime.System;
 using IdelPog.HarvestNode.Runtime.System.Interface;
 using IdelPog.HarvestNode.Services;
+using IdelPog.Loot.Contracts.Grant;
+using IdelPog.Loot.Contracts.Table;
+using IdelPog.Loot.Service;
+using IdelPog.Loot.Service.Interface;
 
 namespace IdelPog.HarvestNode
 {
@@ -77,6 +81,7 @@ namespace IdelPog.HarvestNode
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             ILevelableAssertionPipeline levelableAssertion = new LevelableAssertionPipeline(levelAssertion, objectNullAssertion);
             
+            IAssetRepository<ItemID, ILootTable> lootTableRepository = new AssetRepository<ItemID, ILootTable>();
             IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
             ILevelService levelService = new LevelService(levelableAssertion);
             IExperienceService experienceService = new ExperienceService(levelableAssertion);
@@ -91,11 +96,18 @@ namespace IdelPog.HarvestNode
             };
 
             harvestNodeRepository.Add(ironHarvestNode.ItemID, ironHarvestNode);
-                
+
+            lootTableRepository.Add(ItemID.STONE, new GrantTable { ItemID = ItemID.STONE});
+            lootTableRepository.Add(ItemID.COPPER, new GrantTable { ItemID = ItemID.COPPER});
+            lootTableRepository.Add(ItemID.GOLD, new GrantTable { ItemID = ItemID.GOLD});
+            lootTableRepository.Add(ItemID.IRON, new GrantTable { ItemID = ItemID.IRON});
+            
+            IDispatchOne<InventoryUpdate> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdate>(bufferManager,  objectNullAssertion, collectionAssertion);
+            ILootService lootService = new LootService(lootTableRepository, inventoryUpdateDispatcher, new GrantPolicy(), foundAssertion);
             
             IDispatchOne<HarvestNodeUpdateResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             INodeUpdateService nodeUpdateService = new NodeUpdateService(harvestNodeRepository, levelService, experienceService, responseFactory, foundAssertion);
-            ISingleMediator<SkillUpdateResponse> updateMediator = new NodeUpdateMediator(currentHarvestTargetProvider, skillNodeAccessValidator, nodeUpdateService, responseDispatcher);
+            ISingleMediator<SkillUpdateResponse> updateMediator = new NodeUpdateMediator(currentHarvestTargetProvider, skillNodeAccessValidator, nodeUpdateService, responseDispatcher, lootService);
             ISingleController<SkillUpdateResponse> nodeUpdateController = new ManagedSingleController<SkillUpdateResponse>(updateMediator);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();

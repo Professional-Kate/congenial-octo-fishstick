@@ -5,7 +5,8 @@ using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
-using IdelPog.Loot.Contracts;
+using IdelPog.Loot.Contracts.Grant;
+using IdelPog.Loot.Contracts.Table;
 using IdelPog.Loot.Service;
 using IdelPog.Loot.Service.Interface;
 using Moq;
@@ -19,6 +20,7 @@ namespace Loot.Tests
         private Mock<IAssetRepository<ItemID, ILootTable>> _lootTableRepositoryMock;
         private Mock<IDispatchOne<InventoryUpdate>> _inventoryUpdateDispatcherMock;
         private Mock<ILootTable> _weightedLootTableMock;
+        private Mock<IGrantPolicy> _grantPolicyMock;
 
         private const ItemID ITEM_ID = ItemID.STONE;
 
@@ -28,8 +30,9 @@ namespace Loot.Tests
             _lootTableRepositoryMock = new Mock<IAssetRepository<ItemID, ILootTable>>();
             _inventoryUpdateDispatcherMock = new Mock<IDispatchOne<InventoryUpdate>>();
             _weightedLootTableMock = new Mock<ILootTable>();
+            _grantPolicyMock = new Mock<IGrantPolicy>();
             
-            _lootService = new LootService(_lootTableRepositoryMock.Object, _inventoryUpdateDispatcherMock.Object, new FoundAssertion(new ThrowHandler()));
+            _lootService = new LootService(_lootTableRepositoryMock.Object, _inventoryUpdateDispatcherMock.Object, _grantPolicyMock.Object, new FoundAssertion(new ThrowHandler()));
         }
 
         [SetUp]
@@ -43,6 +46,7 @@ namespace Loot.Tests
         {
             _lootTableRepositoryMock.Setup(library => library.Contains(ITEM_ID)).Returns(true);
             _lootTableRepositoryMock.Setup(library => library.Get(ITEM_ID)).Returns(_weightedLootTableMock.Object);
+            _grantPolicyMock.Setup(library => library.ShouldGrant()).Returns(true);
             
             Assert.DoesNotThrow(() => _lootService.DispatchInventoryUpdates(ITEM_ID));
             
@@ -59,9 +63,23 @@ namespace Loot.Tests
         public void Negative_DispatchInventoryUpdates_ItemNotFound_Throws()
         {
             _lootTableRepositoryMock.Setup(library => library.Contains(ITEM_ID)).Returns(false);
+            _grantPolicyMock.Setup(library => library.ShouldGrant()).Returns(true);
             
             Assert.Throws<NotFoundException<ItemID>>(() => _lootService.DispatchInventoryUpdates(ITEM_ID));
             
+            _lootTableRepositoryMock.Verify(library => library.Contains(ITEM_ID), Times.Once);
+            _lootTableRepositoryMock.VerifyNoOtherCalls();
+            
+            _inventoryUpdateDispatcherMock.Verify(library => library.Dispatch(It.IsAny<InventoryUpdate>()), Times.Never);
+        }
+
+        [Test]
+        public void Negative_GrantPolicyReturnsFalse_DoesNothing()
+        {
+            _grantPolicyMock.Setup(library => library.ShouldGrant()).Returns(false);
+            Assert.DoesNotThrow(() => _lootService.DispatchInventoryUpdates(ITEM_ID));
+            
+            _lootTableRepositoryMock.VerifyNoOtherCalls();
             _inventoryUpdateDispatcherMock.Verify(library => library.Dispatch(It.IsAny<InventoryUpdate>()), Times.Never);
         }
     }
