@@ -1,9 +1,7 @@
-﻿using IdelPog.Core.Contracts.Enum;
-
-namespace IdelPog.Loot.Service.Interface
+﻿namespace IdelPog.Loot.Service.Interface
 {
-    public interface ILootService
+    public interface ILootService<in TID> where TID : Enum
     { 
-        public void DispatchInventoryUpdates(ItemID itemID);
+        public void DispatchInventoryUpdates(TID id);
     }
 }

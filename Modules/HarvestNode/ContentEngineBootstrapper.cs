@@ -103,7 +103,7 @@ namespace IdelPog.HarvestNode
             lootTableRepository.Add(ItemID.IRON, new GrantTable { ItemID = ItemID.IRON});
             
             IDispatchOne<InventoryUpdate> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdate>(bufferManager,  objectNullAssertion, collectionAssertion);
-            ILootService lootService = new LootService(lootTableRepository, inventoryUpdateDispatcher, new GrantPolicy(), foundAssertion);
+            ILootService<ItemID> lootService = new LootService<ItemID>(lootTableRepository, inventoryUpdateDispatcher, new GrantPolicy(), foundAssertion);
             
             IDispatchOne<HarvestNodeUpdateResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
             INodeUpdateService nodeUpdateService = new NodeUpdateService(harvestNodeRepository, levelService, experienceService, responseFactory, foundAssertion);

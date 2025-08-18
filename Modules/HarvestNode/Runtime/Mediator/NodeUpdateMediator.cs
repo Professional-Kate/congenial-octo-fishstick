@@ -14,9 +14,9 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
         private readonly ISkillNodeAccessValidator _skillNodeAccessValidator;
         private readonly INodeUpdateService _nodeUpdateService;
         private readonly IDispatchOne<HarvestNodeUpdateResponse> _updateResponseDispatcher;
-        private readonly ILootService _lootService;
+        private readonly ILootService<ItemID> _lootService;
 
-        public NodeUpdateMediator(ICurrentHarvestTargetProvider currentHarvestTargetProvider, ISkillNodeAccessValidator skillNodeAccessValidator, INodeUpdateService nodeUpdateService, IDispatchOne<HarvestNodeUpdateResponse> updateResponseDispatcher, ILootService lootService)
+        public NodeUpdateMediator(ICurrentHarvestTargetProvider currentHarvestTargetProvider, ISkillNodeAccessValidator skillNodeAccessValidator, INodeUpdateService nodeUpdateService, IDispatchOne<HarvestNodeUpdateResponse> updateResponseDispatcher, ILootService<ItemID> lootService)
         {
             _currentHarvestTargetProvider = currentHarvestTargetProvider;
             _skillNodeAccessValidator = skillNodeAccessValidator;

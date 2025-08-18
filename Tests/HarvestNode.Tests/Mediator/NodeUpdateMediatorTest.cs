@@ -19,7 +19,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         private Mock<ISkillNodeAccessValidator> _skillNodeAccessValidatorMock;
         private Mock<INodeUpdateService> _nodeUpdateServiceMock;
         private Mock<IDispatchOne<HarvestNodeUpdateResponse>> _responseDispatcherMock;
-        private Mock<ILootService> _lootServiceMock;
+        private Mock<ILootService<ItemID>> _lootServiceMock;
         
         private SkillUpdateResponse _skillUpdateResponse;
         private HarvestNodeUpdateResponse _expectedResponse;
@@ -47,7 +47,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _skillNodeAccessValidatorMock = new Mock<ISkillNodeAccessValidator>();
             _nodeUpdateServiceMock = new Mock<INodeUpdateService>();
             _responseDispatcherMock = new Mock<IDispatchOne<HarvestNodeUpdateResponse>>();
-            _lootServiceMock = new Mock<ILootService>();
+            _lootServiceMock = new Mock<ILootService<ItemID>>();
             
             _updateMediator = new NodeUpdateMediator(_currentHarvestTargetProvider, _skillNodeAccessValidatorMock.Object,  _nodeUpdateServiceMock.Object, _responseDispatcherMock.Object, _lootServiceMock.Object);
         }

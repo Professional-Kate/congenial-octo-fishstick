@@ -34,7 +34,7 @@ namespace Loot.Tests
                 { false, 0 }
             };
             
-            uint weight = GRANT_WEIGHT + SKIP_WEIGHT;
+            const uint weight = GRANT_WEIGHT + SKIP_WEIGHT;
             for (uint i = 0; i < weight; i++)
             {
                 _lootRollMock.Setup(library => library.ExclusiveNextInt(0, weight)).Returns(i);

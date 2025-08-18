@@ -16,7 +16,7 @@ namespace Loot.Tests
     [TestFixture]
     public class LootServiceTest
     {
-        private ILootService _lootService;
+        private ILootService<ItemID> _lootService;
         private Mock<IAssetRepository<ItemID, ILootTable>> _lootTableRepositoryMock;
         private Mock<IDispatchOne<InventoryUpdate>> _inventoryUpdateDispatcherMock;
         private Mock<ILootTable> _weightedLootTableMock;
@@ -32,7 +32,7 @@ namespace Loot.Tests
             _weightedLootTableMock = new Mock<ILootTable>();
             _grantPolicyMock = new Mock<IGrantPolicy>();
             
-            _lootService = new LootService(_lootTableRepositoryMock.Object, _inventoryUpdateDispatcherMock.Object, _grantPolicyMock.Object, new FoundAssertion(new ThrowHandler()));
+            _lootService = new LootService<ItemID>(_lootTableRepositoryMock.Object, _inventoryUpdateDispatcherMock.Object, _grantPolicyMock.Object, new FoundAssertion(new ThrowHandler()));
         }
 
         [SetUp]
