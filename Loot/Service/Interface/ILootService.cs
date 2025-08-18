@@ -4,6 +4,6 @@ namespace IdelPog.Loot.Service.Interface
 {
     public interface ILootService
     { 
-        public void GenerateInventoryUpdates(ItemID itemID);
+        public void DispatchInventoryUpdates(ItemID itemID);
     }
 }

@@ -1,12 +1,11 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Loot.Assertion;
 using IdelPog.Loot.Assertion.Interface;
 using IdelPog.Loot.Random;
 
 namespace IdelPog.Loot.Contracts
 {
-    public sealed class WeightedLootTable
+    public sealed class WeightedLootTable : ILootTable
     {
         private readonly WeightedEntry[] _entries;
         private readonly uint _maxWeight;

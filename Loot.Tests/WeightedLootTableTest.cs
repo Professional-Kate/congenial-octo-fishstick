@@ -77,6 +77,14 @@ namespace Loot.Tests
         }
 
         [Test]
+        public void Negative_Roll_WeightOutOfRange_Throws()
+        {
+            _lootRollMock.Setup(library => library.ExclusiveNextInt(0, _weight)).Returns(_weight + 1);
+            
+            Assert.Throws<InvalidOperationException>(() => _weightedLootTable.Roll());
+        }
+
+        [Test]
         public void Negative_ConstructWithEmptyCollection_Throws()
         {
             Assert.Throws<EmptyCollectionException>(() => new WeightedLootTable([], _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
