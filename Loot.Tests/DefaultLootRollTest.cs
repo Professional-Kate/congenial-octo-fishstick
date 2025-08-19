@@ -29,5 +29,18 @@ namespace Loot.Tests
             
             Assert.That(rollOne.ExclusiveNextInt(0, 10), Is.EqualTo(rollTwo.ExclusiveNextInt(0, 10)));
         }
+        
+        [Test]
+        public void Positive_ExclusiveNextInt_NegativeNumbers_ReturnsNegativeRoll()
+        {
+            int roll = _lootRoll.ExclusiveNextInt(-10, 0);
+            Assert.That(roll, Is.Negative);
+        }
+
+        [Test]
+        public void Negative_ExclusiveNextInt_MaxHigherThanMin_Throws()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => _lootRoll.ExclusiveNextInt(10, 1));
+        }
     }
 }

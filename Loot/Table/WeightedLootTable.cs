@@ -39,7 +39,7 @@ namespace IdelPog.Loot.Table
                 roll -= weightedEntry.Weight;
             }
             
-            throw new InvalidOperationException("Number out of range");
+            throw new InvalidOperationException("Roll out of range");
         }
     }
 }

@@ -58,5 +58,12 @@ namespace Loot.Tests
             Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, 0, SKIP_WEIGHT, new WeightAssertion(new ThrowHandler())));
             Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT, 0, new WeightAssertion(new ThrowHandler())));
         }
+
+        [Test]
+        public void Negative_ConstructWithNegativeAmounts_Throws()
+        {
+            Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, -10, SKIP_WEIGHT, new WeightAssertion(new ThrowHandler())));
+            Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT, -10, new WeightAssertion(new ThrowHandler())));
+        }
     }
 }
