@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Validation.Handler;
 using IdelPog.Loot.Assertion;
-using IdelPog.Loot.Contracts.Grant;
 using IdelPog.Loot.Exceptions;
+using IdelPog.Loot.Policy;
 using IdelPog.Loot.Random;
 using Moq;
 // ReSharper disable ObjectCreationAsStatement
@@ -14,8 +14,8 @@ namespace Loot.Tests
         private IGrantPolicy _grantPolicy;
         private Mock<ILootRoll> _lootRollMock;
 
-        private const uint GRANT_WEIGHT = 1;
-        private const uint SKIP_WEIGHT = 100;
+        private const int GRANT_WEIGHT = 1;
+        private const int SKIP_WEIGHT = 100;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -28,14 +28,14 @@ namespace Loot.Tests
         [Test]
         public void Positive_ShouldGrant_AllPossibleValues_MapsToExpectedWeights()
         {
-            Dictionary<bool, uint> counters = new()
+            Dictionary<bool, int> counters = new()
             {
                 { true, 0 },
                 { false, 0 }
             };
             
-            const uint weight = GRANT_WEIGHT + SKIP_WEIGHT;
-            for (uint i = 0; i < weight; i++)
+            const int weight = GRANT_WEIGHT + SKIP_WEIGHT;
+            for (int i = 0; i < weight; i++)
             {
                 _lootRollMock.Setup(library => library.ExclusiveNextInt(0, weight)).Returns(i);
                 
@@ -55,8 +55,8 @@ namespace Loot.Tests
         [Test]
         public void Negative_ConstructWithZeroAmounts_Throws()
         {
-            Assert.Throws<ZeroWeightException>(() => new WeightedPolicy(_lootRollMock.Object, 0, SKIP_WEIGHT, new WeightAssertion(new ThrowHandler())));
-            Assert.Throws<ZeroWeightException>(() => new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT, 0, new WeightAssertion(new ThrowHandler())));
+            Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, 0, SKIP_WEIGHT, new WeightAssertion(new ThrowHandler())));
+            Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT, 0, new WeightAssertion(new ThrowHandler())));
         }
     }
 }

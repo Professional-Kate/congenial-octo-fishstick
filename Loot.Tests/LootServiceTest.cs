@@ -5,10 +5,10 @@ using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
-using IdelPog.Loot.Contracts.Grant;
-using IdelPog.Loot.Contracts.Table;
+using IdelPog.Loot.Policy;
 using IdelPog.Loot.Service;
 using IdelPog.Loot.Service.Interface;
+using IdelPog.Loot.Table;
 using Moq;
 
 namespace Loot.Tests

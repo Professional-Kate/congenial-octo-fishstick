@@ -3,12 +3,12 @@ using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Loot.Assertion.Interface;
 using IdelPog.Loot.Random;
 
-namespace IdelPog.Loot.Contracts.Table
+namespace IdelPog.Loot.Table
 {
     public sealed class WeightedLootTable : ILootTable
     {
         private readonly WeightedEntry[] _entries;
-        private readonly uint _maxWeight;
+        private readonly int _maxWeight;
         private readonly ILootRoll _lootRoll;
 
         public WeightedLootTable(WeightedEntry[] entries, ILootRoll lootRoll, ICollectionAssertion collectionAssertion, IWeightAssertion weightAssertion)
@@ -21,15 +21,14 @@ namespace IdelPog.Loot.Contracts.Table
             _maxWeight = 0;
             foreach (WeightedEntry weightedEntry in entries)
             {
+                weightAssertion.AssertWeightIsPositive(weightedEntry.Weight);
                 _maxWeight += weightedEntry.Weight;
             }
-
-            weightAssertion.AssertWeightIsNotZero(_maxWeight);
         }
 
         public ItemID Roll()
         {
-            uint roll = _lootRoll.ExclusiveNextInt(0, _maxWeight);
+            int roll = _lootRoll.ExclusiveNextInt(0, _maxWeight);
             foreach (WeightedEntry weightedEntry in _entries)
             {
                 if (roll < weightedEntry.Weight)

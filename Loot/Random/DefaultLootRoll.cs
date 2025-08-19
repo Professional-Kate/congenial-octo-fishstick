@@ -14,10 +14,10 @@
             _random = new System.Random(seed);
         }
         
-        public uint ExclusiveNextInt(uint minInclusive, uint maxExclusive)
+        public int ExclusiveNextInt(int minInclusive, int maxExclusive)
         {
-            int value = _random.Next((int) minInclusive, (int) maxExclusive);
-            return (uint) value;
+            int value = _random.Next(minInclusive, maxExclusive);
+            return value;
         }
     }
 }

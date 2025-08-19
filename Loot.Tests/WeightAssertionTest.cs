@@ -19,13 +19,13 @@ namespace Loot.Tests
         [Test]
         public void Positive_AssertWeightIsNotZero_PassedNonZero_NoThrow()
         {
-            Assert.DoesNotThrow(() => _weightAssertion.AssertWeightIsNotZero(1));
+            Assert.DoesNotThrow(() => _weightAssertion.AssertWeightIsPositive(1));
         }
 
         [Test]
         public void Negative_AssertWeightIsNotZero_PassedZero_Throw()
         {
-            Assert.Throws<ZeroWeightException>(() => _weightAssertion.AssertWeightIsNotZero(0));
+            Assert.Throws<InvalidWeightException>(() => _weightAssertion.AssertWeightIsPositive(0));
         }
     }
 }

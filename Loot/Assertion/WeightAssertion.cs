@@ -5,19 +5,19 @@ using IdelPog.Loot.Exceptions;
 
 namespace IdelPog.Loot.Assertion
 {
-    public class WeightAssertion : BaseAssertion, IWeightAssertion
+    public sealed class WeightAssertion : BaseAssertion, IWeightAssertion
     {
         public WeightAssertion(IHandler handler) : base(handler)
         {
         }
 
-        public void AssertWeightIsNotZero(uint weight)
+        public void AssertWeightIsPositive(int weight)
         {
-            Assert<ZeroWeightException>(() =>
+            Assert<InvalidWeightException>(() =>
             {
                 if (weight <= 0)
                 {
-                    throw new ZeroWeightException();
+                    throw new InvalidWeightException();
                 }
             });
         }

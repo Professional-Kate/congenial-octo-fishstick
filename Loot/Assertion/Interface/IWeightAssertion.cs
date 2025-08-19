@@ -2,6 +2,6 @@
 {
     public interface IWeightAssertion
     {
-        public void AssertWeightIsNotZero(uint weight);
+        public void AssertWeightIsPositive(int weight);
     }
 }

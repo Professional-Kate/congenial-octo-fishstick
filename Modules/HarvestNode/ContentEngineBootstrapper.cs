@@ -33,10 +33,10 @@ using IdelPog.HarvestNode.Runtime.Mediator;
 using IdelPog.HarvestNode.Runtime.System;
 using IdelPog.HarvestNode.Runtime.System.Interface;
 using IdelPog.HarvestNode.Services;
-using IdelPog.Loot.Contracts.Grant;
-using IdelPog.Loot.Contracts.Table;
+using IdelPog.Loot.Policy;
 using IdelPog.Loot.Service;
 using IdelPog.Loot.Service.Interface;
+using IdelPog.Loot.Table;
 
 namespace IdelPog.HarvestNode
 {

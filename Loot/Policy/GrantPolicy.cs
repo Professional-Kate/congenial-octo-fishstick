@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Loot.Contracts.Grant
+﻿namespace IdelPog.Loot.Policy
 {
     /// <summary>
     /// Always returns true

@@ -3,10 +3,9 @@ using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Loot.Assertion;
-using IdelPog.Loot.Contracts;
-using IdelPog.Loot.Contracts.Table;
 using IdelPog.Loot.Exceptions;
 using IdelPog.Loot.Random;
+using IdelPog.Loot.Table;
 using Moq;
 // ReSharper disable ObjectCreationAsStatement
 
@@ -19,12 +18,12 @@ namespace Loot.Tests
         private Mock<ILootRoll> _lootRollMock;
 
         private WeightedEntry[] _entries;
-        private uint _weight;
+        private int _weight;
 
-        private const uint STONE_WEIGHT = 50;
-        private const uint COPPER_WEIGHT = 25;
-        private const uint IRON_WEIGHT = 10;
-        private const uint GOLD_WEIGHT = 5;
+        private const int STONE_WEIGHT = 50;
+        private const int COPPER_WEIGHT = 25;
+        private const int IRON_WEIGHT = 10;
+        private const int GOLD_WEIGHT = 5;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -50,7 +49,7 @@ namespace Loot.Tests
         [Test]
         public void Positive_Roll_AllPossibleValues_MapsToExpectedWeights()
         {
-            Dictionary<ItemID, uint> counters = new()
+            Dictionary<ItemID, int> counters = new()
             {
                 { ItemID.STONE, 0 },
                 { ItemID.COPPER, 0 },
@@ -58,7 +57,7 @@ namespace Loot.Tests
                 { ItemID.GOLD, 0 }
             };
             
-            for (uint i = 0; i < _weight; i++)
+            for (int i = 0; i < _weight; i++)
             {
                 _lootRollMock.Setup(library => library.ExclusiveNextInt(0, _weight)).Returns(i);
                 
@@ -100,7 +99,7 @@ namespace Loot.Tests
         [Test]
         public void Negative_ConstructWithZeroWeight_Throws()
         { 
-            Assert.Throws<ZeroWeightException>(() => new WeightedLootTable([new WeightedEntry { ItemID = ItemID.STONE, Weight = 0}], _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
+            Assert.Throws<InvalidWeightException>(() => new WeightedLootTable([new WeightedEntry { ItemID = ItemID.STONE, Weight = 0}], _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
         }
     }
 }

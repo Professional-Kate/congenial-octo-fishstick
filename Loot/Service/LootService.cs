@@ -3,13 +3,13 @@ using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Loot.Contracts.Grant;
-using IdelPog.Loot.Contracts.Table;
+using IdelPog.Loot.Policy;
 using IdelPog.Loot.Service.Interface;
+using IdelPog.Loot.Table;
 
 namespace IdelPog.Loot.Service
 {
-    public class LootService<TID> : ILootService<TID> where TID : Enum
+    public sealed class LootService<TID> : ILootService<TID> where TID : Enum
     {
         private readonly IAssetRepository<TID, ILootTable> _lootTableRepository;
         private readonly IDispatchOne<InventoryUpdate> _inventoryUpdateDispatcher;

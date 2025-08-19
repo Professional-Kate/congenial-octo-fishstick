@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Loot.Contracts.Table
+namespace IdelPog.Loot.Table
 {
     public readonly record struct GrantTable : ILootTable
     {

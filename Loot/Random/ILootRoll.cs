@@ -2,6 +2,6 @@
 {
     public interface ILootRoll
     {
-        public uint ExclusiveNextInt(uint minInclusive, uint maxExclusive);
+        public int ExclusiveNextInt(int minInclusive, int maxExclusive);
     }
 }
