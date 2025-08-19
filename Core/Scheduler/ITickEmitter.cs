@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Core.Scheduler.Runner
+﻿namespace IdelPog.Core.Scheduler
 {
     public interface ITickEmitter
     {

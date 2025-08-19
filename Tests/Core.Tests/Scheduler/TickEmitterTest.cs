@@ -1,6 +1,5 @@
 ﻿using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Scheduler;
-using IdelPog.Core.Scheduler.Runner;
 using Moq;
 
 namespace IdelPog.Core.Tests.Scheduler

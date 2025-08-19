@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Messaging.Dispatcher.Single;
 
-namespace IdelPog.Core.Scheduler.Runner
+namespace IdelPog.Core.Scheduler
 {
     public sealed class TickEmitter : ITickEmitter
     {

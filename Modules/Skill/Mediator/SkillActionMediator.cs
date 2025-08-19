@@ -1,18 +1,19 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Listener.Single;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Repository.State;
+using IdelPog.Core.Scheduler;
 using IdelPog.Loot.Service.Interface;
 using IdelPog.Skill.Factory.Interface;
 using IdelPog.Skill.Service;
 
 namespace IdelPog.Skill.Mediator
 {
-    public class SkillActionMediator : IScheduledTask
+    public class SkillActionMediator : ISingleMediator<ScheduleTick>
     {
         private readonly IExperienceService _experienceService;
         private readonly ILevelService _levelService;
@@ -34,7 +35,7 @@ namespace IdelPog.Skill.Mediator
             _lootService = lootService;
         }
 
-        public void Run()
+        public void HandleMessage(ScheduleTick message)
         {
             SkillID currentSkillID = _currentSkillProvider.GetCurrentSkill();
 

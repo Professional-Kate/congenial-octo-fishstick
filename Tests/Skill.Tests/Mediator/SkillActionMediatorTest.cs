@@ -1,11 +1,12 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Listener.Single;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Repository.State;
+using IdelPog.Core.Scheduler;
 using IdelPog.Loot.Service.Interface;
 using IdelPog.Skill.Factory.Interface;
 using IdelPog.Skill.Mediator;
@@ -18,7 +19,7 @@ namespace IdelPog.Skills.Tests.Mediator
     [TestFixture]
     public class SkillActionMediatorTest
     {
-        private IScheduledTask _skillActionMediator { get; set; }
+        private ISingleMediator<ScheduleTick> _skillActionMediator { get; set; }
         private Mock<IExperienceService> _experienceServiceMock { get; set; }
         private Mock<IStateRepository<SkillID, Skill.Contracts.Skill>> _repositoryMock { get; set; }
         private Mock<ILevelService> _levelServiceMock { get; set; }
@@ -83,7 +84,7 @@ namespace IdelPog.Skills.Tests.Mediator
             _skillUpdateFactoryMock.Setup(library => library.Create(_miningSkill, false))
                 .Returns(_miningSkillUpdateResponse);
 
-            Assert.DoesNotThrow(() => _skillActionMediator.Run());
+            Assert.DoesNotThrow(() => _skillActionMediator.HandleMessage(new ScheduleTick()));
 
             VerifyDependencyCalls(1, 1, 1);
             _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateResponse));
@@ -101,7 +102,7 @@ namespace IdelPog.Skills.Tests.Mediator
             _levelServiceMock.Setup(library => library.CanLevel(_miningSkill.Levelable))
                 .Returns(true);
 
-            Assert.DoesNotThrow(() => _skillActionMediator.Run());
+            Assert.DoesNotThrow(() => _skillActionMediator.HandleMessage(new ScheduleTick()));
 
             VerifyDependencyCalls(1, 1, 1, 1);
             _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateResponse));
@@ -116,7 +117,7 @@ namespace IdelPog.Skills.Tests.Mediator
             _experienceServiceMock.Setup(library => library.AddExperience(_miningSkill.Levelable))
                 .Throws<Exception>();
 
-            Assert.Throws<Exception>(() => _skillActionMediator.Run());
+            Assert.Throws<Exception>(() => _skillActionMediator.HandleMessage(new ScheduleTick()));
 
             VerifyDependencyCalls(1, 0, 1);
             _lootServiceMock.Verify(library => library.DispatchInventoryUpdates(_miningSkill.SkillID), Times.Never);
