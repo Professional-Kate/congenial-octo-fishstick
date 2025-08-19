@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ECS\ECS.csproj" />
     <ProjectReference Include="..\..\Core\Core.csproj" />
+    <ProjectReference Include="..\..\Loot\Loot.csproj" />
   </ItemGroup>
   
 </Project>

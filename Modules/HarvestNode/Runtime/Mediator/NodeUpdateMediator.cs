@@ -4,6 +4,7 @@ using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Single;
 using IdelPog.HarvestNode.Runtime.System.Interface;
 using IdelPog.HarvestNode.Services;
+using IdelPog.Loot.Service.Interface;
 
 namespace IdelPog.HarvestNode.Runtime.Mediator
 {
@@ -13,13 +14,15 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
         private readonly ISkillNodeAccessValidator _skillNodeAccessValidator;
         private readonly INodeUpdateService _nodeUpdateService;
         private readonly IDispatchOne<HarvestNodeUpdateResponse> _updateResponseDispatcher;
+        private readonly ILootService<ItemID> _lootService;
 
-        public NodeUpdateMediator(ICurrentHarvestTargetProvider currentHarvestTargetProvider, ISkillNodeAccessValidator skillNodeAccessValidator, INodeUpdateService nodeUpdateService, IDispatchOne<HarvestNodeUpdateResponse> updateResponseDispatcher)
+        public NodeUpdateMediator(ICurrentHarvestTargetProvider currentHarvestTargetProvider, ISkillNodeAccessValidator skillNodeAccessValidator, INodeUpdateService nodeUpdateService, IDispatchOne<HarvestNodeUpdateResponse> updateResponseDispatcher, ILootService<ItemID> lootService)
         {
             _currentHarvestTargetProvider = currentHarvestTargetProvider;
             _skillNodeAccessValidator = skillNodeAccessValidator;
             _nodeUpdateService = nodeUpdateService;
             _updateResponseDispatcher = updateResponseDispatcher;
+            _lootService = lootService;
         }
 
         public void HandleMessage(SkillUpdateResponse skillUpdateResponse)
@@ -29,6 +32,8 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
             _skillNodeAccessValidator.AssertSkillAllows(skillID, harvestTarget);
             
             HarvestNodeUpdateResponse response = _nodeUpdateService.UpdateHarvestNode(harvestTarget);
+            
+            _lootService.DispatchInventoryUpdates(harvestTarget);
             _updateResponseDispatcher.Dispatch(response);
         }
     }

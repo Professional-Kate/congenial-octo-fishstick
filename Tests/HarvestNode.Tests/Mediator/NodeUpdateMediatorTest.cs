@@ -6,6 +6,7 @@ using IdelPog.Core.Progression;
 using IdelPog.HarvestNode.Runtime.Mediator;
 using IdelPog.HarvestNode.Runtime.System.Interface;
 using IdelPog.HarvestNode.Services;
+using IdelPog.Loot.Service.Interface;
 using Moq;
 
 namespace IdelPog.HarvestNode.Tests.Mediator
@@ -18,6 +19,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         private Mock<ISkillNodeAccessValidator> _skillNodeAccessValidatorMock;
         private Mock<INodeUpdateService> _nodeUpdateServiceMock;
         private Mock<IDispatchOne<HarvestNodeUpdateResponse>> _responseDispatcherMock;
+        private Mock<ILootService<ItemID>> _lootServiceMock;
         
         private SkillUpdateResponse _skillUpdateResponse;
         private HarvestNodeUpdateResponse _expectedResponse;
@@ -45,8 +47,9 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _skillNodeAccessValidatorMock = new Mock<ISkillNodeAccessValidator>();
             _nodeUpdateServiceMock = new Mock<INodeUpdateService>();
             _responseDispatcherMock = new Mock<IDispatchOne<HarvestNodeUpdateResponse>>();
+            _lootServiceMock = new Mock<ILootService<ItemID>>();
             
-            _updateMediator = new NodeUpdateMediator(_currentHarvestTargetProvider, _skillNodeAccessValidatorMock.Object,  _nodeUpdateServiceMock.Object, _responseDispatcherMock.Object);
+            _updateMediator = new NodeUpdateMediator(_currentHarvestTargetProvider, _skillNodeAccessValidatorMock.Object,  _nodeUpdateServiceMock.Object, _responseDispatcherMock.Object, _lootServiceMock.Object);
         }
         
         [SetUp]
