@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.Core.Scheduler.Runner
 {
-    public interface IScheduleRunner
+    public interface ITickEmitter
     {
         public void RunUpdate();
     }
