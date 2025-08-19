@@ -35,7 +35,6 @@ namespace IdelPog.Integration.Tests.SkillCommands.Switch
             Assert.Multiple(() =>
             {
                 Assert.That(_listener.WasCalled, Is.True);
-                Assert.That(CurrentSkillProvider.GetCurrentSkill(), Is.EqualTo(setSkill.SkillID));
                 Assert.That(_listener.SetSkill.SkillID, Is.EqualTo(setSkill.SkillID));
             });
         }

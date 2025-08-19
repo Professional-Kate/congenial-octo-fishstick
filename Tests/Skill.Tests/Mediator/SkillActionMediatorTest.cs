@@ -89,6 +89,7 @@ namespace IdelPog.Skills.Tests.Mediator
             VerifyDependencyCalls(1, 1, 1);
             _skillUpdateDispatcherMock.Verify(library => library.Dispatch(_miningSkillUpdateResponse));
             _skillUpdateFactoryMock.Verify(library => library.Create(_miningSkill, false));
+            _lootServiceMock.Verify(library => library.DispatchInventoryUpdates(_miningSkill.SkillID), Times.Once);
         }
 
         [Test]

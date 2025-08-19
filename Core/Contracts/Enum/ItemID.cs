@@ -5,6 +5,9 @@
         STONE,
         IRON,
         COPPER,
-        GOLD
+        GOLD,
+        DIAMOND,
+        EMERALD,
+        RUBY
     }
 }

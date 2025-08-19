@@ -19,18 +19,18 @@ namespace IdelPog.Skill.Mediator
         private readonly ILevelService _levelService;
         private readonly IStateRepository<SkillID, Contracts.Skill> _skillRepository;
         private readonly ICurrentSkillProvider _currentSkillProvider;
-        private readonly IDispatchOne<SkillUpdateResponse> _skillUpdateDTODispatcher;
+        private readonly IDispatchOne<SkillUpdateResponse> _skillUpdateDispatcher;
         private readonly ISkillUpdateResponseFactory _skillUpdateResponseFactory;
         private readonly ILootService<SkillID> _lootService;
 
         public SkillActionMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Contracts.Skill> skillRepository,
-            ICurrentSkillProvider currentSkillProvider, IDispatchOne<SkillUpdateResponse> skillUpdateDTODispatcher, ISkillUpdateResponseFactory skillUpdateResponseFactory, ILootService<SkillID> lootService)
+            ICurrentSkillProvider currentSkillProvider, IDispatchOne<SkillUpdateResponse> skillUpdateDispatcher, ISkillUpdateResponseFactory skillUpdateResponseFactory, ILootService<SkillID> lootService)
         {
             _experienceService = experienceService;
             _levelService = levelService;
             _skillRepository = skillRepository;
             _currentSkillProvider = currentSkillProvider;
-            _skillUpdateDTODispatcher = skillUpdateDTODispatcher;
+            _skillUpdateDispatcher = skillUpdateDispatcher;
             _skillUpdateResponseFactory = skillUpdateResponseFactory;
             _lootService = lootService;
         }
@@ -53,7 +53,7 @@ namespace IdelPog.Skill.Mediator
             _lootService.DispatchInventoryUpdates(currentSkillID);
             
             _skillRepository.Update(currentSkillID, skill);
-            _skillUpdateDTODispatcher.Dispatch(_skillUpdateResponseFactory.Create(skill, canSkillLevel));
+            _skillUpdateDispatcher.Dispatch(_skillUpdateResponseFactory.Create(skill, canSkillLevel));
         }
     }
 }

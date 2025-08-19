@@ -14,14 +14,12 @@ using IdelPog.HarvestNode;
 using IdelPog.HarvestNode.Services;
 using IdelPog.Inventory;
 using IdelPog.Skill;
-using IdelPog.Skill.Service;
 
 namespace IdelPog.Integration.Tests
 {
     public class ManagedBuffer
     {
         protected IBufferManager BufferManager { get; private set; }
-        protected ICurrentSkillProvider CurrentSkillProvider;
         protected ICurrentHarvestTargetProvider CurrentHarvestTargetProvider;
         private IBufferMessenger _bufferMessenger { get; set; }
         private IBufferFactory _bufferFactory;
@@ -52,16 +50,12 @@ namespace IdelPog.Integration.Tests
 
         private void Register()
         {
-            CurrentSkillProvider skillProvider = new();
-            ICurrentSkillSetter skillSetter = skillProvider;
-            CurrentSkillProvider = skillProvider;
-
             CurrentHarvestTargetProvider harvestTargetProvider = new();
             CurrentHarvestTargetProvider = harvestTargetProvider;
 
             FlowRegister flowRegister = FlowBootstrapper.CreateFlowRegister(BufferManager);
             CurrencyBootstrapper.RegisterFlows(BufferManager, flowRegister);
-            SkillBootstrapper.RegisterSetSkill(BufferManager, skillSetter, flowRegister);
+            SkillBootstrapper.RegisterFlows(BufferManager, flowRegister);
             ContentEngineBootstrapper.RegisterFlows(BufferManager, harvestTargetProvider, flowRegister, flowRegister);
             InventoryBootstrapper.RegisterInventoryUpdate(BufferManager, flowRegister);
             FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
