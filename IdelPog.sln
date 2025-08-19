@@ -43,7 +43,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventory.Tests", "Tests\In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarvestNode.Tests", "Tests\HarvestNode.Tests\HarvestNode.Tests.csproj", "{C7C5AC95-102A-4607-B95C-27086B84490D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loot.Tests", "Loot.Tests\Loot.Tests.csproj", "{0FCB7E9C-62DB-48BC-B094-FEA1C53FBE01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loot.Tests", "Tests\Loot.Tests\Loot.Tests.csproj", "{0FCB7E9C-62DB-48BC-B094-FEA1C53FBE01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

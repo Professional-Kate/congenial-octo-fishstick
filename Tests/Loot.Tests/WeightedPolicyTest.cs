@@ -4,6 +4,7 @@ using IdelPog.Loot.Exceptions;
 using IdelPog.Loot.Policy;
 using IdelPog.Loot.Random;
 using Moq;
+
 // ReSharper disable ObjectCreationAsStatement
 
 namespace Loot.Tests
