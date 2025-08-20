@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Loot\Loot.csproj" />
+      <ProjectReference Include="..\..\Loot\Loot.csproj" />
     </ItemGroup>
 
 </Project>

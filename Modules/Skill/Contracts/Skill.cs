@@ -5,7 +5,7 @@ using IdelPog.Core.Progression;
 
 namespace IdelPog.Skill.Contracts
 {
-    public readonly record struct Skill : ICloneable<Skill>
+    public record class Skill : ICloneable<Skill>
     {
         public required SkillID SkillID { get; init; }
         public required Levelable Levelable { get; init; }
