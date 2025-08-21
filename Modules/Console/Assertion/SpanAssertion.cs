@@ -1,5 +1,5 @@
 ﻿using IdelPog.Console.Assertion.Interface;
-using IdelPog.Console.Runtime.Input.Exceptions;
+using IdelPog.Console.Exceptions;
 using IdelPog.Core.Validation;
 using IdelPog.Core.Validation.Handler.Interface;
 

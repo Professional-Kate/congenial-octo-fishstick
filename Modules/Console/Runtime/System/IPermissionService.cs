@@ -1,4 +1,4 @@
-﻿using IdelPog.Console.Command.Domain.Argument;
+﻿using IdelPog.Console.Resolver.Permission;
 
 namespace IdelPog.Console.Runtime.System
 {

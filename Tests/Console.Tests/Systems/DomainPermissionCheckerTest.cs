@@ -1,4 +1,4 @@
-﻿using IdelPog.Console.Runtime.ECS;
+﻿using IdelPog.Console.Runtime;
 using IdelPog.Console.Runtime.System;
 using IdelPog.Console.Types;
 using IdelPog.Core.Validation.Handler;

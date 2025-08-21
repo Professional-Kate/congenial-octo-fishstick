@@ -1,6 +1,4 @@
-﻿using IdelPog.Console.Command.Domain.Argument;
-using IdelPog.Console.Factory.Interface;
-using IdelPog.Console.Runtime.ECS;
+﻿using IdelPog.Console.Resolver.Permission;
 using IdelPog.Console.Types;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.ECS.Assertion.Interface;
@@ -13,15 +11,13 @@ namespace IdelPog.Console.Runtime.System
     public class PermissionService : IPermissionService
     {
         private readonly IEntity _allowedDomainEntity;
-        private readonly IDomainComponentFactory _domainComponentFactory;
         private readonly IComponentStoreFactory _componentStoreFactory;
         private readonly IComponentAssertion _componentAssertion;
 
-        public PermissionService(IEntity allowedDomainEntity, IDomainComponentFactory domainComponentFactory, IComponentStoreFactory componentStoreFactory,
+        public PermissionService(IEntity allowedDomainEntity, IComponentStoreFactory componentStoreFactory,
             IComponentAssertion componentAssertion)
         {
             _allowedDomainEntity = allowedDomainEntity;
-            _domainComponentFactory = domainComponentFactory;
             _componentStoreFactory = componentStoreFactory;
             _componentAssertion = componentAssertion;
         }
@@ -50,7 +46,7 @@ namespace IdelPog.Console.Runtime.System
 
             DomainComponent[] newCommandDomainComponents = new DomainComponent[commandDomainComponents.Length + 1];
             Array.Copy(commandDomainComponents, newCommandDomainComponents, commandDomainComponents.Length);
-            newCommandDomainComponents[^1] = _domainComponentFactory.CreateDomainComponent(domain);
+            newCommandDomainComponents[^1] = new DomainComponent { AllowedDomain = domain };
 
             _allowedDomainEntity.RemoveComponent<ComponentStore<DomainComponent>>();
             _allowedDomainEntity.AddComponent(_componentStoreFactory.CreateComponentStore(newCommandDomainComponents));

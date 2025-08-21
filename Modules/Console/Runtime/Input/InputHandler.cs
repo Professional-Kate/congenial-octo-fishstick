@@ -1,6 +1,6 @@
-﻿using IdelPog.Console.Assertion.Interface;
-using IdelPog.Console.Command.Mediator;
-using IdelPog.Console.Command.Resolver;
+﻿using IdelPog.Console.Argument.Interface;
+using IdelPog.Console.Assertion.Interface;
+using IdelPog.Console.Mediator;
 using IdelPog.Console.Types;
 
 namespace IdelPog.Console.Runtime.Input

@@ -1,7 +1,6 @@
 ﻿using IdelPog.Console;
 using IdelPog.Console.Exceptions;
 using IdelPog.Console.Runtime.Input;
-using IdelPog.Console.Runtime.Input.Exceptions;
 using IdelPog.Console.Types;
 using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;

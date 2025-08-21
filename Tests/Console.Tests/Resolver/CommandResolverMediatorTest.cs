@@ -1,7 +1,7 @@
 ﻿using IdelPog.Console.Assertion;
-using IdelPog.Console.Command.Domain;
-using IdelPog.Console.Command.Mediator;
-using IdelPog.Console.Runtime.Input.Exceptions;
+using IdelPog.Console.Exceptions;
+using IdelPog.Console.Mediator;
+using IdelPog.Console.Resolver;
 using IdelPog.Console.Runtime.System;
 using IdelPog.Console.Types;
 using IdelPog.Core.Repository.Asset;

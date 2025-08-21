@@ -1,5 +1,4 @@
-﻿using IdelPog.Console.Runtime.ECS;
-using IdelPog.Console.Types;
+﻿using IdelPog.Console.Types;
 using IdelPog.ECS.Assertion.Interface;
 using IdelPog.ECS.Component;
 using IdelPog.ECS.Entity;

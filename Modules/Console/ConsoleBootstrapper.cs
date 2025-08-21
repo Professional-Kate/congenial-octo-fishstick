@@ -1,13 +1,14 @@
-﻿using IdelPog.Console.Assertion;
+﻿using IdelPog.Console.Argument;
+using IdelPog.Console.Argument.Interface;
+using IdelPog.Console.Assertion;
 using IdelPog.Console.Assertion.Interface;
-using IdelPog.Console.Command.Domain;
-using IdelPog.Console.Command.Domain.Argument;
-using IdelPog.Console.Command.Mediator;
-using IdelPog.Console.Command.Resolver;
-using IdelPog.Console.Command.Resolver.Pipeline;
-using IdelPog.Console.Factory;
-using IdelPog.Console.Factory.Interface;
-using IdelPog.Console.Runtime.ECS;
+using IdelPog.Console.Mediator;
+using IdelPog.Console.Resolver;
+using IdelPog.Console.Resolver.Currency;
+using IdelPog.Console.Resolver.Permission;
+using IdelPog.Console.Resolver.Schedule;
+using IdelPog.Console.Resolver.Skill;
+using IdelPog.Console.Runtime;
 using IdelPog.Console.Runtime.Input;
 using IdelPog.Console.Runtime.System;
 using IdelPog.Console.Types;
@@ -66,31 +67,29 @@ namespace IdelPog.Console
                 new CurrencyUpdateResolver(actionTypeResolver, uIntResolver, currencyTypeResolver);
 
             ICommandDomainResolver currencyDomainResolver =
-                new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateDispatcher, argumentCountAssertion);
+                new CurrencyDomainResolver(argumentCountAssertion, enumParseAssertion);
 
             IDispatchOne<SetSkill> skillChangeDispatcher = new ManagedDispatcher<SetSkill>(bufferManager, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<SetSkillArguments> skillChangePipeline = new SetSkillResolver(skillIDResolver);
             ICommandDomainResolver skillDomainResolver =
-                new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, argumentCountAssertion);
+                new SkillDomainResolver(argumentCountAssertion, enumParseAssertion);
 
             IComponentStoreFactory componentStoreFactory = new ComponentStoreFactory();
-            IDomainComponentFactory domainComponentFactory = new DomainComponentFactory();
 
-            IPermissionService permissionService = new PermissionService(allowedDomainEntity, domainComponentFactory, componentStoreFactory, componentAssertion);
+            IPermissionService permissionService = new PermissionService(allowedDomainEntity, componentStoreFactory, componentAssertion);
 
             IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline =
                 new PermissionUpdateResolver(actionTypeResolver, commandDomainResolver);
 
-            ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(permissionUpdatePipeline, permissionService, argumentCountAssertion);
+            ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(argumentCountAssertion, enumParseAssertion);
 
-            IScheduleControlFactory scheduleControlFactory = new ScheduleControlFactory();
             IDispatchOne<ScheduleControl> scheduleControlDispatcher =
                 new ManagedDispatcher<ScheduleControl>(bufferManager, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<ScheduleControlArguments> scheduleControlPipeline = new ScheduleControlResolver(controlActionResolver);
             ICommandDomainResolver scheduleDomainResolver =
-                new ScheduleDomainResolver(scheduleControlPipeline, scheduleControlDispatcher, scheduleControlFactory, argumentCountAssertion);
+                new ScheduleDomainResolver(argumentCountAssertion, enumParseAssertion);
 
             commandRepository.Add(Domain.CURRENCY, currencyDomainResolver);
             commandRepository.Add(Domain.SKILL, skillDomainResolver);
