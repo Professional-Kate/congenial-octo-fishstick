@@ -73,7 +73,7 @@ namespace IdelPog.Console
 
             IArgumentResolverPipeline<SetSkillArguments> skillChangePipeline = new SetSkillResolver(skillIDResolver);
             ICommandDomainResolver skillDomainResolver =
-                new SkillDomainResolver(argumentCountAssertion, enumParseAssertion);
+                new SkillDomainResolver(argumentCountAssertion);
 
             IComponentStoreFactory componentStoreFactory = new ComponentStoreFactory();
 
@@ -82,14 +82,14 @@ namespace IdelPog.Console
             IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline =
                 new PermissionUpdateResolver(actionTypeResolver, commandDomainResolver);
 
-            ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(argumentCountAssertion, enumParseAssertion);
+            ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(argumentCountAssertion);
 
             IDispatchOne<ScheduleControl> scheduleControlDispatcher =
                 new ManagedDispatcher<ScheduleControl>(bufferManager, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<ScheduleControlArguments> scheduleControlPipeline = new ScheduleControlResolver(controlActionResolver);
             ICommandDomainResolver scheduleDomainResolver =
-                new ScheduleDomainResolver(argumentCountAssertion, enumParseAssertion);
+                new ScheduleDomainResolver(argumentCountAssertion);
 
             commandRepository.Add(Domain.CURRENCY, currencyDomainResolver);
             commandRepository.Add(Domain.SKILL, skillDomainResolver);

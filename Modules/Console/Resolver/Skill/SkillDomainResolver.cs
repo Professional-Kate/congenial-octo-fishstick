@@ -1,5 +1,4 @@
-﻿using IdelPog.Console.Argument;
-using IdelPog.Console.Assertion.Interface;
+﻿using IdelPog.Console.Assertion.Interface;
 using IdelPog.Console.Types;
 
 namespace IdelPog.Console.Resolver.Skill
@@ -8,20 +7,20 @@ namespace IdelPog.Console.Resolver.Skill
     {
         public Domain HandledDomain => Domain.SKILL;
 
-        private readonly EnumResolver<SubDomain> _subDomainResolver;
+        private readonly IArgumentResolverPipeline<SetSkillArguments> _setSkillArguments;
         private readonly IArgumentCountAssertion _argumentCountAssertion;
 
-        public SkillDomainResolver(IArgumentCountAssertion argumentCountAssertion, IEnumParseAssertion enumParseAssertion)
+        public SkillDomainResolver(IArgumentResolverPipeline<SetSkillArguments> setSkillArguments, IArgumentCountAssertion argumentCountAssertion)
         {
+            _setSkillArguments = setSkillArguments;
             _argumentCountAssertion = argumentCountAssertion;
-            _subDomainResolver = new EnumResolver<SubDomain>(enumParseAssertion);
         }
 
         public void Resolve(ReadOnlySpan<string> arguments)
         {
             _argumentCountAssertion.AssertCount(arguments.Length, 2);
             
-            SubDomain subDomain = _subDomainResolver.Resolve(arguments[0]);
+            _setSkillArguments.Resolve(arguments);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using IdelPog.Console.Argument;
-using IdelPog.Console.Assertion.Interface;
+﻿using IdelPog.Console.Assertion.Interface;
 using IdelPog.Console.Types;
 
 namespace IdelPog.Console.Resolver.Currency
@@ -8,20 +7,20 @@ namespace IdelPog.Console.Resolver.Currency
     {
         public Domain HandledDomain => Domain.CURRENCY;
 
-        private readonly EnumResolver<SubDomain> _subDomainResolver;
+        private readonly IArgumentResolverPipeline<CurrencyUpdateArguments> _currencyUpdateResolver;
         private readonly IArgumentCountAssertion _argumentCountAssertion;
 
-        public CurrencyDomainResolver(IArgumentCountAssertion argumentCountAssertion, IEnumParseAssertion enumParseAssertion)
+        public CurrencyDomainResolver(IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdateResolver, IArgumentCountAssertion argumentCountAssertion)
         {
+            _currencyUpdateResolver = currencyUpdateResolver;
             _argumentCountAssertion = argumentCountAssertion;
-            _subDomainResolver = new EnumResolver<SubDomain>(enumParseAssertion);
         }
 
         public void Resolve(ReadOnlySpan<string> arguments)
         {
             _argumentCountAssertion.AssertCount(arguments.Length, 3);
             
-            SubDomain subDomain = _subDomainResolver.Resolve(arguments[0]);
+            _currencyUpdateResolver.Resolve(arguments);
         }
     }
 }
