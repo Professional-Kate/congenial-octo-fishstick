@@ -3,14 +3,14 @@ using IdelPog.Console.Types;
 
 namespace IdelPog.Console.Resolver.Schedule
 {
-    public class ScheduleDomainResolver : ICommandDomainResolver
+    public class ScheduleDomainResolver : IDomainResolver
     {
         public Domain HandledDomain => Domain.SCHEDULE;
 
-        private readonly IArgumentResolverPipeline<ScheduleControlArguments> _scheduleControlResolver;
+        private readonly ISubDomainResolver _scheduleControlResolver;
         private readonly IArgumentCountAssertion _argumentCountAssertion;
 
-        public ScheduleDomainResolver(IArgumentResolverPipeline<ScheduleControlArguments> scheduleControlResolver, IArgumentCountAssertion argumentCountAssertion)
+        public ScheduleDomainResolver(ISubDomainResolver scheduleControlResolver, IArgumentCountAssertion argumentCountAssertion)
         {
             _argumentCountAssertion = argumentCountAssertion;
             _scheduleControlResolver = scheduleControlResolver;

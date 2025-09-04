@@ -3,7 +3,7 @@ using IdelPog.Core.Contracts.Enum;
 
 namespace IdelPog.Console.Resolver.Schedule
 {
-    public class ScheduleControlResolver : IArgumentResolverPipeline<ScheduleControlArguments>
+    public class ScheduleControlResolver : ISubDomainResolver
     {
         private readonly IArgumentResolver<ControlAction> _controlActionResolver;
 
@@ -12,7 +12,7 @@ namespace IdelPog.Console.Resolver.Schedule
             _controlActionResolver = controlActionResolver;
         }
 
-        public ScheduleControlArguments Resolve(ReadOnlySpan<string> arguments)
+        public void Resolve(ReadOnlySpan<string> arguments)
         {
             ControlAction controlAction = _controlActionResolver.Resolve(arguments[0]);
 

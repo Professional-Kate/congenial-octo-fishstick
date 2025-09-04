@@ -3,16 +3,16 @@ using IdelPog.Console.Types;
 
 namespace IdelPog.Console.Resolver.Skill
 {
-    public class SkillDomainResolver : ICommandDomainResolver
+    public class SkillDomainResolver : IDomainResolver
     {
         public Domain HandledDomain => Domain.SKILL;
 
-        private readonly IArgumentResolverPipeline<SetSkillArguments> _setSkillArguments;
+        private readonly ISubDomainResolver _setSkillSubDomains;
         private readonly IArgumentCountAssertion _argumentCountAssertion;
 
-        public SkillDomainResolver(IArgumentResolverPipeline<SetSkillArguments> setSkillArguments, IArgumentCountAssertion argumentCountAssertion)
+        public SkillDomainResolver(ISubDomainResolver setSkillSubDomains, IArgumentCountAssertion argumentCountAssertion)
         {
-            _setSkillArguments = setSkillArguments;
+            _setSkillSubDomains = setSkillSubDomains;
             _argumentCountAssertion = argumentCountAssertion;
         }
 
@@ -20,7 +20,7 @@ namespace IdelPog.Console.Resolver.Skill
         {
             _argumentCountAssertion.AssertCount(arguments.Length, 2);
             
-            _setSkillArguments.Resolve(arguments);
+            _setSkillSubDomains.Resolve(arguments);
         }
     }
 }

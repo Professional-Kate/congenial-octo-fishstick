@@ -3,7 +3,7 @@ using IdelPog.Core.Contracts.Enum;
 
 namespace IdelPog.Console.Resolver.Skill
 {
-    public class SetSkillResolver : IArgumentResolverPipeline<SetSkillArguments>
+    public class SetSkillResolver : ISubDomainResolver
     {
         private readonly IArgumentResolver<SkillID> _skillIDResolver;
 
@@ -12,7 +12,7 @@ namespace IdelPog.Console.Resolver.Skill
             _skillIDResolver = skillIDResolver;
         }
 
-        public SetSkillArguments Resolve(ReadOnlySpan<string> arguments)
+        public void Resolve(ReadOnlySpan<string> arguments)
         {
             // arguments[0] == CHANGE
             SkillID skillID = _skillIDResolver.Resolve(arguments[1]);

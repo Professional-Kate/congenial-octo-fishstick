@@ -15,15 +15,15 @@ namespace IdelPog.Console.Tests.Resolver
     public class CommandResolverMediatorTest
     {
         private ICommandResolverMediator _commandResolverMediator { get; set; }
-        private Mock<IAssetRepository<Domain, ICommandDomainResolver>> _repositoryMock { get; set; }
-        private Mock<ICommandDomainResolver> _commandDomainResolverMock { get; set; }
+        private Mock<IAssetRepository<Domain, IDomainResolver>> _repositoryMock { get; set; }
+        private Mock<IDomainResolver> _commandDomainResolverMock { get; set; }
         private Mock<IDomainPermissionChecker> _domainPermissionCheckerMock { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _repositoryMock = new Mock<IAssetRepository<Domain, ICommandDomainResolver>>();
-            _commandDomainResolverMock = new Mock<ICommandDomainResolver>();
+            _repositoryMock = new Mock<IAssetRepository<Domain, IDomainResolver>>();
+            _commandDomainResolverMock = new Mock<IDomainResolver>();
             _domainPermissionCheckerMock = new Mock<IDomainPermissionChecker>();
             _commandResolverMediator = new CommandResolverMediator(_repositoryMock.Object, _domainPermissionCheckerMock.Object,
                 new FoundAssertion(new ThrowHandler()), new SpanAssertion(new ThrowHandler()), new DomainPermissionAssertion(new ThrowHandler()));

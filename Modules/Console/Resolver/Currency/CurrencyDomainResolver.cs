@@ -1,18 +1,18 @@
-﻿using IdelPog.Console.Assertion.Interface;
-using IdelPog.Console.Types;
+﻿using IdelPog.Console.Argument.Interface;
+using IdelPog.Console.Assertion.Interface;
 
 namespace IdelPog.Console.Resolver.Currency
 {
-    public class CurrencyDomainResolver : ICommandDomainResolver
+    internal class CurrencyDomainResolver : IDomainResolver
     {
-        public Domain HandledDomain => Domain.CURRENCY;
-
-        private readonly IArgumentResolverPipeline<CurrencyUpdateArguments> _currencyUpdateResolver;
+        private readonly ISubDomainResolver _currencyUpdateResolver;
+        private readonly IArgumentResolver<SubDomain> _subDomainResolver;
         private readonly IArgumentCountAssertion _argumentCountAssertion;
 
-        public CurrencyDomainResolver(IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdateResolver, IArgumentCountAssertion argumentCountAssertion)
+        public CurrencyDomainResolver(ISubDomainResolver currencyUpdateResolver, IArgumentResolver<SubDomain> subDomainResolver, IArgumentCountAssertion argumentCountAssertion)
         {
             _currencyUpdateResolver = currencyUpdateResolver;
+            _subDomainResolver = subDomainResolver;
             _argumentCountAssertion = argumentCountAssertion;
         }
 
@@ -20,7 +20,21 @@ namespace IdelPog.Console.Resolver.Currency
         {
             _argumentCountAssertion.AssertCount(arguments.Length, 3);
             
-            _currencyUpdateResolver.Resolve(arguments);
+            SubDomain subDomain = _subDomainResolver.Resolve(arguments[0]);
+
+            switch (subDomain)
+            {
+                case SubDomain.CREATE:
+                    // nothing right now
+                    break;
+                case SubDomain.ADD:
+                case SubDomain.REMOVE:
+                    _currencyUpdateResolver.Resolve(arguments);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(arguments), subDomain, null);
+            }
+            
         }
     }
 }

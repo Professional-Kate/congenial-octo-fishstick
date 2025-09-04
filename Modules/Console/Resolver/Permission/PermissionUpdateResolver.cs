@@ -4,7 +4,7 @@ using IdelPog.Core.Contracts.Enum;
 
 namespace IdelPog.Console.Resolver.Permission
 {
-    public class PermissionUpdateResolver : IArgumentResolverPipeline<PermissionUpdateArguments>
+    public class PermissionUpdateResolver : ISubDomainResolver
     {
         private readonly IArgumentResolver<ActionType> _actionTypeResolver;
         private readonly IArgumentResolver<Domain> _commandDomainResolver;
@@ -15,7 +15,7 @@ namespace IdelPog.Console.Resolver.Permission
             _commandDomainResolver = commandDomainResolver;
         }
 
-        public PermissionUpdateArguments Resolve(ReadOnlySpan<string> arguments)
+        public void Resolve(ReadOnlySpan<string> arguments)
         {
             ActionType actionType = _actionTypeResolver.Resolve(arguments[0]);
             Domain domain = _commandDomainResolver.Resolve(arguments[1]);

@@ -9,13 +9,13 @@ namespace IdelPog.Console.Mediator
 {
     public class CommandResolverMediator : ICommandResolverMediator
     {
-        private readonly IAssetRepository<Domain, ICommandDomainResolver> _commandResolverMap;
+        private readonly IAssetRepository<Domain, IDomainResolver> _commandResolverMap;
         private readonly IDomainPermissionChecker _domainPermissionChecker;
         private readonly IFoundAssertion _foundAssertion;
         private readonly ISpanAssertion _spanAssertion;
         private readonly IDomainPermissionAssertion _domainPermissionAssertion;
 
-        public CommandResolverMediator(IAssetRepository<Domain, ICommandDomainResolver> commandResolverMap, IDomainPermissionChecker domainPermissionChecker,
+        public CommandResolverMediator(IAssetRepository<Domain, IDomainResolver> commandResolverMap, IDomainPermissionChecker domainPermissionChecker,
             IFoundAssertion foundAssertion, ISpanAssertion spanAssertion, IDomainPermissionAssertion domainPermissionAssertion)
         {
             _commandResolverMap = commandResolverMap;
@@ -31,9 +31,9 @@ namespace IdelPog.Console.Mediator
             _foundAssertion.AssertFound(domain, _commandResolverMap.Contains(domain));
             _domainPermissionAssertion.AssertHasPermission(_domainPermissionChecker.IsAllowed(domain), domain);
 
-            ICommandDomainResolver commandResolver = _commandResolverMap.Get(domain);
+            IDomainResolver resolver = _commandResolverMap.Get(domain);
 
-            commandResolver.Resolve(arguments);
+            resolver.Resolve(arguments);
         }
     }
 }

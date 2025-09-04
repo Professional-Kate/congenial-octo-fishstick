@@ -3,14 +3,14 @@ using IdelPog.Console.Types;
 
 namespace IdelPog.Console.Resolver.Permission
 {
-    public class PermissionDomainResolver : ICommandDomainResolver
+    public class PermissionDomainResolver : IDomainResolver
     {
         public Domain HandledDomain => Domain.PERMISSION;
 
-        private readonly IArgumentResolverPipeline<PermissionUpdateArguments> _permissionUpdateResolver;
+        private readonly ISubDomainResolver _permissionUpdateResolver;
         private readonly IArgumentCountAssertion _argumentCountAssertion;
 
-        public PermissionDomainResolver(IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdateResolver, IArgumentCountAssertion argumentCountAssertion)
+        public PermissionDomainResolver(ISubDomainResolver permissionUpdateResolver, IArgumentCountAssertion argumentCountAssertion)
         {
             _permissionUpdateResolver = permissionUpdateResolver;
             _argumentCountAssertion = argumentCountAssertion;
