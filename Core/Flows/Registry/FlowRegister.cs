@@ -1,4 +1,5 @@
 ﻿using IdelPog.Core.Factory.Interface;
+using IdelPog.Core.Logging;
 using IdelPog.Core.Messaging.Assertion;
 using IdelPog.Core.Messaging.Assertion.Interface;
 using IdelPog.Core.Messaging.Buffer.Manager;
@@ -16,13 +17,15 @@ namespace IdelPog.Core.Flows.Registry
     {
         private readonly List<IListener> _registeredListeners = [];
         private readonly IBufferManager _bufferManager;
+        private readonly ILogger _logger;
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IUniqueAssertion _uniqueAssertion;
 
-        public FlowRegister(IBufferManager bufferManager, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion)
+        public FlowRegister(IBufferManager bufferManager, ILogger logger, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion)
         {
             _bufferManager = bufferManager;
+            _logger = logger;
             _objectNullAssertion = objectNullAssertion;
             _collectionAssertion = collectionAssertion;
             _uniqueAssertion = uniqueAssertion;
@@ -35,7 +38,7 @@ namespace IdelPog.Core.Flows.Registry
             AssertCommandIsUnique<TCommand>();
             IContextualHandler<TCommand> dispatchHandler = new DispatchingHandler<TError, TCommand>(CreateErrorDispatcher<TError>(), factory);
             ISingleControllerExecutionAssertion<TCommand> executionAssertion = new SingleControllerExecutionAssertion<TCommand>(dispatchHandler);
-            ISingleListener<TCommand> commandListener = new ManagedSingleListener<TCommand>(controller, executionAssertion);
+            ISingleListener<TCommand> commandListener = new ManagedSingleListener<TCommand>(controller, executionAssertion, _logger);
             
             _registeredListeners.Add(commandListener);
         }
@@ -47,7 +50,7 @@ namespace IdelPog.Core.Flows.Registry
             AssertCommandIsUnique<TCommand>();
             IContextualHandler<IReadOnlyList<TCommand>> dispatchHandler = new DispatchingHandler<TError, IReadOnlyList<TCommand>>(CreateErrorDispatcher<TError>(), factory);
             IBatchControllerExecutionAssertion<TCommand> executionAssertion = new BatchControllerExecutionAssertion<TCommand>(dispatchHandler);
-            IBufferListener<TCommand> commandListener = new ManagedBufferListener<TCommand>(controller, executionAssertion);
+            IBufferListener<TCommand> commandListener = new ManagedBufferListener<TCommand>(controller, executionAssertion, _logger);
             
             _registeredListeners.Add(commandListener);
         }
@@ -59,7 +62,7 @@ namespace IdelPog.Core.Flows.Registry
 
         private IDispatchOne<TError> CreateErrorDispatcher<TError>() where TError : struct
         {
-            IDispatchOne<TError> errorDispatcher = new ManagedDispatcher<TError>(_bufferManager, _objectNullAssertion, _collectionAssertion);
+            IDispatchOne<TError> errorDispatcher = new ManagedDispatcher<TError>(_bufferManager, _logger, _objectNullAssertion, _collectionAssertion);
             return  errorDispatcher;
         }
 

@@ -13,6 +13,8 @@ using IdelPog.Console.Runtime.System;
 using IdelPog.Console.Types;
 using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Logging;
+using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Single;
@@ -58,9 +60,12 @@ namespace IdelPog.Console
             IArgumentResolver<Domain> commandDomainResolver = new EnumResolver<Domain>(enumParseAssertion);
             IArgumentResolver<ControlAction> controlActionResolver = new EnumResolver<ControlAction>(enumParseAssertion);
             IArgumentResolver<uint> uIntResolver = new UIntResolver(typeParseAssertion, numberAssertion);
+            
+            ILogWriter writer = new ConsoleWriter();
+            ILogger logger = new LoggingService(writer);
 
             IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher =
-                new ManagedDispatcher<CurrencyUpdate>(bufferManager, objectNullAssertion, collectionAssertion);
+                new ManagedDispatcher<CurrencyUpdate>(bufferManager, logger, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline =
                 new CurrencyUpdateResolver(actionTypeResolver, uIntResolver, currencyTypeResolver);
@@ -68,7 +73,7 @@ namespace IdelPog.Console
             ICommandDomainResolver currencyDomainResolver =
                 new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateDispatcher, argumentCountAssertion);
 
-            IDispatchOne<SetSkill> skillChangeDispatcher = new ManagedDispatcher<SetSkill>(bufferManager, objectNullAssertion, collectionAssertion);
+            IDispatchOne<SetSkill> skillChangeDispatcher = new ManagedDispatcher<SetSkill>(bufferManager, logger, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<SetSkillArguments> skillChangePipeline = new SetSkillResolver(skillIDResolver);
             ICommandDomainResolver skillDomainResolver =
@@ -86,7 +91,7 @@ namespace IdelPog.Console
 
             IScheduleControlFactory scheduleControlFactory = new ScheduleControlFactory();
             IDispatchOne<ScheduleControl> scheduleControlDispatcher =
-                new ManagedDispatcher<ScheduleControl>(bufferManager, objectNullAssertion, collectionAssertion);
+                new ManagedDispatcher<ScheduleControl>(bufferManager, logger, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<ScheduleControlArguments> scheduleControlPipeline = new ScheduleControlResolver(controlActionResolver);
             ICommandDomainResolver scheduleDomainResolver =

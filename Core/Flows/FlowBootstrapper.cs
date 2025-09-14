@@ -1,4 +1,6 @@
 ﻿using IdelPog.Core.Flows.Registry;
+using IdelPog.Core.Logging;
+using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Messaging.Listener;
 using IdelPog.Core.Messaging.Messenger;
@@ -22,8 +24,11 @@ namespace IdelPog.Core.Flows
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+
+            ILogWriter writer = new ConsoleWriter();
+            ILogger logger = new LoggingService(writer);
             
-            FlowRegister flowRegister = new(bufferManager, objectNullAssertion, collectionAssertion, uniqueAssertion);
+            FlowRegister flowRegister = new(bufferManager, logger, objectNullAssertion, collectionAssertion, uniqueAssertion);
             return flowRegister;
         }
 

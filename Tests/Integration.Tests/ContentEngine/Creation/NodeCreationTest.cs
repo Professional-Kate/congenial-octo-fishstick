@@ -134,6 +134,16 @@ namespace IdelPog.Integration.Tests.ContentEngine
             });
             AssertResponseListener(_nodeCreation);
             AssertErrorListener<DuplicateEntityException>(duplicateResourceCreation);
+            
+            Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateResourceCreation));
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(_nodeCreationResponseListener.WasCalled, Is.True);
+                Assert.That(_nodeCreationErrorListener.WasCalled, Is.True);
+            });
+            AssertResponseListener(_nodeCreation);
+            AssertErrorListener<DuplicateEntityException>(duplicateResourceCreation);
         }
         
         [Test]

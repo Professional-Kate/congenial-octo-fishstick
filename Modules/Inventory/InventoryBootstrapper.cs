@@ -7,6 +7,8 @@ using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Information;
 using IdelPog.Core.Information.Contracts;
+using IdelPog.Core.Logging;
+using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
@@ -47,7 +49,10 @@ namespace IdelPog.Inventory
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
             IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
 
-            IDispatchOne<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
+            ILogWriter writer = new ConsoleWriter();
+            ILogger logger = new LoggingService(writer);
+            
+            IDispatchOne<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, logger, objectNullAssertion, collectionAssertion);
 
             IMapper<ItemID> itemMapper = new Mapper<ItemID>(foundAssertion, uniqueAssertion);
             itemMapper.AddInformation(ItemID.STONE, new Information { Description = "Rock and...", Name = "Stone" });
