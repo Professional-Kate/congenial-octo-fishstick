@@ -22,9 +22,9 @@ namespace IdelPog.Core.Logging
             Log(LogLevel.INFO, logDirection, messages);
         }
 
-        public void LogError<T>(LogDirection logDirection, T[] messages)
+        public void LogError<T>(T[] messages, Exception exception)
         {
-            Log(LogLevel.ERROR, logDirection, messages);
+            _logWriter.WriteError(messages, exception);
         }
         
         public void Log<T>(LogLevel logLevel, LogDirection logDirection, T message)

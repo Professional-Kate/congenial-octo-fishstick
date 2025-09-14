@@ -13,7 +13,7 @@ using IdelPog.Core.Validation.Handler.Interface;
 
 namespace IdelPog.Core.Flows.Registry
 {
-    public class FlowRegister : ISingleRegister, IBatchRegister, IRegisterReader
+    public sealed class FlowRegister : ISingleRegister, IBatchRegister, IRegisterReader
     {
         private readonly List<IListener> _registeredListeners = [];
         private readonly IBufferManager _bufferManager;
@@ -37,7 +37,7 @@ namespace IdelPog.Core.Flows.Registry
         {
             AssertCommandIsUnique<TCommand>();
             IContextualHandler<TCommand> dispatchHandler = new DispatchingHandler<TError, TCommand>(CreateErrorDispatcher<TError>(), factory);
-            ISingleControllerExecutionAssertion<TCommand> executionAssertion = new SingleControllerExecutionAssertion<TCommand>(dispatchHandler);
+            ISingleControllerExecutionAssertion<TCommand> executionAssertion = new SingleControllerExecutionAssertion<TCommand>(dispatchHandler, _logger);
             ISingleListener<TCommand> commandListener = new ManagedSingleListener<TCommand>(controller, executionAssertion, _logger);
             
             _registeredListeners.Add(commandListener);
@@ -49,7 +49,7 @@ namespace IdelPog.Core.Flows.Registry
         {
             AssertCommandIsUnique<TCommand>();
             IContextualHandler<IReadOnlyList<TCommand>> dispatchHandler = new DispatchingHandler<TError, IReadOnlyList<TCommand>>(CreateErrorDispatcher<TError>(), factory);
-            IBatchControllerExecutionAssertion<TCommand> executionAssertion = new BatchControllerExecutionAssertion<TCommand>(dispatchHandler);
+            IBatchControllerExecutionAssertion<TCommand> executionAssertion = new BatchControllerExecutionAssertion<TCommand>(dispatchHandler, _logger);
             IBufferListener<TCommand> commandListener = new ManagedBufferListener<TCommand>(controller, executionAssertion, _logger);
             
             _registeredListeners.Add(commandListener);

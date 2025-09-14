@@ -6,13 +6,21 @@ using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Core.Messaging.Messenger
 {
-    public class BufferMessenger(IObjectNullAssertion objectNullAssertion, IListenerAssertion listenerAssertion) : IBufferMessenger, IBufferDispatcher
+    public sealed class BufferMessenger : IBufferMessenger, IBufferDispatcher
     {
         private readonly Dictionary<Type, List<IListener>> _listeners = new();
+        private readonly IObjectNullAssertion _objectNullAssertion;
+        private readonly IListenerAssertion _listenerAssertion;
+        
+        public BufferMessenger(IObjectNullAssertion objectNullAssertion, IListenerAssertion listenerAssertion)
+        {
+            _objectNullAssertion = objectNullAssertion;
+            _listenerAssertion = listenerAssertion;
+        }
 
         public void Subscribe(IListener listener)
         {
-            objectNullAssertion.AssertNotNull(listener, nameof(listener));
+            _objectNullAssertion.AssertNotNull(listener, nameof(listener));
 
             if (_listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners) == false)
             {
@@ -25,17 +33,17 @@ namespace IdelPog.Core.Messaging.Messenger
 
         public void Unsubscribe(IListener listener)
         {
-            objectNullAssertion.AssertNotNull(listener, nameof(listener));
+            _objectNullAssertion.AssertNotNull(listener, nameof(listener));
 
             bool contains = _listeners.TryGetValue(listener.ListenerType, out List<IListener>? listeners);
-            listenerAssertion.AssertListenerFound(contains, listener);
+            _listenerAssertion.AssertListenerFound(contains, listener);
 
             listeners!.Remove(listener);
         }
 
         public void DispatchMessage<T>(IReadOnlyList<T> buffer) where T : struct
         {
-            objectNullAssertion.AssertNotNull(buffer, nameof(buffer));
+            _objectNullAssertion.AssertNotNull(buffer, nameof(buffer));
 
             Type type = typeof(T);
 

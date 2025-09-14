@@ -10,6 +10,6 @@ namespace IdelPog.Core.Logging
         
         public void LogInfo<T>(LogDirection logDirection, T[] messages);
         
-        public void LogError<T>(LogDirection logDirection, T[] messages);
+        public void LogError<T>(T[] messages, Exception exception);
     }
 }

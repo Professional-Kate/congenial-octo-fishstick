@@ -31,6 +31,7 @@ namespace IdelPog.Core.Tests.Logging
         private void VerifyWriterMock(int[] messages, LogLevel logLevel, LogDirection logDirection)
         {
             _logWriterMock.Verify(library => library.Write(logLevel, logDirection, messages), Times.Once);
+            _logWriterMock.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -59,8 +60,11 @@ namespace IdelPog.Core.Tests.Logging
         [Test]
         public void Positive_LogError_LogsAsError()
         {
-            Assert.DoesNotThrow(() => _loggingService.LogError(LogDirection.OUT, _messages));
-            VerifyWriterMock(_messages, LogLevel.ERROR, LogDirection.OUT);
+            Exception exception = new();
+            Assert.DoesNotThrow(() => _loggingService.LogError(_messages, exception));
+            
+            _logWriterMock.Verify(library => library.WriteError(_messages, exception), Times.Once);
+            _logWriterMock.VerifyNoOtherCalls();
         }
     }
 }
