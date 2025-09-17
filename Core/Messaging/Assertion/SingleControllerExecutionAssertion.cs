@@ -9,11 +9,11 @@ namespace IdelPog.Core.Messaging.Assertion
 {
     public class SingleControllerExecutionAssertion<TContext> : ContextualAssertion<TContext>, ISingleControllerExecutionAssertion<TContext> where TContext : struct
     {
-        private readonly ILogger _logger;
+        private readonly IBufferLogger _bufferLogger;
         
-        public SingleControllerExecutionAssertion(IContextualHandler<TContext> handler, ILogger logger) : base(handler)
+        public SingleControllerExecutionAssertion(IContextualHandler<TContext> handler, IBufferLogger bufferLogger) : base(handler)
         {
-            _logger = logger;
+            _bufferLogger = bufferLogger;
         }
 
         public void AssertExecutesWithoutError(ISingleController<TContext> controller, TContext message)
@@ -26,7 +26,7 @@ namespace IdelPog.Core.Messaging.Assertion
                 }
                 catch (Exception exception)
                 {
-                    _logger.LogError([message], exception);
+                    _bufferLogger.LogError([message], exception);
                     throw new ControllerThrownException(controller.GetType().Name, exception);
                     
                 }

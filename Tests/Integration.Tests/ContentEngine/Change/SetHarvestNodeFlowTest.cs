@@ -8,7 +8,7 @@ using IdelPog.Core.Messaging.Exceptions;
 namespace IdelPog.Integration.Tests.ContentEngine
 {
     [TestFixture]
-    public class SetHarvestNodeFlowTest : ManagedBuffer
+    public class SetHarvestNodeFlowTest : ManagedTestBuffer
     {
         private SetHarvestNode _setHarvestNode;
         private NodeCreation _nodeCreation;

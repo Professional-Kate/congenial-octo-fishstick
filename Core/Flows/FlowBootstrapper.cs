@@ -26,9 +26,9 @@ namespace IdelPog.Core.Flows
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
 
             ILogWriter writer = new ConsoleWriter();
-            ILogger logger = new LoggingService(writer);
+            IBufferLogger bufferLogger = new BufferLoggingService(writer);
             
-            FlowRegister flowRegister = new(bufferManager, logger, objectNullAssertion, collectionAssertion, uniqueAssertion);
+            FlowRegister flowRegister = new(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion, uniqueAssertion);
             return flowRegister;
         }
 

@@ -8,7 +8,7 @@ using IdelPog.Core.Messaging.Exceptions;
 namespace IdelPog.Integration.Tests.CurrencyCommands.Create
 {
     [TestFixture]
-    public class CurrencyCreationTest : ManagedBuffer
+    public class CurrencyCreationTest : ManagedTestBuffer
     {
         private CurrencyCreationResponseListener _currencyCreationResponseListener;
         private CurrencyCreationErrorListener _currencyCreationErrorListener;

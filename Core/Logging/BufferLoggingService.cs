@@ -3,11 +3,11 @@ using IdelPog.Core.Logging.Writer;
 
 namespace IdelPog.Core.Logging
 {
-    public sealed class LoggingService : ILogger
+    public sealed class BufferLoggingService : IBufferLogger
     {
         private readonly ILogWriter _logWriter;
 
-        public LoggingService(ILogWriter logWriter)
+        public BufferLoggingService(ILogWriter logWriter)
         {
             _logWriter = logWriter;
         }

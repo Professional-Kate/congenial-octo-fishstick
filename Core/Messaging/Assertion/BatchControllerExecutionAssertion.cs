@@ -9,11 +9,11 @@ namespace IdelPog.Core.Messaging.Assertion
 {
     public class BatchControllerExecutionAssertion<T> : ContextualAssertion<IReadOnlyList<T>>, IBatchControllerExecutionAssertion<T>
     {
-        private readonly ILogger _logger;
+        private readonly IBufferLogger _bufferLogger;
         
-        public BatchControllerExecutionAssertion(IContextualHandler<IReadOnlyList<T>> contextualHandler, ILogger logger) : base(contextualHandler)
+        public BatchControllerExecutionAssertion(IContextualHandler<IReadOnlyList<T>> contextualHandler, IBufferLogger bufferLogger) : base(contextualHandler)
         {
-            _logger = logger;
+            _bufferLogger = bufferLogger;
         }
 
         public void AssertBatchExecutesWithoutError(IBatchController<T> controller, IReadOnlyList<T> messages)
@@ -26,7 +26,7 @@ namespace IdelPog.Core.Messaging.Assertion
                 }
                 catch (Exception exception)
                 {
-                    _logger.LogError(messages.ToArray(), exception);
+                    _bufferLogger.LogError(messages.ToArray(), exception);
                     throw new ControllerThrownException(controller.GetType().Name, exception);
                 }
             }, messages);

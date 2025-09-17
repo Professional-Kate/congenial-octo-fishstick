@@ -8,20 +8,20 @@ namespace IdelPog.Core.Messaging.Listener.Buffer
     {
         private readonly IBatchController<T> _controller;
         private readonly IBatchControllerExecutionAssertion<T> _batchControllerExecutionAssertion;
-        private readonly ILogger _logger;
+        private readonly IBufferLogger _bufferLogger;
 
-        public ManagedBufferListener(IBatchController<T> controller, IBatchControllerExecutionAssertion<T> batchControllerExecutionAssertion, ILogger logger)
+        public ManagedBufferListener(IBatchController<T> controller, IBatchControllerExecutionAssertion<T> batchControllerExecutionAssertion, IBufferLogger bufferLogger)
         {
             _controller = controller;
             _batchControllerExecutionAssertion = batchControllerExecutionAssertion;
-            _logger = logger;
+            _bufferLogger = bufferLogger;
         }
 
         public Type ListenerType => typeof(T);
         
         public void Handle(IReadOnlyList<T> buffer)
         {
-            _logger.LogInfo(LogDirection.IN, buffer.ToArray());
+            _bufferLogger.LogInfo(LogDirection.IN, buffer.ToArray());
             _batchControllerExecutionAssertion.AssertBatchExecutesWithoutError(_controller, buffer);
         }
 

@@ -9,7 +9,7 @@ using IdelPog.Core.Repository.State;
 using IdelPog.Core.Scheduler;
 using IdelPog.Loot.Service.Interface;
 using IdelPog.Skill.Factory.Interface;
-using IdelPog.Skill.Service;
+using IdelPog.Skill.Service.Interface;
 
 namespace IdelPog.Skill.Mediator
 {

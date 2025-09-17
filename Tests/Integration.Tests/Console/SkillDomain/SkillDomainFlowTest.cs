@@ -10,7 +10,7 @@ using IdelPog.Integration.Tests.Console.Permission;
 namespace IdelPog.Integration.Tests.Console
 {
     [TestFixture]
-    public class SkillDomainFlowTest : ManagedBuffer
+    public class SkillDomainFlowTest : ManagedTestBuffer
     {
         private IInputHandler _inputHandler;
         private SetSkillListener _setSkillListener;

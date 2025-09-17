@@ -62,10 +62,10 @@ namespace IdelPog.Console
             IArgumentResolver<uint> uIntResolver = new UIntResolver(typeParseAssertion, numberAssertion);
             
             ILogWriter writer = new ConsoleWriter();
-            ILogger logger = new LoggingService(writer);
+            IBufferLogger bufferLogger = new BufferLoggingService(writer);
 
             IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher =
-                new ManagedDispatcher<CurrencyUpdate>(bufferManager, logger, objectNullAssertion, collectionAssertion);
+                new ManagedDispatcher<CurrencyUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline =
                 new CurrencyUpdateResolver(actionTypeResolver, uIntResolver, currencyTypeResolver);
@@ -73,7 +73,7 @@ namespace IdelPog.Console
             ICommandDomainResolver currencyDomainResolver =
                 new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateDispatcher, argumentCountAssertion);
 
-            IDispatchOne<SetSkill> skillChangeDispatcher = new ManagedDispatcher<SetSkill>(bufferManager, logger, objectNullAssertion, collectionAssertion);
+            IDispatchOne<SetSkill> skillChangeDispatcher = new ManagedDispatcher<SetSkill>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<SetSkillArguments> skillChangePipeline = new SetSkillResolver(skillIDResolver);
             ICommandDomainResolver skillDomainResolver =
@@ -91,7 +91,7 @@ namespace IdelPog.Console
 
             IScheduleControlFactory scheduleControlFactory = new ScheduleControlFactory();
             IDispatchOne<ScheduleControl> scheduleControlDispatcher =
-                new ManagedDispatcher<ScheduleControl>(bufferManager, logger, objectNullAssertion, collectionAssertion);
+                new ManagedDispatcher<ScheduleControl>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
 
             IArgumentResolverPipeline<ScheduleControlArguments> scheduleControlPipeline = new ScheduleControlResolver(controlActionResolver);
             ICommandDomainResolver scheduleDomainResolver =

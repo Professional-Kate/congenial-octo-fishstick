@@ -8,7 +8,7 @@ using IdelPog.Core.Validation.Exceptions;
 namespace IdelPog.Integration.Tests.ContentEngine
 {
     [TestFixture]
-    public class NodeCreationTest : ManagedBuffer
+    public class NodeCreationTest : ManagedTestBuffer
     {
         private NodeCreation _nodeCreation;
         private NodeCreationResponseListener _nodeCreationResponseListener;

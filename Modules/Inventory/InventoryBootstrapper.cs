@@ -50,15 +50,18 @@ namespace IdelPog.Inventory
             IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
 
             ILogWriter writer = new ConsoleWriter();
-            ILogger logger = new LoggingService(writer);
+            IBufferLogger bufferLogger = new BufferLoggingService(writer);
             
-            IDispatchOne<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, logger, objectNullAssertion, collectionAssertion);
+            IDispatchOne<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
 
             IMapper<ItemID> itemMapper = new Mapper<ItemID>(foundAssertion, uniqueAssertion);
             itemMapper.AddInformation(ItemID.STONE, new Information { Description = "Rock and...", Name = "Stone" });
             itemMapper.AddInformation(ItemID.COPPER, new Information { Description = "It's like less cool bronze", Name = "Copper" });
             itemMapper.AddInformation(ItemID.IRON, new Information { Description = "Your job is to mine Diamonds", Name = "Iron" });
             itemMapper.AddInformation(ItemID.GOLD, new Information { Description = "It's like less cool copper", Name = "Gold" });
+            itemMapper.AddInformation(ItemID.DIAMOND, new Information { Description = "Fancy coal", Name = "Coal" });
+            itemMapper.AddInformation(ItemID.EMERALD, new Information { Description = "Your villagers will love this", Name = "Emerald" });
+            itemMapper.AddInformation(ItemID.RUBY, new Information { Description = "Evil Diamond (thus worth more)", Name = "Ruby" });
             
             IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
             IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();
@@ -74,7 +77,7 @@ namespace IdelPog.Inventory
             IErrorFactory<InventoryUpdateError, IReadOnlyList<InventoryUpdate>> inventoryUpdateErrorFactory = new InventoryUpdateErrorFactory(baseErrorFactory);
             IBatchController<InventoryUpdate> inventoryController = new ManagedBatchController<InventoryUpdate>(inventoryMediator);
             
-            flowRegister.Register(inventoryController, inventoryUpdateErrorFactory);
+            flowRegister.RegisterBatch(inventoryController, inventoryUpdateErrorFactory);
         }
     }
 }

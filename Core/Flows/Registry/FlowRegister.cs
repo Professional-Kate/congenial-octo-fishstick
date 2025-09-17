@@ -17,40 +17,40 @@ namespace IdelPog.Core.Flows.Registry
     {
         private readonly List<IListener> _registeredListeners = [];
         private readonly IBufferManager _bufferManager;
-        private readonly ILogger _logger;
+        private readonly IBufferLogger _bufferLogger;
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IUniqueAssertion _uniqueAssertion;
 
-        public FlowRegister(IBufferManager bufferManager, ILogger logger, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion)
+        public FlowRegister(IBufferManager bufferManager, IBufferLogger bufferLogger, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion)
         {
             _bufferManager = bufferManager;
-            _logger = logger;
+            _bufferLogger = bufferLogger;
             _objectNullAssertion = objectNullAssertion;
             _collectionAssertion = collectionAssertion;
             _uniqueAssertion = uniqueAssertion;
         }
 
-        public void Register<TCommand, TError>(ISingleController<TCommand> controller, IErrorFactory<TError, TCommand> factory) 
+        public void RegisterSingle<TCommand, TError>(ISingleController<TCommand> controller, IErrorFactory<TError, TCommand> factory) 
             where TCommand : struct 
             where TError : struct
         {
             AssertCommandIsUnique<TCommand>();
             IContextualHandler<TCommand> dispatchHandler = new DispatchingHandler<TError, TCommand>(CreateErrorDispatcher<TError>(), factory);
-            ISingleControllerExecutionAssertion<TCommand> executionAssertion = new SingleControllerExecutionAssertion<TCommand>(dispatchHandler, _logger);
-            ISingleListener<TCommand> commandListener = new ManagedSingleListener<TCommand>(controller, executionAssertion, _logger);
+            ISingleControllerExecutionAssertion<TCommand> executionAssertion = new SingleControllerExecutionAssertion<TCommand>(dispatchHandler, _bufferLogger);
+            ISingleListener<TCommand> commandListener = new ManagedSingleListener<TCommand>(controller, executionAssertion, _bufferLogger);
             
             _registeredListeners.Add(commandListener);
         }
 
-        public void Register<TCommand, TError>(IBatchController<TCommand> controller, IErrorFactory<TError, IReadOnlyList<TCommand>> factory) 
+        public void RegisterBatch<TCommand, TError>(IBatchController<TCommand> controller, IErrorFactory<TError, IReadOnlyList<TCommand>> factory) 
             where TCommand : struct 
             where TError : struct
         {
             AssertCommandIsUnique<TCommand>();
             IContextualHandler<IReadOnlyList<TCommand>> dispatchHandler = new DispatchingHandler<TError, IReadOnlyList<TCommand>>(CreateErrorDispatcher<TError>(), factory);
-            IBatchControllerExecutionAssertion<TCommand> executionAssertion = new BatchControllerExecutionAssertion<TCommand>(dispatchHandler, _logger);
-            IBufferListener<TCommand> commandListener = new ManagedBufferListener<TCommand>(controller, executionAssertion, _logger);
+            IBatchControllerExecutionAssertion<TCommand> executionAssertion = new BatchControllerExecutionAssertion<TCommand>(dispatchHandler, _bufferLogger);
+            IBufferListener<TCommand> commandListener = new ManagedBufferListener<TCommand>(controller, executionAssertion, _bufferLogger);
             
             _registeredListeners.Add(commandListener);
         }
@@ -62,8 +62,8 @@ namespace IdelPog.Core.Flows.Registry
 
         private IDispatchOne<TError> CreateErrorDispatcher<TError>() where TError : struct
         {
-            IDispatchOne<TError> errorDispatcher = new ManagedDispatcher<TError>(_bufferManager, _logger, _objectNullAssertion, _collectionAssertion);
-            return  errorDispatcher;
+            IDispatchOne<TError> errorDispatcher = new ManagedDispatcher<TError>(_bufferManager, _bufferLogger, _objectNullAssertion, _collectionAssertion);
+            return errorDispatcher;
         }
 
         private void AssertCommandIsUnique<TCommand>() where TCommand : struct

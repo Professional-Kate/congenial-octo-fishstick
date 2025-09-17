@@ -5,7 +5,7 @@ using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Single;
 using IdelPog.Skill.Factory.Interface;
 using IdelPog.Skill.Mediator;
-using IdelPog.Skill.Service;
+using IdelPog.Skill.Service.Interface;
 using Moq;
 
 namespace IdelPog.Skills.Tests.Mediator

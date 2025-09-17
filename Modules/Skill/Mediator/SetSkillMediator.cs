@@ -3,7 +3,7 @@ using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Single;
 using IdelPog.Skill.Factory.Interface;
-using IdelPog.Skill.Service;
+using IdelPog.Skill.Service.Interface;
 
 namespace IdelPog.Skill.Mediator
 {

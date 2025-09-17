@@ -1,4 +1,5 @@
 ﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.Skill.Service.Interface;
 
 namespace IdelPog.Skill.Service
 {

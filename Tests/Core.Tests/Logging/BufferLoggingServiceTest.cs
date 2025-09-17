@@ -6,9 +6,9 @@ using Moq;
 namespace IdelPog.Core.Tests.Logging
 {
     [TestFixture]
-    public class LoggingServiceTest
+    public class BufferLoggingServiceTest
     {
-        private ILogger _loggingService;
+        private IBufferLogger _loggingService;
         private Mock<ILogWriter> _logWriterMock;
 
         private int[] _messages;
@@ -19,7 +19,7 @@ namespace IdelPog.Core.Tests.Logging
             _messages = [1, 2, 3, 4, 5];
             
             _logWriterMock = new Mock<ILogWriter>();
-            _loggingService = new LoggingService(_logWriterMock.Object);
+            _loggingService = new BufferLoggingService(_logWriterMock.Object);
         }
 
         [SetUp]

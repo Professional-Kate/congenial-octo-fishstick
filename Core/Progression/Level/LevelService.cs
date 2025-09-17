@@ -15,13 +15,14 @@ namespace IdelPog.Core.Progression.Level
         {
             _levelableAssertionPipeline.AssertLevelable(levelable);
 
+            levelable.Level++;
+            
             uint total = 0;
-            for (uint i = 1; i < levelable.Level; i++)
+            for (uint i = 1; i <= levelable.Level; i++)
             {
-                total += Convert.ToUInt32(Math.Floor(i + 83 * Math.Pow(2, i / 7.0)));
+                total += Convert.ToUInt32(Math.Floor(i + 300 * Math.Pow(2, i / 7.0)));
             }
 
-            levelable.Level++;
             levelable.NextLevelExperience = total;
         }
     }

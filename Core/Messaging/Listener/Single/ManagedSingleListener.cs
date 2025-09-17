@@ -8,20 +8,20 @@ namespace IdelPog.Core.Messaging.Listener.Single
     {
         private readonly ISingleController<T> _controller;
         private readonly ISingleControllerExecutionAssertion<T> _singleControllerExecutionAssertion;
-        private readonly ILogger _logger;
+        private readonly IBufferLogger _bufferLogger;
 
-        public ManagedSingleListener(ISingleController<T> controller, ISingleControllerExecutionAssertion<T> singleControllerExecutionAssertion, ILogger logger)
+        public ManagedSingleListener(ISingleController<T> controller, ISingleControllerExecutionAssertion<T> singleControllerExecutionAssertion, IBufferLogger bufferLogger)
         {
             _controller = controller;
             _singleControllerExecutionAssertion = singleControllerExecutionAssertion;
-            _logger = logger;
+            _bufferLogger = bufferLogger;
         }
 
         public Type ListenerType => typeof(T);
         
         public void Handle(T message)
         {
-            _logger.Log(LogLevel.INFO, LogDirection.IN, message);
+            _bufferLogger.Log(LogLevel.INFO, LogDirection.IN, message);
             _singleControllerExecutionAssertion.AssertExecutesWithoutError(_controller, message);
         }
     }

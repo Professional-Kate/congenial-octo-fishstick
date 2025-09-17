@@ -10,7 +10,7 @@ using IdelPog.Integration.Tests.Console.Permission;
 namespace IdelPog.Integration.Tests.Console
 {
     [TestFixture]
-    public class ScheduleDomainFlowTest : ManagedBuffer
+    public class ScheduleDomainFlowTest : ManagedTestBuffer
     {
         private IInputHandler _inputHandler;
         private ScheduleControlListener _scheduleControlListener;

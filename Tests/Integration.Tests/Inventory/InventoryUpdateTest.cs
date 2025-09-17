@@ -10,7 +10,7 @@ using IdelPog.Inventory.Exceptions;
 namespace IdelPog.Integration.Tests.Inventory
 {
     [TestFixture]
-    public class InventoryUpdateTest : ManagedBuffer
+    public class InventoryUpdateTest : ManagedTestBuffer
     {
         private InventoryUpdateResponseListener _inventoryUpdateResponseListener;
         private InventoryUpdateErrorListener _inventoryUpdateErrorListener;

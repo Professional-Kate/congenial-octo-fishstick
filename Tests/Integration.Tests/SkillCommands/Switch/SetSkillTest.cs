@@ -5,7 +5,7 @@ using IdelPog.Core.Messaging.Buffer;
 namespace IdelPog.Integration.Tests.SkillCommands.Switch
 {
     [TestFixture]
-    public class SetSkillTest : ManagedBuffer
+    public class SetSkillTest : ManagedTestBuffer
     {
         private SetSkillListener _listener;
         private SetSkill _setSkill;

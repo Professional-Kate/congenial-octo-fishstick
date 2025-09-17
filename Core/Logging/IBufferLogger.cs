@@ -2,7 +2,7 @@
 
 namespace IdelPog.Core.Logging
 {
-    public interface ILogger
+    public interface IBufferLogger
     {
         public void Log<T>(LogLevel logLevel, LogDirection logDirection, T[] messages);
 

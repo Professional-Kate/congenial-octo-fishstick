@@ -11,14 +11,14 @@ namespace IdelPog.Core.Messaging.Dispatcher
     public sealed class ManagedDispatcher<T> : IDispatchOne<T>, IDispatchMany<T> where T : struct
     {
         private readonly IBufferManager _bufferManager;
-        private readonly ILogger _logger;
+        private readonly IBufferLogger _bufferLogger;
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public ManagedDispatcher(IBufferManager bufferManager, ILogger logger, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion)
+        public ManagedDispatcher(IBufferManager bufferManager, IBufferLogger bufferLogger, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion)
         {
             _bufferManager = bufferManager;
-            _logger = logger;
+            _bufferLogger = bufferLogger;
             _objectNullAssertion = objectNullAssertion;
             _collectionAssertion = collectionAssertion;
         }
@@ -33,7 +33,7 @@ namespace IdelPog.Core.Messaging.Dispatcher
             _objectNullAssertion.AssertNotNull(payload, nameof(payload));
             _collectionAssertion.AssertNotEmpty(payload);
             
-            _logger.LogInfo(LogDirection.OUT, payload.ToArray());
+            _bufferLogger.LogInfo(LogDirection.OUT, payload.ToArray());
             
             CreateAndDispatchBuffer(payload);
         }

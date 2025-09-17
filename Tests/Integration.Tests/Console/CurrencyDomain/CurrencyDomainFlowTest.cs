@@ -10,7 +10,7 @@ using IdelPog.Integration.Tests.Console.Permission;
 namespace IdelPog.Integration.Tests.Console
 {
     [TestFixture]
-    public class CurrencyDomainFlowTest : ManagedBuffer
+    public class CurrencyDomainFlowTest : ManagedTestBuffer
     {
         private IInputHandler _inputHandler;
 

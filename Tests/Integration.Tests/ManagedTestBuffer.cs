@@ -17,7 +17,7 @@ using IdelPog.Skill;
 
 namespace IdelPog.Integration.Tests
 {
-    public class ManagedBuffer
+    public class ManagedTestBuffer
     {
         protected IBufferManager BufferManager { get; private set; }
         protected ICurrentHarvestTargetProvider CurrentHarvestTargetProvider;

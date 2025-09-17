@@ -9,7 +9,7 @@ using IdelPog.Core.Validation.Exceptions;
 namespace IdelPog.Integration.Tests.ContentEngine
 {
     [TestFixture]
-    public class HarvestNodeUpdateTest : ManagedBuffer
+    public class HarvestNodeUpdateTest : ManagedTestBuffer
     {
         private SkillUpdateResponse _skillUpdateResponse;
         private SetHarvestNode _setHarvestNode;
