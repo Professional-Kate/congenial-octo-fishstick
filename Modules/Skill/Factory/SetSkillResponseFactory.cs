@@ -1,16 +1,24 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Factory.Interface;
 using IdelPog.Skill.Factory.Interface;
 
 namespace IdelPog.Skill.Factory
 {
     public class SetSkillResponseFactory : ISetSkillResponseFactory
     {
-        public SetSkillResponse Create(SetSkill setSkill)
+        private readonly ILevelProgressFactory _levelProgressFactory;
+
+        public SetSkillResponseFactory(ILevelProgressFactory levelProgressFactory)
+        {
+            _levelProgressFactory = levelProgressFactory;
+        }
+
+        public SetSkillResponse Create(Contracts.Skill skill)
         {
             return new SetSkillResponse
             {
-                SkillID = setSkill.SkillID
+                SkillID = skill.SkillID, 
+                LevelProgress = _levelProgressFactory.CreateLevelProgress(skill.Levelable)
             };
         }
     }

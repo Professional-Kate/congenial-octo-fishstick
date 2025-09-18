@@ -59,7 +59,7 @@ namespace IdelPog.Inventory
             itemMapper.AddInformation(ItemID.COPPER, new Information { Description = "It's like less cool bronze", Name = "Copper" });
             itemMapper.AddInformation(ItemID.IRON, new Information { Description = "Your job is to mine Diamonds", Name = "Iron" });
             itemMapper.AddInformation(ItemID.GOLD, new Information { Description = "It's like less cool copper", Name = "Gold" });
-            itemMapper.AddInformation(ItemID.DIAMOND, new Information { Description = "Fancy coal", Name = "Coal" });
+            itemMapper.AddInformation(ItemID.DIAMOND, new Information { Description = "Fancy coal", Name = "Diamond" });
             itemMapper.AddInformation(ItemID.EMERALD, new Information { Description = "Your villagers will love this", Name = "Emerald" });
             itemMapper.AddInformation(ItemID.RUBY, new Information { Description = "Evil Diamond (thus worth more)", Name = "Ruby" });
             
@@ -71,7 +71,7 @@ namespace IdelPog.Inventory
             IItemInfoFactory itemInfoFactory = new ItemInfoFactory();
             IInventoryUpdateEntryFactory inventoryUpdateEntryFactory = new InventoryUpdateEntryFactory();
             IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
-            IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryUpdateMediator(inventory, itemFactory, summarizer, inventoryUpdateResponseFactory, itemInfoFactory, inventoryUpdateEntryFactory, inventoryUpdateDispatcher, collectionAssertion);
+            IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryUpdateMediator(inventory, itemFactory, summarizer, inventoryUpdateResponseFactory, itemInfoFactory, itemMapper, inventoryUpdateEntryFactory, inventoryUpdateDispatcher, collectionAssertion);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<InventoryUpdateError, IReadOnlyList<InventoryUpdate>> inventoryUpdateErrorFactory = new InventoryUpdateErrorFactory(baseErrorFactory);

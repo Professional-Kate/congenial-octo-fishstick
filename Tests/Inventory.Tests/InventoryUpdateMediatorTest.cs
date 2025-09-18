@@ -2,6 +2,7 @@
 using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Information;
 using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Buffer;
@@ -27,6 +28,7 @@ namespace IdelPog.Inventory.Tests
         private Mock<IItemInfoFactory> _itemInfoFactoryMock;
         private Mock<IInventoryUpdateEntryFactory> _entryFactoryMock;
         private Mock<IDispatchOne<InventoryUpdateResponse>> _dispatcherMock;
+        private Mock<IMapper<ItemID>> _itemMapperMock;
 
         private Item _stoneItem;
         private InventoryUpdate _addStoneUpdate;
@@ -41,9 +43,10 @@ namespace IdelPog.Inventory.Tests
             _itemInfoFactoryMock = new Mock<IItemInfoFactory>();
             _entryFactoryMock = new Mock<IInventoryUpdateEntryFactory>();
             _dispatcherMock = new Mock<IDispatchOne<InventoryUpdateResponse>>();
+            _itemMapperMock = new Mock<IMapper<ItemID>>();
 
             _inventoryMediator = new InventoryUpdateMediator(_repositoryMock.Object, _itemFactoryMock.Object, _updateSummarizerMock.Object, _responseFactoryMock.Object,
-                _itemInfoFactoryMock.Object, _entryFactoryMock.Object, _dispatcherMock.Object, new CollectionAssertion(new ThrowHandler()));
+                _itemInfoFactoryMock.Object, _itemMapperMock.Object, _entryFactoryMock.Object, _dispatcherMock.Object, new CollectionAssertion(new ThrowHandler()));
 
             _stoneItem = new Item(ItemID.STONE, 1, new Information { Description = "", Name = "" }, 1);
 
@@ -105,7 +108,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock.VerifyNoOtherCalls();
 
             VerifySingleCalls();
-            _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 1), Times.Once);
+            _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 1, It.IsAny<Information>()), Times.Once);
             _itemInfoFactoryMock.VerifyNoOtherCalls();
         }
 
@@ -124,7 +127,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock.VerifyNoOtherCalls();
             
             VerifySingleCalls();
-            _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 1), Times.Once);
+            _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 1, It.IsAny<Information>()), Times.Once);
             _itemInfoFactoryMock.VerifyNoOtherCalls();
         }
 
@@ -146,7 +149,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock.VerifyNoOtherCalls();
             
             VerifySingleCalls();
-            _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 3), Times.Once);
+            _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 3, It.IsAny<Information>()), Times.Once);
             _itemInfoFactoryMock.VerifyNoOtherCalls();
         }
 
@@ -165,7 +168,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock.Verify(library => library.RemoveAmount(removeStoneUpdate.ItemID, removeStoneUpdate.Amount), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
             
-            _itemInfoFactoryMock.Verify(library => library.Create(removeStoneUpdate.ItemID, 0, 0), Times.Once);
+            _itemInfoFactoryMock.Verify(library => library.Create(removeStoneUpdate.ItemID, 0, 0, It.IsAny<Information>()), Times.Once);
             _itemInfoFactoryMock.VerifyNoOtherCalls();
         }
 
@@ -194,8 +197,8 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock.VerifyNoOtherCalls();
             
             VerifySingleCalls();
-            _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 1), Times.Once);
-            _itemInfoFactoryMock.Verify(library => library.Create(addGoldUpdate.ItemID, gold.BaseSellPrice, 1), Times.Once);
+            _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 1, It.IsAny<Information>()), Times.Once);
+            _itemInfoFactoryMock.Verify(library => library.Create(addGoldUpdate.ItemID, gold.BaseSellPrice, 1, It.IsAny<Information>()), Times.Once);
             _itemInfoFactoryMock.VerifyNoOtherCalls();
         }
 

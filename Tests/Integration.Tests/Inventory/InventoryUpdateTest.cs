@@ -3,6 +3,7 @@ using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Inventory.Exceptions;
@@ -32,7 +33,8 @@ namespace IdelPog.Integration.Tests.Inventory
             {
                 Amount = 10,
                 ItemID = ItemID.STONE,
-                BaseSellPrice = 1
+                BaseSellPrice = 1,
+                Information = new Information { Description = "", Name = "" }
             };
         }
         

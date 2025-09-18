@@ -2,6 +2,7 @@
 using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Information;
 using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion.Interface;
@@ -20,9 +21,13 @@ namespace IdelPog.Inventory.Mediator
         private readonly IItemInfoFactory _itemInfoFactory;
         private readonly IInventoryUpdateEntryFactory _inventoryUpdateEntryFactory;
         private readonly IDispatchOne<InventoryUpdateResponse> _inventoryUpdateDispatcher;
+        private readonly IMapper<ItemID> _itemMapper;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public InventoryUpdateMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateSummarizer updateSummarizer, IInventoryUpdateResponseFactory inventoryUpdateResponseFactory, IItemInfoFactory itemInfoFactory, IInventoryUpdateEntryFactory inventoryUpdateEntryFactory, IDispatchOne<InventoryUpdateResponse> inventoryUpdateDispatcher, ICollectionAssertion collectionAssertion)
+        public InventoryUpdateMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateSummarizer updateSummarizer,
+            IInventoryUpdateResponseFactory inventoryUpdateResponseFactory, IItemInfoFactory itemInfoFactory, IMapper<ItemID> itemMapper,
+            IInventoryUpdateEntryFactory inventoryUpdateEntryFactory, IDispatchOne<InventoryUpdateResponse> inventoryUpdateDispatcher,
+            ICollectionAssertion collectionAssertion)
         {
             _inventory = inventory;
             _itemFactory = itemFactory;
@@ -32,6 +37,7 @@ namespace IdelPog.Inventory.Mediator
             _inventoryUpdateEntryFactory = inventoryUpdateEntryFactory;
             _inventoryUpdateDispatcher = inventoryUpdateDispatcher;
             _collectionAssertion = collectionAssertion;
+            _itemMapper = itemMapper;
         }
 
         public void HandleMessages(IReadOnlyList<InventoryUpdate> updates)
@@ -61,12 +67,12 @@ namespace IdelPog.Inventory.Mediator
                 ItemInfo itemInfo;
                 if (mutateType == MutateType.DELETED)
                 {
-                    itemInfo = _itemInfoFactory.Create(update.ItemID, 0, 0);
+                    itemInfo = _itemInfoFactory.Create(update.ItemID, 0, 0, _itemMapper.GetInformation(update.ItemID));
                 }
                 else
                 {
                     Item item = _inventory.GetItem(update.ItemID);
-                    itemInfo = _itemInfoFactory.Create(update.ItemID, item.BaseSellPrice, item.Amount);
+                    itemInfo = _itemInfoFactory.Create(update.ItemID, item.BaseSellPrice, item.Amount, _itemMapper.GetInformation(update.ItemID));
                 }
                 
                 updateEntries.Add(_inventoryUpdateEntryFactory.Create(update, itemInfo, mutateType));

@@ -50,7 +50,7 @@ namespace IdelPog.Skill
             
             IStateRepository<SkillID, Contracts.Skill> skillRepository = new StateRepository<SkillID, Contracts.Skill>();
             
-            RegisterSetSkill(bufferManager, skillProvider, flowRegistry, bufferLogger);
+            RegisterSetSkill(bufferManager, skillProvider, flowRegistry, bufferLogger, skillRepository);
             RegisterScheduleTick(bufferManager, skillProvider, flowRegistry, skillRepository, bufferLogger);
             RegisterSkillCreation(bufferManager, flowRegistry, skillRepository, bufferLogger);
         }
@@ -62,21 +62,24 @@ namespace IdelPog.Skill
         /// <param name="currentSkillSetter">Used together with <see cref="ICurrentSkillProvider"/></param>
         /// <param name="flowRegistry">Used to register the SetSkill flow</param>
         /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// <param name="skillRepository">Used to store Skills</param>
         /// <remarks>
         /// Listens to -> <see cref="SetSkill"/>. On Success -> <see cref="SetSkillResponse"/>. On Error -> <see cref="SetSkillError"/>
         /// </remarks>
-        private static void RegisterSetSkill(IBufferManager bufferManager, ICurrentSkillSetter  currentSkillSetter, ISingleRegister flowRegistry, IBufferLogger bufferLogger)
+        private static void RegisterSetSkill(IBufferManager bufferManager, ICurrentSkillSetter  currentSkillSetter, ISingleRegister flowRegistry, IBufferLogger bufferLogger, IStateRepository<SkillID, Contracts.Skill> skillRepository)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<SetSkillError, SetSkill> setSkillErrorFactory = new SetSkillErrorFactory(baseErrorFactory );
+            ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
 
-            ISetSkillResponseFactory setSkillResponseFactory = new SetSkillResponseFactory();
+            ISetSkillResponseFactory setSkillResponseFactory = new SetSkillResponseFactory(levelProgressFactory);
             IDispatchOne<SetSkillResponse> setSkillResponseDispatcher = new ManagedDispatcher<SetSkillResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
-            ISingleMediator<SetSkill> setSkillMediator = new SetSkillMediator(currentSkillSetter, setSkillResponseFactory, setSkillResponseDispatcher);
+            ISingleMediator<SetSkill> setSkillMediator = new SetSkillMediator(currentSkillSetter, skillRepository, setSkillResponseFactory, setSkillResponseDispatcher, foundAssertion);
             ISingleController<SetSkill> setSkillController = new ManagedSingleController<SetSkill>(setSkillMediator);
             
             flowRegistry.RegisterSingle(setSkillController, setSkillErrorFactory);
