@@ -1,4 +1,5 @@
 ﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Progression;
 
 namespace IdelPog.Core.Contracts.Command
 {

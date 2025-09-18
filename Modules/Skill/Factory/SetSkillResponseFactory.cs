@@ -18,7 +18,7 @@ namespace IdelPog.Skill.Factory
             return new SetSkillResponse
             {
                 SkillID = skill.SkillID, 
-                LevelProgress = _levelProgressFactory.CreateLevelProgress(skill.Levelable)
+                ReadOnlyLevelable = _levelProgressFactory.CreateLevelProgress(skill.Levelable)
             };
         }
     }

@@ -63,7 +63,7 @@ namespace IdelPog.Skills.Tests.Mediator
             _repositoryMock.Setup(library => library.Contains(_setSkill.SkillID)).Returns(true);
             _repositoryMock.Setup(library => library.Get(_setSkill.SkillID)).Returns(_miningSkill);
             
-            SetSkillResponse response = new() { SkillID = _setSkill.SkillID, LevelProgress = new LevelProgress { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 }};
+            SetSkillResponse response = new() { SkillID = _setSkill.SkillID, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 }};
             _setSkillFactoryMock.Setup(library => library.Create(_miningSkill)).Returns(response);
 
             Assert.DoesNotThrow(() => _setSkillMediator.HandleMessage(_setSkill));

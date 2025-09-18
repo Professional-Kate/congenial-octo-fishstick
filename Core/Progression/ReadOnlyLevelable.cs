@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Core.Contracts
+﻿namespace IdelPog.Core.Progression
 {
     public readonly record struct ReadOnlyLevelable
     {

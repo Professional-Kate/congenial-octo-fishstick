@@ -18,7 +18,7 @@ namespace IdelPog.HarvestNode.Factory
             return new HarvestNodeUpdateResponse
             {
                 HasLeveled = hasLeveled,
-                LevelProgress = _levelProgressFactory.CreateLevelProgress(harvestNode.Levelable),
+                ReadOnlyLevelable = _levelProgressFactory.CreateLevelProgress(harvestNode.Levelable),
                 ItemID = harvestNode.ItemID
             };
         }

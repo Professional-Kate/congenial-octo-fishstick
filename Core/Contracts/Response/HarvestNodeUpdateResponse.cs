@@ -6,7 +6,7 @@ namespace IdelPog.Core.Contracts.Response
     public readonly record struct HarvestNodeUpdateResponse
     {
         public required ItemID ItemID { get; init; }
-        public required LevelProgress LevelProgress { get; init; }
+        public required ReadOnlyLevelable ReadOnlyLevelable { get; init; }
         public required bool HasLeveled { get; init; }
     }
 }

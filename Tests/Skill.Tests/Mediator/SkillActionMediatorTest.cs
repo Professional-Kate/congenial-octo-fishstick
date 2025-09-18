@@ -57,7 +57,7 @@ namespace IdelPog.Skills.Tests.Mediator
             {
                 HasLeveled = hasLeveled,
                 SkillID = skill.SkillID,
-                LevelProgress = new LevelProgress
+                ReadOnlyLevelable = new ReadOnlyLevelable
                 {
                     Experience = skill.Levelable.Experience,
                     ExperiencePerAction = skill.Levelable.ExperiencePerAction,

@@ -5,9 +5,9 @@ namespace IdelPog.Core.Factory
 {
     public class LevelProgressFactory : ILevelProgressFactory
     {
-        public LevelProgress CreateLevelProgress(Levelable levelable)
+        public ReadOnlyLevelable CreateLevelProgress(Levelable levelable)
         {
-            return new LevelProgress
+            return new ReadOnlyLevelable
             {
                 Experience = levelable.Experience,
                 ExperiencePerAction = levelable.ExperiencePerAction,

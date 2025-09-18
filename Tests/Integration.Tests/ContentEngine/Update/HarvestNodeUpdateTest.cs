@@ -23,7 +23,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
             _skillUpdateResponse = new SkillUpdateResponse
             {
                 SkillID = SkillID.MINING, 
-                LevelProgress = new LevelProgress { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
+                ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
                 HasLeveled = false
             };
             

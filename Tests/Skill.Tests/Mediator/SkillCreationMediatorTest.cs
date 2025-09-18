@@ -1,10 +1,10 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Buffer;
+using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Assertion;
 using IdelPog.Core.Progression.Assertion.Pipelines;
 using IdelPog.Core.Repository.State;
