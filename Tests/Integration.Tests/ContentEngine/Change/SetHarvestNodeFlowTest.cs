@@ -77,16 +77,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
             Assert.That(_harvestNodeChangeResponseListener.WasCalled, Is.False);
         }
 
-        private void AssertCurrentResourceProvider_Equals(ItemID expected)
-        {
-            Assert.That(CurrentHarvestTargetProvider.GetCurrentHarvestTarget(), Is.EqualTo(expected));
-        }
-
-        private void AssertCurrencyResourceProvider_DoesNotEqual(ItemID expected)
-        {
-            Assert.That(CurrentHarvestTargetProvider.GetCurrentHarvestTarget(), Is.Not.EqualTo(expected));
-        }
-        
         [Test]
         public void Positive_SendCommand_SetsCurrentHarvestNode_NoThrow()
         {
@@ -94,7 +84,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
             Assert.DoesNotThrow(() => DispatchSetHarvestNode(_setHarvestNode));
             
             AssertListenerWasCalled(_setHarvestNode);
-            AssertCurrentResourceProvider_Equals(_setHarvestNode.ItemID);
         }
 
         [Test]
@@ -107,7 +96,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
             {
                 Assert.DoesNotThrow(() => DispatchSetHarvestNode(_setHarvestNode));
                 AssertListenerWasCalled(_setHarvestNode);
-                AssertCurrentResourceProvider_Equals(_setHarvestNode.ItemID);
             }
         }
 
@@ -117,7 +105,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
             SetHarvestNode missingSkill = new() { ItemID = ItemID.GOLD, SkillID = SkillID.WOOD_CUTTING };
             Assert.DoesNotThrow(() => DispatchSetHarvestNode(missingSkill));
             AssertListenerWasNotCalled();
-            AssertCurrencyResourceProvider_DoesNotEqual(ItemID.GOLD);
             AssertErrorListenerWasCalled(missingSkill, typeof(ControllerThrownException));
         } 
         
@@ -127,7 +114,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
             SetHarvestNode missingResourceCommand = new() { ItemID = ItemID.GOLD, SkillID = SkillID.MINING };
             Assert.DoesNotThrow(() => DispatchSetHarvestNode(missingResourceCommand));
             AssertListenerWasNotCalled();
-            AssertCurrencyResourceProvider_DoesNotEqual(ItemID.GOLD);
             AssertErrorListenerWasCalled(missingResourceCommand, typeof(ControllerThrownException));
         } 
     }

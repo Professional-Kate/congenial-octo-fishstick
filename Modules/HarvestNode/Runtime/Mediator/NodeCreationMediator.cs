@@ -62,6 +62,7 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
             foreach (ItemID itemID in nodeCreation.ItemIDs)
             { 
                 _harvestNodeRepository.Add(itemID, _harvestNodeFactory.Create(itemID));
+                Console.WriteLine(itemID);
             }
         }
         

@@ -4,6 +4,6 @@
     {
         WOOD_CUTTING,
         MINING,
-        FARMING
+        FORAGING
     }
 }

@@ -11,7 +11,7 @@ namespace IdelPog.HarvestNode.Runtime.Factory
         {
             // TODO: need a way to fetch these
             Information information = new() { Description = "", Name = "" };
-            Levelable levelable = new(0, 0, 0, 0);
+            Levelable levelable = new(0, 0, 300, 25);
             
             return new Contracts.HarvestNode { ItemID = itemID, Information = information, Levelable = levelable };
         }

@@ -102,16 +102,16 @@ namespace IdelPog.Integration.Tests.ContentEngine
         [Test]
         public void Negative_SendCommand_SkillNotFound_NoUpdate_DispatchesError()
         {
-            DispatchSetHarvestNode(_setHarvestNode with { SkillID = SkillID.FARMING });
+            DispatchSetHarvestNode(_setHarvestNode with { SkillID = SkillID.FORAGING });
             
-            Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse with { SkillID = SkillID.FARMING }));
+            Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse with { SkillID = SkillID.FORAGING }));
             
             Assert.Multiple(() =>
             {
                 Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(true));
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
             });
-            AssertErrorListener<NotFoundException<SkillID>>(_skillUpdateResponse with { SkillID = SkillID.FARMING });
+            AssertErrorListener<NotFoundException<SkillID>>(_skillUpdateResponse with { SkillID = SkillID.FORAGING });
         } 
         
         [Test]

@@ -77,7 +77,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
         public void Positive_SendMultipleCommands_CreatesEachNode_DispatchesResponse()
         {
             NodeCreation stoneCreation = new() { LinkedSkill = SkillID.MINING, ItemIDs = [ItemID.STONE] };
-            NodeCreation copperCreation = new() { LinkedSkill = SkillID.FARMING, ItemIDs = [ItemID.COPPER] };
+            NodeCreation copperCreation = new() { LinkedSkill = SkillID.FORAGING, ItemIDs = [ItemID.COPPER] };
             Assert.DoesNotThrow(() => DispatchNodeCreation(stoneCreation, copperCreation));
             
             Assert.Multiple(() =>
@@ -124,7 +124,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
         {
             DispatchNodeCreation(_nodeCreation);
             
-            NodeCreation duplicateResourceCreation = new() { LinkedSkill = SkillID.FARMING, ItemIDs = [ItemID.IRON] };
+            NodeCreation duplicateResourceCreation = new() { LinkedSkill = SkillID.FORAGING, ItemIDs = [ItemID.IRON] };
             Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateResourceCreation));
             
             Assert.Multiple(() =>

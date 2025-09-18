@@ -45,7 +45,7 @@ namespace IdelPog.Skills.Tests.Mediator
                 {
                     Information = new Information { Name = "", Description = "" },
                     ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
-                    SkillID = SkillID.FARMING
+                    SkillID = SkillID.FORAGING
                 },
                 new SkillCreation
                 {
@@ -118,7 +118,7 @@ namespace IdelPog.Skills.Tests.Mediator
                 {
                     Information = new Information { Name = "", Description = "" },
                     ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 120, NextLevelExperience = 0 },
-                    SkillID = SkillID.FARMING
+                    SkillID = SkillID.FORAGING
                 }
             ];
             

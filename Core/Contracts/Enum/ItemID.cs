@@ -2,12 +2,23 @@
 {
     public enum ItemID : byte
     {
+        // mining
         STONE,
         IRON,
         COPPER,
         GOLD,
         DIAMOND,
         EMERALD,
-        RUBY
+        RUBY,
+        // wood cutting
+        OAK,
+        SPRUCE,
+        BIRCH,
+        // foraging
+        HERBS, 
+        SMALL_INSECTS,
+        HONEY,
+        WATER,
+        SAND
     }
 }

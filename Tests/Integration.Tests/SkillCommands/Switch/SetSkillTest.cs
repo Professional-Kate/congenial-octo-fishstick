@@ -13,7 +13,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Switch
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _setSkill = new SetSkill { SkillID = SkillID.FARMING };
+            _setSkill = new SetSkill { SkillID = SkillID.FORAGING };
         }
 
         [SetUp]

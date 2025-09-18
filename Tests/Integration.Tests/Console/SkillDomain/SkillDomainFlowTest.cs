@@ -38,9 +38,9 @@ namespace IdelPog.Integration.Tests.Console
             ).SetName("MINING");
 
             yield return new TestCaseData(
-                new[] { "skill", "change", "FARMING" },
-                SkillID.FARMING
-            ).SetName("FARMING");
+                new[] { "skill", "change", "FORAGING" },
+                SkillID.FORAGING
+            ).SetName("FORAGING");
         }
 
         [TestCaseSource(nameof(ValidSkillChanges))]

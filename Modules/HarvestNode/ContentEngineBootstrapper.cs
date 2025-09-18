@@ -5,7 +5,6 @@ using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Factory;
 using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Flows.Registry;
-using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Logging;
 using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
@@ -14,7 +13,6 @@ using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Messaging.Listener.Single;
-using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Assertion;
 using IdelPog.Core.Progression.Assertion.Pipelines;
 using IdelPog.Core.Progression.Experience;
@@ -48,11 +46,10 @@ namespace IdelPog.HarvestNode
         /// Creates and adds the <see cref="SetHarvestNode"/> and <see cref="SkillUpdateResponse"/> flow into the messaging system
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
-        /// <param name="currentHarvestTargetProvider">Used together with <see cref="ICurrentHarvestTargetProvider"/></param>
         /// <param name="batchRegister">Used to register the NodeCreation flow</param>
         /// <param name="singleRegister">Used to register the SkillUpdateResponse and SetHarvestNode flows</param>
         /// <seealso cref="RegisterSetHarvestNode"/>
-        public static void RegisterFlows(IBufferManager bufferManager, CurrentHarvestTargetProvider currentHarvestTargetProvider, IBatchRegister batchRegister, ISingleRegister singleRegister)
+        public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister batchRegister, ISingleRegister singleRegister)
         {
             IFoundAssertion foundAssertion = new FoundAssertion(new ThrowHandler());
             
@@ -61,10 +58,13 @@ namespace IdelPog.HarvestNode
             
             ILogWriter writer = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
+            CurrentHarvestTargetProvider currentHarvestTargetProvider = new();
+            IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
             
-            RegisterSkillUpdateResponse(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister, bufferLogger);
+            
+            RegisterSkillUpdateResponse(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister, bufferLogger, harvestNodeRepository);
             RegisterSetHarvestNode(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister, bufferLogger);
-            RegisterNodeCreation(bufferManager, skillNodeRepository, batchRegister, bufferLogger);
+            RegisterNodeCreation(bufferManager, skillNodeRepository, batchRegister, bufferLogger, harvestNodeRepository);
         }
 
         /// <summary>
@@ -75,10 +75,11 @@ namespace IdelPog.HarvestNode
         /// <param name="skillNodeAccessValidator">Used to validate if a skill can access a node</param>
         /// <param name="singleRegister">Used to register the SkillUpdateResponse flow</param>
         /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// <param name="harvestNodeRepository">Stores all HarvestNodes</param>
         /// <remarks>
         /// Listens to -> <see cref="SkillUpdateResponse"/>. On Success -> <see cref="HarvestNodeUpdateResponse"/>. On Error -> <see cref="HarvestNodeUpdateError"/>
         /// </remarks>
-        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ICurrentHarvestTargetProvider currentHarvestTargetProvider, ISkillNodeAccessValidator skillNodeAccessValidator, ISingleRegister singleRegister, IBufferLogger bufferLogger)
+        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ICurrentHarvestTargetProvider currentHarvestTargetProvider, ISkillNodeAccessValidator skillNodeAccessValidator, ISingleRegister singleRegister, IBufferLogger bufferLogger, IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -88,25 +89,12 @@ namespace IdelPog.HarvestNode
             ILevelableAssertionPipeline levelableAssertion = new LevelableAssertionPipeline(levelAssertion, objectNullAssertion);
             
             IAssetRepository<ItemID, ILootTable> lootTableRepository = new AssetRepository<ItemID, ILootTable>();
-            IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
             ILevelService levelService = new LevelService(levelableAssertion);
             IExperienceService experienceService = new ExperienceService(levelableAssertion);
             ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
             INodeUpdateResponseFactory responseFactory = new NodeUpdateResponseFactory(levelProgressFactory);
             
-            Contracts.HarvestNode ironHarvestNode = new()
-            {
-                Information = new Information { Description = "", Name = "" }, 
-                ItemID = ItemID.IRON, 
-                Levelable = new Levelable(0, 0, 20, 0)
-            };
-
-            harvestNodeRepository.Add(ironHarvestNode.ItemID, ironHarvestNode);
-
-            lootTableRepository.Add(ItemID.STONE, new GrantTable { ItemID = ItemID.STONE});
-            lootTableRepository.Add(ItemID.COPPER, new GrantTable { ItemID = ItemID.COPPER});
-            lootTableRepository.Add(ItemID.GOLD, new GrantTable { ItemID = ItemID.GOLD});
-            lootTableRepository.Add(ItemID.IRON, new GrantTable { ItemID = ItemID.IRON});
+            LootTableGrantSelf(lootTableRepository, [ItemID.STONE, ItemID.IRON, ItemID.COPPER, ItemID.GOLD, ItemID.OAK, ItemID.SPRUCE, ItemID.BIRCH, ItemID.HERBS, ItemID.SMALL_INSECTS, ItemID.HONEY, ItemID.WATER, ItemID.SAND]);
             
             IDispatchOne<InventoryUpdate> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             ILootService<ItemID> lootService = new LootService<ItemID>(lootTableRepository, inventoryUpdateDispatcher, new GrantPolicy(), foundAssertion);
@@ -120,6 +108,14 @@ namespace IdelPog.HarvestNode
             IErrorFactory<HarvestNodeUpdateError, SkillUpdateResponse> harvestNodeErrorFactory = new HarvestNodeUpdateErrorFactory(baseErrorFactory);
 
             singleRegister.RegisterSingle(nodeUpdateController, harvestNodeErrorFactory);
+        }
+
+        private static void LootTableGrantSelf(IAssetRepository<ItemID, ILootTable> lootTableRepository, ItemID[] itemIDs)
+        {
+            foreach (ItemID itemID in itemIDs)
+            {
+                lootTableRepository.Add(itemID, new GrantTable { ItemID = itemID });
+            }
         }
 
         /// <summary>
@@ -157,17 +153,17 @@ namespace IdelPog.HarvestNode
         /// <param name="skillNodeRepository">Used to store all <see cref="HarvestNode"/> models</param>
         /// <param name="batchRegister">Used to register the NodeCreation flow</param>
         /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// <param name="harvestNodeRepository">Stores all HarvestNodes</param>
         /// <remarks>
         /// Listens to -> <see cref="NodeCreation"/>. On Success -> <see cref="NodeCreationResponse"/>. On Error -> <see cref="NodeCreationError"/>
         /// </remarks>
-        private static void RegisterNodeCreation(IBufferManager bufferManager, IAssetRepository<SkillID, SkillNodeEntity> skillNodeRepository, IBatchRegister batchRegister, IBufferLogger bufferLogger)
+        private static void RegisterNodeCreation(IBufferManager bufferManager, IAssetRepository<SkillID, SkillNodeEntity> skillNodeRepository, IBatchRegister batchRegister, IBufferLogger bufferLogger, IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
 
-            IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
             ISkillNodeEntityFactory skillNodeEntityFactory = new SkillNodeEntityFactory();
             IHarvestNodeFactory harvestNodeFactory = new HarvestNodeFactory();
             INodeCreationResponseFactory nodeCreationResponseFactory = new NodeCreationResponseFactory();
