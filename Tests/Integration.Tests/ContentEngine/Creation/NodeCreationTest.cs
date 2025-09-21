@@ -1,8 +1,11 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Buffer;
+using IdelPog.Core.Progression;
 using IdelPog.Core.Validation.Exceptions;
 
 namespace IdelPog.Integration.Tests.ContentEngine
@@ -19,8 +22,14 @@ namespace IdelPog.Integration.Tests.ContentEngine
         {
             _nodeCreation = new NodeCreation
             {
-                LinkedSkill = SkillID.MINING,
-                ItemIDs = [ItemID.COPPER, ItemID.GOLD, ItemID.IRON, ItemID.STONE]
+                ReadOnlyHarvestNodes =
+                [
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.COPPER, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.GOLD, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                ],
+                LinkedSkill = SkillID.MINING
             };
             
             _nodeCreationResponseListener = new NodeCreationResponseListener();
@@ -76,8 +85,23 @@ namespace IdelPog.Integration.Tests.ContentEngine
         [Test]
         public void Positive_SendMultipleCommands_CreatesEachNode_DispatchesResponse()
         {
-            NodeCreation stoneCreation = new() { LinkedSkill = SkillID.MINING, ItemIDs = [ItemID.STONE] };
-            NodeCreation copperCreation = new() { LinkedSkill = SkillID.FORAGING, ItemIDs = [ItemID.COPPER] };
+            NodeCreation stoneCreation = new()
+            {
+                ReadOnlyHarvestNodes =
+                [
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                ],
+                LinkedSkill = SkillID.MINING
+            };
+            NodeCreation copperCreation = new()
+            {
+                ReadOnlyHarvestNodes =
+                [
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.COPPER, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                ],
+                LinkedSkill = SkillID.FORAGING
+            };
+            
             Assert.DoesNotThrow(() => DispatchNodeCreation(stoneCreation, copperCreation));
             
             Assert.Multiple(() =>
@@ -92,7 +116,15 @@ namespace IdelPog.Integration.Tests.ContentEngine
         public void Negative_SendCommand_DuplicateSkillID_OnlyOneUpdate_SecondCallDispatchesError()
         {
             DispatchNodeCreation(_nodeCreation);
-            NodeCreation duplicateNodeCreation = _nodeCreation with { ItemIDs = [ItemID.STONE] };
+            NodeCreation duplicateNodeCreation = new()
+            {
+                ReadOnlyHarvestNodes =
+                [
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                ],
+                LinkedSkill = SkillID.MINING
+            };
+            
             Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateNodeCreation));
             
             Assert.Multiple(() =>
@@ -108,7 +140,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
         [Test]
         public void Negative_SendCommand_EmptyResourceIDs_NoUpdate_DispatchesError()
         {
-            NodeCreation emptyArrayCreation = _nodeCreation with { ItemIDs = [] };
+            NodeCreation emptyArrayCreation = _nodeCreation with { ReadOnlyHarvestNodes = [] };
             Assert.DoesNotThrow(() => DispatchNodeCreation(emptyArrayCreation));
             
             Assert.Multiple(() =>
@@ -124,7 +156,15 @@ namespace IdelPog.Integration.Tests.ContentEngine
         {
             DispatchNodeCreation(_nodeCreation);
             
-            NodeCreation duplicateResourceCreation = new() { LinkedSkill = SkillID.FORAGING, ItemIDs = [ItemID.IRON] };
+            NodeCreation duplicateResourceCreation = new()
+            {
+                ReadOnlyHarvestNodes =
+                [
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                ],
+                LinkedSkill = SkillID.FORAGING
+            };
+            
             Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateResourceCreation));
             
             Assert.Multiple(() =>
@@ -149,7 +189,16 @@ namespace IdelPog.Integration.Tests.ContentEngine
         [Test]
         public void Negative_SendCommand_DuplicateResourceInCommand_NoUpdate_DispatcherError()
         {
-            NodeCreation duplicateCreation = new() { LinkedSkill = SkillID.MINING, ItemIDs = [ItemID.STONE, ItemID.STONE] };
+            NodeCreation duplicateCreation = new()
+            {
+                ReadOnlyHarvestNodes =
+                [
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                ],
+                LinkedSkill = SkillID.MINING
+            };
+            
             Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateCreation));
             
             Assert.Multiple(() =>

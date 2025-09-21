@@ -62,7 +62,6 @@ namespace IdelPog.Inventory
             itemMapper.AddInformation(ItemID.DIAMOND, new Information { Description = "Fancy coal", Name = "Diamond" });
             itemMapper.AddInformation(ItemID.EMERALD, new Information { Description = "Your villagers will love this", Name = "Emerald" });
             itemMapper.AddInformation(ItemID.RUBY, new Information { Description = "Evil Diamond (thus worth more)", Name = "Ruby" });
-            
             itemMapper.AddInformation(ItemID.OAK, new Information { Description = "The most basic of woods", Name = "Oak" });
             itemMapper.AddInformation(ItemID.SPRUCE, new Information { Description = "Ohhhh now we got something good", Name = "Spruce" });
             itemMapper.AddInformation(ItemID.BIRCH, new Information { Description = "I like the colours", Name = "Birch" });
@@ -71,7 +70,6 @@ namespace IdelPog.Inventory
             itemMapper.AddInformation(ItemID.HONEY, new Information { Description = "Delicious and it was only slightly painful", Name = "Honey" });
             itemMapper.AddInformation(ItemID.WATER, new Information { Description = "Finally learnt how to collect water?", Name = "Water" });
             itemMapper.AddInformation(ItemID.SAND, new Information { Description = "It gets everywhere...", Name = "Sand" });
-            
             
             IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
             IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();

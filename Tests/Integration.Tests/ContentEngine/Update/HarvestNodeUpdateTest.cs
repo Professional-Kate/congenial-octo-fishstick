@@ -1,7 +1,9 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Validation.Exceptions;
@@ -35,8 +37,11 @@ namespace IdelPog.Integration.Tests.ContentEngine
             
             _nodeCreation = new NodeCreation
             {
-                LinkedSkill = SkillID.MINING,
-                ItemIDs = [ItemID.IRON]
+                ReadOnlyHarvestNodes =
+                [
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                ],
+                LinkedSkill = SkillID.MINING
             };
             
             _updateNodeErrorListener = new UpdateNodeErrorListener();

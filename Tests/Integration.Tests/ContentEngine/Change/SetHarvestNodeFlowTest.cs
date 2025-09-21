@@ -1,9 +1,12 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
+using IdelPog.Core.Progression;
 
 namespace IdelPog.Integration.Tests.ContentEngine
 {
@@ -20,8 +23,14 @@ namespace IdelPog.Integration.Tests.ContentEngine
         {
             _nodeCreation = new NodeCreation
             {
-                LinkedSkill = SkillID.MINING,
-                ItemIDs = [ItemID.COPPER, ItemID.GOLD, ItemID.IRON, ItemID.STONE]
+                ReadOnlyHarvestNodes =
+                [
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.COPPER, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.GOLD, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                ],
+                LinkedSkill = SkillID.MINING
             };
             
             _setHarvestNode = new SetHarvestNode
@@ -29,6 +38,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
                 ItemID = ItemID.IRON,
                 SkillID = SkillID.MINING
             };
+            
             
             _harvestNodeChangeResponseListener = new HarvestNodeChangeResponseListener();
             _harvestNodeErrorListener = new  HarvestNodeErrorListener();
