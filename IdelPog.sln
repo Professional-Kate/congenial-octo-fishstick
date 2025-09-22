@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarvestNode.Tests", "Tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loot.Tests", "Tests\Loot.Tests\Loot.Tests.csproj", "{0FCB7E9C-62DB-48BC-B094-FEA1C53FBE01}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Progression", "Progression\Progression.csproj", "{183555CF-E4D2-4C41-AB6C-1C7DC208471B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -118,6 +120,10 @@ Global
 		{0FCB7E9C-62DB-48BC-B094-FEA1C53FBE01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FCB7E9C-62DB-48BC-B094-FEA1C53FBE01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FCB7E9C-62DB-48BC-B094-FEA1C53FBE01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{183555CF-E4D2-4C41-AB6C-1C7DC208471B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{183555CF-E4D2-4C41-AB6C-1C7DC208471B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{183555CF-E4D2-4C41-AB6C-1C7DC208471B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{183555CF-E4D2-4C41-AB6C-1C7DC208471B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9C1B74F8-BEBB-4540-B1EF-57B9D91A4CC0} = {F61AF084-F5C4-4BE1-80BA-326A727091C3}
