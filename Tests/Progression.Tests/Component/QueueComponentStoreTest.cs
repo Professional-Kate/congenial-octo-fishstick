@@ -105,6 +105,17 @@ namespace IdelPog.Progression.Tests.Component
         }
 
         [Test]
+        public void Negative_PeekAfterEmpty_Throws()
+        {
+            for (int i = 0; i < AMOUNT_OF_COMPONENTS; i++)
+            {
+                _queueComponentStore.TryDequeue(out TestComponent _);
+            }
+            
+            Assert.Throws<InvalidOperationException>(() => _queueComponentStore.Peek());
+        }
+
+        [Test]
         public void Negative_EmptyComponents_Throws()
         {
             Assert.Throws<ComponentArrayEmptyException>(() => new QueueComponentStore<TestComponent>([], _handler));
