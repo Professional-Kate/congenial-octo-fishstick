@@ -2,7 +2,7 @@
 using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.Progression.Assertion.Interface;
 using IdelPog.Progression.Exceptions;
-using IdelPog.Progression.Runtime.ECS.Component;
+using IdelPog.Progression.Runtime.Component;
 
 namespace IdelPog.Progression.Assertion
 {

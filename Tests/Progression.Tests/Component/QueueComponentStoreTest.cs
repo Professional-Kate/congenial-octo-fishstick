@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Validation.Handler;
 using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.ECS.Exceptions;
-using IdelPog.Progression.Runtime.ECS.Component;
+using IdelPog.Progression.Runtime.Component;
 
 // ReSharper disable ObjectCreationAsStatement
 

@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Progression.Runtime.ECS.System.Interface
+﻿namespace IdelPog.Progression.Runtime.System.Interface
 {
     public interface IEntityUnlockerService<in TID, out TResponse>
     {

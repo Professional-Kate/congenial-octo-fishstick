@@ -1,10 +1,10 @@
 ﻿using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Progression.Assertion.Interface;
-using IdelPog.Progression.Runtime.ECS.Component;
-using IdelPog.Progression.Runtime.ECS.System.Interface;
+using IdelPog.Progression.Runtime.Component;
+using IdelPog.Progression.Runtime.System.Interface;
 
-namespace IdelPog.Progression.Runtime.ECS.System
+namespace IdelPog.Progression.Runtime.System
 {
     public sealed class EntityUnlockerService<TID, TCommand> : IEntityUnlockerService<TID, TCommand> where TCommand : struct
     {

@@ -1,15 +1,16 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
-using IdelPog.Progression.Contracts;
-using IdelPog.Progression.Runtime.ECS.Mediator;
-using IdelPog.Progression.Runtime.ECS.System.Interface;
+using IdelPog.HarvestNode.Runtime.Mediator;
+using IdelPog.Progression.Runtime.System.Interface;
 using Moq;
 
-namespace IdelPog.Progression.Tests.Mediator
+namespace IdelPog.HarvestNode.Tests.Mediator
 {
     [TestFixture]
     public sealed class NodeUnlockMediatorTest

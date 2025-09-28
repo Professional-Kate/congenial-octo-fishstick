@@ -1,8 +1,8 @@
 ﻿using IdelPog.Core.Validation.Handler;
 using IdelPog.ECS.Entity;
-using IdelPog.Progression.Runtime.ECS.Component;
+using IdelPog.Progression.Runtime.Component;
 
-namespace IdelPog.Progression.Runtime.ECS
+namespace IdelPog.Progression.Runtime
 {
     public sealed record UnlockRequirementsEntity<TID, TCommand> : Entity where TCommand : struct
     {

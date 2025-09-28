@@ -1,11 +1,10 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Progression.Contracts
+namespace IdelPog.Core.Contracts.Command
 {
-    public readonly record struct HarvestNodeUnlockResponse
+    public readonly record struct HarvestNodeUnlock
     {
         public required SkillID SkillID { get; init; }
-        public required ItemID ItemID { get; init; }
         public required byte SkillLevel { get; init; }
     }
 }

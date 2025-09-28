@@ -1,15 +1,16 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Progression.Assertion;
-using IdelPog.Progression.Contracts;
 using IdelPog.Progression.Exceptions;
-using IdelPog.Progression.Runtime.ECS;
-using IdelPog.Progression.Runtime.ECS.Component;
-using IdelPog.Progression.Runtime.ECS.System;
-using IdelPog.Progression.Runtime.ECS.System.Interface;
+using IdelPog.Progression.Runtime;
+using IdelPog.Progression.Runtime.Component;
+using IdelPog.Progression.Runtime.System;
+using IdelPog.Progression.Runtime.System.Interface;
 using Moq;
 
 namespace IdelPog.Progression.Tests.System

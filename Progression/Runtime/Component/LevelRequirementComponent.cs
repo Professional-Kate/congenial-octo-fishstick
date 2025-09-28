@@ -1,6 +1,6 @@
 ﻿using IdelPog.ECS.Component;
 
-namespace IdelPog.Progression.Runtime.ECS.Component
+namespace IdelPog.Progression.Runtime.Component
 {
     public readonly record struct LevelRequirementComponent<TID, TCommand> : IComponent<LevelRequirementComponent<TID, TCommand>> where TCommand : struct
     {

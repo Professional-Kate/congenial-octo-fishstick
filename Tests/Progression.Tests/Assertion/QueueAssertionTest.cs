@@ -1,10 +1,10 @@
 ﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Progression.Assertion;
 using IdelPog.Progression.Assertion.Interface;
-using IdelPog.Progression.Contracts;
 using IdelPog.Progression.Exceptions;
-using IdelPog.Progression.Runtime.ECS.Component;
+using IdelPog.Progression.Runtime.Component;
 
 namespace IdelPog.Progression.Tests.Assertion
 {

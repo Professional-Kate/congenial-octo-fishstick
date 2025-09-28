@@ -1,11 +1,12 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Progression.Contracts;
-using IdelPog.Progression.Runtime.ECS.System.Interface;
+using IdelPog.Progression.Runtime.System.Interface;
 
-namespace IdelPog.Progression.Runtime.ECS.Mediator
+namespace IdelPog.HarvestNode.Runtime.Mediator
 {
     public sealed class NodeUnlockMediator : IBatchMediator<HarvestNodeUnlock>
     {

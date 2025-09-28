@@ -2,7 +2,7 @@
 using IdelPog.ECS.Assertion;
 using IdelPog.ECS.Component;
 
-namespace IdelPog.Progression.Runtime.ECS.Component
+namespace IdelPog.Progression.Runtime.Component
 {
     public readonly struct QueueComponentStore<T> : IComponent<QueueComponentStore<T>> where T : struct, IComponent<T>
     {

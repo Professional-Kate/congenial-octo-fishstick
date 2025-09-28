@@ -1,4 +1,4 @@
-﻿using IdelPog.Progression.Runtime.ECS.Component;
+﻿using IdelPog.Progression.Runtime.Component;
 
 namespace IdelPog.Progression.Exceptions
 {
