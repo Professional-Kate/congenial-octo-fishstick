@@ -11,7 +11,7 @@ namespace IdelPog.HarvestNode.Runtime.Factory
     {
         public UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse> Create(SkillID skillID, HarvestNodeRequirement[] harvestNodeRequirements)
         {
-            LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>[] requirementComponents = [];
+            LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>[] requirementComponents = new LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>[harvestNodeRequirements.Length];
 
             for (int i = 0; i < harvestNodeRequirements.Length; i++)
             {

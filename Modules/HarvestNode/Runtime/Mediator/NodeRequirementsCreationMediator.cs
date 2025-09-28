@@ -44,7 +44,6 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
                 UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse> entity = _entityFactory.Create(skillID, creation.HarvestNodeRequirements);
                 _entityRepository.Add(skillID, entity);
 
-                Console.WriteLine("sdisdishdusd");
                 responses[i] = CreateResponse(skillID, creation.HarvestNodeRequirements);
             }
 
