@@ -10,6 +10,7 @@ using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Messaging.Listener.Single;
@@ -37,18 +38,22 @@ using IdelPog.Loot.Policy;
 using IdelPog.Loot.Service;
 using IdelPog.Loot.Service.Interface;
 using IdelPog.Loot.Table;
+using IdelPog.Progression.Assertion;
+using IdelPog.Progression.Assertion.Interface;
+using IdelPog.Progression.Runtime;
+using IdelPog.Progression.Runtime.System;
+using IdelPog.Progression.Runtime.System.Interface;
 
 namespace IdelPog.HarvestNode
 {
     public static class ContentEngineBootstrapper
     {
         /// <summary>
-        /// Creates and adds the <see cref="SetHarvestNode"/> and <see cref="SkillUpdateResponse"/> flow into the messaging system
+        /// Registers all flows
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="batchRegister">Used to register the NodeCreation flow</param>
         /// <param name="singleRegister">Used to register the SkillUpdateResponse and SetHarvestNode flows</param>
-        /// <seealso cref="RegisterSetHarvestNode"/>
         public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister batchRegister, ISingleRegister singleRegister)
         {
             IFoundAssertion foundAssertion = new FoundAssertion(new ThrowHandler());
@@ -61,10 +66,10 @@ namespace IdelPog.HarvestNode
             CurrentHarvestTargetProvider currentHarvestTargetProvider = new();
             IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
             
-            
             RegisterSkillUpdateResponse(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister, bufferLogger, harvestNodeRepository);
             RegisterSetHarvestNode(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister, bufferLogger);
             RegisterNodeCreation(bufferManager, skillNodeRepository, batchRegister, bufferLogger, harvestNodeRepository);
+            RegisterNodeUnlock(bufferManager, batchRegister, bufferLogger);
         }
 
         /// <summary>
@@ -176,6 +181,39 @@ namespace IdelPog.HarvestNode
             IErrorFactory<NodeCreationError, IReadOnlyList<NodeCreation>> errorFactory = new NodeCreationErrorFactory(baseErrorFactory);
 
             batchRegister.RegisterBatch(creationController, errorFactory);
+        }
+
+        /// <summary>
+        /// Registers the <see cref="HarvestNodeUnlock"/> flow into the messaging system
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="batchRegister">Used to register the NodeCreation flow</param>
+        /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// /// <remarks>
+        /// Listens to -> <see cref="HarvestNodeUnlock"/>. On Success -> <see cref="HarvestNodeUnlockResponse"/>. On Error -> <see cref="HarvestNodeUnlockError"/>
+        /// </remarks>
+        private static void RegisterNodeUnlock(IBufferManager bufferManager, IBatchRegister batchRegister, IBufferLogger bufferLogger)
+        {
+            IHandler throwHandler = new ThrowHandler();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
+            ICanUnlockAssertion<SkillID, HarvestNodeUnlockResponse> canUnlockAssertion = new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler);
+            ISkillMatchesAssertion<SkillID> skillMatchesAssertion = new SkillMatchesAssertion<SkillID>(throwHandler);
+            IQueueAssertion<SkillID, HarvestNodeUnlockResponse> queueAssertion = new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler);
+
+            IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository = new AssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>();
+            
+            IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse> entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(entityRepository, foundAssertion, canUnlockAssertion, skillMatchesAssertion, queueAssertion);
+            IDispatchMany<HarvestNodeUnlockResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUnlockResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
+            IBatchMediator<HarvestNodeUnlock> unlockMediator = new NodeUnlockMediator(entityUnlockerService, responseDispatcher, collectionAssertion);
+            IBatchController<HarvestNodeUnlock> unlockController = new ManagedBatchController<HarvestNodeUnlock>(unlockMediator);
+            
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            IErrorFactory<HarvestNodeUnlockError, IReadOnlyList<HarvestNodeUnlock>> errorFactory = new NodeUnlockErrorFactory(baseErrorFactory);
+            
+            batchRegister.RegisterBatch(unlockController, errorFactory);
         }
     }
 }
