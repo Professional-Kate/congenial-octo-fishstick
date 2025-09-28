@@ -9,11 +9,6 @@ namespace IdelPog.Progression.Runtime.ECS.Component
         public required byte Level { get; init; }
         public required TCommand OnUnlockCommand { get; init; }
 
-        public TCommand Unlock()
-        {
-            return OnUnlockCommand;
-        }
-        
         public NodeLevelRequirement<TCommand> DeepClone()
         {
             return this;

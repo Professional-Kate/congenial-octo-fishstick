@@ -12,7 +12,7 @@ using Moq;
 namespace IdelPog.Progression.Tests.Mediator
 {
     [TestFixture]
-    public class NodeUnlockMediatorTest
+    public sealed class NodeUnlockMediatorTest
     {
         private IBatchMediator<HarvestNodeUnlock> _nodeUnlockMediator;
         private Mock<INodeUnlockerService> _nodeUnlockerServiceMock;
