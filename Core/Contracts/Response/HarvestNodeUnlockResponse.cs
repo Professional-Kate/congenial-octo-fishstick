@@ -6,6 +6,5 @@ namespace IdelPog.Core.Contracts.Response
     {
         public required SkillID SkillID { get; init; }
         public required ItemID ItemID { get; init; }
-        public required byte SkillLevel { get; init; }
     }
 }

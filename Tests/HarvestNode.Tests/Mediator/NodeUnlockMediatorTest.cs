@@ -30,7 +30,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _nodeUnlockMediator = new NodeUnlockMediator(_nodeUnlockerServiceMock.Object, _dispatcherMock.Object, new CollectionAssertion(new ThrowHandler()));
 
             _miningUnlock = new HarvestNodeUnlock { SkillID = SkillID.MINING, SkillLevel = 5 };
-            _miningUnlockResponse = new HarvestNodeUnlockResponse { SkillID = SkillID.MINING, SkillLevel = 5, ItemID = ItemID.BIRCH };
+            _miningUnlockResponse = new HarvestNodeUnlockResponse { SkillID = SkillID.MINING, ItemID = ItemID.BIRCH };
         }
 
         [SetUp]

@@ -65,11 +65,13 @@ namespace IdelPog.HarvestNode
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
             CurrentHarvestTargetProvider currentHarvestTargetProvider = new();
             IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
+            IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository = new AssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>();
             
             RegisterSkillUpdateResponse(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister, bufferLogger, harvestNodeRepository);
             RegisterSetHarvestNode(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister, bufferLogger);
             RegisterNodeCreation(bufferManager, skillNodeRepository, batchRegister, bufferLogger, harvestNodeRepository);
-            RegisterNodeUnlock(bufferManager, batchRegister, bufferLogger);
+            RegisterNodeUnlock(bufferManager, batchRegister, bufferLogger, entityRepository);
+            RegisterNodeRequirementsCreation(bufferManager, batchRegister, bufferLogger, entityRepository);
         }
 
         /// <summary>
@@ -189,10 +191,11 @@ namespace IdelPog.HarvestNode
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="batchRegister">Used to register the NodeCreation flow</param>
         /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// <param name="entityRepository">Stores all <see cref="UnlockRequirementsEntity{TID,TCommand}"/></param>
         /// /// <remarks>
         /// Listens to -> <see cref="HarvestNodeUnlock"/>. On Success -> <see cref="HarvestNodeUnlockResponse"/>. On Error -> <see cref="HarvestNodeUnlockError"/>
         /// </remarks>
-        private static void RegisterNodeUnlock(IBufferManager bufferManager, IBatchRegister batchRegister, IBufferLogger bufferLogger)
+        private static void RegisterNodeUnlock(IBufferManager bufferManager, IBatchRegister batchRegister, IBufferLogger bufferLogger, IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -202,8 +205,6 @@ namespace IdelPog.HarvestNode
             ISkillMatchesAssertion<SkillID> skillMatchesAssertion = new SkillMatchesAssertion<SkillID>(throwHandler);
             IQueueAssertion<SkillID, HarvestNodeUnlockResponse> queueAssertion = new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler);
 
-            IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository = new AssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>();
-            
             IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse> entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(entityRepository, foundAssertion, canUnlockAssertion, skillMatchesAssertion, queueAssertion);
             IDispatchMany<HarvestNodeUnlockResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUnlockResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
@@ -214,6 +215,35 @@ namespace IdelPog.HarvestNode
             IErrorFactory<HarvestNodeUnlockError, IReadOnlyList<HarvestNodeUnlock>> errorFactory = new NodeUnlockErrorFactory(baseErrorFactory);
             
             batchRegister.RegisterBatch(unlockController, errorFactory);
+        }
+
+        /// <summary>
+        /// Registers the <see cref="HarvestNodeUnlock"/> flow into the messaging system
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="batchRegister">Used to register the NodeCreation flow</param>
+        /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// <param name="entityRepository">Stores all <see cref="UnlockRequirementsEntity{TID,TCommand}"/></param>
+        /// /// <remarks>
+        /// Listens to -> <see cref="HarvestNodeRequirementsCreation"/>. On Success -> <see cref="HarvestNodeRequirementsCreationResponse"/>. On Error -> <see cref="HarvestNodeRequirementsCreationError"/>
+        /// </remarks>
+        private static void RegisterNodeRequirementsCreation(IBufferManager bufferManager, IBatchRegister batchRegister, IBufferLogger bufferLogger, IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository)
+        {
+            IHandler throwHandler = new ThrowHandler();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            
+            IDispatchMany<HarvestNodeRequirementsCreationResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeRequirementsCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IUnlockRequirementsEntityFactory entityFactory = new UnlockRequirementsEntityFactory();
+                
+            IBatchMediator<HarvestNodeRequirementsCreation> creationMediator = new NodeRequirementsCreationMediator(entityRepository, entityFactory, responseDispatcher, collectionAssertion, uniqueAssertion);
+            IBatchController<HarvestNodeRequirementsCreation> creationController = new ManagedBatchController<HarvestNodeRequirementsCreation>(creationMediator);
+            
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            IErrorFactory<HarvestNodeRequirementsCreationError, IReadOnlyList<HarvestNodeRequirementsCreation>> errorFactory = new NodeRequirementsCreationErrorFactory(baseErrorFactory);
+            
+            batchRegister.RegisterBatch(creationController, errorFactory);
         }
     }
 }
