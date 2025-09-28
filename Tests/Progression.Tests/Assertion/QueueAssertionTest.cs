@@ -11,17 +11,17 @@ namespace IdelPog.Progression.Tests.Assertion
     [TestFixture]
     public sealed class QueueAssertionTest
     {
-        private IQueueAssertion<HarvestNodeUnlockResponse> _queueAssertion;
-        private NodeLevelRequirement<HarvestNodeUnlockResponse> _nodeLevelRequirement;
+        private IQueueAssertion<SkillID, HarvestNodeUnlockResponse> _queueAssertion;
+        private NodeLevelRequirement<SkillID, HarvestNodeUnlockResponse> _nodeLevelRequirement;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _queueAssertion = new QueueAssertion<HarvestNodeUnlockResponse>(new ThrowHandler());
+            _queueAssertion = new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(new ThrowHandler());
             
-            _nodeLevelRequirement = new NodeLevelRequirement<HarvestNodeUnlockResponse>
+            _nodeLevelRequirement = new NodeLevelRequirement<SkillID, HarvestNodeUnlockResponse>
             {
-                Level = 1, SkillID = SkillID.FORAGING, OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.BIRCH, SkillID = SkillID.FORAGING, SkillLevel = 1 }
+                Level = 1, ID = SkillID.FORAGING, OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.BIRCH, SkillID = SkillID.FORAGING, SkillLevel = 1 }
             };
         }
 
@@ -34,7 +34,7 @@ namespace IdelPog.Progression.Tests.Assertion
         [Test]
         public void Negative_AssertSuccessfulDequeue_UnsuccessfulDequeue_Throws()
         {
-            Assert.Throws<UnsuccessfulDequeueException<HarvestNodeUnlockResponse>>(() => _queueAssertion.AssertSuccessfulDequeue(false, _nodeLevelRequirement));
+            Assert.Throws<UnsuccessfulDequeueException<SkillID, HarvestNodeUnlockResponse>>(() => _queueAssertion.AssertSuccessfulDequeue(false, _nodeLevelRequirement));
         }
     }
 }

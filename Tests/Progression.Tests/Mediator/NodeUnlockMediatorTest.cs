@@ -15,7 +15,7 @@ namespace IdelPog.Progression.Tests.Mediator
     public sealed class NodeUnlockMediatorTest
     {
         private IBatchMediator<HarvestNodeUnlock> _nodeUnlockMediator;
-        private Mock<INodeUnlockerService> _nodeUnlockerServiceMock;
+        private Mock<IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse>> _nodeUnlockerServiceMock;
         private Mock<IDispatchMany<HarvestNodeUnlockResponse>> _dispatcherMock;
 
         private HarvestNodeUnlock _miningUnlock;
@@ -24,7 +24,7 @@ namespace IdelPog.Progression.Tests.Mediator
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _nodeUnlockerServiceMock = new Mock<INodeUnlockerService>();
+            _nodeUnlockerServiceMock = new Mock<IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse>>();
             _dispatcherMock = new Mock<IDispatchMany<HarvestNodeUnlockResponse>>();
             _nodeUnlockMediator = new NodeUnlockMediator(_nodeUnlockerServiceMock.Object, _dispatcherMock.Object, new CollectionAssertion(new ThrowHandler()));
 
@@ -41,7 +41,7 @@ namespace IdelPog.Progression.Tests.Mediator
 
         private void SetupCanUnlock(bool canUnlock, HarvestNodeUnlock harvestNodeUnlock)
         {
-            _nodeUnlockerServiceMock.Setup(library => library.CanUnlock(harvestNodeUnlock)).Returns(canUnlock);
+            _nodeUnlockerServiceMock.Setup(library => library.CanUnlock(harvestNodeUnlock.SkillID, harvestNodeUnlock.SkillLevel)).Returns(canUnlock);
         }
 
         private void VerifyDispatcherCalled(HarvestNodeUnlockResponse[] harvestNodeUnlockResponses)
@@ -58,12 +58,12 @@ namespace IdelPog.Progression.Tests.Mediator
         public void Positive_HandleMessages_OneMessage_UnlocksNode()
         {
             SetupCanUnlock(true, _miningUnlock);
-            _nodeUnlockerServiceMock.Setup(library => library.Unlock(_miningUnlock)).Returns(_miningUnlockResponse);
+            _nodeUnlockerServiceMock.Setup(library => library.Unlock(_miningUnlock.SkillID, _miningUnlock.SkillLevel)).Returns(_miningUnlockResponse);
             
             Assert.DoesNotThrow(() => _nodeUnlockMediator.HandleMessages([_miningUnlock]));
             
-            _nodeUnlockerServiceMock.Verify(library => library.CanUnlock(_miningUnlock), Times.Once);
-            _nodeUnlockerServiceMock.Verify(library => library.Unlock(_miningUnlock), Times.Once);
+            _nodeUnlockerServiceMock.Verify(library => library.CanUnlock(_miningUnlock.SkillID, _miningUnlock.SkillLevel), Times.Once);
+            _nodeUnlockerServiceMock.Verify(library => library.Unlock(_miningUnlock.SkillID, _miningUnlock.SkillLevel), Times.Once);
             _nodeUnlockerServiceMock.VerifyNoOtherCalls();
 
             VerifyDispatcherCalled([_miningUnlockResponse]);
@@ -77,7 +77,7 @@ namespace IdelPog.Progression.Tests.Mediator
 
             Assert.DoesNotThrow(() => _nodeUnlockMediator.HandleMessages([_miningUnlock]));
             
-            _nodeUnlockerServiceMock.Verify(library => library.CanUnlock(_miningUnlock), Times.Once);
+            _nodeUnlockerServiceMock.Verify(library => library.CanUnlock(_miningUnlock.SkillID, _miningUnlock.SkillLevel), Times.Once);
             _nodeUnlockerServiceMock.VerifyNoOtherCalls();
             
             VerifyDispatcherNotCalled();
@@ -93,13 +93,13 @@ namespace IdelPog.Progression.Tests.Mediator
             SetupCanUnlock(true, _miningUnlock);
             SetupCanUnlock(true, foragingUnlock);
             
-            _nodeUnlockerServiceMock.Setup(library => library.Unlock(_miningUnlock)).Returns(_miningUnlockResponse);
-            _nodeUnlockerServiceMock.Setup(library => library.Unlock(foragingUnlock)).Returns(foragingUnlockResponse);
+            _nodeUnlockerServiceMock.Setup(library => library.Unlock(_miningUnlock.SkillID, _miningUnlock.SkillLevel)).Returns(_miningUnlockResponse);
+            _nodeUnlockerServiceMock.Setup(library => library.Unlock(foragingUnlock.SkillID, foragingUnlock.SkillLevel)).Returns(foragingUnlockResponse);
             
             Assert.DoesNotThrow(() => _nodeUnlockMediator.HandleMessages([_miningUnlock, foragingUnlock]));
             
-            _nodeUnlockerServiceMock.Verify(library => library.CanUnlock(It.IsAny<HarvestNodeUnlock>()), Times.Exactly(2));
-            _nodeUnlockerServiceMock.Verify(library => library.Unlock(It.IsAny<HarvestNodeUnlock>()), Times.Exactly(2));
+            _nodeUnlockerServiceMock.Verify(library => library.CanUnlock(It.IsAny<SkillID>(), It.IsAny<byte>()), Times.Exactly(2));
+            _nodeUnlockerServiceMock.Verify(library => library.Unlock(It.IsAny<SkillID>(), It.IsAny<byte>()), Times.Exactly(2));
             _nodeUnlockerServiceMock.VerifyNoOtherCalls();
 
             VerifyDispatcherCalled([_miningUnlockResponse, foragingUnlockResponse]);

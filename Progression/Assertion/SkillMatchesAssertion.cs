@@ -1,24 +1,23 @@
-﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Validation;
+﻿using IdelPog.Core.Validation;
 using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.Progression.Assertion.Interface;
 using IdelPog.Progression.Exceptions;
 
 namespace IdelPog.Progression.Assertion
 {
-    public sealed class SkillMatchesAssertion : BaseAssertion, ISkillMatchesAssertion
+    public sealed class SkillMatchesAssertion<TID> : BaseAssertion, ISkillMatchesAssertion<TID> where TID : Enum
     {
         public SkillMatchesAssertion(IHandler handler) : base(handler)
         {
         }
 
-        public void AssertSkillMatches(SkillID actual, SkillID expected)
+        public void AssertSkillMatches(TID actualID, TID expectedID)
         {
-            Assert<SkillMismatchException>(() =>
+            Assert<IDMismatchException<TID>>(() =>
             {
-                if (actual != expected)
+                if (actualID.Equals(expectedID) == false)
                 {
-                    throw new SkillMismatchException(actual, expected);
+                    throw new IDMismatchException<TID>(actualID, expectedID);
                 }
             });
         }

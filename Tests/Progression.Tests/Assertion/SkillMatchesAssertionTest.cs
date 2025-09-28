@@ -9,12 +9,12 @@ namespace IdelPog.Progression.Tests.Assertion
     [TestFixture]
     public sealed class SkillMatchesAssertionTest
     {
-        private ISkillMatchesAssertion _skillMatchesAssertion;
+        private ISkillMatchesAssertion<SkillID> _skillMatchesAssertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _skillMatchesAssertion = new SkillMatchesAssertion(new ThrowHandler());
+            _skillMatchesAssertion = new SkillMatchesAssertion<SkillID>(new ThrowHandler());
         }
 
         [Test]
@@ -26,7 +26,7 @@ namespace IdelPog.Progression.Tests.Assertion
         [Test]
         public void Negative_AssertSkillMatches_DifferentSkills_Throws()
         {
-            Assert.Throws<SkillMismatchException>(() => _skillMatchesAssertion.AssertSkillMatches(SkillID.FORAGING, SkillID.MINING));
+            Assert.Throws<IDMismatchException<SkillID>>(() => _skillMatchesAssertion.AssertSkillMatches(SkillID.FORAGING, SkillID.MINING));
         }
     }
 }

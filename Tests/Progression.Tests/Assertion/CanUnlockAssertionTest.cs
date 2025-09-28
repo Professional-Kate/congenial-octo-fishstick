@@ -11,17 +11,17 @@ namespace IdelPog.Progression.Tests.Assertion
     [TestFixture]
     public sealed class CanUnlockAssertionTest
     {
-        private ICanUnlockAssertion<HarvestNodeUnlockResponse> _canUnlockAssertion;
-        private NodeLevelRequirement<HarvestNodeUnlockResponse> _nodeLevelRequirement;
+        private ICanUnlockAssertion<SkillID, HarvestNodeUnlockResponse> _canUnlockAssertion;
+        private NodeLevelRequirement<SkillID, HarvestNodeUnlockResponse> _nodeLevelRequirement;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _canUnlockAssertion = new CanUnlockAssertion<HarvestNodeUnlockResponse>(new ThrowHandler());
+            _canUnlockAssertion = new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(new ThrowHandler());
 
-            _nodeLevelRequirement = new NodeLevelRequirement<HarvestNodeUnlockResponse>()
+            _nodeLevelRequirement = new NodeLevelRequirement<SkillID, HarvestNodeUnlockResponse>
             {
-                Level = 1, SkillID = SkillID.FORAGING, OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.BIRCH, SkillID = SkillID.FORAGING, SkillLevel = 1 }
+                Level = 1, ID = SkillID.FORAGING, OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.BIRCH, SkillID = SkillID.FORAGING, SkillLevel = 1 }
             };
         }
 
@@ -34,7 +34,7 @@ namespace IdelPog.Progression.Tests.Assertion
         [Test]
         public void Negative_AssertCanUnlock_NoUnlock_Throws()
         {
-            Assert.Throws<CannotUnlockException<HarvestNodeUnlockResponse>>(() => _canUnlockAssertion.AssertCanUnlock(1, 5, _nodeLevelRequirement));
+            Assert.Throws<CannotUnlockException<SkillID, HarvestNodeUnlockResponse>>(() => _canUnlockAssertion.AssertCanUnlock(1, 5, _nodeLevelRequirement));
         }
     }
 }

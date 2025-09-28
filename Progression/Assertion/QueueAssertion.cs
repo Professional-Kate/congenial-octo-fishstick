@@ -6,19 +6,19 @@ using IdelPog.Progression.Runtime.ECS.Component;
 
 namespace IdelPog.Progression.Assertion
 {
-    public sealed class QueueAssertion<TCommand> : BaseAssertion, IQueueAssertion<TCommand> where TCommand : struct
+    public sealed class QueueAssertion<TID, TCommand> : BaseAssertion, IQueueAssertion<TID, TCommand> where TCommand : struct
     {
         public QueueAssertion(IHandler handler) : base(handler)
         {
         }
 
-        public void AssertSuccessfulDequeue(bool successfulDequeue, NodeLevelRequirement<TCommand> nodeLevelRequirement)
+        public void AssertSuccessfulDequeue(bool successfulDequeue, NodeLevelRequirement<TID, TCommand> nodeLevelRequirement)
         {
-            Assert<UnsuccessfulDequeueException<TCommand>>(() =>
+            Assert<UnsuccessfulDequeueException<TID, TCommand>>(() =>
             {
                 if (successfulDequeue == false)
                 {
-                    throw new UnsuccessfulDequeueException<TCommand>(nodeLevelRequirement);
+                    throw new UnsuccessfulDequeueException<TID, TCommand>(nodeLevelRequirement);
                 }
             });
         }

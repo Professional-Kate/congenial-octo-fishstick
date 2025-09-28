@@ -1,15 +1,14 @@
-﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.ECS.Component;
+﻿using IdelPog.ECS.Component;
 
 namespace IdelPog.Progression.Runtime.ECS.Component
 {
-    public readonly record struct NodeLevelRequirement<TCommand> : IComponent<NodeLevelRequirement<TCommand>> where TCommand : struct
+    public readonly record struct NodeLevelRequirement<TID, TCommand> : IComponent<NodeLevelRequirement<TID, TCommand>> where TCommand : struct
     {
-        public required SkillID SkillID { get; init; }
+        public required TID ID { get; init; }
         public required byte Level { get; init; }
         public required TCommand OnUnlockCommand { get; init; }
 
-        public NodeLevelRequirement<TCommand> DeepClone()
+        public NodeLevelRequirement<TID, TCommand> DeepClone()
         {
             return this;
         }

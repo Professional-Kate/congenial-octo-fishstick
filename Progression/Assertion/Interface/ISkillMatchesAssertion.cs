@@ -1,9 +1,7 @@
-﻿using IdelPog.Core.Contracts.Enum;
-
-namespace IdelPog.Progression.Assertion.Interface
+﻿namespace IdelPog.Progression.Assertion.Interface
 {
-    public interface ISkillMatchesAssertion
+    public interface ISkillMatchesAssertion<in TID>
     { 
-        public void AssertSkillMatches(SkillID actual, SkillID expected);
+        public void AssertSkillMatches(TID actualID, TID expectedID);
     }
 }

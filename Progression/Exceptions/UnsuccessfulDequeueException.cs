@@ -2,13 +2,13 @@
 
 namespace IdelPog.Progression.Exceptions
 {
-    public sealed class UnsuccessfulDequeueException<TCommand> : Exception where TCommand : struct
+    public sealed class UnsuccessfulDequeueException<TID, TCommand> : Exception where TCommand : struct
     {
         private const string MESSAGE = "Could not dequeue component!";
         
-        public readonly NodeLevelRequirement<TCommand> NodeLevelRequirement;
+        public readonly NodeLevelRequirement<TID, TCommand> NodeLevelRequirement;
 
-        public UnsuccessfulDequeueException(NodeLevelRequirement<TCommand> nodeLevelRequirement) : base(string.Format(MESSAGE))
+        public UnsuccessfulDequeueException(NodeLevelRequirement<TID, TCommand> nodeLevelRequirement) : base(string.Format(MESSAGE))
         { 
             NodeLevelRequirement = nodeLevelRequirement;
         }

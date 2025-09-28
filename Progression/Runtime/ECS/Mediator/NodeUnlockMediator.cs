@@ -1,4 +1,5 @@
-﻿using IdelPog.Core.Messaging.Dispatcher.Buffer;
+﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Progression.Contracts;
@@ -8,13 +9,13 @@ namespace IdelPog.Progression.Runtime.ECS.Mediator
 {
     public sealed class NodeUnlockMediator : IBatchMediator<HarvestNodeUnlock>
     {
-        private readonly INodeUnlockerService _nodeUnlockerService;
+        private readonly IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse> _entityUnlockerService;
         private readonly IDispatchMany<HarvestNodeUnlockResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public NodeUnlockMediator(INodeUnlockerService nodeUnlockerService, IDispatchMany<HarvestNodeUnlockResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
+        public NodeUnlockMediator(IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse> entityUnlockerService, IDispatchMany<HarvestNodeUnlockResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
         {
-            _nodeUnlockerService = nodeUnlockerService;
+            _entityUnlockerService = entityUnlockerService;
             _responseDispatcher = responseDispatcher;
             _collectionAssertion = collectionAssertion;
         }
@@ -26,12 +27,12 @@ namespace IdelPog.Progression.Runtime.ECS.Mediator
 
             foreach (HarvestNodeUnlock harvestNodeUnlock in messages)
             {
-                if (_nodeUnlockerService.CanUnlock(harvestNodeUnlock) == false)
+                if (_entityUnlockerService.CanUnlock(harvestNodeUnlock.SkillID, harvestNodeUnlock.SkillLevel) == false)
                 {
                     continue;
                 }
 
-                HarvestNodeUnlockResponse response = _nodeUnlockerService.Unlock(harvestNodeUnlock);
+                HarvestNodeUnlockResponse response = _entityUnlockerService.Unlock(harvestNodeUnlock.SkillID, harvestNodeUnlock.SkillLevel);
                 responses.Add(response);
             }
 

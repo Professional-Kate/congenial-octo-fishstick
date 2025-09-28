@@ -2,8 +2,8 @@
 
 namespace IdelPog.Progression.Assertion.Interface
 {
-    public interface IQueueAssertion<TCommand> where TCommand : struct
+    public interface IQueueAssertion<TID, TCommand> where TCommand : struct
     {
-        public void AssertSuccessfulDequeue(bool successfulDequeue, NodeLevelRequirement<TCommand> nodeLevelRequirement);
+        public void AssertSuccessfulDequeue(bool successfulDequeue, NodeLevelRequirement<TID, TCommand> nodeLevelRequirement);
     }
 }

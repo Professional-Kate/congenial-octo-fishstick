@@ -15,34 +15,34 @@ using Moq;
 namespace IdelPog.Progression.Tests.System
 {
     [TestFixture]
-    public sealed class NodeUnlockerServiceTest
+    public sealed class EntityUnlockerServiceTest
     {
-        private INodeUnlockerService _nodeUnlockerService;
-        private Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<HarvestNodeUnlockResponse>>> _repositoryMock;
+        private IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse> _entityUnlockerService;
+        private Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>> _repositoryMock;
         private HarvestNodeUnlock _harvestNodeUnlock;
         private HarvestNodeUnlockResponse _harvestNodeUnlockResponse;
-        private UnlockRequirementsEntity<HarvestNodeUnlockResponse> _harvestNodeUnlockEntity;
-        private NodeLevelRequirement<HarvestNodeUnlockResponse> _nodeLevelRequirement;
+        private UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse> _harvestNodeUnlockEntity;
+        private NodeLevelRequirement<SkillID, HarvestNodeUnlockResponse> _nodeLevelRequirement;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             ThrowHandler throwHandler = new();
-            _repositoryMock = new Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<HarvestNodeUnlockResponse>>>();
+            _repositoryMock = new Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>>();
             
-            _nodeUnlockerService = new NodeUnlockerService(_repositoryMock.Object, new FoundAssertion(throwHandler), new CanUnlockAssertion<HarvestNodeUnlockResponse>(throwHandler), new SkillMatchesAssertion(throwHandler), new QueueAssertion<HarvestNodeUnlockResponse>(throwHandler));
+            _entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object, new FoundAssertion(throwHandler), new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler), new SkillMatchesAssertion<SkillID>(throwHandler), new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler));
 
             _harvestNodeUnlock = new HarvestNodeUnlock { SkillID = SkillID.MINING, SkillLevel = 5 };
             _harvestNodeUnlockResponse = new HarvestNodeUnlockResponse { ItemID = ItemID.BIRCH, SkillID = SkillID.MINING, SkillLevel = 5 };
-            _nodeLevelRequirement = new NodeLevelRequirement<HarvestNodeUnlockResponse> { Level = 5, SkillID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse };
-            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<HarvestNodeUnlockResponse>([_nodeLevelRequirement]);
+            _nodeLevelRequirement = new NodeLevelRequirement<SkillID, HarvestNodeUnlockResponse> { Level = 5, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse };
+            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([_nodeLevelRequirement]);
         }
 
         [SetUp]
         public void Setup()
         {
             _repositoryMock.Reset();
-            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<HarvestNodeUnlockResponse>([_nodeLevelRequirement]);
+            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([_nodeLevelRequirement]);
         }
 
         private void SetupRepository(SkillID skillID)
@@ -75,7 +75,7 @@ namespace IdelPog.Progression.Tests.System
         {
             SetupRepository(_harvestNodeUnlock.SkillID);
 
-            bool canUnlock = _nodeUnlockerService.CanUnlock(_harvestNodeUnlock with { SkillLevel = level });
+            bool canUnlock = _entityUnlockerService.CanUnlock(_harvestNodeUnlock.SkillID, level);
             
             Assert.That(canUnlock, Is.EqualTo(expected));
             VerifyRepository(_harvestNodeUnlock.SkillID);
@@ -86,7 +86,7 @@ namespace IdelPog.Progression.Tests.System
         {
             _repositoryMock.Setup(library => library.Contains(_harvestNodeUnlock.SkillID)).Returns(false);
 
-            Assert.Throws<NotFoundException<SkillID>>(() => _nodeUnlockerService.CanUnlock(_harvestNodeUnlock));
+            Assert.Throws<NotFoundException<SkillID>>(() => _entityUnlockerService.CanUnlock(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel));
             
             _repositoryMock.Verify(library => library.Contains(_harvestNodeUnlock.SkillID), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
@@ -97,7 +97,7 @@ namespace IdelPog.Progression.Tests.System
         {
             SetupRepository(SkillID.FORAGING);
             
-            Assert.Throws<SkillMismatchException>(() => _nodeUnlockerService.CanUnlock(_harvestNodeUnlock with { SkillID = SkillID.FORAGING }));
+            Assert.Throws<IDMismatchException<SkillID>>(() => _entityUnlockerService.CanUnlock(SkillID.FORAGING, _harvestNodeUnlock.SkillLevel));
             
             VerifyRepository(SkillID.FORAGING);
         }
@@ -107,7 +107,7 @@ namespace IdelPog.Progression.Tests.System
         {
             SetupRepository(_harvestNodeUnlock.SkillID);
             
-            HarvestNodeUnlockResponse response = _nodeUnlockerService.Unlock(_harvestNodeUnlock);
+            HarvestNodeUnlockResponse response = _entityUnlockerService.Unlock(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel);
             
             VerifyResponse(_harvestNodeUnlock, response);
             VerifyRepository(_harvestNodeUnlock.SkillID);
@@ -118,7 +118,7 @@ namespace IdelPog.Progression.Tests.System
         {
             _repositoryMock.Setup(library => library.Contains(_harvestNodeUnlock.SkillID)).Returns(false);
 
-            Assert.Throws<NotFoundException<SkillID>>(() => _nodeUnlockerService.Unlock(_harvestNodeUnlock));
+            Assert.Throws<NotFoundException<SkillID>>(() => _entityUnlockerService.Unlock(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel));
             
             _repositoryMock.Verify(library => library.Contains(_harvestNodeUnlock.SkillID), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
@@ -129,7 +129,7 @@ namespace IdelPog.Progression.Tests.System
         {
             SetupRepository(SkillID.FORAGING);
             
-            Assert.Throws<SkillMismatchException>(() => _nodeUnlockerService.Unlock(_harvestNodeUnlock with { SkillID = SkillID.FORAGING }));
+            Assert.Throws<IDMismatchException<SkillID>>(() => _entityUnlockerService.Unlock(SkillID.FORAGING, _harvestNodeUnlock.SkillLevel));
             
             VerifyRepository(SkillID.FORAGING);
         }
@@ -139,7 +139,7 @@ namespace IdelPog.Progression.Tests.System
         {
             SetupRepository(_harvestNodeUnlock.SkillID);
 
-            Assert.Throws<CannotUnlockException<HarvestNodeUnlockResponse>>(() => _nodeUnlockerService.Unlock(_harvestNodeUnlock with { SkillLevel = 1 }));
+            Assert.Throws<CannotUnlockException<SkillID, HarvestNodeUnlockResponse>>(() => _entityUnlockerService.Unlock(_harvestNodeUnlock.SkillID, 1));
             
             VerifyRepository(_harvestNodeUnlock.SkillID);
         }
@@ -147,12 +147,12 @@ namespace IdelPog.Progression.Tests.System
         [Test]
         public void Negative_Unlock_EmptyEntity_Throws()
         {
-            _harvestNodeUnlockEntity.TryDequeue(out NodeLevelRequirement<HarvestNodeUnlockResponse> _);
+            _harvestNodeUnlockEntity.TryDequeue(out NodeLevelRequirement<SkillID, HarvestNodeUnlockResponse> _);
             
             _repositoryMock.Setup(library => library.Contains(_harvestNodeUnlock.SkillID)).Returns(true);
             _repositoryMock.Setup(library => library.Get(_harvestNodeUnlock.SkillID)).Returns(_harvestNodeUnlockEntity);
 
-            Assert.Throws<InvalidOperationException>(() => _nodeUnlockerService.Unlock(_harvestNodeUnlock));
+            Assert.Throws<InvalidOperationException>(() => _entityUnlockerService.Unlock(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel));
             
             VerifyRepository(_harvestNodeUnlock.SkillID);
         }

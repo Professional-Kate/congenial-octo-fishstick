@@ -2,8 +2,8 @@
 
 namespace IdelPog.Progression.Assertion.Interface
 {
-    public interface ICanUnlockAssertion<TCommand> where TCommand : struct
+    public interface ICanUnlockAssertion<TID, TCommand> where TCommand : struct
     {
-        public void AssertCanUnlock(byte passedLevel, byte requiredLevel, NodeLevelRequirement<TCommand> nodeLevelRequirement);
+        public void AssertCanUnlock(byte passedLevel, byte requiredLevel, NodeLevelRequirement<TID, TCommand> nodeLevelRequirement);
     }
 }

@@ -6,19 +6,19 @@ using IdelPog.Progression.Runtime.ECS.Component;
 
 namespace IdelPog.Progression.Assertion
 {
-    public sealed class CanUnlockAssertion<TCommand> : BaseAssertion, ICanUnlockAssertion<TCommand> where TCommand : struct
+    public sealed class CanUnlockAssertion<TID, TCommand> : BaseAssertion, ICanUnlockAssertion<TID, TCommand> where TCommand : struct
     {
         public CanUnlockAssertion(IHandler handler) : base(handler)
         {
         }
 
-        public void AssertCanUnlock(byte passedLevel, byte requiredLevel, NodeLevelRequirement<TCommand> nodeLevelRequirement)
+        public void AssertCanUnlock(byte passedLevel, byte requiredLevel, NodeLevelRequirement<TID, TCommand> nodeLevelRequirement)
         {
-            Assert<CannotUnlockException<TCommand>>(() =>
+            Assert<CannotUnlockException<TID, TCommand>>(() =>
             {
                 if (passedLevel < requiredLevel)
                 {
-                    throw new CannotUnlockException<TCommand>(passedLevel, requiredLevel, nodeLevelRequirement);
+                    throw new CannotUnlockException<TID, TCommand>(passedLevel, requiredLevel, nodeLevelRequirement);
                 }
             });
         }
