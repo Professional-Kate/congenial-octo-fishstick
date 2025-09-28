@@ -22,7 +22,7 @@ namespace IdelPog.Progression.Tests.System
         private HarvestNodeUnlock _harvestNodeUnlock;
         private HarvestNodeUnlockResponse _harvestNodeUnlockResponse;
         private UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse> _harvestNodeUnlockEntity;
-        private NodeLevelRequirement<SkillID, HarvestNodeUnlockResponse> _nodeLevelRequirement;
+        private LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> _levelRequirementComponent;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -34,15 +34,15 @@ namespace IdelPog.Progression.Tests.System
 
             _harvestNodeUnlock = new HarvestNodeUnlock { SkillID = SkillID.MINING, SkillLevel = 5 };
             _harvestNodeUnlockResponse = new HarvestNodeUnlockResponse { ItemID = ItemID.BIRCH, SkillID = SkillID.MINING, SkillLevel = 5 };
-            _nodeLevelRequirement = new NodeLevelRequirement<SkillID, HarvestNodeUnlockResponse> { Level = 5, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse };
-            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([_nodeLevelRequirement]);
+            _levelRequirementComponent = new LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> { Level = 5, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse };
+            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([_levelRequirementComponent]);
         }
 
         [SetUp]
         public void Setup()
         {
             _repositoryMock.Reset();
-            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([_nodeLevelRequirement]);
+            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([_levelRequirementComponent]);
         }
 
         private void SetupRepository(SkillID skillID)
@@ -147,7 +147,7 @@ namespace IdelPog.Progression.Tests.System
         [Test]
         public void Negative_Unlock_EmptyEntity_Throws()
         {
-            _harvestNodeUnlockEntity.TryDequeue(out NodeLevelRequirement<SkillID, HarvestNodeUnlockResponse> _);
+            _harvestNodeUnlockEntity.TryDequeue(out LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> _);
             
             _repositoryMock.Setup(library => library.Contains(_harvestNodeUnlock.SkillID)).Returns(true);
             _repositoryMock.Setup(library => library.Get(_harvestNodeUnlock.SkillID)).Returns(_harvestNodeUnlockEntity);

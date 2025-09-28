@@ -28,7 +28,7 @@ namespace IdelPog.Progression.Runtime.ECS.System
             AssertSkillFound(id);
             
             UnlockRequirementsEntity<TID, TCommand> entity = _entityRepository.Get(id);
-            NodeLevelRequirement<TID, TCommand> firstComponent = GetFirstComponent(entity, id);
+            LevelRequirementComponent<TID, TCommand> firstComponent = GetFirstComponent(entity, id);
             
             bool canUnlock = skillLevel >= firstComponent.Level;
             return canUnlock;
@@ -39,11 +39,11 @@ namespace IdelPog.Progression.Runtime.ECS.System
             AssertSkillFound(id);
             
             UnlockRequirementsEntity<TID, TCommand> entity = _entityRepository.Get(id);
-            NodeLevelRequirement<TID, TCommand> firstComponent = GetFirstComponent(entity, id);
+            LevelRequirementComponent<TID, TCommand> firstComponent = GetFirstComponent(entity, id);
             
             _canUnlockAssertion.AssertCanUnlock(skillLevel, firstComponent.Level, firstComponent);
             
-            bool successful = entity.TryDequeue(out NodeLevelRequirement<TID, TCommand> dequeuedComponent);
+            bool successful = entity.TryDequeue(out LevelRequirementComponent<TID, TCommand> dequeuedComponent);
             _queueAssertion.AssertSuccessfulDequeue(successful, firstComponent);
 
             return dequeuedComponent.OnUnlockCommand;
@@ -54,9 +54,9 @@ namespace IdelPog.Progression.Runtime.ECS.System
             _foundAssertion.AssertFound(id, _entityRepository.Contains(id));
         }
 
-        private NodeLevelRequirement<TID, TCommand> GetFirstComponent(UnlockRequirementsEntity<TID, TCommand> entity, TID id)
+        private LevelRequirementComponent<TID, TCommand> GetFirstComponent(UnlockRequirementsEntity<TID, TCommand> entity, TID id)
         {
-            NodeLevelRequirement<TID, TCommand> firstComponent = entity.Peek();
+            LevelRequirementComponent<TID, TCommand> firstComponent = entity.Peek();
             _skillMatchesAssertion.AssertSkillMatches(id, firstComponent.ID);
 
             return firstComponent;

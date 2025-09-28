@@ -6,25 +6,25 @@ namespace IdelPog.Progression.Runtime.ECS
 {
     public sealed record UnlockRequirementsEntity<TID, TCommand> : Entity where TCommand : struct
     {
-        private readonly QueueComponentStore<NodeLevelRequirement<TID, TCommand>> _levelRequirementStore;
+        private readonly QueueComponentStore<LevelRequirementComponent<TID, TCommand>> _levelRequirementStore;
 
-        public UnlockRequirementsEntity(NodeLevelRequirement<TID, TCommand>[] unlockComponents)
-            : base(new QueueComponentStore<NodeLevelRequirement<TID, TCommand>>(unlockComponents, new ThrowHandler()))
+        public UnlockRequirementsEntity(LevelRequirementComponent<TID, TCommand>[] unlockComponents)
+            : base(new QueueComponentStore<LevelRequirementComponent<TID, TCommand>>(unlockComponents, new ThrowHandler()))
         {
-            _levelRequirementStore = GetComponent<QueueComponentStore<NodeLevelRequirement<TID, TCommand>>>();
+            _levelRequirementStore = GetComponent<QueueComponentStore<LevelRequirementComponent<TID, TCommand>>>();
         }
 
-        public NodeLevelRequirement<TID, TCommand> Peek()
+        public LevelRequirementComponent<TID, TCommand> Peek()
         {
             return _levelRequirementStore.Peek();
         }
 
-        public bool TryDequeue(out NodeLevelRequirement<TID, TCommand> levelRequirement)
+        public bool TryDequeue(out LevelRequirementComponent<TID, TCommand> levelRequirementComponent)
         {
-            return _levelRequirementStore.TryDequeue(out levelRequirement);
+            return _levelRequirementStore.TryDequeue(out levelRequirementComponent);
         }
 
-        public NodeLevelRequirement<TID, TCommand>[] ToArray()
+        public LevelRequirementComponent<TID, TCommand>[] ToArray()
         {
             return _levelRequirementStore.ToArray();
         }

@@ -8,11 +8,11 @@ namespace IdelPog.Progression.Exceptions
 
         public readonly byte PassedLevel;
         public readonly byte RequiredLevel;
-        public readonly NodeLevelRequirement<TID, TCommand> NodeLevelRequirement;
+        public readonly LevelRequirementComponent<TID, TCommand> LevelRequirementComponent;
 
-        public CannotUnlockException(byte passedLevel, byte requiredLevel, NodeLevelRequirement<TID, TCommand> nodeLevelRequirement) : base(string.Format(MESSAGE, nodeLevelRequirement.ID, requiredLevel, passedLevel))
+        public CannotUnlockException(byte passedLevel, byte requiredLevel, LevelRequirementComponent<TID, TCommand> levelRequirementComponent) : base(string.Format(MESSAGE, levelRequirementComponent.ID, requiredLevel, passedLevel))
         {
-            NodeLevelRequirement = nodeLevelRequirement;
+            LevelRequirementComponent = levelRequirementComponent;
             RequiredLevel = requiredLevel;
             PassedLevel = passedLevel;
         }

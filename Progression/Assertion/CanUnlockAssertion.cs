@@ -12,13 +12,13 @@ namespace IdelPog.Progression.Assertion
         {
         }
 
-        public void AssertCanUnlock(byte passedLevel, byte requiredLevel, NodeLevelRequirement<TID, TCommand> nodeLevelRequirement)
+        public void AssertCanUnlock(byte passedLevel, byte requiredLevel, LevelRequirementComponent<TID, TCommand> levelRequirementComponent)
         {
             Assert<CannotUnlockException<TID, TCommand>>(() =>
             {
                 if (passedLevel < requiredLevel)
                 {
-                    throw new CannotUnlockException<TID, TCommand>(passedLevel, requiredLevel, nodeLevelRequirement);
+                    throw new CannotUnlockException<TID, TCommand>(passedLevel, requiredLevel, levelRequirementComponent);
                 }
             });
         }

@@ -6,11 +6,11 @@ namespace IdelPog.Progression.Exceptions
     {
         private const string MESSAGE = "Could not dequeue component!";
         
-        public readonly NodeLevelRequirement<TID, TCommand> NodeLevelRequirement;
+        public readonly LevelRequirementComponent<TID, TCommand> LevelRequirementComponent;
 
-        public UnsuccessfulDequeueException(NodeLevelRequirement<TID, TCommand> nodeLevelRequirement) : base(string.Format(MESSAGE))
+        public UnsuccessfulDequeueException(LevelRequirementComponent<TID, TCommand> levelRequirementComponent) : base(string.Format(MESSAGE))
         { 
-            NodeLevelRequirement = nodeLevelRequirement;
+            LevelRequirementComponent = levelRequirementComponent;
         }
     }
 }

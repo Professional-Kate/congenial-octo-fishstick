@@ -12,13 +12,13 @@ namespace IdelPog.Progression.Assertion
         {
         }
 
-        public void AssertSuccessfulDequeue(bool successfulDequeue, NodeLevelRequirement<TID, TCommand> nodeLevelRequirement)
+        public void AssertSuccessfulDequeue(bool successfulDequeue, LevelRequirementComponent<TID, TCommand> levelRequirementComponent)
         {
             Assert<UnsuccessfulDequeueException<TID, TCommand>>(() =>
             {
                 if (successfulDequeue == false)
                 {
-                    throw new UnsuccessfulDequeueException<TID, TCommand>(nodeLevelRequirement);
+                    throw new UnsuccessfulDequeueException<TID, TCommand>(levelRequirementComponent);
                 }
             });
         }
