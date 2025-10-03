@@ -86,7 +86,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Unlock
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_miningUnlock.SkillID, ItemID.STONE, new HarvestNodeUnlockResponse { ItemID = ItemID.STONE, SkillID = _miningUnlock.SkillID });
+            AssertResponse(_miningUnlock.SkillID, ItemID.STONE, _responseListener.HarvestNodeRequirementsCreationResponses[0]);
         }
 
         [Test]
@@ -99,8 +99,8 @@ namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Unlock
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponse(_miningUnlock.SkillID, ItemID.STONE, new HarvestNodeUnlockResponse { ItemID = ItemID.STONE, SkillID = _miningUnlock.SkillID });
-            AssertResponse(_miningUnlock.SkillID, ItemID.IRON, new HarvestNodeUnlockResponse { ItemID = ItemID.IRON, SkillID = _miningUnlock.SkillID });
+            AssertResponse(_miningUnlock.SkillID, ItemID.STONE, _responseListener.HarvestNodeRequirementsCreationResponses[0]);
+            AssertResponse(_miningUnlock.SkillID, ItemID.IRON, _responseListener.HarvestNodeRequirementsCreationResponses[1]);
         }
 
         [Test]
