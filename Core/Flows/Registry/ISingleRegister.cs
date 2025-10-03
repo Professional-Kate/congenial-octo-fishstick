@@ -5,6 +5,6 @@ namespace IdelPog.Core.Flows.Registry
 {
     public interface ISingleRegister
     {
-        public void Register<TCommand, TError>(ISingleController<TCommand> controller, IErrorFactory<TError, TCommand> factory) where TCommand : struct where TError : struct;
+        public void RegisterSingle<TCommand, TError>(ISingleController<TCommand> controller, IErrorFactory<TError, TCommand> factory) where TCommand : struct where TError : struct;
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.Core.Progression
 {
-    public readonly record struct LevelProgress
+    public readonly record struct ReadOnlyLevelable
     {
         public required byte Level { get; init; }
         public required uint Experience { get; init; }

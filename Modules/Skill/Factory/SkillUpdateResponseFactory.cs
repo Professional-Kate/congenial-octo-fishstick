@@ -19,7 +19,7 @@ namespace IdelPog.Skill.Factory
             {
                 SkillID = skill.SkillID,
                 HasLeveled = hasLeveled,
-                LevelProgress = _levelProgressFactory.CreateLevelProgress(skill.Levelable)
+                ReadOnlyLevelable = _levelProgressFactory.CreateLevelProgress(skill.Levelable)
             };
         }
     }

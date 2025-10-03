@@ -4,6 +4,6 @@ namespace IdelPog.Core.Factory.Interface
 {
     public interface ILevelProgressFactory
     {
-        public LevelProgress CreateLevelProgress(Levelable levelable);
+        public ReadOnlyLevelable CreateLevelProgress(Levelable levelable);
     }
 }

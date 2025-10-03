@@ -1,0 +1,7 @@
+﻿<Project>
+    <PropertyGroup>
+        <OutDir>$(MSBuildThisFileDirectory)Artifacts\$(Configuration)\</OutDir>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <Deterministic>true</Deterministic>
+    </PropertyGroup>
+</Project>

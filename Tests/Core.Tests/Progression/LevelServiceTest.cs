@@ -12,16 +12,15 @@ namespace IdelPog.Core.Tests.Progression
     public class LevelServiceTest
     {
         private ILevelService _service { get; set; }
-        private ILevelableAssertionPipeline _levelableAsserter { get; set; }
 
         private Levelable _levelable { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _levelableAsserter = new LevelableAssertionPipeline(new LevelAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()));
+            ILevelableAssertionPipeline levelableAsserter = new LevelableAssertionPipeline(new LevelAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()));
 
-            _service = new LevelService(_levelableAsserter);
+            _service = new LevelService(levelableAsserter);
         }
 
         [SetUp]
@@ -74,16 +73,28 @@ namespace IdelPog.Core.Tests.Progression
         [Test]
         public void Positive_SkillCanLevelToMax()
         {
-            Levelable levelable = new(1, 0, 100, 1);
+            Levelable levelable = new(1, 0, 300, 1);
 
             for (int i = 1; i < LevelConstants.MAX_LEVEL; i++)
             {
                 levelable.Experience = levelable.NextLevelExperience + levelable.Experience; // this is here to sum the total experience
-
+                Console.WriteLine(levelable.NextLevelExperience);
+                
                 _service.LevelUp(levelable);
             }
 
             Assert.That(levelable.Level, Is.EqualTo(LevelConstants.MAX_LEVEL));
+        }
+
+        [Test]
+        public void Positive_LevelUp_Increases_NextLevelExperience()
+        {
+            const uint nextLevelExperience = 300;
+            Levelable levelable = new(1, 0, nextLevelExperience, 1);
+            
+            _service.LevelUp(levelable);
+            
+            Assert.That(levelable.NextLevelExperience, Is.GreaterThan(nextLevelExperience));
         }
 
         [Test]

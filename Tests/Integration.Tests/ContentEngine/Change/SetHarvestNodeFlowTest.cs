@@ -1,14 +1,17 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
+using IdelPog.Core.Progression;
 
 namespace IdelPog.Integration.Tests.ContentEngine
 {
     [TestFixture]
-    public class SetHarvestNodeFlowTest : ManagedBuffer
+    public class SetHarvestNodeFlowTest : ManagedTestBuffer
     {
         private SetHarvestNode _setHarvestNode;
         private NodeCreation _nodeCreation;
@@ -20,8 +23,14 @@ namespace IdelPog.Integration.Tests.ContentEngine
         {
             _nodeCreation = new NodeCreation
             {
-                LinkedSkill = SkillID.MINING,
-                ItemIDs = [ItemID.COPPER, ItemID.GOLD, ItemID.IRON, ItemID.STONE]
+                ReadOnlyHarvestNodes =
+                [
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.COPPER, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.GOLD, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                ],
+                LinkedSkill = SkillID.MINING
             };
             
             _setHarvestNode = new SetHarvestNode
@@ -29,6 +38,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
                 ItemID = ItemID.IRON,
                 SkillID = SkillID.MINING
             };
+            
             
             _harvestNodeChangeResponseListener = new HarvestNodeChangeResponseListener();
             _harvestNodeErrorListener = new  HarvestNodeErrorListener();
@@ -77,16 +87,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
             Assert.That(_harvestNodeChangeResponseListener.WasCalled, Is.False);
         }
 
-        private void AssertCurrentResourceProvider_Equals(ItemID expected)
-        {
-            Assert.That(CurrentHarvestTargetProvider.GetCurrentHarvestTarget(), Is.EqualTo(expected));
-        }
-
-        private void AssertCurrencyResourceProvider_DoesNotEqual(ItemID expected)
-        {
-            Assert.That(CurrentHarvestTargetProvider.GetCurrentHarvestTarget(), Is.Not.EqualTo(expected));
-        }
-        
         [Test]
         public void Positive_SendCommand_SetsCurrentHarvestNode_NoThrow()
         {
@@ -94,7 +94,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
             Assert.DoesNotThrow(() => DispatchSetHarvestNode(_setHarvestNode));
             
             AssertListenerWasCalled(_setHarvestNode);
-            AssertCurrentResourceProvider_Equals(_setHarvestNode.ItemID);
         }
 
         [Test]
@@ -107,7 +106,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
             {
                 Assert.DoesNotThrow(() => DispatchSetHarvestNode(_setHarvestNode));
                 AssertListenerWasCalled(_setHarvestNode);
-                AssertCurrentResourceProvider_Equals(_setHarvestNode.ItemID);
             }
         }
 
@@ -117,7 +115,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
             SetHarvestNode missingSkill = new() { ItemID = ItemID.GOLD, SkillID = SkillID.WOOD_CUTTING };
             Assert.DoesNotThrow(() => DispatchSetHarvestNode(missingSkill));
             AssertListenerWasNotCalled();
-            AssertCurrencyResourceProvider_DoesNotEqual(ItemID.GOLD);
             AssertErrorListenerWasCalled(missingSkill, typeof(ControllerThrownException));
         } 
         
@@ -127,7 +124,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
             SetHarvestNode missingResourceCommand = new() { ItemID = ItemID.GOLD, SkillID = SkillID.MINING };
             Assert.DoesNotThrow(() => DispatchSetHarvestNode(missingResourceCommand));
             AssertListenerWasNotCalled();
-            AssertCurrencyResourceProvider_DoesNotEqual(ItemID.GOLD);
             AssertErrorListenerWasCalled(missingResourceCommand, typeof(ControllerThrownException));
         } 
     }

@@ -7,6 +7,8 @@ using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Information;
 using IdelPog.Core.Information.Contracts;
+using IdelPog.Core.Logging;
+using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
@@ -47,13 +49,27 @@ namespace IdelPog.Inventory
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
             IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
 
-            IDispatchOne<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, objectNullAssertion, collectionAssertion);
+            ILogWriter writer = new ConsoleWriter();
+            IBufferLogger bufferLogger = new BufferLoggingService(writer);
+            
+            IDispatchOne<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
 
             IMapper<ItemID> itemMapper = new Mapper<ItemID>(foundAssertion, uniqueAssertion);
             itemMapper.AddInformation(ItemID.STONE, new Information { Description = "Rock and...", Name = "Stone" });
             itemMapper.AddInformation(ItemID.COPPER, new Information { Description = "It's like less cool bronze", Name = "Copper" });
             itemMapper.AddInformation(ItemID.IRON, new Information { Description = "Your job is to mine Diamonds", Name = "Iron" });
             itemMapper.AddInformation(ItemID.GOLD, new Information { Description = "It's like less cool copper", Name = "Gold" });
+            itemMapper.AddInformation(ItemID.DIAMOND, new Information { Description = "Fancy coal", Name = "Diamond" });
+            itemMapper.AddInformation(ItemID.EMERALD, new Information { Description = "Your villagers will love this", Name = "Emerald" });
+            itemMapper.AddInformation(ItemID.RUBY, new Information { Description = "Evil Diamond (thus worth more)", Name = "Ruby" });
+            itemMapper.AddInformation(ItemID.OAK, new Information { Description = "The most basic of woods", Name = "Oak" });
+            itemMapper.AddInformation(ItemID.SPRUCE, new Information { Description = "Ohhhh now we got something good", Name = "Spruce" });
+            itemMapper.AddInformation(ItemID.BIRCH, new Information { Description = "I like the colours", Name = "Birch" });
+            itemMapper.AddInformation(ItemID.HERBS, new Information { Description = "Delicious herbs (do not smoke them)", Name = "Herbs" });
+            itemMapper.AddInformation(ItemID.SMALL_INSECTS, new Information { Description = "Could use these for fishing...", Name = "Small Insects" });
+            itemMapper.AddInformation(ItemID.HONEY, new Information { Description = "Delicious and it was only slightly painful", Name = "Honey" });
+            itemMapper.AddInformation(ItemID.WATER, new Information { Description = "Finally learnt how to collect water?", Name = "Water" });
+            itemMapper.AddInformation(ItemID.SAND, new Information { Description = "It gets everywhere...", Name = "Sand" });
             
             IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
             IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();
@@ -63,13 +79,13 @@ namespace IdelPog.Inventory
             IItemInfoFactory itemInfoFactory = new ItemInfoFactory();
             IInventoryUpdateEntryFactory inventoryUpdateEntryFactory = new InventoryUpdateEntryFactory();
             IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
-            IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryUpdateMediator(inventory, itemFactory, summarizer, inventoryUpdateResponseFactory, itemInfoFactory, inventoryUpdateEntryFactory, inventoryUpdateDispatcher, collectionAssertion);
+            IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryUpdateMediator(inventory, itemFactory, summarizer, inventoryUpdateResponseFactory, itemInfoFactory, itemMapper, inventoryUpdateEntryFactory, inventoryUpdateDispatcher, collectionAssertion);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<InventoryUpdateError, IReadOnlyList<InventoryUpdate>> inventoryUpdateErrorFactory = new InventoryUpdateErrorFactory(baseErrorFactory);
             IBatchController<InventoryUpdate> inventoryController = new ManagedBatchController<InventoryUpdate>(inventoryMediator);
             
-            flowRegister.Register(inventoryController, inventoryUpdateErrorFactory);
+            flowRegister.RegisterBatch(inventoryController, inventoryUpdateErrorFactory);
         }
     }
 }

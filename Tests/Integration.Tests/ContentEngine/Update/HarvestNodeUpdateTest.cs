@@ -1,7 +1,9 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Validation.Exceptions;
@@ -9,7 +11,7 @@ using IdelPog.Core.Validation.Exceptions;
 namespace IdelPog.Integration.Tests.ContentEngine
 {
     [TestFixture]
-    public class HarvestNodeUpdateTest : ManagedBuffer
+    public class HarvestNodeUpdateTest : ManagedTestBuffer
     {
         private SkillUpdateResponse _skillUpdateResponse;
         private SetHarvestNode _setHarvestNode;
@@ -23,7 +25,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
             _skillUpdateResponse = new SkillUpdateResponse
             {
                 SkillID = SkillID.MINING, 
-                LevelProgress = new LevelProgress { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
+                ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
                 HasLeveled = false
             };
             
@@ -35,8 +37,11 @@ namespace IdelPog.Integration.Tests.ContentEngine
             
             _nodeCreation = new NodeCreation
             {
-                LinkedSkill = SkillID.MINING,
-                ItemIDs = [ItemID.IRON]
+                ReadOnlyHarvestNodes =
+                [
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                ],
+                LinkedSkill = SkillID.MINING
             };
             
             _updateNodeErrorListener = new UpdateNodeErrorListener();
@@ -102,16 +107,16 @@ namespace IdelPog.Integration.Tests.ContentEngine
         [Test]
         public void Negative_SendCommand_SkillNotFound_NoUpdate_DispatchesError()
         {
-            DispatchSetHarvestNode(_setHarvestNode with { SkillID = SkillID.FARMING });
+            DispatchSetHarvestNode(_setHarvestNode with { SkillID = SkillID.FORAGING });
             
-            Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse with { SkillID = SkillID.FARMING }));
+            Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse with { SkillID = SkillID.FORAGING }));
             
             Assert.Multiple(() =>
             {
                 Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(true));
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
             });
-            AssertErrorListener<NotFoundException<SkillID>>(_skillUpdateResponse with { SkillID = SkillID.FARMING });
+            AssertErrorListener<NotFoundException<SkillID>>(_skillUpdateResponse with { SkillID = SkillID.FORAGING });
         } 
         
         [Test]

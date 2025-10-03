@@ -7,5 +7,6 @@ namespace IdelPog.Core.Contracts
         public required ItemID ItemID { get; init; }
         public required uint BaseSellPrice { get; init; }
         public required uint Amount { get; init; }
+        public required Information.Contracts.Information Information { get; init; }
     }
 }

@@ -10,7 +10,7 @@ using IdelPog.Core.Scheduler;
 using IdelPog.Loot.Service.Interface;
 using IdelPog.Skill.Factory.Interface;
 using IdelPog.Skill.Mediator;
-using IdelPog.Skill.Service;
+using IdelPog.Skill.Service.Interface;
 using IdelPog.Skills.Tests.Service;
 using Moq;
 
@@ -57,7 +57,7 @@ namespace IdelPog.Skills.Tests.Mediator
             {
                 HasLeveled = hasLeveled,
                 SkillID = skill.SkillID,
-                LevelProgress = new LevelProgress
+                ReadOnlyLevelable = new ReadOnlyLevelable
                 {
                     Experience = skill.Levelable.Experience,
                     ExperiencePerAction = skill.Levelable.ExperiencePerAction,

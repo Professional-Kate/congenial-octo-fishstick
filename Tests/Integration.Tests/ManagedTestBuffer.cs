@@ -11,16 +11,14 @@ using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Currency;
 using IdelPog.HarvestNode;
-using IdelPog.HarvestNode.Services;
 using IdelPog.Inventory;
 using IdelPog.Skill;
 
 namespace IdelPog.Integration.Tests
 {
-    public class ManagedBuffer
+    public class ManagedTestBuffer
     {
         protected IBufferManager BufferManager { get; private set; }
-        protected ICurrentHarvestTargetProvider CurrentHarvestTargetProvider;
         private IBufferMessenger _bufferMessenger { get; set; }
         private IBufferFactory _bufferFactory;
         private IObjectNullAssertion _objectNullAssertion;
@@ -50,13 +48,10 @@ namespace IdelPog.Integration.Tests
 
         private void Register()
         {
-            CurrentHarvestTargetProvider harvestTargetProvider = new();
-            CurrentHarvestTargetProvider = harvestTargetProvider;
-
             FlowRegister flowRegister = FlowBootstrapper.CreateFlowRegister(BufferManager);
             CurrencyBootstrapper.RegisterFlows(BufferManager, flowRegister);
             SkillBootstrapper.RegisterFlows(BufferManager, flowRegister);
-            ContentEngineBootstrapper.RegisterFlows(BufferManager, harvestTargetProvider, flowRegister, flowRegister);
+            ContentEngineBootstrapper.RegisterFlows(BufferManager, flowRegister, flowRegister);
             InventoryBootstrapper.RegisterInventoryUpdate(BufferManager, flowRegister);
             FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
         }

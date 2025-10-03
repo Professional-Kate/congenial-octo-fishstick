@@ -1,0 +1,15 @@
+{
+  "solution": {
+    "path": "IdelPog.sln",
+    "projects": [
+      "Core\\Core.csproj",
+      "ECS\\ECS.csproj",
+      "Loot\\Loot.csproj",
+      "Modules\\Console\\Console.csproj",
+      "Modules\\Currency\\Currency.csproj",
+      "Modules\\Inventory\\Inventory.csproj",
+      "Modules\\Skill\\Skill.csproj",
+      "Modules\\HarvestNode\\HarvestNode.csproj"
+    ]
+  }
+}

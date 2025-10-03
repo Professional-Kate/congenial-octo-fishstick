@@ -10,7 +10,7 @@ using IdelPog.Currency.Exceptions;
 namespace IdelPog.Integration.Tests.CurrencyCommands.Update
 {
     [TestFixture]
-    public class CurrencyFlowTest : ManagedBuffer
+    public class CurrencyFlowTest : ManagedTestBuffer
     {
         private CurrencyUpdateResponseListener _currencyUpdateResponseListener;
         private CurrencyUpdateErrorListener _currencyUpdateErrorListener;

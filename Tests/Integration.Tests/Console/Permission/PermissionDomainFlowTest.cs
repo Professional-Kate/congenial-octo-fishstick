@@ -6,7 +6,7 @@ using IdelPog.ECS.Exceptions;
 namespace IdelPog.Integration.Tests.Console.Permission
 {
     [TestFixture]
-    public class PermissionDomainFlowTest : ManagedBuffer
+    public class PermissionDomainFlowTest : ManagedTestBuffer
     {
         private IInputHandler _inputHandler;
 

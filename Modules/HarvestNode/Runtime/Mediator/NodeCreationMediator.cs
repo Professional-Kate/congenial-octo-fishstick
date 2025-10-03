@@ -1,4 +1,5 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Dispatcher.Single;
@@ -41,11 +42,11 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
             
             foreach (NodeCreation nodeCreation in nodeCreations)
             {
-                _collectionAssertion.AssertHasElements(nodeCreation.ItemIDs);
+                _collectionAssertion.AssertHasElements(nodeCreation.ReadOnlyHarvestNodes);
                 
-                foreach (ItemID nodeCreationResourceID in nodeCreation.ItemIDs)
+                foreach (ReadOnlyHarvestNode readOnlyHarvestNode in nodeCreation.ReadOnlyHarvestNodes)
                 {
-                    _uniqueAssertion.AssertUnique(nodeCreationResourceID, _harvestNodeRepository.Contains(nodeCreationResourceID));
+                    _uniqueAssertion.AssertUnique(readOnlyHarvestNode.ItemID, _harvestNodeRepository.Contains(readOnlyHarvestNode.ItemID));
                 }
 
                 _uniqueAssertion.AssertUnique(nodeCreation.LinkedSkill, _skillNodeEntityRepository.Contains(nodeCreation.LinkedSkill));
@@ -59,15 +60,15 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
         
         private void CreateHarvestNodes(NodeCreation nodeCreation)
         {
-            foreach (ItemID itemID in nodeCreation.ItemIDs)
+            foreach (ReadOnlyHarvestNode readOnlyHarvestNode in nodeCreation.ReadOnlyHarvestNodes)
             { 
-                _harvestNodeRepository.Add(itemID, _harvestNodeFactory.Create(itemID));
+                _harvestNodeRepository.Add(readOnlyHarvestNode.ItemID, _harvestNodeFactory.Create(readOnlyHarvestNode));
             }
         }
         
         private void CreateSkillNodeEntity(NodeCreation nodeCreation)
         {
-            SkillNodeEntity skillNodeEntity = _skillNodeEntityFactory.Create(nodeCreation.LinkedSkill, nodeCreation.ItemIDs);
+            SkillNodeEntity skillNodeEntity = _skillNodeEntityFactory.Create(nodeCreation.LinkedSkill, nodeCreation.ReadOnlyHarvestNodes);
             _skillNodeEntityRepository.Add(nodeCreation.LinkedSkill, skillNodeEntity);
         }
     }

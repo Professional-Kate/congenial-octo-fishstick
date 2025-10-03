@@ -5,7 +5,7 @@ namespace IdelPog.Core.Validation.Handler
     /// <summary>
     /// This handler will throw any passed exception
     /// </summary>
-    public class ThrowHandler : IHandler
+    public sealed class ThrowHandler : IHandler
     {
         public void Handle<TException>(TException exception) where TException : Exception
         {

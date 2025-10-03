@@ -2,7 +2,7 @@
 
 namespace IdelPog.Core.Information
 {
-    public class Mapper<T> : IMapper<T> where T : notnull
+    public sealed class Mapper<T> : IMapper<T> where T : notnull
     {
         private readonly Dictionary<T, Contracts.Information> _information = new();
 

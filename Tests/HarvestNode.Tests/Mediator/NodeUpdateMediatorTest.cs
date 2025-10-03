@@ -33,14 +33,14 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _skillUpdateResponse = new SkillUpdateResponse
             {
                 HasLeveled = false,
-                LevelProgress = new LevelProgress { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
+                ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
                 SkillID = SkillID.MINING
             };
 
             _expectedResponse = new HarvestNodeUpdateResponse
             {
                 HasLeveled = false,
-                LevelProgress = new LevelProgress { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
+                ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
                 ItemID = ItemID.STONE
             };
             

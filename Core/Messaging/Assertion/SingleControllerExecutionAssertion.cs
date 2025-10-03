@@ -1,4 +1,5 @@
-﻿using IdelPog.Core.Messaging.Assertion.Interface;
+﻿using IdelPog.Core.Logging;
+using IdelPog.Core.Messaging.Assertion.Interface;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Messaging.Listener.Single;
 using IdelPog.Core.Validation;
@@ -8,8 +9,11 @@ namespace IdelPog.Core.Messaging.Assertion
 {
     public class SingleControllerExecutionAssertion<TContext> : ContextualAssertion<TContext>, ISingleControllerExecutionAssertion<TContext> where TContext : struct
     {
-        public SingleControllerExecutionAssertion(IContextualHandler<TContext> handler) : base(handler)
+        private readonly IBufferLogger _bufferLogger;
+        
+        public SingleControllerExecutionAssertion(IContextualHandler<TContext> handler, IBufferLogger bufferLogger) : base(handler)
         {
+            _bufferLogger = bufferLogger;
         }
 
         public void AssertExecutesWithoutError(ISingleController<TContext> controller, TContext message)
@@ -22,6 +26,7 @@ namespace IdelPog.Core.Messaging.Assertion
                 }
                 catch (Exception exception)
                 {
+                    _bufferLogger.LogError([message], exception);
                     throw new ControllerThrownException(controller.GetType().Name, exception);
                     
                 }
