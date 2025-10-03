@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
-using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Assertion.Pipelines;
@@ -15,12 +15,12 @@ namespace IdelPog.Skill.Mediator
     {
         private readonly IStateRepository<SkillID, Contracts.Skill> _skillRepository;
         private readonly ISkillCreationResponseFactory _responseFactory;
-        private readonly IDispatchOne<SkillCreationResponse> _responseDispatcher;
+        private readonly IDispatchMany<SkillCreationResponse> _responseDispatcher;
         private readonly ILevelableAssertionPipeline _levelableAssertionPipeline;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IUniqueAssertion _uniqueAssertion;
 
-        public SkillCreationMediator(IStateRepository<SkillID, Contracts.Skill> skillRepository, ISkillCreationResponseFactory responseFactory, IDispatchOne<SkillCreationResponse> responseDispatcher, ILevelableAssertionPipeline levelableAssertionPipeline, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion)
+        public SkillCreationMediator(IStateRepository<SkillID, Contracts.Skill> skillRepository, ISkillCreationResponseFactory responseFactory, IDispatchMany<SkillCreationResponse> responseDispatcher, ILevelableAssertionPipeline levelableAssertionPipeline, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion)
         {
             _skillRepository = skillRepository;
             _responseFactory = responseFactory;
