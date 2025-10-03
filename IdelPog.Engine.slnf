@@ -5,6 +5,7 @@
       "Core\\Core.csproj",
       "ECS\\ECS.csproj",
       "Loot\\Loot.csproj",
+      "Progression\\Progression.csproj",
       "Modules\\Console\\Console.csproj",
       "Modules\\Currency\\Currency.csproj",
       "Modules\\Inventory\\Inventory.csproj",

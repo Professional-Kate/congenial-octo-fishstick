@@ -12,6 +12,7 @@
     <ProjectReference Include="..\..\ECS\ECS.csproj" />
     <ProjectReference Include="..\..\Core\Core.csproj" />
     <ProjectReference Include="..\..\Loot\Loot.csproj" />
+    <ProjectReference Include="..\..\Progression\Progression.csproj" />
   </ItemGroup>
   
 </Project>
