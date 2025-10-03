@@ -5,6 +5,6 @@ namespace IdelPog.Skill.Factory.Interface
 {
     public interface ISkillCreationResponseFactory
     {
-        public SkillCreationResponse Create(SkillCreation[] skillCreations);
+        public SkillCreationResponse[] Create(SkillCreation[] skillCreations);
     }
 }

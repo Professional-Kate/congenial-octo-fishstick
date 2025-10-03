@@ -6,12 +6,21 @@ namespace IdelPog.Skill.Factory
 {
     public sealed class SkillCreationResponseFactory : ISkillCreationResponseFactory
     {
-        public SkillCreationResponse Create(SkillCreation[] skillCreations)
+        public SkillCreationResponse[] Create(SkillCreation[] skillCreations)
         {
-            return new SkillCreationResponse
+            SkillCreationResponse[] responses = new SkillCreationResponse[skillCreations.Length];
+            for (int i = 0; i < skillCreations.Length; i++)
             {
-                SkillCreations = skillCreations
-            };
+                SkillCreation skillCreation = skillCreations[i];
+                responses[i] = new SkillCreationResponse
+                {
+                    SkillID = skillCreation.SkillID,
+                    ReadOnlyLevelable = skillCreation.ReadOnlyLevelable, 
+                    Information =  skillCreation.Information
+                };
+            }
+
+            return responses;
         }
     }
 }

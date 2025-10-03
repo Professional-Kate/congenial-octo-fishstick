@@ -2,7 +2,7 @@
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Information.Contracts;
-using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Assertion;
@@ -23,7 +23,7 @@ namespace IdelPog.Skills.Tests.Mediator
         private IBatchMediator<SkillCreation> _skillCreationMediator;
         private Mock<IStateRepository<SkillID, Skill.Contracts.Skill>> _repositoryMock;
         private Mock<ISkillCreationResponseFactory> _responseFactoryMock;
-        private Mock<IDispatchOne<SkillCreationResponse>> _dispatcherMock;
+        private Mock<IDispatchMany<SkillCreationResponse>> _dispatcherMock;
         
         private SkillCreation[] _skillCreations;
 
@@ -32,7 +32,7 @@ namespace IdelPog.Skills.Tests.Mediator
         {
             _repositoryMock = new Mock<IStateRepository<SkillID, Skill.Contracts.Skill>>();
             _responseFactoryMock = new Mock<ISkillCreationResponseFactory>();
-            _dispatcherMock = new Mock<IDispatchOne<SkillCreationResponse>>();
+            _dispatcherMock = new Mock<IDispatchMany<SkillCreationResponse>>();
 
             ThrowHandler throwHandler = new();
             ILevelableAssertionPipeline levelableAssertionPipeline = new LevelableAssertionPipeline(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler));
@@ -68,7 +68,7 @@ namespace IdelPog.Skills.Tests.Mediator
         {
             _repositoryMock.VerifyNoOtherCalls();
             _responseFactoryMock.Verify(library => library.Create(_skillCreations), Times.Never);
-            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<SkillCreationResponse>()), Times.Never);
+            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<SkillCreationResponse[]>()), Times.Never);
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace IdelPog.Skills.Tests.Mediator
             _repositoryMock.VerifyNoOtherCalls();
             
             _responseFactoryMock.Verify(library => library.Create(_skillCreations), Times.Once);
-            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<SkillCreationResponse>()), Times.Once);
+            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<SkillCreationResponse[]>()), Times.Once);
         }
 
         [Test]
