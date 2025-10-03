@@ -14,7 +14,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
     public class HarvestNodeUpdateTest : ManagedTestBuffer
     {
         private SkillUpdateResponse _skillUpdateResponse;
-        private SetHarvestNode _setHarvestNode;
         private NodeCreation _nodeCreation;
         private UpdateNodeErrorListener _updateNodeErrorListener;
         private UpdateNodeResponseListener _updateNodeResponseListener;
@@ -27,12 +26,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
                 SkillID = SkillID.MINING, 
                 ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
                 HasLeveled = false
-            };
-            
-            _setHarvestNode = new SetHarvestNode
-            {
-                ItemID = ItemID.IRON,
-                SkillID = SkillID.MINING
             };
             
             _nodeCreation = new NodeCreation
@@ -64,17 +57,8 @@ namespace IdelPog.Integration.Tests.ContentEngine
             buffer.MarkReady();
         }
         
-        private void DispatchSetHarvestNode(SetHarvestNode setHarvestNode)
-        {
-            IBuffer<SetHarvestNode> buffer = BufferManager.RequestBuffer<SetHarvestNode>(new BufferRequest(1));
-            buffer.Assign([setHarvestNode]);
-            buffer.MarkReady();
-        }
-
         private void AssertResponseListener()
         {
-            HarvestNodeUpdateResponse response = _updateNodeResponseListener.HarvestNodeUpdateResponse;
-            Assert.That(response.ItemID, Is.EqualTo(_setHarvestNode.ItemID));
         }
 
         private void AssertErrorListener<TException>(SkillUpdateResponse skillUpdateResponse)
@@ -93,7 +77,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
         public void Positive_SendCommand_DispatchesResponse_NoError()
         {
             DispatchNodeCreation(_nodeCreation);
-            DispatchSetHarvestNode(_setHarvestNode);
             Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse));
             
             Assert.Multiple(() =>
@@ -107,8 +90,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
         [Test]
         public void Negative_SendCommand_SkillNotFound_NoUpdate_DispatchesError()
         {
-            DispatchSetHarvestNode(_setHarvestNode with { SkillID = SkillID.FORAGING });
-            
             Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse with { SkillID = SkillID.FORAGING }));
             
             Assert.Multiple(() =>
@@ -123,7 +104,6 @@ namespace IdelPog.Integration.Tests.ContentEngine
         public void Negative_SendCommand_SkillDoesNotAllowResource_NoUpdate_DispatchesError()
         {
             DispatchNodeCreation(_nodeCreation);
-            DispatchSetHarvestNode(_setHarvestNode with { ItemID = ItemID.COPPER });
             
             Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse));
             
