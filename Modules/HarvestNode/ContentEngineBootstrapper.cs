@@ -54,6 +54,7 @@ namespace IdelPog.HarvestNode
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="batchRegister">Used to register the NodeCreation flow</param>
         /// <param name="singleRegister">Used to register the SkillUpdateResponse and SetHarvestNode flows</param>
+        /// <seealso cref="RegisterSetHarvestNode"/>
         public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister batchRegister, ISingleRegister singleRegister)
         {
             IFoundAssertion foundAssertion = new FoundAssertion(new ThrowHandler());
@@ -66,6 +67,7 @@ namespace IdelPog.HarvestNode
             CurrentHarvestTargetProvider currentHarvestTargetProvider = new();
             IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
             IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository = new AssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>();
+            
             
             RegisterSkillUpdateResponse(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister, bufferLogger, harvestNodeRepository);
             RegisterSetHarvestNode(bufferManager, currentHarvestTargetProvider, skillNodeAccessValidator, singleRegister, bufferLogger);
