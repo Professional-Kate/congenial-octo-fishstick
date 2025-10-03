@@ -23,10 +23,5 @@ namespace IdelPog.Progression.Runtime
         {
             return _levelRequirementStore.TryDequeue(out levelRequirementComponent);
         }
-
-        public LevelRequirementComponent<TID, TCommand>[] ToArray()
-        {
-            return _levelRequirementStore.ToArray();
-        }
     }
 }

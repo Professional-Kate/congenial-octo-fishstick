@@ -1,9 +1,7 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Contracts.Response;
-using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 
@@ -15,56 +13,21 @@ namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Creation
         private HarvestNodeRequirementsCreation _miningCreation;
         private RequirementsCreationErrorListener _errorListener;
         private RequirementsCreationResponseListener _responseListener;
+        private HarvestNodeUnlockDispatcher _harvestNodeUnlockDispatcher;
 
         [SetUp]
         public void Setup()
         {
-            _miningCreation = new HarvestNodeRequirementsCreation
-            {
-                SkillID = SkillID.MINING,
-                HarvestNodeRequirements =
-                [
-                    new HarvestNodeRequirement
-                    {
-                        ItemID = ItemID.STONE, 
-                        RequiredLevel = 1,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.STONE, SkillID = SkillID.MINING }
-                    },
-                    new HarvestNodeRequirement
-                    {
-                        ItemID = ItemID.IRON, 
-                        RequiredLevel = 2,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.IRON, SkillID = SkillID.MINING }
-                    },
-                    new HarvestNodeRequirement
-                    {
-                        ItemID = ItemID.COPPER, 
-                        RequiredLevel = 3,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.COPPER, SkillID = SkillID.MINING }
-                    },
-                    new HarvestNodeRequirement
-                    {
-                        ItemID = ItemID.GOLD, 
-                        RequiredLevel = 4,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.GOLD, SkillID = SkillID.MINING }
-                    }
-                ]
-            };
-            
+            _harvestNodeUnlockDispatcher = new HarvestNodeUnlockDispatcher(BufferManager);
             _errorListener = new RequirementsCreationErrorListener();
             _responseListener = new RequirementsCreationResponseListener();
+            
+            _miningCreation = _harvestNodeUnlockDispatcher.MiningCreation;
             
             ManagedSubscribe(_errorListener);
             ManagedSubscribe(_responseListener);
         }
         
-        private void DispatchCreations(params HarvestNodeRequirementsCreation[] creations)
-        {
-            IBuffer<HarvestNodeRequirementsCreation> buffer = BufferManager.RequestBuffer<HarvestNodeRequirementsCreation>(new BufferRequest(creations.Length));
-            buffer.Assign(creations);
-            buffer.MarkReady();
-        }
-
         private void AssertResponseListenerCalled(bool wasCalled)
         { 
             Assert.That(_responseListener.WasCalled, Is.EqualTo(wasCalled));
@@ -111,7 +74,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Creation
         [Test]
         public void Positive_SendCreationCommand_DispatchesResponse_NormalResponse()
         { 
-            Assert.DoesNotThrow(() => DispatchCreations(_miningCreation));
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchCreations(_miningCreation));
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -124,7 +87,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Creation
         public void Positive_SendCreationBuffers_MultipleCommands_NormalResponse()
         {
             HarvestNodeRequirementsCreation foragingCreation = _miningCreation with { SkillID = SkillID.FORAGING };
-            Assert.DoesNotThrow(() => DispatchCreations(_miningCreation, foragingCreation));
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchCreations(_miningCreation, foragingCreation));
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -137,7 +100,7 @@ namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Creation
         [Test]
         public void Negative_SendCreationCommand_DuplicateSkillID_ErrorResponse()
         {
-            Assert.DoesNotThrow(() => DispatchCreations(_miningCreation, _miningCreation));
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchCreations(_miningCreation, _miningCreation));
             
             AssertResponseListenerCalled(false);
             AssertErrorListenerCalled(true);
@@ -149,19 +112,19 @@ namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Creation
         [Test]
         public void Negative_SendMultipleBuffers_ThirdIsDuplicate_ErrorResponse()
         {
-            Assert.DoesNotThrow(() => DispatchCreations(_miningCreation));
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchCreations(_miningCreation));
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
             AssertResponse(_miningCreation, _responseListener.HarvestNodeRequirementsCreationResponses[0]);
             
-            Assert.DoesNotThrow(() => DispatchCreations(_miningCreation with { SkillID = SkillID.FORAGING }));
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchCreations(_miningCreation with { SkillID = SkillID.FORAGING }));
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
             AssertResponse(_miningCreation with { SkillID = SkillID.FORAGING }, _responseListener.HarvestNodeRequirementsCreationResponses[0]);
             
-            Assert.DoesNotThrow(() => DispatchCreations(_miningCreation));
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchCreations(_miningCreation));
             AssertErrorListenerCalled(true);
             AssertErrorLength(1);
             AssertError(typeof(DuplicateEntityException), [_miningCreation]);

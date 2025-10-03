@@ -26,19 +26,44 @@ namespace IdelPog.Progression.Runtime.System
         public bool CanUnlock(TID id, byte skillLevel)
         {
             AssertSkillFound(id);
+
+            return CanUnlockComponent(id, skillLevel, GetEntity(id));
+        }
+
+        public TCommand Unlock(TID id, byte skillLevel)
+        {
+            AssertSkillFound(id);
+
+            return DequeueComponent(id, skillLevel, GetEntity(id));
+        }
+
+        public IEnumerable<TCommand> UnlockAllAvailable(TID id, byte skillLevel)
+        {
+            AssertSkillFound(id);
+            UnlockRequirementsEntity<TID, TCommand> entity = GetEntity(id);
             
+            while (CanUnlockComponent(id, skillLevel, entity))
+            {
+                yield return DequeueComponent(id, skillLevel, entity);
+            }
+        }
+
+        private UnlockRequirementsEntity<TID, TCommand> GetEntity(TID id)
+        {
             UnlockRequirementsEntity<TID, TCommand> entity = _entityRepository.Get(id);
+            return entity;
+        }
+
+        private bool CanUnlockComponent(TID id, byte skillLevel, UnlockRequirementsEntity<TID, TCommand> entity)
+        {
             LevelRequirementComponent<TID, TCommand> firstComponent = GetFirstComponent(entity, id);
             
             bool canUnlock = skillLevel >= firstComponent.Level;
             return canUnlock;
         }
 
-        public TCommand Unlock(TID id, byte skillLevel)
+        private TCommand DequeueComponent(TID id, byte skillLevel, UnlockRequirementsEntity<TID, TCommand> entity)
         {
-            AssertSkillFound(id);
-            
-            UnlockRequirementsEntity<TID, TCommand> entity = _entityRepository.Get(id);
             LevelRequirementComponent<TID, TCommand> firstComponent = GetFirstComponent(entity, id);
             
             _canUnlockAssertion.AssertCanUnlock(skillLevel, firstComponent.Level, firstComponent);
@@ -50,8 +75,9 @@ namespace IdelPog.Progression.Runtime.System
         }
 
         private void AssertSkillFound(TID id)
-        {
+        { 
             _foundAssertion.AssertFound(id, _entityRepository.Contains(id));
+            
         }
 
         private LevelRequirementComponent<TID, TCommand> GetFirstComponent(UnlockRequirementsEntity<TID, TCommand> entity, TID id)

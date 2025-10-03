@@ -13,6 +13,8 @@ using IdelPog.Progression.Runtime.System;
 using IdelPog.Progression.Runtime.System.Interface;
 using Moq;
 
+// ReSharper disable ReturnValueOfPureMethodIsNotUsed
+
 namespace IdelPog.Progression.Tests.System
 {
     [TestFixture]
@@ -153,6 +155,83 @@ namespace IdelPog.Progression.Tests.System
             _repositoryMock.Setup(library => library.Get(_harvestNodeUnlock.SkillID)).Returns(_harvestNodeUnlockEntity);
 
             Assert.Throws<InvalidOperationException>(() => _entityUnlockerService.Unlock(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel));
+            
+            VerifyRepository(_harvestNodeUnlock.SkillID);
+        }
+
+        [Test]
+        public void Positive_UnlockAvailable_UnlocksTillLevel()
+        {
+            LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>[] unlockComponents =
+            [
+                new() { Level = 1, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse },
+                new() { Level = 2, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse },
+                new() { Level = 3, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse },
+                new() { Level = 4, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse },
+                new() { Level = 5, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse },
+                new() { Level = 6, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse }
+            ];
+            
+            UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse> entity = new(unlockComponents);
+            
+            _repositoryMock.Setup(library => library.Contains(SkillID.MINING)).Returns(true);
+            _repositoryMock.Setup(library => library.Get(SkillID.MINING)).Returns(entity);
+            
+            HarvestNodeUnlockResponse[] responses = _entityUnlockerService.UnlockAllAvailable(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel).ToArray();
+            
+            Assert.That(responses.Count, Is.EqualTo(unlockComponents.Length - 1));
+            
+            _repositoryMock.Verify(library => library.Contains(SkillID.MINING), Times.Once);
+            _repositoryMock.Verify(library => library.Get(SkillID.MINING), Times.Once);
+            _repositoryMock.VerifyNoOtherCalls();
+            
+            foreach (HarvestNodeUnlockResponse harvestNodeUnlockResponse in responses)
+            {
+                VerifyResponse(_harvestNodeUnlock, harvestNodeUnlockResponse);
+            }
+        }
+        
+        [Test]
+        public void Positive_UnlockAllAvailable_CannotUnlock_DoesNotReturn()
+        {
+            SetupRepository(_harvestNodeUnlock.SkillID);
+
+            HarvestNodeUnlockResponse[] responses = _entityUnlockerService.UnlockAllAvailable(_harvestNodeUnlock.SkillID, 1).ToArray();
+            
+            Assert.That(responses.Count, Is.EqualTo(0));
+            VerifyRepository(_harvestNodeUnlock.SkillID);
+        }
+
+        [Test]
+        public void Negative_UnlockAllAvailable_SkillNotFound_Throws()
+        { 
+            _repositoryMock.Setup(library => library.Contains(_harvestNodeUnlock.SkillID)).Returns(false);
+
+            Assert.Throws<NotFoundException<SkillID>>(() => _entityUnlockerService.UnlockAllAvailable(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel).ToArray());
+            
+            _repositoryMock.Verify(library => library.Contains(_harvestNodeUnlock.SkillID), Times.Once);
+            _repositoryMock.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void Negative_UnlockAllAvailable_MismatchSkillID_Throws()
+        {
+            SetupRepository(SkillID.FORAGING);
+            
+            Assert.Throws<IDMismatchException<SkillID>>(() => _entityUnlockerService.UnlockAllAvailable(SkillID.FORAGING, _harvestNodeUnlock.SkillLevel).ToArray());
+            
+            VerifyRepository(SkillID.FORAGING);
+        }
+
+        [Test]
+        public void Negative_UnlockAllAvailable_EmptyEntity_Throws()
+        {
+            _harvestNodeUnlockEntity.TryDequeue(out LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> _);
+            
+            _repositoryMock.Setup(library => library.Contains(_harvestNodeUnlock.SkillID)).Returns(true);
+            _repositoryMock.Setup(library => library.Get(_harvestNodeUnlock.SkillID)).Returns(_harvestNodeUnlockEntity);
+
+            Assert.Throws<InvalidOperationException>(() => _entityUnlockerService.UnlockAllAvailable(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel).ToArray());
             
             VerifyRepository(_harvestNodeUnlock.SkillID);
         }

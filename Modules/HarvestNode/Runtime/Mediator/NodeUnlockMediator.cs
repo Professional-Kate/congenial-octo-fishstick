@@ -33,8 +33,8 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
                     continue;
                 }
 
-                HarvestNodeUnlockResponse response = _entityUnlockerService.Unlock(harvestNodeUnlock.SkillID, harvestNodeUnlock.SkillLevel);
-                responses.Add(response);
+                IEnumerable<HarvestNodeUnlockResponse> responsesEnumerable = _entityUnlockerService.UnlockAllAvailable(harvestNodeUnlock.SkillID, harvestNodeUnlock.SkillLevel);
+                responses.AddRange(responsesEnumerable);
             }
 
             if (responses.Count == 0)
