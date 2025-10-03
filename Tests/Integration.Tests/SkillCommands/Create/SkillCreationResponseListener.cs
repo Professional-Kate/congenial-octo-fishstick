@@ -7,7 +7,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
     {
         public Type ListenerType => typeof(SkillCreationResponse);
         public bool WasCalled { get; private set; }
-        public IReadOnlyList<SkillCreationResponse> SkillCreationResponses { get; private set; }
+        public IReadOnlyList<SkillCreationResponse>? SkillCreationResponses { get; private set; }
 
         public void Handle(IReadOnlyList<SkillCreationResponse> buffer)
         {
