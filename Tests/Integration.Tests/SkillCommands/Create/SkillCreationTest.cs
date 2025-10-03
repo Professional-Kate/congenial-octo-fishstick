@@ -95,7 +95,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_miningCreation, _skillCreationResponseListener.SkillCreationResponses[0]);
+            AssertResponse(_miningCreation, _skillCreationResponseListener.SkillCreationResponses![0]);
         }
 
         [Test]
@@ -106,7 +106,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponse(_miningCreation, _skillCreationResponseListener.SkillCreationResponses[0]);
+            AssertResponse(_miningCreation, _skillCreationResponseListener.SkillCreationResponses![0]);
             AssertResponse(_miningCreation with { SkillID = SkillID.FORAGING }, _skillCreationResponseListener.SkillCreationResponses[1]);
         }
 
