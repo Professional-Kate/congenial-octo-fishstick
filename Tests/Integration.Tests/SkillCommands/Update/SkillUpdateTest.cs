@@ -112,6 +112,22 @@ namespace IdelPog.Integration.Tests.SkillCommands.Update
         }
 
         [Test]
+        public void Positive_DispatchSkillUpdate_MultipleSkills_UpdatesBoth_DispatchesResponse()
+        {
+            SkillCreation foragingCreation = _miningCreation with { SkillID = SkillID.FORAGING };
+            SkillUpdate foragingUpdate = new() { SkillID = SkillID.FORAGING };
+            DispatchSkillCreation(_miningCreation, foragingCreation);
+            
+            Assert.DoesNotThrow(() => DispatchSkillUpdate(_miningUpdate, foragingUpdate));
+            
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(2);
+            AssertResponse(_miningCreation, _responseListener.SkillUpdateResponses[0]);
+            AssertResponse(foragingCreation, _responseListener.SkillUpdateResponses[1]);
+        }
+
+        [Test]
         public void Negative_DispatchUpdate_SkillNotFound_DispatchesError()
         { 
             Assert.DoesNotThrow(() => DispatchSkillUpdate(_miningUpdate));
