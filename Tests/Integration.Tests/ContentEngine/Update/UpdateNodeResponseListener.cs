@@ -1,18 +1,19 @@
 ﻿using IdelPog.Core.Contracts.Response;
+using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Messaging.Listener.Single;
 
 namespace IdelPog.Integration.Tests.ContentEngine
 {
-    internal class UpdateNodeResponseListener : ISingleListener<HarvestNodeUpdateResponse>
+    internal class UpdateNodeResponseListener : IBufferListener<HarvestNodeUpdateResponse>
     {
         public Type ListenerType => typeof(HarvestNodeUpdateResponse);
         public bool WasCalled { get; private set; }
-        public HarvestNodeUpdateResponse HarvestNodeUpdateResponse { get; private set; }
+        public HarvestNodeUpdateResponse[] HarvestNodeUpdateResponses { get; private set; } = null!;
 
-        public void Handle(HarvestNodeUpdateResponse message)
+        public void Handle(IReadOnlyList<HarvestNodeUpdateResponse> buffer)
         {
             WasCalled = true;
-            HarvestNodeUpdateResponse = message;
+            HarvestNodeUpdateResponses = buffer.ToArray();
         }
     }
 }

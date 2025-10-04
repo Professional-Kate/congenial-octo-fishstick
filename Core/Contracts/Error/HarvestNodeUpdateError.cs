@@ -1,10 +1,10 @@
-﻿using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Command;
 
 namespace IdelPog.Core.Contracts.Error
 {
     public readonly record struct HarvestNodeUpdateError
     {
-        public required SkillUpdateResponse SkillUpdateResponse { get; init; }
+        public required HarvestNodeUpdate[] HarvestNodeUpdates { get; init; }
         public required BaseError BaseError { get; init; }
     }
 }
