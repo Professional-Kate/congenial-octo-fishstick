@@ -50,7 +50,7 @@ namespace IdelPog.Inventory.Mediator
             
             foreach (InventoryUpdate update in summaryUpdates)
             {
-                MutateType mutateType;
+                MutateType mutateType = MutateType.CHANGED;
 
                 switch (update.ActionType)
                 {
@@ -60,8 +60,6 @@ namespace IdelPog.Inventory.Mediator
                     case ActionType.REMOVE:
                         mutateType = _inventory.RemoveAmount(update.ItemID, update.Amount);
                         break;
-                    default:
-                        throw new ArgumentOutOfRangeException(update.ActionType.ToString());
                 }
 
                 ItemInfo itemInfo;

@@ -207,7 +207,7 @@ namespace IdelPog.Inventory.Tests
         {
             Assert.Throws<EmptyCollectionException>(() => _inventoryMediator.HandleMessages([]));
         }
-        
+
         [Test]
         public void Negative_HandleMessages_NullMessages_Throws()
         {

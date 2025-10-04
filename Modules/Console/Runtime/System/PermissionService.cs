@@ -36,8 +36,6 @@ namespace IdelPog.Console.Runtime.System
                 case ActionType.REMOVE:
                     RemoveAllowedDomain(arguments.Domain);
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 
