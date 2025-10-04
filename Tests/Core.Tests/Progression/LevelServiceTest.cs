@@ -1,6 +1,5 @@
 ﻿using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Assertion;
-using IdelPog.Core.Progression.Assertion.Pipelines;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -18,9 +17,8 @@ namespace IdelPog.Core.Tests.Progression
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            ILevelableAssertionPipeline levelableAsserter = new LevelableAssertionPipeline(new LevelAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()));
-
-            _service = new LevelService(levelableAsserter);
+            ThrowHandler throwHandler = new();
+            _service = new LevelService(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler));
         }
 
         [SetUp]
@@ -104,9 +102,9 @@ namespace IdelPog.Core.Tests.Progression
         }
 
         [Test]
-        public void Negative_LeveUpSkill_MaxLevel_Throws()
+        public void Negative_LeveUpSkill_AboveMaxLevel_Throws()
         {
-            Levelable levelable = new(LevelConstants.MAX_LEVEL, 0, 100, 1);
+            Levelable levelable = new(LevelConstants.MAX_LEVEL + 1, 0, 100, 1);
 
             MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _service.LevelUp(levelable));
             Assert.Multiple(() =>

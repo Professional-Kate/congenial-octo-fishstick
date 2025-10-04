@@ -8,7 +8,7 @@ using IdelPog.Loot.Service.Interface;
 
 namespace IdelPog.HarvestNode.Runtime.Mediator
 {
-    public class NodeUpdateMediator : IBatchMediator<HarvestNodeUpdate>
+    public sealed class NodeUpdateMediator : IBatchMediator<HarvestNodeUpdate>
     {
         private readonly ISkillNodeAccessValidator _skillNodeAccessValidator;
         private readonly INodeUpdateService _nodeUpdateService;

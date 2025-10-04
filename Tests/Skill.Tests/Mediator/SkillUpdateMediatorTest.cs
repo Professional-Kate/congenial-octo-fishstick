@@ -16,7 +16,7 @@ using Moq;
 namespace IdelPog.Skills.Tests.Mediator
 {
     [TestFixture]
-    public class SkillActionMediatorTest
+    public class SkillUpdateMediatorTest
     {
         private IBatchMediator<SkillUpdate> _skillActionMediator { get; set; }
         private Mock<IExperienceService> _experienceServiceMock { get; set; }
@@ -41,7 +41,7 @@ namespace IdelPog.Skills.Tests.Mediator
             _skillUpdateFactoryMock = new Mock<ISkillUpdateResponseFactory>();
             _lootServiceMock = new Mock<ILootService<SkillID>>();
             
-            _skillActionMediator = new SkillActionMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object, _skillUpdateDispatcherMock.Object, _skillUpdateFactoryMock.Object, _lootServiceMock.Object);
+            _skillActionMediator = new SkillUpdateMediator(_experienceServiceMock.Object, _levelServiceMock.Object, _repositoryMock.Object, _skillUpdateDispatcherMock.Object, _skillUpdateFactoryMock.Object, _lootServiceMock.Object);
 
             _repositoryMock.Setup(library => library.Get(_miningSkill.SkillID)).Returns(_miningSkill);
             _repositoryMock.Setup(library => library.Contains(_miningSkill.SkillID)).Returns(true);

@@ -24,13 +24,6 @@ namespace IdelPog.Currency.Factory
             return Create(trades.ToArray());
         }
         
-        public CurrencyUpdateResponse CreateFrom(CurrencyUpdate trade)
-        {
-            _objectNullAssertion.AssertNotNull(trade, nameof(trade));
-
-            return Create([trade]);
-        }
-
         private static CurrencyUpdateResponse Create(CurrencyUpdate[] trades)
         {
             return new CurrencyUpdateResponse

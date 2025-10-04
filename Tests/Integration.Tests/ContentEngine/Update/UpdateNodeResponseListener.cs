@@ -1,6 +1,5 @@
 ﻿using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Listener.Buffer;
-using IdelPog.Core.Messaging.Listener.Single;
 
 namespace IdelPog.Integration.Tests.ContentEngine
 {

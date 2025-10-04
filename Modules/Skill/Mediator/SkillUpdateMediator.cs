@@ -12,7 +12,7 @@ using IdelPog.Skill.Factory.Interface;
 
 namespace IdelPog.Skill.Mediator
 {
-    public class SkillActionMediator : IBatchMediator<SkillUpdate>
+    public class SkillUpdateMediator : IBatchMediator<SkillUpdate>
     {
         private readonly IExperienceService _experienceService;
         private readonly ILevelService _levelService;
@@ -21,7 +21,7 @@ namespace IdelPog.Skill.Mediator
         private readonly ISkillUpdateResponseFactory _skillUpdateResponseFactory;
         private readonly ILootService<SkillID> _lootService;
 
-        public SkillActionMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Contracts.Skill> skillRepository
+        public SkillUpdateMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Contracts.Skill> skillRepository
             , IDispatchMany<SkillUpdateResponse> skillUpdateDispatcher, ISkillUpdateResponseFactory skillUpdateResponseFactory, ILootService<SkillID> lootService)
         {
             _experienceService = experienceService;

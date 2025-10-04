@@ -14,7 +14,6 @@ using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Progression.Assertion;
-using IdelPog.Core.Progression.Assertion.Pipelines;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Repository.Asset;
@@ -51,8 +50,7 @@ namespace IdelPog.HarvestNode
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="batchRegister">Used to register the NodeCreation flow</param>
-        /// <param name="singleRegister">Used to register the SkillUpdateResponse and SetHarvestNode flows</param>
-        public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister batchRegister, ISingleRegister singleRegister)
+        public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister batchRegister)
         {
             IFoundAssertion foundAssertion = new FoundAssertion(new ThrowHandler());
             
@@ -89,11 +87,10 @@ namespace IdelPog.HarvestNode
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             ILevelAssertion levelAssertion = new LevelAssertion(throwHandler);
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
-            ILevelableAssertionPipeline levelableAssertion = new LevelableAssertionPipeline(levelAssertion, objectNullAssertion);
             
             IAssetRepository<ItemID, ILootTable> lootTableRepository = new AssetRepository<ItemID, ILootTable>();
-            ILevelService levelService = new LevelService(levelableAssertion);
-            IExperienceService experienceService = new ExperienceService(levelableAssertion);
+            ILevelService levelService = new LevelService(levelAssertion, objectNullAssertion);
+            IExperienceService experienceService = new ExperienceService(levelAssertion, objectNullAssertion);
             ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
             INodeUpdateResponseFactory responseFactory = new NodeUpdateResponseFactory(levelProgressFactory);
             
