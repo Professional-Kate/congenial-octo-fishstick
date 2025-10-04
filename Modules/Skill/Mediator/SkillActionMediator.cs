@@ -1,59 +1,63 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts.Command;
+using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
-using IdelPog.Core.Messaging.Dispatcher.Single;
-using IdelPog.Core.Messaging.Listener.Single;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
+using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Repository.State;
-using IdelPog.Core.Scheduler;
 using IdelPog.Loot.Service.Interface;
 using IdelPog.Skill.Factory.Interface;
-using IdelPog.Skill.Service.Interface;
 
 namespace IdelPog.Skill.Mediator
 {
-    public class SkillActionMediator : ISingleMediator<ScheduleTick>
+    public class SkillActionMediator : IBatchMediator<SkillUpdate>
     {
         private readonly IExperienceService _experienceService;
         private readonly ILevelService _levelService;
         private readonly IStateRepository<SkillID, Contracts.Skill> _skillRepository;
-        private readonly ICurrentSkillProvider _currentSkillProvider;
-        private readonly IDispatchOne<SkillUpdateResponse> _skillUpdateDispatcher;
+        private readonly IDispatchMany<SkillUpdateResponse> _skillUpdateDispatcher;
         private readonly ISkillUpdateResponseFactory _skillUpdateResponseFactory;
         private readonly ILootService<SkillID> _lootService;
 
-        public SkillActionMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Contracts.Skill> skillRepository,
-            ICurrentSkillProvider currentSkillProvider, IDispatchOne<SkillUpdateResponse> skillUpdateDispatcher, ISkillUpdateResponseFactory skillUpdateResponseFactory, ILootService<SkillID> lootService)
+        public SkillActionMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Contracts.Skill> skillRepository
+            , IDispatchMany<SkillUpdateResponse> skillUpdateDispatcher, ISkillUpdateResponseFactory skillUpdateResponseFactory, ILootService<SkillID> lootService)
         {
             _experienceService = experienceService;
             _levelService = levelService;
             _skillRepository = skillRepository;
-            _currentSkillProvider = currentSkillProvider;
             _skillUpdateDispatcher = skillUpdateDispatcher;
             _skillUpdateResponseFactory = skillUpdateResponseFactory;
             _lootService = lootService;
         }
 
-        public void HandleMessage(ScheduleTick message)
+        public void HandleMessages(IReadOnlyList<SkillUpdate> messages)
         {
-            SkillID currentSkillID = _currentSkillProvider.GetCurrentSkill();
-
-            Contracts.Skill skill = _skillRepository.Get(currentSkillID);
-            Levelable levelable = skill.Levelable;
-
-            _experienceService.AddExperience(levelable);
-            bool canSkillLevel = _levelService.CanLevel(levelable);
-
-            if (canSkillLevel)
+            SkillUpdateResponse[] responses = new SkillUpdateResponse[messages.Count];
+            for (int i = 0; i < messages.Count; i++)
             {
-                _levelService.LevelUp(levelable);
-            }
+                SkillUpdate skillUpdate = messages[i];
+                SkillID skillID = skillUpdate.SkillID;
 
-            _lootService.DispatchInventoryUpdates(currentSkillID);
+                Contracts.Skill skill = _skillRepository.Get(skillID);
+                Levelable levelable = skill.Levelable;
+
+                _experienceService.AddExperience(levelable);
+                bool canSkillLevel = _levelService.CanLevel(levelable);
+
+                if (canSkillLevel)
+                {
+                    _levelService.LevelUp(levelable);
+                }
+
+                _lootService.DispatchInventoryUpdates(skillID);
+
+                _skillRepository.Update(skillID, skill);
+                responses[i] = _skillUpdateResponseFactory.Create(skill, canSkillLevel);
+            }
             
-            _skillRepository.Update(currentSkillID, skill);
-            _skillUpdateDispatcher.Dispatch(_skillUpdateResponseFactory.Create(skill, canSkillLevel));
+            _skillUpdateDispatcher.Dispatch(responses);
         }
     }
 }
