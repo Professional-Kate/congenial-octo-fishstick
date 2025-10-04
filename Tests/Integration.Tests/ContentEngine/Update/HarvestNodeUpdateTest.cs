@@ -13,8 +13,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
     [TestFixture]
     public class HarvestNodeUpdateTest : ManagedTestBuffer
     {
-        private SkillUpdateResponse _skillUpdateResponse;
-        private SetHarvestNode _setHarvestNode;
+        private HarvestNodeUpdate _nodeUpdate;
         private NodeCreation _nodeCreation;
         private UpdateNodeErrorListener _updateNodeErrorListener;
         private UpdateNodeResponseListener _updateNodeResponseListener;
@@ -22,14 +21,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
         [SetUp]
         public void Setup()
         {
-            _skillUpdateResponse = new SkillUpdateResponse
-            {
-                SkillID = SkillID.MINING, 
-                ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
-                HasLeveled = false
-            };
-            
-            _setHarvestNode = new SetHarvestNode
+            _nodeUpdate = new HarvestNodeUpdate
             {
                 ItemID = ItemID.IRON,
                 SkillID = SkillID.MINING
@@ -57,35 +49,26 @@ namespace IdelPog.Integration.Tests.ContentEngine
             buffer.MarkReady();
         }
 
-        private void DispatchSkillUpdate(SkillUpdateResponse skillUpdateResponse)
+        private void DispatchNodeUpdate(HarvestNodeUpdate nodeUpdate)
         {
-            IBuffer<SkillUpdateResponse> buffer = BufferManager.RequestBuffer<SkillUpdateResponse>(new BufferRequest(1));
-            buffer.Assign([skillUpdateResponse]);
+            IBuffer<HarvestNodeUpdate> buffer = BufferManager.RequestBuffer<HarvestNodeUpdate>(new BufferRequest(1));
+            buffer.Assign([nodeUpdate]);
             buffer.MarkReady();
         }
         
-        private void DispatchSetHarvestNode(SetHarvestNode setHarvestNode)
-        {
-            IBuffer<SetHarvestNode> buffer = BufferManager.RequestBuffer<SetHarvestNode>(new BufferRequest(1));
-            buffer.Assign([setHarvestNode]);
-            buffer.MarkReady();
+        private static void AssertResponseListener(HarvestNodeUpdate nodeUpdate, HarvestNodeUpdateResponse response)
+        { 
+            Assert.That(response.ItemID, Is.EqualTo(nodeUpdate.ItemID));
         }
 
-        private void AssertResponseListener()
+        private static void AssertErrorListener<TException>(HarvestNodeUpdate[] nodeUpdates, HarvestNodeUpdateError error)
         {
-            HarvestNodeUpdateResponse response = _updateNodeResponseListener.HarvestNodeUpdateResponse;
-            Assert.That(response.ItemID, Is.EqualTo(_setHarvestNode.ItemID));
-        }
-
-        private void AssertErrorListener<TException>(SkillUpdateResponse skillUpdateResponse)
-        {
-            HarvestNodeUpdateError error = _updateNodeErrorListener.HarvestNodeUpdateError;
             Assert.That(error.BaseError.Exception.InnerException, Is.Not.Null);
             
             Assert.Multiple(() =>
             {
                 Assert.That(error.BaseError.Exception.InnerException.GetType(), Is.EqualTo(typeof(TException)));
-                Assert.That(error.SkillUpdateResponse.SkillID, Is.EqualTo(skillUpdateResponse.SkillID));
+                Assert.That(nodeUpdates, Is.EqualTo(error.HarvestNodeUpdates));
             });
         }
 
@@ -93,39 +76,37 @@ namespace IdelPog.Integration.Tests.ContentEngine
         public void Positive_SendCommand_DispatchesResponse_NoError()
         {
             DispatchNodeCreation(_nodeCreation);
-            DispatchSetHarvestNode(_setHarvestNode);
-            Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse));
+            Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate));
             
             Assert.Multiple(() =>
             {
                 Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(false));
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(true));
             });
-            AssertResponseListener();
+            
+            AssertResponseListener(_nodeUpdate, _updateNodeResponseListener.HarvestNodeUpdateResponses[0]);
         }
 
         [Test]
         public void Negative_SendCommand_SkillNotFound_NoUpdate_DispatchesError()
         {
-            DispatchSetHarvestNode(_setHarvestNode with { SkillID = SkillID.FORAGING });
-            
-            Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse with { SkillID = SkillID.FORAGING }));
+            Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate with { SkillID = SkillID.FORAGING }));
             
             Assert.Multiple(() =>
             {
                 Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(true));
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
             });
-            AssertErrorListener<NotFoundException<SkillID>>(_skillUpdateResponse with { SkillID = SkillID.FORAGING });
+            
+            AssertErrorListener<NotFoundException<SkillID>>([_nodeUpdate with { SkillID = SkillID.FORAGING }], _updateNodeErrorListener.HarvestNodeUpdateError);
         } 
         
         [Test]
         public void Negative_SendCommand_SkillDoesNotAllowResource_NoUpdate_DispatchesError()
         {
             DispatchNodeCreation(_nodeCreation);
-            DispatchSetHarvestNode(_setHarvestNode with { ItemID = ItemID.COPPER });
             
-            Assert.DoesNotThrow(() => DispatchSkillUpdate(_skillUpdateResponse));
+            Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate with { ItemID = ItemID.HERBS }));
             
             Assert.Multiple(() =>
             {
@@ -133,7 +114,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
             });
             
-            AssertErrorListener<NotFoundException<ItemID>>(_skillUpdateResponse);
+            AssertErrorListener<NotFoundException<ItemID>>([_nodeUpdate with { ItemID = ItemID.HERBS }],  _updateNodeErrorListener.HarvestNodeUpdateError);
         } 
     }
 }

@@ -1,8 +1,8 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Console.Command.Domain.Argument
+namespace IdelPog.Core.Contracts.Command
 {
-    public readonly record struct SetSkillArguments
+    public readonly record struct SkillUpdate
     {
         public required SkillID SkillID { get; init; }
     }

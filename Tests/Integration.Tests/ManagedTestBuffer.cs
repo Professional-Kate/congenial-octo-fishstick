@@ -51,7 +51,7 @@ namespace IdelPog.Integration.Tests
             FlowRegister flowRegister = FlowBootstrapper.CreateFlowRegister(BufferManager);
             CurrencyBootstrapper.RegisterFlows(BufferManager, flowRegister);
             SkillBootstrapper.RegisterFlows(BufferManager, flowRegister);
-            ContentEngineBootstrapper.RegisterFlows(BufferManager, flowRegister, flowRegister);
+            ContentEngineBootstrapper.RegisterFlows(BufferManager, flowRegister);
             InventoryBootstrapper.RegisterInventoryUpdate(BufferManager, flowRegister);
             FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
         }

@@ -13,14 +13,11 @@ using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Buffer;
-using IdelPog.Core.Messaging.Listener.Single;
 using IdelPog.Core.Progression.Assertion;
-using IdelPog.Core.Progression.Assertion.Pipelines;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Repository.State;
-using IdelPog.Core.Scheduler;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Core.Validation.Handler;
@@ -35,8 +32,6 @@ using IdelPog.Loot.Table;
 using IdelPog.Skill.Factory;
 using IdelPog.Skill.Factory.Interface;
 using IdelPog.Skill.Mediator;
-using IdelPog.Skill.Service;
-using IdelPog.Skill.Service.Interface;
 
 namespace IdelPog.Skill
 {
@@ -44,52 +39,19 @@ namespace IdelPog.Skill
     {
         public static void RegisterFlows(IBufferManager bufferManager, FlowRegister flowRegistry)
         {
-            CurrentSkillProvider skillProvider = new();
-            
             ILogWriter writer = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
             
             IStateRepository<SkillID, Contracts.Skill> skillRepository = new StateRepository<SkillID, Contracts.Skill>();
             
-            RegisterSetSkill(bufferManager, skillProvider, flowRegistry, bufferLogger, skillRepository);
-            RegisterScheduleTick(bufferManager, skillProvider, flowRegistry, skillRepository, bufferLogger);
+            RegisterSkillUpdate(bufferManager, flowRegistry, skillRepository, bufferLogger);
             RegisterSkillCreation(bufferManager, flowRegistry, skillRepository, bufferLogger);
-        }
-        
-        /// <summary>
-        /// Registers the <see cref="SetSkill"/> flow into the messaging system
-        /// </summary>
-        /// <param name="bufferManager">Used to dispatch <see cref="SetSkillResponse"/></param>
-        /// <param name="currentSkillSetter">Used together with <see cref="ICurrentSkillProvider"/></param>
-        /// <param name="flowRegistry">Used to register the SetSkill flow</param>
-        /// <param name="bufferLogger">Logs all messages in and out</param>
-        /// <param name="skillRepository">Used to store Skills</param>
-        /// <remarks>
-        /// Listens to -> <see cref="SetSkill"/>. On Success -> <see cref="SetSkillResponse"/>. On Error -> <see cref="SetSkillError"/>
-        /// </remarks>
-        private static void RegisterSetSkill(IBufferManager bufferManager, ICurrentSkillSetter  currentSkillSetter, ISingleRegister flowRegistry, IBufferLogger bufferLogger, IStateRepository<SkillID, Contracts.Skill> skillRepository)
-        {
-            IHandler throwHandler = new ThrowHandler();
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
-
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<SetSkillError, SetSkill> setSkillErrorFactory = new SetSkillErrorFactory(baseErrorFactory );
-            ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
-
-            ISetSkillResponseFactory setSkillResponseFactory = new SetSkillResponseFactory(levelProgressFactory);
-            IDispatchOne<SetSkillResponse> setSkillResponseDispatcher = new ManagedDispatcher<SetSkillResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
-            ISingleMediator<SetSkill> setSkillMediator = new SetSkillMediator(currentSkillSetter, skillRepository, setSkillResponseFactory, setSkillResponseDispatcher, foundAssertion);
-            ISingleController<SetSkill> setSkillController = new ManagedSingleController<SetSkill>(setSkillMediator);
-            
-            flowRegistry.RegisterSingle(setSkillController, setSkillErrorFactory);
         }
 
         /// <summary>
         /// Registers the <see cref="SkillCreation"/> flow into the messaging system
         /// </summary>
-        /// <param name="bufferManager">Used to dispatch <see cref="SetSkillResponse"/></param>
+        /// <param name="bufferManager">Used to dispatch <see cref="SkillCreationResponse"/></param>
         /// <param name="flowRegistry">Used to register the SetSkill flow</param>
         /// <param name="skillRepository">Used to store Skills</param>
         /// <param name="bufferLogger">Logs all messages in and out</param>
@@ -103,7 +65,6 @@ namespace IdelPog.Skill
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
             ILevelAssertion levelAssertion = new LevelAssertion(throwHandler);
-            ILevelableAssertionPipeline levelableAssertionPipeline = new LevelableAssertionPipeline(levelAssertion, objectNullAssertion);
             
             ISkillCreationResponseFactory responseFactory = new SkillCreationResponseFactory();
             IDispatchMany<SkillCreationResponse> responseDispatcher = new ManagedDispatcher<SkillCreationResponse>(bufferManager, bufferLogger,  objectNullAssertion, collectionAssertion);
@@ -111,24 +72,23 @@ namespace IdelPog.Skill
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<SkillCreationError, IReadOnlyList<SkillCreation>> errorFactory = new SkillCreationErrorFactory(baseErrorFactory);
             
-            IBatchMediator<SkillCreation> mediator = new SkillCreationMediator(skillRepository, responseFactory, responseDispatcher, levelableAssertionPipeline, collectionAssertion, uniqueAssertion);
+            IBatchMediator<SkillCreation> mediator = new SkillCreationMediator(skillRepository, responseFactory, responseDispatcher, collectionAssertion, uniqueAssertion, levelAssertion);
             IBatchController<SkillCreation> controller = new ManagedBatchController<SkillCreation>(mediator);
             
             flowRegistry.RegisterBatch(controller, errorFactory);
         }
 
         /// <summary>
-        /// Registers the <see cref="ScheduleTick"/> flow into the messaging system
+        /// Registers the <see cref="SkillUpdate"/> flow into the messaging system
         /// </summary>
-        /// <param name="bufferManager">Used to dispatch <see cref="SetSkillResponse"/></param>
-        /// <param name="currentSkillProvider">Used together with <see cref="ICurrentSkillSetter"/></param>
+        /// <param name="bufferManager">Used to dispatch <see cref="SkillUpdateResponse"/></param>
         /// <param name="flowRegistry">Used to register the ScheduleTick flow</param>
         /// <param name="skillRepository">Used to store Skills</param>
         /// <param name="bufferLogger">Logs all messages in and out</param>
         /// /// <remarks>
-        /// Listens to -> <see cref="ScheduleTick"/>. On Success -> <see cref="SkillUpdateResponse"/>. On Error -> <see cref="SkillUpdateError"/>.
+        /// Listens to -> <see cref="SkillUpdate"/>. On Success -> <see cref="SkillUpdateResponse"/>. On Error -> <see cref="SkillUpdateError"/>.
         /// </remarks>
-        private static void RegisterScheduleTick(IBufferManager bufferManager, ICurrentSkillProvider currentSkillProvider, ISingleRegister flowRegistry, IStateRepository<SkillID, Contracts.Skill> skillRepository, IBufferLogger bufferLogger)
+        private static void RegisterSkillUpdate(IBufferManager bufferManager, IBatchRegister flowRegistry, IStateRepository<SkillID, Contracts.Skill> skillRepository, IBufferLogger bufferLogger)
         {
             IHandler throwHandler = new ThrowHandler();
             ILevelAssertion levelAssertion = new LevelAssertion(throwHandler);
@@ -137,12 +97,11 @@ namespace IdelPog.Skill
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             IWeightAssertion weightAssertion = new WeightAssertion(throwHandler);
             
-            ILevelableAssertionPipeline levelableAssertionPipeline = new LevelableAssertionPipeline(levelAssertion, objectNullAssertion);
             ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
             
-            IExperienceService experienceService = new ExperienceService(levelableAssertionPipeline);
-            ILevelService levelService = new LevelService(levelableAssertionPipeline);
-            IDispatchOne<SkillUpdateResponse> responseDispatcher = new ManagedDispatcher<SkillUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IExperienceService experienceService = new ExperienceService(levelAssertion, objectNullAssertion);
+            ILevelService levelService = new LevelService(levelAssertion, objectNullAssertion);
+            IDispatchMany<SkillUpdateResponse> responseDispatcher = new ManagedDispatcher<SkillUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             ISkillUpdateResponseFactory updateResponseFactory = new SkillUpdateResponseFactory(levelProgressFactory);
 
             ILootRoll lootRoll = new DefaultLootRoll();
@@ -174,11 +133,11 @@ namespace IdelPog.Skill
             weightedLootTableRepository.Add(SkillID.MINING, miningLootTable);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<SkillUpdateError, ScheduleTick> updateErrorFactory = new SkillUpdateErrorFactory(baseErrorFactory);
-            ISingleMediator<ScheduleTick> skillActionMediator = new SkillActionMediator(experienceService, levelService, skillRepository, currentSkillProvider, responseDispatcher, updateResponseFactory, lootService);
-            ISingleController<ScheduleTick> skillActionController = new ManagedSingleController<ScheduleTick>(skillActionMediator);
+            IErrorFactory<SkillUpdateError, IReadOnlyList<SkillUpdate>> updateErrorFactory = new SkillUpdateErrorFactory(baseErrorFactory);
+            IBatchMediator<SkillUpdate> skillActionMediator = new SkillUpdateMediator(experienceService, levelService, skillRepository, responseDispatcher, updateResponseFactory, lootService);
+            IBatchController<SkillUpdate> skillActionController = new ManagedBatchController<SkillUpdate>(skillActionMediator);
             
-            flowRegistry.RegisterSingle(skillActionController, updateErrorFactory);
+            flowRegistry.RegisterBatch(skillActionController, updateErrorFactory);
         }
     }
 }

@@ -56,7 +56,6 @@ namespace IdelPog.Console
 
             IArgumentResolver<ActionType> actionTypeResolver = new EnumResolver<ActionType>(enumParseAssertion);
             IArgumentResolver<CurrencyType> currencyTypeResolver = new EnumResolver<CurrencyType>(enumParseAssertion);
-            IArgumentResolver<SkillID> skillIDResolver = new EnumResolver<SkillID>(enumParseAssertion);
             IArgumentResolver<Domain> commandDomainResolver = new EnumResolver<Domain>(enumParseAssertion);
             IArgumentResolver<ControlAction> controlActionResolver = new EnumResolver<ControlAction>(enumParseAssertion);
             IArgumentResolver<uint> uIntResolver = new UIntResolver(typeParseAssertion, numberAssertion);
@@ -72,12 +71,6 @@ namespace IdelPog.Console
 
             ICommandDomainResolver currencyDomainResolver =
                 new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateDispatcher, argumentCountAssertion);
-
-            IDispatchOne<SetSkill> skillChangeDispatcher = new ManagedDispatcher<SetSkill>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
-
-            IArgumentResolverPipeline<SetSkillArguments> skillChangePipeline = new SetSkillResolver(skillIDResolver);
-            ICommandDomainResolver skillDomainResolver =
-                new SkillDomainResolver(skillChangePipeline, skillChangeDispatcher, argumentCountAssertion);
 
             IComponentStoreFactory componentStoreFactory = new ComponentStoreFactory();
             IDomainComponentFactory domainComponentFactory = new DomainComponentFactory();
@@ -98,7 +91,6 @@ namespace IdelPog.Console
                 new ScheduleDomainResolver(scheduleControlPipeline, scheduleControlDispatcher, scheduleControlFactory, argumentCountAssertion);
 
             commandRepository.Add(Domain.CURRENCY, currencyDomainResolver);
-            commandRepository.Add(Domain.SKILL, skillDomainResolver);
             commandRepository.Add(Domain.PERMISSION, permissionDomainResolver);
             commandRepository.Add(Domain.SCHEDULE, scheduleDomainResolver);
 

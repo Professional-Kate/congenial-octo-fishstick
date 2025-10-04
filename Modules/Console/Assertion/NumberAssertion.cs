@@ -21,19 +21,5 @@ namespace IdelPog.Console.Assertion
                 }
             });
         }
-
-        public void AssertAllNonNegative(int[] numbers)
-        {
-            Assert<NegativeNumberException>(() =>
-            {
-                foreach (int number in numbers)
-                {
-                    if (number < 0)
-                    {
-                        throw new NegativeNumberException(number);
-                    }
-                }
-            });
-        }
     }
 }

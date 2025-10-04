@@ -5,7 +5,7 @@ using IdelPog.Currency.Factory.Interface;
 
 namespace IdelPog.Currency.Factory
 {
-    public class CurrencyCreationResponseFactory : ICurrencyCreationResponseFactory
+    public sealed class CurrencyCreationResponseFactory : ICurrencyCreationResponseFactory
     {
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
@@ -24,14 +24,7 @@ namespace IdelPog.Currency.Factory
             return Create(currencyCreations.ToArray());
         }
 
-        public CurrencyCreationResponse CreateFrom(CurrencyCreation currencyCreation)
-        {
-            _objectNullAssertion.AssertNotNull(currencyCreation, nameof(currencyCreation));
-
-            return Create([currencyCreation]);
-        }
-
-        private CurrencyCreationResponse Create(CurrencyCreation[] currencyCreations)
+        private static CurrencyCreationResponse Create(CurrencyCreation[] currencyCreations)
         {
             return new CurrencyCreationResponse
             {

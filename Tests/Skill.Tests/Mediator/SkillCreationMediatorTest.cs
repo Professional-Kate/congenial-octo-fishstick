@@ -6,7 +6,6 @@ using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Assertion;
-using IdelPog.Core.Progression.Assertion.Pipelines;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -35,9 +34,8 @@ namespace IdelPog.Skills.Tests.Mediator
             _dispatcherMock = new Mock<IDispatchMany<SkillCreationResponse>>();
 
             ThrowHandler throwHandler = new();
-            ILevelableAssertionPipeline levelableAssertionPipeline = new LevelableAssertionPipeline(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler));
             
-            _skillCreationMediator = new SkillCreationMediator(_repositoryMock.Object, _responseFactoryMock.Object,  _dispatcherMock.Object, levelableAssertionPipeline, new CollectionAssertion(throwHandler), new UniqueAssertion(throwHandler));
+            _skillCreationMediator = new SkillCreationMediator(_repositoryMock.Object, _responseFactoryMock.Object,  _dispatcherMock.Object, new CollectionAssertion(throwHandler), new UniqueAssertion(throwHandler), new LevelAssertion(throwHandler));
 
             _skillCreations =
             [

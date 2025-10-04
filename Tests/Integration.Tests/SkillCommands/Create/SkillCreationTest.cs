@@ -3,7 +3,6 @@ using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Information.Contracts;
-using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Validation.Exceptions;
@@ -15,6 +14,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
     {
         private SkillCreationErrorListener _skillCreationErrorListener;
         private SkillCreationResponseListener _skillCreationResponseListener;
+        private SkillCreationDispatcher _dispatcher;
 
         private SkillCreation _miningCreation;
 
@@ -32,18 +32,19 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
         [SetUp]
         public void Setup()
         {
+            _dispatcher = new SkillCreationDispatcher();
             _skillCreationErrorListener = new SkillCreationErrorListener();
             _skillCreationResponseListener = new SkillCreationResponseListener();
+
+            _miningCreation = _dispatcher.MiningCreation;
             
             ManagedSubscribe(_skillCreationErrorListener);
             ManagedSubscribe(_skillCreationResponseListener);
         }
 
-        private void SendSkillCreationBuffer(SkillCreation[] skillCreations)
+        private void DispatchSkillCreation(params SkillCreation[] skillCreations)
         {
-            IBuffer<SkillCreation> buffer = BufferManager.RequestBuffer<SkillCreation>(new BufferRequest(skillCreations.Length));
-            buffer.Assign(skillCreations);
-            buffer.MarkReady();
+            SkillCreationDispatcher.SendSkillCreationBuffer(skillCreations, BufferManager);
         }
 
         private void AssertResponseListenerCalled(bool called)
@@ -90,30 +91,42 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
         [Test]
         public void Positive_SendSingleCommand_CreatesSkill_DispatchesResponse()
         {
-            Assert.DoesNotThrow(() => SendSkillCreationBuffer([_miningCreation]));
+            Assert.DoesNotThrow(() => DispatchSkillCreation(_miningCreation));
 
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_miningCreation, _skillCreationResponseListener.SkillCreationResponses![0]);
+            AssertResponse(_miningCreation, _skillCreationResponseListener.SkillCreationResponses[0]);
         }
 
         [Test]
         public void Positive_SendMultipleCommands_DispatchesMultiple()
         {
-            Assert.DoesNotThrow(() => SendSkillCreationBuffer([_miningCreation, _miningCreation with { SkillID = SkillID.FORAGING }]));
+            Assert.DoesNotThrow(() => DispatchSkillCreation(_miningCreation, _miningCreation with { SkillID = SkillID.FORAGING }));
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponse(_miningCreation, _skillCreationResponseListener.SkillCreationResponses![0]);
+            AssertResponse(_miningCreation, _skillCreationResponseListener.SkillCreationResponses[0]);
             AssertResponse(_miningCreation with { SkillID = SkillID.FORAGING }, _skillCreationResponseListener.SkillCreationResponses[1]);
+        }
+
+        [Test]
+        public void Positive_SendSingleCommand_AtMaxLevel_DispatchesResponse()
+        {
+            SkillCreation maxLevelSkill = _miningCreation with {  ReadOnlyLevelable = _miningCreation.ReadOnlyLevelable with { Level = 100 }};
+            Assert.DoesNotThrow(() => DispatchSkillCreation(maxLevelSkill));
+            
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(1);
+            AssertResponse(maxLevelSkill, _skillCreationResponseListener.SkillCreationResponses[0]);
         }
 
         [Test]
         public void Negative_SendMultipleCommands_SameSkillID_Throws()
         {
-            Assert.DoesNotThrow(() => SendSkillCreationBuffer([_miningCreation, _miningCreation]));
+            Assert.DoesNotThrow(() => DispatchSkillCreation(_miningCreation, _miningCreation));
             
             AssertResponseListenerCalled(false);
             AssertErrorListenerCalled(true);
@@ -122,14 +135,14 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
         }
 
         [Test]
-        public void Negative_SendSingleCommand_OveMaxLevel_Throws()
+        public void Negative_SendSingleCommand_OverMaxLevel_Throws()
         {
             SkillCreation creation = _miningCreation with
             {
                 ReadOnlyLevelable = _miningCreation.ReadOnlyLevelable with { Level = LevelConstants.MAX_LEVEL + 1 }
             };
             
-            Assert.DoesNotThrow(() => SendSkillCreationBuffer([creation]));
+            Assert.DoesNotThrow(() => DispatchSkillCreation(creation));
          
             AssertResponseListenerCalled(false);
             AssertErrorListenerCalled(true);

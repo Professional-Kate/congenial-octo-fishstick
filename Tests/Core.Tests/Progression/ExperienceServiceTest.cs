@@ -1,6 +1,5 @@
 ﻿using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Assertion;
-using IdelPog.Core.Progression.Assertion.Pipelines;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -19,7 +18,7 @@ namespace IdelPog.Core.Tests.Progression
         public void OneTimeSetUp()
         {
             IHandler throwHandler = new ThrowHandler();
-            _experienceService = new ExperienceService(new LevelableAssertionPipeline(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler)));
+            _experienceService = new ExperienceService(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler));
         }
 
         [SetUp]
@@ -47,14 +46,17 @@ namespace IdelPog.Core.Tests.Progression
 
             _experienceService.AddExperience(_levelable);
 
-            Assert.That(_levelable.Experience, Is.EqualTo(_levelable.ExperiencePerAction));
-            Assert.That(_levelable.Level, Is.EqualTo(0));
+            Assert.Multiple(() =>
+            {
+                Assert.That(_levelable.Experience, Is.EqualTo(_levelable.ExperiencePerAction));
+                Assert.That(_levelable.Level, Is.EqualTo(0));
+            });
         }
 
         [Test]
-        public void Negative_AddExperience_MaxLevel_Throws()
+        public void Negative_AddExperience_AboveMaxLevel_Throws()
         {
-            Levelable levelable = new(LevelConstants.MAX_LEVEL, 100, 10, 1);
+            Levelable levelable = new(LevelConstants.MAX_LEVEL + 1, 100, 10, 1);
 
             MaxLevelException exception = Assert.Throws<MaxLevelException>(() => _experienceService.AddExperience(levelable));
             Assert.Multiple(() =>
