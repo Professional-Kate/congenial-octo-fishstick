@@ -1,5 +1,4 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Currency.Factory.Interface;
 
@@ -16,21 +15,21 @@ namespace IdelPog.Currency.Factory
             _collectionAssertion = collectionAssertion;
         }
 
-        public IReadOnlyList<CurrencyUpdateResponse> CreateFrom(IReadOnlyList<CurrencyUpdate> trades)
+        public IReadOnlyList<CurrencyUpdateResponse> CreateFrom(IReadOnlyList<Contracts.Currency> currencies)
         {
-            _objectNullAssertion.AssertNotNull(trades, nameof(trades));
-            _collectionAssertion.AssertNotEmpty(trades);
+            _objectNullAssertion.AssertNotNull(currencies, nameof(currencies));
+            _collectionAssertion.AssertNotEmpty(currencies);
 
-            return Create(trades);
+            return Create(currencies);
         }
         
-        private static CurrencyUpdateResponse[] Create(IReadOnlyList<CurrencyUpdate> trades)
+        private static CurrencyUpdateResponse[] Create(IReadOnlyList<Contracts.Currency> currencies)
         {
-            CurrencyUpdateResponse[] responses = new CurrencyUpdateResponse[trades.Count];
-            for (int i = 0; i < trades.Count; i++)
+            CurrencyUpdateResponse[] responses = new CurrencyUpdateResponse[currencies.Count];
+            for (int i = 0; i < currencies.Count; i++)
             {
-                CurrencyUpdate currencyUpdate = trades[i];
-                CurrencyUpdateResponse response = new() { CurrencyType = currencyUpdate.CurrencyType, ActionType = currencyUpdate.ActionType, Amount = currencyUpdate.Amount };
+                Contracts.Currency currency = currencies[i];
+                CurrencyUpdateResponse response = new() { CurrencyType = currency.CurrencyType, CurrencyAmount = currency.Amount };
                 responses[i] = response;
             }
 

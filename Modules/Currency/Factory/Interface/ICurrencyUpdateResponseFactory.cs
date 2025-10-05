@@ -1,10 +1,9 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Response;
 
 namespace IdelPog.Currency.Factory.Interface
 {
     public interface ICurrencyUpdateResponseFactory
     {
-        public IReadOnlyList<CurrencyUpdateResponse> CreateFrom(IReadOnlyList<CurrencyUpdate> trades);
+        public IReadOnlyList<CurrencyUpdateResponse> CreateFrom(IReadOnlyList<Contracts.Currency> currencies);
     }
 }

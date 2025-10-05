@@ -114,7 +114,7 @@ namespace IdelPog.Currency
             ICurrencyUpdateSummarizer currencyUpdateSummarizer = new CurrencyUpdateSummarizer(updateFactory, collectionAssertion);
             ICurrencyUpdateResponseFactory updateResponseFactory = new CurrencyUpdateResponseFactory(objectNullAssertion, collectionAssertion);
 
-            IBatchMediator<CurrencyUpdate> updateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, updateResponseDispatcher, currencyUpdateSummarizer, updateResponseFactory, collectionAssertion, foundAssertion, objectNullAssertion);
+            IBatchMediator<CurrencyUpdate> updateMediator = new CurrencyUpdateMediator(currencyRepository, currencyService, updateResponseDispatcher, currencyUpdateSummarizer, updateResponseFactory, collectionAssertion, foundAssertion);
             IBatchController<CurrencyUpdate> updateController = new ManagedBatchController<CurrencyUpdate>(updateMediator);
             
             IErrorFactory<CurrencyUpdateError, IReadOnlyList<CurrencyUpdate>> updateErrorFactory = new CurrencyUpdateErrorFactory(baseErrorFactory);
