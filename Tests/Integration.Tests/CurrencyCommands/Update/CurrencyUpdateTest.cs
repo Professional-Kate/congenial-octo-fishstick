@@ -99,6 +99,19 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         }
 
         [Test]
+        public void Positive_SendAddUpdate_ReturnsState_NotUpdate()
+        {
+            SendCreationBuffer(_goldCreation with { StartingAmount = 50 });
+            
+            SendCurrencyTradeBuffer(_addGoldCommand);
+            
+            AssertErrorListener(false);
+            AssertUpdateListener(true);
+            AssertResponseLength(1);
+            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand with { Amount = 60 });
+        }
+
+        [Test]
         public void Positive_SendAddGoldUpdate_ProducesSingleCurrencyUpdate()
         {
             SendCreationBuffer(_goldCreation);
