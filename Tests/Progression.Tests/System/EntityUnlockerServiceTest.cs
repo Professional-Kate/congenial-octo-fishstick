@@ -33,7 +33,7 @@ namespace IdelPog.Progression.Tests.System
             ThrowHandler throwHandler = new();
             _repositoryMock = new Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>>();
             
-            _entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object, new FoundAssertion(throwHandler), new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler), new SkillMatchesAssertion<SkillID>(throwHandler), new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler));
+            _entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object, new FoundAssertion(throwHandler), new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler), new IDMatchesAssertion<SkillID>(throwHandler), new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler));
 
             _harvestNodeUnlock = new HarvestNodeUnlock { SkillID = SkillID.MINING, SkillLevel = 5 };
             _harvestNodeUnlockResponse = new HarvestNodeUnlockResponse { ItemID = ItemID.BIRCH, SkillID = SkillID.MINING };

@@ -7,26 +7,26 @@ using IdelPog.Progression.Exceptions;
 namespace IdelPog.Progression.Tests.Assertion
 {
     [TestFixture]
-    public sealed class SkillMatchesAssertionTest
+    public sealed class IDMatchesAssertionTest
     {
-        private ISkillMatchesAssertion<SkillID> _skillMatchesAssertion;
+        private IIDMatchesAssertion<SkillID> _iidMatchesAssertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _skillMatchesAssertion = new SkillMatchesAssertion<SkillID>(new ThrowHandler());
+            _iidMatchesAssertion = new IDMatchesAssertion<SkillID>(new ThrowHandler());
         }
 
         [Test]
         public void Positive_AssertSkillMatches_SkillMatches_NoThrow()
         {
-            Assert.DoesNotThrow(() => _skillMatchesAssertion.AssertSkillMatches(SkillID.FORAGING, SkillID.FORAGING));
+            Assert.DoesNotThrow(() => _iidMatchesAssertion.AssertIDMatches(SkillID.FORAGING, SkillID.FORAGING));
         }
 
         [Test]
         public void Negative_AssertSkillMatches_DifferentSkills_Throws()
         {
-            Assert.Throws<IDMismatchException<SkillID>>(() => _skillMatchesAssertion.AssertSkillMatches(SkillID.FORAGING, SkillID.MINING));
+            Assert.Throws<IDMismatchException<SkillID>>(() => _iidMatchesAssertion.AssertIDMatches(SkillID.FORAGING, SkillID.MINING));
         }
     }
 }

@@ -167,10 +167,10 @@ namespace IdelPog.HarvestNode
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             ICanUnlockAssertion<SkillID, HarvestNodeUnlockResponse> canUnlockAssertion = new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler);
-            ISkillMatchesAssertion<SkillID> skillMatchesAssertion = new SkillMatchesAssertion<SkillID>(throwHandler);
+            IIDMatchesAssertion<SkillID> iidMatchesAssertion = new IDMatchesAssertion<SkillID>(throwHandler);
             IQueueAssertion<SkillID, HarvestNodeUnlockResponse> queueAssertion = new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler);
 
-            IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse> entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(entityRepository, foundAssertion, canUnlockAssertion, skillMatchesAssertion, queueAssertion);
+            IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse> entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(entityRepository, foundAssertion, canUnlockAssertion, iidMatchesAssertion, queueAssertion);
             IDispatchMany<HarvestNodeUnlockResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUnlockResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<HarvestNodeUnlock> unlockMediator = new NodeUnlockMediator(entityUnlockerService, responseDispatcher, collectionAssertion);

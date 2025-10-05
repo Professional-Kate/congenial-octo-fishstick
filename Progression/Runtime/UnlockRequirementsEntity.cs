@@ -23,5 +23,18 @@ namespace IdelPog.Progression.Runtime
         {
             return _levelRequirementStore.TryDequeue(out levelRequirementComponent);
         }
+
+        public bool ContainsComponent(Predicate<LevelRequirementComponent<TID, TCommand>> predicate)
+        {
+            foreach (LevelRequirementComponent<TID, TCommand> levelRequirementComponent in _levelRequirementStore.ToArray())
+            {
+                if (predicate(levelRequirementComponent))
+                { 
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

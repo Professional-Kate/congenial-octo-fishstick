@@ -5,13 +5,13 @@ using IdelPog.Progression.Exceptions;
 
 namespace IdelPog.Progression.Assertion
 {
-    public sealed class SkillMatchesAssertion<TID> : BaseAssertion, ISkillMatchesAssertion<TID> where TID : Enum
+    public sealed class IDMatchesAssertion<TID> : BaseAssertion, IIDMatchesAssertion<TID> where TID : Enum
     {
-        public SkillMatchesAssertion(IHandler handler) : base(handler)
+        public IDMatchesAssertion(IHandler handler) : base(handler)
         {
         }
 
-        public void AssertSkillMatches(TID actualID, TID expectedID)
+        public void AssertIDMatches(TID actualID, TID expectedID)
         {
             Assert<IDMismatchException<TID>>(() =>
             {

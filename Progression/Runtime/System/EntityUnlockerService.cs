@@ -10,16 +10,16 @@ namespace IdelPog.Progression.Runtime.System
     {
         private readonly IAssetRepository<TID, UnlockRequirementsEntity<TID, TCommand>> _entityRepository;
         private readonly IFoundAssertion _foundAssertion;
-        private readonly ISkillMatchesAssertion<TID> _skillMatchesAssertion;
+        private readonly IIDMatchesAssertion<TID> _idMatchesAssertion;
         private readonly ICanUnlockAssertion<TID, TCommand> _canUnlockAssertion;
         private readonly IQueueAssertion<TID, TCommand> _queueAssertion;
 
-        public EntityUnlockerService(IAssetRepository<TID, UnlockRequirementsEntity<TID, TCommand>> entityRepository, IFoundAssertion foundAssertion, ICanUnlockAssertion<TID, TCommand> canUnlockAssertion, ISkillMatchesAssertion<TID> skillMatchesAssertion, IQueueAssertion<TID, TCommand> queueAssertion)
+        public EntityUnlockerService(IAssetRepository<TID, UnlockRequirementsEntity<TID, TCommand>> entityRepository, IFoundAssertion foundAssertion, ICanUnlockAssertion<TID, TCommand> canUnlockAssertion, IIDMatchesAssertion<TID> idMatchesAssertion, IQueueAssertion<TID, TCommand> queueAssertion)
         {
             _entityRepository = entityRepository;
             _foundAssertion = foundAssertion;
             _canUnlockAssertion = canUnlockAssertion;
-            _skillMatchesAssertion = skillMatchesAssertion;
+            _idMatchesAssertion = idMatchesAssertion;
             _queueAssertion = queueAssertion;
         }
 
@@ -83,7 +83,7 @@ namespace IdelPog.Progression.Runtime.System
         private LevelRequirementComponent<TID, TCommand> GetFirstComponent(UnlockRequirementsEntity<TID, TCommand> entity, TID id)
         {
             LevelRequirementComponent<TID, TCommand> firstComponent = entity.Peek();
-            _skillMatchesAssertion.AssertSkillMatches(id, firstComponent.ID);
+            _idMatchesAssertion.AssertIDMatches(id, firstComponent.ID);
 
             return firstComponent;
         }
