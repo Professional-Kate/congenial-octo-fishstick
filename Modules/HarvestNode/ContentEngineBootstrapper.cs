@@ -22,6 +22,8 @@ using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Core.Validation.Handler.Interface;
+using IdelPog.HarvestNode.Assertion;
+using IdelPog.HarvestNode.Assertion.Interface;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Factory;
 using IdelPog.HarvestNode.Factory.Interface;
@@ -63,7 +65,7 @@ namespace IdelPog.HarvestNode
             IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository = new AssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>();
             
             
-            RegisterSkillUpdateResponse(bufferManager, skillNodeAccessValidator, batchRegister, bufferLogger, harvestNodeRepository);
+            RegisterSkillUpdateResponse(bufferManager, skillNodeAccessValidator, batchRegister, bufferLogger, harvestNodeRepository, entityRepository);
             RegisterNodeCreation(bufferManager, skillNodeRepository, batchRegister, bufferLogger, harvestNodeRepository);
             RegisterNodeUnlock(bufferManager, batchRegister, bufferLogger, entityRepository);
             RegisterNodeRequirementsCreation(bufferManager, batchRegister, bufferLogger, entityRepository);
@@ -77,22 +79,25 @@ namespace IdelPog.HarvestNode
         /// <param name="batchRegister">Used to register the SkillUpdateResponse flow</param>
         /// <param name="bufferLogger">Logs all messages in and out</param>
         /// <param name="harvestNodeRepository">Stores all HarvestNodes</param>
+        /// <param name="entityRepository">Stores all <see cref="UnlockRequirementsEntity{TID,TCommand}"/></param>
         /// <remarks>
         /// Listens to -> <see cref="SkillUpdateResponse"/>. On Success -> <see cref="HarvestNodeUpdateResponse"/>. On Error -> <see cref="HarvestNodeUpdateError"/>
         /// </remarks>
-        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ISkillNodeAccessValidator skillNodeAccessValidator, IBatchRegister batchRegister, IBufferLogger bufferLogger, IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository)
+        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ISkillNodeAccessValidator skillNodeAccessValidator, IBatchRegister batchRegister, IBufferLogger bufferLogger, IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             ILevelAssertion levelAssertion = new LevelAssertion(throwHandler);
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
+            INodeUnlockedAssertion nodeUnlockedAssertion = new NodeUnlockedAssertion(throwHandler);
             
             IAssetRepository<ItemID, ILootTable> lootTableRepository = new AssetRepository<ItemID, ILootTable>();
             ILevelService levelService = new LevelService(levelAssertion, objectNullAssertion);
             IExperienceService experienceService = new ExperienceService(levelAssertion, objectNullAssertion);
             ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
             INodeUpdateResponseFactory responseFactory = new NodeUpdateResponseFactory(levelProgressFactory);
+            IEntityUnlockChecker<SkillID, HarvestNodeUnlockResponse> unlockChecker = new EntityUnlockChecker<SkillID, HarvestNodeUnlockResponse>(entityRepository);
             
             LootTableGrantSelf(lootTableRepository, [ItemID.STONE, ItemID.IRON, ItemID.COPPER, ItemID.GOLD, ItemID.OAK, ItemID.SPRUCE, ItemID.BIRCH, ItemID.HERBS, ItemID.SMALL_INSECTS, ItemID.HONEY, ItemID.WATER, ItemID.SAND]);
             
@@ -101,7 +106,7 @@ namespace IdelPog.HarvestNode
             
             IDispatchMany<HarvestNodeUpdateResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             INodeUpdateService nodeUpdateService = new NodeUpdateService(harvestNodeRepository, levelService, experienceService, responseFactory, foundAssertion);
-            IBatchMediator<HarvestNodeUpdate> updateMediator = new NodeUpdateMediator(skillNodeAccessValidator, nodeUpdateService, responseDispatcher, lootService);
+            IBatchMediator<HarvestNodeUpdate> updateMediator = new NodeUpdateMediator(skillNodeAccessValidator, nodeUpdateService, responseDispatcher, lootService, unlockChecker, nodeUnlockedAssertion, collectionAssertion);
             IBatchController<HarvestNodeUpdate> nodeUpdateController = new ManagedBatchController<HarvestNodeUpdate>(updateMediator);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
