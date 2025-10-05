@@ -11,16 +11,17 @@ using IdelPog.Core.Validation.Exceptions;
 namespace IdelPog.Integration.Tests.ContentEngine
 {
     [TestFixture]
-    public class HarvestNodeCreationTest : ManagedTestBuffer
+    public sealed class HarvestNodeCreationTest : ManagedTestBuffer
     {
-        private HarvestNodeCreation _harvestNodeCreation;
+        private HarvestNodeCreation _miningCreation;
+        
         private NodeCreationResponseListener _nodeCreationResponseListener;
         private NodeCreationErrorListener _nodeCreationErrorListener;
 
         [SetUp]
         public void Setup()
         {
-            _harvestNodeCreation = new HarvestNodeCreation
+            _miningCreation = new HarvestNodeCreation
             {
                 ReadOnlyHarvestNodes =
                 [
@@ -31,7 +32,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
                 ],
                 LinkedSkill = SkillID.MINING
             };
-            
+
             _nodeCreationResponseListener = new NodeCreationResponseListener();
             _nodeCreationErrorListener = new NodeCreationErrorListener();
             ManagedSubscribe(_nodeCreationResponseListener);
@@ -45,117 +46,113 @@ namespace IdelPog.Integration.Tests.ContentEngine
             buffer.MarkReady();
         }
 
-        private void AssertResponseListener(params HarvestNodeCreation[] nodeCreations)
+        private void AssertResponseListenerCalled(bool wasCalled)
+        {
+            Assert.That(_nodeCreationResponseListener.WasCalled, Is.EqualTo(wasCalled));
+        }
+        
+        private void AssertResponseLength(int length)
+        {
+            Assert.That(_nodeCreationResponseListener.HarvestNodeCreationResponses, Has.Length.EqualTo(length));
+        }
+
+        private static void AssertResponseListener(HarvestNodeCreationResponse response, HarvestNodeCreation nodeCreation)
         {
             Assert.Multiple(() =>
             {
-                HarvestNodeCreationResponse response = _nodeCreationResponseListener.HarvestNodeCreationResponse;
-                Assert.That(response.NodeCreations.Count, Is.EqualTo(nodeCreations.Length));
-                Assert.That(response.NodeCreations, Is.EqualTo(nodeCreations));
+                Assert.That(response.LinkedSkill, Is.EqualTo(nodeCreation.LinkedSkill));
+                Assert.That(response.ReadOnlyHarvestNodes, Is.EqualTo(nodeCreation.ReadOnlyHarvestNodes));
             });
         }
+        
+        private void AssertErrorListenerCalled(bool wasCalled)
+        {
+            Assert.That(_nodeCreationErrorListener.WasCalled, Is.EqualTo(wasCalled));
+        }
+        
+        private void AssertErrorLength(int length)
+        {
+            Assert.That(_nodeCreationErrorListener.HarvestNodeCreationError.NodeCreations, Has.Length.EqualTo(length));
+        }
 
-        private void AssertErrorListener<TException>(HarvestNodeCreation harvestNodeCreation)
+        private void AssertErrorListener<TException>(params HarvestNodeCreation[] harvestNodeCreations)
         {
             
             Assert.Multiple(() =>
             {
                 HarvestNodeCreationError error = _nodeCreationErrorListener.HarvestNodeCreationError;
                 Assert.That(error.BaseError.Exception.InnerException, Is.Not.Null);
-            
                 Assert.That(error.BaseError.Exception.InnerException!.GetType(), Is.EqualTo(typeof(TException)));
-                Assert.That(error.NodeCreations, Has.Length.EqualTo(1));
-                Assert.That(error.NodeCreations[0], Is.EqualTo(harvestNodeCreation));
+                Assert.That(error.NodeCreations, Is.EqualTo(harvestNodeCreations));
             });
         }
 
         [Test]
         public void Positive_SendCommand_CreatesEachNode_DispatchesResponse()
         {
-            Assert.DoesNotThrow(() => DispatchNodeCreation(_harvestNodeCreation));
-            
-            Assert.Multiple(() =>
-            {
-                Assert.That(_nodeCreationResponseListener.WasCalled, Is.True);
-                Assert.That(_nodeCreationErrorListener.WasCalled, Is.False);
-            });
-            AssertResponseListener(_harvestNodeCreation);
+            Assert.DoesNotThrow(() => DispatchNodeCreation(_miningCreation));
+
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(1);
+            AssertResponseListener(_nodeCreationResponseListener.HarvestNodeCreationResponses[0], _miningCreation);
         }
         
         [Test]
         public void Positive_SendMultipleCommands_CreatesEachNode_DispatchesResponse()
         {
-            HarvestNodeCreation stoneCreation = new()
+            HarvestNodeCreation foragingCreation = new()
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
-                ],
-                LinkedSkill = SkillID.MINING
-            };
-            HarvestNodeCreation copperCreation = new()
-            {
-                ReadOnlyHarvestNodes =
-                [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.COPPER, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.HERBS, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
                 ],
                 LinkedSkill = SkillID.FORAGING
             };
             
-            Assert.DoesNotThrow(() => DispatchNodeCreation(stoneCreation, copperCreation));
+            Assert.DoesNotThrow(() => DispatchNodeCreation(_miningCreation, foragingCreation));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(_nodeCreationResponseListener.WasCalled, Is.True);
-                Assert.That(_nodeCreationErrorListener.WasCalled, Is.False);
-            });
-            AssertResponseListener(stoneCreation, copperCreation);
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(2);
+            AssertResponseListener(_nodeCreationResponseListener.HarvestNodeCreationResponses[0], _miningCreation);
+            AssertResponseListener(_nodeCreationResponseListener.HarvestNodeCreationResponses[1], foragingCreation);
         }
         
         [Test]
-        public void Negative_SendCommand_DuplicateSkillID_OnlyOneUpdate_SecondCallDispatchesError()
+        public void Negative_SendCommand_DuplicateSkillID_DispatchesError()
         {
-            DispatchNodeCreation(_harvestNodeCreation);
-            HarvestNodeCreation duplicateHarvestNodeCreation = new()
+            HarvestNodeCreation miningCreation = new()
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.HERBS, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
                 ],
                 LinkedSkill = SkillID.MINING
             };
             
-            Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateHarvestNodeCreation));
-            
-            Assert.Multiple(() =>
-            {
-                Assert.That(_nodeCreationResponseListener.WasCalled, Is.True);
-                Assert.That(_nodeCreationErrorListener.WasCalled, Is.True);
-            });
-            
-            AssertResponseListener(_harvestNodeCreation);
-            AssertErrorListener<DuplicateEntityException>(duplicateHarvestNodeCreation);
+            Assert.DoesNotThrow(() => DispatchNodeCreation(_miningCreation, miningCreation));
+
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(2);
+            AssertErrorListener<DuplicateEntityException>(_miningCreation, miningCreation);
         }
 
         [Test]
         public void Negative_SendCommand_EmptyResourceIDs_NoUpdate_DispatchesError()
         {
-            HarvestNodeCreation emptyArrayCreation = _harvestNodeCreation with { ReadOnlyHarvestNodes = [] };
+            HarvestNodeCreation emptyArrayCreation = _miningCreation with { ReadOnlyHarvestNodes = [] };
             Assert.DoesNotThrow(() => DispatchNodeCreation(emptyArrayCreation));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(_nodeCreationResponseListener.WasCalled, Is.False);
-                Assert.That(_nodeCreationErrorListener.WasCalled, Is.True);
-            });
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
             AssertErrorListener<EmptyCollectionException>(emptyArrayCreation);
         }
 
         [Test]
         public void Negative_SendCommand_DuplicateResource_OnlyOneUpdate_SecondCallDispatchesError()
         {
-            DispatchNodeCreation(_harvestNodeCreation);
-            
             HarvestNodeCreation duplicateResourceCreation = new()
             {
                 ReadOnlyHarvestNodes =
@@ -165,25 +162,12 @@ namespace IdelPog.Integration.Tests.ContentEngine
                 LinkedSkill = SkillID.FORAGING
             };
             
-            Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateResourceCreation));
-            
-            Assert.Multiple(() =>
-            {
-                Assert.That(_nodeCreationResponseListener.WasCalled, Is.True);
-                Assert.That(_nodeCreationErrorListener.WasCalled, Is.True);
-            });
-            AssertResponseListener(_harvestNodeCreation);
-            AssertErrorListener<DuplicateEntityException>(duplicateResourceCreation);
-            
-            Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateResourceCreation));
-            
-            Assert.Multiple(() =>
-            {
-                Assert.That(_nodeCreationResponseListener.WasCalled, Is.True);
-                Assert.That(_nodeCreationErrorListener.WasCalled, Is.True);
-            });
-            AssertResponseListener(_harvestNodeCreation);
-            AssertErrorListener<DuplicateEntityException>(duplicateResourceCreation);
+            Assert.DoesNotThrow(() => DispatchNodeCreation(_miningCreation, duplicateResourceCreation));
+
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(2);
+            AssertErrorListener<DuplicateEntityException>(_miningCreation, duplicateResourceCreation);
         }
         
         [Test]
@@ -201,11 +185,9 @@ namespace IdelPog.Integration.Tests.ContentEngine
             
             Assert.DoesNotThrow(() => DispatchNodeCreation(duplicateCreation));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(_nodeCreationResponseListener.WasCalled, Is.False);
-                Assert.That(_nodeCreationErrorListener.WasCalled, Is.True);
-            });
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(1);
             AssertErrorListener<DuplicateEntityException>(duplicateCreation);
         }
     }

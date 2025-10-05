@@ -4,14 +4,19 @@ using IdelPog.HarvestNode.Factory.Interface;
 
 namespace IdelPog.HarvestNode.Factory
 {
-    public class NodeCreationResponseFactory : INodeCreationResponseFactory
+    public sealed class NodeCreationResponseFactory : INodeCreationResponseFactory
     {
-        public HarvestNodeCreationResponse Create(HarvestNodeCreation[] nodeCreations)
+        public IReadOnlyList<HarvestNodeCreationResponse> Create(HarvestNodeCreation[] nodeCreations)
         {
-            return new HarvestNodeCreationResponse
+            HarvestNodeCreationResponse[] responses = new HarvestNodeCreationResponse[nodeCreations.Length];
+            for (var i = 0; i < nodeCreations.Length; i++)
             {
-                NodeCreations = nodeCreations
-            };
+                HarvestNodeCreation creation = nodeCreations[i];
+                HarvestNodeCreationResponse response = new HarvestNodeCreationResponse { LinkedSkill = creation.LinkedSkill, ReadOnlyHarvestNodes = creation.ReadOnlyHarvestNodes};
+                responses[i] = response;
+            }
+            
+            return responses;
         }
     }
 }

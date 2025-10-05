@@ -3,7 +3,7 @@ using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Information.Contracts;
-using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Repository.Asset;
@@ -20,7 +20,7 @@ using Moq;
 namespace IdelPog.HarvestNode.Tests.Mediator
 {
     [TestFixture]
-    public class NodeCreationMediatorTest
+    public sealed class NodeCreationMediatorTest
     {
         private IBatchMediator<HarvestNodeCreation> _nodeCreationMediator;
         private Mock<IAssetRepository<SkillID, SkillNodeEntity>> _skillNodeEntityRepositoryMock;
@@ -28,7 +28,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         private Mock<ISkillNodeEntityFactory> _skillNodeEntityFactoryMock;
         private Mock<IHarvestNodeFactory> _harvestNodeFactoryMock;
         private Mock<INodeCreationResponseFactory> _nodeCreationResponseFactoryMock;
-        private Mock<IDispatchOne<HarvestNodeCreationResponse>> _dispatchOneMock;
+        private Mock<IDispatchMany<HarvestNodeCreationResponse>> _dispatchOneMock;
 
         private HarvestNodeCreation _miningCreation;
 
@@ -40,7 +40,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _skillNodeEntityFactoryMock = new Mock<ISkillNodeEntityFactory>();
             _harvestNodeFactoryMock = new Mock<IHarvestNodeFactory>();
             _nodeCreationResponseFactoryMock = new Mock<INodeCreationResponseFactory>();
-            _dispatchOneMock = new Mock<IDispatchOne<HarvestNodeCreationResponse>>();
+            _dispatchOneMock = new Mock<IDispatchMany<HarvestNodeCreationResponse>>();
 
             _miningCreation = new HarvestNodeCreation
             {
@@ -77,7 +77,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ItemID.STONE, ItemID.COPPER, ItemID.GOLD, ItemID.IRON), It.IsAny<Contracts.HarvestNode>()), Times.Exactly(_miningCreation.ReadOnlyHarvestNodes.Length));
             _skillNodeEntityFactoryMock.Verify(library => library.Create(_miningCreation.LinkedSkill, _miningCreation.ReadOnlyHarvestNodes), Times.Once);
             _harvestNodeFactoryMock.Verify(library => library.Create(It.IsAny<ReadOnlyHarvestNode>()), Times.Exactly(_miningCreation.ReadOnlyHarvestNodes.Length));
-            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse>()), Times.Once);
+            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse[]>()), Times.Once);
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             
             Assert.Throws<DuplicateEntityException>(() => _nodeCreationMediator.HandleMessages([_miningCreation]));
             
-            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse>()), Times.Never);
+            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse[]>()), Times.Never);
             _skillNodeEntityRepositoryMock.Verify(library => library.Add(_miningCreation.LinkedSkill, It.IsAny<SkillNodeEntity>()), Times.Never);
             _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ItemID.STONE, ItemID.COPPER, ItemID.GOLD, ItemID.IRON), It.IsAny<Contracts.HarvestNode>()), Times.Never);
         }
@@ -99,7 +99,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             
             Assert.Throws<DuplicateEntityException>(() => _nodeCreationMediator.HandleMessages([_miningCreation]));
             
-            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse>()), Times.Never);
+            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse[]>()), Times.Never);
             _skillNodeEntityRepositoryMock.Verify(library => library.Add(_miningCreation.LinkedSkill, It.IsAny<SkillNodeEntity>()), Times.Never);
             _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ItemID.STONE, ItemID.COPPER, ItemID.GOLD, ItemID.IRON), It.IsAny<Contracts.HarvestNode>()), Times.Never);
             

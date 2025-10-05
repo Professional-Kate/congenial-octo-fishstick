@@ -144,7 +144,7 @@ namespace IdelPog.HarvestNode
             ISkillNodeEntityFactory skillNodeEntityFactory = new SkillNodeEntityFactory();
             IHarvestNodeFactory harvestNodeFactory = new HarvestNodeFactory();
             INodeCreationResponseFactory nodeCreationResponseFactory = new NodeCreationResponseFactory();
-            IDispatchOne<HarvestNodeCreationResponse> nodeCreationResponseDispatcher = new ManagedDispatcher<HarvestNodeCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IDispatchMany<HarvestNodeCreationResponse> nodeCreationResponseDispatcher = new ManagedDispatcher<HarvestNodeCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<HarvestNodeCreation> creationMediator = new NodeCreationMediator(harvestNodeRepository, skillNodeRepository, skillNodeEntityFactory, harvestNodeFactory, nodeCreationResponseFactory, nodeCreationResponseDispatcher, uniqueAssertion, collectionAssertion);
             IBatchController<HarvestNodeCreation> creationController = new ManagedBatchController<HarvestNodeCreation>(creationMediator);
