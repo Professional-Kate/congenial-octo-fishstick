@@ -5,7 +5,7 @@ using IdelPog.Currency.Factory.Interface;
 
 namespace IdelPog.Currency.Factory
 {
-    public class CurrencyUpdateResponseFactory : ICurrencyUpdateResponseFactory
+    public sealed class CurrencyUpdateResponseFactory : ICurrencyUpdateResponseFactory
     {
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
@@ -16,20 +16,25 @@ namespace IdelPog.Currency.Factory
             _collectionAssertion = collectionAssertion;
         }
 
-        public CurrencyUpdateResponse CreateFrom(IReadOnlyList<CurrencyUpdate> trades)
+        public IReadOnlyList<CurrencyUpdateResponse> CreateFrom(IReadOnlyList<CurrencyUpdate> trades)
         {
             _objectNullAssertion.AssertNotNull(trades, nameof(trades));
             _collectionAssertion.AssertNotEmpty(trades);
 
-            return Create(trades.ToArray());
+            return Create(trades);
         }
         
-        private static CurrencyUpdateResponse Create(CurrencyUpdate[] trades)
+        private static CurrencyUpdateResponse[] Create(IReadOnlyList<CurrencyUpdate> trades)
         {
-            return new CurrencyUpdateResponse
+            CurrencyUpdateResponse[] responses = new CurrencyUpdateResponse[trades.Count];
+            for (int i = 0; i < trades.Count; i++)
             {
-                CurrencyUpdates = trades
-            };
+                CurrencyUpdate currencyUpdate = trades[i];
+                CurrencyUpdateResponse response = new() { CurrencyType = currencyUpdate.CurrencyType, ActionType = currencyUpdate.ActionType, Amount = currencyUpdate.Amount };
+                responses[i] = response;
+            }
+
+            return responses;
         }
     }
 }

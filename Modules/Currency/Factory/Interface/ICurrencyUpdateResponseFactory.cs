@@ -5,6 +5,6 @@ namespace IdelPog.Currency.Factory.Interface
 {
     public interface ICurrencyUpdateResponseFactory
     {
-        public CurrencyUpdateResponse CreateFrom(IReadOnlyList<CurrencyUpdate> trades);
+        public IReadOnlyList<CurrencyUpdateResponse> CreateFrom(IReadOnlyList<CurrencyUpdate> trades);
     }
 }

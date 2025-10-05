@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
-using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
@@ -20,22 +20,22 @@ namespace IdelPog.Currency.Tests.Mediator
     public class CurrencyUpdateMediatorTest
     {
         private IBatchMediator<CurrencyUpdate> _currencyUpdateMediator { get; set; }
-        private Mock<IStateRepository<CurrencyType, IdelPog.Currency.Contracts.Currency>> _repositoryMock { get; set; }
+        private Mock<IStateRepository<CurrencyType, Contracts.Currency>> _repositoryMock { get; set; }
         private Mock<ICurrencyService> _currencyServiceMock { get; set; }
-        private Mock<IDispatchOne<CurrencyUpdateResponse>> _dispatcherMock { get; set; }
+        private Mock<IDispatchMany<CurrencyUpdateResponse>> _dispatcherMock { get; set; }
         private Mock<ICurrencyUpdateSummarizer> _currencyUpdateSummarizerMock { get; set; }
         private Mock<ICurrencyUpdateResponseFactory> _currencyUpdateDTOFactoryMock { get; set; }
 
-        private IdelPog.Currency.Contracts.Currency _goldCurrency;
+        private Contracts.Currency _goldCurrency;
         private CurrencyUpdate _addGoldUpdate;
         private CurrencyUpdate _removeGoldUpdate;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _repositoryMock = new Mock<IStateRepository<CurrencyType, IdelPog.Currency.Contracts.Currency>>();
+            _repositoryMock = new Mock<IStateRepository<CurrencyType, Contracts.Currency>>();
             _currencyServiceMock = new Mock<ICurrencyService>();
-            _dispatcherMock = new Mock<IDispatchOne<CurrencyUpdateResponse>>();
+            _dispatcherMock = new Mock<IDispatchMany<CurrencyUpdateResponse>>();
             _currencyUpdateSummarizerMock = new Mock<ICurrencyUpdateSummarizer>();
             _currencyUpdateDTOFactoryMock = new Mock<ICurrencyUpdateResponseFactory>();
 
@@ -46,7 +46,7 @@ namespace IdelPog.Currency.Tests.Mediator
 
             _addGoldUpdate = CurrencyUpdateFactory.Create(10, CurrencyType.GOLD, ActionType.ADD);
             _removeGoldUpdate = CurrencyUpdateFactory.Create(10, CurrencyType.GOLD, ActionType.REMOVE);
-            _goldCurrency = new IdelPog.Currency.Contracts.Currency(_addGoldUpdate.CurrencyType, 0);
+            _goldCurrency = new Contracts.Currency(_addGoldUpdate.CurrencyType, 0);
         }
 
         [SetUp]
@@ -61,8 +61,14 @@ namespace IdelPog.Currency.Tests.Mediator
 
         private void TestRunner(IReadOnlyList<CurrencyUpdate> updates, CurrencyUpdate[] summaryUpdates)
         {
-            CurrencyUpdateResponse responses = new() { CurrencyUpdates = summaryUpdates };
-
+            CurrencyUpdateResponse[] responses = new CurrencyUpdateResponse[summaryUpdates.Length]; 
+            for (var i = 0; i < summaryUpdates.Length; i++)
+            {
+                CurrencyUpdate update = summaryUpdates[i];
+                CurrencyUpdateResponse response = new() { Amount = update.Amount, ActionType = update.ActionType, CurrencyType = update.CurrencyType };
+                responses[i] = response;
+            }
+            
             _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(true);
 
             _repositoryMock.Setup(library => library.Get(_addGoldUpdate.CurrencyType)).Returns(_goldCurrency);
@@ -137,7 +143,7 @@ namespace IdelPog.Currency.Tests.Mediator
         [Test]
         public void Positive_ProcessCurrencyUpdate_SingleAddUpdate_MultipleCurrencies()
         {
-            IdelPog.Currency.Contracts.Currency gems = new(CurrencyType.GEMS, 0);
+            Contracts.Currency gems = new(CurrencyType.GEMS, 0);
             CurrencyUpdate addGemsUpdate = new() { ActionType = ActionType.ADD, Amount = 10, CurrencyType = CurrencyType.GEMS };
 
             IReadOnlyList<CurrencyUpdate> currencyUpdate = [_addGoldUpdate, addGemsUpdate];
@@ -209,7 +215,7 @@ namespace IdelPog.Currency.Tests.Mediator
             _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(new[] { _removeGoldUpdate })).Returns([_removeGoldUpdate]);
 
             _currencyServiceMock.Setup(library =>
-                    library.RemoveAmount(It.Is<IdelPog.Currency.Contracts.Currency>(currency => currency.CurrencyType == _goldCurrency.CurrencyType), _removeGoldUpdate.Amount))
+                    library.RemoveAmount(It.Is<Contracts.Currency>(currency => currency.CurrencyType == _goldCurrency.CurrencyType), _removeGoldUpdate.Amount))
                 .Throws(new NotEnoughCurrencyException(_goldCurrency.CurrencyType, _goldCurrency.Amount, _removeGoldUpdate.Amount));
 
             NotEnoughCurrencyException exception =

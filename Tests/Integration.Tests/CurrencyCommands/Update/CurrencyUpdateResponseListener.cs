@@ -1,18 +1,18 @@
 ﻿using IdelPog.Core.Contracts.Response;
-using IdelPog.Core.Messaging.Listener.Single;
+using IdelPog.Core.Messaging.Listener.Buffer;
 
 namespace IdelPog.Integration.Tests.CurrencyCommands.Update
 {
-    internal class CurrencyUpdateResponseListener : ISingleListener<CurrencyUpdateResponse>
+    internal sealed class CurrencyUpdateResponseListener : IBufferListener<CurrencyUpdateResponse>
     {
         public Type ListenerType { get; } = typeof(CurrencyUpdateResponse);
-        public CurrencyUpdateResponse Item { get; private set; }
+        public CurrencyUpdateResponse[] CurrencyUpdateResponses { get; private set; } = null!;
         public bool WasCalled { get; private set; }
 
-        public void Handle(CurrencyUpdateResponse message)
+        public void Handle(IReadOnlyList<CurrencyUpdateResponse> buffer)
         {
             WasCalled = true;
-            Item = message;
+            CurrencyUpdateResponses = buffer.ToArray();
         }
     }
 }

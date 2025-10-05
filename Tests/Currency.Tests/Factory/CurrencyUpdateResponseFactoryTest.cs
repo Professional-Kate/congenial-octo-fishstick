@@ -11,10 +11,10 @@ using IdelPog.Currency.Factory.Interface;
 namespace IdelPog.Currency.Tests.Factory
 {
     [TestFixture]
-    public class CurrencyUpdateResponseFactoryTest
+    public sealed class CurrencyUpdateResponseFactoryTest
     {
         private ICurrencyUpdateResponseFactory _currencyUpdateResponseFactory { get; set; }
-        private IReadOnlyList<CurrencyUpdate> _currencyTrades { get; set; }
+        private CurrencyUpdate _currencyUpdate;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -22,40 +22,38 @@ namespace IdelPog.Currency.Tests.Factory
             IHandler throwHandler = new ThrowHandler();
             _currencyUpdateResponseFactory = new CurrencyUpdateResponseFactory(new ObjectNullAssertion(throwHandler), new CollectionAssertion(throwHandler));
 
-            _currencyTrades =
-            [
-                CurrencyUpdateFactory.Create(10, CurrencyType.GOLD, ActionType.ADD),
-                CurrencyUpdateFactory.Create(10, CurrencyType.GOLD, ActionType.REMOVE),
-                CurrencyUpdateFactory.Create(uint.MaxValue, CurrencyType.GOLD, ActionType.REMOVE),
-                // The factory doesn't care about negatives. It should be verified elsewhere if negative numbers are an issue
-                CurrencyUpdateFactory.Create(uint.MinValue, CurrencyType.GOLD, ActionType.REMOVE)
-            ];
+            _currencyUpdate = new CurrencyUpdate { ActionType = ActionType.ADD, Amount = 10, CurrencyType = CurrencyType.GOLD };
         }
 
-        private void AssertCollection(CurrencyUpdateResponse currencyUpdateResponse, IReadOnlyList<CurrencyUpdate> currencyTrades)
+        private static void AssertResponse(CurrencyUpdateResponse currencyUpdateResponse, CurrencyUpdate currencyTrade)
         {
-            for (int i = 0; i < currencyUpdateResponse.CurrencyUpdates.Length; i++)
+            Assert.Multiple(() =>
             {
-                CurrencyUpdate currencyUpdates = currencyUpdateResponse.CurrencyUpdates[i];
-                CurrencyUpdate currencyUpdate = currencyTrades[i];
-
-                Assert.Multiple(() =>
-                {
-                    Assert.That(currencyUpdates.ActionType, Is.EqualTo(currencyUpdate.ActionType));
-                    Assert.That(currencyUpdates.Amount, Is.EqualTo(currencyUpdate.Amount));
-                    Assert.That(currencyUpdates.CurrencyType, Is.EqualTo(currencyUpdate.CurrencyType));
-                });
-            }
+                Assert.That(currencyTrade.ActionType, Is.EqualTo(currencyUpdateResponse.ActionType));
+                Assert.That(currencyTrade.Amount, Is.EqualTo(currencyUpdateResponse.Amount));
+                Assert.That(currencyTrade.CurrencyType, Is.EqualTo(currencyUpdateResponse.CurrencyType));
+            });
         }
 
         [Test]
         public void Positive_CreateFrom_ConvertsTradeIntoUpdate()
         {
-            CurrencyUpdateResponse responses = _currencyUpdateResponseFactory.CreateFrom(_currencyTrades);
+            IReadOnlyList<CurrencyUpdateResponse> responses = _currencyUpdateResponseFactory.CreateFrom([_currencyUpdate]);
 
-            Assert.That(responses.CurrencyUpdates, Has.Length.EqualTo(_currencyTrades.Count));
+            Assert.That(responses, Has.Count.EqualTo(1));
+            
+            AssertResponse(responses[0], _currencyUpdate);
+        }
 
-            AssertCollection(responses, _currencyTrades);
+        [Test]
+        public void Positive_CreateFrom_ConvertsMultipleTrades()
+        {
+            IReadOnlyList<CurrencyUpdateResponse> responses = _currencyUpdateResponseFactory.CreateFrom([_currencyUpdate, _currencyUpdate]);
+            
+            Assert.That(responses, Has.Count.EqualTo(2));
+            
+            AssertResponse(responses[0], _currencyUpdate);
+            AssertResponse(responses[1], _currencyUpdate);
         }
 
         [Test]
