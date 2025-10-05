@@ -16,7 +16,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
     public sealed class HarvestNodeUpdateTest : ManagedTestBuffer
     {
         private HarvestNodeUpdate _nodeUpdate;
-        private NodeCreation _nodeCreation;
+        private HarvestNodeCreation _harvestNodeCreation;
         private UpdateNodeErrorListener _updateNodeErrorListener;
         private UpdateNodeResponseListener _updateNodeResponseListener;
 
@@ -29,7 +29,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
                 SkillID = SkillID.MINING
             };
             
-            _nodeCreation = new NodeCreation
+            _harvestNodeCreation = new HarvestNodeCreation
             {
                 ReadOnlyHarvestNodes =
                 [
@@ -44,9 +44,9 @@ namespace IdelPog.Integration.Tests.ContentEngine
             ManagedSubscribe(_updateNodeResponseListener);
         }
         
-        private void DispatchNodeCreation(params NodeCreation[] nodeCreations)
+        private void DispatchNodeCreation(params HarvestNodeCreation[] nodeCreations)
         {
-            IBuffer<NodeCreation> buffer = BufferManager.RequestBuffer<NodeCreation>(new BufferRequest(nodeCreations.Length));
+            IBuffer<HarvestNodeCreation> buffer = BufferManager.RequestBuffer<HarvestNodeCreation>(new BufferRequest(nodeCreations.Length));
             buffer.Assign(nodeCreations);
             buffer.MarkReady();
         }
@@ -87,7 +87,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
         [Test]
         public void Positive_SendCommand_DispatchesResponse_NoError()
         {
-            DispatchNodeCreation(_nodeCreation);
+            DispatchNodeCreation(_harvestNodeCreation);
             Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate));
             
             Assert.Multiple(() =>
@@ -103,7 +103,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
         [Test]
         public void Positive_SendMultipleCommands_DispatchesResponses_NoError()
         {
-            NodeCreation foragingCreation = new()
+            HarvestNodeCreation foragingCreation = new()
             {
                 ReadOnlyHarvestNodes =
                 [
@@ -114,7 +114,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
 
             HarvestNodeUpdate foragingUpdate = new() { ItemID = ItemID.STONE, SkillID = SkillID.FORAGING };
             
-            DispatchNodeCreation(_nodeCreation, foragingCreation);
+            DispatchNodeCreation(_harvestNodeCreation, foragingCreation);
             Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate, foragingUpdate));
             
             Assert.Multiple(() =>
@@ -146,7 +146,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
         [Test]
         public void Negative_SendCommand_SkillDoesNotAllowResource_NoUpdate_DispatchesError()
         {
-            DispatchNodeCreation(_nodeCreation);
+            DispatchNodeCreation(_harvestNodeCreation);
             
             Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate with { ItemID = ItemID.HERBS }));
             
@@ -167,7 +167,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
             HarvestNodeUnlockDispatcher dispatcher = new(BufferManager);
             dispatcher.DispatchCreations(dispatcher.MiningCreation);
             
-            DispatchNodeCreation(_nodeCreation);
+            DispatchNodeCreation(_harvestNodeCreation);
             Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate));
             
             Assert.Multiple(() =>

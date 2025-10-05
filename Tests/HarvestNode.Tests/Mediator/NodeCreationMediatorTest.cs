@@ -22,15 +22,15 @@ namespace IdelPog.HarvestNode.Tests.Mediator
     [TestFixture]
     public class NodeCreationMediatorTest
     {
-        private IBatchMediator<NodeCreation> _nodeCreationMediator;
+        private IBatchMediator<HarvestNodeCreation> _nodeCreationMediator;
         private Mock<IAssetRepository<SkillID, SkillNodeEntity>> _skillNodeEntityRepositoryMock;
         private Mock<IStateRepository<ItemID, Contracts.HarvestNode>> _harvestNodeRepositoryMock;
         private Mock<ISkillNodeEntityFactory> _skillNodeEntityFactoryMock;
         private Mock<IHarvestNodeFactory> _harvestNodeFactoryMock;
         private Mock<INodeCreationResponseFactory> _nodeCreationResponseFactoryMock;
-        private Mock<IDispatchOne<NodeCreationResponse>> _dispatchOneMock;
+        private Mock<IDispatchOne<HarvestNodeCreationResponse>> _dispatchOneMock;
 
-        private NodeCreation _miningCreation;
+        private HarvestNodeCreation _miningCreation;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -40,9 +40,9 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _skillNodeEntityFactoryMock = new Mock<ISkillNodeEntityFactory>();
             _harvestNodeFactoryMock = new Mock<IHarvestNodeFactory>();
             _nodeCreationResponseFactoryMock = new Mock<INodeCreationResponseFactory>();
-            _dispatchOneMock = new Mock<IDispatchOne<NodeCreationResponse>>();
+            _dispatchOneMock = new Mock<IDispatchOne<HarvestNodeCreationResponse>>();
 
-            _miningCreation = new NodeCreation
+            _miningCreation = new HarvestNodeCreation
             {
                 ReadOnlyHarvestNodes =
                 [
@@ -77,7 +77,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ItemID.STONE, ItemID.COPPER, ItemID.GOLD, ItemID.IRON), It.IsAny<Contracts.HarvestNode>()), Times.Exactly(_miningCreation.ReadOnlyHarvestNodes.Length));
             _skillNodeEntityFactoryMock.Verify(library => library.Create(_miningCreation.LinkedSkill, _miningCreation.ReadOnlyHarvestNodes), Times.Once);
             _harvestNodeFactoryMock.Verify(library => library.Create(It.IsAny<ReadOnlyHarvestNode>()), Times.Exactly(_miningCreation.ReadOnlyHarvestNodes.Length));
-            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<NodeCreationResponse>()), Times.Once);
+            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse>()), Times.Once);
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             
             Assert.Throws<DuplicateEntityException>(() => _nodeCreationMediator.HandleMessages([_miningCreation]));
             
-            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<NodeCreationResponse>()), Times.Never);
+            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse>()), Times.Never);
             _skillNodeEntityRepositoryMock.Verify(library => library.Add(_miningCreation.LinkedSkill, It.IsAny<SkillNodeEntity>()), Times.Never);
             _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ItemID.STONE, ItemID.COPPER, ItemID.GOLD, ItemID.IRON), It.IsAny<Contracts.HarvestNode>()), Times.Never);
         }
@@ -99,7 +99,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             
             Assert.Throws<DuplicateEntityException>(() => _nodeCreationMediator.HandleMessages([_miningCreation]));
             
-            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<NodeCreationResponse>()), Times.Never);
+            _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse>()), Times.Never);
             _skillNodeEntityRepositoryMock.Verify(library => library.Add(_miningCreation.LinkedSkill, It.IsAny<SkillNodeEntity>()), Times.Never);
             _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ItemID.STONE, ItemID.COPPER, ItemID.GOLD, ItemID.IRON), It.IsAny<Contracts.HarvestNode>()), Times.Never);
             

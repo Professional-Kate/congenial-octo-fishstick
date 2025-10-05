@@ -5,6 +5,6 @@ namespace IdelPog.HarvestNode.Factory.Interface
 {
     public interface INodeCreationResponseFactory
     {
-        public NodeCreationResponse Create(NodeCreation[] nodeCreations);
+        public HarvestNodeCreationResponse Create(HarvestNodeCreation[] nodeCreations);
     }
 }

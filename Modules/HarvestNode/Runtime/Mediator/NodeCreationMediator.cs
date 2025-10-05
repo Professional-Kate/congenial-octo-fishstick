@@ -13,18 +13,18 @@ using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
 
 namespace IdelPog.HarvestNode.Runtime.Mediator
 {
-    public class NodeCreationMediator : IBatchMediator<NodeCreation>
+    public class NodeCreationMediator : IBatchMediator<HarvestNodeCreation>
     {
         private readonly IStateRepository<ItemID, Contracts.HarvestNode> _harvestNodeRepository;
         private readonly IAssetRepository<SkillID, SkillNodeEntity> _skillNodeEntityRepository;
         private readonly ISkillNodeEntityFactory  _skillNodeEntityFactory;
         private readonly IHarvestNodeFactory  _harvestNodeFactory;
         private readonly INodeCreationResponseFactory  _nodeCreationResponseFactory;
-        private readonly IDispatchOne<NodeCreationResponse> _nodeCreationResponseDispatcher;
+        private readonly IDispatchOne<HarvestNodeCreationResponse> _nodeCreationResponseDispatcher;
         private readonly IUniqueAssertion _uniqueAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public NodeCreationMediator(IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, SkillNodeEntity> skillNodeEntityRepository, ISkillNodeEntityFactory skillNodeEntityFactory, IHarvestNodeFactory harvestNodeFactory, INodeCreationResponseFactory  nodeCreationResponseFactory, IDispatchOne<NodeCreationResponse> nodeCreationResponseDispatcher, IUniqueAssertion uniqueAssertion, ICollectionAssertion collectionAssertion)
+        public NodeCreationMediator(IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, SkillNodeEntity> skillNodeEntityRepository, ISkillNodeEntityFactory skillNodeEntityFactory, IHarvestNodeFactory harvestNodeFactory, INodeCreationResponseFactory  nodeCreationResponseFactory, IDispatchOne<HarvestNodeCreationResponse> nodeCreationResponseDispatcher, IUniqueAssertion uniqueAssertion, ICollectionAssertion collectionAssertion)
         {
             _harvestNodeRepository = harvestNodeRepository;
             _skillNodeEntityRepository = skillNodeEntityRepository;
@@ -36,11 +36,11 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
             _collectionAssertion = collectionAssertion;
         }
 
-        public void HandleMessages(IReadOnlyList<NodeCreation> nodeCreations)
+        public void HandleMessages(IReadOnlyList<HarvestNodeCreation> nodeCreations)
         {
             _collectionAssertion.AssertHasElements(nodeCreations);
             
-            foreach (NodeCreation nodeCreation in nodeCreations)
+            foreach (HarvestNodeCreation nodeCreation in nodeCreations)
             {
                 _collectionAssertion.AssertHasElements(nodeCreation.ReadOnlyHarvestNodes);
                 
@@ -58,18 +58,18 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
             _nodeCreationResponseDispatcher.Dispatch(_nodeCreationResponseFactory.Create(nodeCreations.ToArray()));
         }
         
-        private void CreateHarvestNodes(NodeCreation nodeCreation)
+        private void CreateHarvestNodes(HarvestNodeCreation harvestNodeCreation)
         {
-            foreach (ReadOnlyHarvestNode readOnlyHarvestNode in nodeCreation.ReadOnlyHarvestNodes)
+            foreach (ReadOnlyHarvestNode readOnlyHarvestNode in harvestNodeCreation.ReadOnlyHarvestNodes)
             { 
                 _harvestNodeRepository.Add(readOnlyHarvestNode.ItemID, _harvestNodeFactory.Create(readOnlyHarvestNode));
             }
         }
         
-        private void CreateSkillNodeEntity(NodeCreation nodeCreation)
+        private void CreateSkillNodeEntity(HarvestNodeCreation harvestNodeCreation)
         {
-            SkillNodeEntity skillNodeEntity = _skillNodeEntityFactory.Create(nodeCreation.LinkedSkill, nodeCreation.ReadOnlyHarvestNodes);
-            _skillNodeEntityRepository.Add(nodeCreation.LinkedSkill, skillNodeEntity);
+            SkillNodeEntity skillNodeEntity = _skillNodeEntityFactory.Create(harvestNodeCreation.LinkedSkill, harvestNodeCreation.ReadOnlyHarvestNodes);
+            _skillNodeEntityRepository.Add(harvestNodeCreation.LinkedSkill, skillNodeEntity);
         }
     }
 }

@@ -124,7 +124,7 @@ namespace IdelPog.HarvestNode
         }
 
         /// <summary>
-        /// Registers the <see cref="NodeCreation"/> flow into the messaging system>
+        /// Registers the <see cref="HarvestNodeCreation"/> flow into the messaging system>
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="skillNodeRepository">Used to store all <see cref="HarvestNode"/> models</param>
@@ -132,7 +132,7 @@ namespace IdelPog.HarvestNode
         /// <param name="bufferLogger">Logs all messages in and out</param>
         /// <param name="harvestNodeRepository">Stores all HarvestNodes</param>
         /// <remarks>
-        /// Listens to -> <see cref="NodeCreation"/>. On Success -> <see cref="NodeCreationResponse"/>. On Error -> <see cref="NodeCreationError"/>
+        /// Listens to -> <see cref="HarvestNodeCreation"/>. On Success -> <see cref="HarvestNodeCreationResponse"/>. On Error -> <see cref="HarvestNodeCreationError"/>
         /// </remarks>
         private static void RegisterNodeCreation(IBufferManager bufferManager, IAssetRepository<SkillID, SkillNodeEntity> skillNodeRepository, IBatchRegister batchRegister, IBufferLogger bufferLogger, IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository)
         {
@@ -144,13 +144,13 @@ namespace IdelPog.HarvestNode
             ISkillNodeEntityFactory skillNodeEntityFactory = new SkillNodeEntityFactory();
             IHarvestNodeFactory harvestNodeFactory = new HarvestNodeFactory();
             INodeCreationResponseFactory nodeCreationResponseFactory = new NodeCreationResponseFactory();
-            IDispatchOne<NodeCreationResponse> nodeCreationResponseDispatcher = new ManagedDispatcher<NodeCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IDispatchOne<HarvestNodeCreationResponse> nodeCreationResponseDispatcher = new ManagedDispatcher<HarvestNodeCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
-            IBatchMediator<NodeCreation> creationMediator = new NodeCreationMediator(harvestNodeRepository, skillNodeRepository, skillNodeEntityFactory, harvestNodeFactory, nodeCreationResponseFactory, nodeCreationResponseDispatcher, uniqueAssertion, collectionAssertion);
-            IBatchController<NodeCreation> creationController = new ManagedBatchController<NodeCreation>(creationMediator);
+            IBatchMediator<HarvestNodeCreation> creationMediator = new NodeCreationMediator(harvestNodeRepository, skillNodeRepository, skillNodeEntityFactory, harvestNodeFactory, nodeCreationResponseFactory, nodeCreationResponseDispatcher, uniqueAssertion, collectionAssertion);
+            IBatchController<HarvestNodeCreation> creationController = new ManagedBatchController<HarvestNodeCreation>(creationMediator);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<NodeCreationError, IReadOnlyList<NodeCreation>> errorFactory = new NodeCreationErrorFactory(baseErrorFactory);
+            IErrorFactory<HarvestNodeCreationError, IReadOnlyList<HarvestNodeCreation>> errorFactory = new NodeCreationErrorFactory(baseErrorFactory);
 
             batchRegister.RegisterBatch(creationController, errorFactory);
         }

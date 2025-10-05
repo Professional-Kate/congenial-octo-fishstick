@@ -6,9 +6,9 @@ namespace IdelPog.HarvestNode.Factory
 {
     public class NodeCreationResponseFactory : INodeCreationResponseFactory
     {
-        public NodeCreationResponse Create(NodeCreation[] nodeCreations)
+        public HarvestNodeCreationResponse Create(HarvestNodeCreation[] nodeCreations)
         {
-            return new NodeCreationResponse
+            return new HarvestNodeCreationResponse
             {
                 NodeCreations = nodeCreations
             };
