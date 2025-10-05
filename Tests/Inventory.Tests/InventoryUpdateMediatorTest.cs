@@ -1,10 +1,9 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Information;
 using IdelPog.Core.Information.Contracts;
-using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -18,7 +17,7 @@ using Moq;
 namespace IdelPog.Inventory.Tests
 {
     [TestFixture]
-    public class InventoryUpdateMediatorTest
+    public sealed class InventoryUpdateMediatorTest
     {
         private IBatchMediator<InventoryUpdate> _inventoryMediator;
         private Mock<IInventory> _repositoryMock;
@@ -26,8 +25,7 @@ namespace IdelPog.Inventory.Tests
         private Mock<IInventoryUpdateSummarizer> _updateSummarizerMock;
         private Mock<IInventoryUpdateResponseFactory> _responseFactoryMock;
         private Mock<IItemInfoFactory> _itemInfoFactoryMock;
-        private Mock<IInventoryUpdateEntryFactory> _entryFactoryMock;
-        private Mock<IDispatchOne<InventoryUpdateResponse>> _dispatcherMock;
+        private Mock<IDispatchMany<InventoryUpdateResponse>> _dispatcherMock;
         private Mock<IMapper<ItemID>> _itemMapperMock;
 
         private Item _stoneItem;
@@ -41,12 +39,11 @@ namespace IdelPog.Inventory.Tests
             _updateSummarizerMock = new Mock<IInventoryUpdateSummarizer>();
             _responseFactoryMock = new Mock<IInventoryUpdateResponseFactory>();
             _itemInfoFactoryMock = new Mock<IItemInfoFactory>();
-            _entryFactoryMock = new Mock<IInventoryUpdateEntryFactory>();
-            _dispatcherMock = new Mock<IDispatchOne<InventoryUpdateResponse>>();
+            _dispatcherMock = new Mock<IDispatchMany<InventoryUpdateResponse>>();
             _itemMapperMock = new Mock<IMapper<ItemID>>();
 
             _inventoryMediator = new InventoryUpdateMediator(_repositoryMock.Object, _itemFactoryMock.Object, _updateSummarizerMock.Object, _responseFactoryMock.Object,
-                _itemInfoFactoryMock.Object, _itemMapperMock.Object, _entryFactoryMock.Object, _dispatcherMock.Object, new CollectionAssertion(new ThrowHandler()));
+                _itemInfoFactoryMock.Object, _itemMapperMock.Object, _dispatcherMock.Object, new CollectionAssertion(new ThrowHandler()));
 
             _stoneItem = new Item(ItemID.STONE, 1, new Information { Description = "", Name = "" }, 1);
 
@@ -81,10 +78,9 @@ namespace IdelPog.Inventory.Tests
             _updateSummarizerMock.Setup(library => library.GetSummary(inputUpdates)).Returns(summaryUpdates);
         }
 
-        private void VerifySingleCalls()
+        private void VerifyDispatcherCalled()
         {
-            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<InventoryUpdateResponse>()), Times.Once);
-            _responseFactoryMock.Verify(library => library.Create(It.IsAny<InventoryUpdateEntry[]>()), Times.Once);
+            _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<InventoryUpdateResponse[]>()), Times.Once);
         }
 
         private void VerifyItemFactoryCalls(Times times)
@@ -107,7 +103,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock.Verify(library => library.GetItem(_addStoneUpdate.ItemID), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
 
-            VerifySingleCalls();
+            VerifyDispatcherCalled();
             _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 1, It.IsAny<Information>()), Times.Once);
             _itemInfoFactoryMock.VerifyNoOtherCalls();
         }
@@ -126,7 +122,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock.Verify(library => library.AddAmount(_stoneItem.ItemID, _stoneItem.Amount), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
             
-            VerifySingleCalls();
+            VerifyDispatcherCalled();
             _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 1, It.IsAny<Information>()), Times.Once);
             _itemInfoFactoryMock.VerifyNoOtherCalls();
         }
@@ -148,7 +144,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock.Verify(library => library.AddAmount(_stoneItem.ItemID, 3), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
             
-            VerifySingleCalls();
+            VerifyDispatcherCalled();
             _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 3, It.IsAny<Information>()), Times.Once);
             _itemInfoFactoryMock.VerifyNoOtherCalls();
         }
@@ -196,7 +192,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock.Verify(library => library.AddAmount(addGoldUpdate.ItemID, addGoldUpdate.Amount), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
             
-            VerifySingleCalls();
+            VerifyDispatcherCalled();
             _itemInfoFactoryMock.Verify(library => library.Create(_addStoneUpdate.ItemID, _stoneItem.BaseSellPrice, 1, It.IsAny<Information>()), Times.Once);
             _itemInfoFactoryMock.Verify(library => library.Create(addGoldUpdate.ItemID, gold.BaseSellPrice, 1, It.IsAny<Information>()), Times.Once);
             _itemInfoFactoryMock.VerifyNoOtherCalls();

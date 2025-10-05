@@ -1,16 +1,18 @@
 ﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Inventory.Factory.Interface;
 
 namespace IdelPog.Inventory.Factory
 {
-    public class InventoryUpdateResponseFactory : IInventoryUpdateResponseFactory
+    public sealed class InventoryUpdateResponseFactory : IInventoryUpdateResponseFactory
     {
-        public InventoryUpdateResponse Create(InventoryUpdateEntry[] inventoryUpdateEntries)
+        public InventoryUpdateResponse Create(ItemInfo itemInfo, MutateType mutateType)
         {
             return new InventoryUpdateResponse
             {
-                InventoryUpdateEntries = inventoryUpdateEntries
+                ItemInfo = itemInfo,
+                MutateType = mutateType
             };
         }
     }

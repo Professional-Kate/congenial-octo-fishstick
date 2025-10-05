@@ -1,7 +1,10 @@
-﻿namespace IdelPog.Core.Contracts.Response
+﻿using IdelPog.Core.Contracts.Enum;
+
+namespace IdelPog.Core.Contracts.Response
 {
     public readonly record struct InventoryUpdateResponse
-    {
-        public required InventoryUpdateEntry[] InventoryUpdateEntries { get; init; }
+    { 
+        public required ItemInfo ItemInfo { get; init; }
+        public required MutateType MutateType { get; init; }
     }
 }
