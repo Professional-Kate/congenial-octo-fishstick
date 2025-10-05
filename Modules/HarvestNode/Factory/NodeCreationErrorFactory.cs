@@ -4,7 +4,7 @@ using IdelPog.Core.Factory.Interface;
 
 namespace IdelPog.HarvestNode.Factory
 {
-    public class NodeCreationErrorFactory : IErrorFactory<NodeCreationError, IReadOnlyList<NodeCreation>>
+    public class NodeCreationErrorFactory : IErrorFactory<HarvestNodeCreationError, IReadOnlyList<HarvestNodeCreation>>
     {
         private readonly IBaseErrorFactory _baseErrorFactory;
 
@@ -13,9 +13,9 @@ namespace IdelPog.HarvestNode.Factory
             _baseErrorFactory = baseErrorFactory;
         }
 
-        public NodeCreationError Create<TException>(TException exception, IReadOnlyList<NodeCreation> context) where TException : Exception
+        public HarvestNodeCreationError Create<TException>(TException exception, IReadOnlyList<HarvestNodeCreation> context) where TException : Exception
         {
-            return new NodeCreationError
+            return new HarvestNodeCreationError
             {
                 NodeCreations = context.ToArray(),
                 BaseError = _baseErrorFactory.Create(exception)

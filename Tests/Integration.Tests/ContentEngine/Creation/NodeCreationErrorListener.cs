@@ -3,16 +3,16 @@ using IdelPog.Core.Messaging.Listener.Single;
 
 namespace IdelPog.Integration.Tests.ContentEngine
 {
-    public class NodeCreationErrorListener : ISingleListener<NodeCreationError>
+    public class NodeCreationErrorListener : ISingleListener<HarvestNodeCreationError>
     {
-        public Type ListenerType =>  typeof(NodeCreationError);
+        public Type ListenerType =>  typeof(HarvestNodeCreationError);
         public bool WasCalled { get; private set; }
-        public NodeCreationError NodeCreationError { get; private set; }
+        public HarvestNodeCreationError HarvestNodeCreationError { get; private set; }
 
-        public void Handle(NodeCreationError message)
+        public void Handle(HarvestNodeCreationError message)
         {
             WasCalled = true;
-            NodeCreationError = message;
+            HarvestNodeCreationError = message;
         }
     }
 }
