@@ -2,7 +2,7 @@
 using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
-using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Repository.State;
@@ -13,18 +13,18 @@ using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
 
 namespace IdelPog.HarvestNode.Runtime.Mediator
 {
-    public class NodeCreationMediator : IBatchMediator<HarvestNodeCreation>
+    public sealed class NodeCreationMediator : IBatchMediator<HarvestNodeCreation>
     {
         private readonly IStateRepository<ItemID, Contracts.HarvestNode> _harvestNodeRepository;
         private readonly IAssetRepository<SkillID, SkillNodeEntity> _skillNodeEntityRepository;
         private readonly ISkillNodeEntityFactory  _skillNodeEntityFactory;
         private readonly IHarvestNodeFactory  _harvestNodeFactory;
         private readonly INodeCreationResponseFactory  _nodeCreationResponseFactory;
-        private readonly IDispatchOne<HarvestNodeCreationResponse> _nodeCreationResponseDispatcher;
+        private readonly IDispatchMany<HarvestNodeCreationResponse> _nodeCreationResponseDispatcher;
         private readonly IUniqueAssertion _uniqueAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public NodeCreationMediator(IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, SkillNodeEntity> skillNodeEntityRepository, ISkillNodeEntityFactory skillNodeEntityFactory, IHarvestNodeFactory harvestNodeFactory, INodeCreationResponseFactory  nodeCreationResponseFactory, IDispatchOne<HarvestNodeCreationResponse> nodeCreationResponseDispatcher, IUniqueAssertion uniqueAssertion, ICollectionAssertion collectionAssertion)
+        public NodeCreationMediator(IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, SkillNodeEntity> skillNodeEntityRepository, ISkillNodeEntityFactory skillNodeEntityFactory, IHarvestNodeFactory harvestNodeFactory, INodeCreationResponseFactory  nodeCreationResponseFactory, IDispatchMany<HarvestNodeCreationResponse> nodeCreationResponseDispatcher, IUniqueAssertion uniqueAssertion, ICollectionAssertion collectionAssertion)
         {
             _harvestNodeRepository = harvestNodeRepository;
             _skillNodeEntityRepository = skillNodeEntityRepository;

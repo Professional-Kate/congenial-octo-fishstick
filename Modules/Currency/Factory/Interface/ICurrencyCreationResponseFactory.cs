@@ -5,6 +5,6 @@ namespace IdelPog.Currency.Factory.Interface
 {
     public interface ICurrencyCreationResponseFactory
     {
-        public CurrencyCreationResponse CreateFrom(IReadOnlyList<CurrencyCreation> currencyCreations);
+        public IReadOnlyList<CurrencyCreationResponse> CreateFrom(IReadOnlyList<CurrencyCreation> currencyCreations);
     }
 }

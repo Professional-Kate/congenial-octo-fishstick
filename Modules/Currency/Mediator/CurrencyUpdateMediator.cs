@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
-using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion.Interface;
@@ -10,22 +10,21 @@ using IdelPog.Currency.Service.Interface;
 
 namespace IdelPog.Currency.Mediator
 {
-    public class CurrencyUpdateMediator : IBatchMediator<CurrencyUpdate>
+    public sealed class CurrencyUpdateMediator : IBatchMediator<CurrencyUpdate>
     {
         private readonly ICurrencyService _currencyService;
         private readonly IStateRepository<CurrencyType, Contracts.Currency> _currencyRepository;
-        private readonly IDispatchOne<CurrencyUpdateResponse> _currencyUpdateDispatcher;
+        private readonly IDispatchMany<CurrencyUpdateResponse> _currencyUpdateDispatcher;
         private readonly ICurrencyUpdateSummarizer _currencyUpdateSummarizer;
         private readonly ICurrencyUpdateResponseFactory _currencyUpdateResponseFactory;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IFoundAssertion _foundAssertion;
-        private readonly IObjectNullAssertion _objectNullAssertion;
 
         public CurrencyUpdateMediator(
             IStateRepository<CurrencyType, Contracts.Currency> stateRepository,
-            ICurrencyService currencyService, IDispatchOne<CurrencyUpdateResponse> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer,
+            ICurrencyService currencyService, IDispatchMany<CurrencyUpdateResponse> currencyUpdateDispatcher, ICurrencyUpdateSummarizer currencyUpdateSummarizer,
             ICurrencyUpdateResponseFactory currencyUpdateResponseFactory,
-            ICollectionAssertion collectionAssertion, IFoundAssertion foundAssertion, IObjectNullAssertion objectNullAssertion)
+            ICollectionAssertion collectionAssertion, IFoundAssertion foundAssertion)
         {
             _currencyService = currencyService;
             _currencyRepository = stateRepository;
@@ -34,14 +33,12 @@ namespace IdelPog.Currency.Mediator
             _currencyUpdateResponseFactory = currencyUpdateResponseFactory;
             _collectionAssertion = collectionAssertion;
             _foundAssertion = foundAssertion;
-            _objectNullAssertion = objectNullAssertion;
         }
 
         
         public void HandleMessages(IReadOnlyList<CurrencyUpdate> currencyUpdates)
         {
-            _objectNullAssertion.AssertNotNull(currencyUpdates, nameof(currencyUpdates));
-            AssertUpdates(currencyUpdates);
+            _collectionAssertion.AssertHasElements(currencyUpdates);
 
             CurrencyUpdate[] summarizedUpdates = _currencyUpdateSummarizer.GetSummary(currencyUpdates);
             _collectionAssertion.AssertNotEmpty(summarizedUpdates);
@@ -50,12 +47,7 @@ namespace IdelPog.Currency.Mediator
             List<Contracts.Currency> currencies = GetAllCurrencies(summarizedUpdates);
             UpdateCurrencies(MapUpdates(summarizedUpdates, currencies));
 
-            _currencyUpdateDispatcher.Dispatch(_currencyUpdateResponseFactory.CreateFrom(summarizedUpdates));
-        }
-
-        private void AssertUpdates(IReadOnlyList<CurrencyUpdate> updates)
-        {
-            _collectionAssertion.AssertNotEmpty(updates);
+            _currencyUpdateDispatcher.Dispatch(_currencyUpdateResponseFactory.CreateFrom(currencies));
         }
 
         private void AllCurrenciesExist(IReadOnlyList<CurrencyUpdate> trades)

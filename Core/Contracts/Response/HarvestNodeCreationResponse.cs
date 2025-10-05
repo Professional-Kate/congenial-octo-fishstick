@@ -1,9 +1,10 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts.Enum;
 
 namespace IdelPog.Core.Contracts.Response
 {
     public readonly record struct HarvestNodeCreationResponse
     {
-        public required HarvestNodeCreation[] NodeCreations { get; init; }
+        public required ReadOnlyHarvestNode[] ReadOnlyHarvestNodes { get; init; }
+        public required SkillID LinkedSkill { get; init; }
     }
 }

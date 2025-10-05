@@ -11,7 +11,7 @@ using IdelPog.Inventory.Exceptions;
 namespace IdelPog.Integration.Tests.Inventory
 {
     [TestFixture]
-    public class InventoryUpdateTest : ManagedTestBuffer
+    public sealed class InventoryUpdateTest : ManagedTestBuffer
     {
         private InventoryUpdateResponseListener _inventoryUpdateResponseListener;
         private InventoryUpdateErrorListener _inventoryUpdateErrorListener;
@@ -55,24 +55,37 @@ namespace IdelPog.Integration.Tests.Inventory
             buffer.MarkReady();
         }
 
-        private void AssertResponseEntry(InventoryUpdateEntry entry, InventoryUpdate expectedUpdate, ItemInfo expectedItemInfo)
+        private void AssertResponseListenerCalled(bool wasCalled)
+        { 
+            Assert.That(_inventoryUpdateResponseListener.WasCalled, Is.EqualTo(wasCalled));
+        }
+
+        private void AssertResponseLength(int length)
         {
-            InventoryUpdate inventoryUpdate = entry.InventoryUpdate;
-            ItemInfo itemInfo = entry.ItemInfo;
+            Assert.That(_inventoryUpdateResponseListener.InventoryUpdateResponses, Has.Length.EqualTo(length));
+        }
+        
+        private static void AssertResponse(InventoryUpdateResponse response, ItemInfo expectedItemInfo, MutateType expectedMutateType)
+        {
+            Assert.That(response.MutateType, Is.EqualTo(expectedMutateType));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(inventoryUpdate.ActionType, Is.EqualTo(expectedUpdate.ActionType));
-                Assert.That(inventoryUpdate.Amount, Is.EqualTo(expectedUpdate.Amount));
-                Assert.That(inventoryUpdate.ItemID, Is.EqualTo(expectedUpdate.ItemID));
-            });
-            
+            ItemInfo itemInfo = response.ItemInfo;
             Assert.Multiple(() =>
             {
                 Assert.That(itemInfo.ItemID, Is.EqualTo(expectedItemInfo.ItemID));
                 Assert.That(itemInfo.Amount, Is.EqualTo(expectedItemInfo.Amount));
                 Assert.That(itemInfo.BaseSellPrice, Is.EqualTo(expectedItemInfo.BaseSellPrice));
             });
+        }
+        
+        private void AssertErrorListenerCalled(bool wasCalled)
+        { 
+            Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.EqualTo(wasCalled));
+        }
+
+        private void AssertErrorLength(int length)
+        {
+            Assert.That(_inventoryUpdateErrorListener.InventoryUpdateError.InventoryUpdates, Has.Length.EqualTo(length));
         }
 
         private void AssertResponseError<TException>()
@@ -92,18 +105,10 @@ namespace IdelPog.Integration.Tests.Inventory
         {
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.False);
-                Assert.That(_inventoryUpdateResponseListener.WasCalled, Is.True);
-            });
-
-            InventoryUpdateResponse response = _inventoryUpdateResponseListener.InventoryUpdateResponse;
-            Assert.That(response.InventoryUpdateEntries, Has.Length.EqualTo(1));
-            InventoryUpdateEntry entry = response.InventoryUpdateEntries[0];
-        
-            Assert.That(entry.MutateType, Is.EqualTo(MutateType.CREATED));
-            AssertResponseEntry(entry, _addStoneUpdate, _stoneInfo);
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(1);
+            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo, MutateType.CREATED);
         }
 
         [Test]
@@ -112,29 +117,12 @@ namespace IdelPog.Integration.Tests.Inventory
             InventoryUpdate addCopper = _addStoneUpdate with { ItemID = ItemID.COPPER };
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate, addCopper));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.False);
-                Assert.That(_inventoryUpdateResponseListener.WasCalled, Is.True);
-            });
-
-            Assert.Multiple(() =>
-            {
-                InventoryUpdateResponse response = _inventoryUpdateResponseListener.InventoryUpdateResponse;
-                Assert.That(response.InventoryUpdateEntries, Has.Length.EqualTo(2));
-                
-                foreach (InventoryUpdateEntry inventoryUpdateEntry in response.InventoryUpdateEntries)
-                {
-                    if (inventoryUpdateEntry.InventoryUpdate.ItemID == addCopper.ItemID)
-                    {
-                        AssertResponseEntry(inventoryUpdateEntry, addCopper, _stoneInfo with { ItemID = ItemID.COPPER });
-                    }
-                    else
-                    {
-                        AssertResponseEntry(inventoryUpdateEntry, _addStoneUpdate, _stoneInfo);
-                    }
-                }
-            });
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(2);
+            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo, MutateType.CREATED);
+            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[1], _stoneInfo with { ItemID = ItemID.COPPER }, MutateType.CREATED);
+            
         }
 
         [Test]
@@ -143,18 +131,10 @@ namespace IdelPog.Integration.Tests.Inventory
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.False);
-                Assert.That(_inventoryUpdateResponseListener.WasCalled, Is.True);
-            });
-
-            InventoryUpdateResponse response = _inventoryUpdateResponseListener.InventoryUpdateResponse;
-            Assert.That(response.InventoryUpdateEntries, Has.Length.EqualTo(1));
-            InventoryUpdateEntry entry = response.InventoryUpdateEntries[0];
-            
-            Assert.That(entry.MutateType, Is.EqualTo(MutateType.CHANGED));
-            AssertResponseEntry(entry, _addStoneUpdate, _stoneInfo with { Amount = 20 });
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(1);
+            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo with { Amount = 20 }, MutateType.CHANGED);
         }
 
         [Test]
@@ -163,18 +143,10 @@ namespace IdelPog.Integration.Tests.Inventory
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE }));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.False);
-                Assert.That(_inventoryUpdateResponseListener.WasCalled, Is.True);
-            });
-
-            InventoryUpdateResponse response = _inventoryUpdateResponseListener.InventoryUpdateResponse;
-            Assert.That(response.InventoryUpdateEntries, Has.Length.EqualTo(1));
-            InventoryUpdateEntry entry = response.InventoryUpdateEntries[0];
-            
-            Assert.That(entry.MutateType, Is.EqualTo(MutateType.DELETED));
-            AssertResponseEntry(entry, _addStoneUpdate with { ActionType = ActionType.REMOVE }, _stoneInfo with { Amount = 0, BaseSellPrice = 0 });
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(1);
+            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo with { Amount = 0, BaseSellPrice = 0 }, MutateType.DELETED);
         }
 
         [Test]
@@ -182,18 +154,10 @@ namespace IdelPog.Integration.Tests.Inventory
         { 
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE }, _addStoneUpdate, _addStoneUpdate));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.False);
-                Assert.That(_inventoryUpdateResponseListener.WasCalled, Is.True);
-            });
-            
-            InventoryUpdateResponse response = _inventoryUpdateResponseListener.InventoryUpdateResponse;
-            Assert.That(response.InventoryUpdateEntries, Has.Length.EqualTo(1));
-            InventoryUpdateEntry entry = response.InventoryUpdateEntries[0];
-            
-            Assert.That(entry.MutateType, Is.EqualTo(MutateType.CREATED));
-            AssertResponseEntry(entry, _addStoneUpdate, _stoneInfo with { Amount = 10 });
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(1);
+            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo, MutateType.CREATED);
         }
 
         [Test]
@@ -201,18 +165,10 @@ namespace IdelPog.Integration.Tests.Inventory
         {
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE }, _addStoneUpdate, _addStoneUpdate with { ItemID = ItemID.COPPER }));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.False);
-                Assert.That(_inventoryUpdateResponseListener.WasCalled, Is.True);
-            });
-            
-            InventoryUpdateResponse response = _inventoryUpdateResponseListener.InventoryUpdateResponse;
-            Assert.That(response.InventoryUpdateEntries, Has.Length.EqualTo(1));
-            InventoryUpdateEntry entry = response.InventoryUpdateEntries[0];
-            
-            Assert.That(entry.MutateType, Is.EqualTo(MutateType.CREATED));
-            AssertResponseEntry(entry, _addStoneUpdate with { ItemID = ItemID.COPPER }, _stoneInfo with { Amount = 10, ItemID = ItemID.COPPER });
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(1);
+            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo with { ItemID = ItemID.COPPER }, MutateType.CREATED);
         }
 
         [Test]

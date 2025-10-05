@@ -10,13 +10,13 @@ using IdelPog.Currency.Exceptions;
 namespace IdelPog.Integration.Tests.CurrencyCommands.Update
 {
     [TestFixture]
-    public class CurrencyFlowTest : ManagedTestBuffer
+    public sealed class CurrencyFlowTest : ManagedTestBuffer
     {
         private CurrencyUpdateResponseListener _currencyUpdateResponseListener;
         private CurrencyUpdateErrorListener _currencyUpdateErrorListener;
 
         private CurrencyUpdate _addGoldCommand;
-        private CurrencyUpdate _removeGoldCommand;
+        private CurrencyCreation _goldCreation;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -28,10 +28,9 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
                 CurrencyType = CurrencyType.GOLD
             };
 
-            _removeGoldCommand = new CurrencyUpdate
+            _goldCreation = new CurrencyCreation
             {
-                ActionType = ActionType.REMOVE,
-                Amount = 1,
+                StartingAmount = 0,
                 CurrencyType = CurrencyType.GOLD
             };
         }
@@ -46,14 +45,14 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
             ManagedSubscribe(_currencyUpdateErrorListener);
         }
 
-        private void SendGoldCreationBuffer(uint startingAmount = 0)
+        private void SendCreations(params CurrencyCreation[] currencyCreation)
         {
-            IBuffer<CurrencyCreation> buffer = BufferManager.RequestBuffer<CurrencyCreation>(new BufferRequest(1));
-            buffer.Assign([new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = startingAmount }]);
+            IBuffer<CurrencyCreation> buffer = BufferManager.RequestBuffer<CurrencyCreation>(new BufferRequest(currencyCreation.Length));
+            buffer.Assign(currencyCreation);
             buffer.MarkReady();
         }
 
-        private void SendCurrencyTradeBuffer(CurrencyUpdate[] trades)
+        private void SendUpdates(params CurrencyUpdate[] trades)
         {
             IBuffer<CurrencyUpdate> buffer = BufferManager.RequestBuffer<CurrencyUpdate>(new BufferRequest(trades.Length));
             buffer.Assign(trades);
@@ -61,18 +60,21 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         }
 
         private void AssertUpdateListener(bool wasCalled)
+        { 
+            Assert.That(_currencyUpdateResponseListener.WasCalled, Is.EqualTo(wasCalled));
+        }
+        
+        private void AssertResponseLength(int length)
+        {
+            Assert.That(_currencyUpdateResponseListener.CurrencyUpdateResponses, Has.Length.EqualTo(length));
+        }
+
+        private static void AssertUpdateResponse(CurrencyUpdateResponse responses, CurrencyUpdate expected)
         {
             Assert.Multiple(() =>
             {
-                Assert.That(_currencyUpdateResponseListener.WasCalled, Is.EqualTo(wasCalled));
-
-                if (wasCalled == false)
-                {
-                    return;
-                }
-
-                Assert.That(_currencyUpdateResponseListener.Item.CurrencyUpdates, Is.Not.Null);
-                Assert.That(_currencyUpdateResponseListener.Item.CurrencyUpdates, Has.Length.EqualTo(1));
+                Assert.That(responses.CurrencyAmount, Is.EqualTo(expected.Amount));
+                Assert.That(responses.CurrencyType, Is.EqualTo(expected.CurrencyType));
             });
         }
 
@@ -80,133 +82,129 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         {
             Assert.That(_currencyUpdateErrorListener.WasCalled, Is.EqualTo(wasCalled));
         }
-
-        private void AssertUpdateResponse(CurrencyUpdateResponse response, CurrencyUpdate[] expected)
-        { 
-            Assert.That(response.CurrencyUpdates, Is.EquivalentTo(expected));
+        
+        private void AssertErrorLength(int length)
+        {
+            Assert.That(_currencyUpdateErrorListener.CurrencyUpdateError.CurrencyUpdates, Has.Length.EqualTo(length));
         }
 
-        [TestCase(1u)]
-        [TestCase(10u)]
-        [TestCase(100u)]
-        public void Positive_SendAddGoldUpdate_ProducesSingleCurrencyUpdate(uint amount)
+        private static void AssertError(Type exception, CurrencyUpdate[] updates, CurrencyUpdateError error)
         {
-            CurrencyUpdate[] currencyUpdates = Enumerable.Repeat(_addGoldCommand, (int) amount).ToArray();
-
-            SendGoldCreationBuffer();
-            SendCurrencyTradeBuffer(currencyUpdates);
-            AssertErrorListener(false);
-            AssertUpdateListener(true);
-
-            AssertUpdateResponse(_currencyUpdateResponseListener.Item, [_addGoldCommand with { Amount = amount * 10 }]);
-        }
-
-        [TestCase(1u)]
-        [TestCase(10u)]
-        [TestCase(100u)]
-        public void Positive_SendRemoveGoldUpdate_ProducesSingleCurrencyUpdate(uint amount)
-        {
-            CurrencyUpdate[] currencyUpdates = Enumerable.Repeat(_removeGoldCommand, (int) amount).ToArray();
-
-            SendGoldCreationBuffer(_removeGoldCommand.Amount * amount);
-            SendCurrencyTradeBuffer(currencyUpdates);
-            AssertErrorListener(false);
-            AssertUpdateListener(true);
-
-            AssertUpdateResponse(_currencyUpdateResponseListener.Item, [_removeGoldCommand with { Amount = amount }]);
-        }
-
-        [TestCase(1u)]
-        [TestCase(10u)]
-        [TestCase(100u)]
-        public void Positive_SendMixedUpdates_ProducesSingleCorrectUpdate(uint amount)
-        {
-            List<CurrencyUpdate> currencyUpdates = [];
-            currencyUpdates.AddRange(Enumerable.Repeat(_removeGoldCommand, (int) amount));
-            currencyUpdates.AddRange(Enumerable.Repeat(_addGoldCommand, (int) amount));
-
-            SendGoldCreationBuffer(_removeGoldCommand.Amount * amount);
-            SendCurrencyTradeBuffer(currencyUpdates.ToArray());
-            AssertErrorListener(false);
-            AssertUpdateListener(true);
-
-            uint finalAmount = _addGoldCommand.Amount * amount - _removeGoldCommand.Amount * amount;
-            AssertUpdateResponse(_currencyUpdateResponseListener.Item, [_addGoldCommand with { Amount = finalAmount }]);
-        }
-
-        [Test]
-        public void Negative_OneCommand_NotFoundCurrency_NoUpdate_SendsErrorDTO()
-        {
-            Assert.DoesNotThrow(() => SendCurrencyTradeBuffer([_addGoldCommand]));
-            AssertErrorListener(true);
-            AssertUpdateListener(false);
-
-            CurrencyUpdateError error = _currencyUpdateErrorListener.CurrencyUpdateError;
-            
-            ControllerThrownException controllerException = (ControllerThrownException) error.BaseErrorDetails.Exception;
             Assert.Multiple(() =>
             {
                 Assert.That(error.BaseErrorDetails.Exception, Is.TypeOf<ControllerThrownException>());
-                Assert.That(controllerException.InnerException, Is.TypeOf<NotFoundException<CurrencyType>>());
+                Assert.That(error.BaseErrorDetails.Exception.InnerException, Is.TypeOf(exception));
+                Assert.That(error.CurrencyUpdates, Is.EqualTo(updates));
             });
+        }
+
+        [Test]
+        public void Positive_SendAddUpdate_ShouldReturnNewCurrencyAmount()
+        {
+            SendCreations(_goldCreation with { StartingAmount = 50 });
+            
+            SendUpdates(_addGoldCommand);
+            
+            AssertErrorListener(false);
+            AssertUpdateListener(true);
+            AssertResponseLength(1);
+            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand with { Amount = 60 });
+        }
+
+        [Test]
+        public void Positive_SendAddGoldUpdate_ProducesSingleCurrencyUpdate()
+        {
+            SendCreations(_goldCreation);
+            
+            SendUpdates(_addGoldCommand);
+            
+            AssertErrorListener(false);
+            AssertUpdateListener(true);
+            AssertResponseLength(1);
+            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand);
+        }
+
+        [Test]
+        public void Positive_SendRemoveGoldUpdate_ProducesSingleCurrencyUpdate()
+        {
+            SendCreations(_goldCreation with {  StartingAmount = _addGoldCommand.Amount });
+            
+            SendUpdates(_addGoldCommand with { ActionType = ActionType.REMOVE });
+            
+            AssertErrorListener(false);
+            AssertUpdateListener(true);
+            AssertResponseLength(1);
+            
+            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand with { ActionType = ActionType.REMOVE, Amount = 0 });
+        }
+
+        [Test]
+        public void Positive_SendMixedUpdates_ProducesSingleCorrectUpdate()
+        {
+            SendCreations(_goldCreation);
+            CurrencyUpdate removeGold = _addGoldCommand with { ActionType = ActionType.REMOVE };
+            
+            SendUpdates(removeGold, removeGold, _addGoldCommand, _addGoldCommand, _addGoldCommand);
+            
+            AssertErrorListener(false);
+            AssertUpdateListener(true);
+            AssertResponseLength(1);
+            
+            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand);
+        }
+
+        [Test]
+        public void Positive_SendMultipleCurrencyTypes_DispatchesMultipleResponses()
+        {
+            SendCreations(_goldCreation with { CurrencyType = CurrencyType.GEMS }, _goldCreation);
+            
+            SendUpdates(_addGoldCommand, _addGoldCommand with { CurrencyType = CurrencyType.GEMS });
+            
+            AssertErrorListener(false);
+            AssertUpdateListener(true);
+            AssertResponseLength(2);
+            
+            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand);
+            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[1], _addGoldCommand with { CurrencyType = CurrencyType.GEMS });
+        }
+
+        [Test]
+        public void Negative_OneCommand_NotFoundCurrency_NoUpdate_SendsError()
+        {
+            Assert.DoesNotThrow(() => SendUpdates(_addGoldCommand));
+            
+            AssertErrorListener(true);
+            AssertUpdateListener(false);
+            AssertErrorLength(1);
+            AssertError(typeof(NotFoundException<CurrencyType>), [_addGoldCommand], _currencyUpdateErrorListener.CurrencyUpdateError);
         }
         
         [Test]
-        public void Negative_OneCommand_NotEnoughCurrency_NoUpdate_SendsErrorDTO()
+        public void Negative_OneCommand_NotEnoughCurrency_NoUpdate_SendsError()
         {
-            const int goldAmount = 10;
-            SendGoldCreationBuffer(goldAmount);
+            SendCreations(_goldCreation);
+            CurrencyUpdate removeGold = _addGoldCommand with { ActionType = ActionType.REMOVE };
 
-            CurrencyUpdate notEnoughGoldUpdate = new()
-            {
-                ActionType = ActionType.REMOVE,
-                Amount = 20,
-                CurrencyType = CurrencyType.GOLD
-            };
-
-            Assert.DoesNotThrow(() => SendCurrencyTradeBuffer([notEnoughGoldUpdate]));
+            Assert.DoesNotThrow(() => SendUpdates(removeGold));
+            
             AssertErrorListener(true);
             AssertUpdateListener(false);
-
-            CurrencyUpdateError error = _currencyUpdateErrorListener.CurrencyUpdateError;
-
-            Assert.Multiple(() =>
-            {
-                if (error.BaseErrorDetails.Exception is NotEnoughCurrencyException exception)
-                {
-                    Assert.That(exception, Is.TypeOf<NotEnoughCurrencyException>());
-                    Assert.That(exception.CurrencyTypeContext, Is.EqualTo(notEnoughGoldUpdate.CurrencyType));
-                    Assert.That(exception.RemoveAmount, Is.EqualTo(notEnoughGoldUpdate.Amount));
-                    Assert.That(exception.CurrencyAmount, Is.EqualTo(goldAmount));
-                }
-            });
+            AssertErrorLength(1);
+            AssertError(typeof(NotEnoughCurrencyException), [removeGold], _currencyUpdateErrorListener.CurrencyUpdateError);
         }
 
         [Test]
-        public void Negative_MultipleCommands_SomeValidOneError_NoUpdate_SendsErrorDTO()
+        public void Negative_MultipleCommands_SomeValidOneError_NoUpdate_SendsError()
         {
-            SendGoldCreationBuffer();
+            SendCreations(_goldCreation);
+            CurrencyUpdate addGems = _addGoldCommand with { CurrencyType = CurrencyType.GEMS };
 
-            CurrencyUpdate notFoundUpdate = new()
-            {
-                ActionType = ActionType.ADD,
-                Amount = 10,
-                CurrencyType = CurrencyType.GEMS
-            };
-
-            Assert.DoesNotThrow(() => SendCurrencyTradeBuffer([_addGoldCommand, _addGoldCommand, notFoundUpdate]));
+            Assert.DoesNotThrow(() => SendUpdates(_addGoldCommand, addGems));
+            
             AssertErrorListener(true);
             AssertUpdateListener(false);
-
-            CurrencyUpdateError error = _currencyUpdateErrorListener.CurrencyUpdateError;
-            ControllerThrownException controllerException = (ControllerThrownException) error.BaseErrorDetails.Exception;
-            Assert.Multiple(() =>
-            {
-                Assert.That(_currencyUpdateResponseListener.WasCalled, Is.False);
-                Assert.That(_currencyUpdateErrorListener.WasCalled, Is.True);
-                Assert.That(_currencyUpdateErrorListener.CurrencyUpdateError.BaseErrorDetails.Exception, Is.TypeOf<ControllerThrownException>());
-                Assert.That(controllerException.InnerException, Is.TypeOf<NotFoundException<CurrencyType>>());
-            });
+            AssertErrorLength(2);
+            AssertError(typeof(NotFoundException<CurrencyType>), [_addGoldCommand, addGems], _currencyUpdateErrorListener.CurrencyUpdateError);
         }
     }
 }

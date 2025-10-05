@@ -3,7 +3,7 @@ using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Information;
-using IdelPog.Core.Messaging.Dispatcher.Single;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
@@ -12,29 +12,26 @@ using IdelPog.Inventory.Service.Interface;
 
 namespace IdelPog.Inventory.Mediator
 {
-    public class InventoryUpdateMediator : IBatchMediator<InventoryUpdate>
+    public sealed class InventoryUpdateMediator : IBatchMediator<InventoryUpdate>
     {
         private readonly IInventory _inventory;
         private readonly IItemFactory _itemFactory;
         private readonly IInventoryUpdateSummarizer _updateSummarizer;
         private readonly IInventoryUpdateResponseFactory _inventoryUpdateResponseFactory;
         private readonly IItemInfoFactory _itemInfoFactory;
-        private readonly IInventoryUpdateEntryFactory _inventoryUpdateEntryFactory;
-        private readonly IDispatchOne<InventoryUpdateResponse> _inventoryUpdateDispatcher;
+        private readonly IDispatchMany<InventoryUpdateResponse> _inventoryUpdateDispatcher;
         private readonly IMapper<ItemID> _itemMapper;
         private readonly ICollectionAssertion _collectionAssertion;
 
         public InventoryUpdateMediator(IInventory inventory, IItemFactory itemFactory, IInventoryUpdateSummarizer updateSummarizer,
-            IInventoryUpdateResponseFactory inventoryUpdateResponseFactory, IItemInfoFactory itemInfoFactory, IMapper<ItemID> itemMapper,
-            IInventoryUpdateEntryFactory inventoryUpdateEntryFactory, IDispatchOne<InventoryUpdateResponse> inventoryUpdateDispatcher,
-            ICollectionAssertion collectionAssertion)
+            IInventoryUpdateResponseFactory inventoryUpdateResponseFactory, IItemInfoFactory itemInfoFactory, IMapper<ItemID> itemMapper, 
+            IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher, ICollectionAssertion collectionAssertion)
         {
             _inventory = inventory;
             _itemFactory = itemFactory;
             _updateSummarizer = updateSummarizer;
             _inventoryUpdateResponseFactory = inventoryUpdateResponseFactory;
             _itemInfoFactory = itemInfoFactory;
-            _inventoryUpdateEntryFactory = inventoryUpdateEntryFactory;
             _inventoryUpdateDispatcher = inventoryUpdateDispatcher;
             _collectionAssertion = collectionAssertion;
             _itemMapper = itemMapper;
@@ -46,10 +43,10 @@ namespace IdelPog.Inventory.Mediator
             IReadOnlyList<InventoryUpdate> summaryUpdates = _updateSummarizer.GetSummary(updates);
             _collectionAssertion.AssertHasElements(summaryUpdates);
             
-            List<InventoryUpdateEntry> updateEntries = new(summaryUpdates.Count);
-            
-            foreach (InventoryUpdate update in summaryUpdates)
+            InventoryUpdateResponse[] responses = new InventoryUpdateResponse[summaryUpdates.Count];
+            for (int i = 0; i < summaryUpdates.Count; i++)
             {
+                InventoryUpdate update = summaryUpdates[i];
                 MutateType mutateType = MutateType.CHANGED;
 
                 switch (update.ActionType)
@@ -72,11 +69,11 @@ namespace IdelPog.Inventory.Mediator
                     Item item = _inventory.GetItem(update.ItemID);
                     itemInfo = _itemInfoFactory.Create(update.ItemID, item.BaseSellPrice, item.Amount, _itemMapper.GetInformation(update.ItemID));
                 }
-                
-                updateEntries.Add(_inventoryUpdateEntryFactory.Create(update, itemInfo, mutateType));
+
+                responses[i] = _inventoryUpdateResponseFactory.Create(itemInfo, mutateType);
             }
 
-            _inventoryUpdateDispatcher.Dispatch(_inventoryUpdateResponseFactory.Create(updateEntries.ToArray()));
+            _inventoryUpdateDispatcher.Dispatch(responses);
         }
 
         /// <summary>

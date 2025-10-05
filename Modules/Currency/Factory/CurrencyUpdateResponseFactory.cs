@@ -1,11 +1,10 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Currency.Factory.Interface;
 
 namespace IdelPog.Currency.Factory
 {
-    public class CurrencyUpdateResponseFactory : ICurrencyUpdateResponseFactory
+    public sealed class CurrencyUpdateResponseFactory : ICurrencyUpdateResponseFactory
     {
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
@@ -16,20 +15,25 @@ namespace IdelPog.Currency.Factory
             _collectionAssertion = collectionAssertion;
         }
 
-        public CurrencyUpdateResponse CreateFrom(IReadOnlyList<CurrencyUpdate> trades)
+        public IReadOnlyList<CurrencyUpdateResponse> CreateFrom(IReadOnlyList<Contracts.Currency> currencies)
         {
-            _objectNullAssertion.AssertNotNull(trades, nameof(trades));
-            _collectionAssertion.AssertNotEmpty(trades);
+            _objectNullAssertion.AssertNotNull(currencies, nameof(currencies));
+            _collectionAssertion.AssertNotEmpty(currencies);
 
-            return Create(trades.ToArray());
+            return Create(currencies);
         }
         
-        private static CurrencyUpdateResponse Create(CurrencyUpdate[] trades)
+        private static CurrencyUpdateResponse[] Create(IReadOnlyList<Contracts.Currency> currencies)
         {
-            return new CurrencyUpdateResponse
+            CurrencyUpdateResponse[] responses = new CurrencyUpdateResponse[currencies.Count];
+            for (int i = 0; i < currencies.Count; i++)
             {
-                CurrencyUpdates = trades
-            };
+                Contracts.Currency currency = currencies[i];
+                CurrencyUpdateResponse response = new() { CurrencyType = currency.CurrencyType, CurrencyAmount = currency.Amount };
+                responses[i] = response;
+            }
+
+            return responses;
         }
     }
 }

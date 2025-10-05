@@ -8,7 +8,7 @@ using IdelPog.Core.Messaging.Exceptions;
 namespace IdelPog.Integration.Tests.CurrencyCommands.Create
 {
     [TestFixture]
-    public class CurrencyCreationTest : ManagedTestBuffer
+    public sealed class CurrencyCreationTest : ManagedTestBuffer
     {
         private CurrencyCreationResponseListener _currencyCreationResponseListener;
         private CurrencyCreationErrorListener _currencyCreationErrorListener;
@@ -50,8 +50,8 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Create
             Assert.Multiple(() =>
             {
                 Assert.That(_currencyCreationResponseListener.WasCalled, Is.True);
-                Assert.That(_currencyCreationResponseListener.Item.CurrencyCreations, Is.Not.Null);
-                Assert.That(_currencyCreationResponseListener.Item.CurrencyCreations, Has.Length.EqualTo(currencyCreations.Length));
+                Assert.That(_currencyCreationResponseListener.CurrencyCreationResponses, Is.Not.Null);
+                Assert.That(_currencyCreationResponseListener.CurrencyCreationResponses, Has.Length.EqualTo(currencyCreations.Length));
             });
         }
 
@@ -94,10 +94,12 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Create
             AssertCurrencyCreationResponseListener(currencyCreations, true);
             AssertCurrencyCreationErrorListener(false);
 
-            CurrencyCreationResponse creationResponse = _currencyCreationResponseListener.Item;
+            CurrencyCreationResponse[] creationResponses = _currencyCreationResponseListener.CurrencyCreationResponses;
             Assert.Multiple(() =>
             {
-                Assert.That(creationResponse.CurrencyCreations, Is.EquivalentTo(currencyCreations));
+                Assert.That(creationResponses, Has.Length.EqualTo(1));
+                Assert.That(creationResponses[0].Amount, Is.EqualTo(_createGold.StartingAmount));
+                Assert.That(creationResponses[0].CurrencyType, Is.EqualTo(_createGold.CurrencyType));
             });
         }
 
@@ -109,18 +111,18 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Create
             AssertCurrencyCreationResponseListener(currencyCreations, true);
             AssertCurrencyCreationErrorListener(false);
 
-            CurrencyCreationResponse creationResponse = _currencyCreationResponseListener.Item;
-            foreach (CurrencyCreation currencyCreation in creationResponse.CurrencyCreations)
+            CurrencyCreationResponse[] creationResponses = _currencyCreationResponseListener.CurrencyCreationResponses;
+            foreach (CurrencyCreationResponse response in creationResponses)
             {
-                Assert.That(currencyCreation.StartingAmount, Is.EqualTo(_createGems.StartingAmount));
+                Assert.That(response.Amount, Is.EqualTo(_createGems.StartingAmount));
 
-                switch (currencyCreation.CurrencyType)
+                switch (response.CurrencyType)
                 {
                     case CurrencyType.GOLD:
-                        Assert.That(currencyCreation.CurrencyType, Is.EqualTo(_createGold.CurrencyType));
+                        Assert.That(response.CurrencyType, Is.EqualTo(_createGold.CurrencyType));
                         break;
                     case CurrencyType.GEMS:
-                        Assert.That(currencyCreation.CurrencyType, Is.EqualTo(_createGems.CurrencyType));
+                        Assert.That(response.CurrencyType, Is.EqualTo(_createGems.CurrencyType));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
