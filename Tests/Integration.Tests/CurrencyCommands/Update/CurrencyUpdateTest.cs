@@ -45,14 +45,14 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
             ManagedSubscribe(_currencyUpdateErrorListener);
         }
 
-        private void SendCreationBuffer(params CurrencyCreation[] currencyCreation)
+        private void SendCreations(params CurrencyCreation[] currencyCreation)
         {
             IBuffer<CurrencyCreation> buffer = BufferManager.RequestBuffer<CurrencyCreation>(new BufferRequest(currencyCreation.Length));
             buffer.Assign(currencyCreation);
             buffer.MarkReady();
         }
 
-        private void SendCurrencyTradeBuffer(params CurrencyUpdate[] trades)
+        private void SendUpdates(params CurrencyUpdate[] trades)
         {
             IBuffer<CurrencyUpdate> buffer = BufferManager.RequestBuffer<CurrencyUpdate>(new BufferRequest(trades.Length));
             buffer.Assign(trades);
@@ -99,11 +99,11 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         }
 
         [Test]
-        public void Positive_SendAddUpdate_ReturnsState_NotUpdate()
+        public void Positive_SendAddUpdate_ShouldReturnNewCurrencyAmount()
         {
-            SendCreationBuffer(_goldCreation with { StartingAmount = 50 });
+            SendCreations(_goldCreation with { StartingAmount = 50 });
             
-            SendCurrencyTradeBuffer(_addGoldCommand);
+            SendUpdates(_addGoldCommand);
             
             AssertErrorListener(false);
             AssertUpdateListener(true);
@@ -114,9 +114,9 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         [Test]
         public void Positive_SendAddGoldUpdate_ProducesSingleCurrencyUpdate()
         {
-            SendCreationBuffer(_goldCreation);
+            SendCreations(_goldCreation);
             
-            SendCurrencyTradeBuffer(_addGoldCommand);
+            SendUpdates(_addGoldCommand);
             
             AssertErrorListener(false);
             AssertUpdateListener(true);
@@ -127,9 +127,9 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         [Test]
         public void Positive_SendRemoveGoldUpdate_ProducesSingleCurrencyUpdate()
         {
-            SendCreationBuffer(_goldCreation with {  StartingAmount = _addGoldCommand.Amount });
+            SendCreations(_goldCreation with {  StartingAmount = _addGoldCommand.Amount });
             
-            SendCurrencyTradeBuffer(_addGoldCommand with { ActionType = ActionType.REMOVE });
+            SendUpdates(_addGoldCommand with { ActionType = ActionType.REMOVE });
             
             AssertErrorListener(false);
             AssertUpdateListener(true);
@@ -141,10 +141,10 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         [Test]
         public void Positive_SendMixedUpdates_ProducesSingleCorrectUpdate()
         {
-            SendCreationBuffer(_goldCreation);
+            SendCreations(_goldCreation);
             CurrencyUpdate removeGold = _addGoldCommand with { ActionType = ActionType.REMOVE };
             
-            SendCurrencyTradeBuffer(removeGold, removeGold, _addGoldCommand, _addGoldCommand, _addGoldCommand);
+            SendUpdates(removeGold, removeGold, _addGoldCommand, _addGoldCommand, _addGoldCommand);
             
             AssertErrorListener(false);
             AssertUpdateListener(true);
@@ -156,9 +156,9 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         [Test]
         public void Positive_SendMultipleCurrencyTypes_DispatchesMultipleResponses()
         {
-            SendCreationBuffer(_goldCreation with { CurrencyType = CurrencyType.GEMS }, _goldCreation);
+            SendCreations(_goldCreation with { CurrencyType = CurrencyType.GEMS }, _goldCreation);
             
-            SendCurrencyTradeBuffer(_addGoldCommand, _addGoldCommand with { CurrencyType = CurrencyType.GEMS });
+            SendUpdates(_addGoldCommand, _addGoldCommand with { CurrencyType = CurrencyType.GEMS });
             
             AssertErrorListener(false);
             AssertUpdateListener(true);
@@ -171,7 +171,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         [Test]
         public void Negative_OneCommand_NotFoundCurrency_NoUpdate_SendsError()
         {
-            Assert.DoesNotThrow(() => SendCurrencyTradeBuffer(_addGoldCommand));
+            Assert.DoesNotThrow(() => SendUpdates(_addGoldCommand));
             
             AssertErrorListener(true);
             AssertUpdateListener(false);
@@ -182,10 +182,10 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         [Test]
         public void Negative_OneCommand_NotEnoughCurrency_NoUpdate_SendsError()
         {
-            SendCreationBuffer(_goldCreation);
+            SendCreations(_goldCreation);
             CurrencyUpdate removeGold = _addGoldCommand with { ActionType = ActionType.REMOVE };
 
-            Assert.DoesNotThrow(() => SendCurrencyTradeBuffer(removeGold));
+            Assert.DoesNotThrow(() => SendUpdates(removeGold));
             
             AssertErrorListener(true);
             AssertUpdateListener(false);
@@ -196,10 +196,10 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         [Test]
         public void Negative_MultipleCommands_SomeValidOneError_NoUpdate_SendsError()
         {
-            SendCreationBuffer(_goldCreation);
+            SendCreations(_goldCreation);
             CurrencyUpdate addGems = _addGoldCommand with { CurrencyType = CurrencyType.GEMS };
 
-            Assert.DoesNotThrow(() => SendCurrencyTradeBuffer(_addGoldCommand, addGems));
+            Assert.DoesNotThrow(() => SendUpdates(_addGoldCommand, addGems));
             
             AssertErrorListener(true);
             AssertUpdateListener(false);

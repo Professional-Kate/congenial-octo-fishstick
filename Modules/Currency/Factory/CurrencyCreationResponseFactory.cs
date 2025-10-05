@@ -16,20 +16,25 @@ namespace IdelPog.Currency.Factory
             _collectionAssertion = collectionAssertion;
         }
 
-        public CurrencyCreationResponse CreateFrom(IReadOnlyList<CurrencyCreation> currencyCreations)
+        public IReadOnlyList<CurrencyCreationResponse> CreateFrom(IReadOnlyList<CurrencyCreation> currencyCreations)
         {
             _objectNullAssertion.AssertNotNull(currencyCreations, nameof(currencyCreations));
             _collectionAssertion.AssertNotEmpty(currencyCreations);
 
-            return Create(currencyCreations.ToArray());
+            return Create(currencyCreations);
         }
 
-        private static CurrencyCreationResponse Create(CurrencyCreation[] currencyCreations)
+        private static CurrencyCreationResponse[] Create(IReadOnlyList<CurrencyCreation> currencyCreations)
         {
-            return new CurrencyCreationResponse
+            CurrencyCreationResponse[] responses = new CurrencyCreationResponse[currencyCreations.Count];
+            for (var i = 0; i < currencyCreations.Count; i++)
             {
-                CurrencyCreations = currencyCreations
-            };
+                CurrencyCreation creation = currencyCreations[i];
+                CurrencyCreationResponse currencyCreationResponse = new() { Amount = creation.StartingAmount, CurrencyType = creation.CurrencyType };
+                responses[i] = currencyCreationResponse;
+            }
+
+            return responses;
         }
     }
 }

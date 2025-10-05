@@ -1,9 +1,10 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts.Enum;
 
 namespace IdelPog.Core.Contracts.Response
 {
     public readonly record struct CurrencyCreationResponse
-    {
-        public required CurrencyCreation[] CurrencyCreations { get; init; }
+    { 
+        public required CurrencyType CurrencyType { get; init; }
+        public required uint Amount { get; init; }
     }
 }
