@@ -25,7 +25,7 @@ namespace IdelPog.Core.Logging.Writer
         {
             foreach (T message in messages)
             {
-                Console.WriteLine($"-> {message}");
+                Console.WriteLine($" -> {message}");
             }
         }
         
