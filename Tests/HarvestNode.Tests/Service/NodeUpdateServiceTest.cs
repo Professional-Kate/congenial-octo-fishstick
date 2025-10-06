@@ -18,26 +18,27 @@ namespace IdelPog.HarvestNode.Tests.Service
     public class NodeUpdateServiceTest
     {
         private INodeUpdateService _nodeUpdateService;
-        private Mock<IStateRepository<ItemID, IdelPog.HarvestNode.Contracts.HarvestNode>> _nodeRepositoryMock;
+        private Mock<IStateRepository<ItemID, Contracts.HarvestNode>> _nodeRepositoryMock;
         private Mock<ILevelService> _levelServiceMock;
         private Mock<IExperienceService> _experienceServiceMock;
         private Mock<INodeUpdateResponseFactory> _updateResponseFactoryMock;
 
-        private IdelPog.HarvestNode.Contracts.HarvestNode _harvestNode;
+        private Contracts.HarvestNode _harvestNode;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _nodeRepositoryMock = new Mock<IStateRepository<ItemID, IdelPog.HarvestNode.Contracts.HarvestNode>>();
+            _nodeRepositoryMock = new Mock<IStateRepository<ItemID, Contracts.HarvestNode>>();
             _levelServiceMock = new Mock<ILevelService>();
             _experienceServiceMock = new Mock<IExperienceService>();
             _updateResponseFactoryMock = new Mock<INodeUpdateResponseFactory>();
 
-            _harvestNode = new IdelPog.HarvestNode.Contracts.HarvestNode
+            _harvestNode = new Contracts.HarvestNode
             {
                 ItemID = ItemID.STONE,
                 Information = new Information { Description = "", Name = "" },
-                Levelable = new Levelable(0, 0, 0, 0)
+                Levelable = new Levelable(0, 0, 0, 0),
+                HarvestNodeID = HarvestNodeID.ROCK
             };
             
             _nodeUpdateService = new NodeUpdateService(_nodeRepositoryMock.Object, _levelServiceMock.Object, _experienceServiceMock.Object, _updateResponseFactoryMock.Object, new FoundAssertion(new ThrowHandler()));
@@ -54,7 +55,6 @@ namespace IdelPog.HarvestNode.Tests.Service
         private void AssertMockCalls(Times times, bool canLevel = false)
         {
             _nodeRepositoryMock.Verify(library => library.Get(ItemID.STONE), times);
-            _nodeRepositoryMock.Verify(library => library.Update(ItemID.STONE, _harvestNode), times);
             _nodeRepositoryMock.VerifyNoOtherCalls();
 
             _levelServiceMock.Verify(library => library.CanLevel(_harvestNode.Levelable), times);

@@ -33,7 +33,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.IRON_CLUSTER}
                 ],
                 LinkedSkill = SkillID.MINING
             };
@@ -107,7 +107,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.ROCK}
                 ],
                 LinkedSkill = SkillID.FORAGING
             };

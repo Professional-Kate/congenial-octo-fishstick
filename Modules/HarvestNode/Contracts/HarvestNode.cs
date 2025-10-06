@@ -7,6 +7,7 @@ namespace IdelPog.HarvestNode.Contracts
 {
     public sealed record HarvestNode : ICloneable<HarvestNode>
     {
+        public required HarvestNodeID HarvestNodeID { get; init; }
         public required ItemID ItemID { get; init; }
         public required Levelable Levelable { get; init; }
         public required Information Information { get; init; }
