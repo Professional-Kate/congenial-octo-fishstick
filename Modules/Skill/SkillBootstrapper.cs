@@ -108,7 +108,7 @@ namespace IdelPog.Skill
             IDispatchOne<InventoryUpdate> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdate>(bufferManager, bufferLogger,  objectNullAssertion, collectionAssertion);
             IAssetRepository<SkillID, ILootTable> weightedLootTableRepository = new AssetRepository<SkillID, ILootTable>();
             IGrantPolicy grantPolicy = new WeightedPolicy(lootRoll, grantWeight: 1, skipWeight: 100, weightAssertion);
-            ILootService<SkillID> lootService = new LootService<SkillID>(weightedLootTableRepository, inventoryUpdateDispatcher, grantPolicy, foundAssertion);
+            ILootService<SkillID> lootService = new LootService<SkillID>(weightedLootTableRepository, grantPolicy, foundAssertion);
 
             WeightedEntry[] miningEntries =
             [

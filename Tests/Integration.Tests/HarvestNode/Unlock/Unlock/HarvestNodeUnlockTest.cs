@@ -5,7 +5,7 @@ using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 
-namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Unlock
+namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Unlock
 {
     [TestFixture]
     public sealed class HarvestNodeUnlockTest : ManagedTestBuffer

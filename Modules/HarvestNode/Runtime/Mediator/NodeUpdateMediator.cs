@@ -51,7 +51,7 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
                 HarvestNodeUpdateResponse response = _nodeUpdateService.UpdateHarvestNode(harvestTarget);
                 responses[i] = response;
             
-                _lootService.DispatchInventoryUpdates(harvestTarget);
+                _lootService.GenerateItemID(harvestTarget);
             }
             
             _updateResponseDispatcher.Dispatch(responses);

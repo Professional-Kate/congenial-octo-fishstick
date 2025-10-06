@@ -9,10 +9,12 @@
         OAK_TREE,
         SPRUCE_TREE,
         BIRCH_TREE,
-        HERBS,
+        SMALL_PLANTS,
+        LEAF_LITTER,
         ANT_NEST,
         BEEHIVE,
         WELL,
-        BEACH
+        SHALLOW_POND,
+        RIVER
     }
 }

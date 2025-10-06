@@ -38,7 +38,8 @@ namespace IdelPog.HarvestNode.Tests.Service
                 ItemID = ItemID.STONE,
                 Information = new Information { Description = "", Name = "" },
                 Levelable = new Levelable(0, 0, 0, 0),
-                HarvestNodeID = HarvestNodeID.ROCK
+                HarvestNodeID = HarvestNodeID.ROCK, 
+                LocationID = LocationID.CAVE
             };
             
             _nodeUpdateService = new NodeUpdateService(_nodeRepositoryMock.Object, _levelServiceMock.Object, _experienceServiceMock.Object, _updateResponseFactoryMock.Object, new FoundAssertion(new ThrowHandler()));
@@ -55,6 +56,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         private void AssertMockCalls(Times times, bool canLevel = false)
         {
             _nodeRepositoryMock.Verify(library => library.Get(ItemID.STONE), times);
+            _nodeRepositoryMock.Verify(library => library.Update(ItemID.STONE, _harvestNode), times);
             _nodeRepositoryMock.VerifyNoOtherCalls();
 
             _levelServiceMock.Verify(library => library.CanLevel(_harvestNode.Levelable), times);

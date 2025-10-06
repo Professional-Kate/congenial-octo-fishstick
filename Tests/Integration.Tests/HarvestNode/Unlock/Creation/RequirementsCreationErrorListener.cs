@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Messaging.Listener.Single;
 
-namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Creation
+namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Creation
 {
     public sealed class RequirementsCreationErrorListener : ISingleListener<HarvestNodeRequirementsCreationError>
     {

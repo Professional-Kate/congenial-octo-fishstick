@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Messaging.Listener.Single;
 
-namespace IdelPog.Integration.Tests.ContentEngine
+namespace IdelPog.Integration.Tests.HarvestNode
 {
     internal class UpdateNodeErrorListener : ISingleListener<HarvestNodeUpdateError>
     {

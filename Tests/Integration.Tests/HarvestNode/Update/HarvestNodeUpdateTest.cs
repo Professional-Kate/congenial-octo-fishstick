@@ -8,9 +8,9 @@ using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.HarvestNode.Exceptions;
-using IdelPog.Integration.Tests.ContentEngine.Unlock;
+using IdelPog.Integration.Tests.HarvestNode.Unlock;
 
-namespace IdelPog.Integration.Tests.ContentEngine
+namespace IdelPog.Integration.Tests.HarvestNode
 {
     [TestFixture]
     public sealed class HarvestNodeUpdateTest : ManagedTestBuffer
@@ -33,7 +33,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.IRON_CLUSTER}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.IRON_CLUSTER, LocationID = LocationID.CAVE}
                 ],
                 LinkedSkill = SkillID.MINING
             };
@@ -107,7 +107,7 @@ namespace IdelPog.Integration.Tests.ContentEngine
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.ROCK}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.ROCK, LocationID = LocationID.CAVE}
                 ],
                 LinkedSkill = SkillID.FORAGING
             };

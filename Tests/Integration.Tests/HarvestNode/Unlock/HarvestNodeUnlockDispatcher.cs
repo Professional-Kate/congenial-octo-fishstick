@@ -5,7 +5,7 @@ using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Buffer.Manager;
 
-namespace IdelPog.Integration.Tests.ContentEngine.Unlock
+namespace IdelPog.Integration.Tests.HarvestNode.Unlock
 {
     internal sealed class HarvestNodeUnlockDispatcher
     {

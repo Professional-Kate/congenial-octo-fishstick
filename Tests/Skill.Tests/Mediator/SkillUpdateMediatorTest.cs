@@ -84,7 +84,7 @@ namespace IdelPog.Skills.Tests.Mediator
             VerifyDependencyCalls(1, 1, 1);
             _skillUpdateDispatcherMock.Verify(library => library.Dispatch(It.IsAny<SkillUpdateResponse[]>()), Times.Once);
             _skillUpdateFactoryMock.Verify(library => library.Create(_miningSkill, false));
-            _lootServiceMock.Verify(library => library.DispatchInventoryUpdates(_miningSkill.SkillID), Times.Once);
+            _lootServiceMock.Verify(library => library.GenerateItemID(_miningSkill.SkillID), Times.Never);
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace IdelPog.Skills.Tests.Mediator
             _skillUpdateDispatcherMock.Verify(library => library.Dispatch(It.IsAny<SkillUpdateResponse[]>()), Times.Once);
             _skillUpdateFactoryMock.Verify(library => library.Create(_miningSkill, true));
             
-            _lootServiceMock.Verify(library => library.DispatchInventoryUpdates(_miningSkill.SkillID), Times.Once);
+            _lootServiceMock.Verify(library => library.GenerateItemID(_miningSkill.SkillID), Times.Never);
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace IdelPog.Skills.Tests.Mediator
             Assert.Throws<Exception>(() => _skillActionMediator.HandleMessages([new SkillUpdate { SkillID = _miningSkill.SkillID }]));
 
             VerifyDependencyCalls(1, 0, 1);
-            _lootServiceMock.Verify(library => library.DispatchInventoryUpdates(_miningSkill.SkillID), Times.Never);
+            _lootServiceMock.Verify(library => library.GenerateItemID(_miningSkill.SkillID), Times.Never);
         }
     }
 }

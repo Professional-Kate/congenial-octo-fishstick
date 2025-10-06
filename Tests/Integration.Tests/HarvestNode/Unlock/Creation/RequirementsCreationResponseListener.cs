@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Listener.Buffer;
 
-namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Creation
+namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Creation
 {
     public sealed class RequirementsCreationResponseListener : IBufferListener<HarvestNodeRequirementsCreationResponse>
     {

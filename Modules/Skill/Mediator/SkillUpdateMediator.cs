@@ -51,7 +51,7 @@ namespace IdelPog.Skill.Mediator
                     _levelService.LevelUp(levelable);
                 }
 
-                _lootService.DispatchInventoryUpdates(skillID);
+                // _lootService.GenerateItemID(skillID);
 
                 _skillRepository.Update(skillID, skill);
                 responses[i] = _skillUpdateResponseFactory.Create(skill, canSkillLevel);

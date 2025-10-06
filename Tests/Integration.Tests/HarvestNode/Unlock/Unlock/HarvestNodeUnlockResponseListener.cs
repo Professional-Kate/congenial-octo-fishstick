@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Listener.Buffer;
 
-namespace IdelPog.Integration.Tests.ContentEngine.Unlock.Unlock
+namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Unlock
 {
     public sealed class HarvestNodeUnlockResponseListener : IBufferListener<HarvestNodeUnlockResponse>
     {
