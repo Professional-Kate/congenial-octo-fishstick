@@ -25,10 +25,10 @@ namespace IdelPog.Integration.Tests.HarvestNode
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.ROCK, LocationID = LocationID.CAVE},
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.COPPER, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.COPPER_CLUSTER, LocationID = LocationID.CAVE},
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.GOLD, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.GOLD_CLUSTER, LocationID = LocationID.CAVE},
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.IRON_CLUSTER, LocationID = LocationID.CAVE}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.STONE, LocationID = LocationID.CAVE},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.COPPER, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.COPPER_CLUSTER, LocationID = LocationID.CAVE},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.GOLD, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.GOLD_CLUSTER, LocationID = LocationID.CAVE},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.IRON_CLUSTER, LocationID = LocationID.CAVE}
                 ],
                 LinkedSkill = SkillID.MINING
             };
@@ -105,7 +105,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.HERBS, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.SMALL_PLANTS, LocationID = LocationID.PLAINS}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.HERBS, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.SMALL_PLANTS, LocationID = LocationID.PLAINS}
                 ],
                 LinkedSkill = SkillID.FORAGING
             };
@@ -126,7 +126,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.HERBS, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.SMALL_PLANTS, LocationID = LocationID.PLAINS}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.HERBS, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.SMALL_PLANTS, LocationID = LocationID.PLAINS}
                 ],
                 LinkedSkill = SkillID.MINING
             };
@@ -157,7 +157,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.IRON_CLUSTER, LocationID = LocationID.CAVE}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.IRON_CLUSTER, LocationID = LocationID.CAVE}
                 ],
                 LinkedSkill = SkillID.FORAGING
             };
@@ -177,8 +177,8 @@ namespace IdelPog.Integration.Tests.HarvestNode
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.ROCK, LocationID = LocationID.CAVE},
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, HarvestNodeID = HarvestNodeID.ROCK, LocationID = LocationID.CAVE}
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.STONE, LocationID = LocationID.CAVE},
+                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.STONE, LocationID = LocationID.CAVE}
                 ],
                 LinkedSkill = SkillID.MINING
             };

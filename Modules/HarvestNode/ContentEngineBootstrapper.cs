@@ -11,7 +11,6 @@ using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
-using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Progression.Assertion;
 using IdelPog.Core.Progression.Experience;
@@ -92,21 +91,24 @@ namespace IdelPog.HarvestNode
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             INodeUnlockedAssertion nodeUnlockedAssertion = new NodeUnlockedAssertion(throwHandler);
             
-            IAssetRepository<ItemID, ILootTable> lootTableRepository = new AssetRepository<ItemID, ILootTable>();
+            IAssetRepository<ItemID, ILootTable> itemLootTableRepository = new AssetRepository<ItemID, ILootTable>();
+            IAssetRepository<LocationID, ILootTable> locationLootTableRepository = new AssetRepository<LocationID, ILootTable>();
             ILevelService levelService = new LevelService(levelAssertion, objectNullAssertion);
             IExperienceService experienceService = new ExperienceService(levelAssertion, objectNullAssertion);
             ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
             INodeUpdateResponseFactory responseFactory = new NodeUpdateResponseFactory(levelProgressFactory);
             IEntityUnlockChecker<SkillID, HarvestNodeUnlockResponse> unlockChecker = new EntityUnlockChecker<SkillID, HarvestNodeUnlockResponse>(entityRepository);
             
-            LootTableGrantSelf(lootTableRepository, [ItemID.STONE, ItemID.IRON, ItemID.COPPER, ItemID.GOLD, ItemID.OAK, ItemID.SPRUCE, ItemID.BIRCH, ItemID.HERBS, ItemID.SMALL_INSECTS, ItemID.HONEY, ItemID.WATER, ItemID.SAND]);
+            LootTableGrantSelf(itemLootTableRepository, [ItemID.STONE, ItemID.IRON, ItemID.COPPER, ItemID.GOLD, ItemID.OAK, ItemID.SPRUCE, ItemID.BIRCH, ItemID.HERBS, ItemID.SMALL_INSECTS, ItemID.HONEY, ItemID.WATER, ItemID.SAND]);
             
-            IDispatchOne<InventoryUpdate> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
-            ILootService<ItemID> lootService = new LootService<ItemID>(lootTableRepository, new GrantPolicy(), foundAssertion);
+            IDispatchMany<InventoryUpdate> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            ILootService<ItemID> itemLootService = new LootService<ItemID>(itemLootTableRepository, new GrantPolicy(), foundAssertion);
+            ILootService<LocationID> locationLootService = new LootService<LocationID>(locationLootTableRepository, new GrantPolicy(), foundAssertion);
+            IHarvestNodeLootService harvestNodeLootService = new HarvestNodeLootService(itemLootService, locationLootService);
             
             IDispatchMany<HarvestNodeUpdateResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             INodeUpdateService nodeUpdateService = new NodeUpdateService(harvestNodeRepository, levelService, experienceService, responseFactory, foundAssertion);
-            IBatchMediator<HarvestNodeUpdate> updateMediator = new NodeUpdateMediator(skillNodeAccessValidator, nodeUpdateService, responseDispatcher, lootService, unlockChecker, nodeUnlockedAssertion, collectionAssertion);
+            IBatchMediator<HarvestNodeUpdate> updateMediator = new NodeUpdateMediator(harvestNodeRepository, skillNodeAccessValidator, unlockChecker, nodeUpdateService, harvestNodeLootService, responseDispatcher, inventoryUpdateDispatcher, nodeUnlockedAssertion, collectionAssertion, foundAssertion);
             IBatchController<HarvestNodeUpdate> nodeUpdateController = new ManagedBatchController<HarvestNodeUpdate>(updateMediator);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();

@@ -1,8 +1,8 @@
 ﻿namespace IdelPog.Core.Contracts.Enum
 {
-    public enum HarvestNodeID : byte
+    public enum ResourceID : byte
     {
-        ROCK,
+        STONE,
         IRON_CLUSTER,
         COPPER_CLUSTER,
         GOLD_CLUSTER,

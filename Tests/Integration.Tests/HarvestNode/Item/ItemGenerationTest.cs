@@ -29,7 +29,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
                 [
                     new ReadOnlyHarvestNode
                     {
-                        HarvestNodeID = HarvestNodeID.IRON_CLUSTER,
+                        ResourceID = ResourceID.IRON_CLUSTER,
                         ItemID = ItemID.IRON,
                         LocationID = LocationID.CAVE,
                         ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 },

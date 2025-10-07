@@ -38,7 +38,7 @@ namespace IdelPog.HarvestNode.Tests.Service
                 ItemID = ItemID.STONE,
                 Information = new Information { Description = "", Name = "" },
                 Levelable = new Levelable(0, 0, 0, 0),
-                HarvestNodeID = HarvestNodeID.ROCK, 
+                ResourceID = ResourceID.STONE, 
                 LocationID = LocationID.CAVE
             };
             

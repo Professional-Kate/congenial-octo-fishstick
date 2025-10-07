@@ -16,7 +16,7 @@ namespace IdelPog.HarvestNode.Runtime.Factory
                 Levelable = levelable, 
                 ItemID = readOnlyHarvestNode.ItemID, 
                 Information = readOnlyHarvestNode.Information, 
-                HarvestNodeID = readOnlyHarvestNode.HarvestNodeID, 
+                ResourceID = readOnlyHarvestNode.ResourceID, 
                 LocationID = readOnlyHarvestNode.LocationID
             };
         }
