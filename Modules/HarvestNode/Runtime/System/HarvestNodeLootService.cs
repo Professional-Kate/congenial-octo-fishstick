@@ -19,24 +19,14 @@ namespace IdelPog.HarvestNode.Runtime.System
 
         public IReadOnlyList<InventoryUpdate> GenerateInventoryUpdates(Contracts.HarvestNode harvestNode)
         {
-            List<InventoryUpdate> inventoryUpdates = new();
+            List<InventoryUpdate> inventoryUpdates = [];
 
             TryAddLoot(_itemLootService, harvestNode.ItemID, inventoryUpdates);
             TryAddLoot(_locationLootService, harvestNode.LocationID, inventoryUpdates);
             
             return inventoryUpdates;
         }
-
-        private static InventoryUpdate GenerateUpdate(ItemID itemID)
-        {
-            return new InventoryUpdate
-            {
-                ItemID = itemID,
-                ActionType = ActionType.ADD,
-                Amount = 1
-            };
-        }
-
+        
         private static void TryAddLoot<TID>(ILootService<TID> lootService, TID id, List<InventoryUpdate> inventoryUpdates) where TID : Enum
         {
             if (lootService.ShouldGrant() == false)
@@ -54,5 +44,16 @@ namespace IdelPog.HarvestNode.Runtime.System
                 // suppressed heehee haha
             }
         }
+        
+        private static InventoryUpdate GenerateUpdate(ItemID itemID)
+        {
+            return new InventoryUpdate
+            {
+                ItemID = itemID,
+                ActionType = ActionType.ADD,
+                Amount = 1
+            };
+        }
+
     }
 }

@@ -32,6 +32,8 @@ using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
 using IdelPog.HarvestNode.Runtime.Mediator;
 using IdelPog.HarvestNode.Runtime.System;
 using IdelPog.HarvestNode.Runtime.System.Interface;
+using IdelPog.Loot.Assertion;
+using IdelPog.Loot.Assertion.Interface;
 using IdelPog.Loot.Policy;
 using IdelPog.Loot.Service;
 using IdelPog.Loot.Service.Interface;
@@ -62,12 +64,13 @@ namespace IdelPog.HarvestNode
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
             IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
             IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository = new AssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>();
+            IAssetRepository<ItemID, ILootTable> itemLootTableRepository = new AssetRepository<ItemID, ILootTable>();
             
-            
-            RegisterSkillUpdateResponse(bufferManager, skillNodeAccessValidator, batchRegister, bufferLogger, harvestNodeRepository, entityRepository);
+            RegisterSkillUpdateResponse(bufferManager, skillNodeAccessValidator, batchRegister, bufferLogger, harvestNodeRepository, entityRepository, itemLootTableRepository);
             RegisterNodeCreation(bufferManager, skillNodeRepository, batchRegister, bufferLogger, harvestNodeRepository);
             RegisterNodeUnlock(bufferManager, batchRegister, bufferLogger, entityRepository);
             RegisterNodeRequirementsCreation(bufferManager, batchRegister, bufferLogger, entityRepository);
+            RegisterHarvestNodeLootCreation(bufferManager, batchRegister, bufferLogger, itemLootTableRepository);
         }
 
         /// <summary>
@@ -79,10 +82,11 @@ namespace IdelPog.HarvestNode
         /// <param name="bufferLogger">Logs all messages in and out</param>
         /// <param name="harvestNodeRepository">Stores all HarvestNodes</param>
         /// <param name="entityRepository">Stores all <see cref="UnlockRequirementsEntity{TID,TCommand}"/></param>
+        /// <param name="itemLootTableRepository">Stores all <see cref="ILootTable"/></param>
         /// <remarks>
         /// Listens to -> <see cref="SkillUpdateResponse"/>. On Success -> <see cref="HarvestNodeUpdateResponse"/>. On Error -> <see cref="HarvestNodeUpdateError"/>
         /// </remarks>
-        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ISkillNodeAccessValidator skillNodeAccessValidator, IBatchRegister batchRegister, IBufferLogger bufferLogger, IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository)
+        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ISkillNodeAccessValidator skillNodeAccessValidator, IBatchRegister batchRegister, IBufferLogger bufferLogger, IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository, IAssetRepository<ItemID, ILootTable> itemLootTableRepository)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -91,15 +95,12 @@ namespace IdelPog.HarvestNode
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             INodeUnlockedAssertion nodeUnlockedAssertion = new NodeUnlockedAssertion(throwHandler);
             
-            IAssetRepository<ItemID, ILootTable> itemLootTableRepository = new AssetRepository<ItemID, ILootTable>();
             IAssetRepository<LocationID, ILootTable> locationLootTableRepository = new AssetRepository<LocationID, ILootTable>();
             ILevelService levelService = new LevelService(levelAssertion, objectNullAssertion);
             IExperienceService experienceService = new ExperienceService(levelAssertion, objectNullAssertion);
             ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
             INodeUpdateResponseFactory responseFactory = new NodeUpdateResponseFactory(levelProgressFactory);
             IEntityUnlockChecker<SkillID, HarvestNodeUnlockResponse> unlockChecker = new EntityUnlockChecker<SkillID, HarvestNodeUnlockResponse>(entityRepository);
-            
-            LootTableGrantSelf(itemLootTableRepository, [ItemID.STONE, ItemID.IRON, ItemID.COPPER, ItemID.GOLD, ItemID.OAK, ItemID.SPRUCE, ItemID.BIRCH, ItemID.HERBS, ItemID.SMALL_INSECTS, ItemID.HONEY, ItemID.WATER, ItemID.SAND]);
             
             IDispatchMany<InventoryUpdate> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             ILootService<ItemID> itemLootService = new LootService<ItemID>(itemLootTableRepository, new GrantPolicy(), foundAssertion);
@@ -115,14 +116,6 @@ namespace IdelPog.HarvestNode
             IErrorFactory<HarvestNodeUpdateError, IReadOnlyList<HarvestNodeUpdate>> harvestNodeErrorFactory = new HarvestNodeUpdateErrorFactory(baseErrorFactory);
 
             batchRegister.RegisterBatch(nodeUpdateController, harvestNodeErrorFactory);
-        }
-
-        private static void LootTableGrantSelf(IAssetRepository<ItemID, ILootTable> lootTableRepository, ItemID[] itemIDs)
-        {
-            foreach (ItemID itemID in itemIDs)
-            {
-                lootTableRepository.Add(itemID, new GrantTable { ItemID = itemID });
-            }
         }
 
         /// <summary>
@@ -214,6 +207,36 @@ namespace IdelPog.HarvestNode
             
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<HarvestNodeRequirementsCreationError, IReadOnlyList<HarvestNodeRequirementsCreation>> errorFactory = new NodeRequirementsCreationErrorFactory(baseErrorFactory);
+            
+            batchRegister.RegisterBatch(creationController, errorFactory);
+        }
+
+        /// <summary>
+        /// Registers the <see cref="HarvestNodeLootCreation"/> flow into the messaging system
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="batchRegister">Used to register the NodeCreation flow</param>
+        /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// <param name="itemLootTableRepository">Stores all <see cref="ILootTable"/></param>
+        /// <remarks>
+        /// Listens to -> <see cref="HarvestNodeLootCreation"/>. On Success -> <see cref="HarvestNodeLootCreationResponse"/>. On Error -> <see cref="HarvestNodeLootCreationError"/>
+        /// </remarks>
+        private static void RegisterHarvestNodeLootCreation(IBufferManager bufferManager, IBatchRegister batchRegister, IBufferLogger bufferLogger, IAssetRepository<ItemID, ILootTable> itemLootTableRepository)
+        {
+            IHandler throwHandler = new ThrowHandler();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            IWeightAssertion weightAssertion = new WeightAssertion(throwHandler);
+            
+            IWeightedLootTableFactory lootTableFactory = new WeightedLootTableFactory(collectionAssertion, weightAssertion);
+            IDispatchMany<HarvestNodeLootCreationResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeLootCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
+            IBatchMediator<HarvestNodeLootCreation> creationMediator = new NodeLootGenerationMediator(itemLootTableRepository, lootTableFactory, responseDispatcher, collectionAssertion, uniqueAssertion);
+            IBatchController<HarvestNodeLootCreation> creationController = new ManagedBatchController<HarvestNodeLootCreation>(creationMediator);
+            
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            NodeLootCreationErrorFactory errorFactory = new(baseErrorFactory);
             
             batchRegister.RegisterBatch(creationController, errorFactory);
         }

@@ -12,6 +12,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
     {
         private HarvestNodeUpdate _ironUpdate;
         private HarvestNodeCreation _ironCreation;
+        private HarvestNodeLootCreation _ironLootCreation;
         private InventoryUpdateListener _inventoryUpdateListener;
 
         [OneTimeSetUp]
@@ -38,6 +39,17 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
                 ],
                 LinkedSkill = SkillID.MINING
             };
+            
+            _ironLootCreation = new HarvestNodeLootCreation
+            {
+                ItemID = ItemID.IRON,
+                ResourceID = ResourceID.IRON_CLUSTER,
+                LootTableEntries =
+                [
+                    new LootTableEntry { ItemID = ItemID.IRON, Weight = 1 }
+
+                ]
+            };
         }
         
         [SetUp]
@@ -58,6 +70,13 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
         {
             IBuffer<HarvestNodeUpdate> buffer = BufferManager.RequestBuffer<HarvestNodeUpdate>(new BufferRequest(nodeUpdates.Length));
             buffer.Assign(nodeUpdates);
+            buffer.MarkReady();
+        }
+
+        private void DispatchNodeLootCreation(params HarvestNodeLootCreation[] lootCreations)
+        {
+            IBuffer<HarvestNodeLootCreation> buffer = BufferManager.RequestBuffer<HarvestNodeLootCreation>(new BufferRequest(lootCreations.Length));
+            buffer.Assign(lootCreations);
             buffer.MarkReady();
         }
 
@@ -82,7 +101,30 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
         }
 
         [Test]
-        public void Positive_SendHarvestNodeUpdate_DispatchesInventoryUpdate()
+        public void Positive_SendHarvestNodeUpdate_NoDrops_NoUpdatesDispatched()
+        {
+            DispatchNodeCreation(_ironCreation);
+            
+            DispatchNodeUpdate(_ironUpdate);
+
+            AssertListenerCalled(false);
+        }
+
+        [Test]
+        public void Positive_SendHarvestNodeUpdate_ItemGrantDrop_DispatchesInventoryUpdate()
+        {
+            DispatchNodeCreation(_ironCreation);
+            DispatchNodeLootCreation(_ironLootCreation);
+            
+            DispatchNodeUpdate(_ironUpdate);
+
+            AssertListenerCalled(true);
+            AssertResponseLength(1);
+            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], _ironUpdate.ItemID);
+        }
+
+        [Test]
+        public void Positive_SendHarvestNodeUpdate_LocationGrantsDrop_DispatchesInventoryUpdate()
         {
             DispatchNodeCreation(_ironCreation);
             
@@ -90,7 +132,21 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
 
             AssertListenerCalled(true);
             AssertResponseLength(1);
+            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.STONE);
+        }
+
+        [Test]
+        public void Positive_SendHarvestNodeUpdate_LocationAndItemDrop_DispatchesTwoUpdates()
+        {
+            DispatchNodeCreation(_ironCreation);
+            DispatchNodeLootCreation(_ironLootCreation);
+            
+            DispatchNodeUpdate(_ironUpdate);
+
+            AssertListenerCalled(true);
+            AssertResponseLength(2);
             AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], _ironUpdate.ItemID);
+            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.STONE);
         }
     }
 }
