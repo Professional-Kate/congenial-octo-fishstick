@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.HarvestNode.Runtime.ECS;
-using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Factory.Interface;
 
 namespace IdelPog.HarvestNode.Runtime.Factory
 {

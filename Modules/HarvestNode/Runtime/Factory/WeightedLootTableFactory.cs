@@ -1,5 +1,5 @@
 ﻿using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.Loot.Assertion.Interface;
 using IdelPog.Loot.Random;
 using IdelPog.Loot.Table;

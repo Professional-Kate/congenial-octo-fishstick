@@ -8,7 +8,7 @@ using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
-using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.Mediator;
 using IdelPog.Progression.Runtime;
 using Moq;

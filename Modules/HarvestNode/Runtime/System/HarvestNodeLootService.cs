@@ -29,13 +29,13 @@ namespace IdelPog.HarvestNode.Runtime.System
         
         private static void TryAddLoot<TID>(ILootService<TID> lootService, TID id, List<InventoryUpdate> inventoryUpdates) where TID : Enum
         {
-            if (lootService.ShouldGrant() == false)
-            {
-                return;
-            }
-
             try
             {
+                if (lootService.ShouldGrant(id) == false)
+                {
+                    return;
+                }
+                
                 ItemID itemID = lootService.GenerateItemID(id);
                 inventoryUpdates.Add(GenerateUpdate(itemID));
             }

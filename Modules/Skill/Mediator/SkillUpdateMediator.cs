@@ -7,7 +7,6 @@ using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Repository.State;
-using IdelPog.Loot.Service.Interface;
 using IdelPog.Skill.Factory.Interface;
 
 namespace IdelPog.Skill.Mediator
@@ -19,17 +18,15 @@ namespace IdelPog.Skill.Mediator
         private readonly IStateRepository<SkillID, Contracts.Skill> _skillRepository;
         private readonly IDispatchMany<SkillUpdateResponse> _skillUpdateDispatcher;
         private readonly ISkillUpdateResponseFactory _skillUpdateResponseFactory;
-        private readonly ILootService<SkillID> _lootService;
 
         public SkillUpdateMediator(IExperienceService experienceService, ILevelService levelService, IStateRepository<SkillID, Contracts.Skill> skillRepository
-            , IDispatchMany<SkillUpdateResponse> skillUpdateDispatcher, ISkillUpdateResponseFactory skillUpdateResponseFactory, ILootService<SkillID> lootService)
+            , IDispatchMany<SkillUpdateResponse> skillUpdateDispatcher, ISkillUpdateResponseFactory skillUpdateResponseFactory)
         {
             _experienceService = experienceService;
             _levelService = levelService;
             _skillRepository = skillRepository;
             _skillUpdateDispatcher = skillUpdateDispatcher;
             _skillUpdateResponseFactory = skillUpdateResponseFactory;
-            _lootService = lootService;
         }
 
         public void HandleMessages(IReadOnlyList<SkillUpdate> messages)

@@ -53,11 +53,12 @@ namespace Loot.Tests
             });
         }
 
-        [Test]
-        public void Negative_ConstructWithZeroAmounts_Throws()
+        [TestCase(0)]
+        [TestCase(1)]
+        public void Negative_ConstructWithZeroAmounts_NoThrow(int weight)
         {
-            Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, 0, SKIP_WEIGHT, new WeightAssertion(new ThrowHandler())));
-            Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT, 0, new WeightAssertion(new ThrowHandler())));
+            Assert.DoesNotThrow(() => new WeightedPolicy(_lootRollMock.Object, weight, SKIP_WEIGHT, new WeightAssertion(new ThrowHandler())));
+            Assert.DoesNotThrow(() => new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT, weight, new WeightAssertion(new ThrowHandler())));
         }
 
         [Test]

@@ -11,24 +11,15 @@ using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
-using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Progression.Assertion;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
-using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Core.Validation.Handler.Interface;
-using IdelPog.Loot.Assertion;
-using IdelPog.Loot.Assertion.Interface;
-using IdelPog.Loot.Policy;
-using IdelPog.Loot.Random;
-using IdelPog.Loot.Service;
-using IdelPog.Loot.Service.Interface;
-using IdelPog.Loot.Table;
 using IdelPog.Skill.Factory;
 using IdelPog.Skill.Factory.Interface;
 using IdelPog.Skill.Mediator;
@@ -94,8 +85,6 @@ namespace IdelPog.Skill
             ILevelAssertion levelAssertion = new LevelAssertion(throwHandler);
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
-            IWeightAssertion weightAssertion = new WeightAssertion(throwHandler);
             
             ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
             
@@ -104,37 +93,9 @@ namespace IdelPog.Skill
             IDispatchMany<SkillUpdateResponse> responseDispatcher = new ManagedDispatcher<SkillUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             ISkillUpdateResponseFactory updateResponseFactory = new SkillUpdateResponseFactory(levelProgressFactory);
 
-            ILootRoll lootRoll = new DefaultLootRoll();
-            IDispatchOne<InventoryUpdate> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdate>(bufferManager, bufferLogger,  objectNullAssertion, collectionAssertion);
-            IAssetRepository<SkillID, ILootTable> weightedLootTableRepository = new AssetRepository<SkillID, ILootTable>();
-            IGrantPolicy grantPolicy = new WeightedPolicy(lootRoll, grantWeight: 1, skipWeight: 100, weightAssertion);
-            ILootService<SkillID> lootService = new LootService<SkillID>(weightedLootTableRepository, grantPolicy, foundAssertion);
-
-            WeightedEntry[] miningEntries =
-            [
-                new()
-                {
-                    ItemID = ItemID.DIAMOND,
-                    Weight = 1
-                },
-                new()
-                {
-                    ItemID = ItemID.EMERALD,
-                    Weight = 3
-                },
-                new()
-                {
-                    ItemID = ItemID.RUBY,
-                    Weight = 5
-                }
-            ];
-            
-            ILootTable miningLootTable = new WeightedLootTable(miningEntries, lootRoll, collectionAssertion, weightAssertion);
-            weightedLootTableRepository.Add(SkillID.MINING, miningLootTable);
-
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<SkillUpdateError, IReadOnlyList<SkillUpdate>> updateErrorFactory = new SkillUpdateErrorFactory(baseErrorFactory);
-            IBatchMediator<SkillUpdate> skillActionMediator = new SkillUpdateMediator(experienceService, levelService, skillRepository, responseDispatcher, updateResponseFactory, lootService);
+            IBatchMediator<SkillUpdate> skillActionMediator = new SkillUpdateMediator(experienceService, levelService, skillRepository, responseDispatcher, updateResponseFactory);
             IBatchController<SkillUpdate> skillActionController = new ManagedBatchController<SkillUpdate>(skillActionMediator);
             
             flowRegistry.RegisterBatch(skillActionController, updateErrorFactory);

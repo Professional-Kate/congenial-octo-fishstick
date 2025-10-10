@@ -97,10 +97,17 @@ namespace Loot.Tests
             Assert.Throws<ArgumentNullException>(() => new WeightedLootTable(null!, _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
         }
 
+        [TestCase(0)]
+        [TestCase(1)]
+        public void Positive_ConstructWithPositiveWeight_NoThrow(int weight)
+        {
+            Assert.DoesNotThrow(() => new WeightedLootTable([new WeightedEntry { ItemID = ItemID.STONE, Weight = weight}], _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
+        }
+
         [Test]
-        public void Negative_ConstructWithZeroWeight_Throws()
+        public void Negative_ConstructWithNegativeWeight_Throws()
         { 
-            Assert.Throws<InvalidWeightException>(() => new WeightedLootTable([new WeightedEntry { ItemID = ItemID.STONE, Weight = 0}], _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
+            Assert.Throws<InvalidWeightException>(() => new WeightedLootTable([new WeightedEntry { ItemID = ItemID.STONE, Weight = -1 }], _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
         }
     }
 }

@@ -13,7 +13,7 @@ using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.ECS;
-using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.Mediator;
 using Moq;
 

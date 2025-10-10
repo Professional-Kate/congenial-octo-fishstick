@@ -9,7 +9,7 @@ using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.HarvestNode.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.ECS;
-using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Factory.Interface;
 
 namespace IdelPog.HarvestNode.Runtime.Mediator
 {

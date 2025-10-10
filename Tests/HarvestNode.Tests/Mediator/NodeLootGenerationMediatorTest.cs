@@ -7,8 +7,9 @@ using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
-using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.Mediator;
+using IdelPog.Loot.Policy;
 using IdelPog.Loot.Table;
 using Moq;
 
@@ -19,7 +20,9 @@ namespace IdelPog.HarvestNode.Tests.Mediator
     {
         private NodeLootGenerationMediator _mediator;
         private Mock<IAssetRepository<ItemID, ILootTable>> _lootTableRepositoryMock;
+        private Mock<IAssetRepository<ItemID,IGrantPolicy>> _grantPolicyRepositoryMock;
         private Mock<IWeightedLootTableFactory> _lootTableFactoryMock;
+        private Mock<IWeightedPolicyFactory> _policyFactoryMock;
         private Mock<IDispatchMany<HarvestNodeLootCreationResponse>> _responseDispatcherMock;
 
         private HarvestNodeLootCreation _singleSandCreation;
@@ -28,11 +31,13 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         public void OneTimeSetup()
         {
             _lootTableRepositoryMock = new Mock<IAssetRepository<ItemID, ILootTable>>();
+            _grantPolicyRepositoryMock = new Mock<IAssetRepository<ItemID, IGrantPolicy>>();
             _lootTableFactoryMock = new Mock<IWeightedLootTableFactory>();
+            _policyFactoryMock =  new Mock<IWeightedPolicyFactory>();
             _responseDispatcherMock = new Mock<IDispatchMany<HarvestNodeLootCreationResponse>>();
             ThrowHandler throwHandler = new();
             
-            _mediator = new NodeLootGenerationMediator(_lootTableRepositoryMock.Object, _lootTableFactoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(throwHandler), new UniqueAssertion(throwHandler));
+            _mediator = new NodeLootGenerationMediator(_lootTableRepositoryMock.Object, _grantPolicyRepositoryMock.Object, _lootTableFactoryMock.Object, _policyFactoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(throwHandler), new UniqueAssertion(throwHandler));
 
             _singleSandCreation = new HarvestNodeLootCreation
             {
@@ -41,7 +46,8 @@ namespace IdelPog.HarvestNode.Tests.Mediator
                 LootTableEntries =
                 [
                     new LootTableEntry { ItemID = ItemID.SAND, Weight = 1 }
-                ]
+                ],
+                GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 1, SkipWeight = 0 }
             };
         }
 
@@ -50,6 +56,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         {
             _lootTableRepositoryMock.Reset();
             _responseDispatcherMock.Reset();
+            _grantPolicyRepositoryMock.Reset();
         }
 
         private void VerifyDispatcherCalled()
@@ -62,19 +69,34 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _responseDispatcherMock.VerifyNoOtherCalls();
         }
         
-        private void AssertRepositoryContains(int amountCalled)
+        private void AssertTableRepositoryContains(int amountCalled)
         {
             _lootTableRepositoryMock.Verify(library => library.Contains(It.IsAny<ItemID>()), Times.Exactly(amountCalled));
         }
 
-        private void AssertRepositoryAdd(int amountCalled)
+        private void AssertTableRepositoryAdd(int amountCalled)
         {
             _lootTableRepositoryMock.Verify(library => library.Add(It.IsAny<ItemID>(), It.IsAny<ILootTable>()), Times.Exactly(amountCalled));
         }
 
-        private void VerifyNoMoreRepositoryCalls()
+        private void VerifyNoMoreTableRepositoryCalls()
         {
             _lootTableRepositoryMock.VerifyNoOtherCalls();
+        }
+        
+        private void AssertPolicyRepositoryContains(int amountCalled)
+        {
+            _grantPolicyRepositoryMock.Verify(library => library.Contains(It.IsAny<ItemID>()), Times.Exactly(amountCalled));
+        }
+
+        private void AssertPolicyRepositoryAdd(int amountCalled)
+        {
+            _grantPolicyRepositoryMock.Verify(library => library.Add(It.IsAny<ItemID>(), It.IsAny<IGrantPolicy>()), Times.Exactly(amountCalled));
+        }
+
+        private void VerifyNoMorePolicyRepositoryCalls()
+        {
+            _grantPolicyRepositoryMock.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -82,9 +104,31 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         {
             Assert.DoesNotThrow(() => _mediator.HandleMessages([_singleSandCreation, _singleSandCreation]));
 
-            AssertRepositoryContains(2);
-            AssertRepositoryAdd(2);
-            VerifyNoMoreRepositoryCalls();
+            AssertTableRepositoryContains(2);
+            AssertTableRepositoryAdd(2);
+            VerifyNoMoreTableRepositoryCalls();
+            AssertPolicyRepositoryContains(2);
+            AssertPolicyRepositoryAdd(2);
+            VerifyNoMorePolicyRepositoryCalls();
+            VerifyDispatcherCalled();
+        }
+
+        [Test]
+        public void Positive_HandleMessages_SingleMessage_ZeroWeightGrantPolicy_ReturnsResponse()
+        {
+            HarvestNodeLootCreation creation = _singleSandCreation with
+            {
+                GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 0 }
+            };
+            
+            Assert.DoesNotThrow(() => _mediator.HandleMessages([creation]));
+
+            AssertTableRepositoryContains(1);
+            AssertTableRepositoryAdd(1);
+            VerifyNoMoreTableRepositoryCalls();
+            AssertPolicyRepositoryContains(1);
+            AssertPolicyRepositoryAdd(1);
+            VerifyNoMorePolicyRepositoryCalls();
             VerifyDispatcherCalled();
         }
 
@@ -98,9 +142,12 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             
             Assert.DoesNotThrow(() => _mediator.HandleMessages([creation]));
 
-            AssertRepositoryContains(1);
-            AssertRepositoryAdd(1);
-            VerifyNoMoreRepositoryCalls();
+            AssertTableRepositoryContains(1);
+            AssertTableRepositoryAdd(1);
+            VerifyNoMoreTableRepositoryCalls();
+            AssertPolicyRepositoryContains(1);
+            AssertPolicyRepositoryAdd(1);
+            VerifyNoMorePolicyRepositoryCalls();
             VerifyDispatcherCalled();
         }
 

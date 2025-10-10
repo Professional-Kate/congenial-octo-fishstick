@@ -2,7 +2,7 @@
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.HarvestNode.Runtime.ECS;
 
-namespace IdelPog.HarvestNode.Runtime.Factory.Interfaces
+namespace IdelPog.HarvestNode.Runtime.Factory.Interface
 {
     public interface ISkillNodeEntityFactory
     {

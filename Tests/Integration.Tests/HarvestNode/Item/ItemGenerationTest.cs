@@ -47,8 +47,8 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
                 LootTableEntries =
                 [
                     new LootTableEntry { ItemID = ItemID.IRON, Weight = 1 }
-
-                ]
+                ],
+                GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 0 }
             };
         }
         
@@ -101,6 +101,17 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
         }
 
         [Test]
+        public void Positive_SendHarvestNodeUpdate_GrantPolicyNoDrop_NoUpdatesDispatched()
+        {
+            DispatchNodeCreation(_ironCreation);
+            DispatchNodeLootCreation(_ironLootCreation with { GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 1 }});
+            
+            DispatchNodeUpdate(_ironUpdate);
+
+            AssertListenerCalled(false);
+        }
+
+        [Test]
         public void Positive_SendHarvestNodeUpdate_NoDrops_NoUpdatesDispatched()
         {
             DispatchNodeCreation(_ironCreation);
@@ -122,19 +133,19 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
             AssertResponseLength(1);
             AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], _ironUpdate.ItemID);
         }
-
+        
         [Test]
         public void Positive_SendHarvestNodeUpdate_LocationGrantsDrop_DispatchesInventoryUpdate()
         {
             DispatchNodeCreation(_ironCreation);
             
             DispatchNodeUpdate(_ironUpdate);
-
+        
             AssertListenerCalled(true);
             AssertResponseLength(1);
             AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.STONE);
         }
-
+        
         [Test]
         public void Positive_SendHarvestNodeUpdate_LocationAndItemDrop_DispatchesTwoUpdates()
         {
@@ -142,7 +153,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
             DispatchNodeLootCreation(_ironLootCreation);
             
             DispatchNodeUpdate(_ironUpdate);
-
+        
             AssertListenerCalled(true);
             AssertResponseLength(2);
             AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], _ironUpdate.ItemID);

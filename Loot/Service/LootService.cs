@@ -10,19 +10,24 @@ namespace IdelPog.Loot.Service
     public sealed class LootService<TID> : ILootService<TID> where TID : Enum
     {
         private readonly IAssetRepository<TID, ILootTable> _lootTableRepository;
-        private readonly IGrantPolicy _grantPolicy;
+        private readonly IAssetRepository<TID, IGrantPolicy> _grantPolicyRepository;
         private readonly IFoundAssertion _foundAssertion;
 
-        public LootService(IAssetRepository<TID, ILootTable> lootTableRepository, IGrantPolicy grantPolicy, IFoundAssertion foundAssertion)
+        public LootService(IAssetRepository<TID, ILootTable> lootTableRepository, IAssetRepository<TID, IGrantPolicy> grantPolicyRepository, IFoundAssertion foundAssertion)
         {
             _lootTableRepository = lootTableRepository;
-            _grantPolicy = grantPolicy;
+            _grantPolicyRepository = grantPolicyRepository;
             _foundAssertion = foundAssertion;
         }
 
-        public bool ShouldGrant()
+        public bool ShouldGrant(TID id)
         {
-            return _grantPolicy.ShouldGrant();
+            _foundAssertion.AssertFound(id, _grantPolicyRepository.Contains(id));
+            
+            IGrantPolicy policy = _grantPolicyRepository.Get(id);
+            bool shouldGrant = policy.ShouldGrant();
+            
+            return shouldGrant;
         }
 
         public ItemID GenerateItemID(TID id)

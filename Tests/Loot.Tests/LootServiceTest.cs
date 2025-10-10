@@ -17,6 +17,7 @@ namespace Loot.Tests
         private ILootService<ItemID> _lootService;
         private Mock<IAssetRepository<ItemID, ILootTable>> _lootTableRepositoryMock;
         private Mock<ILootTable> _weightedLootTableMock;
+        private Mock<IAssetRepository<ItemID, IGrantPolicy>> _grantPolicyRepositoryMock;
         private Mock<IGrantPolicy> _grantPolicyMock;
 
         private const ItemID ITEM_ID = ItemID.STONE;
@@ -26,9 +27,10 @@ namespace Loot.Tests
         {
             _lootTableRepositoryMock = new Mock<IAssetRepository<ItemID, ILootTable>>();
             _weightedLootTableMock = new Mock<ILootTable>();
+            _grantPolicyRepositoryMock = new Mock<IAssetRepository<ItemID, IGrantPolicy>>();
             _grantPolicyMock = new Mock<IGrantPolicy>();
             
-            _lootService = new LootService<ItemID>(_lootTableRepositoryMock.Object, _grantPolicyMock.Object, new FoundAssertion(new ThrowHandler()));
+            _lootService = new LootService<ItemID>(_lootTableRepositoryMock.Object, _grantPolicyRepositoryMock.Object, new FoundAssertion(new ThrowHandler()));
         }
 
         [SetUp]
@@ -42,7 +44,7 @@ namespace Loot.Tests
         {
             _lootTableRepositoryMock.Setup(library => library.Contains(ITEM_ID)).Returns(true);
             _lootTableRepositoryMock.Setup(library => library.Get(ITEM_ID)).Returns(_weightedLootTableMock.Object);
-            _grantPolicyMock.Setup(library => library.ShouldGrant()).Returns(true);
+            _grantPolicyRepositoryMock.Setup(library => library.Get(ITEM_ID)).Returns(_grantPolicyMock.Object);
             
             Assert.DoesNotThrow(() => _lootService.GenerateItemID(ITEM_ID));
             
@@ -57,7 +59,7 @@ namespace Loot.Tests
         public void Negative_DispatchInventoryUpdates_ItemNotFound_Throws()
         {
             _lootTableRepositoryMock.Setup(library => library.Contains(ITEM_ID)).Returns(false);
-            _grantPolicyMock.Setup(library => library.ShouldGrant()).Returns(true);
+            _grantPolicyRepositoryMock.Setup(library => library.Get(ITEM_ID)).Returns(_grantPolicyMock.Object);
             
             Assert.Throws<NotFoundException<ItemID>>(() => _lootService.GenerateItemID(ITEM_ID));
             
@@ -69,8 +71,11 @@ namespace Loot.Tests
         [TestCase(false)]
         public void Positive_GrantPolicyReturns_ReturnsThatValue(bool granted)
         {
+            _grantPolicyRepositoryMock.Setup(library => library.Contains(ITEM_ID)).Returns(true);
+            _grantPolicyRepositoryMock.Setup(library => library.Get(ITEM_ID)).Returns(_grantPolicyMock.Object);
             _grantPolicyMock.Setup(library => library.ShouldGrant()).Returns(granted);
-            bool shouldGrant = _lootService.ShouldGrant();
+            
+            bool shouldGrant = _lootService.ShouldGrant(ITEM_ID);
             
             Assert.That(shouldGrant, Is.EqualTo(granted));
             _lootTableRepositoryMock.VerifyNoOtherCalls();

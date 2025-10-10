@@ -3,7 +3,7 @@ using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Progression.Runtime;
 
-namespace IdelPog.HarvestNode.Runtime.Factory.Interfaces
+namespace IdelPog.HarvestNode.Runtime.Factory.Interface
 {
     public interface IUnlockRequirementsEntityFactory
     {

@@ -46,12 +46,12 @@ namespace IdelPog.HarvestNode.Tests.Service
 
         private void SetupItemService(bool shouldGrant)
         {
-            _itemServiceMock.Setup(library => library.ShouldGrant()).Returns(shouldGrant);
+            _itemServiceMock.Setup(library => library.ShouldGrant(It.IsAny<ItemID>())).Returns(shouldGrant);
         }
         
         private void SetupLocationService(bool shouldGrant)
         {
-            _locationServiceMock.Setup(library => library.ShouldGrant()).Returns(shouldGrant);
+            _locationServiceMock.Setup(library => library.ShouldGrant(It.IsAny<LocationID>())).Returns(shouldGrant);
         }
 
         private static void AssertUpdateLength(int length, IReadOnlyList<InventoryUpdate> updates)
@@ -96,6 +96,17 @@ namespace IdelPog.HarvestNode.Tests.Service
         public void Positive_GenerateInventoryUpdates_ItemService_ThrowsNotFound_Catches()
         {
             _itemServiceMock.Setup(library => library.GenerateItemID(_harvestNode.ItemID)).Throws(new NotFoundException<ItemID>(_harvestNode.ItemID));
+            SetupLocationService(true);
+
+            IReadOnlyList<InventoryUpdate> inventoryUpdates = _nodeLootService.GenerateInventoryUpdates(_harvestNode);
+            
+            AssertUpdateLength(1, inventoryUpdates);
+        }
+
+        [Test]
+        public void Positive_GenerateInventoryUpdates_ShouldGrant_ThrowsNotFound_Catches()
+        {
+            _itemServiceMock.Setup(library => library.ShouldGrant(_harvestNode.ItemID)).Throws(new NotFoundException<ItemID>(_harvestNode.ItemID));
             SetupLocationService(true);
 
             IReadOnlyList<InventoryUpdate> inventoryUpdates = _nodeLootService.GenerateInventoryUpdates(_harvestNode);

@@ -28,7 +28,7 @@ using IdelPog.HarvestNode.Factory;
 using IdelPog.HarvestNode.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.ECS;
 using IdelPog.HarvestNode.Runtime.Factory;
-using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.Mediator;
 using IdelPog.HarvestNode.Runtime.System;
 using IdelPog.HarvestNode.Runtime.System.Interface;
@@ -65,12 +65,13 @@ namespace IdelPog.HarvestNode
             IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository = new StateRepository<ItemID, Contracts.HarvestNode>();
             IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository = new AssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>();
             IAssetRepository<ItemID, ILootTable> itemLootTableRepository = new AssetRepository<ItemID, ILootTable>();
+            IAssetRepository<ItemID, IGrantPolicy> grantPolicyRepository = new AssetRepository<ItemID, IGrantPolicy>();
             
-            RegisterSkillUpdateResponse(bufferManager, skillNodeAccessValidator, batchRegister, bufferLogger, harvestNodeRepository, entityRepository, itemLootTableRepository);
+            RegisterSkillUpdateResponse(bufferManager, skillNodeAccessValidator, batchRegister, bufferLogger, harvestNodeRepository, entityRepository, itemLootTableRepository, grantPolicyRepository);
             RegisterNodeCreation(bufferManager, skillNodeRepository, batchRegister, bufferLogger, harvestNodeRepository);
             RegisterNodeUnlock(bufferManager, batchRegister, bufferLogger, entityRepository);
             RegisterNodeRequirementsCreation(bufferManager, batchRegister, bufferLogger, entityRepository);
-            RegisterHarvestNodeLootCreation(bufferManager, batchRegister, bufferLogger, itemLootTableRepository);
+            RegisterHarvestNodeLootCreation(bufferManager, batchRegister, bufferLogger, itemLootTableRepository, grantPolicyRepository);
         }
 
         /// <summary>
@@ -83,10 +84,11 @@ namespace IdelPog.HarvestNode
         /// <param name="harvestNodeRepository">Stores all HarvestNodes</param>
         /// <param name="entityRepository">Stores all <see cref="UnlockRequirementsEntity{TID,TCommand}"/></param>
         /// <param name="itemLootTableRepository">Stores all <see cref="ILootTable"/></param>
+        /// <param name="grantPolicyRepository">Stores all <see cref="IGrantPolicy"/></param>
         /// <remarks>
         /// Listens to -> <see cref="SkillUpdateResponse"/>. On Success -> <see cref="HarvestNodeUpdateResponse"/>. On Error -> <see cref="HarvestNodeUpdateError"/>
         /// </remarks>
-        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ISkillNodeAccessValidator skillNodeAccessValidator, IBatchRegister batchRegister, IBufferLogger bufferLogger, IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository, IAssetRepository<ItemID, ILootTable> itemLootTableRepository)
+        private static void RegisterSkillUpdateResponse(IBufferManager bufferManager, ISkillNodeAccessValidator skillNodeAccessValidator, IBatchRegister batchRegister, IBufferLogger bufferLogger, IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>> entityRepository, IAssetRepository<ItemID, ILootTable> itemLootTableRepository, IAssetRepository<ItemID, IGrantPolicy> grantPolicyRepository)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -103,8 +105,10 @@ namespace IdelPog.HarvestNode
             IEntityUnlockChecker<SkillID, HarvestNodeUnlockResponse> unlockChecker = new EntityUnlockChecker<SkillID, HarvestNodeUnlockResponse>(entityRepository);
             
             IDispatchMany<InventoryUpdate> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
-            ILootService<ItemID> itemLootService = new LootService<ItemID>(itemLootTableRepository, new GrantPolicy(), foundAssertion);
-            ILootService<LocationID> locationLootService = new LootService<LocationID>(locationLootTableRepository, new GrantPolicy(), foundAssertion);
+            ILootService<ItemID> itemLootService = new LootService<ItemID>(itemLootTableRepository, grantPolicyRepository, foundAssertion);
+            
+            IAssetRepository<LocationID, IGrantPolicy> locationGrantRepository = new AssetRepository<LocationID, IGrantPolicy>();
+            ILootService<LocationID> locationLootService = new LootService<LocationID>(locationLootTableRepository, locationGrantRepository, foundAssertion);
             IHarvestNodeLootService harvestNodeLootService = new HarvestNodeLootService(itemLootService, locationLootService);
             
             IDispatchMany<HarvestNodeUpdateResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
@@ -218,10 +222,11 @@ namespace IdelPog.HarvestNode
         /// <param name="batchRegister">Used to register the NodeCreation flow</param>
         /// <param name="bufferLogger">Logs all messages in and out</param>
         /// <param name="itemLootTableRepository">Stores all <see cref="ILootTable"/></param>
+        /// <param name="grantPolicyRepository">Stores all <see cref="IGrantPolicy"/></param>
         /// <remarks>
         /// Listens to -> <see cref="HarvestNodeLootCreation"/>. On Success -> <see cref="HarvestNodeLootCreationResponse"/>. On Error -> <see cref="HarvestNodeLootCreationError"/>
         /// </remarks>
-        private static void RegisterHarvestNodeLootCreation(IBufferManager bufferManager, IBatchRegister batchRegister, IBufferLogger bufferLogger, IAssetRepository<ItemID, ILootTable> itemLootTableRepository)
+        private static void RegisterHarvestNodeLootCreation(IBufferManager bufferManager, IBatchRegister batchRegister, IBufferLogger bufferLogger, IAssetRepository<ItemID, ILootTable> itemLootTableRepository, IAssetRepository<ItemID, IGrantPolicy> grantPolicyRepository)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -231,8 +236,10 @@ namespace IdelPog.HarvestNode
             
             IWeightedLootTableFactory lootTableFactory = new WeightedLootTableFactory(collectionAssertion, weightAssertion);
             IDispatchMany<HarvestNodeLootCreationResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeLootCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+
+            IWeightedPolicyFactory weightedPolicyFactory = new WeightedPolicyFactory(weightAssertion);
             
-            IBatchMediator<HarvestNodeLootCreation> creationMediator = new NodeLootGenerationMediator(itemLootTableRepository, lootTableFactory, responseDispatcher, collectionAssertion, uniqueAssertion);
+            IBatchMediator<HarvestNodeLootCreation> creationMediator = new NodeLootGenerationMediator(itemLootTableRepository, grantPolicyRepository, lootTableFactory, weightedPolicyFactory, responseDispatcher, collectionAssertion, uniqueAssertion);
             IBatchController<HarvestNodeLootCreation> creationController = new ManagedBatchController<HarvestNodeLootCreation>(creationMediator);
             
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();

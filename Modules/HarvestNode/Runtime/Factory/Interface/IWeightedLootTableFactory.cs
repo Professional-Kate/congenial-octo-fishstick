@@ -1,7 +1,7 @@
 ﻿using IdelPog.Loot.Random;
 using IdelPog.Loot.Table;
 
-namespace IdelPog.HarvestNode.Runtime.Factory.Interfaces
+namespace IdelPog.HarvestNode.Runtime.Factory.Interface
 {
     public interface IWeightedLootTableFactory
     {
