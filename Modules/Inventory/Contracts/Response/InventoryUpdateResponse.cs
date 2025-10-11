@@ -1,6 +1,7 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Core.Contracts.Response
+namespace IdelPog.Inventory.Contracts.Response
 {
     public readonly record struct InventoryUpdateResponse
     { 

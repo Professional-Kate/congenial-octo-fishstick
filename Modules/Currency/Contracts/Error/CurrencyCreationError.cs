@@ -1,4 +1,4 @@
-﻿using IdelPog.Core.Contracts.Error;
+﻿using IdelPog.Core.Contracts;
 using IdelPog.Currency.Contracts.Command;
 
 namespace IdelPog.Currency.Contracts.Error

@@ -1,6 +1,7 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 
-namespace IdelPog.Core.Contracts.Error
+namespace IdelPog.Inventory.Contracts.Error
 {
     public readonly record struct InventoryUpdateError
     {

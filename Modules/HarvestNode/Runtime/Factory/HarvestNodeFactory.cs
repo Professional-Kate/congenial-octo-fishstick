@@ -1,5 +1,5 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Progression;
+﻿using IdelPog.Core.Progression;
+using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Runtime.Factory.Interface;
 
 namespace IdelPog.HarvestNode.Runtime.Factory

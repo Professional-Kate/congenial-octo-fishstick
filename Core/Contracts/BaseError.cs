@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Core.Contracts.Error
+﻿namespace IdelPog.Core.Contracts
 {
     public readonly record struct BaseError
     {

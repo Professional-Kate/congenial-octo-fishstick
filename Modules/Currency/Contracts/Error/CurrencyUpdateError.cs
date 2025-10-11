@@ -1,5 +1,5 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Error;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 
 namespace IdelPog.Currency.Contracts.Error
 {

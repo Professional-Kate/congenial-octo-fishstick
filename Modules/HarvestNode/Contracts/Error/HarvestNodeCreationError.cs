@@ -1,4 +1,4 @@
-﻿using IdelPog.Core.Contracts.Error;
+﻿using IdelPog.Core.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
 
 namespace IdelPog.HarvestNode.Contracts.Error

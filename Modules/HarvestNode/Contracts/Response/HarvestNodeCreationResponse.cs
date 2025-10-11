@@ -1,5 +1,4 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts.Enum;
 
 namespace IdelPog.HarvestNode.Contracts.Response
 {

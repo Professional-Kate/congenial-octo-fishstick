@@ -1,4 +1,4 @@
-﻿using IdelPog.Core.Contracts.Error;
+﻿using IdelPog.Core.Contracts;
 using IdelPog.Skill.Contracts.Command;
 
 namespace IdelPog.Skill.Contracts.Error

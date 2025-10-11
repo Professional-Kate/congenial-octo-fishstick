@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Core.Contracts
+namespace IdelPog.HarvestNode.Contracts
 {
     public readonly record struct LootTableEntry
     {

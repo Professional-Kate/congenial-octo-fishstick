@@ -1,4 +1,4 @@
-﻿using IdelPog.Core.Contracts.Error;
+﻿using IdelPog.Core.Contracts;
 
 namespace IdelPog.Core.Factory.Interface
 {

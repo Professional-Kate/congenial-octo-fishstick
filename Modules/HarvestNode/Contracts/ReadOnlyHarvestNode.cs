@@ -1,13 +1,14 @@
 ﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Progression;
 
-namespace IdelPog.Core.Contracts
+namespace IdelPog.HarvestNode.Contracts
 {
     public readonly record struct ReadOnlyHarvestNode
     {
         public required LocationID LocationID { get; init; }
         public required ResourceID ResourceID { get; init; }
         public required ReadOnlyLevelable ReadOnlyLevelable { get; init; }
-        public required Information.Contracts.Information Information { get; init; }
+        public required Information Information { get; init; }
     }
 }
