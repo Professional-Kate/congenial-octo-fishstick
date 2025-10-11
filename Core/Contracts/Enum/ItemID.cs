@@ -16,6 +16,7 @@
         SMALL_INSECTS,
         HONEY,
         WATER,
-        SAND
+        SAND,
+        RING
     }
 }
