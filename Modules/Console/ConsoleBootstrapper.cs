@@ -82,17 +82,8 @@ namespace IdelPog.Console
 
             ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(permissionUpdatePipeline, permissionService, argumentCountAssertion);
 
-            IScheduleControlFactory scheduleControlFactory = new ScheduleControlFactory();
-            IDispatchOne<ScheduleControl> scheduleControlDispatcher =
-                new ManagedDispatcher<ScheduleControl>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
-
-            IArgumentResolverPipeline<ScheduleControlArguments> scheduleControlPipeline = new ScheduleControlResolver(controlActionResolver);
-            ICommandDomainResolver scheduleDomainResolver =
-                new ScheduleDomainResolver(scheduleControlPipeline, scheduleControlDispatcher, scheduleControlFactory, argumentCountAssertion);
-
             commandRepository.Add(Domain.CURRENCY, currencyDomainResolver);
             commandRepository.Add(Domain.PERMISSION, permissionDomainResolver);
-            commandRepository.Add(Domain.SCHEDULE, scheduleDomainResolver);
 
             IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, componentAssertion);
             ICommandResolverMediator commandResolverMediator =
