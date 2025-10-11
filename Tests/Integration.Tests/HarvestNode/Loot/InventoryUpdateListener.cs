@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Messaging.Listener.Buffer;
 
-namespace IdelPog.Integration.Tests.HarvestNode.Item
+namespace IdelPog.Integration.Tests.HarvestNode.Loot
 {
     internal sealed class InventoryUpdateListener : IBufferListener<InventoryUpdate>
     {

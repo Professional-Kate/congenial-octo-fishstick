@@ -5,7 +5,7 @@ using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Progression;
 
-namespace IdelPog.Integration.Tests.HarvestNode.Item
+namespace IdelPog.Integration.Tests.HarvestNode.Loot
 {
     [TestFixture]
     public sealed class ItemGenerationTest : ManagedTestBuffer
