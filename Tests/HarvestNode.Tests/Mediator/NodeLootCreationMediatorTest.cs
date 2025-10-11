@@ -16,23 +16,23 @@ namespace IdelPog.HarvestNode.Tests.Mediator
     public sealed class NodeLootCreationMediatorTest
     {
         private NodeLootCreationMediator _mediator;
-        private Mock<IDispatchMany<HarvestNodeLootCreationResponse>> _responseDispatcherMock;
+        private Mock<IDispatchMany<ResourceLootCreationResponse>> _responseDispatcherMock;
         private Mock<ILootTableService<ResourceID>> _lootTableServiceMock;
         private Mock<IGrantPolicyService<ResourceID>> _grantPolicyServiceMock;
 
-        private HarvestNodeLootCreation _singleSandCreation;
+        private ResourceLootCreation _singleSandCreation;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _lootTableServiceMock = new Mock<ILootTableService<ResourceID>>();
             _grantPolicyServiceMock = new Mock<IGrantPolicyService<ResourceID>>();
-            _responseDispatcherMock = new Mock<IDispatchMany<HarvestNodeLootCreationResponse>>();
+            _responseDispatcherMock = new Mock<IDispatchMany<ResourceLootCreationResponse>>();
             ThrowHandler throwHandler = new();
             
             _mediator = new NodeLootCreationMediator(_lootTableServiceMock.Object, _grantPolicyServiceMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(throwHandler));
 
-            _singleSandCreation = new HarvestNodeLootCreation
+            _singleSandCreation = new ResourceLootCreation
             {
                 ResourceID = ResourceID.RIVER,
                 LootTableEntries =
@@ -63,7 +63,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
 
         private void VerifyDispatcherCalled()
         {
-            _responseDispatcherMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeLootCreationResponse[]>()), Times.Once);
+            _responseDispatcherMock.Verify(library => library.Dispatch(It.IsAny<ResourceLootCreationResponse[]>()), Times.Once);
         }
 
         private void VerifyDispatcherNotCalled()
@@ -84,7 +84,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         [Test]
         public void Positive_HandleMessages_SingleMessage_ZeroWeightGrantPolicy_ReturnsResponse()
         {
-            HarvestNodeLootCreation creation = _singleSandCreation with
+            ResourceLootCreation creation = _singleSandCreation with
             {
                 GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 0 }
             };
@@ -99,7 +99,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         [Test]
         public void Positive_HandleMessages_SingleMessage_MultipleLootTableEntries_ReturnsResponse()
         {
-            HarvestNodeLootCreation creation = _singleSandCreation with
+            ResourceLootCreation creation = _singleSandCreation with
             {
                 LootTableEntries = [ new LootTableEntry { ItemID = ItemID.SAND, Weight = 5 }, new LootTableEntry { ItemID = ItemID.WATER, Weight = 1 } ]
             };
@@ -149,7 +149,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         public void Negative_HandleMessages_CollectionEmpty_Throws()
         {
             EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _mediator.HandleMessages([]));
-            Assert.That(exception.CollectionType, Is.EqualTo(typeof(HarvestNodeLootCreation)));
+            Assert.That(exception.CollectionType, Is.EqualTo(typeof(ResourceLootCreation)));
             
             VerifyLootServiceCalled(Times.Never());
             VerifyGrantServiceCalled(Times.Never());

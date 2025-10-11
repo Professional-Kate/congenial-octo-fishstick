@@ -2,9 +2,9 @@
 
 namespace IdelPog.Core.Contracts.Error
 {
-    public readonly record struct HarvestNodeLootCreationError
+    public readonly record struct ResourceLootCreationError
     {
-        public required HarvestNodeLootCreation[] HarvestNodeLootCreations { get; init; }
+        public required ResourceLootCreation[] HarvestNodeLootCreations { get; init; }
         public required BaseError BaseError { get; init; }
     }
 }

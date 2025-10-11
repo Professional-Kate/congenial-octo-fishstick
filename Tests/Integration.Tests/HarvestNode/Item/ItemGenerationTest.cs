@@ -12,7 +12,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
     {
         private HarvestNodeUpdate _ironUpdate;
         private HarvestNodeCreation _ironCreation;
-        private HarvestNodeLootCreation _ironLootCreation;
+        private ResourceLootCreation _ironLootCreation;
         private LocationLootCreation _locationLootCreation;
         private InventoryUpdateListener _inventoryUpdateListener;
 
@@ -40,7 +40,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
                 LinkedSkill = SkillID.MINING
             };
             
-            _ironLootCreation = new HarvestNodeLootCreation
+            _ironLootCreation = new ResourceLootCreation
             {
                 ResourceID = ResourceID.IRON_CLUSTER,
                 LootTableEntries = [ new LootTableEntry { ItemID = ItemID.IRON, Weight = 1 }],
@@ -77,9 +77,9 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
             buffer.MarkReady();
         }
 
-        private void DispatchNodeLootCreation(params HarvestNodeLootCreation[] lootCreations)
+        private void DispatchNodeLootCreation(params ResourceLootCreation[] lootCreations)
         {
-            IBuffer<HarvestNodeLootCreation> buffer = BufferManager.RequestBuffer<HarvestNodeLootCreation>(new BufferRequest(lootCreations.Length));
+            IBuffer<ResourceLootCreation> buffer = BufferManager.RequestBuffer<ResourceLootCreation>(new BufferRequest(lootCreations.Length));
             buffer.Assign(lootCreations);
             buffer.MarkReady();
         }

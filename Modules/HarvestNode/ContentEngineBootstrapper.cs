@@ -219,7 +219,7 @@ namespace IdelPog.HarvestNode
         }
 
         /// <summary>
-        /// Registers the <see cref="HarvestNodeLootCreation"/> flow into the messaging system
+        /// Registers the <see cref="ResourceLootCreation"/> flow into the messaging system
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="batchRegister">Used to register the NodeCreation flow</param>
@@ -227,7 +227,7 @@ namespace IdelPog.HarvestNode
         /// <param name="resourceLootTableRepository">Stores all <see cref="ILootTable"/> for <see cref="ResourceID"/></param>
         /// <param name="resourceGrantPolicyRepository">Stores all <see cref="IGrantPolicy"/> for <see cref="ResourceID"/></param>
         /// <remarks>
-        /// Listens to -> <see cref="HarvestNodeLootCreation"/>. On Success -> <see cref="HarvestNodeLootCreationResponse"/>. On Error -> <see cref="HarvestNodeLootCreationError"/>
+        /// Listens to -> <see cref="ResourceLootCreation"/>. On Success -> <see cref="ResourceLootCreationResponse"/>. On Error -> <see cref="ResourceLootCreationError"/>
         /// </remarks>
         private static void RegisterHarvestNodeLootCreation(IBufferManager bufferManager, IBatchRegister batchRegister, IBufferLogger bufferLogger, IAssetRepository<ResourceID, ILootTable> resourceLootTableRepository, IAssetRepository<ResourceID, IGrantPolicy> resourceGrantPolicyRepository)
         {
@@ -243,9 +243,9 @@ namespace IdelPog.HarvestNode
             IWeightedPolicyFactory weightedPolicyFactory = new WeightedPolicyFactory(weightAssertion);
             IGrantPolicyService<ResourceID> grantPolicyService = new GrantPolicyService<ResourceID>(resourceGrantPolicyRepository, weightedPolicyFactory, uniqueAssertion);
 
-            IDispatchMany<HarvestNodeLootCreationResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeLootCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
-            IBatchMediator<HarvestNodeLootCreation> creationMediator = new NodeLootCreationMediator(lootTableService, grantPolicyService, responseDispatcher, collectionAssertion);
-            IBatchController<HarvestNodeLootCreation> creationController = new ManagedBatchController<HarvestNodeLootCreation>(creationMediator);
+            IDispatchMany<ResourceLootCreationResponse> responseDispatcher = new ManagedDispatcher<ResourceLootCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IBatchMediator<ResourceLootCreation> creationMediator = new NodeLootCreationMediator(lootTableService, grantPolicyService, responseDispatcher, collectionAssertion);
+            IBatchController<ResourceLootCreation> creationController = new ManagedBatchController<ResourceLootCreation>(creationMediator);
             
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             NodeLootCreationErrorFactory errorFactory = new(baseErrorFactory);

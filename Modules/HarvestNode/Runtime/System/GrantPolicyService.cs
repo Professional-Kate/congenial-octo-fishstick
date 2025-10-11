@@ -31,6 +31,12 @@ namespace IdelPog.HarvestNode.Runtime.System
                 return;
             }
             
+            if (grantPolicyEntry.GrantWeight == 0)
+            {
+                _grantPolicyRepository.Add(id, new SkipPolicy());
+                return;
+            }
+            
             ILootRoll lootRoll = new DefaultLootRoll();
             WeightedPolicy weightedPolicy = _policyFactory.Create(grantPolicyEntry, lootRoll);
             _grantPolicyRepository.Add(id, weightedPolicy);
