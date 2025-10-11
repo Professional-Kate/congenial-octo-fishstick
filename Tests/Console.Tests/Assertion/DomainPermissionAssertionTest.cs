@@ -20,13 +20,13 @@ namespace IdelPog.Console.Tests.Assertion
         [Test]
         public void Positive_AssertHasPermission_PassesTrue_NotThrow()
         {
-            Assert.DoesNotThrow(() => _assertion.AssertHasPermission(true, Domain.SCHEDULE));
+            Assert.DoesNotThrow(() => _assertion.AssertHasPermission(true, Domain.CURRENCY));
         }
 
         [Test]
         public void Negative_AssertHasPermission_PassesFalse_Throws()
         {
-            Assert.Throws<DomainPermissionDeniedException>(() => _assertion.AssertHasPermission(false, Domain.SCHEDULE));
+            Assert.Throws<DomainPermissionDeniedException>(() => _assertion.AssertHasPermission(false, Domain.CURRENCY));
         }
     }
 }
