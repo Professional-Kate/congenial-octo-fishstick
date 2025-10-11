@@ -1,6 +1,7 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Core.Contracts.Response
+namespace IdelPog.HarvestNode.Contracts.Response
 {
     public readonly record struct LocationLootCreationResponse
     {

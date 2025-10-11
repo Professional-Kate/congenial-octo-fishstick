@@ -1,11 +1,11 @@
 ﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Error;
-using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
+using IdelPog.HarvestNode.Contracts.Command;
+using IdelPog.HarvestNode.Contracts.Error;
+using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Loot.Exceptions;
 
 namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
