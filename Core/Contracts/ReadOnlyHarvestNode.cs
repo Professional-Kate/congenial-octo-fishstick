@@ -5,7 +5,8 @@ namespace IdelPog.Core.Contracts
 {
     public readonly record struct ReadOnlyHarvestNode
     {
-        public required ItemID ItemID { get; init; }
+        public required LocationID LocationID { get; init; }
+        public required ResourceID ResourceID { get; init; }
         public required ReadOnlyLevelable ReadOnlyLevelable { get; init; }
         public required Information.Contracts.Information Information { get; init; }
     }

@@ -9,13 +9,13 @@ using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.HarvestNode.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.ECS;
-using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Factory.Interface;
 
 namespace IdelPog.HarvestNode.Runtime.Mediator
 {
     public sealed class NodeCreationMediator : IBatchMediator<HarvestNodeCreation>
     {
-        private readonly IStateRepository<ItemID, Contracts.HarvestNode> _harvestNodeRepository;
+        private readonly IStateRepository<ResourceID, Contracts.HarvestNode> _harvestNodeRepository;
         private readonly IAssetRepository<SkillID, SkillNodeEntity> _skillNodeEntityRepository;
         private readonly ISkillNodeEntityFactory  _skillNodeEntityFactory;
         private readonly IHarvestNodeFactory  _harvestNodeFactory;
@@ -24,7 +24,7 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
         private readonly IUniqueAssertion _uniqueAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public NodeCreationMediator(IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, SkillNodeEntity> skillNodeEntityRepository, ISkillNodeEntityFactory skillNodeEntityFactory, IHarvestNodeFactory harvestNodeFactory, INodeCreationResponseFactory  nodeCreationResponseFactory, IDispatchMany<HarvestNodeCreationResponse> nodeCreationResponseDispatcher, IUniqueAssertion uniqueAssertion, ICollectionAssertion collectionAssertion)
+        public NodeCreationMediator(IStateRepository<ResourceID, Contracts.HarvestNode> harvestNodeRepository, IAssetRepository<SkillID, SkillNodeEntity> skillNodeEntityRepository, ISkillNodeEntityFactory skillNodeEntityFactory, IHarvestNodeFactory harvestNodeFactory, INodeCreationResponseFactory  nodeCreationResponseFactory, IDispatchMany<HarvestNodeCreationResponse> nodeCreationResponseDispatcher, IUniqueAssertion uniqueAssertion, ICollectionAssertion collectionAssertion)
         {
             _harvestNodeRepository = harvestNodeRepository;
             _skillNodeEntityRepository = skillNodeEntityRepository;
@@ -46,7 +46,7 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
                 
                 foreach (ReadOnlyHarvestNode readOnlyHarvestNode in nodeCreation.ReadOnlyHarvestNodes)
                 {
-                    _uniqueAssertion.AssertUnique(readOnlyHarvestNode.ItemID, _harvestNodeRepository.Contains(readOnlyHarvestNode.ItemID));
+                    _uniqueAssertion.AssertUnique(readOnlyHarvestNode.ResourceID, _harvestNodeRepository.Contains(readOnlyHarvestNode.ResourceID));
                 }
 
                 _uniqueAssertion.AssertUnique(nodeCreation.LinkedSkill, _skillNodeEntityRepository.Contains(nodeCreation.LinkedSkill));
@@ -62,7 +62,7 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
         {
             foreach (ReadOnlyHarvestNode readOnlyHarvestNode in harvestNodeCreation.ReadOnlyHarvestNodes)
             { 
-                _harvestNodeRepository.Add(readOnlyHarvestNode.ItemID, _harvestNodeFactory.Create(readOnlyHarvestNode));
+                _harvestNodeRepository.Add(readOnlyHarvestNode.ResourceID, _harvestNodeFactory.Create(readOnlyHarvestNode));
             }
         }
         

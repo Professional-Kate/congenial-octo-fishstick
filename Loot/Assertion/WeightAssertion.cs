@@ -15,7 +15,7 @@ namespace IdelPog.Loot.Assertion
         {
             Assert<InvalidWeightException>(() =>
             {
-                if (weight <= 0)
+                if (weight < 0)
                 {
                     throw new InvalidWeightException();
                 }

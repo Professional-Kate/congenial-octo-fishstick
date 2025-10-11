@@ -8,7 +8,7 @@ using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
-using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.Mediator;
 using IdelPog.Progression.Runtime;
 using Moq;
@@ -42,27 +42,23 @@ namespace IdelPog.HarvestNode.Tests.Mediator
                 [
                     new HarvestNodeRequirement
                     {
-                        ItemID = ItemID.STONE, 
                         RequiredLevel = 1,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.STONE, SkillID = SkillID.MINING }
+                        OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.STONE, SkillID = SkillID.MINING }
                     },
                     new HarvestNodeRequirement
                     {
-                        ItemID = ItemID.IRON, 
                         RequiredLevel = 2,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.IRON, SkillID = SkillID.MINING }
+                        OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.IRON_CLUSTER, SkillID = SkillID.MINING }
                     },
                     new HarvestNodeRequirement
                     {
-                        ItemID = ItemID.COPPER, 
                         RequiredLevel = 3,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.COPPER, SkillID = SkillID.MINING }
+                        OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.COPPER_CLUSTER, SkillID = SkillID.MINING }
                     },
                     new HarvestNodeRequirement
                     {
-                        ItemID = ItemID.GOLD, 
                         RequiredLevel = 4,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.GOLD, SkillID = SkillID.MINING }
+                        OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.GOLD_CLUSTER, SkillID = SkillID.MINING }
                     }
                 ]
             };

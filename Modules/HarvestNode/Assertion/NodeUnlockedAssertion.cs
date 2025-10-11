@@ -18,7 +18,7 @@ namespace IdelPog.HarvestNode.Assertion
             {
                 if (unlocked == false)
                 {
-                    throw new HarvestNodeLockedException(update.SkillID, update.ItemID);
+                    throw new HarvestNodeLockedException(update.SkillID, update.ResourceID);
                 }
             });
         }

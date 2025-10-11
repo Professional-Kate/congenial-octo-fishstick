@@ -1,7 +1,11 @@
-﻿namespace IdelPog.Loot.Service.Interface
+﻿using IdelPog.Core.Contracts.Enum;
+
+namespace IdelPog.Loot.Service.Interface
 {
     public interface ILootService<in TID> where TID : Enum
-    { 
-        public void DispatchInventoryUpdates(TID id);
+    {
+        public bool ShouldGrant(TID id);
+        
+        public ItemID GenerateItemID(TID id);
     }
 }

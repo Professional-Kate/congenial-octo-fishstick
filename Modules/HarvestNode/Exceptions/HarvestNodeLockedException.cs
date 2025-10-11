@@ -7,12 +7,12 @@ namespace IdelPog.HarvestNode.Exceptions
         private const string MESSAGE = "{0} does not have the {1} HarvestNode unlocked!!!";
 
         public readonly SkillID SkillID;
-        public readonly ItemID ItemID;
+        public readonly ResourceID ResourceID;
 
-        public HarvestNodeLockedException(SkillID skillID, ItemID itemID) : base (string.Format(MESSAGE, skillID.ToString(), itemID.ToString()))
+        public HarvestNodeLockedException(SkillID skillID, ResourceID resourceID) : base (string.Format(MESSAGE, skillID.ToString(), resourceID.ToString()))
         {
             SkillID = skillID;
-            ItemID = itemID;
+            ResourceID = resourceID;
         }
     }
 }

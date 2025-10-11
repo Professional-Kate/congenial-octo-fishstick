@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts;
 using IdelPog.Core.Progression;
-using IdelPog.HarvestNode.Runtime.Factory.Interfaces;
+using IdelPog.HarvestNode.Runtime.Factory.Interface;
 
 namespace IdelPog.HarvestNode.Runtime.Factory
 {
@@ -11,7 +11,13 @@ namespace IdelPog.HarvestNode.Runtime.Factory
             ReadOnlyLevelable readOnlyLevelable = readOnlyHarvestNode.ReadOnlyLevelable;
             Levelable levelable = new(readOnlyLevelable.Level, readOnlyLevelable.Experience, readOnlyLevelable.NextLevelExperience, readOnlyLevelable.ExperiencePerAction);
             
-            return new Contracts.HarvestNode { ItemID = readOnlyHarvestNode.ItemID, Information = readOnlyHarvestNode.Information, Levelable = levelable };
+            return new Contracts.HarvestNode
+            {
+                Levelable = levelable, 
+                Information = readOnlyHarvestNode.Information, 
+                ResourceID = readOnlyHarvestNode.ResourceID, 
+                LocationID = readOnlyHarvestNode.LocationID
+            };
         }
     }
 }

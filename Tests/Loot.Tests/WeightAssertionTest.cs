@@ -1,14 +1,13 @@
 ﻿using IdelPog.Core.Validation.Handler;
 using IdelPog.Loot.Assertion;
-using IdelPog.Loot.Assertion.Interface;
 using IdelPog.Loot.Exceptions;
 
 namespace Loot.Tests
 {
     [TestFixture]
-    public class WeightAssertionTest
+    public sealed class WeightAssertionTest
     {
-        private IWeightAssertion _weightAssertion;
+        private WeightAssertion _weightAssertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -16,16 +15,17 @@ namespace Loot.Tests
             _weightAssertion = new WeightAssertion(new ThrowHandler());
         }
 
-        [Test]
-        public void Positive_AssertWeightIsNotZero_PassedNonZero_NoThrow()
+        [TestCase(0)]
+        [TestCase(1)]
+        public void Positive_AssertWeightIsPositive_PassedPositive_NoThrow(int weight)
         {
-            Assert.DoesNotThrow(() => _weightAssertion.AssertWeightIsPositive(1));
+            Assert.DoesNotThrow(() => _weightAssertion.AssertWeightIsPositive(weight));
         }
 
         [Test]
-        public void Negative_AssertWeightIsNotZero_PassedZero_Throw()
+        public void Negative_AssertWeightIsPositive_PassedNegative_Throws()
         {
-            Assert.Throws<InvalidWeightException>(() => _weightAssertion.AssertWeightIsPositive(0));
+            Assert.Throws<InvalidWeightException>(() => _weightAssertion.AssertWeightIsPositive(-1));
         }
     }
 }
