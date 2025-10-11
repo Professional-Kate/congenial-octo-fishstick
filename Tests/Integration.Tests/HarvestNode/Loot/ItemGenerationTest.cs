@@ -77,7 +77,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
             buffer.MarkReady();
         }
 
-        private void DispatchNodeLootCreation(params ResourceLootCreation[] lootCreations)
+        private void DispatchResourceLootCreation(params ResourceLootCreation[] lootCreations)
         {
             IBuffer<ResourceLootCreation> buffer = BufferManager.RequestBuffer<ResourceLootCreation>(new BufferRequest(lootCreations.Length));
             buffer.Assign(lootCreations);
@@ -115,7 +115,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         public void Positive_SendHarvestNodeUpdate_ItemGrantPolicyNoDrop_NoUpdatesDispatched()
         {
             DispatchNodeCreation(_ironCreation);
-            DispatchNodeLootCreation(_ironLootCreation with { GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 1 }});
+            DispatchResourceLootCreation(_ironLootCreation with { GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 1 }});
             
             DispatchNodeUpdate(_ironUpdate);
 
@@ -147,7 +147,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         public void Positive_SendHarvestNodeUpdate_HarvestNodeGrantDrop_DispatchesInventoryUpdate()
         {
             DispatchNodeCreation(_ironCreation);
-            DispatchNodeLootCreation(_ironLootCreation);
+            DispatchResourceLootCreation(_ironLootCreation);
             
             DispatchNodeUpdate(_ironUpdate);
 
@@ -173,7 +173,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         public void Positive_SendHarvestNodeUpdate_LocationAndHarvestNodeDrop_DispatchesTwoUpdates()
         {
             DispatchNodeCreation(_ironCreation);
-            DispatchNodeLootCreation(_ironLootCreation);
+            DispatchResourceLootCreation(_ironLootCreation);
             DispatchLocationLootCreation(_locationLootCreation);
             
             DispatchNodeUpdate(_ironUpdate);

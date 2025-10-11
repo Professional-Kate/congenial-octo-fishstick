@@ -118,20 +118,6 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
             VerifyResponse(_responseListener.LocationLootCreationResponses[0], _forestLootCreation);
             VerifyResponse(_responseListener.LocationLootCreationResponses[1], birchCreation);
         }
-        
-        [Test]
-        public void Positive_SendSingleCommand_SingleLootTableEntry_NegativeWeight_DispatchesResponse()
-        {
-            // in cases of single entries the weight won't be read
-            LocationLootCreation negativeCreation = _forestLootCreation with { LootTableEntries = [ new LootTableEntry { ItemID = ItemID.EMERALD, Weight = -10 } ] };
-            
-            Assert.DoesNotThrow(() => DispatchLocationLootCreation(negativeCreation));
-
-            VerifyResponseListenerCalled(true);
-            VerifyErrorListenerCalled(false);
-            VerifyResponseLength(1);
-            VerifyResponse(_responseListener.LocationLootCreationResponses[0], negativeCreation);
-        }
 
         [Test]
         public void Negative_SendMultipleCommands_SameLocationID_DispatchesError()
@@ -205,6 +191,20 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
             VerifyErrorListenerCalled(true);
             VerifyErrorLength(1);
             VerifyError(typeof(InvalidWeightException), negativeCreation);
+        }
+        
+        [Test]
+        public void Positive_SendSingleCommand_SingleLootTableEntry_NegativeWeight_DispatchesResponse()
+        {
+            // in cases of single entries the weight won't be read
+            LocationLootCreation negativeCreation = _forestLootCreation with { LootTableEntries = [ new LootTableEntry { ItemID = ItemID.EMERALD, Weight = -10 } ] };
+            
+            Assert.DoesNotThrow(() => DispatchLocationLootCreation(negativeCreation));
+
+            VerifyResponseListenerCalled(true);
+            VerifyErrorListenerCalled(false);
+            VerifyResponseLength(1);
+            VerifyResponse(_responseListener.LocationLootCreationResponses[0], negativeCreation);
         }
     }
 }
