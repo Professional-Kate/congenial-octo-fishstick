@@ -57,7 +57,6 @@ namespace IdelPog.Console
             IArgumentResolver<ActionType> actionTypeResolver = new EnumResolver<ActionType>(enumParseAssertion);
             IArgumentResolver<CurrencyType> currencyTypeResolver = new EnumResolver<CurrencyType>(enumParseAssertion);
             IArgumentResolver<Domain> commandDomainResolver = new EnumResolver<Domain>(enumParseAssertion);
-            IArgumentResolver<ControlAction> controlActionResolver = new EnumResolver<ControlAction>(enumParseAssertion);
             IArgumentResolver<uint> uIntResolver = new UIntResolver(typeParseAssertion, numberAssertion);
             
             ILogWriter writer = new ConsoleWriter();
