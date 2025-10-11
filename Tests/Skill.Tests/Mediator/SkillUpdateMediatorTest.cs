@@ -1,6 +1,4 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Progression;
@@ -8,6 +6,8 @@ using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Repository.State;
 using IdelPog.Loot.Service.Interface;
+using IdelPog.Skill.Contracts.Command;
+using IdelPog.Skill.Contracts.Response;
 using IdelPog.Skill.Factory.Interface;
 using IdelPog.Skill.Mediator;
 using IdelPog.Skills.Tests.Service;

@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Core.Contracts.Command
+namespace IdelPog.Skill.Contracts.Command
 {
     public readonly record struct SkillUpdate
     {

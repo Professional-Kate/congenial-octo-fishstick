@@ -1,6 +1,7 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts.Error;
+using IdelPog.Skill.Contracts.Command;
 
-namespace IdelPog.Core.Contracts.Error
+namespace IdelPog.Skill.Contracts.Error
 {
     public readonly record struct SkillCreationError
     {

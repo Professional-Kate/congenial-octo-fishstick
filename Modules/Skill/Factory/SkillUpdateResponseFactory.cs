@@ -1,5 +1,5 @@
-﻿using IdelPog.Core.Contracts.Response;
-using IdelPog.Core.Factory.Interface;
+﻿using IdelPog.Core.Factory.Interface;
+using IdelPog.Skill.Contracts.Response;
 using IdelPog.Skill.Factory.Interface;
 
 namespace IdelPog.Skill.Factory
