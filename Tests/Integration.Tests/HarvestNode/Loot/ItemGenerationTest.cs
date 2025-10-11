@@ -4,6 +4,7 @@ using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Progression;
+using IdelPog.HarvestNode.Contracts.Command;
 
 namespace IdelPog.Integration.Tests.HarvestNode.Loot
 {

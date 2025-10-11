@@ -1,10 +1,10 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
+using IdelPog.HarvestNode.Contracts.Command;
+using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Progression.Assertion;
 using IdelPog.Progression.Exceptions;
 using IdelPog.Progression.Runtime;

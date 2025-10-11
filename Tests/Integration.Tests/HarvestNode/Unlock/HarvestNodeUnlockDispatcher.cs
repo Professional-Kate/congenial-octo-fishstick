@@ -1,9 +1,9 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Buffer.Manager;
+using IdelPog.HarvestNode.Contracts;
+using IdelPog.HarvestNode.Contracts.Command;
+using IdelPog.HarvestNode.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.HarvestNode.Unlock
 {

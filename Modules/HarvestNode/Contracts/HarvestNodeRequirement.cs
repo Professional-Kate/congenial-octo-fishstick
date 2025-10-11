@@ -1,6 +1,6 @@
-﻿using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.HarvestNode.Contracts.Response;
 
-namespace IdelPog.Core.Contracts
+namespace IdelPog.HarvestNode.Contracts
 {
     public readonly record struct HarvestNodeRequirement
     {

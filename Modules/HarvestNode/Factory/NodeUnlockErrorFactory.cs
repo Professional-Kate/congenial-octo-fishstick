@@ -1,6 +1,6 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Error;
-using IdelPog.Core.Factory.Interface;
+﻿using IdelPog.Core.Factory.Interface;
+using IdelPog.HarvestNode.Contracts.Command;
+using IdelPog.HarvestNode.Contracts.Error;
 
 namespace IdelPog.HarvestNode.Factory
 {

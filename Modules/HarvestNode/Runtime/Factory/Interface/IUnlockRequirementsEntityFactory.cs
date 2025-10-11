@@ -1,6 +1,6 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.HarvestNode.Contracts;
+using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Progression.Runtime;
 
 namespace IdelPog.HarvestNode.Runtime.Factory.Interface

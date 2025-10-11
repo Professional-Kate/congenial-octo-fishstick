@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Core.Contracts.Response
+namespace IdelPog.HarvestNode.Contracts.Response
 {
     public readonly record struct HarvestNodeRequirementsCreationResponse
     { 

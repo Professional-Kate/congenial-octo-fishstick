@@ -1,6 +1,7 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Core.Contracts.Command
+namespace IdelPog.HarvestNode.Contracts.Command
 {
     public readonly record struct HarvestNodeCreation
     {
