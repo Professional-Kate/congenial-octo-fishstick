@@ -1,5 +1,5 @@
-﻿using IdelPog.Core.Contracts.Response;
-using IdelPog.Core.Messaging.Listener.Buffer;
+﻿using IdelPog.Core.Messaging.Listener.Buffer;
+using IdelPog.HarvestNode.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Creation
 {

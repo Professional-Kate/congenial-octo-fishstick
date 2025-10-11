@@ -1,7 +1,7 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Assertion;
+using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Exceptions;
 
 namespace IdelPog.HarvestNode.Tests.Assertion

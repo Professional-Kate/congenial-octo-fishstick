@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Repository.Asset;
+using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Progression.Runtime;
 using IdelPog.Progression.Runtime.Component;
 using IdelPog.Progression.Runtime.System;

@@ -1,5 +1,5 @@
-﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Information.Contracts;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -34,7 +34,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock = new Mock<IStateRepository<ItemID, Item>>();
             IHandler throwHandler = new ThrowHandler();
 
-            _inventory = new IdelPog.Inventory.Service.Inventory(_repositoryMock.Object, new FoundAssertion(throwHandler), new UniqueAssertion(throwHandler), new AmountAssertion(throwHandler));
+            _inventory = new Service.Inventory(_repositoryMock.Object, new FoundAssertion(throwHandler), new UniqueAssertion(throwHandler), new AmountAssertion(throwHandler));
         }
 
         private void VerifyRepositoryUpdate()

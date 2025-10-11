@@ -1,4 +1,4 @@
-﻿using IdelPog.Core.Contracts;
+﻿using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.Loot.Assertion.Interface;
 using IdelPog.Loot.Policy;

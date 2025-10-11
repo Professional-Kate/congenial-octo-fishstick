@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Error;
 using IdelPog.Core.Factory.Interface;
+using IdelPog.Inventory.Contracts.Error;
 
 namespace IdelPog.Inventory.Factory
 {

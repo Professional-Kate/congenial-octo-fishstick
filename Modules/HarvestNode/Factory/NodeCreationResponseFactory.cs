@@ -1,5 +1,5 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.HarvestNode.Contracts.Command;
+using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.HarvestNode.Factory.Interface;
 
 namespace IdelPog.HarvestNode.Factory

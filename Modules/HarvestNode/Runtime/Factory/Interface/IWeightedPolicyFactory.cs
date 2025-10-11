@@ -1,4 +1,4 @@
-﻿using IdelPog.Core.Contracts;
+﻿using IdelPog.HarvestNode.Contracts;
 using IdelPog.Loot.Policy;
 using IdelPog.Loot.Random;
 

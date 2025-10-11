@@ -1,9 +1,10 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
 using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Error;
-using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
+using IdelPog.Currency.Contracts.Command;
+using IdelPog.Currency.Contracts.Error;
+using IdelPog.Currency.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.CurrencyCommands.Create
 {

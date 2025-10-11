@@ -1,9 +1,9 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
+using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.System;
 using IdelPog.HarvestNode.Runtime.System.Interface;

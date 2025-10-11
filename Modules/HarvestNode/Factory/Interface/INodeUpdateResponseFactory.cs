@@ -1,4 +1,4 @@
-﻿using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.HarvestNode.Contracts.Response;
 
 namespace IdelPog.HarvestNode.Factory.Interface
 {

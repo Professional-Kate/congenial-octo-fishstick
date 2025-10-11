@@ -1,4 +1,4 @@
-﻿using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Skill.Contracts.Response;
 
 namespace IdelPog.Skill.Factory.Interface
 {

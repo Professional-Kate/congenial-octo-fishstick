@@ -1,9 +1,10 @@
 ﻿using IdelPog.Core.Contracts;
 using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Progression;
+using IdelPog.HarvestNode.Contracts;
+using IdelPog.HarvestNode.Contracts.Command;
 
 namespace IdelPog.Integration.Tests.HarvestNode.Loot
 {

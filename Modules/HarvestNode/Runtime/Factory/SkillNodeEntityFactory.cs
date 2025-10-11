@@ -1,5 +1,5 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Runtime.ECS;
 using IdelPog.HarvestNode.Runtime.Factory.Interface;
 

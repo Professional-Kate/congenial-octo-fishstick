@@ -1,7 +1,4 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Error;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Factory;
 using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Flows.Registry;
@@ -20,6 +17,9 @@ using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Core.Validation.Handler.Interface;
+using IdelPog.Skill.Contracts.Command;
+using IdelPog.Skill.Contracts.Error;
+using IdelPog.Skill.Contracts.Response;
 using IdelPog.Skill.Factory;
 using IdelPog.Skill.Factory.Interface;
 using IdelPog.Skill.Mediator;

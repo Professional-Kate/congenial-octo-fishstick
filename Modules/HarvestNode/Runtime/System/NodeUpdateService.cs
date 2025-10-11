@@ -1,10 +1,10 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion.Interface;
+using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.HarvestNode.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.System.Interface;
 

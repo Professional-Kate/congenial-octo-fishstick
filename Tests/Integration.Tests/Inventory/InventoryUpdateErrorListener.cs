@@ -1,5 +1,5 @@
-﻿using IdelPog.Core.Contracts.Error;
-using IdelPog.Core.Messaging.Listener.Single;
+﻿using IdelPog.Core.Messaging.Listener.Single;
+using IdelPog.Inventory.Contracts.Error;
 
 namespace IdelPog.Integration.Tests.Inventory
 {

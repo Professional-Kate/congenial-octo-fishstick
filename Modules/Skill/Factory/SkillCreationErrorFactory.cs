@@ -1,6 +1,6 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Error;
-using IdelPog.Core.Factory.Interface;
+﻿using IdelPog.Core.Factory.Interface;
+using IdelPog.Skill.Contracts.Command;
+using IdelPog.Skill.Contracts.Error;
 
 namespace IdelPog.Skill.Factory
 {

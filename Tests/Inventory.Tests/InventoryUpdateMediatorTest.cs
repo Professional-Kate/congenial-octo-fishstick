@@ -1,14 +1,14 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Information;
-using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Contracts;
+using IdelPog.Inventory.Contracts.Response;
 using IdelPog.Inventory.Factory.Interface;
 using IdelPog.Inventory.Mediator;
 using IdelPog.Inventory.Service.Interface;

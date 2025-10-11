@@ -1,7 +1,5 @@
 ﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Error;
-using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Factory;
 using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Flows.Registry;
@@ -24,6 +22,9 @@ using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.HarvestNode.Assertion;
 using IdelPog.HarvestNode.Assertion.Interface;
 using IdelPog.HarvestNode.Contracts;
+using IdelPog.HarvestNode.Contracts.Command;
+using IdelPog.HarvestNode.Contracts.Error;
+using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.HarvestNode.Factory;
 using IdelPog.HarvestNode.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.ECS;

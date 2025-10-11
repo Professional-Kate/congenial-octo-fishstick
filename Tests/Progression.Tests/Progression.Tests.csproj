@@ -24,6 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Modules\HarvestNode\HarvestNode.csproj" />
       <ProjectReference Include="..\..\Progression\Progression.csproj" />
     </ItemGroup>
 

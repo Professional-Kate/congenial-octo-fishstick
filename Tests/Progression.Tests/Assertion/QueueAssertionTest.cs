@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Validation.Handler;
+using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Progression.Assertion;
 using IdelPog.Progression.Assertion.Interface;
 using IdelPog.Progression.Exceptions;

@@ -57,7 +57,6 @@ namespace IdelPog.Console
             IArgumentResolver<ActionType> actionTypeResolver = new EnumResolver<ActionType>(enumParseAssertion);
             IArgumentResolver<CurrencyType> currencyTypeResolver = new EnumResolver<CurrencyType>(enumParseAssertion);
             IArgumentResolver<Domain> commandDomainResolver = new EnumResolver<Domain>(enumParseAssertion);
-            IArgumentResolver<ControlAction> controlActionResolver = new EnumResolver<ControlAction>(enumParseAssertion);
             IArgumentResolver<uint> uIntResolver = new UIntResolver(typeParseAssertion, numberAssertion);
             
             ILogWriter writer = new ConsoleWriter();
@@ -82,17 +81,8 @@ namespace IdelPog.Console
 
             ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(permissionUpdatePipeline, permissionService, argumentCountAssertion);
 
-            IScheduleControlFactory scheduleControlFactory = new ScheduleControlFactory();
-            IDispatchOne<ScheduleControl> scheduleControlDispatcher =
-                new ManagedDispatcher<ScheduleControl>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
-
-            IArgumentResolverPipeline<ScheduleControlArguments> scheduleControlPipeline = new ScheduleControlResolver(controlActionResolver);
-            ICommandDomainResolver scheduleDomainResolver =
-                new ScheduleDomainResolver(scheduleControlPipeline, scheduleControlDispatcher, scheduleControlFactory, argumentCountAssertion);
-
             commandRepository.Add(Domain.CURRENCY, currencyDomainResolver);
             commandRepository.Add(Domain.PERMISSION, permissionDomainResolver);
-            commandRepository.Add(Domain.SCHEDULE, scheduleDomainResolver);
 
             IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, componentAssertion);
             ICommandResolverMediator commandResolverMediator =
