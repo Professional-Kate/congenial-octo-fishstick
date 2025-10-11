@@ -13,8 +13,8 @@ namespace IdelPog.Core.Tests.Information
         private IFoundAssertion _assertFound { get; set; }
         private IUniqueAssertion _assertUnique { get; set; }
 
-        private readonly Core.Information.Contracts.Information _informationOne = new() { Description = "AA", Name = "scream" };
-        private readonly Core.Information.Contracts.Information _informationTwo = new() { Description = "SDSD", Name = "wooo" };
+        private readonly Contracts.Information _informationOne = new() { Description = "AA", Name = "scream" };
+        private readonly Contracts.Information _informationTwo = new() { Description = "SDSD", Name = "wooo" };
 
         [SetUp]
         public void Setup()
@@ -30,7 +30,7 @@ namespace IdelPog.Core.Tests.Information
         [Test]
         public void Positive_GetInformation_Returns_Information()
         {
-            Core.Information.Contracts.Information returnedInfo = _informationMapper.GetInformation(1);
+            Contracts.Information returnedInfo = _informationMapper.GetInformation(1);
 
             Assert.That(_informationOne, Is.EqualTo(returnedInfo));
             Assert.That(_informationOne.Description, Is.EqualTo(returnedInfo.Description));
@@ -49,10 +49,10 @@ namespace IdelPog.Core.Tests.Information
         [Test]
         public void Positive_AddInformation_Adds_Information()
         {
-            Core.Information.Contracts.Information newInformation = new() { Description = "Hello", Name = "World!!!!!!" };
+            Contracts.Information newInformation = new() { Description = "Hello", Name = "World!!!!!!" };
             _informationMapper.AddInformation(3, newInformation);
 
-            Core.Information.Contracts.Information returnedInfo = _informationMapper.GetInformation(3);
+            Contracts.Information returnedInfo = _informationMapper.GetInformation(3);
 
             Assert.That(newInformation, Is.EqualTo(returnedInfo));
             Assert.That(newInformation.Description, Is.EqualTo(returnedInfo.Description));

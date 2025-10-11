@@ -1,6 +1,5 @@
 ﻿using IdelPog.Core.Contracts;
 using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Information.Contracts;
 
 namespace IdelPog.Inventory.Factory.Interface
 {

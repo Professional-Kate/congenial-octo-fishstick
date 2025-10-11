@@ -1,10 +1,10 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Factory;
 using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Information;
-using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Logging;
 using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;

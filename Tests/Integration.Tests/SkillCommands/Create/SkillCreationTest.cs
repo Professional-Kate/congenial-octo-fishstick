@@ -1,5 +1,5 @@
-﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Information.Contracts;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Validation.Exceptions;

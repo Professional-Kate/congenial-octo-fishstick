@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Core.Information.Contracts
+﻿namespace IdelPog.Core.Contracts
 {
     /// <summary>
     /// Contains two readonly strings that describes an objects readable name and readable description

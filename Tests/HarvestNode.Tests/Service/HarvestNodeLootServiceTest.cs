@@ -1,6 +1,6 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Information.Contracts;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.HarvestNode.Runtime.System;
