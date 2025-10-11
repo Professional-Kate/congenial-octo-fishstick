@@ -1,9 +1,9 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Core.Validation.Handler.Interface;
+using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory;
 
 namespace IdelPog.Currency.Tests.Factory

@@ -1,10 +1,10 @@
-﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion.Interface;
+using IdelPog.Currency.Contracts.Command;
+using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory.Interface;
 
 namespace IdelPog.Currency.Mediator

@@ -1,6 +1,7 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts.Error;
+using IdelPog.Currency.Contracts.Command;
 
-namespace IdelPog.Core.Contracts.Error
+namespace IdelPog.Currency.Contracts.Error
 {
     public readonly record struct CurrencyCreationError
     {

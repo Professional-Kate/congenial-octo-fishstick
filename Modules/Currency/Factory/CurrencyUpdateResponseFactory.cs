@@ -1,5 +1,5 @@
-﻿using IdelPog.Core.Contracts.Response;
-using IdelPog.Core.Validation.Assertion.Interface;
+﻿using IdelPog.Core.Validation.Assertion.Interface;
+using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory.Interface;
 
 namespace IdelPog.Currency.Factory

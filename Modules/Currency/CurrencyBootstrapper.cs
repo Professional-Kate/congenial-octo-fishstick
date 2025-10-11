@@ -1,7 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Error;
-using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Factory;
 using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Flows.Registry;
@@ -20,6 +19,9 @@ using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.Currency.Assertion;
 using IdelPog.Currency.Assertion.Interface;
 using IdelPog.Currency.Contracts;
+using IdelPog.Currency.Contracts.Command;
+using IdelPog.Currency.Contracts.Error;
+using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory;
 using IdelPog.Currency.Factory.Interface;
 using IdelPog.Currency.Mediator;

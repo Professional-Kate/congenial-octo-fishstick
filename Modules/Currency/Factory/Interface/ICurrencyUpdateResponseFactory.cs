@@ -1,4 +1,4 @@
-﻿using IdelPog.Core.Contracts.Response;
+﻿using IdelPog.Currency.Contracts.Response;
 
 namespace IdelPog.Currency.Factory.Interface
 {
