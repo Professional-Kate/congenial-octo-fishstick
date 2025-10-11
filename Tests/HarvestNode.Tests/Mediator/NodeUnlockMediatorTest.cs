@@ -29,8 +29,8 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _dispatcherMock = new Mock<IDispatchMany<HarvestNodeUnlockResponse>>();
             _nodeUnlockMediator = new NodeUnlockMediator(_nodeUnlockerServiceMock.Object, _dispatcherMock.Object, new CollectionAssertion(new ThrowHandler()));
 
-            _miningUnlock = new HarvestNodeUnlock { SkillID = SkillID.MINING, SkillLevel = 5 };
-            _miningUnlockResponse = new HarvestNodeUnlockResponse { SkillID = SkillID.MINING, ItemID = ItemID.BIRCH };
+            _miningUnlock = new HarvestNodeUnlock { SkillID = SkillID.WOOD_CUTTING, SkillLevel = 5 };
+            _miningUnlockResponse = new HarvestNodeUnlockResponse { SkillID = SkillID.WOOD_CUTTING, ResourceID = ResourceID.BIRCH_TREE };
         }
 
         [SetUp]

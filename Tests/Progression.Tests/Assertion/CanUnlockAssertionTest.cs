@@ -21,7 +21,7 @@ namespace IdelPog.Progression.Tests.Assertion
 
             _levelRequirementComponent = new LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>
             {
-                Level = 1, ID = SkillID.FORAGING, OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.BIRCH, SkillID = SkillID.FORAGING }
+                Level = 1, ID = SkillID.FORAGING, OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.BIRCH_TREE, SkillID = SkillID.FORAGING }
             };
         }
 

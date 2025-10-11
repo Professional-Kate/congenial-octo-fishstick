@@ -9,7 +9,6 @@ namespace IdelPog.HarvestNode.Contracts
     {
         public required LocationID LocationID { get; init; }
         public required ResourceID ResourceID { get; init; }
-        public required ItemID ItemID { get; init; }
         public required Levelable Levelable { get; init; }
         public required Information Information { get; init; }
 

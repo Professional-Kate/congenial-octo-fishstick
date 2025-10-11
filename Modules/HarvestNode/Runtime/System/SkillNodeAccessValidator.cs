@@ -17,11 +17,11 @@ namespace IdelPog.HarvestNode.Runtime.System
             _foundAssertion = foundAssertion;
         }
 
-        public void AssertSkillAllows(SkillID skillID, ItemID itemID)
+        public void AssertSkillAllows(SkillID skillID, ResourceID resourceID)
         {
             _foundAssertion.AssertFound(skillID, _skillNodeEntityRepository.Contains(skillID));
             SkillNodeEntity skillNodeEntity = _skillNodeEntityRepository.Get(skillID);
-            _foundAssertion.AssertFound(itemID, skillNodeEntity.Allows(itemID));
+            _foundAssertion.AssertFound(resourceID, skillNodeEntity.Allows(resourceID));
         }
     }
 }

@@ -43,12 +43,12 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Unlock
             Assert.That(_responseListener.HarvestNodeRequirementsCreationResponses, Has.Length.EqualTo(expectedLength));
         }
 
-        private static void AssertResponse(SkillID skillID, ItemID itemID, HarvestNodeUnlockResponse response)
+        private static void AssertResponse(SkillID skillID, ResourceID resourceID, HarvestNodeUnlockResponse response)
         {
             Assert.Multiple(() =>
             {
                 Assert.That(response.SkillID, Is.EqualTo(skillID));
-                Assert.That(response.ItemID, Is.EqualTo(itemID));
+                Assert.That(response.ResourceID, Is.EqualTo(resourceID));
             });
         }
 
@@ -86,7 +86,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Unlock
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_miningUnlock.SkillID, ItemID.STONE, _responseListener.HarvestNodeRequirementsCreationResponses[0]);
+            AssertResponse(_miningUnlock.SkillID, ResourceID.STONE, _responseListener.HarvestNodeRequirementsCreationResponses[0]);
         }
 
         [Test]
@@ -99,8 +99,8 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Unlock
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponse(_miningUnlock.SkillID, ItemID.STONE, _responseListener.HarvestNodeRequirementsCreationResponses[0]);
-            AssertResponse(_miningUnlock.SkillID, ItemID.IRON, _responseListener.HarvestNodeRequirementsCreationResponses[1]);
+            AssertResponse(_miningUnlock.SkillID, ResourceID.STONE, _responseListener.HarvestNodeRequirementsCreationResponses[0]);
+            AssertResponse(_miningUnlock.SkillID, ResourceID.IRON_CLUSTER, _responseListener.HarvestNodeRequirementsCreationResponses[1]);
         }
 
         [Test]

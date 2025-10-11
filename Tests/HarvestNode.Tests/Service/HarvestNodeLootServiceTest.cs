@@ -14,7 +14,7 @@ namespace IdelPog.HarvestNode.Tests.Service
     public sealed class HarvestNodeLootServiceTest
     {
         private IHarvestNodeLootService _nodeLootService;
-        private Mock<ILootService<ItemID>> _itemServiceMock;
+        private Mock<ILootService<ResourceID>> _itemServiceMock;
         private Mock<ILootService<LocationID>> _locationServiceMock;
         
         private Contracts.HarvestNode _harvestNode;
@@ -26,12 +26,11 @@ namespace IdelPog.HarvestNode.Tests.Service
             {
                 LocationID = LocationID.FOREST,
                 ResourceID = ResourceID.LEAF_LITTER,
-                ItemID = ItemID.SMALL_INSECTS,
                 Information = new Information { Description = "", Name = "" },
                 Levelable = new Levelable(0, 0, 0, 0)
             };
 
-            _itemServiceMock = new Mock<ILootService<ItemID>>();
+            _itemServiceMock = new Mock<ILootService<ResourceID>>();
             _locationServiceMock = new Mock<ILootService<LocationID>>();
             
             _nodeLootService = new HarvestNodeLootService(_itemServiceMock.Object, _locationServiceMock.Object);
@@ -46,7 +45,7 @@ namespace IdelPog.HarvestNode.Tests.Service
 
         private void SetupItemService(bool shouldGrant)
         {
-            _itemServiceMock.Setup(library => library.ShouldGrant(It.IsAny<ItemID>())).Returns(shouldGrant);
+            _itemServiceMock.Setup(library => library.ShouldGrant(It.IsAny<ResourceID>())).Returns(shouldGrant);
         }
         
         private void SetupLocationService(bool shouldGrant)
@@ -95,7 +94,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         [Test]
         public void Positive_GenerateInventoryUpdates_ItemService_ThrowsNotFound_Catches()
         {
-            _itemServiceMock.Setup(library => library.GenerateItemID(_harvestNode.ItemID)).Throws(new NotFoundException<ItemID>(_harvestNode.ItemID));
+            _itemServiceMock.Setup(library => library.GenerateItemID(_harvestNode.ResourceID)).Throws(new NotFoundException<ResourceID>(_harvestNode.ResourceID));
             SetupLocationService(true);
 
             IReadOnlyList<InventoryUpdate> inventoryUpdates = _nodeLootService.GenerateInventoryUpdates(_harvestNode);
@@ -106,7 +105,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         [Test]
         public void Positive_GenerateInventoryUpdates_ShouldGrant_ThrowsNotFound_Catches()
         {
-            _itemServiceMock.Setup(library => library.ShouldGrant(_harvestNode.ItemID)).Throws(new NotFoundException<ItemID>(_harvestNode.ItemID));
+            _itemServiceMock.Setup(library => library.ShouldGrant(_harvestNode.ResourceID)).Throws(new NotFoundException<ResourceID>(_harvestNode.ResourceID));
             SetupLocationService(true);
 
             IReadOnlyList<InventoryUpdate> inventoryUpdates = _nodeLootService.GenerateInventoryUpdates(_harvestNode);

@@ -21,7 +21,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _skillNodeEntity = new SkillNodeEntity(new SkillComponent() { SkillID = SkillID.FORAGING},[new HarvestTargetComponent() { HarvestTarget = ItemID.COPPER}]);
+            _skillNodeEntity = new SkillNodeEntity(new SkillComponent() { SkillID = SkillID.FORAGING},[new HarvestTargetComponent() { HarvestTarget = ResourceID.COPPER_CLUSTER}]);
             _repositoryMock = new Mock<IAssetRepository<SkillID, SkillNodeEntity>>();
             _skillNodeAccessValidator = new SkillNodeAccessValidator(_repositoryMock.Object, new FoundAssertion(new ThrowHandler()));
             
@@ -39,7 +39,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         {
             _repositoryMock.Setup(library => library.Contains(SkillID.FORAGING)).Returns(true);
             
-            Assert.DoesNotThrow(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FORAGING, ItemID.COPPER));
+            Assert.DoesNotThrow(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FORAGING, ResourceID.COPPER_CLUSTER));
             
             _repositoryMock.Verify(library => library.Get(SkillID.FORAGING), Times.Once);
             _repositoryMock.Verify(library => library.Contains(SkillID.FORAGING), Times.Once);
@@ -51,7 +51,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         {
             _repositoryMock.Setup(library => library.Contains(SkillID.FORAGING)).Returns(false);
             
-            Assert.Throws<NotFoundException<SkillID>>(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FORAGING,  ItemID.COPPER));
+            Assert.Throws<NotFoundException<SkillID>>(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FORAGING,  ResourceID.COPPER_CLUSTER));
             
             _repositoryMock.Verify(library => library.Get(SkillID.FORAGING), Times.Never);
             _repositoryMock.Verify(library => library.Contains(SkillID.FORAGING), Times.Once);
@@ -63,7 +63,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         {
             _repositoryMock.Setup(library => library.Contains(SkillID.FORAGING)).Returns(true);
             
-            Assert.Throws<NotFoundException<ItemID>>(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FORAGING,  ItemID.IRON));
+            Assert.Throws<NotFoundException<ResourceID>>(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FORAGING,  ResourceID.IRON_CLUSTER));
             
             _repositoryMock.Verify(library => library.Get(SkillID.FORAGING), Times.Once);
             _repositoryMock.Verify(library => library.Contains(SkillID.FORAGING), Times.Once);

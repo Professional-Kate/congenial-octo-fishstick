@@ -25,7 +25,7 @@ namespace IdelPog.Progression.Tests.System
             
             _unlockChecker = new EntityUnlockChecker<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object);
 
-            _foragingResponse = new HarvestNodeUnlockResponse { SkillID = SkillID.FORAGING, ItemID = ItemID.SAND };
+            _foragingResponse = new HarvestNodeUnlockResponse { SkillID = SkillID.FORAGING, ResourceID = ResourceID.RIVER };
             _unlockRequirementsEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([new LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> { ID = SkillID.FORAGING, Level = 1, OnUnlockCommand = _foragingResponse }
             ]);
         }
@@ -41,7 +41,7 @@ namespace IdelPog.Progression.Tests.System
         {
             _repositoryMock.Setup(library => library.Contains(_foragingResponse.SkillID)).Returns(false);
             
-            bool unlocked = _unlockChecker.IsUnlocked(_foragingResponse.SkillID, component => component.OnUnlockCommand.ItemID == ItemID.HERBS);
+            bool unlocked = _unlockChecker.IsUnlocked(_foragingResponse.SkillID, component => component.OnUnlockCommand.ResourceID == ResourceID.BEEHIVE);
             
             Assert.That(unlocked, Is.True);
             
@@ -55,7 +55,7 @@ namespace IdelPog.Progression.Tests.System
             _repositoryMock.Setup(library => library.Contains(_foragingResponse.SkillID)).Returns(true);
             _repositoryMock.Setup(library => library.Get(_foragingResponse.SkillID)).Returns(_unlockRequirementsEntity);
             
-            bool unlocked = _unlockChecker.IsUnlocked(_foragingResponse.SkillID, component => component.OnUnlockCommand.ItemID == ItemID.HERBS);
+            bool unlocked = _unlockChecker.IsUnlocked(_foragingResponse.SkillID, component => component.OnUnlockCommand.ResourceID == ResourceID.BEEHIVE);
             
             Assert.That(unlocked, Is.True);
             
@@ -70,7 +70,7 @@ namespace IdelPog.Progression.Tests.System
             _repositoryMock.Setup(library => library.Contains(_foragingResponse.SkillID)).Returns(true);
             _repositoryMock.Setup(library => library.Get(_foragingResponse.SkillID)).Returns(_unlockRequirementsEntity);
             
-            bool unlocked = _unlockChecker.IsUnlocked(_foragingResponse.SkillID, component => component.OnUnlockCommand.ItemID == _foragingResponse.ItemID);
+            bool unlocked = _unlockChecker.IsUnlocked(_foragingResponse.SkillID, component => component.OnUnlockCommand.ResourceID == _foragingResponse.ResourceID);
             
             Assert.That(unlocked, Is.False);
             

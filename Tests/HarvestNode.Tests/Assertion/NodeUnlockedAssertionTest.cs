@@ -15,7 +15,7 @@ namespace IdelPog.HarvestNode.Tests.Assertion
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _harvestNodeUpdate = new HarvestNodeUpdate { SkillID = SkillID.MINING, ItemID = ItemID.STONE };
+            _harvestNodeUpdate = new HarvestNodeUpdate { SkillID = SkillID.MINING, ResourceID = ResourceID.ANT_NEST };
             _nodeUnlockedAssertion = new NodeUnlockedAssertion(new ThrowHandler());
         }
 

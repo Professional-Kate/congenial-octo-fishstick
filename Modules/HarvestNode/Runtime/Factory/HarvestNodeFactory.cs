@@ -14,7 +14,6 @@ namespace IdelPog.HarvestNode.Runtime.Factory
             return new Contracts.HarvestNode
             {
                 Levelable = levelable, 
-                ItemID = readOnlyHarvestNode.ItemID, 
                 Information = readOnlyHarvestNode.Information, 
                 ResourceID = readOnlyHarvestNode.ResourceID, 
                 LocationID = readOnlyHarvestNode.LocationID

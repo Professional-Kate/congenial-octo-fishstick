@@ -27,7 +27,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         private Mock<INodeUpdateService> _nodeUpdateServiceMock;
         private Mock<IDispatchMany<HarvestNodeUpdateResponse>> _responseDispatcherMock;
         private Mock<IEntityUnlockChecker<SkillID, HarvestNodeUnlockResponse>> _checkerMock;
-        private Mock<IStateRepository<ItemID,Contracts.HarvestNode>> _harvestNodeRepository;
+        private Mock<IStateRepository<ResourceID, Contracts.HarvestNode>> _harvestNodeRepository;
         private Mock<IDispatchMany<InventoryUpdate>> _inventoryUpdateDispatcherMock;
         private Mock<IHarvestNodeLootService> _harvestNodeLootServiceMock;
         
@@ -48,7 +48,6 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             
             _harvestNode = new Contracts.HarvestNode
             {
-                ItemID = ItemID.STONE,
                 Information = new Information { Description = "", Name = "" },
                 Levelable = new Levelable(0, 0, 0, 0),
                 ResourceID = ResourceID.STONE, 
@@ -58,14 +57,15 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _nodeUpdate = new HarvestNodeUpdate
             {
                 SkillID = SkillID.MINING,
-                ItemID = ItemID.STONE
+                ResourceID = ResourceID.STONE
             };
 
             _expectedResponse = new HarvestNodeUpdateResponse
             {
                 HasLeveled = false,
                 ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
-                ItemID = ItemID.STONE
+                ResourceID = _harvestNode.ResourceID,
+                LocationID = _harvestNode.LocationID
             };
 
             ThrowHandler throwHandler = new();
@@ -73,7 +73,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _nodeUpdateServiceMock = new Mock<INodeUpdateService>();
             _responseDispatcherMock = new Mock<IDispatchMany<HarvestNodeUpdateResponse>>();
             _checkerMock = new Mock<IEntityUnlockChecker<SkillID, HarvestNodeUnlockResponse>>();
-            _harvestNodeRepository =  new Mock<IStateRepository<ItemID, Contracts.HarvestNode>>();
+            _harvestNodeRepository =  new Mock<IStateRepository<ResourceID, Contracts.HarvestNode>>();
             _inventoryUpdateDispatcherMock = new Mock<IDispatchMany<InventoryUpdate>>();
             _harvestNodeLootServiceMock =  new Mock<IHarvestNodeLootService>();
             
@@ -97,14 +97,14 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _checkerMock.Setup(library => library.IsUnlocked(_nodeUpdate.SkillID, It.IsAny< Predicate<LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>>>())).Returns(shouldReturn);
         }
 
-        private void SetupRepositoryContains(bool contains, ItemID itemID)
+        private void SetupRepositoryContains(bool contains, ResourceID resourceID)
         {
-            _harvestNodeRepository.Setup(library => library.Contains(itemID)).Returns(contains);
+            _harvestNodeRepository.Setup(library => library.Contains(resourceID)).Returns(contains);
         }
         
         private void SetupRepositoryGet(Contracts.HarvestNode harvestNode)
         {
-            _harvestNodeRepository.Setup(library => library.Get(harvestNode.ItemID)).Returns(harvestNode);
+            _harvestNodeRepository.Setup(library => library.Get(harvestNode.ResourceID)).Returns(harvestNode);
         }
 
         private void SetupLootService(Contracts.HarvestNode harvestNode, params InventoryUpdate[] updates)
@@ -125,15 +125,15 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         [Test]
         public void Positive_HandleMessage_UpdateNode_DispatchesResponse()
         {
-            SetupRepositoryContains(true, _stoneUpdate.ItemID);
+            SetupRepositoryContains(true, _harvestNode.ResourceID);
             SetupRepositoryGet(_harvestNode);
             SetupLootService(_harvestNode, _stoneUpdate);
             SetupUnlockChecker(true);
             
             Assert.DoesNotThrow(() => _updateMediator.HandleMessages([_nodeUpdate]));
             
-            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_nodeUpdate.SkillID, _expectedResponse.ItemID), Times.Once);
-            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ItemID), Times.Once);
+            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_nodeUpdate.SkillID, _expectedResponse.ResourceID), Times.Once);
+            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ResourceID), Times.Once);
             AssertUpdateResponseDispatcher(Times.Once());
             AssertInventoryUpdateDispatcher(Times.Once());
         }
@@ -141,15 +141,15 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         [Test]
         public void Positive_HandleMessages_LootServiceReturnsNothing_NoInventoryUpdatesDispatched()
         {
-            SetupRepositoryContains(true, _stoneUpdate.ItemID);
+            SetupRepositoryContains(true, _harvestNode.ResourceID);
             SetupRepositoryGet(_harvestNode);
             SetupLootService(_harvestNode);
             SetupUnlockChecker(true);
             
             Assert.DoesNotThrow(() => _updateMediator.HandleMessages([_nodeUpdate]));
             
-            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_nodeUpdate.SkillID, _expectedResponse.ItemID), Times.Once);
-            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ItemID), Times.Once);
+            _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_nodeUpdate.SkillID, _expectedResponse.ResourceID), Times.Once);
+            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ResourceID), Times.Once);
             AssertUpdateResponseDispatcher(Times.Once());
             AssertInventoryUpdateDispatcher(Times.Never());
         }
@@ -175,7 +175,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         [Test]
         public void Negative_HandleMessages_ValidatorReturnsFalse_Throws()
         {
-            _skillNodeAccessValidatorMock.Setup(library => library.AssertSkillAllows(_nodeUpdate.SkillID, _nodeUpdate.ItemID)).Throws<Exception>();
+            _skillNodeAccessValidatorMock.Setup(library => library.AssertSkillAllows(_nodeUpdate.SkillID, _nodeUpdate.ResourceID)).Throws<Exception>();
             
             Assert.Throws<Exception>(() => _updateMediator.HandleMessages([_nodeUpdate]));
             

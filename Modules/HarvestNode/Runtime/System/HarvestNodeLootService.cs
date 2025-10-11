@@ -8,10 +8,10 @@ namespace IdelPog.HarvestNode.Runtime.System
 {
     public sealed class HarvestNodeLootService : IHarvestNodeLootService
     {
-        private readonly ILootService<ItemID> _itemLootService;
+        private readonly ILootService<ResourceID> _itemLootService;
         private readonly ILootService<LocationID> _locationLootService;
 
-        public HarvestNodeLootService(ILootService<ItemID> itemLootService, ILootService<LocationID> locationLootService)
+        public HarvestNodeLootService(ILootService<ResourceID> itemLootService, ILootService<LocationID> locationLootService)
         {
             _itemLootService = itemLootService;
             _locationLootService = locationLootService;
@@ -21,7 +21,7 @@ namespace IdelPog.HarvestNode.Runtime.System
         {
             List<InventoryUpdate> inventoryUpdates = [];
 
-            TryAddLoot(_itemLootService, harvestNode.ItemID, inventoryUpdates);
+            TryAddLoot(_itemLootService, harvestNode.ResourceID, inventoryUpdates);
             TryAddLoot(_locationLootService, harvestNode.LocationID, inventoryUpdates);
             
             return inventoryUpdates;

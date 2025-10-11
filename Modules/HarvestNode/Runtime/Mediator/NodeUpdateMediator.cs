@@ -13,7 +13,7 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
 {
     public sealed class NodeUpdateMediator : IBatchMediator<HarvestNodeUpdate>
     {
-        private readonly IStateRepository<ItemID, Contracts.HarvestNode> _harvestNodeRepository;
+        private readonly IStateRepository<ResourceID, Contracts.HarvestNode> _harvestNodeRepository;
         private readonly ISkillNodeAccessValidator _skillNodeAccessValidator;
         private readonly INodeUpdateService _nodeUpdateService;
         private readonly IHarvestNodeLootService _lootService;
@@ -24,7 +24,7 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IFoundAssertion _foundAssertion;
 
-        public NodeUpdateMediator(IStateRepository<ItemID, Contracts.HarvestNode> harvestNodeRepository, ISkillNodeAccessValidator skillNodeAccessValidator,
+        public NodeUpdateMediator(IStateRepository<ResourceID, Contracts.HarvestNode> harvestNodeRepository, ISkillNodeAccessValidator skillNodeAccessValidator,
             IEntityUnlockChecker<SkillID, HarvestNodeUnlockResponse> unlockChecker, INodeUpdateService nodeUpdateService, IHarvestNodeLootService lootService,
             IDispatchMany<HarvestNodeUpdateResponse> updateResponseDispatcher, IDispatchMany<InventoryUpdate> inventoryUpdateDispatcher,
             INodeUnlockedAssertion nodeUnlockedAssertion, ICollectionAssertion collectionAssertion, IFoundAssertion foundAssertion)
@@ -53,10 +53,10 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
                 HarvestNodeUpdate harvestNodeUpdate = messages[i];
                 ValidateUnlocked(harvestNodeUpdate);
                 
-                ItemID itemID = harvestNodeUpdate.ItemID;
-                responses[i] = _nodeUpdateService.UpdateHarvestNode(itemID);
+                ResourceID resourceID = harvestNodeUpdate.ResourceID;
+                responses[i] = _nodeUpdateService.UpdateHarvestNode(resourceID);
 
-                inventoryUpdates.AddRange(GenerateInventoryUpdates(itemID));
+                inventoryUpdates.AddRange(GenerateInventoryUpdates(resourceID));
             }
 
             _updateResponseDispatcher.Dispatch(responses);
@@ -66,21 +66,21 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
         private void ValidateUnlocked(HarvestNodeUpdate harvestNodeUpdate)
         {
             SkillID skillID = harvestNodeUpdate.SkillID;
-            ItemID itemID = harvestNodeUpdate.ItemID;
+            ResourceID resourceID = harvestNodeUpdate.ResourceID;
             
-            _skillNodeAccessValidator.AssertSkillAllows(skillID, itemID);
+            _skillNodeAccessValidator.AssertSkillAllows(skillID, resourceID);
 
-            bool isUnlocked = _unlockChecker.IsUnlocked(skillID, component => component.OnUnlockCommand.ItemID == itemID);
+            bool isUnlocked = _unlockChecker.IsUnlocked(skillID, component => component.OnUnlockCommand.ResourceID == resourceID);
             _nodeUnlockedAssertion.AssertNodeIsUnlocked(isUnlocked, harvestNodeUpdate);
         }
 
-        private List<InventoryUpdate> GenerateInventoryUpdates(ItemID itemID)
+        private List<InventoryUpdate> GenerateInventoryUpdates(ResourceID resourceID)
         {
-            _foundAssertion.AssertFound(itemID, _harvestNodeRepository.Contains(itemID));
+            _foundAssertion.AssertFound(resourceID, _harvestNodeRepository.Contains(resourceID));
 
             List<InventoryUpdate> inventoryUpdates = [];
             
-            Contracts.HarvestNode harvestNode = _harvestNodeRepository.Get(itemID);
+            Contracts.HarvestNode harvestNode = _harvestNodeRepository.Get(resourceID);
             inventoryUpdates.AddRange(_lootService.GenerateInventoryUpdates(harvestNode));
 
             return inventoryUpdates;

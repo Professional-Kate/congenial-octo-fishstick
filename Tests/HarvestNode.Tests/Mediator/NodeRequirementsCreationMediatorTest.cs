@@ -44,25 +44,25 @@ namespace IdelPog.HarvestNode.Tests.Mediator
                     {
                         ItemID = ItemID.STONE, 
                         RequiredLevel = 1,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.STONE, SkillID = SkillID.MINING }
+                        OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.STONE, SkillID = SkillID.MINING }
                     },
                     new HarvestNodeRequirement
                     {
                         ItemID = ItemID.IRON, 
                         RequiredLevel = 2,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.IRON, SkillID = SkillID.MINING }
+                        OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.IRON_CLUSTER, SkillID = SkillID.MINING }
                     },
                     new HarvestNodeRequirement
                     {
                         ItemID = ItemID.COPPER, 
                         RequiredLevel = 3,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.COPPER, SkillID = SkillID.MINING }
+                        OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.COPPER_CLUSTER, SkillID = SkillID.MINING }
                     },
                     new HarvestNodeRequirement
                     {
                         ItemID = ItemID.GOLD, 
                         RequiredLevel = 4,
-                        OnUnlockCommand = new HarvestNodeUnlockResponse { ItemID = ItemID.GOLD, SkillID = SkillID.MINING }
+                        OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.GOLD_CLUSTER, SkillID = SkillID.MINING }
                     }
                 ]
             };

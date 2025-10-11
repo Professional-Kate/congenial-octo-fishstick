@@ -15,7 +15,7 @@ namespace IdelPog.HarvestNode.Runtime.ECS
             _harvestTargetStore = GetComponent<ComponentStore<HarvestTargetComponent>>();
         }
 
-        public bool Allows(ItemID harvestTarget)
+        public bool Allows(ResourceID harvestTarget)
         {
             bool contains =_harvestTargetStore.ContainsComponent(resource => resource.HarvestTarget == harvestTarget);
             return contains;

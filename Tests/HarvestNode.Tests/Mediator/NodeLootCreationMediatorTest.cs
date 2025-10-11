@@ -3,45 +3,37 @@ using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Contracts.Response;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
-using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
-using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.Mediator;
-using IdelPog.Loot.Policy;
-using IdelPog.Loot.Table;
+using IdelPog.HarvestNode.Runtime.System.Interface;
 using Moq;
 
 namespace IdelPog.HarvestNode.Tests.Mediator
 {
     [TestFixture]
-    public sealed class NodeLootGenerationMediatorTest
+    public sealed class NodeLootCreationMediatorTest
     {
-        private NodeLootGenerationMediator _mediator;
-        private Mock<IAssetRepository<ItemID, ILootTable>> _lootTableRepositoryMock;
-        private Mock<IAssetRepository<ItemID,IGrantPolicy>> _grantPolicyRepositoryMock;
-        private Mock<IWeightedLootTableFactory> _lootTableFactoryMock;
-        private Mock<IWeightedPolicyFactory> _policyFactoryMock;
+        private NodeLootCreationMediator _mediator;
         private Mock<IDispatchMany<HarvestNodeLootCreationResponse>> _responseDispatcherMock;
+        private Mock<ILootTableService<ResourceID>> _lootTableServiceMock;
+        private Mock<IGrantPolicyService<ResourceID>> _grantPolicyServiceMock;
 
         private HarvestNodeLootCreation _singleSandCreation;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _lootTableRepositoryMock = new Mock<IAssetRepository<ItemID, ILootTable>>();
-            _grantPolicyRepositoryMock = new Mock<IAssetRepository<ItemID, IGrantPolicy>>();
-            _lootTableFactoryMock = new Mock<IWeightedLootTableFactory>();
-            _policyFactoryMock =  new Mock<IWeightedPolicyFactory>();
+            _lootTableServiceMock = new Mock<ILootTableService<ResourceID>>();
+            _grantPolicyServiceMock = new Mock<IGrantPolicyService<ResourceID>>();
             _responseDispatcherMock = new Mock<IDispatchMany<HarvestNodeLootCreationResponse>>();
             ThrowHandler throwHandler = new();
             
-            _mediator = new NodeLootGenerationMediator(_lootTableRepositoryMock.Object, _grantPolicyRepositoryMock.Object, _lootTableFactoryMock.Object, _policyFactoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(throwHandler), new UniqueAssertion(throwHandler));
+            _mediator = new NodeLootCreationMediator(_lootTableServiceMock.Object, _grantPolicyServiceMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(throwHandler));
 
             _singleSandCreation = new HarvestNodeLootCreation
             {
-                ItemID = ItemID.SAND,
                 ResourceID = ResourceID.RIVER,
                 LootTableEntries =
                 [
@@ -54,9 +46,19 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         [SetUp]
         public void Setup()
         {
-            _lootTableRepositoryMock.Reset();
             _responseDispatcherMock.Reset();
-            _grantPolicyRepositoryMock.Reset();
+            _lootTableServiceMock.Reset();
+            _grantPolicyServiceMock.Reset();
+        }
+
+        private void VerifyLootServiceCalled(Times times)
+        {
+            _lootTableServiceMock.Verify(library => library.CreateLootTable(It.IsAny<LootTableEntry[]>(), It.IsAny<ResourceID>()), times);
+        }
+        
+        private void VerifyGrantServiceCalled(Times times)
+        {
+            _grantPolicyServiceMock.Verify(library => library.CreateGrantPolicy(It.IsAny<GrantPolicyEntry>(),It.IsAny<ResourceID>()), times);
         }
 
         private void VerifyDispatcherCalled()
@@ -69,47 +71,13 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _responseDispatcherMock.VerifyNoOtherCalls();
         }
         
-        private void AssertTableRepositoryContains(int amountCalled)
-        {
-            _lootTableRepositoryMock.Verify(library => library.Contains(It.IsAny<ItemID>()), Times.Exactly(amountCalled));
-        }
-
-        private void AssertTableRepositoryAdd(int amountCalled)
-        {
-            _lootTableRepositoryMock.Verify(library => library.Add(It.IsAny<ItemID>(), It.IsAny<ILootTable>()), Times.Exactly(amountCalled));
-        }
-
-        private void VerifyNoMoreTableRepositoryCalls()
-        {
-            _lootTableRepositoryMock.VerifyNoOtherCalls();
-        }
-        
-        private void AssertPolicyRepositoryContains(int amountCalled)
-        {
-            _grantPolicyRepositoryMock.Verify(library => library.Contains(It.IsAny<ItemID>()), Times.Exactly(amountCalled));
-        }
-
-        private void AssertPolicyRepositoryAdd(int amountCalled)
-        {
-            _grantPolicyRepositoryMock.Verify(library => library.Add(It.IsAny<ItemID>(), It.IsAny<IGrantPolicy>()), Times.Exactly(amountCalled));
-        }
-
-        private void VerifyNoMorePolicyRepositoryCalls()
-        {
-            _grantPolicyRepositoryMock.VerifyNoOtherCalls();
-        }
-
         [Test]
         public void Positive_HandleMessages_MultipleMessages_CreatesLootTable_ReturnsResponse()
         {
             Assert.DoesNotThrow(() => _mediator.HandleMessages([_singleSandCreation, _singleSandCreation]));
 
-            AssertTableRepositoryContains(2);
-            AssertTableRepositoryAdd(2);
-            VerifyNoMoreTableRepositoryCalls();
-            AssertPolicyRepositoryContains(2);
-            AssertPolicyRepositoryAdd(2);
-            VerifyNoMorePolicyRepositoryCalls();
+            VerifyLootServiceCalled(Times.Exactly(2));
+            VerifyGrantServiceCalled(Times.Exactly(2));
             VerifyDispatcherCalled();
         }
 
@@ -123,12 +91,8 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             
             Assert.DoesNotThrow(() => _mediator.HandleMessages([creation]));
 
-            AssertTableRepositoryContains(1);
-            AssertTableRepositoryAdd(1);
-            VerifyNoMoreTableRepositoryCalls();
-            AssertPolicyRepositoryContains(1);
-            AssertPolicyRepositoryAdd(1);
-            VerifyNoMorePolicyRepositoryCalls();
+            VerifyLootServiceCalled(Times.Once());
+            VerifyGrantServiceCalled(Times.Once());
             VerifyDispatcherCalled();
         }
 
@@ -142,12 +106,8 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             
             Assert.DoesNotThrow(() => _mediator.HandleMessages([creation]));
 
-            AssertTableRepositoryContains(1);
-            AssertTableRepositoryAdd(1);
-            VerifyNoMoreTableRepositoryCalls();
-            AssertPolicyRepositoryContains(1);
-            AssertPolicyRepositoryAdd(1);
-            VerifyNoMorePolicyRepositoryCalls();
+            VerifyLootServiceCalled(Times.Once());
+            VerifyGrantServiceCalled(Times.Once());
             VerifyDispatcherCalled();
         }
 
@@ -157,17 +117,21 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _mediator.HandleMessages([_singleSandCreation with { LootTableEntries = [] }]));
             Assert.That(exception.CollectionType, Is.EqualTo(typeof(LootTableEntry)));
             
+            VerifyLootServiceCalled(Times.Never());
+            VerifyGrantServiceCalled(Times.Never());
             VerifyDispatcherNotCalled();
         }
 
         [Test]
         public void Negative_HandleMessages_LootTableAlreadyExists_Throws()
         {
-            _lootTableRepositoryMock.Setup(library => library.Contains(_singleSandCreation.ItemID)).Returns(true);
+            _lootTableServiceMock.Setup(library => library.CreateLootTable(_singleSandCreation.LootTableEntries, _singleSandCreation.ResourceID))
+                .Throws(new DuplicateEntityException(_singleSandCreation.ResourceID));
             
-            DuplicateEntityException exception = Assert.Throws<DuplicateEntityException>(() => _mediator.HandleMessages([_singleSandCreation]));
-            Assert.That(exception.ID, Is.EqualTo(_singleSandCreation.ItemID));
+            Assert.Throws<DuplicateEntityException>(() => _mediator.HandleMessages([_singleSandCreation]));
 
+            VerifyLootServiceCalled(Times.Once());
+            VerifyGrantServiceCalled(Times.Never());
             VerifyDispatcherNotCalled();
         }
 
@@ -176,8 +140,9 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         {
             Assert.Throws<ArgumentNullException>(() => _mediator.HandleMessages(null!));
             
+            VerifyLootServiceCalled(Times.Never());
+            VerifyGrantServiceCalled(Times.Never());
             VerifyDispatcherNotCalled();
-            
         }
         
         [Test]
@@ -186,6 +151,8 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _mediator.HandleMessages([]));
             Assert.That(exception.CollectionType, Is.EqualTo(typeof(HarvestNodeLootCreation)));
             
+            VerifyLootServiceCalled(Times.Never());
+            VerifyGrantServiceCalled(Times.Never());
             VerifyDispatcherNotCalled();
         }
     }

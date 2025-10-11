@@ -25,7 +25,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
         {
             _nodeUpdate = new HarvestNodeUpdate
             {
-                ItemID = ItemID.IRON,
+                ResourceID = ResourceID.IRON_CLUSTER,
                 SkillID = SkillID.MINING
             };
             
@@ -33,7 +33,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.IRON_CLUSTER, LocationID = LocationID.CAVE}
+                    new ReadOnlyHarvestNode { ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.IRON_CLUSTER, LocationID = LocationID.CAVE}
                 ],
                 LinkedSkill = SkillID.MINING
             };
@@ -65,7 +65,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
         
         private static void AssertResponseListener(HarvestNodeUpdate nodeUpdate, HarvestNodeUpdateResponse response)
         { 
-            Assert.That(response.ItemID, Is.EqualTo(nodeUpdate.ItemID));
+            Assert.That(response.ResourceID, Is.EqualTo(nodeUpdate.ResourceID));
         }
 
         private void AssertErrorLength(int length)
@@ -107,12 +107,12 @@ namespace IdelPog.Integration.Tests.HarvestNode
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.STONE, LocationID = LocationID.CAVE}
+                    new ReadOnlyHarvestNode { ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.STONE, LocationID = LocationID.CAVE}
                 ],
                 LinkedSkill = SkillID.FORAGING
             };
 
-            HarvestNodeUpdate foragingUpdate = new() { ItemID = ItemID.STONE, SkillID = SkillID.FORAGING };
+            HarvestNodeUpdate foragingUpdate = new() { ResourceID = ResourceID.STONE, SkillID = SkillID.FORAGING };
             
             DispatchNodeCreation(_harvestNodeCreation, foragingCreation);
             Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate, foragingUpdate));
@@ -148,7 +148,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
         {
             DispatchNodeCreation(_harvestNodeCreation);
             
-            Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate with { ItemID = ItemID.HERBS }));
+            Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate with { ResourceID = ResourceID.ANT_NEST }));
             
             Assert.Multiple(() =>
             {
@@ -157,7 +157,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             });
             
             AssertErrorLength(1);
-            AssertErrorListener<NotFoundException<ItemID>>([_nodeUpdate with { ItemID = ItemID.HERBS }],  _updateNodeErrorListener.HarvestNodeUpdateError);
+            AssertErrorListener<NotFoundException<ResourceID>>([_nodeUpdate with { ResourceID = ResourceID.ANT_NEST }],  _updateNodeErrorListener.HarvestNodeUpdateError);
         }
 
         [Test]

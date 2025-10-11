@@ -6,6 +6,7 @@
         IRON_CLUSTER,
         COPPER_CLUSTER,
         GOLD_CLUSTER,
+        GEM_VEIN,
         OAK_TREE,
         SPRUCE_TREE,
         BIRCH_TREE,

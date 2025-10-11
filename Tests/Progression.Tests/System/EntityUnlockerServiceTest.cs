@@ -36,7 +36,7 @@ namespace IdelPog.Progression.Tests.System
             _entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object, new FoundAssertion(throwHandler), new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler), new IDMatchesAssertion<SkillID>(throwHandler), new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler));
 
             _harvestNodeUnlock = new HarvestNodeUnlock { SkillID = SkillID.MINING, SkillLevel = 5 };
-            _harvestNodeUnlockResponse = new HarvestNodeUnlockResponse { ItemID = ItemID.BIRCH, SkillID = SkillID.MINING };
+            _harvestNodeUnlockResponse = new HarvestNodeUnlockResponse { ResourceID = ResourceID.COPPER_CLUSTER, SkillID = SkillID.MINING };
             _levelRequirementComponent = new LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> { Level = 5, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse };
             _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([_levelRequirementComponent]);
         }
@@ -66,7 +66,7 @@ namespace IdelPog.Progression.Tests.System
             Assert.Multiple(() =>
             {
                 Assert.That(harvestNodeUnlock.SkillID, Is.EqualTo(harvestNodeUnlockResponse.SkillID));
-                Assert.That(harvestNodeUnlockResponse.ItemID, Is.EqualTo(_harvestNodeUnlockResponse.ItemID));
+                Assert.That(harvestNodeUnlockResponse.ResourceID, Is.EqualTo(_harvestNodeUnlockResponse.ResourceID));
             });
         }
 

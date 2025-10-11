@@ -13,6 +13,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
         private HarvestNodeUpdate _ironUpdate;
         private HarvestNodeCreation _ironCreation;
         private HarvestNodeLootCreation _ironLootCreation;
+        private LocationLootCreation _locationLootCreation;
         private InventoryUpdateListener _inventoryUpdateListener;
 
         [OneTimeSetUp]
@@ -20,7 +21,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
         {
             _ironUpdate = new HarvestNodeUpdate
             {
-                ItemID = ItemID.IRON,
+                ResourceID = ResourceID.IRON_CLUSTER,
                 SkillID = SkillID.MINING
             };
 
@@ -31,7 +32,6 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
                     new ReadOnlyHarvestNode
                     {
                         ResourceID = ResourceID.IRON_CLUSTER,
-                        ItemID = ItemID.IRON,
                         LocationID = LocationID.CAVE,
                         ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 },
                         Information = new Information { Name = "", Description = "" }
@@ -42,12 +42,16 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
             
             _ironLootCreation = new HarvestNodeLootCreation
             {
-                ItemID = ItemID.IRON,
                 ResourceID = ResourceID.IRON_CLUSTER,
-                LootTableEntries =
-                [
-                    new LootTableEntry { ItemID = ItemID.IRON, Weight = 1 }
-                ],
+                LootTableEntries = [ new LootTableEntry { ItemID = ItemID.IRON, Weight = 1 }],
+                GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 0 }
+            };
+
+            _locationLootCreation = new LocationLootCreation
+            {
+                ResourceID = ResourceID.GEM_VEIN,
+                LocationID = LocationID.CAVE,
+                LootTableEntries = [ new LootTableEntry { ItemID = ItemID.RUBY, Weight = 1 } ],
                 GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 0 }
             };
         }
@@ -80,6 +84,13 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
             buffer.MarkReady();
         }
 
+        private void DispatchLocationLootCreation(params LocationLootCreation[] lootCreations)
+        {
+            IBuffer<LocationLootCreation> buffer = BufferManager.RequestBuffer<LocationLootCreation>(new BufferRequest(lootCreations.Length));
+            buffer.Assign(lootCreations);
+            buffer.MarkReady();
+        }
+
         private void AssertListenerCalled(bool wasCalled)
         {
             Assert.That(_inventoryUpdateListener.WasCalled, Is.EqualTo(wasCalled));
@@ -99,12 +110,23 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
                 Assert.That(inventoryUpdate.Amount, Is.GreaterThan(0));
             });
         }
-
+        
         [Test]
-        public void Positive_SendHarvestNodeUpdate_GrantPolicyNoDrop_NoUpdatesDispatched()
+        public void Positive_SendHarvestNodeUpdate_ItemGrantPolicyNoDrop_NoUpdatesDispatched()
         {
             DispatchNodeCreation(_ironCreation);
             DispatchNodeLootCreation(_ironLootCreation with { GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 1 }});
+            
+            DispatchNodeUpdate(_ironUpdate);
+
+            AssertListenerCalled(false);
+        }
+        
+        [Test]
+        public void Positive_SendHarvestNodeUpdate_LocationGrantPolicyNoDrop_NoUpdatesDispatched()
+        {
+            DispatchNodeCreation(_ironCreation);
+            DispatchLocationLootCreation(_locationLootCreation with { GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 1 }});
             
             DispatchNodeUpdate(_ironUpdate);
 
@@ -122,7 +144,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
         }
 
         [Test]
-        public void Positive_SendHarvestNodeUpdate_ItemGrantDrop_DispatchesInventoryUpdate()
+        public void Positive_SendHarvestNodeUpdate_HarvestNodeGrantDrop_DispatchesInventoryUpdate()
         {
             DispatchNodeCreation(_ironCreation);
             DispatchNodeLootCreation(_ironLootCreation);
@@ -131,33 +153,35 @@ namespace IdelPog.Integration.Tests.HarvestNode.Item
 
             AssertListenerCalled(true);
             AssertResponseLength(1);
-            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], _ironUpdate.ItemID);
+            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.IRON);
         }
         
         [Test]
         public void Positive_SendHarvestNodeUpdate_LocationGrantsDrop_DispatchesInventoryUpdate()
         {
             DispatchNodeCreation(_ironCreation);
+            DispatchLocationLootCreation(_locationLootCreation);
             
             DispatchNodeUpdate(_ironUpdate);
         
             AssertListenerCalled(true);
             AssertResponseLength(1);
-            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.STONE);
+            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.RUBY);
         }
         
         [Test]
-        public void Positive_SendHarvestNodeUpdate_LocationAndItemDrop_DispatchesTwoUpdates()
+        public void Positive_SendHarvestNodeUpdate_LocationAndHarvestNodeDrop_DispatchesTwoUpdates()
         {
             DispatchNodeCreation(_ironCreation);
             DispatchNodeLootCreation(_ironLootCreation);
+            DispatchLocationLootCreation(_locationLootCreation);
             
             DispatchNodeUpdate(_ironUpdate);
         
             AssertListenerCalled(true);
             AssertResponseLength(2);
-            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], _ironUpdate.ItemID);
-            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.STONE);
+            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.IRON);
+            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[1], ItemID.RUBY);
         }
     }
 }

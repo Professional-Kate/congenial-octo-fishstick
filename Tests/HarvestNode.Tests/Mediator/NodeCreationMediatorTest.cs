@@ -24,7 +24,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
     {
         private IBatchMediator<HarvestNodeCreation> _nodeCreationMediator;
         private Mock<IAssetRepository<SkillID, SkillNodeEntity>> _skillNodeEntityRepositoryMock;
-        private Mock<IStateRepository<ItemID, Contracts.HarvestNode>> _harvestNodeRepositoryMock;
+        private Mock<IStateRepository<ResourceID, Contracts.HarvestNode>> _harvestNodeRepositoryMock;
         private Mock<ISkillNodeEntityFactory> _skillNodeEntityFactoryMock;
         private Mock<IHarvestNodeFactory> _harvestNodeFactoryMock;
         private Mock<INodeCreationResponseFactory> _nodeCreationResponseFactoryMock;
@@ -36,7 +36,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         public void OneTimeSetup()
         {
             _skillNodeEntityRepositoryMock = new Mock<IAssetRepository<SkillID, SkillNodeEntity>>();
-            _harvestNodeRepositoryMock = new Mock<IStateRepository<ItemID, Contracts.HarvestNode>>();
+            _harvestNodeRepositoryMock = new Mock<IStateRepository<ResourceID, Contracts.HarvestNode>>();
             _skillNodeEntityFactoryMock = new Mock<ISkillNodeEntityFactory>();
             _harvestNodeFactoryMock = new Mock<IHarvestNodeFactory>();
             _nodeCreationResponseFactoryMock = new Mock<INodeCreationResponseFactory>();
@@ -46,10 +46,10 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             {
                 ReadOnlyHarvestNodes =
                 [
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.STONE, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.STONE, LocationID = LocationID.CAVE},
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.COPPER, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.COPPER_CLUSTER, LocationID = LocationID.CAVE},
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.GOLD, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.GOLD_CLUSTER, LocationID = LocationID.CAVE},
-                    new ReadOnlyHarvestNode { ItemID =  ItemID.IRON, ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.IRON_CLUSTER, LocationID = LocationID.CAVE}
+                    new ReadOnlyHarvestNode { ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.STONE, LocationID = LocationID.CAVE},
+                    new ReadOnlyHarvestNode { ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.COPPER_CLUSTER, LocationID = LocationID.CAVE},
+                    new ReadOnlyHarvestNode { ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.GOLD_CLUSTER, LocationID = LocationID.CAVE},
+                    new ReadOnlyHarvestNode { ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, Level = 0, ExperiencePerAction = 0, NextLevelExperience = 0 }, Information = new Information { Name = "", Description = "" }, ResourceID = ResourceID.IRON_CLUSTER, LocationID = LocationID.CAVE}
                 ],
                 LinkedSkill = SkillID.MINING
             };
@@ -74,7 +74,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             Assert.DoesNotThrow(() => _nodeCreationMediator.HandleMessages([_miningCreation]));
             
             _skillNodeEntityRepositoryMock.Verify(library => library.Add(_miningCreation.LinkedSkill, It.IsAny<SkillNodeEntity>()), Times.Once);
-            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ItemID.STONE, ItemID.COPPER, ItemID.GOLD, ItemID.IRON), It.IsAny<Contracts.HarvestNode>()), Times.Exactly(_miningCreation.ReadOnlyHarvestNodes.Length));
+            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ResourceID.STONE, ResourceID.COPPER_CLUSTER, ResourceID.GOLD_CLUSTER, ResourceID.IRON_CLUSTER), It.IsAny<Contracts.HarvestNode>()), Times.Exactly(_miningCreation.ReadOnlyHarvestNodes.Length));
             _skillNodeEntityFactoryMock.Verify(library => library.Create(_miningCreation.LinkedSkill, _miningCreation.ReadOnlyHarvestNodes), Times.Once);
             _harvestNodeFactoryMock.Verify(library => library.Create(It.IsAny<ReadOnlyHarvestNode>()), Times.Exactly(_miningCreation.ReadOnlyHarvestNodes.Length));
             _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse[]>()), Times.Once);
@@ -89,19 +89,19 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             
             _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse[]>()), Times.Never);
             _skillNodeEntityRepositoryMock.Verify(library => library.Add(_miningCreation.LinkedSkill, It.IsAny<SkillNodeEntity>()), Times.Never);
-            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ItemID.STONE, ItemID.COPPER, ItemID.GOLD, ItemID.IRON), It.IsAny<Contracts.HarvestNode>()), Times.Never);
+            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ResourceID.STONE, ResourceID.COPPER_CLUSTER, ResourceID.GOLD_CLUSTER, ResourceID.IRON_CLUSTER), It.IsAny<Contracts.HarvestNode>()), Times.Never);
         }
 
         [Test]
         public void Negative_HandleMessages_ResourceIDAlreadyExists_Throws()
         {
-            _harvestNodeRepositoryMock.Setup(library => library.Contains(It.IsAny<ItemID>())).Returns(true);
+            _harvestNodeRepositoryMock.Setup(library => library.Contains(It.IsAny<ResourceID>())).Returns(true);
             
             Assert.Throws<DuplicateEntityException>(() => _nodeCreationMediator.HandleMessages([_miningCreation]));
             
             _dispatchOneMock.Verify(library => library.Dispatch(It.IsAny<HarvestNodeCreationResponse[]>()), Times.Never);
             _skillNodeEntityRepositoryMock.Verify(library => library.Add(_miningCreation.LinkedSkill, It.IsAny<SkillNodeEntity>()), Times.Never);
-            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ItemID.STONE, ItemID.COPPER, ItemID.GOLD, ItemID.IRON), It.IsAny<Contracts.HarvestNode>()), Times.Never);
+            _harvestNodeRepositoryMock.Verify(library => library.Add(It.IsIn(ResourceID.STONE, ResourceID.COPPER_CLUSTER, ResourceID.GOLD_CLUSTER, ResourceID.IRON_CLUSTER), It.IsAny<Contracts.HarvestNode>()), Times.Never);
             
             
         }
