@@ -145,7 +145,7 @@ namespace IdelPog.Integration.Tests.Inventory
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo with { Amount = 0, BaseSellPrice = 0 }, MutateType.DELETED);
+            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo with { Amount = 0 }, MutateType.DELETED);
         }
 
         [Test]
@@ -175,16 +175,10 @@ namespace IdelPog.Integration.Tests.Inventory
         {
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE }, _addStoneUpdate));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.True);
-                Assert.That(_inventoryUpdateResponseListener.WasCalled, Is.False);
-            });
-
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(2);
             AssertResponseError<EmptyCollectionException>();
-
-            InventoryUpdate[] inventoryUpdates = _inventoryUpdateErrorListener.InventoryUpdateError.InventoryUpdates;
-            Assert.That(inventoryUpdates, Has.Length.EqualTo(2));
         }
 
         [Test]
@@ -192,16 +186,10 @@ namespace IdelPog.Integration.Tests.Inventory
         {
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE }));
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.True);
-                Assert.That(_inventoryUpdateResponseListener.WasCalled, Is.False);
-            });
-
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(1);
             AssertResponseError<NotFoundException<ItemID>>();
-
-            InventoryUpdate[] inventoryUpdates = _inventoryUpdateErrorListener.InventoryUpdateError.InventoryUpdates;
-            Assert.That(inventoryUpdates, Has.Length.EqualTo(1));
         }
 
         [Test]
@@ -210,11 +198,10 @@ namespace IdelPog.Integration.Tests.Inventory
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE, Amount = 11 }));
             
-            Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.True);
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(1);
             AssertResponseError<InsufficientAmountException>();
-
-            InventoryUpdate[] inventoryUpdates = _inventoryUpdateErrorListener.InventoryUpdateError.InventoryUpdates;
-            Assert.That(inventoryUpdates, Has.Length.EqualTo(1));
         }
 
         [Test]
@@ -222,11 +209,10 @@ namespace IdelPog.Integration.Tests.Inventory
         {
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = (ActionType) 5 }));
             
-            Assert.That(_inventoryUpdateErrorListener.WasCalled, Is.True);
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(1);
             AssertResponseError<ArgumentOutOfRangeException>();
-
-            InventoryUpdate[] inventoryUpdates = _inventoryUpdateErrorListener.InventoryUpdateError.InventoryUpdates;
-            Assert.That(inventoryUpdates, Has.Length.EqualTo(1));
         }
     }
 }

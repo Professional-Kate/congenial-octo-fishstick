@@ -48,11 +48,7 @@ namespace IdelPog.Inventory
             IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
             IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
             IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
-
-            ILogWriter writer = new ConsoleWriter();
-            IBufferLogger bufferLogger = new BufferLoggingService(writer);
-            
-            IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IItemFoundAssertion itemFoundAssertion = new ItemFoundAssertion(throwHandler);
 
             IMapper<ItemID> itemMapper = new Mapper<ItemID>(foundAssertion, uniqueAssertion);
             itemMapper.AddInformation(ItemID.STONE, new Information { Description = "Rock and...", Name = "Stone" });
@@ -73,12 +69,17 @@ namespace IdelPog.Inventory
             
             IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
             IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();
-            IInventoryUpdateResponseFactory inventoryUpdateResponseFactory = new InventoryUpdateResponseFactory();
             IItemFactory itemFactory = new ItemFactory(itemMapper);
-            IInventoryUpdateSummarizer summarizer = new InventoryUpdateSummarizer(updateFactory, collectionAssertion);
             IItemInfoFactory itemInfoFactory = new ItemInfoFactory();
             IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
-            IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryUpdateMediator(inventory, itemFactory, summarizer, inventoryUpdateResponseFactory, itemInfoFactory, itemMapper, inventoryUpdateDispatcher, collectionAssertion);
+            ILogWriter writer = new ConsoleWriter();
+            IBufferLogger bufferLogger = new BufferLoggingService(writer);
+            
+            IInventoryUpdateService inventoryUpdateService = new InventoryUpdateService(inventory, itemInfoFactory, itemFactory, collectionAssertion, itemFoundAssertion);
+            IInventoryUpdateSummarizer summarizer = new InventoryUpdateSummarizer(updateFactory, collectionAssertion);
+            IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
+            IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryUpdateMediator(inventoryUpdateService, summarizer, inventoryUpdateDispatcher, collectionAssertion);
 
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
             IErrorFactory<InventoryUpdateError, IReadOnlyList<InventoryUpdate>> inventoryUpdateErrorFactory = new InventoryUpdateErrorFactory(baseErrorFactory);

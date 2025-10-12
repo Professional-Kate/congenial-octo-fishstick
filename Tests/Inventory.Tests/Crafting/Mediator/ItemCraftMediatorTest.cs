@@ -9,6 +9,7 @@ using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Contracts;
+using IdelPog.Inventory.Contracts.Response;
 using IdelPog.Inventory.Crafting.Contracts;
 using IdelPog.Inventory.Crafting.Contracts.Command;
 using IdelPog.Inventory.Crafting.Contracts.Response;
@@ -16,6 +17,7 @@ using IdelPog.Inventory.Crafting.Runtime.ECS;
 using IdelPog.Inventory.Crafting.Runtime.ECS.Component;
 using IdelPog.Inventory.Crafting.Runtime.Mediator;
 using IdelPog.Inventory.Exceptions;
+using IdelPog.Inventory.Factory.Interface;
 using IdelPog.Inventory.Service.Interface;
 using Moq;
 
@@ -29,6 +31,8 @@ namespace IdelPog.Inventory.Tests.Crafting.Mediator
         private Mock<IAssetRepository<RecipeID, CraftingRecipeEntity>> _entityRepositoryMock;
         private Mock<IInventoryUpdateService> _updateServiceMock;
         private Mock<IDispatchMany<ItemCraftResponse>> _dispatcherMock;
+        private Mock<IInventoryUpdateFactory> _updateFactoryMock;
+        private Mock<IDispatchMany<InventoryUpdateResponse>> _updateDispatcherMock;
         
         private ItemCraft _ironRingCraft;
         private CraftingRecipeEntity _recipeEntity;
@@ -41,12 +45,14 @@ namespace IdelPog.Inventory.Tests.Crafting.Mediator
             _entityRepositoryMock = new Mock<IAssetRepository<RecipeID, CraftingRecipeEntity>>();
             _updateServiceMock = new Mock<IInventoryUpdateService>();
             _dispatcherMock = new Mock<IDispatchMany<ItemCraftResponse>>();
+            _updateFactoryMock = new Mock<IInventoryUpdateFactory>();
+            _updateDispatcherMock = new Mock<IDispatchMany<InventoryUpdateResponse>>();
             ThrowHandler throwHandler = new();
             
             _ironRingItem = new Item(ItemID.RING, 1, new Information { Name = "", Description = "" }, 1);
             _ironRingCraft = new ItemCraft { RecipeID = RecipeID.IRON_RING, Amount = 1 };
             _recipeEntity = new CraftingRecipeEntity([new RecipeInputComponent { ItemID = ItemID.IRON, RequiredAmount = 1}], [new RecipeOutputComponent { ItemID = ItemID.RING, OutputAmount = 1}], throwHandler);
-            _craftMediator = new ItemCraftMediator(_inventoryMock.Object, _entityRepositoryMock.Object, _updateServiceMock.Object, _dispatcherMock.Object, new FoundAssertion(throwHandler), new AmountAssertion(throwHandler), new CollectionAssertion(throwHandler));
+            _craftMediator = new ItemCraftMediator(_inventoryMock.Object, _entityRepositoryMock.Object, _updateServiceMock.Object, _updateFactoryMock.Object, _dispatcherMock.Object, _updateDispatcherMock.Object, new FoundAssertion(throwHandler), new AmountAssertion(throwHandler), new CollectionAssertion(throwHandler));
         }
 
         [SetUp]
@@ -90,12 +96,6 @@ namespace IdelPog.Inventory.Tests.Crafting.Mediator
             _dispatcherMock.Verify(library => library.Dispatch(It.IsAny<ItemCraftResponse[]>()), times);
         }
 
-        private void VerifyUpdateServiceCalls(Times times)
-        {
-            _updateServiceMock.Verify(library => library.CreateAddUpdate(It.IsAny<ItemID>(), It.IsAny<uint>()), times);
-            _updateServiceMock.Verify(library => library.CreateRemoveUpdate(It.IsAny<ItemID>(), It.IsAny<uint>()), times);
-        }
-
         private void VerifyUpdateServiceApplyUpdatesCalled(Times times)
         { 
             _updateServiceMock.Verify(library => library.ApplyUpdates(It.IsAny<IReadOnlyList<InventoryUpdate>>()), times);
@@ -117,7 +117,6 @@ namespace IdelPog.Inventory.Tests.Crafting.Mediator
 
             VerifyRepository(Times.Once());
             VerifyDispatcherCalled(Times.Once());
-            VerifyUpdateServiceCalls(Times.Once());
             VerifyUpdateServiceApplyUpdatesCalled(Times.Once());
             VerifyServiceNoOtherCalls();
         }
@@ -132,7 +131,6 @@ namespace IdelPog.Inventory.Tests.Crafting.Mediator
             Assert.DoesNotThrow(() => _craftMediator.HandleMessages([_ironRingCraft, _ironRingCraft]));
 
             VerifyDispatcherCalled(Times.Once());
-            VerifyUpdateServiceCalls(Times.Exactly(2));
             VerifyUpdateServiceApplyUpdatesCalled(Times.Once());
             VerifyServiceNoOtherCalls();
         }

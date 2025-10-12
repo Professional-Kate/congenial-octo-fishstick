@@ -1,14 +1,10 @@
 ﻿using IdelPog.Core.Contracts.Command;
-using IdelPog.Core.Contracts.Enum;
+using IdelPog.Inventory.Contracts.Response;
 
 namespace IdelPog.Inventory.Service.Interface
 {
     public interface IInventoryUpdateService
     {
-        public InventoryUpdate CreateRemoveUpdate(ItemID itemID, uint amount);
-
-        public InventoryUpdate CreateAddUpdate(ItemID itemID, uint amount);
-
-        public void ApplyUpdates(IReadOnlyList<InventoryUpdate> inventoryUpdates);
+        public IReadOnlyList<InventoryUpdateResponse> ApplyUpdates(IReadOnlyList<InventoryUpdate> inventoryUpdates);
     }
 }

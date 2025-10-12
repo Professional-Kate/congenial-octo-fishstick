@@ -4,7 +4,7 @@ using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Exceptions;
 
-namespace IdelPog.Inventory.Tests
+namespace IdelPog.Inventory.Tests.Assertion
 {
     [TestFixture]
     public class AmountAssertionTest
