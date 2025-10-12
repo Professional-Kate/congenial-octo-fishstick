@@ -21,5 +21,15 @@ namespace IdelPog.Inventory.Crafting.Runtime.ECS
         {
             return _outputStore.ContainsComponent(predicate);
         }
+        
+        public RecipeInputComponent[] GetRecipe()
+        { 
+            return _ingredientStore.GetAllComponents();
+        }
+
+        public RecipeOutputComponent[] GetOutput()
+        { 
+            return _outputStore.GetAllComponents();
+        }
     }
 }
