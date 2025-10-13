@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts;
-using IdelPog.Inventory.Crafting.Contracts.Command;
+using IdelPog.Inventory.Contracts.Command;
 
-namespace IdelPog.Inventory.Crafting.Contracts.Error
+namespace IdelPog.Inventory.Contracts.Error
 {
     public readonly record struct ItemCraftError
     {

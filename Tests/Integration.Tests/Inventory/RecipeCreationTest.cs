@@ -2,10 +2,10 @@
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Inventory.Crafting.Contracts;
-using IdelPog.Inventory.Crafting.Contracts.Command;
-using IdelPog.Inventory.Crafting.Contracts.Error;
-using IdelPog.Inventory.Crafting.Contracts.Response;
+using IdelPog.Inventory.Contracts;
+using IdelPog.Inventory.Contracts.Command;
+using IdelPog.Inventory.Contracts.Error;
+using IdelPog.Inventory.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.Inventory
 {

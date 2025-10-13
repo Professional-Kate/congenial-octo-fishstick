@@ -1,6 +1,6 @@
-﻿namespace IdelPog.Inventory.Crafting.Contracts.Response
+﻿namespace IdelPog.Inventory.Contracts.Command
 {
-    public readonly record struct RecipeCreationResponse
+    public readonly record struct RecipeCreation
     {
         public required RecipeID RecipeID { get; init; }
         public required RecipeInput[] RecipeInputs { get; init; }

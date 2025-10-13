@@ -1,7 +1,7 @@
-﻿using IdelPog.Inventory.Crafting.Contracts;
-using IdelPog.Inventory.Crafting.Runtime.ECS;
+﻿using IdelPog.Inventory.Contracts;
+using IdelPog.Inventory.Crafting.ECS;
 
-namespace IdelPog.Inventory.Crafting.Runtime.Factory.Interface
+namespace IdelPog.Inventory.Crafting.Factory.Interface
 {
     public interface ICraftingRecipeEntityFactory
     {

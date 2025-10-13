@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.ECS.Component;
 
-namespace IdelPog.Inventory.Crafting.Runtime.ECS.Component
+namespace IdelPog.Inventory.Crafting.ECS.Component
 {
     public readonly record struct RecipeInputComponent : IComponent<RecipeInputComponent>
     {

@@ -5,12 +5,12 @@ using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
-using IdelPog.Inventory.Crafting.Contracts;
-using IdelPog.Inventory.Crafting.Contracts.Command;
-using IdelPog.Inventory.Crafting.Contracts.Response;
-using IdelPog.Inventory.Crafting.Runtime.ECS;
-using IdelPog.Inventory.Crafting.Runtime.Factory.Interface;
-using IdelPog.Inventory.Crafting.Runtime.Mediator;
+using IdelPog.Inventory.Contracts;
+using IdelPog.Inventory.Contracts.Command;
+using IdelPog.Inventory.Contracts.Response;
+using IdelPog.Inventory.Crafting.ECS;
+using IdelPog.Inventory.Crafting.Factory.Interface;
+using IdelPog.Inventory.Crafting.Mediator;
 using Moq;
 
 namespace IdelPog.Inventory.Tests.Crafting.Mediator

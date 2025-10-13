@@ -6,16 +6,14 @@ using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
+using IdelPog.Inventory.Contracts.Command;
 using IdelPog.Inventory.Contracts.Response;
-using IdelPog.Inventory.Crafting.Contracts;
-using IdelPog.Inventory.Crafting.Contracts.Command;
-using IdelPog.Inventory.Crafting.Contracts.Response;
-using IdelPog.Inventory.Crafting.Runtime.ECS;
-using IdelPog.Inventory.Crafting.Runtime.ECS.Component;
+using IdelPog.Inventory.Crafting.ECS;
+using IdelPog.Inventory.Crafting.ECS.Component;
 using IdelPog.Inventory.Factory.Interface;
 using IdelPog.Inventory.Service.Interface;
 
-namespace IdelPog.Inventory.Crafting.Runtime.Mediator
+namespace IdelPog.Inventory.Crafting.Mediator
 {
     public sealed class ItemCraftMediator : IBatchMediator<ItemCraft>
     {

@@ -1,9 +1,9 @@
 ﻿using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.ECS.Component;
 using IdelPog.ECS.Entity;
-using IdelPog.Inventory.Crafting.Runtime.ECS.Component;
+using IdelPog.Inventory.Crafting.ECS.Component;
 
-namespace IdelPog.Inventory.Crafting.Runtime.ECS
+namespace IdelPog.Inventory.Crafting.ECS
 {
     public sealed record CraftingRecipeEntity : Entity
     {

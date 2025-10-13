@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Inventory.Crafting.Contracts.Response
+﻿namespace IdelPog.Inventory.Contracts.Response
 {
     public readonly record struct ItemCraftResponse
     {

@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Inventory.Crafting.Contracts.Command
+﻿namespace IdelPog.Inventory.Contracts.Command
 {
     public readonly record struct ItemCraft
     {

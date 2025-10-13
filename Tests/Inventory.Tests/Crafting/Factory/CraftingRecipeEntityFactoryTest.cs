@@ -2,9 +2,9 @@
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Core.Validation.Handler;
-using IdelPog.Inventory.Crafting.Contracts;
-using IdelPog.Inventory.Crafting.Runtime.ECS;
-using IdelPog.Inventory.Crafting.Runtime.Factory;
+using IdelPog.Inventory.Contracts;
+using IdelPog.Inventory.Crafting.ECS;
+using IdelPog.Inventory.Crafting.Factory;
 
 namespace IdelPog.Inventory.Tests.Crafting.Factory
 {

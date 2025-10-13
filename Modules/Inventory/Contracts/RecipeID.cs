@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Inventory.Crafting.Contracts
+﻿namespace IdelPog.Inventory.Contracts
 {
     public enum RecipeID : byte
     {
