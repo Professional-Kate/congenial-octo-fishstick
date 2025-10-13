@@ -12,8 +12,8 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
     [TestFixture]
     public sealed class SkillCreationTest : ManagedTestBuffer
     {
-        private SkillCreationErrorListener _skillCreationErrorListener;
-        private SkillCreationResponseListener _skillCreationResponseListener;
+        private ManagedResponseListener<SkillCreationResponse> _skillCreationResponseListener;
+        private ManagedErrorListener<SkillCreationError> _skillCreationErrorListener;
         private SkillCreationDispatcher _dispatcher;
 
         private SkillCreation _miningCreation;
@@ -33,8 +33,8 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
         public void Setup()
         {
             _dispatcher = new SkillCreationDispatcher();
-            _skillCreationErrorListener = new SkillCreationErrorListener();
-            _skillCreationResponseListener = new SkillCreationResponseListener();
+            _skillCreationResponseListener = new ManagedResponseListener<SkillCreationResponse>();
+            _skillCreationErrorListener = new ManagedErrorListener<SkillCreationError>();
 
             _miningCreation = _dispatcher.MiningCreation;
             
@@ -54,7 +54,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
 
         private void AssertResponseLength(int length)
         {
-            Assert.That(_skillCreationResponseListener.SkillCreationResponses, Has.Count.EqualTo(length));
+            Assert.That(_skillCreationResponseListener.Responses, Has.Length.EqualTo(length));
         }
         
         private void AssertErrorListenerCalled(bool called)
@@ -74,7 +74,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
         
         private void AssertErrorLength(int length)
         {
-            Assert.That(_skillCreationErrorListener.SkillCreationError.SkillCreations, Has.Length.EqualTo(length));
+            Assert.That(_skillCreationErrorListener.Error.SkillCreations, Has.Length.EqualTo(length));
         }
 
         private static void AssertError(Type exception, SkillCreation[] skillCreations, SkillCreationError error)
@@ -96,7 +96,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_miningCreation, _skillCreationResponseListener.SkillCreationResponses[0]);
+            AssertResponse(_miningCreation, _skillCreationResponseListener.Responses[0]);
         }
 
         [Test]
@@ -107,8 +107,8 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponse(_miningCreation, _skillCreationResponseListener.SkillCreationResponses[0]);
-            AssertResponse(_miningCreation with { SkillID = SkillID.FORAGING }, _skillCreationResponseListener.SkillCreationResponses[1]);
+            AssertResponse(_miningCreation, _skillCreationResponseListener.Responses[0]);
+            AssertResponse(_miningCreation with { SkillID = SkillID.FORAGING }, _skillCreationResponseListener.Responses[1]);
         }
 
         [Test]
@@ -120,7 +120,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(maxLevelSkill, _skillCreationResponseListener.SkillCreationResponses[0]);
+            AssertResponse(maxLevelSkill, _skillCreationResponseListener.Responses[0]);
         }
 
         [Test]
@@ -131,7 +131,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
             AssertResponseListenerCalled(false);
             AssertErrorListenerCalled(true);
             AssertErrorLength(2);
-            AssertError(typeof(DuplicateEntityException),[_miningCreation, _miningCreation], _skillCreationErrorListener.SkillCreationError);
+            AssertError(typeof(DuplicateEntityException),[_miningCreation, _miningCreation], _skillCreationErrorListener.Error);
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Create
             AssertResponseListenerCalled(false);
             AssertErrorListenerCalled(true);
             AssertErrorLength(1);
-            AssertError(typeof(MaxLevelException),[creation], _skillCreationErrorListener.SkillCreationError);
+            AssertError(typeof(MaxLevelException),[creation], _skillCreationErrorListener.Error);
         }
     }
 }

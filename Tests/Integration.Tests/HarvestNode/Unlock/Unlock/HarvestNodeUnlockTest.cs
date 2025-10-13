@@ -12,16 +12,16 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Unlock
     public sealed class HarvestNodeUnlockTest : ManagedTestBuffer
     {
         private HarvestNodeUnlock _miningUnlock;
-        private HarvestNodeUnlockErrorListener _errorListener;
-        private HarvestNodeUnlockResponseListener _responseListener;
+        private ManagedResponseListener<HarvestNodeUnlockResponse> _responseListener;
+        private ManagedErrorListener<HarvestNodeUnlockError> _errorListener;
         private HarvestNodeUnlockDispatcher _harvestNodeUnlockDispatcher;
 
         [SetUp]
         public void Setup()
         {
             _harvestNodeUnlockDispatcher = new HarvestNodeUnlockDispatcher(BufferManager);
-            _errorListener = new HarvestNodeUnlockErrorListener();
-            _responseListener = new HarvestNodeUnlockResponseListener();
+            _responseListener = new ManagedResponseListener<HarvestNodeUnlockResponse>();
+            _errorListener = new ManagedErrorListener<HarvestNodeUnlockError>();
 
             _miningUnlock = _harvestNodeUnlockDispatcher.MiningUnlock;
             
@@ -41,7 +41,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Unlock
 
         private void AssertResponseLength(int expectedLength)
         {
-            Assert.That(_responseListener.HarvestNodeRequirementsCreationResponses, Has.Length.EqualTo(expectedLength));
+            Assert.That(_responseListener.Responses, Has.Length.EqualTo(expectedLength));
         }
 
         private static void AssertResponse(SkillID skillID, ResourceID resourceID, HarvestNodeUnlockResponse response)
@@ -60,12 +60,12 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Unlock
         
         private void AssertErrorLength(int expectedLength)
         {
-            Assert.That(_errorListener.HarvestNodeRequirementsCreationError.HarvestNodeUnlocks, Has.Length.EqualTo(expectedLength));
+            Assert.That(_errorListener.Error.HarvestNodeUnlocks, Has.Length.EqualTo(expectedLength));
         }
 
         private void AssertError(Type exception, HarvestNodeUnlock[] unlocks)
         {
-            HarvestNodeUnlockError error = _errorListener.HarvestNodeRequirementsCreationError;
+            HarvestNodeUnlockError error = _errorListener.Error;
 
             BaseError baseError = error.BaseError;
             Assert.Multiple(() =>
@@ -87,7 +87,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Unlock
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_miningUnlock.SkillID, ResourceID.STONE, _responseListener.HarvestNodeRequirementsCreationResponses[0]);
+            AssertResponse(_miningUnlock.SkillID, ResourceID.STONE, _responseListener.Responses[0]);
         }
 
         [Test]
@@ -100,8 +100,8 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Unlock
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponse(_miningUnlock.SkillID, ResourceID.STONE, _responseListener.HarvestNodeRequirementsCreationResponses[0]);
-            AssertResponse(_miningUnlock.SkillID, ResourceID.IRON_CLUSTER, _responseListener.HarvestNodeRequirementsCreationResponses[1]);
+            AssertResponse(_miningUnlock.SkillID, ResourceID.STONE, _responseListener.Responses[0]);
+            AssertResponse(_miningUnlock.SkillID, ResourceID.IRON_CLUSTER, _responseListener.Responses[1]);
         }
 
         [Test]

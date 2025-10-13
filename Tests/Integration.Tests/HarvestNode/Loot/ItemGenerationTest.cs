@@ -15,7 +15,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         private HarvestNodeCreation _ironCreation;
         private ResourceLootCreation _ironLootCreation;
         private LocationLootCreation _locationLootCreation;
-        private InventoryUpdateListener _inventoryUpdateListener;
+        private ManagedResponseListener<InventoryUpdate> _inventoryUpdateListener;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -60,7 +60,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         [SetUp]
         public void Setup()
         {
-            _inventoryUpdateListener = new InventoryUpdateListener();
+            _inventoryUpdateListener = new ManagedResponseListener<InventoryUpdate>();
             ManagedSubscribe(_inventoryUpdateListener);
         }
         
@@ -99,7 +99,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
 
         private void AssertResponseLength(int length)
         {
-            Assert.That(_inventoryUpdateListener.InventoryUpdates, Has.Length.EqualTo(length));
+            Assert.That(_inventoryUpdateListener.Responses, Has.Length.EqualTo(length));
         }
 
         private static void AssertInventoryUpdate(InventoryUpdate inventoryUpdate, ItemID itemID)
@@ -154,7 +154,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
 
             AssertListenerCalled(true);
             AssertResponseLength(1);
-            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.IRON);
+            AssertInventoryUpdate(_inventoryUpdateListener.Responses[0], ItemID.IRON);
         }
         
         [Test]
@@ -167,7 +167,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         
             AssertListenerCalled(true);
             AssertResponseLength(1);
-            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.RUBY);
+            AssertInventoryUpdate(_inventoryUpdateListener.Responses[0], ItemID.RUBY);
         }
         
         [Test]
@@ -181,8 +181,8 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         
             AssertListenerCalled(true);
             AssertResponseLength(2);
-            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[0], ItemID.IRON);
-            AssertInventoryUpdate(_inventoryUpdateListener.InventoryUpdates[1], ItemID.RUBY);
+            AssertInventoryUpdate(_inventoryUpdateListener.Responses[0], ItemID.IRON);
+            AssertInventoryUpdate(_inventoryUpdateListener.Responses[1], ItemID.RUBY);
         }
     }
 }

@@ -14,8 +14,8 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Resource
     {
         private ResourceLootCreation _beeHiveLootCreation;
 
-        private ResourceLootCreationResponseListener _responseListener;
-        private ResourceLootCreationErrorListener _errorListener;
+        private ManagedResponseListener<ResourceLootCreationResponse> _responseListener;
+        private ManagedErrorListener<ResourceLootCreationError> _errorListener;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -31,8 +31,8 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Resource
         [SetUp]
         public void Setup()
         {
-            _responseListener = new ResourceLootCreationResponseListener();
-            _errorListener = new ResourceLootCreationErrorListener();
+            _responseListener = new ManagedResponseListener<ResourceLootCreationResponse>();
+            _errorListener = new ManagedErrorListener<ResourceLootCreationError>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -45,7 +45,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Resource
 
         private void VerifyResponseLength(int length)
         {
-            Assert.That(_responseListener.ResourceLootCreationResponses, Has.Length.EqualTo(length));
+            Assert.That(_responseListener.Responses, Has.Length.EqualTo(length));
         }
 
         private static void VerifyResponse(ResourceLootCreationResponse response, ResourceLootCreation creation)
@@ -64,12 +64,12 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Resource
         
         private void VerifyErrorLength(int length)
         {
-            Assert.That(_errorListener.ResourceLootCreationError.HarvestNodeLootCreations, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.HarvestNodeLootCreations, Has.Length.EqualTo(length));
         }
 
         private void VerifyError(Type exception, params ResourceLootCreation[] creations)
         {
-            ResourceLootCreationError error = _errorListener.ResourceLootCreationError;
+            ResourceLootCreationError error = _errorListener.Error;
             Assert.Multiple(() =>
             {
                 Assert.That(error.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
@@ -93,7 +93,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Resource
             VerifyResponseListenerCalled(true);
             VerifyErrorListenerCalled(false);
             VerifyResponseLength(1);
-            VerifyResponse(_responseListener.ResourceLootCreationResponses[0], _beeHiveLootCreation);
+            VerifyResponse(_responseListener.Responses[0], _beeHiveLootCreation);
         }
 
         [Test]
@@ -111,8 +111,8 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Resource
             VerifyResponseListenerCalled(true);
             VerifyErrorListenerCalled(false);
             VerifyResponseLength(2);
-            VerifyResponse(_responseListener.ResourceLootCreationResponses[0], _beeHiveLootCreation);
-            VerifyResponse(_responseListener.ResourceLootCreationResponses[1], leafLitterCreation);
+            VerifyResponse(_responseListener.Responses[0], _beeHiveLootCreation);
+            VerifyResponse(_responseListener.Responses[1], leafLitterCreation);
         }
 
         [Test]
@@ -197,7 +197,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Resource
             VerifyResponseListenerCalled(true);
             VerifyErrorListenerCalled(false);
             VerifyResponseLength(1);
-            VerifyResponse(_responseListener.ResourceLootCreationResponses[0], negativeCreation);
+            VerifyResponse(_responseListener.Responses[0], negativeCreation);
         }
     }
 }

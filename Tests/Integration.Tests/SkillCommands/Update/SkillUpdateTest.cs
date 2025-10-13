@@ -11,8 +11,8 @@ namespace IdelPog.Integration.Tests.SkillCommands.Update
     [TestFixture]
     public sealed class SkillUpdateTest : ManagedTestBuffer
     {
-        private SkillUpdateResponseListener _responseListener;
-        private SkillUpdateErrorListener _errorListener;
+        private ManagedResponseListener<SkillUpdateResponse> _responseListener;
+        private ManagedErrorListener<SkillUpdateError> _errorListener;
         private SkillCreationDispatcher _dispatcher;
 
         private SkillCreation _miningCreation; 
@@ -33,8 +33,8 @@ namespace IdelPog.Integration.Tests.SkillCommands.Update
         [SetUp]
         public void Setup()
         {
-            _responseListener = new SkillUpdateResponseListener();
-            _errorListener = new SkillUpdateErrorListener();
+            _responseListener = new ManagedResponseListener<SkillUpdateResponse>();
+            _errorListener = new ManagedErrorListener<SkillUpdateError>();
 
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -59,7 +59,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Update
 
         private void AssertResponseLength(int length)
         {
-            Assert.That(_responseListener.SkillUpdateResponses, Has.Length.EqualTo(length));
+            Assert.That(_responseListener.Responses, Has.Length.EqualTo(length));
         }
 
         private static void AssertResponse(SkillCreation skillCreation, SkillUpdateResponse skillUpdateResponse)
@@ -78,7 +78,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Update
         
         private void AssertErrorLength(int length)
         {
-            Assert.That(_errorListener.SkillUpdateError.SkillUpdates, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.SkillUpdates, Has.Length.EqualTo(length));
         }
 
         private void AssertError(Type exception, SkillUpdateError error, params SkillUpdate[] updates)
@@ -107,7 +107,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Update
 
             for (int i = 0; i < amount; i++)
             {
-                AssertResponse(_miningCreation, _responseListener.SkillUpdateResponses[i]);
+                AssertResponse(_miningCreation, _responseListener.Responses[i]);
             }
         }
 
@@ -123,8 +123,8 @@ namespace IdelPog.Integration.Tests.SkillCommands.Update
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponse(_miningCreation, _responseListener.SkillUpdateResponses[0]);
-            AssertResponse(foragingCreation, _responseListener.SkillUpdateResponses[1]);
+            AssertResponse(_miningCreation, _responseListener.Responses[0]);
+            AssertResponse(foragingCreation, _responseListener.Responses[1]);
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Update
             AssertResponseListenerCalled(false);
             AssertErrorListenerCalled(true);
             AssertErrorLength(1);
-            AssertError(typeof(NotFoundException<SkillID>), _errorListener.SkillUpdateError, _miningUpdate);
+            AssertError(typeof(NotFoundException<SkillID>), _errorListener.Error, _miningUpdate);
         }
 
         [Test]
@@ -148,7 +148,7 @@ namespace IdelPog.Integration.Tests.SkillCommands.Update
             AssertResponseListenerCalled(false);
             AssertErrorListenerCalled(true);
             AssertErrorLength(1);
-            AssertError(typeof(MaxLevelException), _errorListener.SkillUpdateError, _miningUpdate);
+            AssertError(typeof(MaxLevelException), _errorListener.Error, _miningUpdate);
         }
     }
 }

@@ -15,8 +15,8 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
     {
         private LocationLootCreation _forestLootCreation;
         
-        private LocationLootCreationResponseListener _responseListener;
-        private LocationLootCreationErrorListener _errorListener;
+        private ManagedResponseListener<LocationLootCreationResponse> _responseListener;
+        private ManagedErrorListener<LocationLootCreationError> _errorListener;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -33,8 +33,8 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
         [SetUp]
         public void Setup()
         {
-            _responseListener = new LocationLootCreationResponseListener();
-            _errorListener = new LocationLootCreationErrorListener();
+            _responseListener = new ManagedResponseListener<LocationLootCreationResponse>();
+            _errorListener = new ManagedErrorListener<LocationLootCreationError>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -54,7 +54,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
 
         private void VerifyResponseLength(int length)
         {
-            Assert.That(_responseListener.LocationLootCreationResponses, Has.Length.EqualTo(length));
+            Assert.That(_responseListener.Responses, Has.Length.EqualTo(length));
         }
 
         private static void VerifyResponse(LocationLootCreationResponse response, LocationLootCreation creation)
@@ -74,12 +74,12 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
         
         private void VerifyErrorLength(int length)
         {
-            Assert.That(_errorListener.LocationLootCreationError.LocationLootCreations, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.LocationLootCreations, Has.Length.EqualTo(length));
         }
 
         private void VerifyError(Type exception, params LocationLootCreation[] creations)
         {
-            LocationLootCreationError error = _errorListener.LocationLootCreationError;
+            LocationLootCreationError error = _errorListener.Error;
             Assert.Multiple(() =>
             {
                 Assert.That(error.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
@@ -96,7 +96,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
             VerifyResponseListenerCalled(true);
             VerifyErrorListenerCalled(false);
             VerifyResponseLength(1);
-            VerifyResponse(_responseListener.LocationLootCreationResponses[0], _forestLootCreation);
+            VerifyResponse(_responseListener.Responses[0], _forestLootCreation);
         }
 
         [Test]
@@ -115,8 +115,8 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
             VerifyResponseListenerCalled(true);
             VerifyErrorListenerCalled(false);
             VerifyResponseLength(2);
-            VerifyResponse(_responseListener.LocationLootCreationResponses[0], _forestLootCreation);
-            VerifyResponse(_responseListener.LocationLootCreationResponses[1], birchCreation);
+            VerifyResponse(_responseListener.Responses[0], _forestLootCreation);
+            VerifyResponse(_responseListener.Responses[1], birchCreation);
         }
 
         [Test]
@@ -204,7 +204,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
             VerifyResponseListenerCalled(true);
             VerifyErrorListenerCalled(false);
             VerifyResponseLength(1);
-            VerifyResponse(_responseListener.LocationLootCreationResponses[0], negativeCreation);
+            VerifyResponse(_responseListener.Responses[0], negativeCreation);
         }
     }
 }

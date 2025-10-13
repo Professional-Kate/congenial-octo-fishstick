@@ -13,8 +13,8 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
     [TestFixture]
     public sealed class CurrencyFlowTest : ManagedTestBuffer
     {
-        private CurrencyUpdateResponseListener _currencyUpdateResponseListener;
-        private CurrencyUpdateErrorListener _currencyUpdateErrorListener;
+        private ManagedResponseListener<CurrencyUpdateResponse> _currencyUpdateResponseListener;
+        private ManagedErrorListener<CurrencyUpdateError> _currencyUpdateErrorListener;
 
         private CurrencyUpdate _addGoldCommand;
         private CurrencyCreation _goldCreation;
@@ -39,8 +39,8 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         [SetUp]
         public void SetUp()
         {
-            _currencyUpdateResponseListener = new CurrencyUpdateResponseListener();
-            _currencyUpdateErrorListener = new CurrencyUpdateErrorListener();
+            _currencyUpdateResponseListener = new ManagedResponseListener<CurrencyUpdateResponse>();
+            _currencyUpdateErrorListener = new ManagedErrorListener<CurrencyUpdateError>();
 
             ManagedSubscribe(_currencyUpdateResponseListener);
             ManagedSubscribe(_currencyUpdateErrorListener);
@@ -67,7 +67,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         
         private void AssertResponseLength(int length)
         {
-            Assert.That(_currencyUpdateResponseListener.CurrencyUpdateResponses, Has.Length.EqualTo(length));
+            Assert.That(_currencyUpdateResponseListener.Responses, Has.Length.EqualTo(length));
         }
 
         private static void AssertUpdateResponse(CurrencyUpdateResponse responses, CurrencyUpdate expected)
@@ -86,7 +86,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
         
         private void AssertErrorLength(int length)
         {
-            Assert.That(_currencyUpdateErrorListener.CurrencyUpdateError.CurrencyUpdates, Has.Length.EqualTo(length));
+            Assert.That(_currencyUpdateErrorListener.Error.CurrencyUpdates, Has.Length.EqualTo(length));
         }
 
         private static void AssertError(Type exception, CurrencyUpdate[] updates, CurrencyUpdateError error)
@@ -109,7 +109,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(false);
             AssertUpdateListener(true);
             AssertResponseLength(1);
-            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand with { Amount = 60 });
+            AssertUpdateResponse(_currencyUpdateResponseListener.Responses[0], _addGoldCommand with { Amount = 60 });
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(false);
             AssertUpdateListener(true);
             AssertResponseLength(1);
-            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand);
+            AssertUpdateResponse(_currencyUpdateResponseListener.Responses[0], _addGoldCommand);
         }
 
         [Test]
@@ -136,7 +136,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
             AssertUpdateListener(true);
             AssertResponseLength(1);
             
-            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand with { ActionType = ActionType.REMOVE, Amount = 0 });
+            AssertUpdateResponse(_currencyUpdateResponseListener.Responses[0], _addGoldCommand with { ActionType = ActionType.REMOVE, Amount = 0 });
         }
 
         [Test]
@@ -151,7 +151,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
             AssertUpdateListener(true);
             AssertResponseLength(1);
             
-            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand);
+            AssertUpdateResponse(_currencyUpdateResponseListener.Responses[0], _addGoldCommand);
         }
 
         [Test]
@@ -165,8 +165,8 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
             AssertUpdateListener(true);
             AssertResponseLength(2);
             
-            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[0], _addGoldCommand);
-            AssertUpdateResponse(_currencyUpdateResponseListener.CurrencyUpdateResponses[1], _addGoldCommand with { CurrencyType = CurrencyType.GEMS });
+            AssertUpdateResponse(_currencyUpdateResponseListener.Responses[0], _addGoldCommand);
+            AssertUpdateResponse(_currencyUpdateResponseListener.Responses[1], _addGoldCommand with { CurrencyType = CurrencyType.GEMS });
         }
 
         [Test]
@@ -177,7 +177,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(true);
             AssertUpdateListener(false);
             AssertErrorLength(1);
-            AssertError(typeof(NotFoundException<CurrencyType>), [_addGoldCommand], _currencyUpdateErrorListener.CurrencyUpdateError);
+            AssertError(typeof(NotFoundException<CurrencyType>), [_addGoldCommand], _currencyUpdateErrorListener.Error);
         }
         
         [Test]
@@ -191,7 +191,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(true);
             AssertUpdateListener(false);
             AssertErrorLength(1);
-            AssertError(typeof(NotEnoughCurrencyException), [removeGold], _currencyUpdateErrorListener.CurrencyUpdateError);
+            AssertError(typeof(NotEnoughCurrencyException), [removeGold], _currencyUpdateErrorListener.Error);
         }
 
         [Test]
@@ -205,7 +205,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Update
             AssertErrorListener(true);
             AssertUpdateListener(false);
             AssertErrorLength(2);
-            AssertError(typeof(NotFoundException<CurrencyType>), [_addGoldCommand, addGems], _currencyUpdateErrorListener.CurrencyUpdateError);
+            AssertError(typeof(NotFoundException<CurrencyType>), [_addGoldCommand, addGems], _currencyUpdateErrorListener.Error);
         }
     }
 }

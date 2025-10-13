@@ -15,8 +15,8 @@ namespace IdelPog.Integration.Tests.HarvestNode
     {
         private HarvestNodeCreation _miningCreation;
         
-        private NodeCreationResponseListener _nodeCreationResponseListener;
-        private NodeCreationErrorListener _nodeCreationErrorListener;
+        private ManagedResponseListener<HarvestNodeCreationResponse> _nodeCreationResponseListener;
+        private ManagedErrorListener<HarvestNodeCreationError> _nodeCreationErrorListener;
 
         [SetUp]
         public void Setup()
@@ -33,8 +33,8 @@ namespace IdelPog.Integration.Tests.HarvestNode
                 LinkedSkill = SkillID.MINING
             };
 
-            _nodeCreationResponseListener = new NodeCreationResponseListener();
-            _nodeCreationErrorListener = new NodeCreationErrorListener();
+            _nodeCreationResponseListener = new ManagedResponseListener<HarvestNodeCreationResponse>();
+            _nodeCreationErrorListener = new ManagedErrorListener<HarvestNodeCreationError>();
             ManagedSubscribe(_nodeCreationResponseListener);
             ManagedSubscribe(_nodeCreationErrorListener);
         }
@@ -53,7 +53,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
         
         private void AssertResponseLength(int length)
         {
-            Assert.That(_nodeCreationResponseListener.HarvestNodeCreationResponses, Has.Length.EqualTo(length));
+            Assert.That(_nodeCreationResponseListener.Responses, Has.Length.EqualTo(length));
         }
 
         private static void AssertResponseListener(HarvestNodeCreationResponse response, HarvestNodeCreation nodeCreation)
@@ -72,7 +72,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
         
         private void AssertErrorLength(int length)
         {
-            Assert.That(_nodeCreationErrorListener.HarvestNodeCreationError.NodeCreations, Has.Length.EqualTo(length));
+            Assert.That(_nodeCreationErrorListener.Error.NodeCreations, Has.Length.EqualTo(length));
         }
 
         private void AssertErrorListener<TException>(params HarvestNodeCreation[] harvestNodeCreations)
@@ -80,7 +80,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             
             Assert.Multiple(() =>
             {
-                HarvestNodeCreationError error = _nodeCreationErrorListener.HarvestNodeCreationError;
+                HarvestNodeCreationError error = _nodeCreationErrorListener.Error;
                 Assert.That(error.BaseError.Exception.InnerException, Is.Not.Null);
                 Assert.That(error.BaseError.Exception.InnerException!.GetType(), Is.EqualTo(typeof(TException)));
                 Assert.That(error.NodeCreations, Is.EqualTo(harvestNodeCreations));
@@ -95,7 +95,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponseListener(_nodeCreationResponseListener.HarvestNodeCreationResponses[0], _miningCreation);
+            AssertResponseListener(_nodeCreationResponseListener.Responses[0], _miningCreation);
         }
         
         [Test]
@@ -115,8 +115,8 @@ namespace IdelPog.Integration.Tests.HarvestNode
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponseListener(_nodeCreationResponseListener.HarvestNodeCreationResponses[0], _miningCreation);
-            AssertResponseListener(_nodeCreationResponseListener.HarvestNodeCreationResponses[1], foragingCreation);
+            AssertResponseListener(_nodeCreationResponseListener.Responses[0], _miningCreation);
+            AssertResponseListener(_nodeCreationResponseListener.Responses[1], foragingCreation);
         }
         
         [Test]

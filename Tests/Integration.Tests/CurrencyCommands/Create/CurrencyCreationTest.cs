@@ -11,8 +11,8 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Create
     [TestFixture]
     public sealed class CurrencyCreationTest : ManagedTestBuffer
     {
-        private CurrencyCreationResponseListener _currencyCreationResponseListener;
-        private CurrencyCreationErrorListener _currencyCreationErrorListener;
+        private ManagedResponseListener<CurrencyCreationResponse> _currencyCreationResponseListener;
+        private ManagedErrorListener<CurrencyCreationError> _currencyCreationErrorListener;
 
         private CurrencyCreation _createGold;
         private CurrencyCreation _createGems;
@@ -51,8 +51,8 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Create
             Assert.Multiple(() =>
             {
                 Assert.That(_currencyCreationResponseListener.WasCalled, Is.True);
-                Assert.That(_currencyCreationResponseListener.CurrencyCreationResponses, Is.Not.Null);
-                Assert.That(_currencyCreationResponseListener.CurrencyCreationResponses, Has.Length.EqualTo(currencyCreations.Length));
+                Assert.That(_currencyCreationResponseListener.Responses, Is.Not.Null);
+                Assert.That(_currencyCreationResponseListener.Responses, Has.Length.EqualTo(currencyCreations.Length));
             });
         }
 
@@ -69,7 +69,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Create
 
         private void AssertCreationError<TException>(CurrencyCreationError currencyCreationError, CurrencyCreation[] creations)
         {
-            BaseError baseError = _currencyCreationErrorListener.CurrencyUpdateError.BaseErrorDetails;
+            BaseError baseError = _currencyCreationErrorListener.Error.BaseErrorDetails;
             Assert.Multiple(() =>
             {
                 Assert.That(currencyCreationError.CurrencyCreations, Is.EquivalentTo(creations));
@@ -80,8 +80,8 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Create
         [SetUp]
         public void SetUp()
         {
-            _currencyCreationResponseListener = new CurrencyCreationResponseListener();
-            _currencyCreationErrorListener = new CurrencyCreationErrorListener();
+            _currencyCreationResponseListener = new ManagedResponseListener<CurrencyCreationResponse>();
+            _currencyCreationErrorListener = new ManagedErrorListener<CurrencyCreationError>();
 
             ManagedSubscribe(_currencyCreationResponseListener);
             ManagedSubscribe(_currencyCreationErrorListener);
@@ -95,7 +95,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Create
             AssertCurrencyCreationResponseListener(currencyCreations, true);
             AssertCurrencyCreationErrorListener(false);
 
-            CurrencyCreationResponse[] creationResponses = _currencyCreationResponseListener.CurrencyCreationResponses;
+            CurrencyCreationResponse[] creationResponses = _currencyCreationResponseListener.Responses;
             Assert.Multiple(() =>
             {
                 Assert.That(creationResponses, Has.Length.EqualTo(1));
@@ -112,7 +112,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Create
             AssertCurrencyCreationResponseListener(currencyCreations, true);
             AssertCurrencyCreationErrorListener(false);
 
-            CurrencyCreationResponse[] creationResponses = _currencyCreationResponseListener.CurrencyCreationResponses;
+            CurrencyCreationResponse[] creationResponses = _currencyCreationResponseListener.Responses;
             foreach (CurrencyCreationResponse response in creationResponses)
             {
                 Assert.That(response.Amount, Is.EqualTo(_createGems.StartingAmount));
@@ -138,7 +138,7 @@ namespace IdelPog.Integration.Tests.CurrencyCommands.Create
             Assert.DoesNotThrow(() => SendCurrencyCreationBuffer(currencyCreations));
             AssertCurrencyCreationResponseListener(currencyCreations, false);
             AssertCurrencyCreationErrorListener(true);
-            AssertCreationError<ControllerThrownException>(_currencyCreationErrorListener.CurrencyUpdateError, currencyCreations);
+            AssertCreationError<ControllerThrownException>(_currencyCreationErrorListener.Error, currencyCreations);
         }
     }
 }

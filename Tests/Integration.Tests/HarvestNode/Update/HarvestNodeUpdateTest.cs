@@ -17,8 +17,8 @@ namespace IdelPog.Integration.Tests.HarvestNode
     {
         private HarvestNodeUpdate _nodeUpdate;
         private HarvestNodeCreation _harvestNodeCreation;
-        private UpdateNodeErrorListener _updateNodeErrorListener;
-        private UpdateNodeResponseListener _updateNodeResponseListener;
+        private ManagedResponseListener<HarvestNodeUpdateResponse> _updateNodeResponseListener;
+        private ManagedErrorListener<HarvestNodeUpdateError> _updateNodeErrorListener;
 
         [SetUp]
         public void Setup()
@@ -38,8 +38,8 @@ namespace IdelPog.Integration.Tests.HarvestNode
                 LinkedSkill = SkillID.MINING
             };
             
-            _updateNodeErrorListener = new UpdateNodeErrorListener();
-            _updateNodeResponseListener = new UpdateNodeResponseListener();
+            _updateNodeResponseListener = new ManagedResponseListener<HarvestNodeUpdateResponse>();
+            _updateNodeErrorListener = new ManagedErrorListener<HarvestNodeUpdateError>();
             ManagedSubscribe(_updateNodeErrorListener);
             ManagedSubscribe(_updateNodeResponseListener);
         }
@@ -60,7 +60,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
 
         private void AssertResponseLength(int length)
         {
-            Assert.That(_updateNodeResponseListener.HarvestNodeUpdateResponses, Has.Length.EqualTo(length));
+            Assert.That(_updateNodeResponseListener.Responses, Has.Length.EqualTo(length));
         }
         
         private static void AssertResponseListener(HarvestNodeUpdate nodeUpdate, HarvestNodeUpdateResponse response)
@@ -70,7 +70,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
 
         private void AssertErrorLength(int length)
         {
-            Assert.That(_updateNodeErrorListener.HarvestNodeUpdateError.HarvestNodeUpdates, Has.Length.EqualTo(length));
+            Assert.That(_updateNodeErrorListener.Error.HarvestNodeUpdates, Has.Length.EqualTo(length));
         }
 
         private static void AssertErrorListener<TException>(HarvestNodeUpdate[] nodeUpdates, HarvestNodeUpdateError error)
@@ -97,7 +97,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             });
 
             AssertResponseLength(1);
-            AssertResponseListener(_nodeUpdate, _updateNodeResponseListener.HarvestNodeUpdateResponses[0]);
+            AssertResponseListener(_nodeUpdate, _updateNodeResponseListener.Responses[0]);
         }
 
         [Test]
@@ -124,8 +124,8 @@ namespace IdelPog.Integration.Tests.HarvestNode
             });
 
             AssertResponseLength(2);
-            AssertResponseListener(_nodeUpdate, _updateNodeResponseListener.HarvestNodeUpdateResponses[0]);
-            AssertResponseListener(foragingUpdate, _updateNodeResponseListener.HarvestNodeUpdateResponses[1]);
+            AssertResponseListener(_nodeUpdate, _updateNodeResponseListener.Responses[0]);
+            AssertResponseListener(foragingUpdate, _updateNodeResponseListener.Responses[1]);
         }
 
         [Test]
@@ -140,7 +140,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             });
 
             AssertErrorLength(1);
-            AssertErrorListener<NotFoundException<SkillID>>([_nodeUpdate with { SkillID = SkillID.FORAGING }], _updateNodeErrorListener.HarvestNodeUpdateError);
+            AssertErrorListener<NotFoundException<SkillID>>([_nodeUpdate with { SkillID = SkillID.FORAGING }], _updateNodeErrorListener.Error);
         } 
         
         [Test]
@@ -157,7 +157,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             });
             
             AssertErrorLength(1);
-            AssertErrorListener<NotFoundException<ResourceID>>([_nodeUpdate with { ResourceID = ResourceID.ANT_NEST }],  _updateNodeErrorListener.HarvestNodeUpdateError);
+            AssertErrorListener<NotFoundException<ResourceID>>([_nodeUpdate with { ResourceID = ResourceID.ANT_NEST }],  _updateNodeErrorListener.Error);
         }
 
         [Test]
@@ -177,7 +177,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             });
             
             AssertErrorLength(1);
-            AssertErrorListener<HarvestNodeLockedException>([_nodeUpdate],  _updateNodeErrorListener.HarvestNodeUpdateError);
+            AssertErrorListener<HarvestNodeLockedException>([_nodeUpdate],  _updateNodeErrorListener.Error);
         }
     }
 }
