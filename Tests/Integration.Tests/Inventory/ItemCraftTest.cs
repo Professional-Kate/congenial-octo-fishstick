@@ -176,6 +176,27 @@ namespace IdelPog.Integration.Tests.Inventory
         }
 
         [Test]
+        public void Positive_DispatchCraft_MultipleMessages_DispatchesResponses()
+        {
+            DispatchInventoryUpdates(_ironUpdate with { Amount = 10 });
+            DispatchRecipeCreations(_ringCreation);
+            ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
+            
+            Assert.DoesNotThrow(() => DispatchItemCrafts(_ringCraft, _ringCraft));
+
+            AssertCraftResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertCraftListenerLength(2);
+            AssertCraftResponse(_itemCraftResponseListener.Responses[0], _ringCraft);
+            AssertCraftResponse(_itemCraftResponseListener.Responses[1], _ringCraft);
+            
+            AssertInventoryUpdateResponseListenerCalled(listener, true);
+            AssertInventoryUpdateResponseLength(listener, 2);
+            AssertInventoryResponse(listener.Responses[0], _ironUpdate with { ActionType = ActionType.REMOVE, Amount = 8 }, MutateType.CHANGED);
+            AssertInventoryResponse(listener.Responses[1], _ringUpdate with { Amount = 2 }, MutateType.CREATED);
+        }
+
+        [Test]
         public void Negative_DispatchCraft_CraftNotFound_DispatchesError()
         {
             ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
