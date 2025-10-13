@@ -56,6 +56,7 @@ namespace IdelPog.Inventory.Crafting.Mediator
             {
                 ItemCraft itemCraft = messages[i];
                 _foundAssertion.AssertFound(itemCraft.RecipeID, _recipeEntityRepository.Contains(itemCraft.RecipeID));
+                _amountAssertion.AssertAmountNotZero(itemCraft.Amount);
                 
                 CraftingRecipeEntity entity = _recipeEntityRepository.Get(itemCraft.RecipeID);
                 

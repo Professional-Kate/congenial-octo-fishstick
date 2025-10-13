@@ -272,5 +272,22 @@ namespace IdelPog.Integration.Tests.Inventory
             
             AssertInventoryUpdateResponseListenerCalled(listener, false);
         }
+
+        [Test]
+        public void Negative_DispatchCraft_ZeroAmount_DispatchesError()
+        {
+            DispatchInventoryUpdates(_ironUpdate);
+            DispatchRecipeCreations(_ringCreation);
+            ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
+            
+            Assert.DoesNotThrow(() => DispatchItemCrafts(_ringCraft with { Amount = 0 }));
+
+            AssertCraftResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(1);
+            AssertError(typeof(AmountZeroException), _ringCraft with { Amount = 0 });
+            
+            AssertInventoryUpdateResponseListenerCalled(listener, false);
+        }
     }
 }

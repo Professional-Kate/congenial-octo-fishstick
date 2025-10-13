@@ -196,5 +196,19 @@ namespace IdelPog.Inventory.Tests.Crafting.Mediator
             VerifyDispatcherCalled(Times.Never());
             VerifyRepository(Times.Once());
         }
+
+        [Test]
+        public void Negative_HandleMessages_CraftAmountZero_Throws()
+        {
+            SetupRepository(_ironRingCraft.RecipeID, true);
+            
+            Assert.Throws<AmountZeroException>(() => _craftMediator.HandleMessages([_ironRingCraft with {  Amount = 0 }]));
+            
+            VerifyServiceNoOtherCalls();
+            VerifyDispatcherCalled(Times.Never());
+            
+            _entityRepositoryMock.Verify(library => library.Contains(_ironRingCraft.RecipeID), Times.Once);
+            VerifyRepositoryNoOtherCalls();
+        }
     }
 }
