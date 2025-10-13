@@ -31,6 +31,7 @@ namespace IdelPog.Inventory.Tests.Crafting.Mediator
         private Mock<IDispatchMany<ItemCraftResponse>> _dispatcherMock;
         private Mock<IInventoryUpdateFactory> _updateFactoryMock;
         private Mock<IDispatchMany<InventoryUpdateResponse>> _updateDispatcherMock;
+        private Mock<IInventoryUpdateSummarizer> _updateSummarizerMock;
         
         private ItemCraft _ironRingCraft;
         private CraftingRecipeEntity _recipeEntity;
@@ -45,12 +46,13 @@ namespace IdelPog.Inventory.Tests.Crafting.Mediator
             _dispatcherMock = new Mock<IDispatchMany<ItemCraftResponse>>();
             _updateFactoryMock = new Mock<IInventoryUpdateFactory>();
             _updateDispatcherMock = new Mock<IDispatchMany<InventoryUpdateResponse>>();
+            _updateSummarizerMock = new Mock<IInventoryUpdateSummarizer>();
             ThrowHandler throwHandler = new();
             
             _ironRingItem = new Item(ItemID.RING, 1, new Information { Name = "", Description = "" }, 1);
             _ironRingCraft = new ItemCraft { RecipeID = RecipeID.IRON_RING, Amount = 1 };
             _recipeEntity = new CraftingRecipeEntity([new RecipeInputComponent { ItemID = ItemID.IRON, RequiredAmount = 1}], [new RecipeOutputComponent { ItemID = ItemID.RING, OutputAmount = 1}], throwHandler);
-            _craftMediator = new ItemCraftMediator(_inventoryMock.Object, _entityRepositoryMock.Object, _updateServiceMock.Object, _updateFactoryMock.Object, _dispatcherMock.Object, _updateDispatcherMock.Object, new FoundAssertion(throwHandler), new AmountAssertion(throwHandler), new CollectionAssertion(throwHandler));
+            _craftMediator = new ItemCraftMediator(_inventoryMock.Object, _entityRepositoryMock.Object, _updateServiceMock.Object, _updateFactoryMock.Object, _updateSummarizerMock.Object, _dispatcherMock.Object, _updateDispatcherMock.Object, new FoundAssertion(throwHandler), new AmountAssertion(throwHandler), new CollectionAssertion(throwHandler));
         }
 
         [SetUp]

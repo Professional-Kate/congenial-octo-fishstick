@@ -3,5 +3,6 @@
     public readonly record struct ItemCraftResponse
     {
         public required RecipeID RecipeID { get; init; }
+        public required byte Amount { get; init; }
     }
 }

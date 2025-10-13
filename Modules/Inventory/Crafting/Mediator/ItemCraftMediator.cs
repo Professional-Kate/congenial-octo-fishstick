@@ -21,6 +21,7 @@ namespace IdelPog.Inventory.Crafting.Mediator
         private readonly IAssetRepository<RecipeID, CraftingRecipeEntity> _recipeEntityRepository;
         private readonly IInventoryUpdateService _inventoryUpdateService;
         private readonly IInventoryUpdateFactory _inventoryUpdateFactory;
+        private readonly IInventoryUpdateSummarizer _inventoryUpdateSummarizer;
         private readonly IDispatchMany<ItemCraftResponse> _itemCraftDispatcher;
         private readonly IDispatchMany<InventoryUpdateResponse> _inventoryUpdateDispatcher;
         private readonly IFoundAssertion _foundAssertion;
@@ -28,7 +29,7 @@ namespace IdelPog.Inventory.Crafting.Mediator
         private readonly ICollectionAssertion _collectionAssertion;
 
         public ItemCraftMediator(IInventory inventory, IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository,
-            IInventoryUpdateService inventoryUpdateService, IInventoryUpdateFactory inventoryUpdateFactory, IDispatchMany<ItemCraftResponse> itemCraftDispatcher,
+            IInventoryUpdateService inventoryUpdateService, IInventoryUpdateFactory inventoryUpdateFactory, IInventoryUpdateSummarizer inventoryUpdateSummarizer, IDispatchMany<ItemCraftResponse> itemCraftDispatcher,
             IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher, IFoundAssertion foundAssertion, IAmountAssertion amountAssertion,
             ICollectionAssertion collectionAssertion)
         {
@@ -36,6 +37,7 @@ namespace IdelPog.Inventory.Crafting.Mediator
             _recipeEntityRepository = recipeEntityRepository;
             _inventoryUpdateService = inventoryUpdateService;
             _inventoryUpdateFactory = inventoryUpdateFactory;
+            _inventoryUpdateSummarizer = inventoryUpdateSummarizer;
             _itemCraftDispatcher = itemCraftDispatcher;
             _inventoryUpdateDispatcher = inventoryUpdateDispatcher;
             _foundAssertion = foundAssertion;
@@ -57,48 +59,47 @@ namespace IdelPog.Inventory.Crafting.Mediator
                 
                 CraftingRecipeEntity entity = _recipeEntityRepository.Get(itemCraft.RecipeID);
                 
-                updates.AddRange(CreateRemoveInventoryUpdates(entity.GetRecipe()));
-                updates.AddRange(CreateAddInventoryUpdates(entity.GetOutput()));
+                updates.AddRange(CreateRemoveInventoryUpdates(entity.GetRecipe(), itemCraft.Amount));
+                updates.AddRange(CreateAddInventoryUpdates(entity.GetOutput(), itemCraft.Amount));
 
-                ItemCraftResponse response = new(){ RecipeID = itemCraft.RecipeID };
+                ItemCraftResponse response = new(){ RecipeID = itemCraft.RecipeID, Amount = itemCraft.Amount };
                 responses[i] = response;
             }
-            
-            IReadOnlyList<InventoryUpdateResponse> inventoryUpdateResponses = _inventoryUpdateService.ApplyUpdates(updates);
+
+            IReadOnlyList<InventoryUpdate> summarizedUpdates = _inventoryUpdateSummarizer.GetSummary(updates);
+            IReadOnlyList<InventoryUpdateResponse> inventoryUpdateResponses = _inventoryUpdateService.ApplyUpdates(summarizedUpdates);
              
             _inventoryUpdateDispatcher.Dispatch(inventoryUpdateResponses);
             _itemCraftDispatcher.Dispatch(responses);
         }
 
-        private InventoryUpdate[] CreateRemoveInventoryUpdates(RecipeInputComponent[] components)
+        private InventoryUpdate[] CreateRemoveInventoryUpdates(RecipeInputComponent[] components, uint iterations)
         {
-            InventoryUpdate[] updates = new InventoryUpdate[components.Length];
-            for (int i = 0; i < components.Length; i++)
+            List<InventoryUpdate> updates = new(components.Length);
+            foreach (RecipeInputComponent recipeInputComponent in components)
             {
-                RecipeInputComponent recipeInputComponent = components[i];
                 _foundAssertion.AssertFound(recipeInputComponent.ItemID, _inventory.Contains(recipeInputComponent.ItemID));
 
                 Item item = _inventory.GetItem(recipeInputComponent.ItemID);
                 _amountAssertion.AssertEnoughAmount(recipeInputComponent.RequiredAmount, item.Amount, item.ItemID);
-
-                updates[i] = _inventoryUpdateFactory.Create(recipeInputComponent.ItemID, recipeInputComponent.RequiredAmount, ActionType.REMOVE);
+                
+                InventoryUpdate[] inventoryUpdates = _inventoryUpdateFactory.CreateMultiple(recipeInputComponent.ItemID, recipeInputComponent.RequiredAmount, ActionType.REMOVE, iterations);
+                updates.AddRange(inventoryUpdates);
             }
 
-            return updates;
+            return updates.ToArray();
         }
 
-        private InventoryUpdate[] CreateAddInventoryUpdates(RecipeOutputComponent[] components)
+        private InventoryUpdate[] CreateAddInventoryUpdates(RecipeOutputComponent[] components, uint iterations)
         {
-            InventoryUpdate[] updates = new InventoryUpdate[components.Length];
-            for (var i = 0; i < components.Length; i++)
+            List<InventoryUpdate> updates = new(components.Length);
+            foreach (RecipeOutputComponent recipeOutputComponent in components)
             {
-                RecipeOutputComponent recipeOutputComponent = components[i];
-
-                InventoryUpdate inventoryUpdate = _inventoryUpdateFactory.Create(recipeOutputComponent.ItemID, recipeOutputComponent.OutputAmount, ActionType.ADD);
-                updates[i] = inventoryUpdate;
+                InventoryUpdate[] inventoryUpdates = _inventoryUpdateFactory.CreateMultiple(recipeOutputComponent.ItemID, recipeOutputComponent.OutputAmount, ActionType.ADD, iterations);
+                updates.AddRange(inventoryUpdates);
             }
 
-            return updates;
+            return updates.ToArray();
         }
     }
 }

@@ -40,13 +40,28 @@ namespace IdelPog.Inventory
     {
         public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister flowRegister)
         {
+            IHandler throwHandler = new ThrowHandler();
+            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IItemFoundAssertion itemFoundAssertion = new ItemFoundAssertion(throwHandler);
+            
             ILogWriter writer = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
+            IMapper<ItemID> itemMapper = new Mapper<ItemID>(foundAssertion, uniqueAssertion);
+            IItemFactory itemFactory = new ItemFactory(itemMapper);
+            IItemInfoFactory itemInfoFactory = new ItemInfoFactory();
             
             IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository = new AssetRepository<RecipeID, CraftingRecipeEntity>();
+            IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();
             
-            RegisterInventoryUpdate(bufferManager, bufferLogger, flowRegister);
+            IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
+            IInventoryUpdateService inventoryUpdateService = new InventoryUpdateService(inventory, itemInfoFactory, itemFactory, collectionAssertion, itemFoundAssertion);
+            
+            RegisterInventoryUpdate(bufferManager, bufferLogger, flowRegister, inventoryUpdateService, itemMapper);
             RegisterRecipeCreation(bufferManager, bufferLogger, flowRegister, recipeEntityRepository);
+            RegisterItemCraft(bufferManager, bufferLogger, flowRegister, recipeEntityRepository, inventory, inventoryUpdateService);
         }
 
         /// <summary>
@@ -55,20 +70,18 @@ namespace IdelPog.Inventory
         /// <param name="bufferManager">Used to dispatch response records</param>
         /// <param name="bufferLogger">Logs all messages in and out</param>
         /// <param name="flowRegister">Used to register the InventoryUpdate flow</param>
+        /// <param name="inventoryUpdateService">Handles updating the <see cref="IInventory"/></param>
+        /// <param name="itemMapper">Maps <see cref="Information"/> to <see cref="ItemID"/>s</param>
         /// <remarks>
         /// Listens to -> <see cref="InventoryUpdate"/>. On Success -> <see cref="InventoryUpdateResponse"/>. On Error -> <see cref="InventoryUpdateError"/>
         /// </remarks>
-        private static void RegisterInventoryUpdate(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister)
+        private static void RegisterInventoryUpdate(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IInventoryUpdateService inventoryUpdateService, IMapper<ItemID> itemMapper)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
-            IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
-            IItemFoundAssertion itemFoundAssertion = new ItemFoundAssertion(throwHandler);
 
-            IMapper<ItemID> itemMapper = new Mapper<ItemID>(foundAssertion, uniqueAssertion);
+            // TODO: need some kinda ItemDefinition command that can define all this
             itemMapper.AddInformation(ItemID.STONE, new Information { Description = "Rock and...", Name = "Stone" });
             itemMapper.AddInformation(ItemID.COPPER, new Information { Description = "It's like less cool bronze", Name = "Copper" });
             itemMapper.AddInformation(ItemID.IRON, new Information { Description = "Your job is to mine Diamonds", Name = "Iron" });
@@ -84,14 +97,9 @@ namespace IdelPog.Inventory
             itemMapper.AddInformation(ItemID.HONEY, new Information { Description = "Delicious and it was only slightly painful", Name = "Honey" });
             itemMapper.AddInformation(ItemID.WATER, new Information { Description = "Finally learnt how to collect water?", Name = "Water" });
             itemMapper.AddInformation(ItemID.SAND, new Information { Description = "It gets everywhere...", Name = "Sand" });
+            itemMapper.AddInformation(ItemID.RING, new Information { Description = "A small ring with some elvish writing on the inside", Name = "Ring" });
             
             IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
-            IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();
-            IItemFactory itemFactory = new ItemFactory(itemMapper);
-            IItemInfoFactory itemInfoFactory = new ItemInfoFactory();
-            IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
-            
-            IInventoryUpdateService inventoryUpdateService = new InventoryUpdateService(inventory, itemInfoFactory, itemFactory, collectionAssertion, itemFoundAssertion);
             IInventoryUpdateSummarizer summarizer = new InventoryUpdateSummarizer(updateFactory, collectionAssertion);
             IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
@@ -131,6 +139,40 @@ namespace IdelPog.Inventory
             IBatchController<RecipeCreation> creationController = new ManagedBatchController<RecipeCreation>(creationMediator);
             
             flowRegister.RegisterBatch(creationController, errorFactory);
+        }
+
+        /// <summary>
+        /// Registers the <see cref="ItemCraft"/> flow
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// <param name="flowRegister">Used to register the InventoryUpdate flow</param>
+        /// <param name="recipeEntityRepository">Stores all <see cref="CraftingRecipeEntity"/></param>
+        /// <param name="inventory">Stores all <see cref="Item"/>s</param>
+        /// <param name="inventoryUpdateService">Handles updating the <see cref="IInventory"/></param>
+        /// /// <remarks>
+        /// Listens to -> <see cref="ItemCraft"/>. On Success -> <see cref="ItemCraftResponse"/>. On Error -> <see cref="ItemCraftError"/>
+        /// </remarks>
+        private static void RegisterItemCraft(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository, IInventory inventory, IInventoryUpdateService inventoryUpdateService)
+        {
+            IHandler throwHandler = new ThrowHandler();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
+            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
+            
+            IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
+            IInventoryUpdateSummarizer inventoryUpdateSummarizer = new InventoryUpdateSummarizer(updateFactory, collectionAssertion);
+            IDispatchMany<ItemCraftResponse> itemCraftDispatcher = new ManagedDispatcher<ItemCraftResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
+            IBatchMediator<ItemCraft> craftMediator = new ItemCraftMediator(inventory, recipeEntityRepository, inventoryUpdateService, updateFactory, inventoryUpdateSummarizer, itemCraftDispatcher, inventoryUpdateDispatcher, foundAssertion, amountAssertion, collectionAssertion);
+            
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            ItemCraftErrorFactory errorFactory = new(baseErrorFactory);
+            IBatchController<ItemCraft> craftController = new ManagedBatchController<ItemCraft>(craftMediator);
+            
+            flowRegister.RegisterBatch(craftController, errorFactory);
         }
     }
 }
