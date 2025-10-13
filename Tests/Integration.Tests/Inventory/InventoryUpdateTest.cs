@@ -12,8 +12,8 @@ namespace IdelPog.Integration.Tests.Inventory
     [TestFixture]
     public sealed class InventoryUpdateTest : ManagedTestBuffer
     {
-        private InventoryUpdateResponseListener _inventoryUpdateResponseListener;
-        private InventoryUpdateErrorListener _inventoryUpdateErrorListener;
+        private ManagedResponseListener<InventoryUpdateResponse> _inventoryUpdateResponseListener;
+        private ManagedErrorListener<InventoryUpdateError> _inventoryUpdateErrorListener;
 
         private InventoryUpdate _addStoneUpdate;
         private ItemInfo _stoneInfo;
@@ -40,8 +40,8 @@ namespace IdelPog.Integration.Tests.Inventory
         [SetUp]
         public void Setup()
         {
-            _inventoryUpdateResponseListener = new InventoryUpdateResponseListener();
-            _inventoryUpdateErrorListener = new InventoryUpdateErrorListener();
+            _inventoryUpdateResponseListener = new ManagedResponseListener<InventoryUpdateResponse>();
+            _inventoryUpdateErrorListener = new ManagedErrorListener<InventoryUpdateError>();
             
             ManagedSubscribe(_inventoryUpdateResponseListener);
             ManagedSubscribe(_inventoryUpdateErrorListener);
@@ -61,7 +61,7 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private void AssertResponseLength(int length)
         {
-            Assert.That(_inventoryUpdateResponseListener.InventoryUpdateResponses, Has.Length.EqualTo(length));
+            Assert.That(_inventoryUpdateResponseListener.Responses, Has.Length.EqualTo(length));
         }
         
         private static void AssertResponse(InventoryUpdateResponse response, ItemInfo expectedItemInfo, MutateType expectedMutateType)
@@ -84,12 +84,12 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private void AssertErrorLength(int length)
         {
-            Assert.That(_inventoryUpdateErrorListener.InventoryUpdateError.InventoryUpdates, Has.Length.EqualTo(length));
+            Assert.That(_inventoryUpdateErrorListener.Error.InventoryUpdates, Has.Length.EqualTo(length));
         }
 
         private void AssertResponseError<TException>()
         {
-            InventoryUpdateError updateError = _inventoryUpdateErrorListener.InventoryUpdateError;
+            InventoryUpdateError updateError = _inventoryUpdateErrorListener.Error;
             BaseError baseError = updateError.BaseError;
 
             Assert.Multiple(() =>
@@ -107,7 +107,7 @@ namespace IdelPog.Integration.Tests.Inventory
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo, MutateType.CREATED);
+            AssertResponse(_inventoryUpdateResponseListener.Responses[0], _stoneInfo, MutateType.CREATED);
         }
 
         [Test]
@@ -119,8 +119,8 @@ namespace IdelPog.Integration.Tests.Inventory
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo, MutateType.CREATED);
-            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[1], _stoneInfo with { ItemID = ItemID.COPPER }, MutateType.CREATED);
+            AssertResponse(_inventoryUpdateResponseListener.Responses[0], _stoneInfo, MutateType.CREATED);
+            AssertResponse(_inventoryUpdateResponseListener.Responses[1], _stoneInfo with { ItemID = ItemID.COPPER }, MutateType.CREATED);
             
         }
 
@@ -133,7 +133,7 @@ namespace IdelPog.Integration.Tests.Inventory
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo with { Amount = 20 }, MutateType.CHANGED);
+            AssertResponse(_inventoryUpdateResponseListener.Responses[0], _stoneInfo with { Amount = 20 }, MutateType.CHANGED);
         }
 
         [Test]
@@ -145,7 +145,7 @@ namespace IdelPog.Integration.Tests.Inventory
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo with { Amount = 0 }, MutateType.DELETED);
+            AssertResponse(_inventoryUpdateResponseListener.Responses[0], _stoneInfo with { Amount = 0 }, MutateType.DELETED);
         }
 
         [Test]
@@ -156,7 +156,7 @@ namespace IdelPog.Integration.Tests.Inventory
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo, MutateType.CREATED);
+            AssertResponse(_inventoryUpdateResponseListener.Responses[0], _stoneInfo, MutateType.CREATED);
         }
 
         [Test]
@@ -167,7 +167,7 @@ namespace IdelPog.Integration.Tests.Inventory
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_inventoryUpdateResponseListener.InventoryUpdateResponses[0], _stoneInfo with { ItemID = ItemID.COPPER }, MutateType.CREATED);
+            AssertResponse(_inventoryUpdateResponseListener.Responses[0], _stoneInfo with { ItemID = ItemID.COPPER }, MutateType.CREATED);
         }
 
         [Test]

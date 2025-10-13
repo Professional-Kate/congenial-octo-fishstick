@@ -12,6 +12,7 @@ using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
+using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
@@ -22,6 +23,14 @@ using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Error;
 using IdelPog.Inventory.Contracts.Response;
+using IdelPog.Inventory.Crafting.Contracts;
+using IdelPog.Inventory.Crafting.Contracts.Command;
+using IdelPog.Inventory.Crafting.Contracts.Error;
+using IdelPog.Inventory.Crafting.Contracts.Response;
+using IdelPog.Inventory.Crafting.Runtime.ECS;
+using IdelPog.Inventory.Crafting.Runtime.Factory;
+using IdelPog.Inventory.Crafting.Runtime.Factory.Interface;
+using IdelPog.Inventory.Crafting.Runtime.Mediator;
 using IdelPog.Inventory.Factory;
 using IdelPog.Inventory.Factory.Interface;
 using IdelPog.Inventory.Mediator;
@@ -32,15 +41,27 @@ namespace IdelPog.Inventory
 {
     public static class InventoryBootstrapper
     {
+        public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister flowRegister)
+        {
+            ILogWriter writer = new ConsoleWriter();
+            IBufferLogger bufferLogger = new BufferLoggingService(writer);
+            
+            IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository = new AssetRepository<RecipeID, CraftingRecipeEntity>();
+            
+            RegisterInventoryUpdate(bufferManager, bufferLogger, flowRegister);
+            RegisterRecipeCreation(bufferManager, bufferLogger, flowRegister, recipeEntityRepository);
+        }
+
         /// <summary>
-        /// Registers the InventoryUpdate flow
+        /// Registers the <see cref="InventoryUpdate"/> flow
         /// </summary>
         /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="bufferLogger">Logs all messages in and out</param>
         /// <param name="flowRegister">Used to register the InventoryUpdate flow</param>
         /// <remarks>
         /// Listens to -> <see cref="InventoryUpdate"/>. On Success -> <see cref="InventoryUpdateResponse"/>. On Error -> <see cref="InventoryUpdateError"/>
         /// </remarks>
-        public static void RegisterInventoryUpdate(IBufferManager bufferManager, IBatchRegister flowRegister)
+        private static void RegisterInventoryUpdate(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
@@ -72,8 +93,6 @@ namespace IdelPog.Inventory
             IItemFactory itemFactory = new ItemFactory(itemMapper);
             IItemInfoFactory itemInfoFactory = new ItemInfoFactory();
             IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
-            ILogWriter writer = new ConsoleWriter();
-            IBufferLogger bufferLogger = new BufferLoggingService(writer);
             
             IInventoryUpdateService inventoryUpdateService = new InventoryUpdateService(inventory, itemInfoFactory, itemFactory, collectionAssertion, itemFoundAssertion);
             IInventoryUpdateSummarizer summarizer = new InventoryUpdateSummarizer(updateFactory, collectionAssertion);
@@ -86,6 +105,35 @@ namespace IdelPog.Inventory
             IBatchController<InventoryUpdate> inventoryController = new ManagedBatchController<InventoryUpdate>(inventoryMediator);
             
             flowRegister.RegisterBatch(inventoryController, inventoryUpdateErrorFactory);
+        }
+
+        /// <summary>
+        /// Registers the <see cref="RecipeCreation"/> flow
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// <param name="flowRegister">Used to register the InventoryUpdate flow</param>
+        /// <param name="recipeEntityRepository">Stores all <see cref="CraftingRecipeEntity"/></param>
+        /// <remarks>
+        /// Listens to -> <see cref="RecipeCreation"/>. On Success -> <see cref="RecipeCreationResponse"/>. On Error -> <see cref="RecipeCreationError"/>
+        /// </remarks>
+        private static void RegisterRecipeCreation(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository)
+        {
+            IHandler throwHandler = new ThrowHandler();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            
+            ICraftingRecipeEntityFactory entityFactory = new CraftingRecipeEntityFactory(throwHandler, collectionAssertion);
+            IDispatchMany<RecipeCreationResponse> responseDispatcher = new ManagedDispatcher<RecipeCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
+            IBatchMediator<RecipeCreation> creationMediator = new RecipeCreationMediator(recipeEntityRepository, entityFactory, responseDispatcher, collectionAssertion, uniqueAssertion);
+            
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            RecipeCreationErrorFactory errorFactory = new(baseErrorFactory);
+            IBatchController<RecipeCreation> creationController = new ManagedBatchController<RecipeCreation>(creationMediator);
+            
+            flowRegister.RegisterBatch(creationController, errorFactory);
         }
     }
 }

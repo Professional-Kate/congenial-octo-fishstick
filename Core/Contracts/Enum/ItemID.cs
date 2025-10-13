@@ -17,6 +17,7 @@
         HONEY,
         WATER,
         SAND,
-        RING
+        RING,
+        DIAMOND_RING
     }
 }
