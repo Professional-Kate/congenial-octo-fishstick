@@ -5,6 +5,7 @@ using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Crafting.ECS;
 using IdelPog.Inventory.Crafting.Factory;
+using IdelPog.Inventory.Exceptions;
 
 namespace IdelPog.Inventory.Tests.Crafting.Factory
 {
@@ -61,6 +62,19 @@ namespace IdelPog.Inventory.Tests.Crafting.Factory
         public void Negative_Create_NullOutputs_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _entityFactory.Create([_recipeInput], null!));
+        }
+
+        [Test]
+        public void Negative_Create_ZeroInputAmount_Throws()
+        {
+            Assert.Throws<AmountZeroException>(() => _entityFactory.Create([_recipeInput with { Amount = 0 }], [_recipeOutput]));
+        }
+        
+        [Test]
+        public void Negative_Create_ZeroOutputAmount_Throws()
+        {
+            Assert.Throws<AmountZeroException>(() => _entityFactory.Create([_recipeInput], [_recipeOutput with { Amount = 0 }]));
+            
         }
     }
 }

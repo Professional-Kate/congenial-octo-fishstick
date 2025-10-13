@@ -6,6 +6,7 @@ using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Command;
 using IdelPog.Inventory.Contracts.Error;
 using IdelPog.Inventory.Contracts.Response;
+using IdelPog.Inventory.Exceptions;
 
 namespace IdelPog.Integration.Tests.Inventory
 {
@@ -152,6 +153,32 @@ namespace IdelPog.Integration.Tests.Inventory
             AssertErrorListenerCalled(true);
             AssertErrorLength(1);
             AssertError(typeof(EmptyCollectionException), emptyOutputCreation);
+        }
+
+        [Test]
+        public void Negative_DispatchSingleCreation_ZeroInputAmount_DispatchesError()
+        {
+            RecipeCreation zeroAmountCreation = _ringCreation with { RecipeInputs = [new RecipeInput { ItemID = ItemID.IRON, Amount = 0 }] };
+            
+            Assert.DoesNotThrow(() => DispatchRecipeCreations(zeroAmountCreation));
+            
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(1);
+            AssertError(typeof(AmountZeroException), zeroAmountCreation);
+        }
+        
+        [Test]
+        public void Negative_DispatchSingleCreation_ZeroOutputAmount_DispatchesError()
+        {
+            RecipeCreation zeroAmountCreation = _ringCreation with { RecipeOutputs = [new  RecipeOutput { ItemID = ItemID.RING, Amount = 0 }] };
+            
+            Assert.DoesNotThrow(() => DispatchRecipeCreations(zeroAmountCreation));
+            
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(1);
+            AssertError(typeof(AmountZeroException), zeroAmountCreation);
         }
     }
 }

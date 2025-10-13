@@ -1,7 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Assertion;
-using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Exceptions;
 
 namespace IdelPog.Inventory.Tests.Assertion
@@ -9,7 +8,7 @@ namespace IdelPog.Inventory.Tests.Assertion
     [TestFixture]
     public class AmountAssertionTest
     {
-        private IAmountAssertion _amountAssertion;
+        private AmountAssertion _amountAssertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -23,19 +22,19 @@ namespace IdelPog.Inventory.Tests.Assertion
         }
 
         [Test]
-        public void Positive_AmountIsGreater_NoThrow()
+        public void Positive_AssertEnoughAmount_AmountIsGreater_NoThrow()
         {
             Assert.DoesNotThrow(() => AssertionTestRunner(1, 10));
         }
 
         [Test]
-        public void Positive_AmountIsTheSame_NoThrow()
+        public void Positive_AssertEnoughAmount_AmountIsTheSame_NoThrow()
         {
             Assert.DoesNotThrow(() => AssertionTestRunner(10u, 10u));
         }
 
         [Test]
-        public void Negative_AmountIsLesser_Throws()
+        public void Negative_AssertEnoughAmount_AmountIsLesser_Throws()
         {
             InsufficientAmountException exception = Assert.Throws<InsufficientAmountException>(() => AssertionTestRunner(10, 1));
             
@@ -46,6 +45,18 @@ namespace IdelPog.Inventory.Tests.Assertion
                 Assert.That(exception.ActualAmount, Is.EqualTo(1));
                 Assert.That(exception.Message, Is.Not.Null.Or.Empty);
             });
+        }
+        
+        [Test]
+        public void Positive_AssertAmountNotZero_AmountNotZero_NoThrow()
+        {
+            Assert.DoesNotThrow(() => _amountAssertion.AssertAmountNotZero(1));
+        }
+        
+        [Test]
+        public void Positive_AssertAmountNotZero_AmountZero_Throws()
+        {
+            Assert.Throws<AmountZeroException>(() => _amountAssertion.AssertAmountNotZero(0));
         }
     }
 }

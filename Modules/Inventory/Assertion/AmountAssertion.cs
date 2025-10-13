@@ -12,6 +12,17 @@ namespace IdelPog.Inventory.Assertion
         {
         }
 
+        public void AssertAmountNotZero(uint amount)
+        {
+            Assert<AmountZeroException>(() =>
+            {
+                if (amount == 0)
+                {
+                    throw new AmountZeroException();
+                }
+            });
+        }
+
         public void AssertEnoughAmount(uint requestedAmount, uint actualAmount, ItemID itemID)
         {
             Assert<InsufficientAmountException>(() =>
