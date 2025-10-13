@@ -3,6 +3,6 @@
     public readonly record struct ItemCraft
     {
         public required RecipeID RecipeID { get; init; }
-        public required byte Amount { get; init; }
+        public required uint Amount { get; init; }
     }
 }
