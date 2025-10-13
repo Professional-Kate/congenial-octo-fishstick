@@ -197,6 +197,35 @@ namespace IdelPog.Integration.Tests.Inventory
         }
 
         [Test]
+        public void Positive_DispatchCraft_MultipleInputsAndOutputs_DispatchesResponses()
+        {
+            RecipeCreation creation = new()
+            {
+                RecipeID = RecipeID.IRON_RING,
+                RecipeInputs = [new RecipeInput { ItemID = ItemID.IRON, Amount = 1 }, new RecipeInput { ItemID = ItemID.DIAMOND, Amount = 1 }],
+                RecipeOutputs = [new  RecipeOutput { ItemID = ItemID.RING, Amount = 1 }, new  RecipeOutput { ItemID = ItemID.SAND, Amount = 1 }]
+            };
+            
+            DispatchInventoryUpdates(_ironUpdate, _ironUpdate with { ItemID = ItemID.DIAMOND});
+            DispatchRecipeCreations(creation);
+            ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
+            
+            Assert.DoesNotThrow(() => DispatchItemCrafts(_ringCraft));
+
+            AssertCraftResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertCraftListenerLength(1);
+            AssertCraftResponse(_itemCraftResponseListener.Responses[0], _ringCraft);
+            
+            AssertInventoryUpdateResponseListenerCalled(listener, true);
+            AssertInventoryUpdateResponseLength(listener, 4);
+            AssertInventoryResponse(listener.Responses[0], _ironUpdate with { ActionType = ActionType.REMOVE, Amount = 0 }, MutateType.DELETED);
+            AssertInventoryResponse(listener.Responses[1], _ringUpdate with { ItemID = ItemID.DIAMOND, Amount = 0}, MutateType.DELETED);
+            AssertInventoryResponse(listener.Responses[2], _ringUpdate, MutateType.CREATED);
+            AssertInventoryResponse(listener.Responses[3], _ringUpdate with { ItemID = ItemID.SAND }, MutateType.CREATED);
+        }
+
+        [Test]
         public void Negative_DispatchCraft_CraftNotFound_DispatchesError()
         {
             ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
