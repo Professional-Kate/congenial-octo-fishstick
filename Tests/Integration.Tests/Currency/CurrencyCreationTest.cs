@@ -6,7 +6,7 @@ using IdelPog.Currency.Contracts.Command;
 using IdelPog.Currency.Contracts.Error;
 using IdelPog.Currency.Contracts.Response;
 
-namespace IdelPog.Integration.Tests.CurrencyCommands.Create
+namespace IdelPog.Integration.Tests.Currency
 {
     [TestFixture]
     public sealed class CurrencyCreationTest : ManagedTestBuffer

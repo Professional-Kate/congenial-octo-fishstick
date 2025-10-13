@@ -8,7 +8,7 @@ using IdelPog.Currency.Contracts.Error;
 using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Exceptions;
 
-namespace IdelPog.Integration.Tests.CurrencyCommands.Update
+namespace IdelPog.Integration.Tests.Currency
 {
     [TestFixture]
     public sealed class CurrencyFlowTest : ManagedTestBuffer

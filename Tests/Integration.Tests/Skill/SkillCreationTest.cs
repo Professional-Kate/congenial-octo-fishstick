@@ -7,7 +7,7 @@ using IdelPog.Skill.Contracts.Command;
 using IdelPog.Skill.Contracts.Error;
 using IdelPog.Skill.Contracts.Response;
 
-namespace IdelPog.Integration.Tests.SkillCommands.Create
+namespace IdelPog.Integration.Tests.Skill
 {
     [TestFixture]
     public sealed class SkillCreationTest : ManagedTestBuffer

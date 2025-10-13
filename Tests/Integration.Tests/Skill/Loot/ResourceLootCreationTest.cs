@@ -8,7 +8,7 @@ using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Loot.Exceptions;
 
-namespace IdelPog.Integration.Tests.HarvestNode.Loot.Resource
+namespace IdelPog.Integration.Tests.Skill.Loot
 {
     public sealed class ResourceLootCreationTest : ManagedTestBuffer
     {

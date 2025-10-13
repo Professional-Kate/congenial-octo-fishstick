@@ -5,7 +5,7 @@ using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Progression;
 using IdelPog.Skill.Contracts.Command;
 
-namespace IdelPog.Integration.Tests.SkillCommands
+namespace IdelPog.Integration.Tests.Skill
 {
     internal sealed class SkillCreationDispatcher
     {

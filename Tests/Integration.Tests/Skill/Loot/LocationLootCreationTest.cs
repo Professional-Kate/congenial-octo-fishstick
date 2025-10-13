@@ -8,7 +8,7 @@ using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Loot.Exceptions;
 
-namespace IdelPog.Integration.Tests.HarvestNode.Loot.Location
+namespace IdelPog.Integration.Tests.Skill.Loot
 {
     [TestFixture]
     public sealed class LocationLootCreationTest : ManagedTestBuffer

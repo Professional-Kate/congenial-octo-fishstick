@@ -6,7 +6,7 @@ using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
 
-namespace IdelPog.Integration.Tests.HarvestNode.Unlock.Creation
+namespace IdelPog.Integration.Tests.HarvestNode.Unlock
 {
     [TestFixture]
     public sealed class NodeRequirementsCreationTest : ManagedTestBuffer
