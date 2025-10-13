@@ -52,7 +52,7 @@ namespace IdelPog.Integration.Tests
             CurrencyBootstrapper.RegisterFlows(BufferManager, flowRegister);
             SkillBootstrapper.RegisterFlows(BufferManager, flowRegister);
             ContentEngineBootstrapper.RegisterFlows(BufferManager, flowRegister);
-            InventoryBootstrapper.RegisterInventoryUpdate(BufferManager, flowRegister);
+            InventoryBootstrapper.RegisterFlows(BufferManager, flowRegister);
             FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
         }
 

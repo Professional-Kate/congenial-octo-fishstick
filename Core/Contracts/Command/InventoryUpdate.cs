@@ -4,8 +4,8 @@ namespace IdelPog.Core.Contracts.Command
 {
     public readonly record struct InventoryUpdate
     {
-        public ItemID ItemID { get; init; }
-        public uint Amount { get; init; }
-        public ActionType ActionType { get; init; }
+        public required ItemID ItemID { get; init; }
+        public required uint Amount { get; init; }
+        public required ActionType ActionType { get; init; }
     }
 }

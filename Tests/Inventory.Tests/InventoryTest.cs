@@ -34,7 +34,7 @@ namespace IdelPog.Inventory.Tests
             _repositoryMock = new Mock<IStateRepository<ItemID, Item>>();
             IHandler throwHandler = new ThrowHandler();
 
-            _inventory = new Service.Inventory(_repositoryMock.Object, new FoundAssertion(throwHandler), new UniqueAssertion(throwHandler), new AmountAssertion(throwHandler));
+            _inventory = new Inventory.Service.Inventory(_repositoryMock.Object, new FoundAssertion(throwHandler), new UniqueAssertion(throwHandler), new AmountAssertion(throwHandler));
         }
 
         private void VerifyRepositoryUpdate()
