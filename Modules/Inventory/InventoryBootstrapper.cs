@@ -1,10 +1,8 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Factory;
 using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Flows.Registry;
-using IdelPog.Core.Information;
 using IdelPog.Core.Logging;
 using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
@@ -47,20 +45,19 @@ namespace IdelPog.Inventory
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
             IItemFoundAssertion itemFoundAssertion = new ItemFoundAssertion(throwHandler);
             
-            ILogWriter writer = new ConsoleWriter();
-            IBufferLogger bufferLogger = new BufferLoggingService(writer);
-            IMapper<ItemID> itemMapper = new Mapper<ItemID>(foundAssertion, uniqueAssertion);
-            IItemFactory itemFactory = new ItemFactory(itemMapper);
-            IItemInfoFactory itemInfoFactory = new ItemInfoFactory();
-            
             IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository = new AssetRepository<RecipeID, CraftingRecipeEntity>();
             IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();
             IAssetRepository<ItemID,ItemDefinition> definitionRepository = new AssetRepository<ItemID, ItemDefinition>();
             
-            IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
-            IInventoryUpdateService inventoryUpdateService = new InventoryUpdateService(inventory, itemInfoFactory, itemFactory, collectionAssertion, itemFoundAssertion);
+            ILogWriter writer = new ConsoleWriter();
+            IBufferLogger bufferLogger = new BufferLoggingService(writer);
+            IItemInfoFactory itemInfoFactory = new ItemInfoFactory();
+            IItemCreationService creationService = new ItemCreationService(definitionRepository, foundAssertion);
             
-            RegisterInventoryUpdate(bufferManager, bufferLogger, flowRegister, inventoryUpdateService, itemMapper);
+            IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
+            IInventoryUpdateService inventoryUpdateService = new InventoryUpdateService(inventory, itemInfoFactory, collectionAssertion, itemFoundAssertion, creationService);
+            
+            RegisterInventoryUpdate(bufferManager, bufferLogger, flowRegister, inventoryUpdateService);
             RegisterRecipeCreation(bufferManager, bufferLogger, flowRegister, recipeEntityRepository);
             RegisterItemCraft(bufferManager, bufferLogger, flowRegister, recipeEntityRepository, inventory, inventoryUpdateService);
             RegisterItemDefinitionCreation(bufferManager, bufferLogger, flowRegister, definitionRepository);
@@ -73,33 +70,14 @@ namespace IdelPog.Inventory
         /// <param name="bufferLogger">Logs all messages in and out</param>
         /// <param name="flowRegister">Used to register the InventoryUpdate flow</param>
         /// <param name="inventoryUpdateService">Handles updating the <see cref="IInventory"/></param>
-        /// <param name="itemMapper">Maps <see cref="Information"/> to <see cref="ItemID"/>s</param>
         /// <remarks>
         /// Listens to -> <see cref="InventoryUpdate"/>. On Success -> <see cref="InventoryUpdateResponse"/>. On Error -> <see cref="InventoryUpdateError"/>
         /// </remarks>
-        private static void RegisterInventoryUpdate(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IInventoryUpdateService inventoryUpdateService, IMapper<ItemID> itemMapper)
+        private static void RegisterInventoryUpdate(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IInventoryUpdateService inventoryUpdateService)
         {
             IHandler throwHandler = new ThrowHandler();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
             ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-
-            // TODO: need some kinda ItemDefinition command that can define all this
-            itemMapper.AddInformation(ItemID.STONE, new Information { Description = "Rock and...", Name = "Stone" });
-            itemMapper.AddInformation(ItemID.COPPER, new Information { Description = "It's like less cool bronze", Name = "Copper" });
-            itemMapper.AddInformation(ItemID.IRON, new Information { Description = "Your job is to mine Diamonds", Name = "Iron" });
-            itemMapper.AddInformation(ItemID.GOLD, new Information { Description = "It's like less cool copper", Name = "Gold" });
-            itemMapper.AddInformation(ItemID.DIAMOND, new Information { Description = "Fancy coal", Name = "Diamond" });
-            itemMapper.AddInformation(ItemID.EMERALD, new Information { Description = "Your villagers will love this", Name = "Emerald" });
-            itemMapper.AddInformation(ItemID.RUBY, new Information { Description = "Evil Diamond (thus worth more)", Name = "Ruby" });
-            itemMapper.AddInformation(ItemID.OAK, new Information { Description = "The most basic of woods", Name = "Oak" });
-            itemMapper.AddInformation(ItemID.SPRUCE, new Information { Description = "Ohhhh now we got something good", Name = "Spruce" });
-            itemMapper.AddInformation(ItemID.BIRCH, new Information { Description = "I like the colours", Name = "Birch" });
-            itemMapper.AddInformation(ItemID.HERBS, new Information { Description = "Delicious herbs (do not smoke them)", Name = "Herbs" });
-            itemMapper.AddInformation(ItemID.SMALL_INSECTS, new Information { Description = "Could use these for fishing...", Name = "Small Insects" });
-            itemMapper.AddInformation(ItemID.HONEY, new Information { Description = "Delicious and it was only slightly painful", Name = "Honey" });
-            itemMapper.AddInformation(ItemID.WATER, new Information { Description = "Finally learnt how to collect water?", Name = "Water" });
-            itemMapper.AddInformation(ItemID.SAND, new Information { Description = "It gets everywhere...", Name = "Sand" });
-            itemMapper.AddInformation(ItemID.RING, new Information { Description = "A small ring with some elvish writing on the inside", Name = "Ring" });
             
             IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
             IInventoryUpdateSummarizer summarizer = new InventoryUpdateSummarizer(updateFactory, collectionAssertion);

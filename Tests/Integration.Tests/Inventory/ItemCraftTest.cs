@@ -1,4 +1,5 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
@@ -16,8 +17,11 @@ namespace IdelPog.Integration.Tests.Inventory
     {
         private ItemCraft _ringCraft;
         private RecipeCreation _ringCreation;
-        private InventoryUpdate _ironUpdate;
         private InventoryUpdate _ringUpdate;
+        private ItemDefinitionCreation _ringDefinition;
+        
+        private InventoryUpdate _ironUpdate;
+        private ItemDefinitionCreation _ironDefinition;
         
         private ManagedResponseListener<ItemCraftResponse> _itemCraftResponseListener;
         private ManagedErrorListener<ItemCraftError> _itemCraftErrorListener;
@@ -36,6 +40,9 @@ namespace IdelPog.Integration.Tests.Inventory
 
             _ironUpdate = new InventoryUpdate { ItemID = ItemID.IRON, Amount = 1, ActionType = ActionType.ADD };
             _ringUpdate = new InventoryUpdate { ItemID = ItemID.RING, Amount = 1, ActionType = ActionType.ADD };
+            
+            _ringDefinition = new ItemDefinitionCreation { ItemID = ItemID.RING, BaseSellPrice = 5, Information = new Information { Name = "Ring", Description = "Shiny" } };
+            _ironDefinition = new ItemDefinitionCreation { ItemID = ItemID.IRON, BaseSellPrice = 1, Information = new Information { Name = "Iron", Description = "Basic" } };
         }
 
         [SetUp]
@@ -46,6 +53,13 @@ namespace IdelPog.Integration.Tests.Inventory
             
             ManagedSubscribe(_itemCraftResponseListener);
             ManagedSubscribe(_itemCraftErrorListener);
+        }
+        
+        private void DispatchItemDefinitionCreations(params ItemDefinitionCreation[] creations)
+        {
+            IBuffer<ItemDefinitionCreation> buffer = BufferManager.RequestBuffer<ItemDefinitionCreation>(new BufferRequest(creations.Length));
+            buffer.Assign(creations);
+            buffer.MarkReady();
         }
 
         private ManagedResponseListener<InventoryUpdateResponse> SubscribeInventoryUpdateResponseListener()
@@ -136,6 +150,7 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test] 
         public void Positive_DispatchCraft_CraftsOneItem_DispatchesResponses()
         {
+            DispatchItemDefinitionCreations(_ringDefinition, _ironDefinition);
             DispatchInventoryUpdates(_ironUpdate);
             DispatchRecipeCreations(_ringCreation);
             ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
@@ -158,6 +173,7 @@ namespace IdelPog.Integration.Tests.Inventory
         {
             ItemCraft twoRingsCraft = _ringCraft with { Amount = 2 };
             
+            DispatchItemDefinitionCreations(_ringDefinition, _ironDefinition);
             DispatchInventoryUpdates(_ironUpdate with { Amount = 10 });
             DispatchRecipeCreations(_ringCreation);
             ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
@@ -178,6 +194,7 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Positive_DispatchCraft_MultipleMessages_DispatchesResponses()
         {
+            DispatchItemDefinitionCreations(_ringDefinition, _ironDefinition);
             DispatchInventoryUpdates(_ironUpdate with { Amount = 10 });
             DispatchRecipeCreations(_ringCreation);
             ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
@@ -206,7 +223,8 @@ namespace IdelPog.Integration.Tests.Inventory
                 RecipeOutputs = [new  RecipeOutput { ItemID = ItemID.RING, Amount = 1 }, new  RecipeOutput { ItemID = ItemID.SAND, Amount = 1 }]
             };
             
-            DispatchInventoryUpdates(_ironUpdate, _ironUpdate with { ItemID = ItemID.DIAMOND});
+            DispatchItemDefinitionCreations(_ringDefinition, _ironDefinition, _ringDefinition with { ItemID = ItemID.DIAMOND }, _ringDefinition with { ItemID = ItemID.SAND });
+            DispatchInventoryUpdates(_ironUpdate, _ironUpdate with { ItemID = ItemID.DIAMOND });
             DispatchRecipeCreations(creation);
             ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
             
@@ -259,6 +277,7 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Negative_DispatchCraft_ItemNotEnoughAmount_DispatchesError()
         {
+            DispatchItemDefinitionCreations(_ringDefinition, _ironDefinition);
             DispatchInventoryUpdates(_ironUpdate);
             DispatchRecipeCreations(_ringCreation);
             ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
@@ -276,6 +295,7 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Negative_DispatchCraft_ZeroAmount_DispatchesError()
         {
+            DispatchItemDefinitionCreations(_ringDefinition, _ironDefinition);
             DispatchInventoryUpdates(_ironUpdate);
             DispatchRecipeCreations(_ringCreation);
             ManagedResponseListener<InventoryUpdateResponse> listener = SubscribeInventoryUpdateResponseListener();
@@ -288,6 +308,20 @@ namespace IdelPog.Integration.Tests.Inventory
             AssertError(typeof(AmountZeroException), _ringCraft with { Amount = 0 });
             
             AssertInventoryUpdateResponseListenerCalled(listener, false);
+        }
+
+        [Test]
+        public void Negative_DispatchCraft_NoDefinitionFound_DispatchesError()
+        {
+            DispatchInventoryUpdates(_ironUpdate);
+            DispatchRecipeCreations(_ringCreation);
+            
+            Assert.DoesNotThrow(() => DispatchItemCrafts(_ringCraft));
+
+            AssertCraftResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(1);
+            AssertError(typeof(NotFoundException<ItemID>), _ringCraft);
         }
     }
 }

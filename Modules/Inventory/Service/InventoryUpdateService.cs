@@ -14,17 +14,17 @@ namespace IdelPog.Inventory.Service
     {
         private readonly IInventory _inventory;
         private readonly IItemInfoFactory _itemInfoFactory;
-        private readonly IItemFactory _itemFactory;
+        private readonly IItemCreationService _itemCreationService;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IItemFoundAssertion _itemFoundAssertion;
 
-        public InventoryUpdateService(IInventory inventory, IItemInfoFactory itemInfoFactory, IItemFactory itemFactory, ICollectionAssertion collectionAssertion, IItemFoundAssertion itemFoundAssertion)
+        public InventoryUpdateService(IInventory inventory, IItemInfoFactory itemInfoFactory, ICollectionAssertion collectionAssertion, IItemFoundAssertion itemFoundAssertion, IItemCreationService itemCreationService)
         {
             _inventory = inventory;
             _itemInfoFactory = itemInfoFactory;
-            _itemFactory = itemFactory;
             _collectionAssertion = collectionAssertion;
             _itemFoundAssertion = itemFoundAssertion;
+            _itemCreationService = itemCreationService;
         }
 
         public IReadOnlyList<InventoryUpdateResponse> ApplyUpdates(IReadOnlyList<InventoryUpdate> inventoryUpdates)
@@ -60,8 +60,8 @@ namespace IdelPog.Inventory.Service
         private InventoryUpdateResponse HandleMissingItem(InventoryUpdate update)
         {
             _itemFoundAssertion.AssertItemFound(false, update.ActionType, update.ItemID);
-                    
-            Item item = _itemFactory.CreateItem(update.ItemID, update.Amount);
+
+            Item item = _itemCreationService.Create(update.ItemID, update.Amount);
             _inventory.AddItem(item);
 
             return CreateInventoryUpdateResponse(CreateItemInfo(item), MutateType.CREATED);
