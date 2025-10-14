@@ -3,6 +3,7 @@ using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Validation.Exceptions;
+using IdelPog.Inventory.Contracts.Command;
 using IdelPog.Inventory.Contracts.Error;
 using IdelPog.Inventory.Contracts.Response;
 using IdelPog.Inventory.Exceptions;
@@ -17,6 +18,7 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private InventoryUpdate _addStoneUpdate;
         private ItemInfo _stoneInfo;
+        private ItemDefinitionCreation _stoneDefinition;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -35,6 +37,8 @@ namespace IdelPog.Integration.Tests.Inventory
                 BaseSellPrice = 1,
                 Information = new Information { Description = "", Name = "" }
             };
+            
+            _stoneDefinition = new ItemDefinitionCreation { ItemID = ItemID.STONE, BaseSellPrice = 1, Information = new Information { Name = "Stone", Description = "Stoney" } };
         }
         
         [SetUp]
@@ -47,6 +51,13 @@ namespace IdelPog.Integration.Tests.Inventory
             ManagedSubscribe(_inventoryUpdateErrorListener);
         }
 
+        private void DispatchItemDefinitionCreations(params ItemDefinitionCreation[] creations)
+        {
+            IBuffer<ItemDefinitionCreation> buffer = BufferManager.RequestBuffer<ItemDefinitionCreation>(new BufferRequest(creations.Length));
+            buffer.Assign(creations);
+            buffer.MarkReady();
+        }
+        
         private void DispatchInventoryUpdate(params InventoryUpdate[] inventoryUpdates)
         {
             IBuffer<InventoryUpdate> buffer = BufferManager.RequestBuffer<InventoryUpdate>(new BufferRequest(inventoryUpdates.Length));
@@ -102,6 +113,8 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Positive_SendAddUpdate_CreatesStone_DispatchesCreationUpdate()
         {
+            DispatchItemDefinitionCreations(_stoneDefinition);
+                
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
             
             AssertResponseListenerCalled(true);
@@ -114,6 +127,8 @@ namespace IdelPog.Integration.Tests.Inventory
         public void Positive_SendMultipleAddUpdates_CreatesMultipleItems_DispatchesCreationUpdate()
         {
             InventoryUpdate addCopper = _addStoneUpdate with { ItemID = ItemID.COPPER };
+            DispatchItemDefinitionCreations(_stoneDefinition, _stoneDefinition with { ItemID = ItemID.COPPER });
+            
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate, addCopper));
             
             AssertResponseListenerCalled(true);
@@ -127,6 +142,8 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Positive_SendAddAfterCreation_ResponsesWithChanged()
         {
+            DispatchItemDefinitionCreations(_stoneDefinition);
+            
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
 
@@ -139,6 +156,8 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Positive_SendRemoveAfterCreation_ResponsesWithDeleted()
         {
+            DispatchItemDefinitionCreations(_stoneDefinition);
+            
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE }));
             
@@ -151,6 +170,8 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Positive_SendMixedUpdate_SingleItem_ResponsesWithCorrectAmount()
         { 
+            DispatchItemDefinitionCreations(_stoneDefinition);
+            
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE }, _addStoneUpdate, _addStoneUpdate));
             
             AssertResponseListenerCalled(true);
@@ -162,6 +183,8 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Positive_SendMixedUpdates_TwoItems_OneZero_DispatchesOneResponse()
         {
+            DispatchItemDefinitionCreations(_stoneDefinition, _stoneDefinition with { ItemID = ItemID.COPPER });
+            
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE }, _addStoneUpdate, _addStoneUpdate with { ItemID = ItemID.COPPER }));
             
             AssertResponseListenerCalled(true);
@@ -184,6 +207,8 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Negative_SendRemoveUpdate_ItemNotCreated_DispatchesError()
         {
+            DispatchItemDefinitionCreations(_stoneDefinition);
+            
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE }));
             
             AssertResponseListenerCalled(false);
@@ -195,6 +220,8 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Negative_SendMixedUpdates_FinalAmountNegative_DispatchesError()
         {
+            DispatchItemDefinitionCreations(_stoneDefinition);
+            
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = ActionType.REMOVE, Amount = 11 }));
             
@@ -207,12 +234,25 @@ namespace IdelPog.Integration.Tests.Inventory
         [Test]
         public void Negative_SendBadActionType_DispatchesError()
         {
+            DispatchItemDefinitionCreations(_stoneDefinition);
+            
             Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate with { ActionType = (ActionType) 5 }));
             
             AssertResponseListenerCalled(false);
             AssertErrorListenerCalled(true);
             AssertErrorLength(1);
             AssertResponseError<ArgumentOutOfRangeException>();
+        }
+
+        [Test]
+        public void Negative_SendUpdate_NoDefinitionFound_DispatchesError()
+        {
+            Assert.DoesNotThrow(() => DispatchInventoryUpdate(_addStoneUpdate));
+            
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(true);
+            AssertErrorLength(1);
+            AssertResponseError<NotFoundException<ItemID>>();
         }
     }
 }

@@ -3,6 +3,6 @@
     public enum RecipeID : byte
     {
         IRON_RING,
-        DIAMOND_RING,
+        DIAMOND_RING
     }
 }

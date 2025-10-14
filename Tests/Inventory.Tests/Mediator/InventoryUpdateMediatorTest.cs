@@ -10,7 +10,7 @@ using IdelPog.Inventory.Mediator;
 using IdelPog.Inventory.Service.Interface;
 using Moq;
 
-namespace IdelPog.Inventory.Tests
+namespace IdelPog.Inventory.Tests.Mediator
 {
     [TestFixture]
     public sealed class InventoryUpdateMediatorTest

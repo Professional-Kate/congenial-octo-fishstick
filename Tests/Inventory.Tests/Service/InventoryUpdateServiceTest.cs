@@ -20,7 +20,7 @@ namespace IdelPog.Inventory.Tests.Service
         private InventoryUpdateService _updateService;
         private Mock<IInventory> _inventoryMock;
         private Mock<IItemInfoFactory> _infoFactoryMock;
-        private Mock<IItemFactory> _itemFactoryMock;
+        private Mock<IItemCreationService> _creationServiceMock;
 
         private Item _spruceItem;
         private InventoryUpdate _spruceUpdate;
@@ -35,10 +35,10 @@ namespace IdelPog.Inventory.Tests.Service
             
             _inventoryMock = new Mock<IInventory>();
             _infoFactoryMock = new Mock<IItemInfoFactory>();
-            _itemFactoryMock = new Mock<IItemFactory>();
+            _creationServiceMock = new Mock<IItemCreationService>();
             ThrowHandler throwHandler = new();
             
-            _updateService = new InventoryUpdateService(_inventoryMock.Object, _infoFactoryMock.Object, _itemFactoryMock.Object, new CollectionAssertion(throwHandler), new ItemFoundAssertion(throwHandler));
+            _updateService = new InventoryUpdateService(_inventoryMock.Object, _infoFactoryMock.Object, new CollectionAssertion(throwHandler), new ItemFoundAssertion(throwHandler), _creationServiceMock.Object);
         }
 
         [SetUp]
@@ -46,7 +46,6 @@ namespace IdelPog.Inventory.Tests.Service
         {
             _inventoryMock.Reset();
             _infoFactoryMock.Reset();
-            _itemFactoryMock.Reset();
         }
 
         private void SetupInventoryContains(ItemID itemID, bool contains)
@@ -69,9 +68,9 @@ namespace IdelPog.Inventory.Tests.Service
             _infoFactoryMock.Setup(library => library.Create(itemInfo.ItemID, itemInfo.BaseSellPrice, itemInfo.Amount, itemInfo.Information)).Returns(itemInfo);
         }
 
-        private void SetupItemFactory(Item item)
-        {
-            _itemFactoryMock.Setup(library => library.CreateItem(item.ItemID, item.Amount)).Returns(item);
+        private void SetupItemCreationService(Item item)
+        { 
+            _creationServiceMock.Setup(library => library.Create(item.ItemID, item.Amount)).Returns(item);
         }
 
         private static void VerifyResponseLength(int length, IReadOnlyList<InventoryUpdateResponse> responses)
@@ -123,7 +122,7 @@ namespace IdelPog.Inventory.Tests.Service
         {
             SetupInventoryContains(_spruceUpdate.ItemID, false);
             SetupInfoFactory(_spruceInfo);
-            SetupItemFactory(_spruceItem);
+            SetupItemCreationService(_spruceItem);
             
             IReadOnlyList<InventoryUpdateResponse> responses = _updateService.ApplyUpdates([_spruceUpdate]);
             
@@ -140,7 +139,7 @@ namespace IdelPog.Inventory.Tests.Service
             SetupInventoryContains(_spruceUpdate.ItemID, true);
             SetupInventoryGet(_spruceItem);
             SetupInfoFactory(_spruceInfo);
-            SetupItemFactory(_spruceItem);
+            SetupItemCreationService(_spruceItem);
             
             IReadOnlyList<InventoryUpdateResponse> responses = _updateService.ApplyUpdates([_spruceUpdate]);
             
@@ -159,7 +158,7 @@ namespace IdelPog.Inventory.Tests.Service
             SetupInventoryGet(_spruceItem);
             SetupInventoryRemoveAmount(_spruceUpdate.ItemID, _spruceUpdate.Amount, MutateType.DELETED);
             SetupInfoFactory(_spruceInfo with { Amount = 0 });
-            SetupItemFactory(_spruceItem);
+            SetupItemCreationService(_spruceItem);
             
             IReadOnlyList<InventoryUpdateResponse> responses = _updateService.ApplyUpdates([_spruceUpdate with { ActionType = ActionType.REMOVE }]);
             
@@ -178,7 +177,7 @@ namespace IdelPog.Inventory.Tests.Service
             SetupInventoryGet(_spruceItem);
             SetupInventoryRemoveAmount(_spruceUpdate.ItemID, _spruceUpdate.Amount, MutateType.CHANGED);
             SetupInfoFactory(_spruceInfo with { Amount = 1 });
-            SetupItemFactory(_spruceItem);
+            SetupItemCreationService(_spruceItem);
             
             IReadOnlyList<InventoryUpdateResponse> responses = _updateService.ApplyUpdates([_spruceUpdate with { ActionType = ActionType.REMOVE }]);
             
@@ -196,7 +195,7 @@ namespace IdelPog.Inventory.Tests.Service
             SetupInventoryContains(_spruceUpdate.ItemID, true);
             SetupInventoryGet(_spruceItem);
             SetupInfoFactory(_spruceInfo);
-            SetupItemFactory(_spruceItem);
+            SetupItemCreationService(_spruceItem);
             
             IReadOnlyList<InventoryUpdateResponse> responses = _updateService.ApplyUpdates([_spruceUpdate, _spruceUpdate]);
             
