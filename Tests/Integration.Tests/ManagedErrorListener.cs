@@ -13,6 +13,5 @@ namespace IdelPog.Integration.Tests
             WasCalled = true;
             Error = message;
         }
-
     }
 }

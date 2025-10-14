@@ -55,6 +55,7 @@ namespace IdelPog.Inventory
             
             IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository = new AssetRepository<RecipeID, CraftingRecipeEntity>();
             IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();
+            IAssetRepository<ItemID,ItemDefinition> definitionRepository = new AssetRepository<ItemID, ItemDefinition>();
             
             IInventory inventory = new Service.Inventory(itemRepository, foundAssertion, uniqueAssertion, amountAssertion);
             IInventoryUpdateService inventoryUpdateService = new InventoryUpdateService(inventory, itemInfoFactory, itemFactory, collectionAssertion, itemFoundAssertion);
@@ -62,6 +63,7 @@ namespace IdelPog.Inventory
             RegisterInventoryUpdate(bufferManager, bufferLogger, flowRegister, inventoryUpdateService, itemMapper);
             RegisterRecipeCreation(bufferManager, bufferLogger, flowRegister, recipeEntityRepository);
             RegisterItemCraft(bufferManager, bufferLogger, flowRegister, recipeEntityRepository, inventory, inventoryUpdateService);
+            RegisterItemDefinitionCreation(bufferManager, bufferLogger, flowRegister, definitionRepository);
         }
 
         /// <summary>
@@ -150,7 +152,7 @@ namespace IdelPog.Inventory
         /// <param name="recipeEntityRepository">Stores all <see cref="CraftingRecipeEntity"/></param>
         /// <param name="inventory">Stores all <see cref="Item"/>s</param>
         /// <param name="inventoryUpdateService">Handles updating the <see cref="IInventory"/></param>
-        /// /// <remarks>
+        /// <remarks>
         /// Listens to -> <see cref="ItemCraft"/>. On Success -> <see cref="ItemCraftResponse"/>. On Error -> <see cref="ItemCraftError"/>
         /// </remarks>
         private static void RegisterItemCraft(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository, IInventory inventory, IInventoryUpdateService inventoryUpdateService)
@@ -173,6 +175,35 @@ namespace IdelPog.Inventory
             IBatchController<ItemCraft> craftController = new ManagedBatchController<ItemCraft>(craftMediator);
             
             flowRegister.RegisterBatch(craftController, errorFactory);
+        }
+
+        /// <summary>
+        /// Registers the <see cref="ItemDefinitionCreation"/> flow
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// <param name="flowRegister">Used to register the InventoryUpdate flow</param>
+        /// <param name="definitionRepository">Stores all <see cref="ItemDefinition"/>s</param>
+        /// <remarks>
+        /// Listens to -> <see cref="ItemDefinitionCreation"/>. On Success -> <see cref="ItemDefinitionCreationResponse"/>. On Error -> <see cref="ItemDefinitionCreationError"/>
+        /// </remarks>
+        private static void RegisterItemDefinitionCreation(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IAssetRepository<ItemID, ItemDefinition> definitionRepository)
+        {
+            IHandler throwHandler = new ThrowHandler();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
+            
+            IDispatchMany<ItemDefinitionCreationResponse> responseDispatcher = new ManagedDispatcher<ItemDefinitionCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
+            IBatchMediator<ItemDefinitionCreation> creationMediator = new ItemDefinitionCreationMediator(definitionRepository, responseDispatcher, collectionAssertion, uniqueAssertion, amountAssertion);
+            
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            ItemDefinitionCreationErrorFactory errorFactory = new(baseErrorFactory);
+            IBatchController<ItemDefinitionCreation> creationController = new ManagedBatchController<ItemDefinitionCreation>(creationMediator);
+            
+            flowRegister.RegisterBatch(creationController, errorFactory);
         }
     }
 }

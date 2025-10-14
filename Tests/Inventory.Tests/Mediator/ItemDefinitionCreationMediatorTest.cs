@@ -50,7 +50,7 @@ namespace IdelPog.Inventory.Tests.Mediator
         
         private void VerifyRepositoryAdd(Times times, ItemID itemID)
         {
-            _repositoryMock.Verify(library => library.Add(itemID, It.IsAny<ItemDefinition>()), times);
+            _repositoryMock.Verify(library => library.Add(itemID, It.Is<ItemDefinition>(definition => definition.ItemID == itemID)), times);
         }
 
         private void VerifyRepositoryNoOtherCalls()
@@ -58,9 +58,14 @@ namespace IdelPog.Inventory.Tests.Mediator
             _repositoryMock.VerifyNoOtherCalls();
         }
 
-        private void VerifyDispatcherCalled(Times times)
+        private void VerifyDispatcherCalled(int length)
         {
-            _responseDispatcherMock.Verify(library => library.Dispatch(It.IsAny<ItemDefinitionCreationResponse[]>()), times);
+            _responseDispatcherMock.Verify(library => library.Dispatch(It.Is<ItemDefinitionCreationResponse[]>(responses => responses.Length == length)), Times.Once);
+        }
+
+        private void VerifyDispatcherNotCalled()
+        {
+            _responseDispatcherMock.Verify(library => library.Dispatch(It.IsAny<ItemDefinitionCreationResponse[]>()), Times.Never);
         }
 
         [Test]
@@ -71,7 +76,7 @@ namespace IdelPog.Inventory.Tests.Mediator
             VerifyRepositoryContains(Times.Once(), _honeyCreation.ItemID);
             VerifyRepositoryAdd(Times.Once(), _honeyCreation.ItemID);
             VerifyRepositoryNoOtherCalls();
-            VerifyDispatcherCalled(Times.Once());
+            VerifyDispatcherCalled(1);
         }
 
         [Test]
@@ -82,7 +87,7 @@ namespace IdelPog.Inventory.Tests.Mediator
             VerifyRepositoryContains(Times.Exactly(2), _honeyCreation.ItemID);
             VerifyRepositoryAdd(Times.Exactly(2), _honeyCreation.ItemID);
             VerifyRepositoryNoOtherCalls();
-            VerifyDispatcherCalled(Times.Once());
+            VerifyDispatcherCalled(2);
         }
 
         [Test]
@@ -91,7 +96,7 @@ namespace IdelPog.Inventory.Tests.Mediator
             Assert.Throws<EmptyCollectionException>(() => _creationMediator.HandleMessages([]));
             
             VerifyRepositoryNoOtherCalls();
-            VerifyDispatcherCalled(Times.Never());
+            VerifyDispatcherNotCalled();
         }
         
         [Test]
@@ -100,7 +105,7 @@ namespace IdelPog.Inventory.Tests.Mediator
             Assert.Throws<ArgumentNullException>(() => _creationMediator.HandleMessages(null!));
             
             VerifyRepositoryNoOtherCalls();
-            VerifyDispatcherCalled(Times.Never());
+            VerifyDispatcherNotCalled();
         }
 
         [Test]
@@ -109,7 +114,7 @@ namespace IdelPog.Inventory.Tests.Mediator
             Assert.Throws<AmountZeroException>(() => _creationMediator.HandleMessages([_honeyCreation with { BaseSellPrice = 0 }]));
             
             VerifyRepositoryNoOtherCalls();
-            VerifyDispatcherCalled(Times.Never());
+            VerifyDispatcherNotCalled();
         }
 
         [Test]
@@ -121,7 +126,7 @@ namespace IdelPog.Inventory.Tests.Mediator
             
             _repositoryMock.Verify(library => library.Contains(_honeyCreation.ItemID), Times.Once);
             VerifyRepositoryNoOtherCalls();
-            VerifyDispatcherCalled(Times.Never());
+            VerifyDispatcherNotCalled();
         }
     }
 }
