@@ -1,7 +1,7 @@
 ﻿# Modules/Inventory
-The `Inventory` module stores player `Item`s and can mutate them, adding or removing from their `Amount`, on request.
+The `Inventory` module stores player `Item`s and handles all mutations, adding or removing from their `Amount` on request.
 
-The `Inventory` also handles `Crafting` and `Recipies` which is the process of taking x items and transforming them into y items.
+It also manages `Crafting` and `Recipies` which define how sets of input Items can be transformed into new output Items.
 
 ## Contracts
 
@@ -39,7 +39,7 @@ If an `ItemDefinition` for any given `ItemID` is not found an `Assertion` will b
 ### `RecipeInputComponent` and `RecipeOutputComponent` component records
 
 ```csharp
-
+ 
 public readonly record struct RecipeInputComponent : IComponent<RecipeInputComponent>
 {
     public required ItemID ItemID { get; init; }
