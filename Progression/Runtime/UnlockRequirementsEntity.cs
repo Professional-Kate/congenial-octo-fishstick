@@ -1,5 +1,4 @@
-﻿using IdelPog.Core.Validation.Handler;
-using IdelPog.ECS.Entity;
+﻿using IdelPog.ECS.Entity;
 using IdelPog.Progression.Runtime.Component;
 
 namespace IdelPog.Progression.Runtime
@@ -9,7 +8,7 @@ namespace IdelPog.Progression.Runtime
         private readonly QueueComponentStore<LevelRequirementComponent<TID, TCommand>> _levelRequirementStore;
 
         public UnlockRequirementsEntity(LevelRequirementComponent<TID, TCommand>[] unlockComponents)
-            : base(new QueueComponentStore<LevelRequirementComponent<TID, TCommand>>(unlockComponents, new ThrowHandler()))
+            : base(new QueueComponentStore<LevelRequirementComponent<TID, TCommand>>(unlockComponents))
         {
             _levelRequirementStore = GetComponent<QueueComponentStore<LevelRequirementComponent<TID, TCommand>>>();
         }

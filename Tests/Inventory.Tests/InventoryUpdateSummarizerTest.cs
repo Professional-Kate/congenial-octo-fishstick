@@ -2,7 +2,6 @@
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Factory.Interface;
 using IdelPog.Inventory.Service;
 using IdelPog.Inventory.Service.Interface;
@@ -11,7 +10,7 @@ using Moq;
 namespace IdelPog.Inventory.Tests
 {
     [TestFixture]
-    public class InventoryUpdateSummarizerTest
+    public sealed class InventoryUpdateSummarizerTest
     {
         private IInventoryUpdateSummarizer _inventoryUpdateSummarizer;
         private Mock<IInventoryUpdateFactory> _inventoryUpdateFactoryMock;
@@ -30,7 +29,7 @@ namespace IdelPog.Inventory.Tests
             
             _inventoryUpdateFactoryMock = new Mock<IInventoryUpdateFactory>();
             
-            _inventoryUpdateSummarizer = new InventoryUpdateSummarizer(_inventoryUpdateFactoryMock.Object, new CollectionAssertion(new ThrowHandler()));
+            _inventoryUpdateSummarizer = new InventoryUpdateSummarizer(_inventoryUpdateFactoryMock.Object, new CollectionAssertion());
         }
 
         [SetUp]

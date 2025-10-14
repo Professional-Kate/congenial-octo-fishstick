@@ -14,8 +14,6 @@ using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
@@ -38,12 +36,11 @@ namespace IdelPog.Inventory
     {
         public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister flowRegister)
         {
-            IHandler throwHandler = new ThrowHandler();
-            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
-            IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IItemFoundAssertion itemFoundAssertion = new ItemFoundAssertion(throwHandler);
+            IFoundAssertion foundAssertion = new FoundAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
+            IAmountAssertion amountAssertion = new AmountAssertion();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IItemFoundAssertion itemFoundAssertion = new ItemFoundAssertion();
             
             IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository = new AssetRepository<RecipeID, CraftingRecipeEntity>();
             IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();
@@ -75,9 +72,8 @@ namespace IdelPog.Inventory
         /// </remarks>
         private static void RegisterInventoryUpdate(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IInventoryUpdateService inventoryUpdateService)
         {
-            IHandler throwHandler = new ThrowHandler();
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
             
             IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
             IInventoryUpdateSummarizer summarizer = new InventoryUpdateSummarizer(updateFactory, collectionAssertion);
@@ -104,12 +100,11 @@ namespace IdelPog.Inventory
         /// </remarks>
         private static void RegisterRecipeCreation(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository)
         {
-            IHandler throwHandler = new ThrowHandler();
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
             
-            ICraftingRecipeEntityFactory entityFactory = new CraftingRecipeEntityFactory(throwHandler, collectionAssertion);
+            ICraftingRecipeEntityFactory entityFactory = new CraftingRecipeEntityFactory(collectionAssertion);
             IDispatchMany<RecipeCreationResponse> responseDispatcher = new ManagedDispatcher<RecipeCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<RecipeCreation> creationMediator = new RecipeCreationMediator(recipeEntityRepository, entityFactory, responseDispatcher, collectionAssertion, uniqueAssertion);
@@ -135,11 +130,10 @@ namespace IdelPog.Inventory
         /// </remarks>
         private static void RegisterItemCraft(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository, IInventory inventory, IInventoryUpdateService inventoryUpdateService)
         {
-            IHandler throwHandler = new ThrowHandler();
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
-            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            IAmountAssertion amountAssertion = new AmountAssertion();
+            IFoundAssertion foundAssertion = new FoundAssertion();
             
             IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
             IInventoryUpdateSummarizer inventoryUpdateSummarizer = new InventoryUpdateSummarizer(updateFactory, collectionAssertion);
@@ -167,11 +161,10 @@ namespace IdelPog.Inventory
         /// </remarks>
         private static void RegisterItemDefinitionCreation(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IAssetRepository<ItemID, ItemDefinition> definitionRepository)
         {
-            IHandler throwHandler = new ThrowHandler();
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
-            IAmountAssertion amountAssertion = new AmountAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
+            IAmountAssertion amountAssertion = new AmountAssertion();
             
             IDispatchMany<ItemDefinitionCreationResponse> responseDispatcher = new ManagedDispatcher<ItemDefinitionCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             

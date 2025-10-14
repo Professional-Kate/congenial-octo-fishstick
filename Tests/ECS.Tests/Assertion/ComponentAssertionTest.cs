@@ -1,19 +1,18 @@
-﻿using IdelPog.Core.Validation.Handler;
-using IdelPog.ECS.Assertion;
+﻿using IdelPog.ECS.Assertion;
 using IdelPog.ECS.Assertion.Interface;
 using IdelPog.ECS.Exceptions;
 
 namespace IdelPog.ECS.Tests.Assertion
 {
     [TestFixture]
-    public class ComponentAssertionTest
+    public sealed class ComponentAssertionTest
     {
         private IComponentAssertion _assertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _assertion = new ComponentAssertion(new ThrowHandler());
+            _assertion = new ComponentAssertion();
         }
 
         [Test]

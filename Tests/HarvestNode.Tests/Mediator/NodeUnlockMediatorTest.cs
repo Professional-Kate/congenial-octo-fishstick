@@ -3,7 +3,6 @@ using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.HarvestNode.Runtime.Mediator;
@@ -27,7 +26,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
         {
             _nodeUnlockerServiceMock = new Mock<IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse>>();
             _dispatcherMock = new Mock<IDispatchMany<HarvestNodeUnlockResponse>>();
-            _nodeUnlockMediator = new NodeUnlockMediator(_nodeUnlockerServiceMock.Object, _dispatcherMock.Object, new CollectionAssertion(new ThrowHandler()));
+            _nodeUnlockMediator = new NodeUnlockMediator(_nodeUnlockerServiceMock.Object, _dispatcherMock.Object, new CollectionAssertion());
 
             _miningUnlock = new HarvestNodeUnlock { SkillID = SkillID.WOOD_CUTTING, SkillLevel = 5 };
             _miningUnlockResponse = new HarvestNodeUnlockResponse { SkillID = SkillID.WOOD_CUTTING, ResourceID = ResourceID.BIRCH_TREE };

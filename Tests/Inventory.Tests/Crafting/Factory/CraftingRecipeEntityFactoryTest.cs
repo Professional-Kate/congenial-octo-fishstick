@@ -1,7 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Crafting.ECS;
 using IdelPog.Inventory.Crafting.Factory;
@@ -22,8 +21,7 @@ namespace IdelPog.Inventory.Tests.Crafting.Factory
             _recipeInput = new RecipeInput { ItemID = ItemID.SAND, Amount = 4 };
             _recipeOutput = new RecipeOutput { ItemID = ItemID.STONE, Amount = 1 };
 
-            ThrowHandler throwHandler = new();
-            _entityFactory = new CraftingRecipeEntityFactory(throwHandler, new CollectionAssertion(throwHandler));
+            _entityFactory = new CraftingRecipeEntityFactory(new CollectionAssertion());
         }
 
         private static void AssertEntityContains(CraftingRecipeEntity entity, ItemID itemID, bool contains)

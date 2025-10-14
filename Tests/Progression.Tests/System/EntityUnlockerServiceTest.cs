@@ -2,7 +2,6 @@
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Progression.Assertion;
@@ -30,10 +29,9 @@ namespace IdelPog.Progression.Tests.System
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            ThrowHandler throwHandler = new();
             _repositoryMock = new Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>>();
             
-            _entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object, new FoundAssertion(throwHandler), new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler), new IDMatchesAssertion<SkillID>(throwHandler), new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler));
+            _entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object, new FoundAssertion(), new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(), new IDMatchesAssertion<SkillID>(), new QueueAssertion<SkillID, HarvestNodeUnlockResponse>());
 
             _harvestNodeUnlock = new HarvestNodeUnlock { SkillID = SkillID.MINING, SkillLevel = 5 };
             _harvestNodeUnlockResponse = new HarvestNodeUnlockResponse { ResourceID = ResourceID.COPPER_CLUSTER, SkillID = SkillID.MINING };

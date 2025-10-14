@@ -1,5 +1,4 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Progression.Assertion;
 using IdelPog.Progression.Assertion.Interface;
 using IdelPog.Progression.Exceptions;
@@ -14,7 +13,7 @@ namespace IdelPog.Progression.Tests.Assertion
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _iidMatchesAssertion = new IDMatchesAssertion<SkillID>(new ThrowHandler());
+            _iidMatchesAssertion = new IDMatchesAssertion<SkillID>();
         }
 
         [Test]

@@ -1,7 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Loot.Assertion;
 using IdelPog.Loot.Exceptions;
 using IdelPog.Loot.Random;
@@ -13,7 +12,7 @@ using Moq;
 namespace Loot.Tests
 {
     [TestFixture]
-    public class WeightedLootTableTest
+    public sealed class WeightedLootTableTest
     {
         private WeightedLootTable _weightedLootTable;
         private Mock<ILootRoll> _lootRollMock;
@@ -44,7 +43,7 @@ namespace Loot.Tests
                 _weight += weightedEntry.Weight;
             }
             
-            _weightedLootTable = new WeightedLootTable(_entries, _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler()));
+            _weightedLootTable = new WeightedLootTable(_entries, _lootRollMock.Object, new CollectionAssertion(), new WeightAssertion());
         }
 
         [Test]
@@ -88,26 +87,26 @@ namespace Loot.Tests
         [Test]
         public void Negative_ConstructWithEmptyCollection_Throws()
         {
-            Assert.Throws<EmptyCollectionException>(() => new WeightedLootTable([], _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
+            Assert.Throws<EmptyCollectionException>(() => new WeightedLootTable([], _lootRollMock.Object, new CollectionAssertion(), new WeightAssertion()));
         }
         
         [Test]
         public void Negative_ConstructWithNullCollection_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new WeightedLootTable(null!, _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
+            Assert.Throws<ArgumentNullException>(() => new WeightedLootTable(null!, _lootRollMock.Object, new CollectionAssertion(), new WeightAssertion()));
         }
 
         [TestCase(0)]
         [TestCase(1)]
         public void Positive_ConstructWithPositiveWeight_NoThrow(int weight)
         {
-            Assert.DoesNotThrow(() => new WeightedLootTable([new WeightedEntry { ItemID = ItemID.STONE, Weight = weight}], _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
+            Assert.DoesNotThrow(() => new WeightedLootTable([new WeightedEntry { ItemID = ItemID.STONE, Weight = weight}], _lootRollMock.Object, new CollectionAssertion(), new WeightAssertion()));
         }
 
         [Test]
         public void Negative_ConstructWithNegativeWeight_Throws()
         { 
-            Assert.Throws<InvalidWeightException>(() => new WeightedLootTable([new WeightedEntry { ItemID = ItemID.STONE, Weight = -1 }], _lootRollMock.Object, new CollectionAssertion(new ThrowHandler()), new WeightAssertion(new ThrowHandler())));
+            Assert.Throws<InvalidWeightException>(() => new WeightedLootTable([new WeightedEntry { ItemID = ItemID.STONE, Weight = -1 }], _lootRollMock.Object, new CollectionAssertion(), new WeightAssertion()));
         }
     }
 }

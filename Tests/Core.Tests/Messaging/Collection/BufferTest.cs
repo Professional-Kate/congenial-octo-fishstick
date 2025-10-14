@@ -4,13 +4,12 @@ using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Messaging.Messenger;
 using IdelPog.Core.Validation.Assertion;
-using IdelPog.Core.Validation.Handler;
 using Moq;
 
 namespace IdelPog.Core.Tests.Messaging.Collection
 {
     [TestFixture]
-    public class BufferTest
+    public sealed class BufferTest
     {
         private Buffer<int> _buffer { get; set; }
         private int[] _data = [];
@@ -22,8 +21,8 @@ namespace IdelPog.Core.Tests.Messaging.Collection
         {
             _bufferDispatcherMock =  new Mock<IBufferDispatcher>();
 
-            _bufferAssertion = new BufferAssertion(new ThrowHandler());
-            _buffer = new Buffer<int>(_bufferAssertion, _bufferDispatcherMock.Object, new ObjectNullAssertion(new ThrowHandler()), new BufferRequest(3));
+            _bufferAssertion = new BufferAssertion();
+            _buffer = new Buffer<int>(_bufferAssertion, _bufferDispatcherMock.Object, new ObjectNullAssertion(), new BufferRequest(3));
 
             _data = [1, 2, 3];
         }
@@ -31,7 +30,7 @@ namespace IdelPog.Core.Tests.Messaging.Collection
         [Test]
         public void Positive_OnConstruct_SetsState()
         {
-            Buffer<int> createdBuffer = new(_bufferAssertion, _bufferDispatcherMock.Object, new ObjectNullAssertion(new ThrowHandler()), new BufferRequest(3));
+            Buffer<int> createdBuffer = new(_bufferAssertion, _bufferDispatcherMock.Object, new ObjectNullAssertion(), new BufferRequest(3));
 
             Assert.That(createdBuffer.State, Is.EqualTo(BufferState.CREATED));
         }

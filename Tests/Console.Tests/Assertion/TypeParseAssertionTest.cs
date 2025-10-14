@@ -1,19 +1,18 @@
 ﻿using IdelPog.Console.Assertion;
 using IdelPog.Console.Assertion.Interface;
 using IdelPog.Console.Exceptions;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Console.Tests.Assertion
 {
     [TestFixture]
-    public class TypeParseAssertionTest
+    public sealed class TypeParseAssertionTest
     {
         private ITypeParseAssertion _assertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _assertion = new TypeParseAssertion(new ThrowHandler());
+            _assertion = new TypeParseAssertion();
         }
 
         [Test]

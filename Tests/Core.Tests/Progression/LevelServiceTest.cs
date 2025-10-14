@@ -3,12 +3,11 @@ using IdelPog.Core.Progression.Assertion;
 using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Tests.Progression
 {
     [TestFixture]
-    public class LevelServiceTest
+    public sealed class LevelServiceTest
     {
         private ILevelService _service { get; set; }
 
@@ -17,8 +16,7 @@ namespace IdelPog.Core.Tests.Progression
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            ThrowHandler throwHandler = new();
-            _service = new LevelService(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler));
+            _service = new LevelService(new LevelAssertion(), new ObjectNullAssertion());
         }
 
         [SetUp]

@@ -2,12 +2,11 @@
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Tests.Repository
 {
     [TestFixture]
-    public class StateRepositoryTest
+    public sealed class StateRepositoryTest
     {
         private IStateRepository<int, CloneableTestObject> _stateRepository;
         private IRepositoryAsserter _asserterMock;
@@ -19,8 +18,7 @@ namespace IdelPog.Core.Tests.Repository
         [SetUp]
         public void Setup()
         {
-            _asserterMock = new RepositoryAsserter(new FoundAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()),
-                new UniqueAssertion(new ThrowHandler()));
+            _asserterMock = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
 
             _stateRepository = new StateRepository<int, CloneableTestObject>(_asserterMock);
             _cloneableTestObject = new CloneableTestObject(VALUE);

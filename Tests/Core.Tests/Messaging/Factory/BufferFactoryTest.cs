@@ -4,13 +4,12 @@ using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Buffer.Factory;
 using IdelPog.Core.Messaging.Messenger;
 using IdelPog.Core.Validation.Assertion;
-using IdelPog.Core.Validation.Handler;
 using Moq;
 
 namespace IdelPog.Core.Tests.Messaging.Factory
 {
     [TestFixture]
-    public class BufferFactoryTest
+    public sealed class BufferFactoryTest
     {
         private IBufferFactory _bufferFactory { get; set; }
         private BufferRequest _bufferRequest { get; set; }
@@ -20,10 +19,10 @@ namespace IdelPog.Core.Tests.Messaging.Factory
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _bufferAssertion = new BufferAssertion(new ThrowHandler());
+            _bufferAssertion = new BufferAssertion();
 
             Mock<IBufferDispatcher> bufferDispatcherMock = new();
-            _bufferFactory = new BufferFactory(_bufferAssertion, new ObjectNullAssertion(new ThrowHandler()), bufferDispatcherMock.Object);
+            _bufferFactory = new BufferFactory(_bufferAssertion, new ObjectNullAssertion(), bufferDispatcherMock.Object);
             _bufferRequest = new BufferRequest(5);
         }
 

@@ -1,5 +1,4 @@
-﻿using IdelPog.Core.Validation.Handler.Interface;
-using IdelPog.ECS.Assertion;
+﻿using IdelPog.ECS.Assertion;
 using IdelPog.ECS.Component;
 
 namespace IdelPog.Progression.Runtime.Component
@@ -7,12 +6,10 @@ namespace IdelPog.Progression.Runtime.Component
     public readonly struct QueueComponentStore<T> : IComponent<QueueComponentStore<T>> where T : struct, IComponent<T>
     {
         private readonly Queue<T> _components;
-        private readonly IHandler _handler;
 
-        public QueueComponentStore(T[] components, IHandler handler)
+        public QueueComponentStore(T[] components)
         {
-            _handler = handler;
-            ComponentArrayAssertion componentArrayAssertion = new(_handler);
+            ComponentArrayAssertion componentArrayAssertion = new();
             componentArrayAssertion.AssertHasElements(components.ToArray());
             
             _components = new Queue<T>(components);
@@ -42,7 +39,7 @@ namespace IdelPog.Progression.Runtime.Component
 
         public QueueComponentStore<T> DeepClone()
         {
-            return new QueueComponentStore<T>(_components.ToArray(), _handler);
+            return new QueueComponentStore<T>(_components.ToArray());
         }
     }
 }

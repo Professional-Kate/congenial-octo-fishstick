@@ -1,7 +1,6 @@
 ﻿using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Repository.State
 {
@@ -13,8 +12,7 @@ namespace IdelPog.Core.Repository.State
 
         public StateRepository()
         {
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()),
-                new UniqueAssertion(new ThrowHandler()));
+            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
         }
 
         public StateRepository(IRepositoryAsserter repositoryAsserter)

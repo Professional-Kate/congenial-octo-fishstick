@@ -3,13 +3,11 @@ using IdelPog.Core.Progression.Assertion;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
 
 namespace IdelPog.Core.Tests.Progression
 {
     [TestFixture]
-    public class ExperienceServiceTest
+    public sealed class ExperienceServiceTest
     {
         private IExperienceService _experienceService { get; set; }
         private Levelable _levelable { get; set; }
@@ -17,8 +15,7 @@ namespace IdelPog.Core.Tests.Progression
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            IHandler throwHandler = new ThrowHandler();
-            _experienceService = new ExperienceService(new LevelAssertion(throwHandler), new ObjectNullAssertion(throwHandler));
+            _experienceService = new ExperienceService(new LevelAssertion(), new ObjectNullAssertion());
         }
 
         [SetUp]

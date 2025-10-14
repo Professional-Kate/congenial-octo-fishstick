@@ -1,19 +1,18 @@
 ﻿using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Tests.Validation.Assertion
 {
     [TestFixture]
-    public class UniqueAssertionTest
+    public sealed class UniqueAssertionTest
     {
         private IUniqueAssertion _uniqueAssertion { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _uniqueAssertion = new UniqueAssertion(new ThrowHandler());
+            _uniqueAssertion = new UniqueAssertion();
         }
 
         [Test]

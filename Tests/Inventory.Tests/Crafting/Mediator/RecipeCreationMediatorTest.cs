@@ -4,7 +4,6 @@ using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Command;
 using IdelPog.Inventory.Contracts.Response;
@@ -39,8 +38,7 @@ namespace IdelPog.Inventory.Tests.Crafting.Mediator
             _factoryMock = new Mock<ICraftingRecipeEntityFactory>();
             _responseDispatchMock = new Mock<IDispatchMany<RecipeCreationResponse>>();
 
-            ThrowHandler throwHandler = new();
-            _creationMediator = new RecipeCreationMediator(_repositoryEntityMock.Object, _factoryMock.Object, _responseDispatchMock.Object, new CollectionAssertion(throwHandler), new UniqueAssertion(throwHandler));
+            _creationMediator = new RecipeCreationMediator(_repositoryEntityMock.Object, _factoryMock.Object, _responseDispatchMock.Object, new CollectionAssertion(), new UniqueAssertion());
         }
 
         [SetUp]

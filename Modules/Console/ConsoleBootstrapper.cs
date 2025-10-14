@@ -22,8 +22,6 @@ using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.ECS.Assertion;
 using IdelPog.ECS.Assertion.Interface;
 using IdelPog.ECS.Entity;
@@ -35,19 +33,18 @@ namespace IdelPog.Console
     {
         public static IInputHandler Initialize(IBufferManager bufferManager)
         {
-            IHandler throwHandler = new ThrowHandler();
-            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
-            ISpanAssertion spanAssertion = new SpanAssertion(throwHandler);
-            IEnumParseAssertion enumParseAssertion = new EnumParseAssertion(throwHandler);
-            ITypeParseAssertion typeParseAssertion = new TypeParseAssertion(throwHandler);
-            IArgumentCountAssertion argumentCountAssertion = new ArgumentCountAssertion(throwHandler);
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IComponentAssertion componentAssertion = new ComponentAssertion(throwHandler);
-            IDomainPermissionAssertion domainPermissionAssertion = new DomainPermissionAssertion(throwHandler);
+            IFoundAssertion foundAssertion = new FoundAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
+            ISpanAssertion spanAssertion = new SpanAssertion();
+            IEnumParseAssertion enumParseAssertion = new EnumParseAssertion();
+            ITypeParseAssertion typeParseAssertion = new TypeParseAssertion();
+            IArgumentCountAssertion argumentCountAssertion = new ArgumentCountAssertion();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IComponentAssertion componentAssertion = new ComponentAssertion();
+            IDomainPermissionAssertion domainPermissionAssertion = new DomainPermissionAssertion();
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
-            INumberAssertion numberAssertion = new NumberAssertion(throwHandler);
+            INumberAssertion numberAssertion = new NumberAssertion();
 
             DomainComponent permissionDomain = new() { AllowedDomain = Domain.PERMISSION };
             IEntity allowedDomainEntity = new AllowedDomainsEntity([permissionDomain]);
@@ -62,31 +59,23 @@ namespace IdelPog.Console
             ILogWriter writer = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
 
-            IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher =
-                new ManagedDispatcher<CurrencyUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IDispatchOne<CurrencyUpdate> currencyUpdateDispatcher = new ManagedDispatcher<CurrencyUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline = new CurrencyUpdateResolver(actionTypeResolver, uIntResolver, currencyTypeResolver);
 
-            IArgumentResolverPipeline<CurrencyUpdateArguments> currencyUpdatePipeline =
-                new CurrencyUpdateResolver(actionTypeResolver, uIntResolver, currencyTypeResolver);
-
-            ICommandDomainResolver currencyDomainResolver =
-                new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateDispatcher, argumentCountAssertion);
+            ICommandDomainResolver currencyDomainResolver = new CurrencyDomainResolver(currencyUpdatePipeline, currencyUpdateDispatcher, argumentCountAssertion);
 
             IComponentStoreFactory componentStoreFactory = new ComponentStoreFactory();
             IDomainComponentFactory domainComponentFactory = new DomainComponentFactory();
 
             IPermissionService permissionService = new PermissionService(allowedDomainEntity, domainComponentFactory, componentStoreFactory, componentAssertion);
-
-            IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline =
-                new PermissionUpdateResolver(actionTypeResolver, commandDomainResolver);
-
+            IArgumentResolverPipeline<PermissionUpdateArguments> permissionUpdatePipeline = new PermissionUpdateResolver(actionTypeResolver, commandDomainResolver);
             ICommandDomainResolver permissionDomainResolver = new PermissionDomainResolver(permissionUpdatePipeline, permissionService, argumentCountAssertion);
 
             commandRepository.Add(Domain.CURRENCY, currencyDomainResolver);
             commandRepository.Add(Domain.PERMISSION, permissionDomainResolver);
 
             IDomainPermissionChecker domainPermissionChecker = new DomainPermissionChecker(allowedDomainEntity, componentAssertion);
-            ICommandResolverMediator commandResolverMediator =
-                new CommandResolverMediator(commandRepository, domainPermissionChecker, foundAssertion, spanAssertion, domainPermissionAssertion);
+            ICommandResolverMediator commandResolverMediator = new CommandResolverMediator(commandRepository, domainPermissionChecker, foundAssertion, spanAssertion, domainPermissionAssertion);
 
             IArgumentResolver<Domain> commandArgumentResolver = new EnumResolver<Domain>(enumParseAssertion);
 

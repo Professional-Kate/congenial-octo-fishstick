@@ -7,12 +7,11 @@ using IdelPog.Console.Types;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using Moq;
 
 namespace IdelPog.Console.Tests.Resolver
 {
-    public class CommandResolverMediatorTest
+    public sealed class CommandResolverMediatorTest
     {
         private ICommandResolverMediator _commandResolverMediator { get; set; }
         private Mock<IAssetRepository<Domain, ICommandDomainResolver>> _repositoryMock { get; set; }
@@ -25,8 +24,7 @@ namespace IdelPog.Console.Tests.Resolver
             _repositoryMock = new Mock<IAssetRepository<Domain, ICommandDomainResolver>>();
             _commandDomainResolverMock = new Mock<ICommandDomainResolver>();
             _domainPermissionCheckerMock = new Mock<IDomainPermissionChecker>();
-            _commandResolverMediator = new CommandResolverMediator(_repositoryMock.Object, _domainPermissionCheckerMock.Object,
-                new FoundAssertion(new ThrowHandler()), new SpanAssertion(new ThrowHandler()), new DomainPermissionAssertion(new ThrowHandler()));
+            _commandResolverMediator = new CommandResolverMediator(_repositoryMock.Object, _domainPermissionCheckerMock.Object, new FoundAssertion(), new SpanAssertion(), new DomainPermissionAssertion());
         }
 
         [SetUp]

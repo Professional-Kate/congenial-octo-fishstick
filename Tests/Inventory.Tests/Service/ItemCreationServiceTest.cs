@@ -3,7 +3,6 @@ using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Service;
 using Moq;
@@ -30,7 +29,7 @@ namespace IdelPog.Inventory.Tests.Service
 
             _repositoryMock = new Mock<IAssetRepository<ItemID, ItemDefinition>>();
 
-            _itemCreationService = new ItemCreationService(_repositoryMock.Object, new FoundAssertion(new ThrowHandler()));
+            _itemCreationService = new ItemCreationService(_repositoryMock.Object, new FoundAssertion());
         }
 
         [SetUp]

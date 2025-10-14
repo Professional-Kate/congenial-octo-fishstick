@@ -1,25 +1,16 @@
 ﻿using IdelPog.Console.Assertion.Interface;
 using IdelPog.Console.Exceptions;
-using IdelPog.Core.Validation;
-using IdelPog.Core.Validation.Handler.Interface;
 
 namespace IdelPog.Console.Assertion
 {
-    public class NumberAssertion : BaseAssertion, INumberAssertion
+    public sealed class NumberAssertion : INumberAssertion
     {
-        public NumberAssertion(IHandler handler) : base(handler)
-        {
-        }
-
         public void AssertNonNegative(int number)
         {
-            Assert<NegativeNumberException>(() =>
+            if (number < 0)
             {
-                if (number < 0)
-                {
-                    throw new NegativeNumberException(number);
-                }
-            });
+                throw new NegativeNumberException(number);
+            }
         }
     }
 }

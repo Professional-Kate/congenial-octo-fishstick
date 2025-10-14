@@ -3,19 +3,18 @@ using IdelPog.Core.Messaging.Assertion.Interface;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Messaging.Listener;
 using IdelPog.Core.Tests.Messaging.Messaging;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Tests.Messaging.Assertion
 {
     [TestFixture]
-    public class ListenerAssertionTest
+    public sealed class ListenerAssertionTest
     {
         private IListenerAssertion _listenerAssertion { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _listenerAssertion = new ListenerAssertion(new ThrowHandler());
+            _listenerAssertion = new ListenerAssertion();
         }
 
         [Test]

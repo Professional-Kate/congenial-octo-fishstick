@@ -2,7 +2,6 @@
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Contracts.Response;
@@ -28,9 +27,8 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _lootTableServiceMock = new Mock<ILootTableService<ResourceID>>();
             _grantPolicyServiceMock = new Mock<IGrantPolicyService<ResourceID>>();
             _responseDispatcherMock = new Mock<IDispatchMany<ResourceLootCreationResponse>>();
-            ThrowHandler throwHandler = new();
             
-            _mediator = new NodeLootCreationMediator(_lootTableServiceMock.Object, _grantPolicyServiceMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(throwHandler));
+            _mediator = new NodeLootCreationMediator(_lootTableServiceMock.Object, _grantPolicyServiceMock.Object, _responseDispatcherMock.Object, new CollectionAssertion());
 
             _singleSandCreation = new ResourceLootCreation
             {

@@ -2,12 +2,11 @@
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Messaging.Messenger;
 using IdelPog.Core.Validation.Assertion;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Tests.Messaging.Messaging
 {
     [TestFixture]
-    public class BufferMessengerTest
+    public sealed class BufferMessengerTest
     {
         private BufferMessenger _bufferMessenger { get; set; }
         private TestListener<int> _intListener { get; set; }
@@ -30,7 +29,7 @@ namespace IdelPog.Core.Tests.Messaging.Messaging
 
         private void Setup()
         {
-            _bufferMessenger = new BufferMessenger(new ObjectNullAssertion(new ThrowHandler()), new ListenerAssertion(new ThrowHandler()));
+            _bufferMessenger = new BufferMessenger(new ObjectNullAssertion(), new ListenerAssertion());
         }
 
         [Test]

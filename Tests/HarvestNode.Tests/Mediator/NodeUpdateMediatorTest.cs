@@ -7,7 +7,6 @@ using IdelPog.Core.Progression;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Assertion;
 using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Contracts.Response;
@@ -69,7 +68,6 @@ namespace IdelPog.HarvestNode.Tests.Mediator
                 LocationID = _harvestNode.LocationID
             };
 
-            ThrowHandler throwHandler = new();
             _skillNodeAccessValidatorMock = new Mock<ISkillNodeAccessValidator>();
             _nodeUpdateServiceMock = new Mock<INodeUpdateService>();
             _responseDispatcherMock = new Mock<IDispatchMany<HarvestNodeUpdateResponse>>();
@@ -78,7 +76,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _inventoryUpdateDispatcherMock = new Mock<IDispatchMany<InventoryUpdate>>();
             _harvestNodeLootServiceMock =  new Mock<IHarvestNodeLootService>();
             
-            _updateMediator = new NodeUpdateMediator(_harvestNodeRepository.Object, _skillNodeAccessValidatorMock.Object, _checkerMock.Object, _nodeUpdateServiceMock.Object, _harvestNodeLootServiceMock.Object, _responseDispatcherMock.Object, _inventoryUpdateDispatcherMock.Object, new NodeUnlockedAssertion(throwHandler), new CollectionAssertion(throwHandler), new FoundAssertion(throwHandler));
+            _updateMediator = new NodeUpdateMediator(_harvestNodeRepository.Object, _skillNodeAccessValidatorMock.Object, _checkerMock.Object, _nodeUpdateServiceMock.Object, _harvestNodeLootServiceMock.Object, _responseDispatcherMock.Object, _inventoryUpdateDispatcherMock.Object, new NodeUnlockedAssertion(), new CollectionAssertion(), new FoundAssertion());
         }
         
         [SetUp]

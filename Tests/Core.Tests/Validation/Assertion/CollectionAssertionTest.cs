@@ -1,19 +1,18 @@
 ﻿using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Tests.Validation.Assertion
 {
     [TestFixture]
-    public class CollectionAssertionTest
+    public sealed class CollectionAssertionTest
     {
         private ICollectionAssertion _assertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _assertion = new CollectionAssertion(new ThrowHandler());
+            _assertion = new CollectionAssertion();
         }
 
         [Test]

@@ -1,19 +1,18 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Exceptions;
 
 namespace IdelPog.Inventory.Tests.Assertion
 {
     [TestFixture]
-    public class AmountAssertionTest
+    public sealed class AmountAssertionTest
     {
         private AmountAssertion _amountAssertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _amountAssertion = new AmountAssertion(new ThrowHandler());
+            _amountAssertion = new AmountAssertion();
         }
 
         private void AssertionTestRunner(uint requestedAmount, uint actualAmount)

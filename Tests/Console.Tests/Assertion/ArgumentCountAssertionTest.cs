@@ -1,18 +1,17 @@
 ﻿using IdelPog.Console.Assertion;
 using IdelPog.Console.Exceptions;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Console.Tests.Assertion
 {
     [TestFixture]
-    public class ArgumentCountAssertionTest
+    public sealed class ArgumentCountAssertionTest
     {
         private ArgumentCountAssertion _assertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _assertion = new ArgumentCountAssertion(new ThrowHandler());
+            _assertion = new ArgumentCountAssertion();
         }
 
         [Test]

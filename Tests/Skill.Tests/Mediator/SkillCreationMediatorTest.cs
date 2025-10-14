@@ -7,7 +7,6 @@ using IdelPog.Core.Progression.Assertion;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Skill.Contracts.Command;
 using IdelPog.Skill.Contracts.Response;
 using IdelPog.Skill.Factory.Interface;
@@ -33,9 +32,7 @@ namespace IdelPog.Skills.Tests.Mediator
             _responseFactoryMock = new Mock<ISkillCreationResponseFactory>();
             _dispatcherMock = new Mock<IDispatchMany<SkillCreationResponse>>();
 
-            ThrowHandler throwHandler = new();
-            
-            _skillCreationMediator = new SkillCreationMediator(_repositoryMock.Object, _responseFactoryMock.Object,  _dispatcherMock.Object, new CollectionAssertion(throwHandler), new UniqueAssertion(throwHandler), new LevelAssertion(throwHandler));
+            _skillCreationMediator = new SkillCreationMediator(_repositoryMock.Object, _responseFactoryMock.Object,  _dispatcherMock.Object, new CollectionAssertion(), new UniqueAssertion(), new LevelAssertion());
 
             _skillCreations =
             [

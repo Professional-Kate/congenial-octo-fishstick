@@ -1,10 +1,9 @@
 ﻿using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Repository.Asset
 {
-    public class AssetRepository<TID, T> : IAssetRepository<TID, T>
+    public sealed class AssetRepository<TID, T> : IAssetRepository<TID, T>
         where TID : notnull where T : notnull
     {
         private readonly Dictionary<TID, T> _repository = new();
@@ -12,8 +11,7 @@ namespace IdelPog.Core.Repository.Asset
 
         public AssetRepository()
         {
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()),
-                new UniqueAssertion(new ThrowHandler()));
+            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
         }
 
         public AssetRepository(IRepositoryAsserter repositoryAsserter)

@@ -4,7 +4,6 @@ using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Contracts.Response;
@@ -16,7 +15,7 @@ using Moq;
 namespace IdelPog.HarvestNode.Tests.Mediator
 {
     [TestFixture]
-    public class NodeRequirementsCreationMediatorTest
+    public sealed class NodeRequirementsCreationMediatorTest
     {
         private IBatchMediator<HarvestNodeRequirementsCreation> _creationMediator;
         private Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>> _repositoryMock;
@@ -31,9 +30,8 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _repositoryMock = new Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>>();
             _factoryMock = new Mock<IUnlockRequirementsEntityFactory>();
             _responseDispatcherMock = new Mock<IDispatchMany<HarvestNodeRequirementsCreationResponse>>();
-            ThrowHandler throwHandler = new();
 
-            _creationMediator = new NodeRequirementsCreationMediator(_repositoryMock.Object, _factoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(throwHandler), new UniqueAssertion(throwHandler));
+            _creationMediator = new NodeRequirementsCreationMediator(_repositoryMock.Object, _factoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new UniqueAssertion());
 
             _miningCreation = new HarvestNodeRequirementsCreation
             {

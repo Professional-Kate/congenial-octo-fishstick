@@ -6,7 +6,6 @@ using IdelPog.Core.Progression.Level;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.System;
 using IdelPog.HarvestNode.Runtime.System.Interface;
@@ -15,7 +14,7 @@ using Moq;
 namespace IdelPog.HarvestNode.Tests.Service
 {
     [TestFixture]
-    public class NodeUpdateServiceTest
+    public sealed class NodeUpdateServiceTest
     {
         private INodeUpdateService _nodeUpdateService;
         private Mock<IStateRepository<ResourceID, Contracts.HarvestNode>> _nodeRepositoryMock;
@@ -41,7 +40,7 @@ namespace IdelPog.HarvestNode.Tests.Service
                 LocationID = LocationID.CAVE
             };
             
-            _nodeUpdateService = new NodeUpdateService(_nodeRepositoryMock.Object, _levelServiceMock.Object, _experienceServiceMock.Object, _updateResponseFactoryMock.Object, new FoundAssertion(new ThrowHandler()));
+            _nodeUpdateService = new NodeUpdateService(_nodeRepositoryMock.Object, _levelServiceMock.Object, _experienceServiceMock.Object, _updateResponseFactoryMock.Object, new FoundAssertion());
         }
 
         [SetUp]

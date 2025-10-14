@@ -2,7 +2,6 @@
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Loot.Policy;
 using IdelPog.Loot.Service;
 using IdelPog.Loot.Service.Interface;
@@ -12,7 +11,7 @@ using Moq;
 namespace Loot.Tests
 {
     [TestFixture]
-    public class LootServiceTest
+    public sealed class LootServiceTest
     {
         private ILootService<ItemID> _lootService;
         private Mock<IAssetRepository<ItemID, ILootTable>> _lootTableRepositoryMock;
@@ -30,7 +29,7 @@ namespace Loot.Tests
             _grantPolicyRepositoryMock = new Mock<IAssetRepository<ItemID, IGrantPolicy>>();
             _grantPolicyMock = new Mock<IGrantPolicy>();
             
-            _lootService = new LootService<ItemID>(_lootTableRepositoryMock.Object, _grantPolicyRepositoryMock.Object, new FoundAssertion(new ThrowHandler()));
+            _lootService = new LootService<ItemID>(_lootTableRepositoryMock.Object, _grantPolicyRepositoryMock.Object, new FoundAssertion());
         }
 
         [SetUp]
