@@ -18,7 +18,7 @@ public sealed class Currency
 ### Description
 
 `Currency` in IdelPog is just a `uint amount` and that specific currencies `CurrencyType`.
-``
+
 ### Listens to
 
 | Command            | Requirements       | Usage                                                                                                                               |

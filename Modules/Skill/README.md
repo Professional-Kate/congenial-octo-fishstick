@@ -26,7 +26,7 @@ Skills are simple in IdelPog. They just contain their `Information` and a `Level
 
 | Command         | Requirements    | Usage                                                                                |
 |-----------------|-----------------|--------------------------------------------------------------------------------------|
-| `SkillCreation` | None            | Used To create `Skills` with the specified Levelable and Information.                |
+| `SkillCreation` | None            | Used To create `Skills` with the specified `Levelable` and `Information`.            |
 | `SkillUpdate`   | `SkillCreation` | Used to update `Skills` by progressing their `Levelable` provided on `SkillCreation` |
 
 ### Dispatches 
