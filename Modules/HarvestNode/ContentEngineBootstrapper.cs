@@ -246,7 +246,7 @@ namespace IdelPog.HarvestNode
             IGrantPolicyService<ResourceID> grantPolicyService = new GrantPolicyService<ResourceID>(resourceGrantPolicyRepository, weightedPolicyFactory, uniqueAssertion);
 
             IDispatchMany<ResourceLootCreationResponse> responseDispatcher = new ManagedDispatcher<ResourceLootCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
-            IBatchMediator<ResourceLootCreation> creationMediator = new NodeLootCreationMediator(lootTableService, grantPolicyService, responseDispatcher, collectionAssertion);
+            IBatchMediator<ResourceLootCreation> creationMediator = new ResourceLootCreationMediator(lootTableService, grantPolicyService, responseDispatcher, collectionAssertion);
             IBatchController<ResourceLootCreation> creationController = new ManagedBatchController<ResourceLootCreation>(creationMediator);
             
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();

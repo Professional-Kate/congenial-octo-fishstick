@@ -8,14 +8,14 @@ using IdelPog.HarvestNode.Runtime.System.Interface;
 
 namespace IdelPog.HarvestNode.Runtime.Mediator
 {
-    public sealed class NodeLootCreationMediator : IBatchMediator<ResourceLootCreation>
+    public sealed class ResourceLootCreationMediator : IBatchMediator<ResourceLootCreation>
     {
         private readonly ILootTableService<ResourceID> _lootTableService;
         private readonly IGrantPolicyService<ResourceID> _grantPolicyService;
         private readonly IDispatchMany<ResourceLootCreationResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public NodeLootCreationMediator(ILootTableService<ResourceID> lootTableService, IGrantPolicyService<ResourceID> grantPolicyService, IDispatchMany<ResourceLootCreationResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
+        public ResourceLootCreationMediator(ILootTableService<ResourceID> lootTableService, IGrantPolicyService<ResourceID> grantPolicyService, IDispatchMany<ResourceLootCreationResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
         {
             _lootTableService = lootTableService;
             _grantPolicyService = grantPolicyService;

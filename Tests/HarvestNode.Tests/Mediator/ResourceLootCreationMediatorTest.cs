@@ -12,9 +12,9 @@ using Moq;
 namespace IdelPog.HarvestNode.Tests.Mediator
 {
     [TestFixture]
-    public sealed class NodeLootCreationMediatorTest
+    public sealed class ResourceLootCreationMediatorTest
     {
-        private NodeLootCreationMediator _mediator;
+        private ResourceLootCreationMediator _mediator;
         private Mock<IDispatchMany<ResourceLootCreationResponse>> _responseDispatcherMock;
         private Mock<ILootTableService<ResourceID>> _lootTableServiceMock;
         private Mock<IGrantPolicyService<ResourceID>> _grantPolicyServiceMock;
@@ -28,7 +28,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             _grantPolicyServiceMock = new Mock<IGrantPolicyService<ResourceID>>();
             _responseDispatcherMock = new Mock<IDispatchMany<ResourceLootCreationResponse>>();
             
-            _mediator = new NodeLootCreationMediator(_lootTableServiceMock.Object, _grantPolicyServiceMock.Object, _responseDispatcherMock.Object, new CollectionAssertion());
+            _mediator = new ResourceLootCreationMediator(_lootTableServiceMock.Object, _grantPolicyServiceMock.Object, _responseDispatcherMock.Object, new CollectionAssertion());
 
             _singleSandCreation = new ResourceLootCreation
             {
