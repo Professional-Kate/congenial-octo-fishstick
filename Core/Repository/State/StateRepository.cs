@@ -1,6 +1,5 @@
 ﻿using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
-using IdelPog.Core.Validation.Assertion;
 
 namespace IdelPog.Core.Repository.State
 {
@@ -9,11 +8,6 @@ namespace IdelPog.Core.Repository.State
     {
         private readonly Dictionary<TID, T> _repository = new();
         private readonly IRepositoryAsserter _repositoryAsserter;
-
-        public StateRepository()
-        {
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
-        }
 
         public StateRepository(IRepositoryAsserter repositoryAsserter)
         {

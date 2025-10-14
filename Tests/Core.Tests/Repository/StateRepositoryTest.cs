@@ -27,7 +27,7 @@ namespace IdelPog.Core.Tests.Repository
         [Test]
         public void Positive_DefaultConstruction_CreatesRepositoryAsserter()
         {
-            _stateRepository = new StateRepository<int, CloneableTestObject>();
+            _stateRepository = new StateRepository<int, CloneableTestObject>(_asserterMock);
 
             _stateRepository.Add(1, _cloneableTestObject);
 

@@ -1,4 +1,5 @@
-﻿using IdelPog.ECS.Entity;
+﻿using IdelPog.Core.Repository.Asserter;
+using IdelPog.ECS.Entity;
 using IdelPog.Progression.Runtime.Component;
 
 namespace IdelPog.Progression.Runtime
@@ -7,8 +8,8 @@ namespace IdelPog.Progression.Runtime
     {
         private readonly QueueComponentStore<LevelRequirementComponent<TID, TCommand>> _levelRequirementStore;
 
-        public UnlockRequirementsEntity(LevelRequirementComponent<TID, TCommand>[] unlockComponents)
-            : base(new QueueComponentStore<LevelRequirementComponent<TID, TCommand>>(unlockComponents))
+        public UnlockRequirementsEntity(IRepositoryAsserter repositoryAsserter, LevelRequirementComponent<TID, TCommand>[] unlockComponents)
+            : base(repositoryAsserter, new QueueComponentStore<LevelRequirementComponent<TID, TCommand>>(unlockComponents))
         {
             _levelRequirementStore = GetComponent<QueueComponentStore<LevelRequirementComponent<TID, TCommand>>>();
         }

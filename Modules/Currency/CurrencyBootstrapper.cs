@@ -11,6 +11,7 @@ using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
+using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
@@ -39,10 +40,13 @@ namespace IdelPog.Currency
         /// <seealso cref="RegisterCurrencyUpdate"/>
         public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister flowRegistry)
         {
-            IStateRepository<CurrencyType, Contracts.Currency> currencyRepository = new StateRepository<CurrencyType, Contracts.Currency>();
-
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            IFoundAssertion foundAssertion = new FoundAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
+            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
+            
+            IStateRepository<CurrencyType, Contracts.Currency> currencyRepository = new StateRepository<CurrencyType, Contracts.Currency>(repositoryAsserter);
             
             ILogWriter writer = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
@@ -58,7 +62,6 @@ namespace IdelPog.Currency
         /// </summary>
         /// <param name="bufferManager">Used to dispatch <see cref="CurrencyCreationResponse"/></param>
         /// <param name="currencyRepository">Used to store all <see cref="Currency"/> models</param>
-        /// <param name="">The handle used in all assertions</param>
         /// <param name="baseErrorFactory">Used to construct <see cref="BaseError"/></param>
         /// <param name="objectNullAssertion">Used to assert if objects are null</param>
         /// <param name="collectionAssertion">Used to assert if a collection is null or empty</param>
@@ -89,7 +92,6 @@ namespace IdelPog.Currency
         /// </summary>
         /// <param name="bufferManager">Used to dispatch <see cref="CurrencyUpdateError"/> if anything is thrown</param>
         /// <param name="currencyRepository">Used to store all <see cref="Currency"/> models</param>
-        /// <param name="">The handle used in all assertions</param>
         /// <param name="baseErrorFactory">Used to construct <see cref="BaseError"/></param>
         /// <param name="objectNullAssertion">Used to assert if objects are null</param>
         /// <param name="collectionAssertion">Used to assert if a collection is null or empty</param>

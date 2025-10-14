@@ -10,6 +10,7 @@ using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
+using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
@@ -41,10 +42,12 @@ namespace IdelPog.Inventory
             IAmountAssertion amountAssertion = new AmountAssertion();
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
             IItemFoundAssertion itemFoundAssertion = new ItemFoundAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
             
-            IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository = new AssetRepository<RecipeID, CraftingRecipeEntity>();
-            IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>();
-            IAssetRepository<ItemID,ItemDefinition> definitionRepository = new AssetRepository<ItemID, ItemDefinition>();
+            IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository = new AssetRepository<RecipeID, CraftingRecipeEntity>(repositoryAsserter);
+            IStateRepository<ItemID, Item> itemRepository = new StateRepository<ItemID, Item>(repositoryAsserter);
+            IAssetRepository<ItemID,ItemDefinition> definitionRepository = new AssetRepository<ItemID, ItemDefinition>(repositoryAsserter);
             
             ILogWriter writer = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
@@ -55,7 +58,7 @@ namespace IdelPog.Inventory
             IInventoryUpdateService inventoryUpdateService = new InventoryUpdateService(inventory, itemInfoFactory, collectionAssertion, itemFoundAssertion, creationService);
             
             RegisterInventoryUpdate(bufferManager, bufferLogger, flowRegister, inventoryUpdateService);
-            RegisterRecipeCreation(bufferManager, bufferLogger, flowRegister, recipeEntityRepository);
+            RegisterRecipeCreation(bufferManager, bufferLogger, flowRegister, recipeEntityRepository, repositoryAsserter);
             RegisterItemCraft(bufferManager, bufferLogger, flowRegister, recipeEntityRepository, inventory, inventoryUpdateService);
             RegisterItemDefinitionCreation(bufferManager, bufferLogger, flowRegister, definitionRepository);
         }
@@ -95,16 +98,17 @@ namespace IdelPog.Inventory
         /// <param name="bufferLogger">Logs all messages in and out</param>
         /// <param name="flowRegister">Used to register the InventoryUpdate flow</param>
         /// <param name="recipeEntityRepository">Stores all <see cref="CraftingRecipeEntity"/></param>
+        /// <param name="repositoryAsserter">Asserts the Repository</param>
         /// <remarks>
         /// Listens to -> <see cref="RecipeCreation"/>. On Success -> <see cref="RecipeCreationResponse"/>. On Error -> <see cref="RecipeCreationError"/>
         /// </remarks>
-        private static void RegisterRecipeCreation(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository)
+        private static void RegisterRecipeCreation(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IAssetRepository<RecipeID, CraftingRecipeEntity> recipeEntityRepository, IRepositoryAsserter repositoryAsserter)
         {
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             IUniqueAssertion uniqueAssertion = new UniqueAssertion();
             
-            ICraftingRecipeEntityFactory entityFactory = new CraftingRecipeEntityFactory(collectionAssertion);
+            ICraftingRecipeEntityFactory entityFactory = new CraftingRecipeEntityFactory(collectionAssertion, repositoryAsserter);
             IDispatchMany<RecipeCreationResponse> responseDispatcher = new ManagedDispatcher<RecipeCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<RecipeCreation> creationMediator = new RecipeCreationMediator(recipeEntityRepository, entityFactory, responseDispatcher, collectionAssertion, uniqueAssertion);

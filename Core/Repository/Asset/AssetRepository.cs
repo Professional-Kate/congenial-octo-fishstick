@@ -1,5 +1,4 @@
 ﻿using IdelPog.Core.Repository.Asserter;
-using IdelPog.Core.Validation.Assertion;
 
 namespace IdelPog.Core.Repository.Asset
 {
@@ -8,11 +7,6 @@ namespace IdelPog.Core.Repository.Asset
     {
         private readonly Dictionary<TID, T> _repository = new();
         private readonly IRepositoryAsserter _repositoryAsserter;
-
-        public AssetRepository()
-        {
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
-        }
 
         public AssetRepository(IRepositoryAsserter repositoryAsserter)
         {

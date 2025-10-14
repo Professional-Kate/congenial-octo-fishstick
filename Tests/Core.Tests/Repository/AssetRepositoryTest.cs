@@ -22,7 +22,7 @@ namespace IdelPog.Core.Tests.Repository
         [Test]
         public void Positive_DefaultConstruction_CreatesRepositoryAsserter()
         {
-            _repository = new AssetRepository<int, string>();
+            _repository = new AssetRepository<int, string>(_asserterMock);
 
             _repository.Add(1, "10");
 
