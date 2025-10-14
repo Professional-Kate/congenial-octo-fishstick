@@ -1,27 +1,16 @@
 ﻿using IdelPog.Console.Assertion.Interface;
 using IdelPog.Console.Runtime.Input.Exceptions;
-using IdelPog.Core.Validation;
-using IdelPog.Core.Validation.Handler.Interface;
 
 namespace IdelPog.Console.Assertion
 {
-    public class SpanAssertion : BaseAssertion, ISpanAssertion
+    public sealed class SpanAssertion : ISpanAssertion
     {
-        public SpanAssertion(IHandler handler) : base(handler)
-        {
-        }
-
         public void AssertNotEmpty<T>(ReadOnlySpan<T> span)
         {
-            bool spanEmpty = span.IsEmpty;
-
-            Assert<EmptySpanException>(() =>
+            if (span.IsEmpty)
             {
-                if (spanEmpty)
-                {
-                    throw new EmptySpanException(typeof(T));
-                }
-            });
+                throw new EmptySpanException(typeof(T));
+            }
         }
     }
 }

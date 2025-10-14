@@ -6,8 +6,6 @@ using IdelPog.Core.Messaging.Listener;
 using IdelPog.Core.Messaging.Messenger;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
 
 namespace IdelPog.Core.Flows
 {
@@ -20,10 +18,9 @@ namespace IdelPog.Core.Flows
         /// <returns>A ready to use <see cref="FlowRegister"/></returns>
         public static FlowRegister CreateFlowRegister(IBufferManager bufferManager)
         {
-            IHandler throwHandler = new ThrowHandler();
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
 
             ILogWriter writer = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(writer);

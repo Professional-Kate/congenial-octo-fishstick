@@ -4,7 +4,6 @@ using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Contracts.Response;
 using IdelPog.Inventory.Mediator;
 using IdelPog.Inventory.Service.Interface;
@@ -29,7 +28,7 @@ namespace IdelPog.Inventory.Tests.Mediator
             _updateSummarizerMock = new Mock<IInventoryUpdateSummarizer>();
             _dispatcherMock = new Mock<IDispatchMany<InventoryUpdateResponse>>();
 
-            _inventoryMediator = new InventoryUpdateMediator(_inventoryUpdateServiceMock.Object, _updateSummarizerMock.Object, _dispatcherMock.Object, new CollectionAssertion(new ThrowHandler()));
+            _inventoryMediator = new InventoryUpdateMediator(_inventoryUpdateServiceMock.Object, _updateSummarizerMock.Object, _dispatcherMock.Object, new CollectionAssertion());
 
             _addStoneUpdate = new InventoryUpdate
             {

@@ -3,7 +3,6 @@ using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Response;
@@ -36,9 +35,8 @@ namespace IdelPog.Inventory.Tests.Service
             _inventoryMock = new Mock<IInventory>();
             _infoFactoryMock = new Mock<IItemInfoFactory>();
             _creationServiceMock = new Mock<IItemCreationService>();
-            ThrowHandler throwHandler = new();
             
-            _updateService = new InventoryUpdateService(_inventoryMock.Object, _infoFactoryMock.Object, new CollectionAssertion(throwHandler), new ItemFoundAssertion(throwHandler), _creationServiceMock.Object);
+            _updateService = new InventoryUpdateService(_inventoryMock.Object, _infoFactoryMock.Object, new CollectionAssertion(), new ItemFoundAssertion(), _creationServiceMock.Object);
         }
 
         [SetUp]

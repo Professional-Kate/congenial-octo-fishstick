@@ -1,21 +1,14 @@
-﻿using IdelPog.Core.Validation.Handler.Interface;
-using IdelPog.ECS.Component;
+﻿using IdelPog.ECS.Component;
 using IdelPog.ECS.Exceptions;
-using Moq;
+
+// ReSharper disable ObjectCreationAsStatement
 
 namespace IdelPog.ECS.Tests
 {
     [TestFixture]
-    public class ComponentStoreTest
+    public sealed class ComponentStoreTest
     {
         private ComponentStore<TestComponent> _componentStore;
-        private Mock<IHandler> _handlerMock;
-
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            _handlerMock = new Mock<IHandler>();
-        }
 
         private void SetupComponentStoreWith(int count)
         {
@@ -26,7 +19,7 @@ namespace IdelPog.ECS.Tests
                 components[i] = new TestComponent { TestNumber = i };
             }
 
-            _componentStore = new ComponentStore<TestComponent>(components, _handlerMock.Object);
+            _componentStore = new ComponentStore<TestComponent>(components);
         }
 
         [Test]
@@ -78,19 +71,13 @@ namespace IdelPog.ECS.Tests
         [Test]
         public void Negative_ConstructNewStore_EmptyArray_Throws()
         {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentArrayEmptyException>()))
-                .Throws(new ComponentArrayEmptyException());
-
-            Assert.Throws<ComponentArrayEmptyException>(() => new ComponentStore<TestComponent>([], _handlerMock.Object));
+            Assert.Throws<ComponentArrayEmptyException>(() => new ComponentStore<TestComponent>([]));
         }
 
         [Test]
         public void Negative_ConstructNewStore_NullArray_Throws()
         {
-            _handlerMock.Setup(library => library.Handle(It.IsAny<ComponentArrayNullException>()))
-                .Throws(new ComponentArrayNullException());
-
-            Assert.Throws<ComponentArrayNullException>(() => new ComponentStore<TestComponent>(null!, _handlerMock.Object));
+            Assert.Throws<ComponentArrayNullException>(() => new ComponentStore<TestComponent>(null!));
         }
 
         [Test]

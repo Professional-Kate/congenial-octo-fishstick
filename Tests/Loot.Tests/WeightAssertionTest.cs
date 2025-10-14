@@ -1,5 +1,4 @@
-﻿using IdelPog.Core.Validation.Handler;
-using IdelPog.Loot.Assertion;
+﻿using IdelPog.Loot.Assertion;
 using IdelPog.Loot.Exceptions;
 
 namespace Loot.Tests
@@ -12,7 +11,7 @@ namespace Loot.Tests
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _weightAssertion = new WeightAssertion(new ThrowHandler());
+            _weightAssertion = new WeightAssertion();
         }
 
         [TestCase(0)]

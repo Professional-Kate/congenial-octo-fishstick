@@ -1,5 +1,4 @@
-﻿using IdelPog.Core.Validation.Handler.Interface;
-using IdelPog.ECS.Assertion;
+﻿using IdelPog.ECS.Assertion;
 using IdelPog.ECS.Exceptions;
 
 namespace IdelPog.ECS.Component
@@ -15,19 +14,16 @@ namespace IdelPog.ECS.Component
     public readonly struct ComponentStore<T> : IComponent<ComponentStore<T>> where T : IComponent<T>
     {
         private readonly T[] _components;
-        private readonly IHandler _handler;
 
         /// <summary>
         /// Creates a new store containing the provided components
         /// </summary>
         /// <param name="components">An array of components to store. Must not be null or empty</param>
-        /// <param name="handler">Handler used for controlling assertion failure behavior</param>
         /// <exception cref="ComponentArrayNullException">Thrown if the passed components are null</exception>
         /// <exception cref="ComponentArrayEmptyException">Thrown if the passed components are empty </exception>
-        public ComponentStore(T[] components, IHandler handler)
+        public ComponentStore(T[] components)
         {
-            _handler = handler;
-            ComponentArrayAssertion componentArrayAssertion = new(_handler);
+            ComponentArrayAssertion componentArrayAssertion = new();
 
             componentArrayAssertion.AssertHasElements(components);
 
@@ -75,7 +71,7 @@ namespace IdelPog.ECS.Component
 
         public ComponentStore<T> DeepClone()
         {
-            return new ComponentStore<T>(GetAllComponents(), _handler);
+            return new ComponentStore<T>(GetAllComponents());
         }
     }
 }

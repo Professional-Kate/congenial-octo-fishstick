@@ -1,6 +1,4 @@
-﻿using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
-using IdelPog.ECS.Exceptions;
+﻿using IdelPog.ECS.Exceptions;
 using IdelPog.Progression.Runtime.Component;
 
 // ReSharper disable ObjectCreationAsStatement
@@ -11,15 +9,8 @@ namespace IdelPog.Progression.Tests.Component
     public sealed class QueueComponentStoreTest
     {
         private QueueComponentStore<TestComponent> _queueComponentStore;
-        private IHandler _handler;
         private const int AMOUNT_OF_COMPONENTS = 10;
 
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            _handler = new ThrowHandler();
-        }
-        
         [SetUp]
         public void Setup()
         {
@@ -29,7 +20,7 @@ namespace IdelPog.Progression.Tests.Component
                 testComponents[i] = CreateComponent(i);
             }
 
-            _queueComponentStore = new QueueComponentStore<TestComponent>(testComponents, _handler);
+            _queueComponentStore = new QueueComponentStore<TestComponent>(testComponents);
         }
 
         private static TestComponent CreateComponent(int index)
@@ -118,13 +109,13 @@ namespace IdelPog.Progression.Tests.Component
         [Test]
         public void Negative_EmptyComponents_Throws()
         {
-            Assert.Throws<ComponentArrayEmptyException>(() => new QueueComponentStore<TestComponent>([], _handler));
+            Assert.Throws<ComponentArrayEmptyException>(() => new QueueComponentStore<TestComponent>([]));
         }
         
         [Test]
         public void Negative_NullComponents_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new QueueComponentStore<TestComponent>(null!, _handler));
+            Assert.Throws<ArgumentNullException>(() => new QueueComponentStore<TestComponent>(null!));
         }
     }
 }

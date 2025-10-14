@@ -1,36 +1,24 @@
-﻿using IdelPog.Core.Validation;
-using IdelPog.Core.Validation.Handler.Interface;
-using IdelPog.ECS.Assertion.Interface;
+﻿using IdelPog.ECS.Assertion.Interface;
 using IdelPog.ECS.Exceptions;
 
 namespace IdelPog.ECS.Assertion
 {
-    public class ComponentArrayAssertion : BaseAssertion, IComponentArrayAssertion
+    public sealed class ComponentArrayAssertion : IComponentArrayAssertion
     {
-        public ComponentArrayAssertion(IHandler handler) : base(handler)
-        {
-        }
-
         public void AssertNotNull<T>(T[]? array)
         {
-            Assert<ComponentArrayNullException>(() =>
+            if (array == null)
             {
-                if (array == null)
-                {
-                    throw new ComponentArrayNullException();
-                }
-            });
+                throw new ComponentArrayNullException();
+            }
         }
 
         public void AssertNotEmpty<T>(T[] array)
         {
-            Assert<ComponentArrayEmptyException>(() =>
+            if (array.Length == 0)
             {
-                if (array.Length == 0)
-                {
-                    throw new ComponentArrayEmptyException();
-                }
-            });
+                throw new ComponentArrayEmptyException();
+            }
         }
 
         public void AssertHasElements<T>(T[]? array)

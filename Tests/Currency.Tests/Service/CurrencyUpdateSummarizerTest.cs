@@ -2,7 +2,6 @@
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Currency.Factory.Interface;
 using IdelPog.Currency.Service;
 using IdelPog.Currency.Service.Interface;
@@ -11,7 +10,7 @@ using Moq;
 namespace IdelPog.Currency.Tests.Service
 {
     [TestFixture]
-    public class CurrencyUpdateSummarizerTest
+    public sealed class CurrencyUpdateSummarizerTest
     {
         private ICurrencyUpdateSummarizer _currencyUpdateSummarizer;
         private Mock<ICurrencyUpdateFactory> _currencyUpdateFactoryMock;
@@ -23,7 +22,7 @@ namespace IdelPog.Currency.Tests.Service
         public void OneTimeSetUp()
         {
             _currencyUpdateFactoryMock = new Mock<ICurrencyUpdateFactory>();
-            _currencyUpdateSummarizer = new CurrencyUpdateSummarizer(_currencyUpdateFactoryMock.Object, new CollectionAssertion(new ThrowHandler()));
+            _currencyUpdateSummarizer = new CurrencyUpdateSummarizer(_currencyUpdateFactoryMock.Object, new CollectionAssertion());
 
             _addGoldUpdate = CurrencyUpdateFactory.Create(10, CurrencyType.GOLD, ActionType.ADD);
             _removeGoldUpdate = CurrencyUpdateFactory.Create(10, CurrencyType.GOLD, ActionType.REMOVE);

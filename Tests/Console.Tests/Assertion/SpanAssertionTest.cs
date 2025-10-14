@@ -1,19 +1,18 @@
 ﻿using IdelPog.Console.Assertion;
 using IdelPog.Console.Assertion.Interface;
 using IdelPog.Console.Runtime.Input.Exceptions;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Console.Tests.Assertion
 {
     [TestFixture]
-    public class SpanAssertionTest
+    public sealed class SpanAssertionTest
     {
         private ISpanAssertion _spanAssertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _spanAssertion = new SpanAssertion(new ThrowHandler());
+            _spanAssertion = new SpanAssertion();
         }
 
         [Test]

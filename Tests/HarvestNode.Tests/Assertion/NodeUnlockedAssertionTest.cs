@@ -1,5 +1,4 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Assertion;
 using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Exceptions;
@@ -16,7 +15,7 @@ namespace IdelPog.HarvestNode.Tests.Assertion
         public void OneTimeSetup()
         {
             _harvestNodeUpdate = new HarvestNodeUpdate { SkillID = SkillID.MINING, ResourceID = ResourceID.ANT_NEST };
-            _nodeUnlockedAssertion = new NodeUnlockedAssertion(new ThrowHandler());
+            _nodeUnlockedAssertion = new NodeUnlockedAssertion();
         }
 
         [Test]

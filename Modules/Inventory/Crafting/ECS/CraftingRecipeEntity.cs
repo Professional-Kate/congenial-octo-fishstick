@@ -1,4 +1,4 @@
-﻿using IdelPog.Core.Validation.Handler.Interface;
+﻿using IdelPog.Core.Repository.Asserter;
 using IdelPog.ECS.Component;
 using IdelPog.ECS.Entity;
 using IdelPog.Inventory.Crafting.ECS.Component;
@@ -10,8 +10,8 @@ namespace IdelPog.Inventory.Crafting.ECS
         private readonly ComponentStore<RecipeInputComponent> _ingredientStore;
         private readonly ComponentStore<RecipeOutputComponent> _outputStore;
 
-        public CraftingRecipeEntity(RecipeInputComponent[] inputs, RecipeOutputComponent[] outputs, IHandler handler) 
-            : base(new ComponentStore<RecipeInputComponent>(inputs, handler),  new ComponentStore<RecipeOutputComponent>(outputs, handler))
+        public CraftingRecipeEntity(IRepositoryAsserter repositoryAsserter, RecipeInputComponent[] inputs, RecipeOutputComponent[] outputs) 
+            : base(repositoryAsserter, new ComponentStore<RecipeOutputComponent>(outputs), new ComponentStore<RecipeInputComponent>(inputs))
         {
             _ingredientStore = GetComponent<ComponentStore<RecipeInputComponent>>();
             _outputStore = GetComponent<ComponentStore<RecipeOutputComponent>>();

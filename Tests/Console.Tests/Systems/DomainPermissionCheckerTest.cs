@@ -1,7 +1,6 @@
 ﻿using IdelPog.Console.Runtime.ECS;
 using IdelPog.Console.Runtime.System;
 using IdelPog.Console.Types;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.ECS.Assertion;
 using IdelPog.ECS.Component;
 using IdelPog.ECS.Entity;
@@ -11,7 +10,7 @@ using Moq;
 namespace IdelPog.Console.Tests.Systems
 {
     [TestFixture]
-    public class DomainPermissionCheckerTest
+    public sealed class DomainPermissionCheckerTest
     {
         private IDomainPermissionChecker _domainPermissionChecker;
         private Mock<IEntity> _entityMock;
@@ -21,7 +20,7 @@ namespace IdelPog.Console.Tests.Systems
         public void OneTimeSetup()
         {
             _entityMock = new Mock<IEntity>();
-            _domainPermissionChecker = new DomainPermissionChecker(_entityMock.Object, new ComponentAssertion(new ThrowHandler()));
+            _domainPermissionChecker = new DomainPermissionChecker(_entityMock.Object, new ComponentAssertion());
         }
 
         [SetUp]
@@ -33,7 +32,7 @@ namespace IdelPog.Console.Tests.Systems
         private void SetupComponentStore(Domain allowedDomain)
         {
             DomainComponent[] commandDomainComponents = [new() { AllowedDomain = allowedDomain }];
-            _componentStore = new ComponentStore<DomainComponent>(commandDomainComponents, new ThrowHandler());
+            _componentStore = new ComponentStore<DomainComponent>(commandDomainComponents);
         }
 
         [Test]

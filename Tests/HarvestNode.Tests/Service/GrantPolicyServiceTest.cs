@@ -2,7 +2,6 @@
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.System;
@@ -28,9 +27,8 @@ namespace IdelPog.HarvestNode.Tests.Service
         {
             _repositoryMock = new  Mock<IAssetRepository<ResourceID, IGrantPolicy>>();
             _factoryMock = new  Mock<IWeightedPolicyFactory>();
-            ThrowHandler throwHandler = new();
             
-            _grantPolicyService = new GrantPolicyService<ResourceID>(_repositoryMock.Object, _factoryMock.Object, new UniqueAssertion(throwHandler));
+            _grantPolicyService = new GrantPolicyService<ResourceID>(_repositoryMock.Object, _factoryMock.Object, new UniqueAssertion());
 
             _grantPolicyEntry = new GrantPolicyEntry { GrantWeight = 1, SkipWeight = 0 };
         }

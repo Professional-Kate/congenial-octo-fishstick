@@ -2,19 +2,18 @@
 using IdelPog.Console.Assertion.Interface;
 using IdelPog.Console.Exceptions;
 using IdelPog.Console.Types;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Console.Tests.Assertion
 {
     [TestFixture]
-    public class DomainPermissionAssertionTest
+    public sealed class DomainPermissionAssertionTest
     {
         private IDomainPermissionAssertion _assertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _assertion = new DomainPermissionAssertion(new ThrowHandler());
+            _assertion = new DomainPermissionAssertion();
         }
 
         [Test]

@@ -2,23 +2,20 @@
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
 
 namespace IdelPog.Core.Tests.Repository
 {
     [TestFixture]
-    public class RepositoryAsserterTest
+    public sealed class RepositoryAsserterTest
     {
         private IRepositoryAsserter _repositoryAsserter { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            IHandler handler = new ThrowHandler();
-            IFoundAssertion foundAssertion = new FoundAssertion(handler);
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(handler);
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion(handler);
+            IFoundAssertion foundAssertion = new FoundAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
 
             _repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
         }

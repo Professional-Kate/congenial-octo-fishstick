@@ -7,7 +7,6 @@ using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Contracts.Response;
@@ -54,7 +53,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
                 LinkedSkill = SkillID.MINING
             };
 
-            _nodeCreationMediator = new NodeCreationMediator(_harvestNodeRepositoryMock.Object, _skillNodeEntityRepositoryMock.Object, _skillNodeEntityFactoryMock.Object, _harvestNodeFactoryMock.Object, _nodeCreationResponseFactoryMock.Object, _dispatchOneMock.Object, new UniqueAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()));
+            _nodeCreationMediator = new NodeCreationMediator(_harvestNodeRepositoryMock.Object, _skillNodeEntityRepositoryMock.Object, _skillNodeEntityFactoryMock.Object, _harvestNodeFactoryMock.Object, _nodeCreationResponseFactoryMock.Object, _dispatchOneMock.Object, new UniqueAssertion(), new CollectionAssertion());
         }
 
         [SetUp]

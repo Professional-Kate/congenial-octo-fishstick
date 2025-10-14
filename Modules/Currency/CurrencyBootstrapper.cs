@@ -11,11 +11,10 @@ using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
+using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.Currency.Assertion;
 using IdelPog.Currency.Assertion.Interface;
 using IdelPog.Currency.Contracts;
@@ -41,19 +40,21 @@ namespace IdelPog.Currency
         /// <seealso cref="RegisterCurrencyUpdate"/>
         public static void RegisterFlows(IBufferManager bufferManager, IBatchRegister flowRegistry)
         {
-            IStateRepository<CurrencyType, Contracts.Currency> currencyRepository = new StateRepository<CurrencyType, Contracts.Currency>();
-
-            IHandler throwHandler = new ThrowHandler();
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            IFoundAssertion foundAssertion = new FoundAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
+            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
+            
+            IStateRepository<CurrencyType, Contracts.Currency> currencyRepository = new StateRepository<CurrencyType, Contracts.Currency>(repositoryAsserter);
             
             ILogWriter writer = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
             
             IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
 
-            RegisterCurrencyCreation(bufferManager, currencyRepository, baseErrorFactory, throwHandler, objectNullAssertion, collectionAssertion, flowRegistry, bufferLogger);
-            RegisterCurrencyUpdate(bufferManager,  currencyRepository, baseErrorFactory, throwHandler, objectNullAssertion, collectionAssertion, flowRegistry, bufferLogger);
+            RegisterCurrencyCreation(bufferManager, currencyRepository, baseErrorFactory, objectNullAssertion, collectionAssertion, flowRegistry, bufferLogger);
+            RegisterCurrencyUpdate(bufferManager,  currencyRepository, baseErrorFactory, objectNullAssertion, collectionAssertion, flowRegistry, bufferLogger);
         }
 
         /// <summary>
@@ -61,7 +62,6 @@ namespace IdelPog.Currency
         /// </summary>
         /// <param name="bufferManager">Used to dispatch <see cref="CurrencyCreationResponse"/></param>
         /// <param name="currencyRepository">Used to store all <see cref="Currency"/> models</param>
-        /// <param name="throwHandler">The handle used in all assertions</param>
         /// <param name="baseErrorFactory">Used to construct <see cref="BaseError"/></param>
         /// <param name="objectNullAssertion">Used to assert if objects are null</param>
         /// <param name="collectionAssertion">Used to assert if a collection is null or empty</param>
@@ -71,10 +71,10 @@ namespace IdelPog.Currency
         /// Listens to -> <see cref="CurrencyCreation"/>. On Success -> <see cref="CurrencyCreationResponse"/>. On Error -> <see cref="CurrencyCreationError"/>
         /// </remarks>
         private static void RegisterCurrencyCreation(IBufferManager bufferManager,
-            IStateRepository<CurrencyType, Contracts.Currency> currencyRepository, IBaseErrorFactory baseErrorFactory, IHandler throwHandler, IObjectNullAssertion objectNullAssertion,
+            IStateRepository<CurrencyType, Contracts.Currency> currencyRepository, IBaseErrorFactory baseErrorFactory, IObjectNullAssertion objectNullAssertion,
             ICollectionAssertion collectionAssertion, IBatchRegister flowRegistry, IBufferLogger bufferLogger)
         {
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
 
             ICurrencyCreationResponseFactory currencyCreationResponseFactory = new CurrencyCreationResponseFactory(objectNullAssertion, collectionAssertion);
 
@@ -92,7 +92,6 @@ namespace IdelPog.Currency
         /// </summary>
         /// <param name="bufferManager">Used to dispatch <see cref="CurrencyUpdateError"/> if anything is thrown</param>
         /// <param name="currencyRepository">Used to store all <see cref="Currency"/> models</param>
-        /// <param name="throwHandler">The handle used in all assertions</param>
         /// <param name="baseErrorFactory">Used to construct <see cref="BaseError"/></param>
         /// <param name="objectNullAssertion">Used to assert if objects are null</param>
         /// <param name="collectionAssertion">Used to assert if a collection is null or empty</param>
@@ -102,11 +101,11 @@ namespace IdelPog.Currency
         /// Listens to -> <see cref="CurrencyUpdate"/>. On Success -> <see cref="CurrencyUpdateResponse"/>. On Error -> <see cref="CurrencyUpdateError"/>
         /// </remarks>
         private static void RegisterCurrencyUpdate(IBufferManager bufferManager,
-            IStateRepository<CurrencyType, Contracts.Currency> currencyRepository, IBaseErrorFactory baseErrorFactory, IHandler throwHandler, IObjectNullAssertion objectNullAssertion,
+            IStateRepository<CurrencyType, Contracts.Currency> currencyRepository, IBaseErrorFactory baseErrorFactory, IObjectNullAssertion objectNullAssertion,
             ICollectionAssertion collectionAssertion, IBatchRegister flowRegistry, IBufferLogger bufferLogger)
         {
-            ICurrencyAssertion currencyAssertion = new CurrencyAssertion(throwHandler);
-            IFoundAssertion foundAssertion = new FoundAssertion(throwHandler);
+            ICurrencyAssertion currencyAssertion = new CurrencyAssertion();
+            IFoundAssertion foundAssertion = new FoundAssertion();
             
             ICurrencyUpdateFactory updateFactory = new CurrencyUpdateFactory();
             

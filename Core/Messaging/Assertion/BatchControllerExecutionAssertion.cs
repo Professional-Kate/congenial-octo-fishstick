@@ -7,7 +7,7 @@ using IdelPog.Core.Validation.Handler.Interface;
 
 namespace IdelPog.Core.Messaging.Assertion
 {
-    public class BatchControllerExecutionAssertion<T> : ContextualAssertion<IReadOnlyList<T>>, IBatchControllerExecutionAssertion<T>
+    public sealed class BatchControllerExecutionAssertion<T> : ContextualAssertion<IReadOnlyList<T>>, IBatchControllerExecutionAssertion<T>
     {
         private readonly IBufferLogger _bufferLogger;
         

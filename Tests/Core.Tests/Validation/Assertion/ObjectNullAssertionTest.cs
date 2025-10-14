@@ -1,18 +1,17 @@
 ﻿using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Tests.Validation.Assertion
 {
     [TestFixture]
-    public class ObjectNullAssertionTest
+    public sealed class ObjectNullAssertionTest
     {
         private IObjectNullAssertion _objectNullAssertion { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
+            _objectNullAssertion = new ObjectNullAssertion();
         }
 
         [Test]

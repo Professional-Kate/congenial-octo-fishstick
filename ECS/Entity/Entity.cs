@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.Asset;
-using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.ECS.Assertion;
 using IdelPog.ECS.Assertion.Interface;
 using IdelPog.ECS.Component;
@@ -13,10 +12,10 @@ namespace IdelPog.ECS.Entity
         private readonly IAssetRepository<Type, IComponent> _componentMap;
         private readonly IComponentAssertion _componentAssertion;
 
-        protected Entity(params IComponent[] requiredComponents)
+        protected Entity(IRepositoryAsserter repositoryAsserter, params IComponent[] requiredComponents)
         {
-            _componentMap = new AssetRepository<Type, IComponent>();
-            _componentAssertion = new ComponentAssertion(new ThrowHandler());
+            _componentMap = new AssetRepository<Type, IComponent>(repositoryAsserter);
+            _componentAssertion = new ComponentAssertion();
 
             foreach (IComponent requiredComponent in requiredComponents)
             {
@@ -24,11 +23,11 @@ namespace IdelPog.ECS.Entity
             }
         }
 
-        protected Entity(IAssetRepository<Type, IComponent> componentMap, IHandler handler)
+        protected Entity(IAssetRepository<Type, IComponent> componentMap)
         {
             _componentMap = componentMap;
 
-            _componentAssertion = new ComponentAssertion(handler);
+            _componentAssertion = new ComponentAssertion();
         }
 
         public void AddComponent(IComponent component)

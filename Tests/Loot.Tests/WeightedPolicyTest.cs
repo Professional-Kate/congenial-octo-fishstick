@@ -1,5 +1,4 @@
-﻿using IdelPog.Core.Validation.Handler;
-using IdelPog.Loot.Assertion;
+﻿using IdelPog.Loot.Assertion;
 using IdelPog.Loot.Exceptions;
 using IdelPog.Loot.Policy;
 using IdelPog.Loot.Random;
@@ -10,7 +9,7 @@ using Moq;
 namespace Loot.Tests
 {
     [TestFixture]
-    public class WeightedPolicyTest
+    public sealed class WeightedPolicyTest
     {
         private IGrantPolicy _grantPolicy;
         private Mock<ILootRoll> _lootRollMock;
@@ -23,7 +22,7 @@ namespace Loot.Tests
         {
             _lootRollMock = new Mock<ILootRoll>();
             
-            _grantPolicy = new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT,  SKIP_WEIGHT, new WeightAssertion(new ThrowHandler()));
+            _grantPolicy = new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT,  SKIP_WEIGHT, new WeightAssertion());
         }
 
         [Test]
@@ -57,15 +56,15 @@ namespace Loot.Tests
         [TestCase(1)]
         public void Negative_ConstructWithZeroAmounts_NoThrow(int weight)
         {
-            Assert.DoesNotThrow(() => new WeightedPolicy(_lootRollMock.Object, weight, SKIP_WEIGHT, new WeightAssertion(new ThrowHandler())));
-            Assert.DoesNotThrow(() => new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT, weight, new WeightAssertion(new ThrowHandler())));
+            Assert.DoesNotThrow(() => new WeightedPolicy(_lootRollMock.Object, weight, SKIP_WEIGHT, new WeightAssertion()));
+            Assert.DoesNotThrow(() => new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT, weight, new WeightAssertion()));
         }
 
         [Test]
         public void Negative_ConstructWithNegativeAmounts_Throws()
         {
-            Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, -10, SKIP_WEIGHT, new WeightAssertion(new ThrowHandler())));
-            Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT, -10, new WeightAssertion(new ThrowHandler())));
+            Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, -10, SKIP_WEIGHT, new WeightAssertion()));
+            Assert.Throws<InvalidWeightException>(() => new WeightedPolicy(_lootRollMock.Object, GRANT_WEIGHT, -10, new WeightAssertion()));
         }
     }
 }

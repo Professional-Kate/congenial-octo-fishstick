@@ -4,13 +4,12 @@ using IdelPog.Core.Messaging.Buffer.Factory;
 using IdelPog.Core.Messaging.Buffer.Manager;
 using IdelPog.Core.Messaging.Messenger;
 using IdelPog.Core.Validation.Assertion;
-using IdelPog.Core.Validation.Handler;
 using Moq;
 
 namespace IdelPog.Core.Tests.Messaging.Orchestration
 {
     [TestFixture]
-    public class BufferManagerTest
+    public sealed class BufferManagerTest
     {
         private IBufferManager _bufferManager { get; set; }
         private BufferRequest _bufferRequest { get; set; }
@@ -22,9 +21,9 @@ namespace IdelPog.Core.Tests.Messaging.Orchestration
         {
             _bufferFactoryMock = new Mock<IBufferFactory>();
             _bufferRequest = new BufferRequest(3);
-            _bufferManager = new BufferManager(_bufferFactoryMock.Object, new ObjectNullAssertion(new ThrowHandler()));
+            _bufferManager = new BufferManager(_bufferFactoryMock.Object, new ObjectNullAssertion());
             
-            _intBuffer = new Buffer<int>(new Mock<IBufferAssertion>().Object, new Mock<IBufferDispatcher>().Object, new ObjectNullAssertion(new  ThrowHandler()), _bufferRequest);
+            _intBuffer = new Buffer<int>(new Mock<IBufferAssertion>().Object, new Mock<IBufferDispatcher>().Object, new ObjectNullAssertion(), _bufferRequest);
         }
 
         [SetUp]

@@ -1,5 +1,4 @@
-﻿using IdelPog.Core.Validation.Handler;
-using IdelPog.Currency.Assertion;
+﻿using IdelPog.Currency.Assertion;
 using IdelPog.Currency.Service;
 using IdelPog.Currency.Service.Interface;
 using IdelPog.Currency.Tests.Factory;
@@ -7,17 +6,17 @@ using IdelPog.Currency.Tests.Factory;
 namespace IdelPog.Currency.Tests.Service
 {
     [TestFixture]
-    public class CurrencyServiceTest
+    public sealed class CurrencyServiceTest
     {
         private ICurrencyService _currencyService { get; set; }
-        private IdelPog.Currency.Contracts.Currency _goldCurrency { get; set; }
+        private Contracts.Currency _goldCurrency { get; set; }
 
         private const uint AMOUNT = 10;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _currencyService = new CurrencyService(new CurrencyAssertion(new ThrowHandler()));
+            _currencyService = new CurrencyService(new CurrencyAssertion());
         }
 
         [SetUp]

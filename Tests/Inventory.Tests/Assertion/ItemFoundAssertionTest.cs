@@ -1,6 +1,5 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Assertion;
 
 namespace IdelPog.Inventory.Tests.Assertion
@@ -13,7 +12,7 @@ namespace IdelPog.Inventory.Tests.Assertion
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _itemFoundAssertion = new ItemFoundAssertion(new ThrowHandler());
+            _itemFoundAssertion = new ItemFoundAssertion();
         }
 
         [Test]

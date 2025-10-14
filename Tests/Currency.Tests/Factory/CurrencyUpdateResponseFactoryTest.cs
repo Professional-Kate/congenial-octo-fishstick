@@ -1,8 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory;
 
@@ -17,8 +15,7 @@ namespace IdelPog.Currency.Tests.Factory
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            IHandler throwHandler = new ThrowHandler();
-            _currencyUpdateResponseFactory = new CurrencyUpdateResponseFactory(new ObjectNullAssertion(throwHandler), new CollectionAssertion(throwHandler));
+            _currencyUpdateResponseFactory = new CurrencyUpdateResponseFactory(new ObjectNullAssertion(), new CollectionAssertion());
 
             _goldCurrency = new Contracts.Currency(CurrencyType.GOLD, 0);
         }

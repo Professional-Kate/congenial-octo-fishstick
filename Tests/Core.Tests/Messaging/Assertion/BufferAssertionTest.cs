@@ -2,19 +2,18 @@
 using IdelPog.Core.Messaging.Assertion.Interface;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Tests.Messaging.Assertion
 {
     [TestFixture]
-    public class BufferAssertionTest
+    public sealed class BufferAssertionTest
     {
         private IBufferAssertion _bufferAssertion { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _bufferAssertion = new BufferAssertion(new ThrowHandler());
+            _bufferAssertion = new BufferAssertion();
         }
 
         [Test]

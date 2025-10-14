@@ -2,7 +2,6 @@
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Runtime.Factory.Interface;
 using IdelPog.HarvestNode.Runtime.System;
@@ -29,9 +28,8 @@ namespace IdelPog.HarvestNode.Tests.Service
         {
             _repositoryMock = new Mock<IAssetRepository<ResourceID, ILootTable>>();
             _factoryMock = new Mock<IWeightedLootTableFactory>();
-            ThrowHandler throwHandler = new();
             
-            _lootTableService = new LootTableService<ResourceID>(_repositoryMock.Object, _factoryMock.Object, new UniqueAssertion(throwHandler));
+            _lootTableService = new LootTableService<ResourceID>(_repositoryMock.Object, _factoryMock.Object, new UniqueAssertion());
 
             _honeyEntry = new LootTableEntry { ItemID = ItemID.HONEY, Weight = 1 };
             _honeyWeightedEntry = new WeightedEntry { ItemID = ItemID.HONEY, Weight = 1 };

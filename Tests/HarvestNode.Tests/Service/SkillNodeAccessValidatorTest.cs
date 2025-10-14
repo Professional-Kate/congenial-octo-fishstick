@@ -1,8 +1,8 @@
 ﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Runtime.ECS;
 using IdelPog.HarvestNode.Runtime.System;
 using IdelPog.HarvestNode.Runtime.System.Interface;
@@ -11,7 +11,7 @@ using Moq;
 namespace IdelPog.HarvestNode.Tests.Service
 {
     [TestFixture]
-    public class SkillNodeAccessValidatorTest
+    public sealed class SkillNodeAccessValidatorTest
     {
         private ISkillNodeAccessValidator _skillNodeAccessValidator;
         private Mock<IAssetRepository<SkillID, SkillNodeEntity>> _repositoryMock;
@@ -21,10 +21,11 @@ namespace IdelPog.HarvestNode.Tests.Service
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _skillNodeEntity = new SkillNodeEntity(new SkillComponent() { SkillID = SkillID.FORAGING},[new HarvestTargetComponent() { HarvestTarget = ResourceID.COPPER_CLUSTER}]);
+            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
+            _skillNodeEntity = new SkillNodeEntity(repositoryAsserter, new SkillComponent { SkillID = SkillID.FORAGING},[new HarvestTargetComponent() { HarvestTarget = ResourceID.COPPER_CLUSTER}]);
             _repositoryMock = new Mock<IAssetRepository<SkillID, SkillNodeEntity>>();
-            _skillNodeAccessValidator = new SkillNodeAccessValidator(_repositoryMock.Object, new FoundAssertion(new ThrowHandler()));
             
+            _skillNodeAccessValidator = new SkillNodeAccessValidator(_repositoryMock.Object, new FoundAssertion());
         }
 
         [SetUp]

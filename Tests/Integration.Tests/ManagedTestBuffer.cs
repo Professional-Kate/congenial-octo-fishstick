@@ -8,7 +8,6 @@ using IdelPog.Core.Messaging.Listener;
 using IdelPog.Core.Messaging.Messenger;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Currency;
 using IdelPog.HarvestNode;
 using IdelPog.Inventory;
@@ -26,7 +25,7 @@ namespace IdelPog.Integration.Tests
         [OneTimeSetUp]
         protected void BaseOneTimeSetUp()
         {
-            _objectNullAssertion = new ObjectNullAssertion(new ThrowHandler());
+            _objectNullAssertion = new ObjectNullAssertion();
         }
 
         [SetUp]
@@ -38,8 +37,8 @@ namespace IdelPog.Integration.Tests
         
         private void Setup()
         {
-            IListenerAssertion listenerAssertion = new ListenerAssertion(new ThrowHandler());
-            IBufferAssertion bufferAssertion = new BufferAssertion(new ThrowHandler());
+            IListenerAssertion listenerAssertion = new ListenerAssertion();
+            IBufferAssertion bufferAssertion = new BufferAssertion();
 
             _bufferMessenger = new BufferMessenger(_objectNullAssertion, listenerAssertion);
             _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher)_bufferMessenger);

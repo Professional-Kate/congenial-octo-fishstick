@@ -1,5 +1,4 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Progression.Assertion;
 using IdelPog.Progression.Assertion.Interface;
@@ -17,7 +16,7 @@ namespace IdelPog.Progression.Tests.Assertion
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _queueAssertion = new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(new ThrowHandler());
+            _queueAssertion = new QueueAssertion<SkillID, HarvestNodeUnlockResponse>();
             
             _levelRequirementComponent = new LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>
             {

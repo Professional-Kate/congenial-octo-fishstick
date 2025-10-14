@@ -2,12 +2,11 @@
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Tests.Repository
 {
     [TestFixture]
-    public class AssetRepositoryTest
+    public sealed class AssetRepositoryTest
     {
         private IAssetRepository<int, string> _repository { get; set; }
         private IRepositoryAsserter _asserterMock { get; set; }
@@ -15,8 +14,7 @@ namespace IdelPog.Core.Tests.Repository
         [SetUp]
         public void Setup()
         {
-            _asserterMock = new RepositoryAsserter(new FoundAssertion(new ThrowHandler()), new ObjectNullAssertion(new ThrowHandler()),
-                new UniqueAssertion(new ThrowHandler()));
+            _asserterMock = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
 
             _repository = new AssetRepository<int, string>(_asserterMock);
         }
@@ -24,7 +22,7 @@ namespace IdelPog.Core.Tests.Repository
         [Test]
         public void Positive_DefaultConstruction_CreatesRepositoryAsserter()
         {
-            _repository = new AssetRepository<int, string>();
+            _repository = new AssetRepository<int, string>(_asserterMock);
 
             _repository.Add(1, "10");
 

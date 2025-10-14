@@ -12,11 +12,10 @@ using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Progression.Assertion;
 using IdelPog.Core.Progression.Experience;
 using IdelPog.Core.Progression.Level;
+using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.Skill.Contracts.Command;
 using IdelPog.Skill.Contracts.Error;
 using IdelPog.Skill.Contracts.Response;
@@ -30,10 +29,15 @@ namespace IdelPog.Skill
     {
         public static void RegisterFlows(IBufferManager bufferManager, FlowRegister flowRegistry)
         {
+            IFoundAssertion foundAssertion = new FoundAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
+            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
+            
             ILogWriter writer = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
             
-            IStateRepository<SkillID, Contracts.Skill> skillRepository = new StateRepository<SkillID, Contracts.Skill>();
+            IStateRepository<SkillID, Contracts.Skill> skillRepository = new StateRepository<SkillID, Contracts.Skill>(repositoryAsserter);
             
             RegisterSkillUpdate(bufferManager, flowRegistry, skillRepository, bufferLogger);
             RegisterSkillCreation(bufferManager, flowRegistry, skillRepository, bufferLogger);
@@ -51,11 +55,10 @@ namespace IdelPog.Skill
         /// </remarks>
         private static void RegisterSkillCreation(IBufferManager bufferManager, IBatchRegister flowRegistry, IStateRepository<SkillID, Contracts.Skill> skillRepository, IBufferLogger bufferLogger)
         {
-            IHandler throwHandler = new ThrowHandler();
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion(throwHandler);
-            ILevelAssertion levelAssertion = new LevelAssertion(throwHandler);
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
+            ILevelAssertion levelAssertion = new LevelAssertion();
             
             ISkillCreationResponseFactory responseFactory = new SkillCreationResponseFactory();
             IDispatchMany<SkillCreationResponse> responseDispatcher = new ManagedDispatcher<SkillCreationResponse>(bufferManager, bufferLogger,  objectNullAssertion, collectionAssertion);
@@ -81,10 +84,9 @@ namespace IdelPog.Skill
         /// </remarks>
         private static void RegisterSkillUpdate(IBufferManager bufferManager, IBatchRegister flowRegistry, IStateRepository<SkillID, Contracts.Skill> skillRepository, IBufferLogger bufferLogger)
         {
-            IHandler throwHandler = new ThrowHandler();
-            ILevelAssertion levelAssertion = new LevelAssertion(throwHandler);
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion(throwHandler);
-            ICollectionAssertion collectionAssertion = new CollectionAssertion(throwHandler);
+            ILevelAssertion levelAssertion = new LevelAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
             
             ILevelProgressFactory levelProgressFactory = new LevelProgressFactory();
             

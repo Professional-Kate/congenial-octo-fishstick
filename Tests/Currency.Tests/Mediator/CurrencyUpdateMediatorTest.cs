@@ -5,7 +5,6 @@ using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory.Interface;
 using IdelPog.Currency.Mediator;
@@ -36,10 +35,7 @@ namespace IdelPog.Currency.Tests.Mediator
             _currencyUpdateSummarizerMock = new Mock<ICurrencyUpdateSummarizer>();
             _currencyUpdateDTOFactoryMock = new Mock<ICurrencyUpdateResponseFactory>();
 
-            ThrowHandler throwHandler = new();
-            _currencyUpdateMediator = new CurrencyUpdateMediator(_repositoryMock.Object, _currencyServiceMock.Object, _dispatcherMock.Object,
-                _currencyUpdateSummarizerMock.Object, _currencyUpdateDTOFactoryMock.Object,
-                new CollectionAssertion(throwHandler), new FoundAssertion(throwHandler));
+            _currencyUpdateMediator = new CurrencyUpdateMediator(_repositoryMock.Object, _currencyServiceMock.Object, _dispatcherMock.Object, _currencyUpdateSummarizerMock.Object, _currencyUpdateDTOFactoryMock.Object, new CollectionAssertion(), new FoundAssertion());
 
             _addGoldUpdate = CurrencyUpdateFactory.Create(10, CurrencyType.GOLD, ActionType.ADD);
             _goldCurrency = CreateCurrency(_addGoldUpdate.CurrencyType);

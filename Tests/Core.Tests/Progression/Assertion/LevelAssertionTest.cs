@@ -1,19 +1,18 @@
 ﻿using IdelPog.Core.Progression;
 using IdelPog.Core.Progression.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 
 namespace IdelPog.Core.Tests.Progression.Assertion
 {
     [TestFixture]
-    public class LevelAssertionTest
+    public sealed class LevelAssertionTest
     {
         private ILevelAssertion _levelAssertion { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _levelAssertion = new LevelAssertion(new ThrowHandler());
+            _levelAssertion = new LevelAssertion();
         }
 
         private static void AssertException(MaxLevelException maxLevelException, Levelable levelable)

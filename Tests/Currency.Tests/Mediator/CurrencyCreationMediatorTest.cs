@@ -4,7 +4,6 @@ using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Currency.Contracts.Command;
 using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory.Interface;
@@ -14,7 +13,7 @@ using Moq;
 namespace IdelPog.Currency.Tests.Mediator
 {
     [TestFixture]
-    public class CurrencyCreationMediatorTest
+    public sealed class CurrencyCreationMediatorTest
     {
         private IBatchMediator<CurrencyCreation> _currencyCreationMediator;
         private Mock<IStateRepository<CurrencyType, Contracts.Currency>> _repositoryMock;
@@ -29,9 +28,7 @@ namespace IdelPog.Currency.Tests.Mediator
             _repositoryMock = new Mock<IStateRepository<CurrencyType, Contracts.Currency>>();
             _responseDispatcherMock = new Mock<IDispatchMany<CurrencyCreationResponse>>();
             _responseFactoryMock = new Mock<ICurrencyCreationResponseFactory>();
-            _currencyCreationMediator = new CurrencyCreationMediator(_repositoryMock.Object, _responseDispatcherMock.Object,
-                _responseFactoryMock.Object, new ObjectNullAssertion(new ThrowHandler()), new CollectionAssertion(new ThrowHandler()),
-                new UniqueAssertion(new ThrowHandler()));
+            _currencyCreationMediator = new CurrencyCreationMediator(_repositoryMock.Object, _responseDispatcherMock.Object, _responseFactoryMock.Object, new ObjectNullAssertion(), new CollectionAssertion(), new UniqueAssertion());
 
             _createGold = new CurrencyCreation { CurrencyType = CurrencyType.GOLD, StartingAmount = 0 };
         }

@@ -4,7 +4,6 @@ using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Command;
@@ -31,9 +30,8 @@ namespace IdelPog.Inventory.Tests.Mediator
             
             _repositoryMock = new Mock<IAssetRepository<ItemID, ItemDefinition>>();
             _responseDispatcherMock = new Mock<IDispatchMany<ItemDefinitionCreationResponse>>();
-            ThrowHandler throwHandler = new();
             
-            _creationMediator = new ItemDefinitionCreationMediator(_repositoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(throwHandler), new UniqueAssertion(throwHandler), new AmountAssertion(throwHandler));
+            _creationMediator = new ItemDefinitionCreationMediator(_repositoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new UniqueAssertion(), new AmountAssertion());
         }
 
         [SetUp]

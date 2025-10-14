@@ -1,8 +1,8 @@
 ﻿using IdelPog.Core.Contracts.Enum;
+using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
 using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Progression.Assertion;
@@ -22,6 +22,8 @@ namespace IdelPog.Progression.Tests.System
     {
         private IEntityUnlockerService<SkillID, HarvestNodeUnlockResponse> _entityUnlockerService;
         private Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>> _repositoryMock;
+        private IRepositoryAsserter _repositoryAsserter;
+        
         private HarvestNodeUnlock _harvestNodeUnlock;
         private HarvestNodeUnlockResponse _harvestNodeUnlockResponse;
         private UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse> _harvestNodeUnlockEntity;
@@ -30,22 +32,22 @@ namespace IdelPog.Progression.Tests.System
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            ThrowHandler throwHandler = new();
+            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             _repositoryMock = new Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>>();
             
-            _entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object, new FoundAssertion(throwHandler), new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler), new IDMatchesAssertion<SkillID>(throwHandler), new QueueAssertion<SkillID, HarvestNodeUnlockResponse>(throwHandler));
+            _entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object, new FoundAssertion(), new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(), new IDMatchesAssertion<SkillID>(), new QueueAssertion<SkillID, HarvestNodeUnlockResponse>());
 
             _harvestNodeUnlock = new HarvestNodeUnlock { SkillID = SkillID.MINING, SkillLevel = 5 };
             _harvestNodeUnlockResponse = new HarvestNodeUnlockResponse { ResourceID = ResourceID.COPPER_CLUSTER, SkillID = SkillID.MINING };
             _levelRequirementComponent = new LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> { Level = 5, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse };
-            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([_levelRequirementComponent]);
+            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>(_repositoryAsserter, [_levelRequirementComponent]);
         }
 
         [SetUp]
         public void Setup()
         {
             _repositoryMock.Reset();
-            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([_levelRequirementComponent]);
+            _harvestNodeUnlockEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>(_repositoryAsserter, [_levelRequirementComponent]);
         }
 
         private void SetupRepository(SkillID skillID)
@@ -172,7 +174,7 @@ namespace IdelPog.Progression.Tests.System
                 new() { Level = 6, ID = SkillID.MINING, OnUnlockCommand = _harvestNodeUnlockResponse }
             ];
             
-            UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse> entity = new(unlockComponents);
+            UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse> entity = new(_repositoryAsserter, unlockComponents);
             
             _repositoryMock.Setup(library => library.Contains(SkillID.MINING)).Returns(true);
             _repositoryMock.Setup(library => library.Get(SkillID.MINING)).Returns(entity);

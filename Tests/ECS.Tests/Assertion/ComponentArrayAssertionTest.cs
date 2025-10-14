@@ -1,19 +1,18 @@
-﻿using IdelPog.Core.Validation.Handler;
-using IdelPog.ECS.Assertion;
+﻿using IdelPog.ECS.Assertion;
 using IdelPog.ECS.Assertion.Interface;
 using IdelPog.ECS.Exceptions;
 
 namespace IdelPog.ECS.Tests.Assertion
 {
     [TestFixture]
-    public class ComponentArrayAssertionTest
+    public sealed class ComponentArrayAssertionTest
     {
         private IComponentArrayAssertion _assertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _assertion = new ComponentArrayAssertion(new ThrowHandler());
+            _assertion = new ComponentArrayAssertion();
         }
 
         [Test]

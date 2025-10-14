@@ -3,8 +3,6 @@ using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Core.Validation.Handler;
-using IdelPog.Core.Validation.Handler.Interface;
 using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Exceptions;
@@ -14,7 +12,7 @@ using Moq;
 namespace IdelPog.Inventory.Tests
 {
     [TestFixture]
-    public class InventoryTest
+    public sealed class InventoryTest
     {
         private IInventory _inventory { get; set; }
         private Mock<IStateRepository<ItemID, Item>> _repositoryMock { get; set; }
@@ -32,9 +30,8 @@ namespace IdelPog.Inventory.Tests
         {
             _oakWoodItem = ItemFactory.CreateOakWood();
             _repositoryMock = new Mock<IStateRepository<ItemID, Item>>();
-            IHandler throwHandler = new ThrowHandler();
 
-            _inventory = new Inventory.Service.Inventory(_repositoryMock.Object, new FoundAssertion(throwHandler), new UniqueAssertion(throwHandler), new AmountAssertion(throwHandler));
+            _inventory = new Inventory.Service.Inventory(_repositoryMock.Object, new FoundAssertion(), new UniqueAssertion(), new AmountAssertion());
         }
 
         private void VerifyRepositoryUpdate()
