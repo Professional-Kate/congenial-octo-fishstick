@@ -43,6 +43,7 @@ public readonly record struct CurrencyCreation
 
 - Creation will fail if the records `CurrencyType` already exists. `CurrencyType` must be unique.
  
+
   | Buffered records           | Requirements                    | Description                                                                                                 |
   |----------------------------|---------------------------------|-------------------------------------------------------------------------------------------------------------|
   | `CurrencyCreation`         | None                            | Creates new `Currency` with a specific `uint` `StartingAmount`. Will create one `Currency` for each record. |
@@ -50,7 +51,6 @@ public readonly record struct CurrencyCreation
   | `CurrencyCreationError`    | Unsuccessful `CurrencyCreation` | Will be dispatched automatically whenever a `CurrencyCreation` fails.                                       |
 
 ---
-
 
 ### `CurrencyUpdate`
 
@@ -77,6 +77,7 @@ Summaries are unique per `CurrencyType`. If after summarization the total `Amoun
 - Updating will fail if the `CurrencyType` is not found. 
 - Updating will fail if `ActionType` is `REMOVE` and the `Currency` doesn't have enough `Amount`.
 - Updating will fail if after summarization the total amount of summerized records is 0.
+
 
   | Buffered records         | Requirements                  | Description                                                                                                                                                                |
   |--------------------------|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
