@@ -82,13 +82,12 @@ on construct.
 ### Progression: `UnlockRequirementsEntity` and `LevelRequirementComponent`
 
 ```csharp
-public sealed record UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse> : Entity where TCommand : struct
+public sealed record UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse> : Entity
 {
     private readonly QueueComponentStore<LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>> _levelRequirementStore;
 }
 
-public readonly record struct LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> : IComponent<LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>> 
-    where TCommand : struct
+public readonly record struct LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> : IComponent<LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>>
 {
     public required SkillID ID { get; init; }
     public required byte Level { get; init; }
