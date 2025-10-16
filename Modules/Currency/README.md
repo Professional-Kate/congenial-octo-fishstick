@@ -1,7 +1,7 @@
 ﻿# Modules/Currency
-The `Currency` module stores player currency and mutates them on request. 
+The `Currency` module stores player currency and mutates them on a `CurrencyUpdate`. 
 
-Each `Currency` object just contain their `uint amount`. 
+---
 
 ## Contracts
 
@@ -15,22 +15,71 @@ public sealed class Currency
 }
 ```
 
+- Only one `Currency` of each `CurrencyType` is allowed.
+
+---
+
 ### Description
 
-`Currency` in IdelPog is just a `uint amount` and that specific currencies `CurrencyType`.
+`Currency` in IdelPog is simple. Currently, we just store a `uint Amount` with a `CurrencyType`.
 
-### Listens to
+- Commands are simple but easily mutate state.
 
-| Command            | Requirements       | Usage                                                                                                                               |
-|--------------------|--------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| `CurrencyCreation` | None               | Used to create a new `Currency` object with a given `uint StartingAmount`.                                                          |
-| `CurrencyUpdate`   | `CurrencyCreation` | Used to mutate `Currency` based on the commands `ActionType` and `Amount`. The `Currency` updated is defined by the `CurrencyType`. |
+---
 
-### Dispatches
+### Commands
 
-| Command                    | When                            | Usage                                                                                                                             |
-|----------------------------|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| `CurrencyCreationResponse` | Successful `CurrencyCreation`   | This response will be dispatched for each successful `CurrencyCreation` and defines the properties of the `Currency` created.     |
-| `CurrencyCreationError`    | Unsuccessful `CurrencyCreation` | This will contain a `BaseError` giving details on why this error occured and a `CurrencyCreation[]` of the Buffer that caused it. |
-| `CurrencyUpdateResponse`   | Successful `CurrencyUpdate`     | This response will detail the new amount of that `Currency`. Dispatches one response for each `CurrencyUpdate` input.             |
-| `CurrencyUpdateError`      | Unsuccessful `CurrencyUpdate`   | This will contain a `BaseError` giving details on why this error occured and a `CurrencyUpdate[]` of the Buffer that caused it.   |
+### `CurrencyCreation`
+
+```csharp
+public readonly record struct CurrencyCreation
+{
+    public required CurrencyType CurrencyType { get; init; }
+    public required uint StartingAmount { get; init; }
+}
+```
+
+`CurrencyCreation` is used to create a new `Currency` with a specific `StartingAmount`. 
+
+- Creation will fail if the records `CurrencyType` already exists. `CurrencyType` must be unique.
+ 
+  | Buffered records           | Requirements                    | Description                                                                                                 |
+  |----------------------------|---------------------------------|-------------------------------------------------------------------------------------------------------------|
+  | `CurrencyCreation`         | None                            | Creates new `Currency` with a specific `uint` `StartingAmount`. Will create one `Currency` for each record. |
+  | `CurrencyCreationResponse` | Successful `CurrencyCreation`   | Each response will contain a newly created `Currency`.                                                      |
+  | `CurrencyCreationError`    | Unsuccessful `CurrencyCreation` | Will be dispatched automatically whenever a `CurrencyCreation` fails.                                       |
+
+---
+
+
+### `CurrencyUpdate`
+
+```csharp
+
+public readonly record struct CurrencyUpdate
+{ 
+    public required CurrencyType CurrencyType { get; init; }
+    public required uint Amount { get; init; }
+    public required ActionType ActionType { get; init; }
+}
+
+```
+
+`CurrencyUpdate` defines how to mutate a `Currency` that already exists. `ActionType` defines how to mutate the `Currency`.
+The update works in a unique way. To reduce the amount we need to process we summarize `CurrencyUpdate`s before processing.
+IE,
+
+- Three `CurrencyUpdate`s with `CurrencyType: GOLD, Amount: 5, ActionType: ADD` will result in one `CurrencyType: GOLD, Amount 15, ActionType ADD` command.
+- Two `CurrencyUpdates`s with `CurrencyType: GOLD, Amount: 5, ActionType: REMOVE` and one `CurrencyType: GOLD, Amount: 5, ActionType: ADD` will result in one `CurrencyType: GOLD, Amount 5, ActionType REMOVE` command.
+
+Summaries are unique per `CurrencyType`. If after summarization the total `Amount` is 0, no `CurrencyUpdate` will be applied for that `CurrencyType`.
+
+- Updating will fail if the `CurrencyType` is not found. 
+- Updating will fail if `ActionType` is `REMOVE` and the `Currency` doesn't have enough `Amount`.
+- Updating will fail if after summarization the total amount of summerized records is 0.
+
+  | Buffered records         | Requirements                  | Description                                                                                                                                                                |
+  |--------------------------|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+  | `CurrencyUpdate`         | `CurrencyCreation`            | Will update one `Currency` per record. Can either remove or add an `Amount`.                                                                                               |
+  | `CurrencyUpdateResponse` | Successful `CurrencyUpdate`   | Each response will contain the new state of each `Currenecy` updated. If the total `Amount` of one update is zero, no response will be dispatched for that `CurrencyType`. |
+  | `CurrencyUpdaeError`     | Unsuccessful `CurrencyUpdate` | Will be dispatched automatically whenever a `CurrencyUpdate` fails.                                                                                                        |
