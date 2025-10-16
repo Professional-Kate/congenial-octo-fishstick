@@ -6,6 +6,8 @@ This module also contains commands for creating `LootTable`s for each `HarvestNo
 
 `HarvestNode`s can be locked via the `HarvestNodeRequirementsCreation` command. This will require certain `Skill` levels to unlock and use.
 
+---
+
 ## Contracts
 
 ### `HarvestNode` model
@@ -20,9 +22,11 @@ public sealed record HarvestNode
 }
 ```
 
-- `ResourceID` defines what in the world this `HarvestNode` is. 
-- `LocationID` defines where in the world this `HarvestNode` is.
+- `ResourceID` defines what in the world this `HarvestNode` is. IE, Iron Ore. 
+- `LocationID` defines where in the world this `HarvestNode` is. IE, Cave.
 - The `Levelable` will be updated on every update action.
+
+---
 
 ### `ReadOnlyHarvestNode` record
 
@@ -37,6 +41,8 @@ public readonly record struct ReadOnlyHarvestNode
 ```
 
 This record is used to represent a `HarvestNode`. `ReadOnlyLevelable` will always contain the new state of the `HarvestNode`.
+
+---
 
 ### `HarvestTargetComponent` and `SkillComponent`
 
@@ -59,6 +65,8 @@ nodes are expected to be leveled alongside skills but not strictly required.
 If a `HarvestNode` isn't registered to a `Skill` then any updates on that node will not be allowed. A `ResourceID` with 
 matching `SkillID` is expected.
 
+---
+
 ### `SkillNodeEntity`
 
 ````csharp
@@ -79,6 +87,8 @@ public sealed record SkillNodeEntity : Entity
 This Entity contains a `ComponentStore` of `HarvestTargetComponent` which will be linked to the passed `SkillComponent` 
 on construct.
 
+---
+
 ### Progression: `UnlockRequirementsEntity` and `LevelRequirementComponent`
 
 ```csharp
@@ -98,6 +108,8 @@ public readonly record struct LevelRequirementComponent<SkillID, HarvestNodeUnlo
 This links the `Levelable.Level` of a `Skill` to locking/unlocking of `HarvestNode`s. Each node can be locked, or none at all can be locked. 
 The required `Skill` `Level`, `OnUnlockCommand`, and linked `HarvestNode` can all be configured using the commands below.
 
+---
+
 ### Description
 
 `HarvestNode`s at their simplest are just `Levelable`s that can be progressed with `HarvestNodeUpdate`.
@@ -106,7 +118,9 @@ The required `Skill` `Level`, `OnUnlockCommand`, and linked `HarvestNode` can al
 - `HarvestNode`s can generate Items for both their `ResourceID` and `LocationID`.
 - When locking a `HarvestNode` with `HarvestNodeRequirementsCreation`, it is not required to have that `HarvestNode` created. These services are separate. 
 
-## APIs
+---
+
+## Commands
 
 ### `HarvestNodeCreation`
 
@@ -127,6 +141,8 @@ public readonly record struct HarvestNodeCreation
 | `HarvestNodeCreation`         | None                               | Creates new `HarvestNode`s for each record. The `SkillID` `LinkedSkill` will be used in the `SkillNodeEntity`. |
 | `HarvestNodeCreationResponse` | Successful `HarvestNodeCreation`   | Each response will contain one newly created `HarvestNode` with linked `SkillID`.                              |
 | `HarvestNodeCreationError`    | Unsuccessful `HarvestNodeCreation` | Will be dispatched automatically whenever a `HarvestNodeCreation` fails.                                       |
+
+---
 
 ### `HarvestNodeUpdate`
 
@@ -150,6 +166,8 @@ This update will also generate `Item`s if a `LootTable` has been created with `R
 | `HarvestNodeUpdate`         | `HarvestNodeCreation`            | Updates a `HarvestNode` by updating their `Levelable`. One node will be updated per record. |
 | `HarvestNodeUpdateResponse` | Successful `HarvestNodeUpdate`   | Each response will contain the new state of any updated `HarvestNode`.                      |
 | `HarvestNodeUpdateError`    | Unsuccessful `HarvestNodeUpdate` | Will be dispatched automatically whenever a `HarvestNodeUpdate` fails.                      |
+
+---
 
 ### `HarvestNodeRequirementsCreation`
 
@@ -183,6 +201,8 @@ On unlock the `OnUnlockCommand` will be dispatched.
 | `HarvestNodeRequirementsCreationResponse` | Successful `HarvestNodeRequirementsCreation`   | Each response will contain a newly created requirement.                              |
 | `HarvestNodeRequirementsCreationError`    | Unsuccessful `HarvestNodeRequirementsCreation` | Will be dispatched automatically whenever a `HarvestNodeRequirementsCreation` fails. |
 
+---
+
 ### `HarvestNodeUnlock`
 
 ```csharp
@@ -203,6 +223,8 @@ in this case, multiple `HarvestNodeUnlockResponse` will be dispatched.
 | `HarvestNodeUnlock`         | None                             | Attempts to unlock any requirement who's `SkillLevel` is less than or equal to `HarvestNodeUnlock.SkillLevel`.                  |
 | `HarvestNodeUnlockResponse` | Successful `HarvestNodeUnlock`   | Each response will contain one `HarvestNode` unlocked in the operation. One `HarvestNodeUnlock` can produce multiple responses. |
 | `HarvestNodeUnlockError`    | Unsuccessful `HarvestNodeUnlock` | Will be dispatched automatically whenever a `HarvestNodeUnlock` fails.                                                          |
+
+---
 
 ## Loot
 
@@ -228,6 +250,8 @@ public readonly record struct GrantPolicyEntry
 - If `GrantPolicy` is provided with 0 `GrantWeight` or `SkipWeight`, then `GrantPolicy` and `SkipPolicy` will be used respectively.
 
 `Item` generation can fail and dispatch an `InventoryUpdateError`. This failure will not cause an update to fail.
+
+---
 
 ### `ResourceLootCreation`
 
@@ -255,6 +279,8 @@ generated using the `LootTableEntries`.
 | `ResourceLootCreation`         | None                                | Creates a new `LootTable` and `GrantPolicy` for the `ResourceID`. Whenever a `HarvestNode` with matching `ResourceID` is updated, the table will be rolled. |
 | `ResourceLootCreationResponse` | Successful `ResourceLootCreation`   | Each response will contain one new `ResourceID` `LootTable` created.                                                                                        |
 | `ResourceLootCreationError`    | Unsuccessful `ResourceLootCreation` | Will be dispatched automatically whenever a `ResourceLootCreation` fails.                                                                                   |
+
+---
 
 ### `LocationLootCreation`
 
