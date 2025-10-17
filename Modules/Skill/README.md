@@ -55,7 +55,7 @@ public readonly record struct SkillCreation
 
 ---
 
-### `SkillUpdate`
+### `SkillUpdate``
 
 ```csharp
 public readonly record struct SkillUpdate
@@ -64,7 +64,7 @@ public readonly record struct SkillUpdate
 }
 ```
 
-`SkillUpdate` progresses the `Skill.Levelelable`. Every update the `Levelable.ExperiencePerAction` will be applied to the `Levelable.Experience`.
+`SkillUpdate` progresses the `Skill.Levelable`. Every update the `Levelable.ExperiencePerAction` will be applied to the `Levelable.Experience`.
 
 - Updating can fail if the `SkillID` is not found.
 
