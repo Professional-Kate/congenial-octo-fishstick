@@ -19,7 +19,7 @@ public sealed class Currency
 
 ---
 
-### Description
+## Description
 
 `Currency` in IdelPog is simple. Currently, we just store a `uint Amount` with a `CurrencyType`.
 
@@ -27,7 +27,7 @@ public sealed class Currency
 
 ---
 
-### Commands
+## Commands
 
 ### `CurrencyCreation`
 
@@ -42,13 +42,12 @@ public readonly record struct CurrencyCreation
 `CurrencyCreation` is used to create a new `Currency` with a specific `StartingAmount`. 
 
 - Creation will fail if the records `CurrencyType` already exists. `CurrencyType` must be unique.
- 
 
-  | Buffered records           | Requirements                    | Description                                                                                                 |
-  |----------------------------|---------------------------------|-------------------------------------------------------------------------------------------------------------|
-  | `CurrencyCreation`         | None                            | Creates new `Currency` with a specific `uint` `StartingAmount`. Will create one `Currency` for each record. |
-  | `CurrencyCreationResponse` | Successful `CurrencyCreation`   | Each response will contain a newly created `Currency`.                                                      |
-  | `CurrencyCreationError`    | Unsuccessful `CurrencyCreation` | Will be dispatched automatically whenever a `CurrencyCreation` fails.                                       |
+| Buffered records           | Requirements                    | Description                                                                                                 |
+|----------------------------|---------------------------------|-------------------------------------------------------------------------------------------------------------|
+| `CurrencyCreation`         | None                            | Creates new `Currency` with a specific `uint` `StartingAmount`. Will create one `Currency` for each record. |
+| `CurrencyCreationResponse` | Successful `CurrencyCreation`   | Each response will contain a newly created `Currency`.                                                      |
+| `CurrencyCreationError`    | Unsuccessful `CurrencyCreation` | Will be dispatched automatically whenever a `CurrencyCreation` fails.                                       |
 
 ---
 
@@ -78,9 +77,8 @@ Summaries are unique per `CurrencyType`. If after summarization the total `Amoun
 - Updating will fail if `ActionType` is `REMOVE` and the `Currency` doesn't have enough `Amount`.
 - Updating will fail if after summarization the total amount of summerized records is 0.
 
-
-  | Buffered records         | Requirements                  | Description                                                                                                                                                                |
-  |--------------------------|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-  | `CurrencyUpdate`         | `CurrencyCreation`            | Will update one `Currency` per record. Can either remove or add an `Amount`.                                                                                               |
-  | `CurrencyUpdateResponse` | Successful `CurrencyUpdate`   | Each response will contain the new state of each `Currenecy` updated. If the total `Amount` of one update is zero, no response will be dispatched for that `CurrencyType`. |
-  | `CurrencyUpdaeError`     | Unsuccessful `CurrencyUpdate` | Will be dispatched automatically whenever a `CurrencyUpdate` fails.                                                                                                        |
+| Buffered records         | Requirements                  | Description                                                                                                                                                                |
+|--------------------------|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `CurrencyUpdate`         | `CurrencyCreation`            | Will update one `Currency` per record. Can either remove or add an `Amount`.                                                                                               |
+| `CurrencyUpdateResponse` | Successful `CurrencyUpdate`   | Each response will contain the new state of each `Currenecy` updated. If the total `Amount` of one update is zero, no response will be dispatched for that `CurrencyType`. |
+| `CurrencyUpdateError`    | Unsuccessful `CurrencyUpdate` | Will be dispatched automatically whenever a `CurrencyUpdate` fails.                                                                                                        |

@@ -110,7 +110,7 @@ The required `Skill` `Level`, `OnUnlockCommand`, and linked `HarvestNode` can al
 
 ---
 
-### Description
+## Description
 
 `HarvestNode`s at their simplest are just `Levelable`s that can be progressed with `HarvestNodeUpdate`.
 - `HarvestNode`s are linked to `Skill`s.
@@ -161,11 +161,12 @@ This update will also generate `Item`s if a `LootTable` has been created with `R
 - Updating will fail if the `HarvestNode` is not linked to the records `SkillID`.
 - The `HarvestNode` will still update if an `Item` creation occurs but fails due to any reason. 
 
-| Buffered records            | Requirements                     | Description                                                                                 |
-|-----------------------------|----------------------------------|---------------------------------------------------------------------------------------------|
-| `HarvestNodeUpdate`         | `HarvestNodeCreation`            | Updates a `HarvestNode` by updating their `Levelable`. One node will be updated per record. |
-| `HarvestNodeUpdateResponse` | Successful `HarvestNodeUpdate`   | Each response will contain the new state of any updated `HarvestNode`.                      |
-| `HarvestNodeUpdateError`    | Unsuccessful `HarvestNodeUpdate` | Will be dispatched automatically whenever a `HarvestNodeUpdate` fails.                      |
+| Buffered records            | Requirements                     | Description                                                                                                                                                       |
+|-----------------------------|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `HarvestNodeUpdate`         | `HarvestNodeCreation`            | Updates a `HarvestNode` by updating their `Levelable`. One node will be updated per record.                                                                       |
+| `HarvestNodeUpdateResponse` | Successful `HarvestNodeUpdate`   | Each response will contain the new state of any updated `HarvestNode`.                                                                                            |
+| `HarvestNodeUpdateError`    | Unsuccessful `HarvestNodeUpdate` | Will be dispatched automatically whenever a `HarvestNodeUpdate` fails.                                                                                            |
+| `InventoryUpdate`           | Successful Loot generation       | Successfully updating a node can dispatch `InventoryUpdate`s through their `LootTable`s. See, `ResourceLootCreation` and `LocationLootCreation` for more details. |
 
 ---
 
