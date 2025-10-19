@@ -10,6 +10,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loot", "Loot\Loot.csproj", "{07292D58-872A-4CDB-B62A-CC3BD3602033}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{F61AF084-F5C4-4BE1-80BA-326A727091C3}"
+	ProjectSection(SolutionItems) = preProject
+		Modules\README.md = Modules\README.md
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Modules\Console\Console.csproj", "{9C1B74F8-BEBB-4540-B1EF-57B9D91A4CC0}"
 EndProject

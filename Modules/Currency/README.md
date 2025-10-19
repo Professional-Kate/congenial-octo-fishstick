@@ -1,4 +1,6 @@
-﻿# Modules/Currency
+﻿[← Modules](../README.md) ▸ Currency
+
+# Modules/Currency
 The `Currency` module stores player currency and mutates them on a `CurrencyUpdate`. 
 
 ---

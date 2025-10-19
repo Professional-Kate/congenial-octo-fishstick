@@ -1,4 +1,6 @@
-﻿# Modules/Inventory
+﻿[← Modules](../README.md) ▸ Inventory
+
+# Modules/Inventory
 The `Inventory` module stores player `Item`s and handles all mutations, adding or removing from their `Amount` on request.
 
 It also manages `Crafting` and `Recipes` which define how sets of input Items can be transformed into new output Items.

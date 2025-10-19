@@ -1,4 +1,6 @@
-﻿# Modules/HarvestNode
+﻿[← Modules](../README.md) ▸ HarvestNode
+
+# Modules/HarvestNode
 The `HarvestNode` module controls the lifecycle of `HarvestNode`s. In IdelPog, these define nodes in the world that when
 harvested will grant Items for the `Inventory`. These also contain a `Levelable` which on `HarvestNodeUpdate` will be progressed.
 

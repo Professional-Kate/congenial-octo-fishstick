@@ -1,4 +1,6 @@
-﻿# Modules/Skill
+﻿[← Modules](../README.md) ▸ Skill
+
+# Modules/Skill
 The `Skill` module defines playable skills and their progression mechanic in IdelPog. 
 
 Each `Skill` contains a `Levelable` property, that tracks Experience, Level, Next Level 
