@@ -161,6 +161,43 @@ Summaries are unique per `ItemID`. If after summarization the total `Amount` is 
 
 ---
 
+### `ItemSell`
+
+````csharp
+public readonly record struct ItemSell
+{ 
+    public required CurrencyType CurrencyType { get; init; }
+    public required ItemID ItemID { get; init; }
+    public required uint Amount { get; init; }
+}
+````
+
+`ItemSell` is used to sell `Item`s in the `Inventory` for a specific `CurrencyType`. Selling an `Item` involves removing 
+that `ItemID` in the `Amount` specified. This will mutate the `Inventory` in the same way as `InventoryUpdate`.
+If this operation is successful, multiple `InventoryUpdateResponses` will be dispatched.
+
+`ItemSell` will also dispatch multiple `CurrencyUpdate`s on successful operation. `ItemSell` itself will not update `Currency`.
+That is not a responsibility of `Inventory`.
+
+- Selling will fail if any `ItemID` does not have enough `Amount`.
+- Selling will fail if any `ItemID` does not have a created `ItemDefinition`.
+- Selling will fail if the `Amount` is zero.
+
+This record will only remove `Item`s from the `Inventory`, no `Item`s will be added.
+
+If `CurrencyUpdate` fails this will not cause the `ItemSell` operation to fail. You must ensure the `CurrencyType` is created before attempting to sell anything.
+`Item`s will be removed from the `Inventory` even if `CurrencyUpdate` fails.
+
+| Buffered records         | Requirements            | Description                                                                                                                                                                                  |
+|--------------------------|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ItemSell`               | None                    | Attempts to sell each `ItemID` in the `Amount` specified, the `CurrencyType` defines what `Currency` you want.                                                                               |
+| `ItemSellResponse`       | Successful `ItemSell`   | Each response will contain a successful `ItemSell`. This response will not tell you how `Inventory` or `Currency` has changed. This response is just an acknowledgement of success.          |
+| `ItemSellError`          | Unsuccessful `ItemSell` | Will be dispatched automatically whenever an `ItemSell` fails.                                                                                                                               |
+| `InvenoryUpdateResponse` | Successful `ItemSell`   | Each response will contain an `Item` that was changed in this operation. One response per `Item`.                                                                                            |
+| `CurrencyUpdate`         | Successful `ItemSell`   | As `Inventory` doesn't update `Currency` itself, we dispatch this record to be automatically handled. This record can fail to update `Currency`, but this won't affect `ItemSell` in anyway. |
+
+---
+
 ## Crafting 
 
 ### `RecipeCreation`
