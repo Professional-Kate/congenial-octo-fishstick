@@ -61,6 +61,7 @@ namespace IdelPog.Inventory
             RegisterRecipeCreation(bufferManager, bufferLogger, flowRegister, recipeEntityRepository, repositoryAsserter);
             RegisterItemCraft(bufferManager, bufferLogger, flowRegister, recipeEntityRepository, inventory, inventoryUpdateService);
             RegisterItemDefinitionCreation(bufferManager, bufferLogger, flowRegister, definitionRepository);
+            RegisterItemSell(bufferManager, bufferLogger, flowRegister, inventoryUpdateService, definitionRepository);
         }
 
         /// <summary>
@@ -179,6 +180,40 @@ namespace IdelPog.Inventory
             IBatchController<ItemDefinitionCreation> creationController = new ManagedBatchController<ItemDefinitionCreation>(creationMediator);
             
             flowRegister.RegisterBatch(creationController, errorFactory);
+        }
+
+        /// <summary>
+        /// Registers the <see cref="ItemSell"/> flow
+        /// </summary>
+        /// <param name="bufferManager">Used to dispatch response records</param>
+        /// <param name="bufferLogger">Logs all messages in and out</param>
+        /// <param name="flowRegister">Used to register the InventoryUpdate flow</param>
+        /// <param name="inventoryUpdateService">Handles updating the <see cref="IInventory"/></param>
+        /// <param name="definitionRepository">Stores all <see cref="ItemDefinition"/>s</param>
+        /// <remarks>
+        /// Listens to -> <see cref="ItemSell"/>. On Success -> <see cref="ItemSellResponse"/>. On Error -> <see cref="ItemSellError"/>
+        /// </remarks>
+        private static void RegisterItemSell(IBufferManager bufferManager, IBufferLogger bufferLogger, IBatchRegister flowRegister, IInventoryUpdateService inventoryUpdateService, IAssetRepository<ItemID, ItemDefinition> definitionRepository)
+        {
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            IAmountAssertion amountAssertion = new AmountAssertion();
+            IFoundAssertion foundAssertion = new FoundAssertion();
+            
+            IInventoryUpdateFactory updateFactory = new InventoryUpdateFactory();
+            
+            IInventoryUpdateSummarizer inventoryUpdateSummarizer = new InventoryUpdateSummarizer(updateFactory, collectionAssertion);
+            IDispatchMany<ItemSellResponse> itemSellDispatcher = new ManagedDispatcher<ItemSellResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher = new  ManagedDispatcher<InventoryUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IDispatchMany<CurrencyUpdate> currencyUpdateDispatcher =  new ManagedDispatcher<CurrencyUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+                
+            IBatchMediator<ItemSell> sellMediator = new ItemSellMediator(definitionRepository, inventoryUpdateService, inventoryUpdateSummarizer, updateFactory, itemSellDispatcher, inventoryUpdateDispatcher, currencyUpdateDispatcher, collectionAssertion, amountAssertion, foundAssertion);
+            
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            ItemSellErrorFactory errorFactory = new(baseErrorFactory);
+            IBatchController<ItemSell> sellController = new ManagedBatchController<ItemSell>(sellMediator);
+            
+            flowRegister.RegisterBatch(sellController, errorFactory);
         }
     }
 }

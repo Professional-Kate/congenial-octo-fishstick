@@ -56,7 +56,7 @@ namespace IdelPog.Inventory.Mediator
 
                 inventoryUpdates[i] = _inventoryUpdateFactory.Create(itemSell.ItemID, itemSell.Amount, ActionType.REMOVE);
                 currencyUpdates[i] = CreateCurrencyUpdate(itemSell, _definitionRepository.Get(itemSell.ItemID).BaseSellPrice);
-                responses[i] = new ItemSellResponse { CurrencyType =itemSell.CurrencyType, ItemID = itemSell.ItemID, Amount = itemSell.Amount };
+                responses[i] = new ItemSellResponse { CurrencyType = itemSell.CurrencyType, ItemID = itemSell.ItemID, Amount = itemSell.Amount };
             }
 
             DispatchInventoryUpdates(inventoryUpdates);
