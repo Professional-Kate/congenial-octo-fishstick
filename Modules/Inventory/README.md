@@ -188,13 +188,13 @@ This record will only remove `Item`s from the `Inventory`, no `Item`s will be ad
 If `CurrencyUpdate` fails this will not cause the `ItemSell` operation to fail. You must ensure the `CurrencyType` is created before attempting to sell anything.
 `Item`s will be removed from the `Inventory` even if `CurrencyUpdate` fails.
 
-| Buffered records         | Requirements            | Description                                                                                                                                                                                  |
-|--------------------------|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ItemSell`               | None                    | Attempts to sell each `ItemID` in the `Amount` specified, the `CurrencyType` defines what `Currency` you want.                                                                               |
-| `ItemSellResponse`       | Successful `ItemSell`   | Each response will contain a successful `ItemSell`. This response will not tell you how `Inventory` or `Currency` has changed. This response is just an acknowledgement of success.          |
-| `ItemSellError`          | Unsuccessful `ItemSell` | Will be dispatched automatically whenever an `ItemSell` fails.                                                                                                                               |
-| `InvenoryUpdateResponse` | Successful `ItemSell`   | Each response will contain an `Item` that was changed in this operation. One response per `Item`.                                                                                            |
-| `CurrencyUpdate`         | Successful `ItemSell`   | As `Inventory` doesn't update `Currency` itself, we dispatch this record to be automatically handled. This record can fail to update `Currency`, but this won't affect `ItemSell` in anyway. |
+| Buffered records         | Requirements             | Description                                                                                                                                                                                  |
+|--------------------------|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ItemSell`               | `ItemDefinitionCreation` | Attempts to sell each `ItemID` in the `Amount` specified, the `CurrencyType` defines what `Currency` you want.                                                                               |
+| `ItemSellResponse`       | Successful `ItemSell`    | Each response will contain a successful `ItemSell`. This response will not tell you how `Inventory` or `Currency` has changed. This response is just an acknowledgement of success.          |
+| `ItemSellError`          | Unsuccessful `ItemSell`  | Will be dispatched automatically whenever an `ItemSell` fails.                                                                                                                               |
+| `InvenoryUpdateResponse` | Successful `ItemSell`    | Each response will contain an `Item` that was changed in this operation. One response per `Item`.                                                                                            |
+| `CurrencyUpdate`         | Successful `ItemSell`    | As `Inventory` doesn't update `Currency` itself, we dispatch this record to be automatically handled. This record can fail to update `Currency`, but this won't affect `ItemSell` in anyway. |
 
 ---
 
