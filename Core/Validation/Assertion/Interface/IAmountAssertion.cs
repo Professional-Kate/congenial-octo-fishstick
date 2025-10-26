@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Inventory.Assertion.Interface
+namespace IdelPog.Core.Validation.Assertion.Interface
 {
     public interface IAmountAssertion
     {

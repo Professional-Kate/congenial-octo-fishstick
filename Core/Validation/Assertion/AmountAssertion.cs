@@ -1,8 +1,8 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Inventory.Assertion.Interface;
+using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Inventory.Exceptions;
 
-namespace IdelPog.Inventory.Assertion
+namespace IdelPog.Core.Validation.Assertion
 {
     public sealed class AmountAssertion : IAmountAssertion
     {

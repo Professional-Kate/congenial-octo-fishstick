@@ -4,7 +4,6 @@ using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Command;
 using IdelPog.Inventory.Contracts.Response;

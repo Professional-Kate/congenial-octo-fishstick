@@ -5,7 +5,6 @@ using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Command;
 using IdelPog.Inventory.Contracts.Response;
