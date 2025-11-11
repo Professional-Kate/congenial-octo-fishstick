@@ -2,11 +2,9 @@
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
-using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Currency.Contracts.Response;
-using IdelPog.Currency.Factory.Interface;
 using IdelPog.Currency.Mediator;
 using IdelPog.Currency.Service.Interface;
 using Moq;
@@ -16,67 +14,28 @@ namespace IdelPog.Currency.Tests.Mediator
     [TestFixture]
     public sealed class CurrencyUpdateMediatorTest
     {
-        private IBatchMediator<CurrencyUpdate> _currencyUpdateMediator { get; set; }
-        private Mock<IStateRepository<CurrencyType, Contracts.Currency>> _repositoryMock { get; set; }
-        private Mock<ICurrencyService> _currencyServiceMock { get; set; }
-        private Mock<IDispatchMany<CurrencyUpdateResponse>> _dispatcherMock { get; set; }
-        private Mock<ICurrencyUpdateSummarizer> _currencyUpdateSummarizerMock { get; set; }
-        private Mock<ICurrencyUpdateResponseFactory> _currencyUpdateDTOFactoryMock { get; set; }
+        private IBatchMediator<CurrencyUpdate> _currencyUpdateMediator;
+        private Mock<IDispatchMany<CurrencyUpdateResponse>> _dispatcherMock;
+        private Mock<ICurrencyUpdateService> _currencyUpdateServiceMock;
 
-        private Contracts.Currency _goldCurrency;
         private CurrencyUpdate _addGoldUpdate;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _repositoryMock = new Mock<IStateRepository<CurrencyType, Contracts.Currency>>();
-            _currencyServiceMock = new Mock<ICurrencyService>();
             _dispatcherMock = new Mock<IDispatchMany<CurrencyUpdateResponse>>();
-            _currencyUpdateSummarizerMock = new Mock<ICurrencyUpdateSummarizer>();
-            _currencyUpdateDTOFactoryMock = new Mock<ICurrencyUpdateResponseFactory>();
+            _currencyUpdateServiceMock = new Mock<ICurrencyUpdateService>();
 
-            _currencyUpdateMediator = new CurrencyUpdateMediator(_repositoryMock.Object, _currencyServiceMock.Object, _dispatcherMock.Object, _currencyUpdateSummarizerMock.Object, _currencyUpdateDTOFactoryMock.Object, new CollectionAssertion(), new FoundAssertion());
+            _currencyUpdateMediator = new CurrencyUpdateMediator(_currencyUpdateServiceMock.Object, _dispatcherMock.Object, new CollectionAssertion());
 
             _addGoldUpdate = CurrencyUpdateFactory.Create(10, CurrencyType.GOLD, ActionType.ADD);
-            _goldCurrency = CreateCurrency(_addGoldUpdate.CurrencyType);
         }
 
         [SetUp]
         public void SetUp()
         {
-            _repositoryMock.Reset();
-            _currencyServiceMock.Reset();
             _dispatcherMock.Reset();
-            _currencyUpdateSummarizerMock.Reset();
-        }
-
-        private static Contracts.Currency CreateCurrency(CurrencyType type)
-        {
-            Contracts.Currency currency = new(type, 0);
-            return currency;
-        }
-
-        private void SetupSummarizer(CurrencyUpdate[] summerizedUpdates, params CurrencyUpdate[] updates)
-        {
-            _currencyUpdateSummarizerMock.Setup(library => library.GetSummary(updates)).Returns(summerizedUpdates);
-        }
-
-        private void SetupRepositoryMock(Contracts.Currency currency)
-        {
-            _repositoryMock.Setup(library => library.Contains(currency.CurrencyType)).Returns(true);
-            _repositoryMock.Setup(library => library.Get(currency.CurrencyType)).Returns(currency);
-        }
-        
-        private void VerifyRepositoryMock(Contracts.Currency currency)
-        {
-            _repositoryMock.Verify(library => library.Contains(currency.CurrencyType), Times.Once);
-            _repositoryMock.Verify(library => library.Get(currency.CurrencyType), Times.Once);
-            _repositoryMock.Verify(library => library.Update(currency.CurrencyType, currency), Times.Once);
-        }
-
-        private void VerifyRepositoryNoMoreCalls()
-        {
-            _repositoryMock.VerifyNoOtherCalls();
+            _currencyUpdateServiceMock.Reset();
         }
 
         private void VerifyDispatcher()
@@ -90,99 +49,55 @@ namespace IdelPog.Currency.Tests.Mediator
             _dispatcherMock.VerifyNoOtherCalls();
         }
 
-        private void VerifyCurrencyServiceAdd()
+        private void VerifyUpdateServiceCalled(params CurrencyUpdate[] updates)
         {
-            _currencyServiceMock.Verify(library => library.AddAmount(It.IsAny<Contracts.Currency>(), It.IsAny<uint>()));
-        }
-        
-        private void VerifyCurrencyServiceRemove()
-        {
-            _currencyServiceMock.Verify(library => library.RemoveAmount(It.IsAny<Contracts.Currency>(), It.IsAny<uint>()));
+            _currencyUpdateServiceMock.Verify(library => library.ApplyUpdates(updates), Times.Once);
+            _currencyUpdateServiceMock.VerifyNoOtherCalls();
         }
 
-        private void VerifyCurrencyServiceNoMoreCalls()
-        {
-            _currencyServiceMock.VerifyNoOtherCalls();
-        }
-        
         [Test]
         public void Positive_HandleMessages_MultipleAddUpdates_AddAmountToCurrency()
         {
             CurrencyUpdate[] updates = [_addGoldUpdate, _addGoldUpdate];
-            SetupSummarizer([_addGoldUpdate with { Amount = 20 }], updates);
-            SetupRepositoryMock(_goldCurrency);
             
             Assert.DoesNotThrow(() => _currencyUpdateMediator.HandleMessages(updates));
             
-            VerifyRepositoryMock(_goldCurrency);
-            VerifyRepositoryNoMoreCalls();
             VerifyDispatcher();
-            VerifyCurrencyServiceAdd();
-            VerifyCurrencyServiceNoMoreCalls();
+            VerifyUpdateServiceCalled(updates);
         }
 
         [Test]
         public void Positive_HandleMessages_MultipleRemoveUpdates_RemovesAmountFromCurrency()
         {
             CurrencyUpdate removeUpdate = _addGoldUpdate with { ActionType = ActionType.REMOVE };
-            SetupSummarizer([removeUpdate], removeUpdate);
-            SetupRepositoryMock(_goldCurrency);
             
             Assert.DoesNotThrow(() => _currencyUpdateMediator.HandleMessages([removeUpdate]));
             
-            VerifyRepositoryMock(_goldCurrency);
-            VerifyRepositoryNoMoreCalls();
             VerifyDispatcher();
-            VerifyCurrencyServiceRemove();
-            VerifyCurrencyServiceNoMoreCalls();
+            VerifyUpdateServiceCalled(removeUpdate);
         }
 
         [Test]
         public void Positive_HandleMessages_MixedUpdates()
         {
             CurrencyUpdate removeUpdate = _addGoldUpdate with { ActionType = ActionType.REMOVE };
-            SetupSummarizer([_addGoldUpdate], removeUpdate, _addGoldUpdate);
-            SetupRepositoryMock(_goldCurrency);
             
             Assert.DoesNotThrow(() => _currencyUpdateMediator.HandleMessages([removeUpdate, _addGoldUpdate]));
             
-            VerifyRepositoryMock(_goldCurrency);
-            VerifyRepositoryNoMoreCalls();
             VerifyDispatcher();
-            VerifyCurrencyServiceAdd();
-            VerifyCurrencyServiceNoMoreCalls();
+            VerifyUpdateServiceCalled(removeUpdate, _addGoldUpdate);
         }
 
         [Test]
         public void Positive_HandleMessages_SingleAddUpdate_MultipleCurrencies()
         {
-            Contracts.Currency gemsCurrency = CreateCurrency(CurrencyType.GEMS);
             CurrencyUpdate gemsUpdate = _addGoldUpdate with { CurrencyType = CurrencyType.GEMS };
-            SetupSummarizer([_addGoldUpdate, gemsUpdate], gemsUpdate, _addGoldUpdate);
-            SetupRepositoryMock(_goldCurrency);
-            SetupRepositoryMock(gemsCurrency);
             
             Assert.DoesNotThrow(() => _currencyUpdateMediator.HandleMessages([gemsUpdate, _addGoldUpdate]));
             
-            VerifyRepositoryMock(_goldCurrency);
-            VerifyRepositoryMock(gemsCurrency);
-            VerifyRepositoryNoMoreCalls();
             VerifyDispatcher();
-            VerifyCurrencyServiceAdd();
-            VerifyCurrencyServiceNoMoreCalls();
-        }
-
-        [Test]
-        public void Negative_HandleMessages_GetSummary_ReturnsNothing_Throws()
-        {
-            SetupSummarizer([], _addGoldUpdate);
-            SetupRepositoryMock(_goldCurrency);
+            VerifyUpdateServiceCalled(gemsUpdate, _addGoldUpdate);
             
-            Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.HandleMessages([_addGoldUpdate]));
-            
-            VerifyRepositoryNoMoreCalls();
-            VerifyCurrencyServiceNoMoreCalls();
-            VerifyDispatcherNoMoreCalls();
         }
 
         [Test]
@@ -190,8 +105,6 @@ namespace IdelPog.Currency.Tests.Mediator
         {
             Assert.Throws<ArgumentNullException>(() => _currencyUpdateMediator.HandleMessages(null!));
             
-            VerifyRepositoryNoMoreCalls();
-            VerifyCurrencyServiceNoMoreCalls();
             VerifyDispatcherNoMoreCalls();
         }
 
@@ -201,22 +114,6 @@ namespace IdelPog.Currency.Tests.Mediator
             EmptyCollectionException exception = Assert.Throws<EmptyCollectionException>(() => _currencyUpdateMediator.HandleMessages([]));
             Assert.That(exception.CollectionType, Is.EqualTo(typeof(CurrencyUpdate)));
             
-            VerifyRepositoryNoMoreCalls();
-            VerifyCurrencyServiceNoMoreCalls();
-            VerifyDispatcherNoMoreCalls();
-        }
-
-        [Test]
-        public void Negative_HandleMessages_CurrencyNotFound_Throws()
-        {
-            SetupSummarizer([_addGoldUpdate], _addGoldUpdate);
-            _repositoryMock.Setup(library => library.Contains(_addGoldUpdate.CurrencyType)).Returns(false);
-
-            Assert.Throws<NotFoundException<CurrencyType>>(() => _currencyUpdateMediator.HandleMessages([_addGoldUpdate]));
-            
-            _repositoryMock.Verify(library => library.Contains(_addGoldUpdate.CurrencyType));
-            VerifyRepositoryNoMoreCalls();
-            VerifyCurrencyServiceNoMoreCalls();
             VerifyDispatcherNoMoreCalls();
         }
     }
