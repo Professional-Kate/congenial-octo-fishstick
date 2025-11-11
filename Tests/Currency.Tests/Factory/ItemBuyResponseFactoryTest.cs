@@ -50,5 +50,13 @@ namespace IdelPog.Currency.Tests.Factory
                 AssertItemBuyResponse(itemBuyResponse, _honeyBuy);
             }
         }
+        
+        [Test]
+        public void Positive_CreateMultiple_ReturnsEmptyCollection()
+        {
+            IReadOnlyList<ItemBuyResponse> response = _itemBuyResponseFactory.CreateMultiple([]);
+
+            Assert.That(response, Has.Count.EqualTo(0));
+        }
     }
 }
