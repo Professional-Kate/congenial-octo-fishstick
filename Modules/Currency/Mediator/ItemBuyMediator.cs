@@ -4,7 +4,6 @@ using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Currency.Contracts.Command;
-using IdelPog.Currency.Contracts.Error;
 using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory.Interface;
 using IdelPog.Currency.Service.Interface;

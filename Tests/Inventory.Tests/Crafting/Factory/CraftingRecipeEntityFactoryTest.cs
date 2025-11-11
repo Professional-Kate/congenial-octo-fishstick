@@ -5,7 +5,6 @@ using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Crafting.ECS;
 using IdelPog.Inventory.Crafting.Factory;
-using IdelPog.Inventory.Exceptions;
 
 namespace IdelPog.Inventory.Tests.Crafting.Factory
 {

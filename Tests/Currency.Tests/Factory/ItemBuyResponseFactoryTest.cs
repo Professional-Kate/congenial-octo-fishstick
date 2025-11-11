@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Currency.Contracts.Command;
-using IdelPog.Currency.Contracts.Error;
+using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory;
 
 namespace IdelPog.Currency.Tests.Factory

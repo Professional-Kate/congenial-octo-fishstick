@@ -1,5 +1,5 @@
 ﻿using IdelPog.Currency.Contracts.Command;
-using IdelPog.Currency.Contracts.Error;
+using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory.Interface;
 
 namespace IdelPog.Currency.Factory

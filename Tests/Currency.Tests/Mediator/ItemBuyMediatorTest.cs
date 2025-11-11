@@ -4,12 +4,10 @@ using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Currency.Contracts.Command;
-using IdelPog.Currency.Contracts.Error;
 using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory.Interface;
 using IdelPog.Currency.Mediator;
 using IdelPog.Currency.Service.Interface;
-using IdelPog.Inventory.Exceptions;
 using Moq;
 
 namespace IdelPog.Currency.Tests.Mediator

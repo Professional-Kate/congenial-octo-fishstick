@@ -4,7 +4,6 @@ using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Inventory.Contracts;
-using IdelPog.Inventory.Exceptions;
 using IdelPog.Inventory.Service.Interface;
 using Moq;
 

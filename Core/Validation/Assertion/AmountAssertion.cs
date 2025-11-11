@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Inventory.Exceptions;
+using IdelPog.Core.Validation.Exceptions;
 
 namespace IdelPog.Core.Validation.Assertion
 {

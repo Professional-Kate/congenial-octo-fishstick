@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Inventory.Exceptions
+﻿namespace IdelPog.Core.Validation.Exceptions
 {
     public sealed class AmountZeroException : Exception
     {

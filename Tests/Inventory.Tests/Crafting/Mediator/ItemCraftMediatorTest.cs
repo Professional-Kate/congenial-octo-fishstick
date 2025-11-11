@@ -13,7 +13,6 @@ using IdelPog.Inventory.Contracts.Response;
 using IdelPog.Inventory.Crafting.ECS;
 using IdelPog.Inventory.Crafting.ECS.Component;
 using IdelPog.Inventory.Crafting.Mediator;
-using IdelPog.Inventory.Exceptions;
 using IdelPog.Inventory.Factory.Interface;
 using IdelPog.Inventory.Service.Interface;
 using Moq;

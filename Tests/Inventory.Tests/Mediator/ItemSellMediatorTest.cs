@@ -8,7 +8,6 @@ using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Command;
 using IdelPog.Inventory.Contracts.Response;
-using IdelPog.Inventory.Exceptions;
 using IdelPog.Inventory.Factory.Interface;
 using IdelPog.Inventory.Mediator;
 using IdelPog.Inventory.Service.Interface;

@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Currency.Contracts.Error
+namespace IdelPog.Currency.Contracts.Response
 {
     public readonly record struct ItemBuyResponse
     {
