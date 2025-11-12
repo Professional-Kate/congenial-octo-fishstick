@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Inventory.Assertion;
-using IdelPog.Inventory.Exceptions;
+using IdelPog.Core.Validation.Assertion;
+using IdelPog.Core.Validation.Exceptions;
 
 namespace IdelPog.Inventory.Tests.Assertion
 {

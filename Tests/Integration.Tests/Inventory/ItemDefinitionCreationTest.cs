@@ -6,7 +6,6 @@ using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Inventory.Contracts.Command;
 using IdelPog.Inventory.Contracts.Error;
 using IdelPog.Inventory.Contracts.Response;
-using IdelPog.Inventory.Exceptions;
 
 namespace IdelPog.Integration.Tests.Inventory
 {

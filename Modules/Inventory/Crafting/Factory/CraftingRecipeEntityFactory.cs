@@ -1,7 +1,6 @@
 ﻿using IdelPog.Core.Repository.Asserter;
+using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Inventory.Assertion;
-using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Crafting.ECS;
 using IdelPog.Inventory.Crafting.ECS.Component;

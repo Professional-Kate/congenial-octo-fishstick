@@ -3,9 +3,7 @@ using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
-using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Contracts;
-using IdelPog.Inventory.Exceptions;
 using IdelPog.Inventory.Service.Interface;
 using Moq;
 

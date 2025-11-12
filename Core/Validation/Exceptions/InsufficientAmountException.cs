@@ -1,6 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 
-namespace IdelPog.Inventory.Exceptions
+namespace IdelPog.Core.Validation.Exceptions
 {
     public class InsufficientAmountException : Exception
     {

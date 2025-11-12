@@ -1,7 +1,6 @@
 ﻿using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Service.Interface;
 
