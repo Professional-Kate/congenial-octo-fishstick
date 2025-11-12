@@ -56,14 +56,12 @@ public readonly record struct CurrencyCreation
 ### `CurrencyUpdate`
 
 ```csharp
-
 public readonly record struct CurrencyUpdate
 { 
     public required CurrencyType CurrencyType { get; init; }
     public required uint Amount { get; init; }
     public required ActionType ActionType { get; init; }
 }
-
 ```
 
 `CurrencyUpdate` defines how to mutate a `Currency` that already exists. `ActionType` defines how to mutate the `Currency`.
@@ -84,3 +82,41 @@ Summaries are unique per `CurrencyType`. If after summarization the total `Amoun
 | `CurrencyUpdate`         | `CurrencyCreation`            | Will update one `Currency` per record. Can either remove or add an `Amount`.                                                                                               |
 | `CurrencyUpdateResponse` | Successful `CurrencyUpdate`   | Each response will contain the new state of each `Currenecy` updated. If the total `Amount` of one update is zero, no response will be dispatched for that `CurrencyType`. |
 | `CurrencyUpdateError`    | Unsuccessful `CurrencyUpdate` | Will be dispatched automatically whenever a `CurrencyUpdate` fails.                                                                                                        |
+
+---
+
+### `ItemBuy`
+
+```csharp
+public readonly record struct ItemBuy
+{
+    public required CurrencyType CurrencyType { get; init; }
+    public required ItemID ItemID { get; init; }
+    public required uint Price { get; init; }
+    public required uint Amount { get; init; }
+}
+```
+
+`ItemBuy` is used to gain certain `ItemID`s in the `Inventory` for a specific amount of a `CurrencyType`.
+`Price`is how much `Currency` this `ItemBuy` will take. 
+`Amount` is how many `Item`s will be created.
+
+`Price` and `Amount` are for the whole transaction. Not unit price. Each `ItemBuy` is one complete transaction.
+
+Updating `Currency` is done in the same way as `CurrencyUpdate` which means a successful `ItemBuy` will also dispatch
+a `CurrencyUpdateResponse`.
+
+- Buying will fail if the `CurrencyType` is not found.
+- Buying will fail if the `CurrencyType` doesn't have enough amount.
+- Buying will fail if `Amount` or `Price` are zero.
+
+The operation will not fail if the `InventoryUpdate` fails. This operation will still take from a `Currency` even if
+no `Item` is generated.
+
+| Buffered records         | Requirements           | Description                                                                                                                                                                |
+|--------------------------|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ItemBuy`                | `CurrencyCreation`     | Each command represents one full transaction. This will remove currency and add items.                                                                                     |
+| `ItemBuyResponse`        | Successful `ItemBuy`   | Each response will contain a successful `ItemBuy` transaction. This response will not contain what `Item` was generated or how a `Currency` was changed.                   |
+| `ItemBuyError`           | Unsuccessful `ItemBuy` | Will be dispatched automatically whenever an `ItemBuy` fails.                                                                                                              |
+| `CurrencyUpdateResponse` | Successful `ItemBuy`   | Each response will contain the new state of each `Currenecy` updated. If the total `Amount` of one update is zero, no response will be dispatched for that `CurrencyType`. |
+| `InventoryUpdate`        | Successful `ItemBuy`   | For each `ItemBuy` command an `InventoryUpdate` will be dispatched. The `ItemID` and `Amount` are defined by the command.                                                  |
