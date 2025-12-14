@@ -42,9 +42,11 @@ namespace IdelPog.Combat
             
             IStateRepository<ArenaType, Arena> arenaRepository = new StateRepository<ArenaType, Arena>(repositoryAsserter);
             IAssetRepository<CombatantType, CombatantDefinition> combatantRepository = new AssetRepository<CombatantType, CombatantDefinition>(repositoryAsserter);
+            IAssetRepository<AbilityType, AbilityDefinition> abilityRepository = new AssetRepository<AbilityType, AbilityDefinition>(repositoryAsserter);
                 
             RegisterArenaCreation(bufferManager, flowRegistry, bufferLogger, arenaRepository);
             RegisterCombatantDefinitionCreation(bufferManager, flowRegistry, bufferLogger, combatantRepository);
+            RegisterAbilityDefinitionCreation(bufferManager, flowRegistry, bufferLogger, abilityRepository);
         }
 
         private static void RegisterArenaCreation(IBufferManager bufferManager, IBatchRegister flowRegistry, IBufferLogger bufferLogger, IStateRepository<ArenaType, Arena> arenaRepository)
@@ -83,6 +85,25 @@ namespace IdelPog.Combat
             CombatantDefinitionCreationErrorFactory combatantDefinitionCreationErrorFactory = new(baseErrorFactory);
             
             flowRegistry.RegisterBatch(combatantDefinitionCreationController, combatantDefinitionCreationErrorFactory);
+        }
+
+        private static void RegisterAbilityDefinitionCreation(IBufferManager bufferManager, IBatchRegister flowRegistry, IBufferLogger bufferLogger, IAssetRepository<AbilityType, AbilityDefinition> abilityRepository)
+        {
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
+            IAmountAssertion amountAssertion = new AmountAssertion();
+            
+            IAbilityDefinitionFactory abilityDefinitionFactory = new AbilityDefinitionFactory();
+            IDispatchMany<AbilityDefinitionCreationResponse> responseDispatcher = new ManagedDispatcher<AbilityDefinitionCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+                
+            AbilityDefinitionCreationMediator abilityDefinitionCreationMediator = new(abilityRepository, abilityDefinitionFactory, responseDispatcher, collectionAssertion, uniqueAssertion, amountAssertion);
+            IBatchController<AbilityDefinitionCreation> abilityDefinitionCreationController = new ManagedBatchController<AbilityDefinitionCreation>(abilityDefinitionCreationMediator);
+            
+            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
+            AbilityDefinitionCreationErrorFactory abilityDefinitionCreationErrorFactory = new(baseErrorFactory);
+            
+            flowRegistry.RegisterBatch(abilityDefinitionCreationController, abilityDefinitionCreationErrorFactory);
         }
     }
 }
