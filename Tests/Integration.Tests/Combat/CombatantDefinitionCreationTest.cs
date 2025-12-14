@@ -29,6 +29,23 @@ namespace IdelPog.Integration.Tests.Combat
             };
         }
         
+        [SetUp]
+        public void Setup()
+        {
+            _responseListener = new ManagedResponseListener<CombatantDefinitionCreationResponse>();
+            _errorListener = new ManagedErrorListener<CombatantDefinitionCreationError>();
+            
+            ManagedSubscribe(_responseListener);
+            ManagedSubscribe(_errorListener);
+        }
+        
+        private void DispatchCombatantDefinitionCreations(params CombatantDefinitionCreation[] combatantDefinitionCreations)
+        { 
+            IBuffer<CombatantDefinitionCreation> buffer = BufferManager.RequestBuffer<CombatantDefinitionCreation>(new BufferRequest(combatantDefinitionCreations.Length));
+            buffer.Assign(combatantDefinitionCreations);
+            buffer.MarkReady();
+        }
+        
         private void AssertResponseListenerCalled(bool called)
         {
             Assert.That(_responseListener.WasCalled, Is.EqualTo(called));
@@ -68,23 +85,6 @@ namespace IdelPog.Integration.Tests.Combat
                 Assert.That(baseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(baseError.Exception.InnerException, Is.TypeOf<TException>());
             });
-        }
-
-        [SetUp]
-        public void Setup()
-        {
-            _responseListener = new ManagedResponseListener<CombatantDefinitionCreationResponse>();
-            _errorListener = new ManagedErrorListener<CombatantDefinitionCreationError>();
-            
-            ManagedSubscribe(_responseListener);
-            ManagedSubscribe(_errorListener);
-        }
-
-        private void DispatchCombatantDefinitionCreations(params CombatantDefinitionCreation[] combatantDefinitionCreations)
-        { 
-            IBuffer<CombatantDefinitionCreation> buffer = BufferManager.RequestBuffer<CombatantDefinitionCreation>(new BufferRequest(combatantDefinitionCreations.Length));
-            buffer.Assign(combatantDefinitionCreations);
-            buffer.MarkReady();
         }
 
         [Test]
