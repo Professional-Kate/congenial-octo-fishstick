@@ -26,22 +26,22 @@ namespace IdelPog.Combat.Tests.Factory
             };
         }
 
-        private static void AssertDefinition(CombatantDefinition definition, CombatantDefinitionCreation combatantDefinitionCreation)
+        private static void AssertDefinition(CombatantDefinition definitionCreation, CombatantDefinitionCreation combatantDefinitionCreation)
         {
             Assert.Multiple(() =>
             {
-                Assert.That(definition.CombatantType, Is.EqualTo(combatantDefinitionCreation.CombatantType));
-                Assert.That(definition.CombatantStats, Is.EqualTo(combatantDefinitionCreation.CombatantStats));
-                Assert.That(definition.Information, Is.EqualTo(combatantDefinitionCreation.Information));
+                Assert.That(definitionCreation.CombatantType, Is.EqualTo(combatantDefinitionCreation.CombatantType));
+                Assert.That(definitionCreation.CombatantStats, Is.EqualTo(combatantDefinitionCreation.CombatantStats));
+                Assert.That(definitionCreation.Information, Is.EqualTo(combatantDefinitionCreation.Information));
             });
         }
 
         [Test]
         public void Positive_Create_CreatesDefinition()
         {
-            CombatantDefinition definition = _combatantDefinitionFactory.Create(_combatantDefinitionCreation);
+            CombatantDefinition definitionCreation = _combatantDefinitionFactory.Create(_combatantDefinitionCreation);
             
-            AssertDefinition(definition, _combatantDefinitionCreation);
+            AssertDefinition(definitionCreation, _combatantDefinitionCreation);
         }
     }
 }

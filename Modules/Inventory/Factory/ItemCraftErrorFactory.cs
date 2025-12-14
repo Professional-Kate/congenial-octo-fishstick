@@ -10,7 +10,7 @@ namespace IdelPog.Inventory.Factory
 
         public ItemCraftErrorFactory(IBaseErrorFactory baseErrorFactory)
         {
-            this._baseErrorFactory = baseErrorFactory;
+            _baseErrorFactory = baseErrorFactory;
         }
 
         public ItemCraftError Create<TException>(TException exception, IReadOnlyList<ItemCraft> context) where TException : Exception
