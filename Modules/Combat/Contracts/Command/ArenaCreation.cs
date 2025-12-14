@@ -1,4 +1,5 @@
-﻿using IdelPog.Core.Contracts;
+﻿using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Progression;
 
 namespace IdelPog.Combat.Contracts.Command

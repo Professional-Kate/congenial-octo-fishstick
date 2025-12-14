@@ -1,7 +1,7 @@
 ﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Messaging.Listener.Buffer;
 
-namespace IdelPog.Integration.Tests.Console
+namespace IdelPog.Integration.Tests.Console.CurrencyDomain
 {
     internal class CurrencyUpdateListener : IBufferListener<CurrencyUpdate>
     {

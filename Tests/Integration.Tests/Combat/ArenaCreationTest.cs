@@ -1,5 +1,5 @@
-﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Core.Contracts;
