@@ -27,7 +27,7 @@ namespace IdelPog.HarvestNode.Runtime.System
             _foundAssertion = foundAssertion;
         }
 
-        public HarvestNodeUpdateResponse UpdateHarvestNode(ResourceID resourceID)
+        public HarvestNodeUpdateResponse UpdateHarvestNode(ResourceID resourceID, SkillID skillID)
         {
             _foundAssertion.AssertFound(resourceID, _harvestNodeRepository.Contains(resourceID));
             Contracts.HarvestNode harvestNode = _harvestNodeRepository.Get(resourceID);
@@ -43,7 +43,7 @@ namespace IdelPog.HarvestNode.Runtime.System
             
             _harvestNodeRepository.Update(harvestNode.ResourceID, harvestNode);
             
-            HarvestNodeUpdateResponse updateResponse = _nodeUpdateResponseFactory.Create(harvestNode, canLevel);
+            HarvestNodeUpdateResponse updateResponse = _nodeUpdateResponseFactory.Create(harvestNode, canLevel, skillID);
             return updateResponse;
         }
     }

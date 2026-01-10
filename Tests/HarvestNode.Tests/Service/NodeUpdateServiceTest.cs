@@ -60,7 +60,7 @@ namespace IdelPog.HarvestNode.Tests.Service
             _levelServiceMock.Verify(library => library.CanLevel(_harvestNode.Levelable), times);
             _levelServiceMock.VerifyNoOtherCalls();
             
-            _updateResponseFactoryMock.Verify(library => library.Create(_harvestNode, canLevel), times);
+            _updateResponseFactoryMock.Verify(library => library.Create(_harvestNode, canLevel, SkillID.MINING), times);
             _updateResponseFactoryMock.VerifyNoOtherCalls();
         }
 
@@ -70,7 +70,7 @@ namespace IdelPog.HarvestNode.Tests.Service
             _nodeRepositoryMock.Setup(library => library.Contains(ResourceID.STONE)).Returns(true);
             _nodeRepositoryMock.Setup(library => library.Get(ResourceID.STONE)).Returns(_harvestNode);
             
-            Assert.DoesNotThrow(() => _nodeUpdateService.UpdateHarvestNode(ResourceID.STONE));
+            Assert.DoesNotThrow(() => _nodeUpdateService.UpdateHarvestNode(ResourceID.STONE, SkillID.MINING));
             
             _nodeRepositoryMock.Verify(library => library.Contains(ResourceID.STONE), Times.Once);
             _levelServiceMock.Verify(library => library.LevelUp(_harvestNode.Levelable), Times.Never);
@@ -84,7 +84,7 @@ namespace IdelPog.HarvestNode.Tests.Service
             _nodeRepositoryMock.Setup(library => library.Get(ResourceID.STONE)).Returns(_harvestNode);
             _levelServiceMock.Setup(library => library.CanLevel(_harvestNode.Levelable)).Returns(true);
             
-            Assert.DoesNotThrow(() => _nodeUpdateService.UpdateHarvestNode(ResourceID.STONE));
+            Assert.DoesNotThrow(() => _nodeUpdateService.UpdateHarvestNode(ResourceID.STONE, SkillID.MINING));
             
             _nodeRepositoryMock.Verify(library => library.Contains(ResourceID.STONE), Times.Once);
             _levelServiceMock.Verify(library => library.LevelUp(_harvestNode.Levelable), Times.Once);
@@ -96,7 +96,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         {
             _nodeRepositoryMock.Setup(library => library.Contains(ResourceID.STONE)).Returns(false);
             
-            Assert.Throws<NotFoundException<ResourceID>>(() => _nodeUpdateService.UpdateHarvestNode(ResourceID.STONE));
+            Assert.Throws<NotFoundException<ResourceID>>(() => _nodeUpdateService.UpdateHarvestNode(ResourceID.STONE, SkillID.MINING));
 
             _nodeRepositoryMock.Verify(library => library.Contains(ResourceID.STONE), Times.Once);
             AssertMockCalls(Times.Never());
