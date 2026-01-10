@@ -5,6 +5,6 @@ namespace IdelPog.HarvestNode.Runtime.System.Interface
 {
     public interface INodeUpdateService
     {
-        public HarvestNodeUpdateResponse UpdateHarvestNode(ResourceID resourceID);
+        public HarvestNodeUpdateResponse UpdateHarvestNode(ResourceID resourceID, SkillID skillID);
     }
 }

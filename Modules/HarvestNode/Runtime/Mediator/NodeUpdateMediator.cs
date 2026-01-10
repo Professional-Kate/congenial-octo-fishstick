@@ -55,7 +55,7 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
                 ValidateUnlocked(harvestNodeUpdate);
                 
                 ResourceID resourceID = harvestNodeUpdate.ResourceID;
-                responses[i] = _nodeUpdateService.UpdateHarvestNode(resourceID);
+                responses[i] = _nodeUpdateService.UpdateHarvestNode(resourceID, harvestNodeUpdate.SkillID);
 
                 inventoryUpdates.AddRange(GenerateInventoryUpdates(resourceID));
             }

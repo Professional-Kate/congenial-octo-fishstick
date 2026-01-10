@@ -65,7 +65,8 @@ namespace IdelPog.HarvestNode.Tests.Mediator
                 HasLeveled = false,
                 ReadOnlyLevelable = new ReadOnlyLevelable { Experience = 0, ExperiencePerAction = 0, Level = 0, NextLevelExperience = 0 },
                 ResourceID = _harvestNode.ResourceID,
-                LocationID = _harvestNode.LocationID
+                LocationID = _harvestNode.LocationID,
+                SkillID = SkillID.MINING
             };
 
             _skillNodeAccessValidatorMock = new Mock<ISkillNodeAccessValidator>();
@@ -132,7 +133,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             Assert.DoesNotThrow(() => _updateMediator.HandleMessages([_nodeUpdate]));
             
             _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_nodeUpdate.SkillID, _expectedResponse.ResourceID), Times.Once);
-            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ResourceID), Times.Once);
+            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ResourceID, _expectedResponse.SkillID), Times.Once);
             AssertUpdateResponseDispatcher(Times.Once());
             AssertInventoryUpdateDispatcher(Times.Once());
         }
@@ -148,7 +149,7 @@ namespace IdelPog.HarvestNode.Tests.Mediator
             Assert.DoesNotThrow(() => _updateMediator.HandleMessages([_nodeUpdate]));
             
             _skillNodeAccessValidatorMock.Verify(library => library.AssertSkillAllows(_nodeUpdate.SkillID, _expectedResponse.ResourceID), Times.Once);
-            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ResourceID), Times.Once);
+            _nodeUpdateServiceMock.Verify(library => library.UpdateHarvestNode(_expectedResponse.ResourceID, _expectedResponse.SkillID), Times.Once);
             AssertUpdateResponseDispatcher(Times.Once());
             AssertInventoryUpdateDispatcher(Times.Never());
         }
