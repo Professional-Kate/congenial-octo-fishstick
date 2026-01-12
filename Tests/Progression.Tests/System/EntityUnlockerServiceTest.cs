@@ -226,14 +226,15 @@ namespace IdelPog.Progression.Tests.System
         }
 
         [Test]
-        public void Negative_UnlockAllAvailable_EmptyEntity_Throws()
+        public void Positive_UnlockAllAvailable_EmptyEntity_ReturnsNothing()
         {
             _harvestNodeUnlockEntity.TryDequeue(out LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> _);
             
             _repositoryMock.Setup(library => library.Contains(_harvestNodeUnlock.SkillID)).Returns(true);
             _repositoryMock.Setup(library => library.Get(_harvestNodeUnlock.SkillID)).Returns(_harvestNodeUnlockEntity);
 
-            Assert.Throws<InvalidOperationException>(() => _entityUnlockerService.UnlockAllAvailable(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel).ToArray());
+            HarvestNodeUnlockResponse[] responses = _entityUnlockerService.UnlockAllAvailable(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel).ToArray();
+            Assert.That(responses, Has.Length.EqualTo(0));
             
             VerifyRepository(_harvestNodeUnlock.SkillID);
         }

@@ -20,6 +20,11 @@ namespace IdelPog.Progression.Runtime.Component
             return _components.Peek();
         }
 
+        public bool TryPeek(out T component)
+        {
+            return _components.TryPeek(out component);
+        }
+
         public bool TryDequeue(out T component)
         {
             if (_components.Count <= 0)

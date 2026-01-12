@@ -40,6 +40,27 @@ namespace IdelPog.Progression.Tests.Component
             
             AssertComponent(frontComponent, 0);
         }
+
+        [Test]
+        public void Positive_TryPeek_GetsFrontComponent()
+        {
+            bool canPeek = _queueComponentStore.TryPeek(out TestComponent frontComponent);
+            
+            Assert.That(canPeek, Is.True);
+            AssertComponent(frontComponent, 0);
+        }
+
+        [Test]
+        public void Positive_TryPeek_NoComponents_ReturnsFalse()
+        {
+            QueueComponentStore<TestComponent> queueComponentStore = new([new TestComponent { Index = 0 }]);
+            bool successful = queueComponentStore.TryDequeue(out TestComponent _);
+            Assert.That(successful, Is.True);
+            
+            bool canPeek = queueComponentStore.TryPeek(out TestComponent _);
+            
+            Assert.That(canPeek, Is.False);
+        }
         
         [Test]
         public void Positive_TryDequeue_DequeuesFrontComponent()

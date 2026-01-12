@@ -56,7 +56,10 @@ namespace IdelPog.Progression.Runtime.System
 
         private bool CanUnlockComponent(TID id, byte skillLevel, UnlockRequirementsEntity<TID, TCommand> entity)
         {
-            LevelRequirementComponent<TID, TCommand> firstComponent = GetFirstComponent(entity, id);
+            if (GetFirstComponent(entity, id, out LevelRequirementComponent<TID, TCommand> firstComponent) == false)
+            {
+                return false;
+            }
             
             bool canUnlock = skillLevel >= firstComponent.Level;
             return canUnlock;
@@ -64,7 +67,11 @@ namespace IdelPog.Progression.Runtime.System
 
         private TCommand DequeueComponent(TID id, byte skillLevel, UnlockRequirementsEntity<TID, TCommand> entity)
         {
-            LevelRequirementComponent<TID, TCommand> firstComponent = GetFirstComponent(entity, id);
+            bool hasFirst = GetFirstComponent(entity, id, out LevelRequirementComponent<TID, TCommand> firstComponent);
+            if (hasFirst == false)
+            {
+                throw new InvalidOperationException();
+            }
             
             _canUnlockAssertion.AssertCanUnlock(skillLevel, firstComponent.Level, firstComponent);
             
@@ -80,12 +87,16 @@ namespace IdelPog.Progression.Runtime.System
             
         }
 
-        private LevelRequirementComponent<TID, TCommand> GetFirstComponent(UnlockRequirementsEntity<TID, TCommand> entity, TID id)
+        private bool GetFirstComponent(UnlockRequirementsEntity<TID, TCommand> entity, TID id, out LevelRequirementComponent<TID, TCommand> component)
         {
-            LevelRequirementComponent<TID, TCommand> firstComponent = entity.Peek();
-            _idMatchesAssertion.AssertIDMatches(id, firstComponent.ID);
+            if (entity.TryPeek(out component) == false)
+            {
+                return false;
+            }
+            
+            _idMatchesAssertion.AssertIDMatches(id, component.ID);
 
-            return firstComponent;
+            return true;
         }
     }
 }
