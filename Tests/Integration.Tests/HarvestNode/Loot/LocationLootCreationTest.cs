@@ -23,7 +23,6 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         {
             _forestLootCreation = new LocationLootCreation
             {
-                ResourceID = ResourceID.ANT_NEST,
                 LocationID = LocationID.FOREST,
                 LootTableEntries = [ new LootTableEntry { ItemID = ItemID.SMALL_INSECTS, Weight = 2 }, new LootTableEntry { ItemID = ItemID.HERBS,  Weight = 1 } ],
                 GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 1, SkipWeight = 1 }
@@ -61,7 +60,6 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         {
             Assert.Multiple(() =>
             {
-                Assert.That(response.ResourceID, Is.EqualTo(creation.ResourceID));
                 Assert.That(response.LocationID, Is.EqualTo(creation.LocationID));
                 Assert.That(response.LootTableEntries, Is.EqualTo(creation.LootTableEntries));
             });
@@ -104,7 +102,6 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         {
             LocationLootCreation birchCreation = new()
             {
-                ResourceID = ResourceID.STONE,
                 LocationID = LocationID.CAVE,
                 LootTableEntries = [ new LootTableEntry { ItemID = ItemID.STONE, Weight = 10 }, new LootTableEntry { ItemID = ItemID.DIAMOND, Weight = 1 } ],
                 GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 1, SkipWeight = 1 }
@@ -124,7 +121,6 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         {
             LocationLootCreation duplicateCreation = new()
             {
-                ResourceID = ResourceID.LEAF_LITTER,
                 LocationID = LocationID.FOREST,
                 LootTableEntries = [ new LootTableEntry { ItemID = ItemID.EMERALD, Weight = 1 } ],
                 GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 1, SkipWeight = 100 }

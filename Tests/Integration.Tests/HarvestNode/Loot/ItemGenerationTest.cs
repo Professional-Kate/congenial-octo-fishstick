@@ -50,7 +50,6 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
 
             _locationLootCreation = new LocationLootCreation
             {
-                ResourceID = ResourceID.GEM_VEIN,
                 LocationID = LocationID.CAVE,
                 LootTableEntries = [ new LootTableEntry { ItemID = ItemID.RUBY, Weight = 1 } ],
                 GrantPolicyEntry = new GrantPolicyEntry { GrantWeight = 0, SkipWeight = 0 }
