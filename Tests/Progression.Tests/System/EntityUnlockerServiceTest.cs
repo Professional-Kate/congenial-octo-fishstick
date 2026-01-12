@@ -35,7 +35,7 @@ namespace IdelPog.Progression.Tests.System
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             _repositoryMock = new Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>>();
             
-            _entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object, new FoundAssertion(), new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(), new IDMatchesAssertion<SkillID>(), new QueueAssertion<SkillID, HarvestNodeUnlockResponse>());
+            _entityUnlockerService = new EntityUnlockerService<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object, new FoundAssertion(), new CanUnlockAssertion<SkillID, HarvestNodeUnlockResponse>(), new IDMatchesAssertion<SkillID>(), new QueueAssertion());
 
             _harvestNodeUnlock = new HarvestNodeUnlock { SkillID = SkillID.MINING, SkillLevel = 5 };
             _harvestNodeUnlockResponse = new HarvestNodeUnlockResponse { ResourceID = ResourceID.COPPER_CLUSTER, SkillID = SkillID.MINING };
@@ -156,7 +156,7 @@ namespace IdelPog.Progression.Tests.System
             _repositoryMock.Setup(library => library.Contains(_harvestNodeUnlock.SkillID)).Returns(true);
             _repositoryMock.Setup(library => library.Get(_harvestNodeUnlock.SkillID)).Returns(_harvestNodeUnlockEntity);
 
-            Assert.Throws<InvalidOperationException>(() => _entityUnlockerService.Unlock(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel));
+            Assert.Throws<UnsuccessfulPeekException>(() => _entityUnlockerService.Unlock(_harvestNodeUnlock.SkillID, _harvestNodeUnlock.SkillLevel));
             
             VerifyRepository(_harvestNodeUnlock.SkillID);
         }

@@ -12,9 +12,9 @@ namespace IdelPog.Progression.Runtime.System
         private readonly IFoundAssertion _foundAssertion;
         private readonly IIDMatchesAssertion<TID> _idMatchesAssertion;
         private readonly ICanUnlockAssertion<TID, TCommand> _canUnlockAssertion;
-        private readonly IQueueAssertion<TID, TCommand> _queueAssertion;
+        private readonly IQueueAssertion _queueAssertion;
 
-        public EntityUnlockerService(IAssetRepository<TID, UnlockRequirementsEntity<TID, TCommand>> entityRepository, IFoundAssertion foundAssertion, ICanUnlockAssertion<TID, TCommand> canUnlockAssertion, IIDMatchesAssertion<TID> idMatchesAssertion, IQueueAssertion<TID, TCommand> queueAssertion)
+        public EntityUnlockerService(IAssetRepository<TID, UnlockRequirementsEntity<TID, TCommand>> entityRepository, IFoundAssertion foundAssertion, ICanUnlockAssertion<TID, TCommand> canUnlockAssertion, IIDMatchesAssertion<TID> idMatchesAssertion, IQueueAssertion queueAssertion)
         {
             _entityRepository = entityRepository;
             _foundAssertion = foundAssertion;
@@ -68,15 +68,12 @@ namespace IdelPog.Progression.Runtime.System
         private TCommand DequeueComponent(TID id, byte skillLevel, UnlockRequirementsEntity<TID, TCommand> entity)
         {
             bool hasFirst = GetFirstComponent(entity, id, out LevelRequirementComponent<TID, TCommand> firstComponent);
-            if (hasFirst == false)
-            {
-                throw new InvalidOperationException();
-            }
+            _queueAssertion.AssertSuccessfulPeek(hasFirst);
             
             _canUnlockAssertion.AssertCanUnlock(skillLevel, firstComponent.Level, firstComponent);
             
             bool successful = entity.TryDequeue(out LevelRequirementComponent<TID, TCommand> dequeuedComponent);
-            _queueAssertion.AssertSuccessfulDequeue(successful, firstComponent);
+            _queueAssertion.AssertSuccessfulDequeue(successful);
 
             return dequeuedComponent.OnUnlockCommand;
         }

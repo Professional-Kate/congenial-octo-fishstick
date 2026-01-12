@@ -1,16 +1,23 @@
 ﻿using IdelPog.Progression.Assertion.Interface;
 using IdelPog.Progression.Exceptions;
-using IdelPog.Progression.Runtime.Component;
 
 namespace IdelPog.Progression.Assertion
 {
-    public sealed class QueueAssertion<TID, TCommand> : IQueueAssertion<TID, TCommand> where TCommand : struct
+    public sealed class QueueAssertion : IQueueAssertion
     {
-        public void AssertSuccessfulDequeue(bool successfulDequeue, LevelRequirementComponent<TID, TCommand> levelRequirementComponent)
+        public void AssertSuccessfulDequeue(bool successfulDequeue)
         {
             if (successfulDequeue == false)
             {
-                throw new UnsuccessfulDequeueException<TID, TCommand>(levelRequirementComponent);
+                throw new UnsuccessfulDequeueException();
+            }
+        }
+
+        public void AssertSuccessfulPeek(bool successfulPeek)
+        {
+            if (successfulPeek == false)
+            {
+                throw new UnsuccessfulPeekException();
             }
         }
     }
