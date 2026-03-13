@@ -1,39 +1,41 @@
-﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.HarvestNode.Contracts.Response;
-using IdelPog.Progression.Assertion;
-using IdelPog.Progression.Assertion.Interface;
+﻿using IdelPog.Progression.Assertion;
 using IdelPog.Progression.Exceptions;
-using IdelPog.Progression.Runtime.Component;
 
 namespace IdelPog.Progression.Tests.Assertion
 {
     [TestFixture]
     public sealed class QueueAssertionTest
     {
-        private IQueueAssertion<SkillID, HarvestNodeUnlockResponse> _queueAssertion;
-        private LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> _levelRequirementComponent;
+        private QueueAssertion _queueAssertion;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _queueAssertion = new QueueAssertion<SkillID, HarvestNodeUnlockResponse>();
-            
-            _levelRequirementComponent = new LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse>
-            {
-                Level = 1, ID = SkillID.FORAGING, OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.BIRCH_TREE, SkillID = SkillID.FORAGING }
-            };
+            _queueAssertion = new QueueAssertion();
         }
 
         [Test]
         public void Positive_AssertSuccessfulDequeue_SuccessfulDequeue_NoThrow()
         {
-            Assert.DoesNotThrow(() => _queueAssertion.AssertSuccessfulDequeue(true, _levelRequirementComponent));
+            Assert.DoesNotThrow(() => _queueAssertion.AssertSuccessfulDequeue(true));
         }
 
         [Test]
         public void Negative_AssertSuccessfulDequeue_UnsuccessfulDequeue_Throws()
         {
-            Assert.Throws<UnsuccessfulDequeueException<SkillID, HarvestNodeUnlockResponse>>(() => _queueAssertion.AssertSuccessfulDequeue(false, _levelRequirementComponent));
+            Assert.Throws<UnsuccessfulDequeueException>(() => _queueAssertion.AssertSuccessfulDequeue(false));
+        }
+        
+        [Test]
+        public void Positive_AssertSuccessfulPeek_SuccessfulPeek_NoThrow()
+        {
+            Assert.DoesNotThrow(() => _queueAssertion.AssertSuccessfulPeek(true));
+        }
+
+        [Test]
+        public void Negative_AssertSuccessfulPeek_UnsuccessfulPeek_Throws()
+        {
+            Assert.Throws<UnsuccessfulPeekException>(() => _queueAssertion.AssertSuccessfulPeek(false));
         }
     }
 }

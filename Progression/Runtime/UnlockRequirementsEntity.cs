@@ -14,9 +14,9 @@ namespace IdelPog.Progression.Runtime
             _levelRequirementStore = GetComponent<QueueComponentStore<LevelRequirementComponent<TID, TCommand>>>();
         }
 
-        public LevelRequirementComponent<TID, TCommand> Peek()
-        {
-            return _levelRequirementStore.Peek();
+        public bool TryPeek(out LevelRequirementComponent<TID, TCommand> component)
+        { 
+            return _levelRequirementStore.TryPeek(out component);
         }
 
         public bool TryDequeue(out LevelRequirementComponent<TID, TCommand> levelRequirementComponent)

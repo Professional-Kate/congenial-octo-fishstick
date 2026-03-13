@@ -2,6 +2,7 @@
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
+using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
 using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
@@ -75,6 +76,80 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock
             });
             
             Assert.That(error.HarvestNodeUnlocks, Is.EqualTo(unlocks));
+        }
+        
+        [Test]
+        public void Positive_SendMultipleUnlockCommands_UnlocksWholeQueue()
+        {
+            HarvestNodeRequirementsCreation requirementsCreation = new()
+            {
+                SkillID = SkillID.MINING,
+                HarvestNodeRequirements = 
+                [
+                    new HarvestNodeRequirement { RequiredLevel = 5, OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.IRON_CLUSTER, SkillID = SkillID.MINING }},
+                    new HarvestNodeRequirement { RequiredLevel = 10, OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.COPPER_CLUSTER, SkillID = SkillID.MINING }},
+                    new HarvestNodeRequirement { RequiredLevel = 15, OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.GOLD_CLUSTER, SkillID = SkillID.MINING }}
+                ]
+            };
+            
+            _harvestNodeUnlockDispatcher.DispatchCreations(requirementsCreation);
+            
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchUnlocks(_miningUnlock with { SkillLevel = 5 }));
+            AssertResponseLength(1);
+            AssertResponse(_miningUnlock.SkillID, ResourceID.IRON_CLUSTER, _responseListener.Responses[0]);
+            
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchUnlocks(_miningUnlock with { SkillLevel = 10 }));
+            AssertResponseLength(1);
+            AssertResponse(_miningUnlock.SkillID, ResourceID.COPPER_CLUSTER, _responseListener.Responses[0]);
+            
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchUnlocks(_miningUnlock with { SkillLevel = 15 }));
+            AssertResponseLength(1);
+            AssertResponse(_miningUnlock.SkillID, ResourceID.GOLD_CLUSTER, _responseListener.Responses[0]);
+        }
+
+        [Test]
+        public void Positive_SendSingleUnlockCommand_UnlocksNode_EmptiesQueue()
+        {
+            HarvestNodeRequirementsCreation requirementsCreation = new()
+            {
+                SkillID = SkillID.MINING,
+                HarvestNodeRequirements = 
+                [
+                    new HarvestNodeRequirement { RequiredLevel = 5, OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.IRON_CLUSTER, SkillID = SkillID.MINING }}
+                ]
+            };
+            
+            _harvestNodeUnlockDispatcher.DispatchCreations(requirementsCreation);
+            
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchUnlocks(_miningUnlock with { SkillLevel = 5 }));
+            AssertResponseLength(1);
+            AssertResponse(_miningUnlock.SkillID, ResourceID.IRON_CLUSTER, _responseListener.Responses[0]);
+        }
+        
+        [Test]
+        public void Positive_SendUnlockCommand_QueueEmpty_DispatchesNothing()
+        {
+            HarvestNodeRequirementsCreation requirementsCreation = new()
+            {
+                SkillID = SkillID.MINING,
+                HarvestNodeRequirements = 
+                [
+                    new HarvestNodeRequirement { RequiredLevel = 5, OnUnlockCommand = new HarvestNodeUnlockResponse { ResourceID = ResourceID.IRON_CLUSTER, SkillID = SkillID.MINING }}
+                ]
+            };
+            
+            _harvestNodeUnlockDispatcher.DispatchCreations(requirementsCreation);
+            
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchUnlocks(_miningUnlock with { SkillLevel = 5 }));
+            AssertResponseListenerCalled(true);
+
+            // reset the listener after the successful call
+            _responseListener = new ManagedResponseListener<HarvestNodeUnlockResponse>();
+            
+            Assert.DoesNotThrow(() => _harvestNodeUnlockDispatcher.DispatchUnlocks(_miningUnlock with { SkillLevel = 5 }));
+            
+            AssertResponseListenerCalled(false);
+            AssertErrorListenerCalled(false);
         }
 
         [Test]

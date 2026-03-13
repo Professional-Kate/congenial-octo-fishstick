@@ -37,7 +37,7 @@ namespace IdelPog.HarvestNode.Runtime.Mediator
                 _lootTableService.CreateLootTable(creation.LootTableEntries, creation.LocationID);
                 _grantPolicyService.CreateGrantPolicy(creation.GrantPolicyEntry, creation.LocationID);
                 
-                LocationLootCreationResponse response = new() { ResourceID = creation.ResourceID, LocationID = creation.LocationID, LootTableEntries = creation.LootTableEntries };
+                LocationLootCreationResponse response = new() { LocationID = creation.LocationID, LootTableEntries = creation.LootTableEntries };
                 responses[i] = response;
             }
             

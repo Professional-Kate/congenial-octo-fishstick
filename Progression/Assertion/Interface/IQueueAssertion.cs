@@ -1,9 +1,9 @@
-﻿using IdelPog.Progression.Runtime.Component;
-
-namespace IdelPog.Progression.Assertion.Interface
+﻿namespace IdelPog.Progression.Assertion.Interface
 {
-    public interface IQueueAssertion<TID, TCommand> where TCommand : struct
+    public interface IQueueAssertion
     {
-        public void AssertSuccessfulDequeue(bool successfulDequeue, LevelRequirementComponent<TID, TCommand> levelRequirementComponent);
+        public void AssertSuccessfulDequeue(bool successfulDequeue);
+
+        public void AssertSuccessfulPeek(bool successfulPeek);
     }
 }

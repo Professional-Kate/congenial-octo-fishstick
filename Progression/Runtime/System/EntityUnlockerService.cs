@@ -12,9 +12,9 @@ namespace IdelPog.Progression.Runtime.System
         private readonly IFoundAssertion _foundAssertion;
         private readonly IIDMatchesAssertion<TID> _idMatchesAssertion;
         private readonly ICanUnlockAssertion<TID, TCommand> _canUnlockAssertion;
-        private readonly IQueueAssertion<TID, TCommand> _queueAssertion;
+        private readonly IQueueAssertion _queueAssertion;
 
-        public EntityUnlockerService(IAssetRepository<TID, UnlockRequirementsEntity<TID, TCommand>> entityRepository, IFoundAssertion foundAssertion, ICanUnlockAssertion<TID, TCommand> canUnlockAssertion, IIDMatchesAssertion<TID> idMatchesAssertion, IQueueAssertion<TID, TCommand> queueAssertion)
+        public EntityUnlockerService(IAssetRepository<TID, UnlockRequirementsEntity<TID, TCommand>> entityRepository, IFoundAssertion foundAssertion, ICanUnlockAssertion<TID, TCommand> canUnlockAssertion, IIDMatchesAssertion<TID> idMatchesAssertion, IQueueAssertion queueAssertion)
         {
             _entityRepository = entityRepository;
             _foundAssertion = foundAssertion;
@@ -56,7 +56,10 @@ namespace IdelPog.Progression.Runtime.System
 
         private bool CanUnlockComponent(TID id, byte skillLevel, UnlockRequirementsEntity<TID, TCommand> entity)
         {
-            LevelRequirementComponent<TID, TCommand> firstComponent = GetFirstComponent(entity, id);
+            if (GetFirstComponent(entity, id, out LevelRequirementComponent<TID, TCommand> firstComponent) == false)
+            {
+                return false;
+            }
             
             bool canUnlock = skillLevel >= firstComponent.Level;
             return canUnlock;
@@ -64,12 +67,13 @@ namespace IdelPog.Progression.Runtime.System
 
         private TCommand DequeueComponent(TID id, byte skillLevel, UnlockRequirementsEntity<TID, TCommand> entity)
         {
-            LevelRequirementComponent<TID, TCommand> firstComponent = GetFirstComponent(entity, id);
+            bool hasFirst = GetFirstComponent(entity, id, out LevelRequirementComponent<TID, TCommand> firstComponent);
+            _queueAssertion.AssertSuccessfulPeek(hasFirst);
             
             _canUnlockAssertion.AssertCanUnlock(skillLevel, firstComponent.Level, firstComponent);
             
             bool successful = entity.TryDequeue(out LevelRequirementComponent<TID, TCommand> dequeuedComponent);
-            _queueAssertion.AssertSuccessfulDequeue(successful, firstComponent);
+            _queueAssertion.AssertSuccessfulDequeue(successful);
 
             return dequeuedComponent.OnUnlockCommand;
         }
@@ -80,12 +84,16 @@ namespace IdelPog.Progression.Runtime.System
             
         }
 
-        private LevelRequirementComponent<TID, TCommand> GetFirstComponent(UnlockRequirementsEntity<TID, TCommand> entity, TID id)
+        private bool GetFirstComponent(UnlockRequirementsEntity<TID, TCommand> entity, TID id, out LevelRequirementComponent<TID, TCommand> component)
         {
-            LevelRequirementComponent<TID, TCommand> firstComponent = entity.Peek();
-            _idMatchesAssertion.AssertIDMatches(id, firstComponent.ID);
+            if (entity.TryPeek(out component) == false)
+            {
+                return false;
+            }
+            
+            _idMatchesAssertion.AssertIDMatches(id, component.ID);
 
-            return firstComponent;
+            return true;
         }
     }
 }
