@@ -1,27 +1,27 @@
 ﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service.Interface;
 
 namespace IdelPog.Combat.Event
 {
     public sealed class AttackEvent : ICombatEvent
     {
-        private readonly CombatantCard _attacker;
-        private readonly CombatantCard _target;
+        private readonly IDamageSystem _damageSystem;
+        private readonly StatCard _attackerStats;
+        private readonly byte _targetID;
 
-        public AttackEvent(CombatantCard attacker, CombatantCard target)
+        public AttackEvent(IDamageSystem damageSystem, StatCard attackerStats, byte targetID)
         {
-            _attacker = attacker;
-            _target = target;
+            _attackerStats = attackerStats;
+            _targetID = targetID;
+            _damageSystem = damageSystem;
         }
 
         public void RunEvent(IEnqueueEvent enqueueEvent, double tick)
         {
-            // call into the ECS and reduce HP for the _target
-
-            double interval = 1.0 / _attacker.StatCard.Speed;
-            double nexTick = tick + interval;
-            
-            enqueueEvent.Enqueue(new AttackEvent(_attacker, _target), nexTick);
+            _damageSystem.ApplyDamage(_targetID, _attackerStats);
+            // double interval = 1.0 / _attacker.StatCard.Speed;
+            // double nexTick = tick + interval;
         }
     }
 }

@@ -7,9 +7,12 @@ namespace IdelPog.Combat.Runtime
 {
     public sealed record CombatantEntity : Entity
     {
-        public CombatantEntity(RepositoryAsserter repositoryAsserter, StatCard statCard) 
+        public readonly byte InstanceID;
+
+        public CombatantEntity(RepositoryAsserter repositoryAsserter, StatCard statCard, byte InstanceID) 
             : base(repositoryAsserter, new CombatantStatsComponent { StatCard = statCard })
         { 
+            this.InstanceID = InstanceID;
         }
 
         public void UpdateCombatantStats(StatCard statCard)
