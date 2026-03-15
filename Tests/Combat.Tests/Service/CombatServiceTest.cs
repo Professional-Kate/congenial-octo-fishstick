@@ -19,8 +19,8 @@ namespace IdelPog.Combat.Tests.Service
             _combatService = new CombatService(new CollectionAssertion());
             _basicEncounterDeck = new BasicEncounterDeck
             {
-                FriendlyCombatantCards = [new CombatantCard { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Attack = 5, Health = 10 }}],
-                EnemyCombatantCards = [new CombatantCard { CombatantType = CombatantType.WOLF, StatCard = new StatCard { Attack = 3, Health = 10 }}]
+                FriendlyCombatantCards = [new CombatantCard { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5}}],
+                EnemyCombatantCards = [new CombatantCard { CombatantType = CombatantType.WOLF, StatCard = new StatCard { Attack = 3, Health = 10, Speed = 9 }}]
             };
         }
 

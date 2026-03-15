@@ -1,5 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Deck;
+﻿using IdelPog.Combat.Contracts.Deck;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
@@ -25,20 +24,6 @@ namespace IdelPog.Combat.Service
                 BasicEncounterDeck = basicEncounterDeck,
                 FriendlyWin = false 
             };
-        }
-
-        private StatCard CalculateTotalStats(CombatantCard[] combatantCards)
-        {
-            uint attack = 0;
-            uint health = 0;
-            
-            foreach (CombatantCard combatantCard in combatantCards)
-            {
-                attack += combatantCard.StatCard.Attack;
-                health += combatantCard.StatCard.Health;
-            }
-            
-            return new StatCard { Attack = attack,  Health = health };
         }
 
         private uint HitsToKill(uint health, uint attack)
