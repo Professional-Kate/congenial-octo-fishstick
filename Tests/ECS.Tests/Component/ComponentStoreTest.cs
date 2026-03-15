@@ -1,9 +1,10 @@
 ﻿using IdelPog.ECS.Component;
 using IdelPog.ECS.Exceptions;
+using IdelPog.ECS.Tests.Entity;
 
 // ReSharper disable ObjectCreationAsStatement
 
-namespace IdelPog.ECS.Tests
+namespace IdelPog.ECS.Tests.Component
 {
     [TestFixture]
     public sealed class ComponentStoreTest

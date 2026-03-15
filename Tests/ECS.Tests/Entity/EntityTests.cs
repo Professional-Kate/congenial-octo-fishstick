@@ -3,12 +3,12 @@ using IdelPog.ECS.Component;
 using IdelPog.ECS.Exceptions;
 using Moq;
 
-namespace IdelPog.ECS.Tests
+namespace IdelPog.ECS.Tests.Entity
 {
     [TestFixture]
     public sealed class EntityTests
     {
-        private Entity.Entity _entity { get; set; }
+        private ECS.Entity.Entity _entity { get; set; }
         private Mock<IAssetRepository<Type, IComponent>> _repositoryMock { get; set; }
         private TestComponent _testComponent { get; set; }
 

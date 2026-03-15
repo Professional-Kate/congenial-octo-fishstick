@@ -1,6 +1,6 @@
 ﻿using IdelPog.ECS.Component;
 
-namespace IdelPog.ECS.Tests
+namespace IdelPog.ECS.Tests.Entity
 {
     public readonly record struct TestComponent : IComponent<TestComponent>
     {
