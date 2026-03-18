@@ -3,8 +3,8 @@ using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System;
+using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Core.Repository.Asserter;
-using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -15,14 +15,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
     public sealed class CombatantFactoryTest
     {
         private CombatantFactory _combatService;
-        private Mock<IAssetRepository<byte, CombatantEntity>> _friendlyRepositoryMock;
+        private Mock<ICombatantRepository> _friendlyRepositoryMock;
 
         private CombatantCard _wolfCard; 
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _friendlyRepositoryMock = new Mock<IAssetRepository<byte, CombatantEntity>>();
+            _friendlyRepositoryMock = new Mock<ICombatantRepository>();
             
             _combatService = new CombatantFactory(_friendlyRepositoryMock.Object, new CollectionAssertion(), new UniqueAssertion(), new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
 
@@ -49,7 +49,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private void VerifyRepositoryAdd(byte id, StatCard statCard, bool isFriendly)
         {
             // :) CombatantEntity -> Get CombatantStatsComponent -> Compare StatCard to provided AND compare if Entity is friend
-            _friendlyRepositoryMock.Verify(library => library.Add(id, It.Is<CombatantEntity>(entity => entity.GetComponent<CombatantStatsComponent>().StatCard == statCard && entity.IsFriendly == isFriendly)));
+            _friendlyRepositoryMock.Verify(library => library.Add(It.Is<CombatantEntity>(entity => entity.GetComponent<CombatantStatsComponent>().StatCard == statCard && entity.IsFriendly == isFriendly)));
         }
 
         [Test]

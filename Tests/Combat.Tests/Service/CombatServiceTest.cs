@@ -1,9 +1,11 @@
 ﻿using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Deck;
+using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
+using Moq;
 
 namespace IdelPog.Combat.Tests.Service
 {
@@ -11,12 +13,16 @@ namespace IdelPog.Combat.Tests.Service
     public sealed class CombatServiceTest
     {
         private CombatService _combatService;
+        private Mock<ICombatantFactory> _combatantFactoryMock;
+        
         private BasicEncounterDeck _basicEncounterDeck;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _combatService = new CombatService(new CollectionAssertion());
+            _combatantFactoryMock = new Mock<ICombatantFactory>();
+            
+            _combatService = new CombatService(new CollectionAssertion(), _combatantFactoryMock.Object);
             _basicEncounterDeck = new BasicEncounterDeck
             {
                 FriendlyCombatantCards = [new CombatantCard { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5}, IsFriendly = false }],
