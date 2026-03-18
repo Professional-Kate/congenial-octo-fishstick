@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Combat\Combat.csproj" />
         <ProjectReference Include="..\..\Core\Core.csproj" />
         <ProjectReference Include="..\..\Modules\Console\Console.csproj" />
         <ProjectReference Include="..\..\Modules\Currency\Currency.csproj" />

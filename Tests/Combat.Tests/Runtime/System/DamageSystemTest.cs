@@ -1,4 +1,6 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Assertion;
+using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System;
@@ -26,7 +28,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             _repositoryMock = new Mock<IAssetRepository<byte, CombatantEntity>>();
             
-            _damageSystem = new DamageSystem(_repositoryMock.Object, new FoundAssertion());
+            _damageSystem = new DamageSystem(_repositoryMock.Object, new FoundAssertion(), new NumberAssertion());
 
             _statCard = new StatCard { Health = 10, Attack = 5, Speed = 3 };
         }
@@ -34,7 +36,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void SetUp()
         { 
-            _combatantEntity = new CombatantEntity(_repositoryAsserter, _statCard, 0);
+            _combatantEntity = new CombatantEntity(_repositoryAsserter, _statCard) { IsFriendly = true };
             _repositoryMock.Reset();
         }
         
@@ -92,6 +94,18 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.Throws<NotFoundException<byte>>(() => _damageSystem.ApplyDamage(0, _statCard));
             
             _repositoryMock.Verify(library => library.Contains(0), Times.Once);
+            VerifyRepository();
+        }
+
+        [Test]
+        public void Negative_ApplyDamage_ZeroAttack_Throws()
+        {
+            StatCard zeroAttackCard = _statCard with { Attack = 0 };
+            
+            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _damageSystem.ApplyDamage(0, zeroAttackCard));
+            
+            Assert.That(exception.Source, Is.EqualTo(zeroAttackCard.ToString()));
+            
             VerifyRepository();
         }
     }

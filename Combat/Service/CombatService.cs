@@ -18,6 +18,11 @@ namespace IdelPog.Combat.Service
         {
             _collectionAssertion.AssertHasElements(basicEncounterDeck.FriendlyCombatantCards);
             _collectionAssertion.AssertHasElements(basicEncounterDeck.EnemyCombatantCards);
+            
+            // TODO: Add initial combatants into ECS 
+            // TODO: queue attacks
+            // TODO: run next attack until all dead
+            // TODO: fill out EncounterResponse
 
             return new EncounterResponse
             {

@@ -24,7 +24,7 @@ namespace IdelPog.Combat.Tests.Runtime
         [SetUp]
         public void Setup()
         { 
-            _combatantEntity = new CombatantEntity(_repositoryAsserter, _statCard, 0);
+            _combatantEntity = new CombatantEntity(_repositoryAsserter, _statCard) { IsFriendly = true };
         }
 
         private void UpdateCombatantStats(StatCard statCard)

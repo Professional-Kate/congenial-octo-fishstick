@@ -4,5 +4,6 @@
     { 
         public required CombatantType CombatantType { get; init; }
         public required StatCard StatCard { get; init; }
+        public required bool IsFriendly { get; init; }
     }
 }
