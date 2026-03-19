@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Event.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service.Interface;
 
@@ -18,10 +19,8 @@ namespace IdelPog.Combat.Event
         }
 
         public void RunEvent(IEnqueueEvent enqueueEvent, double tick)
-        {
+        { 
             _damageSystem.ApplyDamage(_targetID, _attackerStats);
-            // double interval = 1.0 / _attacker.StatCard.Speed;
-            // double nexTick = tick + interval;
         }
     }
 }

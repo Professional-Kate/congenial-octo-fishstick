@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Event;
+﻿using IdelPog.Combat.Event.Interface;
 using IdelPog.Combat.Service.Interface;
 
 namespace IdelPog.Combat.Service
@@ -7,6 +7,6 @@ namespace IdelPog.Combat.Service
     {
         private readonly PriorityQueue<ICombatEvent, double> _combatQueue = new();
         
-        public void Enqueue(ICombatEvent combatEvent, double time) => _combatQueue.Enqueue(combatEvent, time);
+        public void Enqueue(ICombatEvent combatEvent, double tick) => _combatQueue.Enqueue(combatEvent, tick);
     }
 }

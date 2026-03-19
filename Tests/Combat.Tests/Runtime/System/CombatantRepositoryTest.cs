@@ -2,9 +2,7 @@
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Core.Repository.Asserter;
-using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
-using Moq;
 
 namespace IdelPog.Combat.Tests.Runtime.System
 {
@@ -12,7 +10,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
     public sealed class CombatantRepositoryTest
     {
         private CombatantRepository _combatantRepository;
-        private Mock<IAssetRepository<byte, CombatantEntity>> _repositoryMock;
 
         private StatCard _wolfCard; 
         private CombatantEntity _wolfEntity;
@@ -20,8 +17,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _repositoryMock = new Mock<IAssetRepository<byte, CombatantEntity>>();
-
             _wolfCard = new StatCard { Health = 3, Attack = 5, Speed = 5 };
             _wolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard) { IsFriendly = false };
         }
@@ -29,38 +24,20 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void SetUp()
         {
-            _repositoryMock.Reset();
-            _combatantRepository = new CombatantRepository(_repositoryMock.Object);
+            _combatantRepository = new CombatantRepository();
         }
 
-        private void VerifyAdd(CombatantEntity combatantEntity, byte id)
+        private void VerifyContains(byte id, bool contains)
         {
-            _repositoryMock.Verify(library => library.Add(id,  combatantEntity), Times.Once);
-        }
-        
-        private void VerifyRemove(byte id)
-        {
-            _repositoryMock.Verify(library => library.Remove(id), Times.Once);
+            Assert.That(_combatantRepository.Contains(id), Is.EqualTo(contains));
         }
 
-        private void SetupContains(byte id, bool contains)
-        { 
-            _repositoryMock.Setup(library => library.Contains(id)).Returns(contains).Verifiable();
-        }
-
-        private void VerifyRepository()
-        {
-            _repositoryMock.Verify();
-            _repositoryMock.VerifyNoOtherCalls();
-        }
-        
         [Test]
         public void Positive_Add_AddsNewEntity()
         { 
             _combatantRepository.Add(_wolfEntity);
 
-            VerifyAdd(_wolfEntity, 0);
-            VerifyRepository();
+            VerifyContains(0, true);
         }
 
         [Test]
@@ -70,10 +47,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantRepository.Add(_wolfEntity);
             _combatantRepository.Add(_wolfEntity);
             
-            VerifyAdd(_wolfEntity, 0);
-            VerifyAdd(_wolfEntity, 1);
-            VerifyAdd(_wolfEntity, 2);
-            VerifyRepository();
+            VerifyContains(0, true);
+            VerifyContains(1, true);
+            VerifyContains(2, true);
         }
 
         [Test]
@@ -81,8 +57,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             _combatantRepository.Add(_wolfEntity);
             _combatantRepository.Clear();
-
-            VerifyRemove(0);
+            
+            VerifyContains(0, false);
         }
 
         [Test]
@@ -94,9 +70,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
             _combatantRepository.Clear();
             
-            VerifyRemove(0);
-            VerifyRemove(1);
-            VerifyRemove(2);
+            VerifyContains(0, false);
+            VerifyContains(1, false);
+            VerifyContains(2, false);
         }
 
         [Test]
@@ -106,34 +82,48 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantRepository.Clear();
             _combatantRepository.Add(_wolfEntity);
             
-            VerifyRemove(0);
-            _repositoryMock.Verify(library => library.Add(0,  _wolfEntity), Times.Exactly(2));
-            _repositoryMock.Verify(library => library.Add(1,  _wolfEntity), Times.Never);
-            VerifyRepository();
+            VerifyContains(0, true);
+            VerifyContains(1, false);
         }
 
         [Test]
         public void Positive_Contains_ReturnsTrue()
         {
-            SetupContains(0, true);
             _combatantRepository.Add(_wolfEntity);
 
             bool contains = _combatantRepository.Contains(0);
             
             Assert.That(contains, Is.True);
-            VerifyAdd(_wolfEntity, 0);
-            VerifyRepository();
+            VerifyContains(0, true);
         }
         
         [Test]
         public void Positive_Contains_ReturnsFalse()
         {
-            SetupContains(0, false);
-
             bool contains = _combatantRepository.Contains(0);
             
             Assert.That(contains, Is.False);
-            VerifyRepository();
+        }
+
+        [Test]
+        public void Positive_GetAll_ReturnsAll()
+        {
+            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_wolfEntity);
+            
+            CombatantEntity[] entities = _combatantRepository.GetAll().ToArray();
+            
+            Assert.That(entities, Has.Length.EqualTo(3));
+        }
+
+        [Test]
+        public void Positive_GetAll_EmptyRepository_ReturnsEmptyArray()
+        {
+            CombatantEntity[] entities = _combatantRepository.GetAll().ToArray();
+            
+            Assert.That(entities, Is.Not.Null);
+            Assert.That(entities, Has.Length.EqualTo(0));
         }
     }
 }

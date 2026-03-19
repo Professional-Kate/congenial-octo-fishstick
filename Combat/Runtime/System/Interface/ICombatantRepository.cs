@@ -7,5 +7,7 @@
         public bool Contains(byte id);
         
         public void Clear();
+
+        public IEnumerable<CombatantEntity> GetAll();
     }
 }

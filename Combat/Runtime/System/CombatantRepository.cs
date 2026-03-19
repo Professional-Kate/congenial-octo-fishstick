@@ -1,18 +1,12 @@
 ﻿using IdelPog.Combat.Runtime.System.Interface;
-using IdelPog.Core.Repository.Asset;
 
 namespace IdelPog.Combat.Runtime.System
 {
     public sealed class CombatantRepository : ICombatantRepository
     {
-        private readonly IAssetRepository<byte, CombatantEntity> _combatantRepository;
+        private readonly Dictionary<byte, CombatantEntity> _combatantRepository = [];
 
-        public CombatantRepository(IAssetRepository<byte, CombatantEntity> combatantRepository)
-        {
-            _combatantRepository = combatantRepository;
-        }
-
-        private byte _nextID { get; set; }
+        private byte _nextID;
 
         public void Add(CombatantEntity combatantEntity)
         {
@@ -21,18 +15,20 @@ namespace IdelPog.Combat.Runtime.System
         }
 
         public bool Contains(byte id)
-        { 
-            return _combatantRepository.Contains(id);
+        {
+            return _combatantRepository.ContainsKey(id);
         }
 
         public void Clear()
         {
-            for (byte i = 0; i < _nextID; i++)
-            { 
-                _combatantRepository.Remove(i);
-            }
+            _combatantRepository.Clear();
             
             _nextID = 0;
+        }
+
+        public IEnumerable<CombatantEntity> GetAll()
+        {
+            return _combatantRepository.Values;
         }
     }
 }

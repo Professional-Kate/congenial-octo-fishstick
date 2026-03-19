@@ -14,6 +14,7 @@ namespace IdelPog.Combat.Tests.Service
     {
         private CombatService _combatService;
         private Mock<ICombatantFactory> _combatantFactoryMock;
+        private Mock<IAttackScheduler> _attackSchedulerMock;
         
         private BasicEncounterDeck _basicEncounterDeck;
 
@@ -21,8 +22,9 @@ namespace IdelPog.Combat.Tests.Service
         public void OneTimeSetup()
         {
             _combatantFactoryMock = new Mock<ICombatantFactory>();
+            _attackSchedulerMock = new Mock<IAttackScheduler>();
             
-            _combatService = new CombatService(new CollectionAssertion(), _combatantFactoryMock.Object);
+            _combatService = new CombatService(new CollectionAssertion(), _combatantFactoryMock.Object, _attackSchedulerMock.Object);
             _basicEncounterDeck = new BasicEncounterDeck
             {
                 FriendlyCombatantCards = [new CombatantCard { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5}, IsFriendly = false }],

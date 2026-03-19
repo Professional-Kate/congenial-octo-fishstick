@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Service.Interface;
 
-namespace IdelPog.Combat.Event
+namespace IdelPog.Combat.Event.Interface
 {
     public interface ICombatEvent
     {

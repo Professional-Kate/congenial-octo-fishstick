@@ -6,15 +6,17 @@ using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Service
 {
-    public sealed class CombatService: ICombatService
+    public sealed class CombatService : ICombatService
     {
         private readonly ICombatantFactory _combatantFactory;
+        private readonly IAttackScheduler _attackScheduler;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public CombatService(ICollectionAssertion collectionAssertion, ICombatantFactory combatantFactory)
+        public CombatService(ICollectionAssertion collectionAssertion, ICombatantFactory combatantFactory, IAttackScheduler attackScheduler)
         {
             _collectionAssertion = collectionAssertion;
             _combatantFactory = combatantFactory;
+            _attackScheduler = attackScheduler;
         }
 
         public EncounterResponse RunEncounter(BasicEncounterDeck basicEncounterDeck)
@@ -23,7 +25,9 @@ namespace IdelPog.Combat.Service
             _collectionAssertion.AssertHasElements(basicEncounterDeck.EnemyCombatantCards);
             
             _combatantFactory.SpawnCombatants(basicEncounterDeck.FriendlyCombatantCards);
-            // TODO: queue attacks
+            _combatantFactory.SpawnCombatants(basicEncounterDeck.EnemyCombatantCards);
+            
+            _attackScheduler.EnqueueInitial(0);
             // TODO: run next attack until all dead
             // TODO: fill out EncounterResponse
 
