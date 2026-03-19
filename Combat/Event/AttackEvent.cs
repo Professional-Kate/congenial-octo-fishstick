@@ -9,18 +9,22 @@ namespace IdelPog.Combat.Event
     {
         private readonly IDamageSystem _damageSystem;
         private readonly StatCard _attackerStats;
-        private readonly byte _targetID;
+        public readonly byte TargetID;
 
-        public AttackEvent(IDamageSystem damageSystem, StatCard attackerStats, byte targetID)
+        public double Tick { get; }
+        
+        public AttackEvent(IDamageSystem damageSystem, StatCard attackerStats, byte targetID, double tick)
         {
             _attackerStats = attackerStats;
-            _targetID = targetID;
+            TargetID = targetID;
             _damageSystem = damageSystem;
+
+            Tick = tick;
         }
 
-        public void RunEvent(IEnqueueEvent enqueueEvent, double tick)
-        { 
-            _damageSystem.ApplyDamage(_targetID, _attackerStats);
+        public void RunEvent(IEnqueueEvent enqueueEvent)
+        {
+            _damageSystem.ApplyDamage(TargetID, _attackerStats);
         }
     }
 }

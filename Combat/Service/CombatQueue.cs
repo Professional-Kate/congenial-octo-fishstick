@@ -8,5 +8,7 @@ namespace IdelPog.Combat.Service
         private readonly PriorityQueue<ICombatEvent, double> _combatQueue = new();
         
         public void Enqueue(ICombatEvent combatEvent, double tick) => _combatQueue.Enqueue(combatEvent, tick);
+        
+        public ICombatEvent Dequeue() => _combatQueue.Dequeue();
     }
 }

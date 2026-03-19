@@ -7,6 +7,8 @@
         public bool Contains(byte id);
         
         public void Clear();
+        
+        public CombatantEntity Get(byte id);
 
         public IEnumerable<CombatantEntity> GetAll();
     }

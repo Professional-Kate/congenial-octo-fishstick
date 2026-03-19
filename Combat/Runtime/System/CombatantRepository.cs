@@ -1,12 +1,19 @@
 ﻿using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Runtime.System
 {
     public sealed class CombatantRepository : ICombatantRepository
     {
         private readonly Dictionary<byte, CombatantEntity> _combatantRepository = [];
+        private readonly IFoundAssertion _foundAssertion;
 
         private byte _nextID;
+
+        public CombatantRepository(IFoundAssertion foundAssertion)
+        {
+            _foundAssertion = foundAssertion;
+        }
 
         public void Add(CombatantEntity combatantEntity)
         {
@@ -24,6 +31,12 @@ namespace IdelPog.Combat.Runtime.System
             _combatantRepository.Clear();
             
             _nextID = 0;
+        }
+
+        public CombatantEntity Get(byte id)
+        { 
+            _foundAssertion.AssertFound(id, _combatantRepository.ContainsKey(id));
+            return _combatantRepository[id];
         }
 
         public IEnumerable<CombatantEntity> GetAll()

@@ -4,6 +4,8 @@ namespace IdelPog.Combat.Event.Interface
 {
     public interface ICombatEvent
     {
-        public void RunEvent(IEnqueueEvent enqueueEvent, double tick);
+        public double Tick { get; }
+
+        public void RunEvent(IEnqueueEvent enqueueEvent);
     }
 }

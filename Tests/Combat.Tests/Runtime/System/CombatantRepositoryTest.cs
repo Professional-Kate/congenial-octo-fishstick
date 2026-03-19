@@ -3,6 +3,7 @@ using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
+using IdelPog.Core.Validation.Exceptions;
 
 namespace IdelPog.Combat.Tests.Runtime.System
 {
@@ -24,7 +25,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void SetUp()
         {
-            _combatantRepository = new CombatantRepository();
+            _combatantRepository = new CombatantRepository(new FoundAssertion());
         }
 
         private void VerifyContains(byte id, bool contains)
@@ -124,6 +125,23 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities, Has.Length.EqualTo(0));
+        }
+
+        [Test]
+        public void Positive_Get_ReturnsEntity()
+        {
+            _combatantRepository.Add(_wolfEntity);
+            
+            CombatantEntity combatantEntity = _combatantRepository.Get(0);
+            
+            Assert.That(combatantEntity, Is.Not.Null);
+            Assert.That(combatantEntity, Is.EqualTo(_wolfEntity));
+        }
+
+        [Test]
+        public void Negative_Get_KeyNotFound_Throws()
+        { 
+            Assert.Throws<NotFoundException<byte>>(() => _combatantRepository.Get(0));
         }
     }
 }
