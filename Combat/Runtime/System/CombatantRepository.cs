@@ -8,7 +8,7 @@ namespace IdelPog.Combat.Runtime.System
         private readonly Dictionary<byte, CombatantEntity> _combatantRepository = [];
         private readonly IFoundAssertion _foundAssertion;
 
-        private byte _nextID;
+        public byte NextCombatantID { get; private set; }
 
         public CombatantRepository(IFoundAssertion foundAssertion)
         {
@@ -17,8 +17,8 @@ namespace IdelPog.Combat.Runtime.System
 
         public void Add(CombatantEntity combatantEntity)
         {
-            _combatantRepository.Add(_nextID, combatantEntity);
-            _nextID++;
+            _combatantRepository.Add(NextCombatantID, combatantEntity);
+            NextCombatantID++;
         }
 
         public bool Contains(byte id)
@@ -30,7 +30,7 @@ namespace IdelPog.Combat.Runtime.System
         {
             _combatantRepository.Clear();
             
-            _nextID = 0;
+            NextCombatantID = 0;
         }
 
         public CombatantEntity Get(byte id)

@@ -29,7 +29,11 @@ namespace IdelPog.Combat.Runtime.System
                 _uniqueAssertion.AssertUnique(i, _combatantRepository.Contains(i));
                 
                 CombatantCard combatantCard = combatants[i];
-                CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard.StatCard) { IsFriendly = combatantCard.IsFriendly };
+                CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard.StatCard)
+                {
+                    IsFriendly = combatantCard.IsFriendly, 
+                    CombatantID = _combatantRepository.NextCombatantID
+                };
 
                 _combatantRepository.Add(combatantEntity);
             } 

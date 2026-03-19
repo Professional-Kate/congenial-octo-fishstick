@@ -19,7 +19,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void OneTimeSetup()
         {
             _wolfCard = new StatCard { Health = 3, Attack = 5, Speed = 5 };
-            _wolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard) { IsFriendly = false };
+            _wolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard) { IsFriendly = false, CombatantID = 0 };
         }
 
         [SetUp]

@@ -46,38 +46,45 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _friendlyRepositoryMock.Setup(library => library.Contains(id)).Returns(false).Verifiable();
         }
 
-        private void VerifyRepositoryAdd(byte id, StatCard statCard, bool isFriendly)
+        private void VerifyRepositoryAdd(StatCard statCard, bool isFriendly)
         {
             // :) CombatantEntity -> Get CombatantStatsComponent -> Compare StatCard to provided AND compare if Entity is friend
             _friendlyRepositoryMock.Verify(library => library.Add(It.Is<CombatantEntity>(entity => entity.GetComponent<CombatantStatsComponent>().StatCard == statCard && entity.IsFriendly == isFriendly)));
         }
 
+        private void VerifyRepositoryNextCombatantID(Times times)
+        {
+            _friendlyRepositoryMock.Verify(library => library.NextCombatantID, times);
+        }
+
         [Test]
-        public void Test_SpawnCombatants_SingleCard_CreatesOneCombatant()
+        public void Positive_SpawnCombatants_SingleCard_CreatesOneCombatant()
         { 
             SetupContains(0);
             
             _combatService.SpawnCombatants([_wolfCard]);
             
-            VerifyRepositoryAdd(0, _wolfCard.StatCard, true);
+            VerifyRepositoryAdd(_wolfCard.StatCard, true);
+            VerifyRepositoryNextCombatantID(Times.Once());
             VerifyRepository();
         }
         
         [Test]
-        public void Test_SpawnCombatants_DuplicateCard_CreatesMultipleCombatant()
+        public void Positive_SpawnCombatants_DuplicateCard_CreatesMultipleCombatant()
         {
             SetupContains(0);
             SetupContains(1);
             
             _combatService.SpawnCombatants([_wolfCard, _wolfCard]);
             
-            VerifyRepositoryAdd(0, _wolfCard.StatCard, true);
-            VerifyRepositoryAdd(1, _wolfCard.StatCard, true);
+            VerifyRepositoryAdd(_wolfCard.StatCard, true);
+            VerifyRepositoryAdd(_wolfCard.StatCard, true);
+            VerifyRepositoryNextCombatantID(Times.Exactly(2));
             VerifyRepository();
         }
         
         [Test]
-        public void Test_SpawnCombatants_MultipleCards_CreatesMultipleCombatant()
+        public void Positive_SpawnCombatants_MultipleCards_CreatesMultipleCombatant()
         {
             SetupContains(0);
             SetupContains(1);
@@ -85,8 +92,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             CombatantCard humanCard = new() { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Health = 10, Attack = 3, Speed = 3 }, IsFriendly = false };
             _combatService.SpawnCombatants([_wolfCard, humanCard]);
             
-            VerifyRepositoryAdd(0, _wolfCard.StatCard, true);
-            VerifyRepositoryAdd(1, humanCard.StatCard, false);
+            VerifyRepositoryAdd(_wolfCard.StatCard, true);
+            VerifyRepositoryAdd(humanCard.StatCard, false);
+            VerifyRepositoryNextCombatantID(Times.Exactly(2));
             VerifyRepository();
         }
         

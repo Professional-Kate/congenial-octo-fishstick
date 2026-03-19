@@ -50,7 +50,7 @@ namespace IdelPog.Combat.Runtime.System
             double interval = 1.0 / combatantStatsComponent.StatCard.Speed;
             double nextTick = tick + interval;
             
-            AttackEvent attackEvent = new(_damageSystem, combatantStatsComponent.StatCard, 0, nextTick);
+            AttackEvent attackEvent = new(_damageSystem, nextTick, combatantEntity.CombatantID);
             _combatQueue.Enqueue(attackEvent, nextTick);
         }
     }

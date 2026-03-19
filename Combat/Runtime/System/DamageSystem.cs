@@ -20,17 +20,18 @@ namespace IdelPog.Combat.Runtime.System
             _numberAssertion = numberAssertion;
         }
 
-        public void ApplyDamage(byte targetInstanceID, StatCard attackerStats)
+        public void ApplyDamage(byte combatantID)
         {
+            _foundAssertion.AssertFound(combatantID, _combatantRepository.Contains(combatantID));
+            
+            CombatantEntity attackingEntity = _combatantRepository.Get(combatantID);
+            CombatantStatsComponent combatantStatsComponent = attackingEntity.GetComponent<CombatantStatsComponent>();
+            StatCard attackerStats = combatantStatsComponent.StatCard;
+            
             _numberAssertion.AssertNumberNotZero(attackerStats.Attack, attackerStats.ToString());
-            _foundAssertion.AssertFound(targetInstanceID, _combatantRepository.Contains(targetInstanceID));
             
-            CombatantEntity combatantEntity = _combatantRepository.Get(targetInstanceID);
-            CombatantStatsComponent combatantStatsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
-            StatCard targetStats = combatantStatsComponent.StatCard;
-            
-            StatCard statCard = targetStats with { Health = targetStats.Health - attackerStats.Attack };
-            combatantEntity.UpdateCombatantStats(statCard);
+            // TODO: find target
+            // GetEntity -> Deal Damage to new Entity -> UpdateCombatantStats
         }
     }
 }

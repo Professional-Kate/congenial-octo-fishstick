@@ -44,7 +44,7 @@ namespace IdelPog.Combat.Service
 
                 if (combatEvent is AttackEvent attackEvent)
                 { 
-                    _attackScheduler.EnqueueAttack(currentTick, attackEvent.TargetID);
+                    _attackScheduler.EnqueueAttack(currentTick, attackEvent.CombatantID);
                 }
 
                 break;

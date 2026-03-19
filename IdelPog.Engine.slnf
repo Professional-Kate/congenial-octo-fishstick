@@ -3,6 +3,7 @@
     "path": "IdelPog.sln",
     "projects": [
       "Core\\Core.csproj",
+      "Combat\\Combat.csproj",
       "ECS\\ECS.csproj",
       "Loot\\Loot.csproj",
       "Progression\\Progression.csproj",

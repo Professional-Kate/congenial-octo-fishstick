@@ -2,6 +2,8 @@
 {
     public interface ICombatantRepository
     {
+        public byte NextCombatantID { get; }
+
         public void Add(CombatantEntity combatantEntity);
 
         public bool Contains(byte id);

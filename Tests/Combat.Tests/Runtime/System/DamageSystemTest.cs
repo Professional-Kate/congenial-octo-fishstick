@@ -36,7 +36,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void SetUp()
         { 
-            _combatantEntity = new CombatantEntity(_repositoryAsserter, _statCard) { IsFriendly = true };
+            _combatantEntity = new CombatantEntity(_repositoryAsserter, _statCard) { IsFriendly = true, CombatantID = 0 };
             _repositoryMock.Reset();
         }
         
@@ -67,7 +67,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             SetupRepository(_combatantEntity);
             
-            _damageSystem.ApplyDamage(0, _statCard);
+            _damageSystem.ApplyDamage(0);
             
             VerifyComponent(_statCard with { Health = 5 }, GetComponent());
 
@@ -79,10 +79,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             SetupRepository(_combatantEntity);
             
-            _damageSystem.ApplyDamage(0, _statCard);
+            _damageSystem.ApplyDamage(0);
             VerifyComponent(_statCard with { Health = 5 }, GetComponent());
 
-            _damageSystem.ApplyDamage(0, _statCard);
+            _damageSystem.ApplyDamage(0);
             VerifyComponent(_statCard with { Health = 0 }, GetComponent());
             
             VerifyRepository();
@@ -91,7 +91,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_ApplyDamage_InstanceIDUnknown_Throws()
         {
-            Assert.Throws<NotFoundException<byte>>(() => _damageSystem.ApplyDamage(0, _statCard));
+            Assert.Throws<NotFoundException<byte>>(() => _damageSystem.ApplyDamage(0));
             
             _repositoryMock.Verify(library => library.Contains(0), Times.Once);
             VerifyRepository();
@@ -100,9 +100,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_ApplyDamage_ZeroAttack_Throws()
         {
+            SetupRepository(_combatantEntity);
             StatCard zeroAttackCard = _statCard with { Attack = 0 };
             
-            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _damageSystem.ApplyDamage(0, zeroAttackCard));
+            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _damageSystem.ApplyDamage(0));
             
             Assert.That(exception.Source, Is.EqualTo(zeroAttackCard.ToString()));
             
