@@ -40,6 +40,12 @@ namespace IdelPog.Combat.Tests.Runtime.System
         { 
             _combatantEntity = new CombatantEntity(_repositoryAsserter, _statCard) { IsFriendly = true, CombatantID = 0 };
             _repositoryMock.Reset();
+            _targetFinderMock.Reset();
+        }
+
+        private void SetupTargetFinder(CombatantEntity combatantEntity)
+        {
+            _targetFinderMock.Setup(library => library.FindBestTarget(combatantEntity)).Returns(combatantEntity).Verifiable();
         }
         
         private CombatantStatsComponent GetComponent()
@@ -64,9 +70,16 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _repositoryMock.VerifyNoOtherCalls();
         }
 
+        private void VerifyTargetFinder()
+        {
+            _targetFinderMock.Verify();
+            _targetFinderMock.VerifyNoOtherCalls();
+        }
+
         [Test]
         public void Positive_ApplyDamage_RemovesHealthFromTarget()
         {
+            SetupTargetFinder(_combatantEntity);
             SetupRepository(_combatantEntity);
             
             _damageSystem.ApplyDamage(0);
@@ -74,11 +87,13 @@ namespace IdelPog.Combat.Tests.Runtime.System
             VerifyComponent(_statCard with { Health = 5 }, GetComponent());
 
             VerifyRepository();
+            VerifyTargetFinder();
         }
 
         [Test]
         public void Positive_ApplyDamage_MultipleTimes_ReducesHealth()
         {
+            SetupTargetFinder(_combatantEntity);
             SetupRepository(_combatantEntity);
             
             _damageSystem.ApplyDamage(0);
@@ -88,6 +103,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             VerifyComponent(_statCard with { Health = 0 }, GetComponent());
             
             VerifyRepository();
+            VerifyTargetFinder();
         }
 
         [Test]
@@ -97,19 +113,23 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _repositoryMock.Verify(library => library.Contains(0), Times.Once);
             VerifyRepository();
+            VerifyTargetFinder();
         }
 
         [Test]
         public void Negative_ApplyDamage_ZeroAttack_Throws()
         {
-            SetupRepository(_combatantEntity);
             StatCard zeroAttackCard = _statCard with { Attack = 0 };
+            CombatantEntity zeroAttackEntity = new(_repositoryAsserter, zeroAttackCard) { IsFriendly = true, CombatantID = 0 };
+            
+            SetupRepository(zeroAttackEntity);
             
             NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _damageSystem.ApplyDamage(0));
             
             Assert.That(exception.Source, Is.EqualTo(zeroAttackCard.ToString()));
             
             VerifyRepository();
+            VerifyTargetFinder();
         }
     }
 }
