@@ -4,8 +4,8 @@ using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System;
+using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Core.Repository.Asserter;
-using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -16,8 +16,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
     public sealed class DamageSystemTest
     {
         private DamageSystem _damageSystem;
-        private Mock<IAssetRepository<byte, CombatantEntity>> _repositoryMock;
+        private Mock<ICombatantRepository> _repositoryMock;
         private RepositoryAsserter _repositoryAsserter;
+        private Mock<ITargetFinder> _targetFinderMock;
         
         private CombatantEntity _combatantEntity;
         private StatCard _statCard;
@@ -26,9 +27,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void OneTimeSetup()
         {
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
-            _repositoryMock = new Mock<IAssetRepository<byte, CombatantEntity>>();
+            _repositoryMock = new Mock<ICombatantRepository>();
+            _targetFinderMock = new Mock<ITargetFinder>();
             
-            _damageSystem = new DamageSystem(_repositoryMock.Object, new FoundAssertion(), new NumberAssertion());
+            _damageSystem = new DamageSystem(_repositoryMock.Object, new FoundAssertion(), new NumberAssertion(), _targetFinderMock.Object);
 
             _statCard = new StatCard { Health = 10, Attack = 5, Speed = 3 };
         }

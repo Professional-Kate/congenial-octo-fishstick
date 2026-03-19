@@ -143,5 +143,49 @@ namespace IdelPog.Combat.Tests.Runtime.System
         { 
             Assert.Throws<NotFoundException<byte>>(() => _combatantRepository.Get(0));
         }
+
+        [Test]
+        public void Positive_GetFriendlies_ReturnsAllFriendlies()
+        {
+            _combatantRepository.Add(_wolfEntity with { IsFriendly = true });
+            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_wolfEntity);
+            
+            CombatantEntity[] combatantEntities = _combatantRepository.GetFriendlies().ToArray();
+            
+            Assert.That(combatantEntities, Has.Length.EqualTo(1));
+        }
+
+        [Test]
+        public void Positive_GetFriendlies_EmptyRepository_ReturnsEmptyArray()
+        {
+            _combatantRepository.Add(_wolfEntity);
+            
+            CombatantEntity[] combatantEntities = _combatantRepository.GetFriendlies().ToArray();
+            
+            Assert.That(combatantEntities, Has.Length.EqualTo(0));
+        }
+        
+        [Test]
+        public void Positive_GetEnemies_ReturnsAllFriendlies()
+        {
+            _combatantRepository.Add(_wolfEntity with { IsFriendly = true });
+            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_wolfEntity);
+            
+            CombatantEntity[] combatantEntities = _combatantRepository.GetEnemies().ToArray();
+            
+            Assert.That(combatantEntities, Has.Length.EqualTo(2));
+        }
+        
+        [Test]
+        public void Positive_GetEnemies_EmptyRepository_ReturnsEmptyArray()
+        {
+            _combatantRepository.Add(_wolfEntity with { IsFriendly = true });
+            
+            CombatantEntity[] combatantEntities = _combatantRepository.GetEnemies().ToArray();
+            
+            Assert.That(combatantEntities, Has.Length.EqualTo(0));
+        }
     }
 }
