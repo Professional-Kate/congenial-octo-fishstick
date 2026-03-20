@@ -1,10 +1,14 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Assertion.Interface;
+using IdelPog.Combat.Event;
+using IdelPog.Combat.Event.Resolver;
+using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Core.Repository.Asserter;
+using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
 
@@ -28,8 +32,13 @@ namespace IdelPog.Combat
             
             ICombatantFactory combatantFactory = new CombatantFactory(combatantRepository, collectionAssertion, uniqueAssertion, repositoryAsserter);
             IAttackScheduler attackScheduler = new AttackScheduler(combatQueue, numberAssertion, combatantRepository, foundAssertion);
+            IAssetRepository<EventType, IEventResolver> resolverRepository = new AssetRepository<EventType, IEventResolver>(repositoryAsserter);
+
+            // TODO: move this out eventually 
+            AttackEventResolver attackEventResolver = new(damageSystem, attackScheduler);
+            resolverRepository.Add(EventType.BASIC_ATTACK, attackEventResolver);
             
-            CombatService combatService = new(collectionAssertion, combatantFactory, attackScheduler, combatQueue);
+            CombatService combatService = new(combatantFactory, attackScheduler, combatQueue, resolverRepository, collectionAssertion);
 
             return combatService;
         }

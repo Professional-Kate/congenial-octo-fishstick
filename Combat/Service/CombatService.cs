@@ -1,8 +1,11 @@
 ﻿using IdelPog.Combat.Contracts.Deck;
 using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Interface;
+using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service.Interface;
+using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Service
@@ -12,14 +15,16 @@ namespace IdelPog.Combat.Service
         private readonly ICombatantFactory _combatantFactory;
         private readonly IAttackScheduler _attackScheduler;
         private readonly ICombatQueue _combatQueue;
+        private readonly IAssetRepository<EventType, IEventResolver> _resolverRepository;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public CombatService(ICollectionAssertion collectionAssertion, ICombatantFactory combatantFactory, IAttackScheduler attackScheduler, ICombatQueue combatQueue)
+        public CombatService(ICombatantFactory combatantFactory, IAttackScheduler attackScheduler, ICombatQueue combatQueue, IAssetRepository<EventType, IEventResolver> resolverRepository, ICollectionAssertion collectionAssertion)
         {
-            _collectionAssertion = collectionAssertion;
             _combatantFactory = combatantFactory;
             _attackScheduler = attackScheduler;
             _combatQueue = combatQueue;
+            _resolverRepository = resolverRepository;
+            _collectionAssertion = collectionAssertion;
         }
 
         public EncounterResponse RunEncounter(BasicEncounterDeck basicEncounterDeck)
@@ -37,6 +42,12 @@ namespace IdelPog.Combat.Service
                 ICombatEvent combatEvent = _combatQueue.Dequeue();
                 double currentTick = combatEvent.Tick;
 
+                if (_resolverRepository.Contains(combatEvent.EventType))
+                {
+                    IEventResolver resolver = _resolverRepository.Get(combatEvent.EventType);
+                    resolver.ResolveEvent(currentTick, combatEvent.AttackerID);
+                }
+                
                 break;
             }
 
