@@ -33,7 +33,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             
-            _attackScheduler = new AttackScheduler(_combatQueueMock.Object, _damageSystemMock.Object, new NumberAssertion(), _combatantRepositoryMock.Object, new FoundAssertion());
+            _attackScheduler = new AttackScheduler(_combatQueueMock.Object, new NumberAssertion(), _combatantRepositoryMock.Object, new FoundAssertion());
 
             _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
             _combatantEntity = new CombatantEntity(_repositoryAsserter, _attackerStats) { IsFriendly = true, CombatantID = 0 };

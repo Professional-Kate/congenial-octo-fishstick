@@ -1,11 +1,8 @@
-﻿using IdelPog.Combat.Service.Interface;
-
-namespace IdelPog.Combat.Event.Interface
+﻿namespace IdelPog.Combat.Event.Interface
 {
     public interface ICombatEvent
     {
+        public EventType EventType { get; }
         public double Tick { get; }
-
-        public void RunEvent(IEnqueueEvent enqueueEvent);
     }
 }

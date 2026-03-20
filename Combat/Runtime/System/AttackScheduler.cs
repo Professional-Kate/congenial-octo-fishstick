@@ -10,15 +10,13 @@ namespace IdelPog.Combat.Runtime.System
     public sealed class AttackScheduler : IAttackScheduler
     { 
         private readonly ICombatQueue _combatQueue;
-        private readonly IDamageSystem _damageSystem;
         private readonly ICombatantRepository _combatantRepository;
         private readonly INumberAssertion _numberAssertion;
         private readonly IFoundAssertion _foundAssertion;
 
-        public AttackScheduler(ICombatQueue combatQueue, IDamageSystem damageSystem, INumberAssertion numberAssertion, ICombatantRepository combatantRepository, IFoundAssertion foundAssertion)
+        public AttackScheduler(ICombatQueue combatQueue, INumberAssertion numberAssertion, ICombatantRepository combatantRepository, IFoundAssertion foundAssertion)
         {
             _combatQueue = combatQueue;
-            _damageSystem = damageSystem;
             _numberAssertion = numberAssertion;
             _combatantRepository = combatantRepository;
             _foundAssertion = foundAssertion;
@@ -32,11 +30,11 @@ namespace IdelPog.Combat.Runtime.System
             }
         }
 
-        public void EnqueueAttack(double tick, byte id)
+        public void EnqueueAttack(double tick, byte attackerID)
         {
-            _foundAssertion.AssertFound(id, _combatantRepository.Contains(id));
+            _foundAssertion.AssertFound(attackerID, _combatantRepository.Contains(attackerID));
             
-            CombatantEntity combatantEntity = _combatantRepository.Get(id);
+            CombatantEntity combatantEntity = _combatantRepository.Get(attackerID);
             
             Enqueue(combatantEntity, tick);
         }
@@ -50,7 +48,7 @@ namespace IdelPog.Combat.Runtime.System
             double interval = 1.0 / combatantStatsComponent.StatCard.Speed;
             double nextTick = tick + interval;
             
-            AttackEvent attackEvent = new(_damageSystem, nextTick, combatantEntity.CombatantID);
+            AttackEvent attackEvent = new() { AttackerID = combatantEntity.CombatantID, Tick =  nextTick };
             _combatQueue.Enqueue(attackEvent, nextTick);
         }
     }

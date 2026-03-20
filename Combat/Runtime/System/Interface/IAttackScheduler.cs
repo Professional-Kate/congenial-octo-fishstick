@@ -4,6 +4,6 @@
     { 
         public void EnqueueInitial(double tick);
 
-        public void EnqueueAttack(double tick, byte id);
+        public void EnqueueAttack(double tick, byte attackerID);
     }
 }

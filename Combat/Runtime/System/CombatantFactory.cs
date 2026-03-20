@@ -24,19 +24,19 @@ namespace IdelPog.Combat.Runtime.System
         {
             _collectionAssertion.AssertHasElements(combatants);
             
-            for (byte i = 0; i < combatants.Count; i++)
+            foreach (CombatantCard combatantCard in combatants)
             {
-                _uniqueAssertion.AssertUnique(i, _combatantRepository.Contains(i));
+                byte nextCombatantID = _combatantRepository.NextCombatantID;
+                _uniqueAssertion.AssertUnique(nextCombatantID, _combatantRepository.Contains(nextCombatantID));
                 
-                CombatantCard combatantCard = combatants[i];
                 CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard.StatCard)
                 {
                     IsFriendly = combatantCard.IsFriendly, 
-                    CombatantID = _combatantRepository.NextCombatantID
+                    CombatantID = nextCombatantID
                 };
 
                 _combatantRepository.Add(combatantEntity);
-            } 
+            }
         }
     }
 }

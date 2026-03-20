@@ -29,7 +29,7 @@ namespace IdelPog.Combat.Tests.Service
             _combatQueueMock = new Mock<ICombatQueue>();
             _enqueueEventMock = new Mock<IEnqueueEvent>();
             
-            _combatService = new CombatService(new CollectionAssertion(), _combatantFactoryMock.Object, _attackSchedulerMock.Object, _combatQueueMock.Object, _enqueueEventMock.Object);
+            _combatService = new CombatService(new CollectionAssertion(), _combatantFactoryMock.Object, _attackSchedulerMock.Object, _combatQueueMock.Object);
             _basicEncounterDeck = new BasicEncounterDeck
             {
                 FriendlyCombatantCards = [new CombatantCard { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5}, IsFriendly = false }],
