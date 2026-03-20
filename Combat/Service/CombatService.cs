@@ -48,6 +48,9 @@ namespace IdelPog.Combat.Service
                     resolver.ResolveEvent(currentTick, combatEvent.AttackerID);
                 }
                 
+                // TODO: utility class that decides when combat is over, loop on that.
+                // TODO: That class will be reported changes by each Resolver that affects an Entity.
+                
                 break;
             }
 
