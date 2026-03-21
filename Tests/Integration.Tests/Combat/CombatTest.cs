@@ -22,14 +22,16 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 CombatantType = CombatantType.HUMAN, 
                 IsFriendly = true, 
-                StatCard = new StatCard { Health = 9, Attack = 5, Speed = 5 }
+                StatCard = new StatCard { Health = 9, Attack = 5, Speed = 5 },
+                TargetingType = TargetingType.HIGH_ATTACK
             };
             
             _goblinCard = new CombatantCard
             {
                 CombatantType = CombatantType.GOBLIN, 
                 IsFriendly = false, 
-                StatCard = new StatCard { Health = 5, Attack = 3, Speed = 10 }
+                StatCard = new StatCard { Health = 5, Attack = 3, Speed = 10 },
+                TargetingType = TargetingType.LOW_HEALTH
             };
             
             _basicEncounterDeck = new BasicEncounterDeck

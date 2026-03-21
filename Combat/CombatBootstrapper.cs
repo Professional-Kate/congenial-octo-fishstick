@@ -3,6 +3,8 @@ using IdelPog.Combat.Assertion.Interface;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver;
 using IdelPog.Combat.Event.Resolver.Interface;
+using IdelPog.Combat.Runtime.Filter;
+using IdelPog.Combat.Runtime.Filter.Interface;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service;
@@ -25,8 +27,11 @@ namespace IdelPog.Combat
             INumberAssertion numberAssertion = new NumberAssertion();
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
 
+            ICombatantSelector lowHealthSelector = new LowestHealthSelector(collectionAssertion);
+            ICombatantSelector highestAttackSelector = new HighestAttackSelector(collectionAssertion);
+            ICombatantStore combatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
             CombatantRepository combatantRepository = new(foundAssertion);
-            ITargetFinder targetFinder = new TargetFinder(combatantRepository, new Random());
+            ITargetFinder targetFinder = new TargetFinder(combatantRepository, new Random(), combatantStore);
             CombatQueue combatQueue = new();
             IDamageSystem damageSystem = new DamageSystem(combatantRepository, foundAssertion, numberAssertion, targetFinder);
             

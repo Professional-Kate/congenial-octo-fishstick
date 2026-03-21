@@ -7,12 +7,14 @@ namespace IdelPog.Combat.Runtime.System
     public sealed class TargetFinder : ITargetFinder
     {
         private readonly ICombatantFilters _combatantFilters;
+        private readonly ICombatantStore _combatantStore;
         private readonly Random _random;
 
-        public TargetFinder(ICombatantFilters combatantFilters, Random random)
+        public TargetFinder(ICombatantFilters combatantFilters, Random random, ICombatantStore combatantStore)
         {
             _combatantFilters = combatantFilters;
             _random = random;
+            _combatantStore = combatantStore;
         }
 
         public CombatantEntity FindBestTarget(CombatantEntity attackingEntity)

@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Contracts;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Core.Repository.Asserter;
@@ -12,14 +13,19 @@ namespace IdelPog.Combat.Tests.Runtime.System
     {
         private CombatantRepository _combatantRepository;
 
-        private StatCard _wolfCard; 
-        private CombatantEntity _wolfEntity;
+        private StatCard _wolfStatCard;
+        private CombatantCard _wolfCard;
+        private CombatantEntity _enemyWolfEntity;
+        private CombatantEntity _friendlyWolfEntity;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _wolfCard = new StatCard { Health = 3, Attack = 5, Speed = 5 };
-            _wolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard) { IsFriendly = false, CombatantID = 0 };
+            _wolfStatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 };
+            _wolfCard = new CombatantCard { StatCard = _wolfStatCard, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = false,  CombatantType = CombatantType.WOLF };
+            
+            _enemyWolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard) {  CombatantID = 0 };
+            _friendlyWolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard with { IsFriendly = true }) {  CombatantID = 1 };
         }
 
         [SetUp]
@@ -36,7 +42,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_Add_AddsNewEntity()
         { 
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
 
             VerifyContains(0, true);
         }
@@ -44,9 +50,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_Add_AddMultiple_IncrementsID()
         {
-            _combatantRepository.Add(_wolfEntity);
-            _combatantRepository.Add(_wolfEntity);
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
             
             VerifyContains(0, true);
             VerifyContains(1, true);
@@ -56,7 +62,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_Clear_RemovesOne()
         {
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
             _combatantRepository.Clear();
             
             VerifyContains(0, false);
@@ -65,9 +71,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_Clear_RemovesAll()
         {
-            _combatantRepository.Add(_wolfEntity);
-            _combatantRepository.Add(_wolfEntity);
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
 
             _combatantRepository.Clear();
             
@@ -79,9 +85,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_Add_ClearAfterAdd_ResetsID()
         { 
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
             _combatantRepository.Clear();
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
             
             VerifyContains(0, true);
             VerifyContains(1, false);
@@ -90,7 +96,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_Contains_ReturnsTrue()
         {
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
 
             bool contains = _combatantRepository.Contains(0);
             
@@ -109,9 +115,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_GetAll_ReturnsAll()
         {
-            _combatantRepository.Add(_wolfEntity);
-            _combatantRepository.Add(_wolfEntity);
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
             
             CombatantEntity[] entities = _combatantRepository.GetAll().ToArray();
             
@@ -130,12 +136,12 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_Get_ReturnsEntity()
         {
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
             
             CombatantEntity combatantEntity = _combatantRepository.Get(0);
             
             Assert.That(combatantEntity, Is.Not.Null);
-            Assert.That(combatantEntity, Is.EqualTo(_wolfEntity));
+            Assert.That(combatantEntity, Is.EqualTo(_enemyWolfEntity));
         }
 
         [Test]
@@ -147,9 +153,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_GetFriendlies_ReturnsAllFriendlies()
         {
-            _combatantRepository.Add(_wolfEntity with { IsFriendly = true });
-            _combatantRepository.Add(_wolfEntity);
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_friendlyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
             
             CombatantEntity[] combatantEntities = _combatantRepository.GetFriendlies().ToArray();
             
@@ -159,7 +165,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_GetFriendlies_EmptyRepository_ReturnsEmptyArray()
         {
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
             
             CombatantEntity[] combatantEntities = _combatantRepository.GetFriendlies().ToArray();
             
@@ -169,9 +175,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_GetEnemies_ReturnsAllFriendlies()
         {
-            _combatantRepository.Add(_wolfEntity with { IsFriendly = true });
-            _combatantRepository.Add(_wolfEntity);
-            _combatantRepository.Add(_wolfEntity);
+            _combatantRepository.Add(_friendlyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
             
             CombatantEntity[] combatantEntities = _combatantRepository.GetEnemies().ToArray();
             
@@ -181,7 +187,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_GetEnemies_EmptyRepository_ReturnsEmptyArray()
         {
-            _combatantRepository.Add(_wolfEntity with { IsFriendly = true });
+            _combatantRepository.Add(_friendlyWolfEntity);
             
             CombatantEntity[] combatantEntities = _combatantRepository.GetEnemies().ToArray();
             

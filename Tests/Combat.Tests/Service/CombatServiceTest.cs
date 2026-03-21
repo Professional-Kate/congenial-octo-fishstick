@@ -35,8 +35,8 @@ namespace IdelPog.Combat.Tests.Service
             _combatService = new CombatService(_combatantFactoryMock.Object, _attackSchedulerMock.Object, _combatQueueMock.Object, _repositoryMock.Object, new CollectionAssertion());
             _basicEncounterDeck = new BasicEncounterDeck
             {
-                FriendlyCombatantCards = [new CombatantCard { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5}, IsFriendly = false }],
-                EnemyCombatantCards = [new CombatantCard { CombatantType = CombatantType.WOLF, StatCard = new StatCard { Attack = 3, Health = 10, Speed = 9 }, IsFriendly = true }]
+                FriendlyCombatantCards = [new CombatantCard { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5}, IsFriendly = false, TargetingType = TargetingType.LOW_HEALTH }],
+                EnemyCombatantCards = [new CombatantCard { CombatantType = CombatantType.WOLF, StatCard = new StatCard { Attack = 3, Health = 10, Speed = 9 }, IsFriendly = true, TargetingType = TargetingType.LOW_HEALTH }]
             };
         }
 

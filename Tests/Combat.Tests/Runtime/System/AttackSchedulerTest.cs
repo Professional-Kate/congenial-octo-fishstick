@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Assertion;
+using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Exceptions;
@@ -24,6 +25,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         
         private CombatantEntity _combatantEntity;
         private StatCard _attackerStats;
+        private CombatantCard _attackerCard;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -36,7 +38,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _attackScheduler = new AttackScheduler(_combatQueueMock.Object, new NumberAssertion(), _combatantRepositoryMock.Object, new FoundAssertion());
 
             _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
-            _combatantEntity = new CombatantEntity(_repositoryAsserter, _attackerStats) { IsFriendly = true, CombatantID = 0 };
+            _attackerCard = new CombatantCard { StatCard = _attackerStats, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN };
+            
+            _combatantEntity = new CombatantEntity(_repositoryAsserter, _attackerCard) { CombatantID = 0 };
         }
 
         [SetUp]
@@ -114,7 +118,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_EnqueueInitial_ZeroSpeed_Throws()
         {
-            CombatantEntity zeroSpeedEntity = new(_repositoryAsserter, _attackerStats with { Speed = 0 }) { IsFriendly = true, CombatantID = 0 };
+            CombatantEntity zeroSpeedEntity = new(_repositoryAsserter, _attackerCard with { StatCard = _attackerStats with { Speed = 0 } }) { CombatantID = 0 };
             SetupRepositoryGetAll(zeroSpeedEntity);
             
             Assert.Throws<NumberZeroException>(() => _attackScheduler.EnqueueInitial(1d));

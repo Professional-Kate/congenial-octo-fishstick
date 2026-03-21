@@ -29,9 +29,8 @@ namespace IdelPog.Combat.Runtime.System
                 byte nextCombatantID = _combatantRepository.NextCombatantID;
                 _uniqueAssertion.AssertUnique(nextCombatantID, _combatantRepository.Contains(nextCombatantID));
                 
-                CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard.StatCard)
+                CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard)
                 {
-                    IsFriendly = combatantCard.IsFriendly, 
                     CombatantID = nextCombatantID
                 };
 

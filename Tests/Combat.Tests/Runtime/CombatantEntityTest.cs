@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Contracts;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Core.Repository.Asserter;
@@ -11,6 +12,8 @@ namespace IdelPog.Combat.Tests.Runtime
     {
         private CombatantEntity _combatantEntity;
         private RepositoryAsserter _repositoryAsserter;
+        
+        private CombatantCard _combatantCard;
         private StatCard _statCard;
 
         [OneTimeSetUp]
@@ -19,12 +22,13 @@ namespace IdelPog.Combat.Tests.Runtime
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             
             _statCard = new StatCard { Health = 10, Attack = 5, Speed = 4 };
+            _combatantCard = new CombatantCard { StatCard = _statCard, IsFriendly = true, TargetingType = TargetingType.LOW_HEALTH, CombatantType = CombatantType.GOBLIN };
         }
 
         [SetUp]
         public void Setup()
         { 
-            _combatantEntity = new CombatantEntity(_repositoryAsserter, _statCard) { IsFriendly = true, CombatantID = 0 };
+            _combatantEntity = new CombatantEntity(_repositoryAsserter, _combatantCard) { CombatantID = 0 };
         }
 
         private void UpdateCombatantStats(StatCard statCard)

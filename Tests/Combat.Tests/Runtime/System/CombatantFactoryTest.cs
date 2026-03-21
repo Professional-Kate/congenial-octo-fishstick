@@ -26,7 +26,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _combatService = new CombatantFactory(_combatantRepositoryMock.Object, new CollectionAssertion(), new UniqueAssertion(), new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
 
-            _wolfCard = new CombatantCard { CombatantType = CombatantType.WOLF, StatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 }, IsFriendly = true };
+            _wolfCard = new CombatantCard { CombatantType = CombatantType.WOLF, StatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 }, IsFriendly = true, TargetingType = TargetingType.HIGH_ATTACK };
         }
 
         [SetUp]
@@ -96,7 +96,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupContains(1);
             SetupNextCombatantIDSequence();
             
-            CombatantCard humanCard = new() { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Health = 10, Attack = 3, Speed = 3 }, IsFriendly = false };
+            CombatantCard humanCard = new() { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Health = 10, Attack = 3, Speed = 3 }, IsFriendly = false, TargetingType = TargetingType.LOW_HEALTH };
             _combatService.SpawnCombatants([_wolfCard, humanCard]);
             
             VerifyRepositoryAdd(_wolfCard.StatCard, true);
