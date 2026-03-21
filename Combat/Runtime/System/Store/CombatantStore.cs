@@ -3,10 +3,10 @@ using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Filter.Interface;
-using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
 
-namespace IdelPog.Combat.Runtime.System
+namespace IdelPog.Combat.Runtime.System.Store
 {
     public sealed class CombatantStore : ICombatantStore
     {

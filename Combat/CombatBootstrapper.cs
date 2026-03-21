@@ -7,6 +7,8 @@ using IdelPog.Combat.Runtime.Filter;
 using IdelPog.Combat.Runtime.Filter.Interface;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Store;
+using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Core.Repository.Asserter;
