@@ -1,49 +1,50 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Runtime.System
 {
     public sealed class TargetFinder : ITargetFinder
     {
-        private readonly ICombatantFilters _combatantFilters;
-        private readonly ICombatantStore _combatantStore;
-        private readonly Random _random;
+        private readonly ICombatantStore _friendlyCombatantStore;
+        private readonly ICombatantStore _enemyCombatantStore;
+        private readonly ICombatantRepository _combatantRepository;
+        private readonly IObjectNullAssertion _objectNullAssertion;
 
-        public TargetFinder(ICombatantFilters combatantFilters, Random random, ICombatantStore combatantStore)
+        public TargetFinder(ICombatantStore friendlyCombatantStore, ICombatantStore enemyCombatantStore, ICombatantRepository combatantRepository, IObjectNullAssertion objectNullAssertion)
         {
-            _combatantFilters = combatantFilters;
-            _random = random;
-            _combatantStore = combatantStore;
+            _friendlyCombatantStore = friendlyCombatantStore;
+            _enemyCombatantStore = enemyCombatantStore;
+            _combatantRepository = combatantRepository;
+            _objectNullAssertion = objectNullAssertion;
         }
 
         public CombatantEntity FindBestTarget(CombatantEntity attackingEntity)
         {
-            CombatantStatsComponent stats = attackingEntity.GetComponent<CombatantStatsComponent>();
-            
-            if (attackingEntity.IsFriendly)
-            {
-                return EnumerateCombatants(stats.StatCard, _combatantFilters.GetEnemies());
-            }
-
-            return EnumerateCombatants(stats.StatCard, _combatantFilters.GetFriendlies());
+            return DetermineTarget(attackingEntity.IsFriendly ? _enemyCombatantStore : _friendlyCombatantStore, attackingEntity);
         }
 
-        private CombatantEntity EnumerateCombatants(StatCard attackerStats, IEnumerable<CombatantEntity> combatants)
+        private CombatantEntity DetermineTarget(ICombatantStore combatantSelector, CombatantEntity attackingEntity)
         {
-            CombatantEntity[] combatantEntities = combatants.ToArray();
-            foreach (CombatantEntity combatantEntity in combatantEntities)
-            { 
-                StatCard enemyStats = combatantEntity.GetComponent<CombatantStatsComponent>().StatCard;
-
-                if (attackerStats.Attack >= enemyStats.Health)
-                {
-                    return combatantEntity;
-                }
+            TargetingTypeComponent targetingTypeComponent = attackingEntity.GetComponent<TargetingTypeComponent>();
+            CombatantEntity target;
+                
+            switch (targetingTypeComponent.TargetingType)
+            {
+                case TargetingType.LOW_HEALTH:
+                    target = _combatantRepository.Get(combatantSelector.LowestHealthCombatant.CombatantID);
+                    break;
+                case TargetingType.HIGH_ATTACK:
+                    target = _combatantRepository.Get(combatantSelector.HighestAttackCombatant.CombatantID);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(attackingEntity));
             }
-            
-            int index = _random.Next(0, combatantEntities.Length);
-            return combatantEntities[index];
+
+            _objectNullAssertion.AssertNotNull(target, nameof(target));
+
+            return target;
         }
     }
 }

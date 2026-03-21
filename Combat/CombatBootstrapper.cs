@@ -29,9 +29,10 @@ namespace IdelPog.Combat
 
             ICombatantSelector lowHealthSelector = new LowestHealthSelector(collectionAssertion);
             ICombatantSelector highestAttackSelector = new HighestAttackSelector(collectionAssertion);
-            ICombatantStore combatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
+            ICombatantStore friendlyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
+            ICombatantStore enemyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
             CombatantRepository combatantRepository = new(foundAssertion);
-            ITargetFinder targetFinder = new TargetFinder(combatantRepository, new Random(), combatantStore);
+            ITargetFinder targetFinder = new TargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantRepository, objectNullAssertion);
             CombatQueue combatQueue = new();
             IDamageSystem damageSystem = new DamageSystem(combatantRepository, foundAssertion, numberAssertion, targetFinder);
             

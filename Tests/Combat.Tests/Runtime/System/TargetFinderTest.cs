@@ -13,68 +13,136 @@ namespace IdelPog.Combat.Tests.Runtime.System
     public sealed class TargetFinderTest
     {
         private TargetFinder _targetFinder;
-        private Mock<ICombatantFilters> _combatantFiltersMock;
-        private Mock<ICombatantStore> _combatantStoreMock;
+        private Mock<ICombatantStore> _friendlyCombatantStoreMock;
+        private Mock<ICombatantStore> _enemyCombatantStoreMock;
+        private Mock<ICombatantRepository> _combatantRepositoryMock;
         private RepositoryAsserter _repositoryAsserter;
 
+        private StatCard _friendlyStats;
+        private CombatantCard _friendlyCard;
         private CombatantEntity _friendlyEntity;
+        
+        private StatCard _enemyStats;
+        private CombatantCard _enemyCard;
         private CombatantEntity _enemyEntity;
 
-        private StatCard _friendlyStats;
-        private StatCard _enemyStats;
-        private CombatantCard _friendlyCard;
-        private CombatantCard _enemyCard;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _combatantFiltersMock = new Mock<ICombatantFilters>();
-            _combatantStoreMock = new Mock<ICombatantStore>();
+            _friendlyCombatantStoreMock = new Mock<ICombatantStore>();
+            _enemyCombatantStoreMock = new Mock<ICombatantStore>();
+            _combatantRepositoryMock =  new Mock<ICombatantRepository>();
             
-            _targetFinder = new TargetFinder(_combatantFiltersMock.Object, new Random(1),  _combatantStoreMock.Object);
+            _targetFinder = new TargetFinder(_friendlyCombatantStoreMock.Object, _enemyCombatantStoreMock.Object, _combatantRepositoryMock.Object, new ObjectNullAssertion());
 
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
 
-            _friendlyStats = new StatCard { Health = 10, Attack = 5, Speed = 10 };
+            _friendlyStats = new StatCard { Health = 25, Attack = 10, Speed = 10 };
             _friendlyCard = new CombatantCard { StatCard = _friendlyStats, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = true, CombatantType = CombatantType.BEAR };
-            
-            _enemyStats = new StatCard { Health = 10, Attack = 5, Speed = 10 };
-            _enemyCard = new CombatantCard { StatCard = _enemyStats, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = false, CombatantType = CombatantType.GOBLIN };
-            
             _friendlyEntity = new CombatantEntity(_repositoryAsserter, _friendlyCard) { CombatantID = 0 };
+            
+            _enemyStats = new StatCard { Health = 15, Attack = 15, Speed = 10 };
+            _enemyCard = new CombatantCard { StatCard = _enemyStats, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = false, CombatantType = CombatantType.HUMAN };
             _enemyEntity = new CombatantEntity(_repositoryAsserter, _enemyCard) { CombatantID = 1 };
         }
 
-        private void SetupReturnEnemies(params CombatantEntity[] enemies)
+        [SetUp]
+        public void Setup()
         {
-            _combatantFiltersMock.Setup(library => library.GetEnemies()).Returns(enemies).Verifiable();
+            _friendlyCombatantStoreMock.Reset();
+            _enemyCombatantStoreMock.Reset();
+            _combatantRepositoryMock.Reset();
+        }
+
+        private void SetupRepositoryGet(CombatantEntity combatantEntity)
+        {
+            _combatantRepositoryMock.Setup(library => library.Get(combatantEntity.CombatantID)).Returns(combatantEntity).Verifiable();
+        }
+
+        private static void SetupLowestHealthStore(Mock<ICombatantStore> combatantStoreMock, LowestHealthCombatant lowestHealthCombatant)
+        { 
+            combatantStoreMock.Setup(library => library.LowestHealthCombatant).Returns(lowestHealthCombatant).Verifiable();
         }
         
-        private void SetupReturnFriendlies(params CombatantEntity[] friends)
+        private static void SetupHighestAttackStore(Mock<ICombatantStore> combatantStoreMock, HighestAttackCombatant highestAttackCombatant)
+        { 
+            combatantStoreMock.Setup(library => library.HighestAttackCombatant).Returns(highestAttackCombatant).Verifiable();
+        }
+
+        private static void AssertLowestHealthCombatant(Mock<ICombatantStore> combatantStoreMock, Times times)
+        { 
+            combatantStoreMock.Verify(library => library.LowestHealthCombatant, times);
+        }
+        
+        private static void AssertHighestAttackCombatant(Mock<ICombatantStore> combatantStoreMock, Times times)
+        { 
+            combatantStoreMock.Verify(library => library.HighestAttackCombatant, times);
+        }
+        
+        private void VerifyCombatStores()
         {
-            _combatantFiltersMock.Setup(library => library.GetFriendlies()).Returns(friends).Verifiable();
+            _friendlyCombatantStoreMock.Verify();
+            _friendlyCombatantStoreMock.VerifyNoOtherCalls();
+            _enemyCombatantStoreMock.Verify();
+            _enemyCombatantStoreMock.VerifyNoOtherCalls();
+        }
+
+        private static void VerifyCombatantEntity(CombatantEntity expectedEntity, CombatantEntity actualEntity)
+        { 
+            Assert.That(actualEntity.CombatantID, Is.EqualTo(expectedEntity.CombatantID));
         }
 
         [Test]
-        public void Positive_FindBestTarget_FriendlyAttack_ReturnsOnlyTarget()
+        public void Positive_FindBestTarget_FriendlyCombatant_UsesEnemyCombatantStore()
         {
-            SetupReturnEnemies(_enemyEntity);
+            SetupRepositoryGet(_enemyEntity);
+            SetupLowestHealthStore(_enemyCombatantStoreMock, new LowestHealthCombatant { CombatantID = _enemyEntity.CombatantID, Health = _enemyStats.Health });
             
-            CombatantEntity target = _targetFinder.FindBestTarget(_friendlyEntity);
-            
-            Assert.That(target, Is.EqualTo(_enemyEntity));
+            CombatantEntity combatantEntity = _targetFinder.FindBestTarget(_friendlyEntity);
+
+            AssertLowestHealthCombatant(_enemyCombatantStoreMock, Times.Once());
+            AssertLowestHealthCombatant(_friendlyCombatantStoreMock, Times.Never());
+
+            VerifyCombatantEntity(_enemyEntity, combatantEntity);
+            VerifyCombatStores();
         }
 
         [Test]
-        public void Positive_FindBestTarget_FriendlyAttack_ReturnsKillableTarget()
+        public void Positive_FindBestTarget_EnemyCombatant_UsesFriendlyCombatantStore()
         {
-            CombatantEntity lowHealthEnemy = new(_repositoryAsserter, _enemyCard with { StatCard = _enemyStats with { Health = 5 }}) { CombatantID = 10 };
+            SetupRepositoryGet(_friendlyEntity);
+            SetupHighestAttackStore(_friendlyCombatantStoreMock, new HighestAttackCombatant { CombatantID = _friendlyEntity.CombatantID, Attack = _friendlyStats.Attack });
             
-            SetupReturnEnemies(_enemyEntity, lowHealthEnemy);
+            CombatantEntity combatantEntity = _targetFinder.FindBestTarget(_enemyEntity);
+
+            AssertHighestAttackCombatant(_friendlyCombatantStoreMock, Times.Once());
+            AssertHighestAttackCombatant(_enemyCombatantStoreMock, Times.Never());
+
+            VerifyCombatantEntity(_friendlyEntity, combatantEntity);
+            VerifyCombatStores();
+        }
+
+        [Test]
+        public void Negative_FindBestTarget_StoresReturnNull_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => _targetFinder.FindBestTarget(_friendlyEntity));
+            Assert.Throws<ArgumentNullException>(() => _targetFinder.FindBestTarget(_enemyEntity));
             
-            CombatantEntity target = _targetFinder.FindBestTarget(_friendlyEntity);
+            AssertLowestHealthCombatant(_enemyCombatantStoreMock, Times.Once());
+            AssertHighestAttackCombatant(_enemyCombatantStoreMock, Times.Never());
+            AssertLowestHealthCombatant(_friendlyCombatantStoreMock, Times.Never());
+            AssertHighestAttackCombatant(_friendlyCombatantStoreMock, Times.Once());
+            VerifyCombatStores();
+        }
+        
+        [Test]
+        public void Negative_FindBestTarget_TargetingType_OutOfRange_Throws()
+        {
+            CombatantCard badTargetingTypeCard = new() { StatCard = _friendlyStats, TargetingType = (TargetingType) 90, IsFriendly = true, CombatantType = CombatantType.BEAR };
+            CombatantEntity badEntity = new(_repositoryAsserter, badTargetingTypeCard) { CombatantID = 2 };
             
-            Assert.That(target, Is.EqualTo(lowHealthEnemy));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _targetFinder.FindBestTarget(badEntity));
         }
     }
 }
