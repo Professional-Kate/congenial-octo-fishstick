@@ -13,26 +13,32 @@ namespace IdelPog.Combat.Runtime.Filter
             _collectionAssertion = collectionAssertion;
         }
 
-        public byte GetEntity(CombatantEntity[] combatants)
+        public CombatantEntity GetEntity(IEnumerable<CombatantEntity> combatants)
         {
-            _collectionAssertion.AssertHasElements(combatants);
+            CombatantEntity[] combatantEntities = combatants.ToArray();
+            _collectionAssertion.AssertHasElements(combatantEntities);
             
             uint highestAttack = uint.MinValue;
-            byte combatantID = 0;
+            CombatantEntity highestAttackEntity = combatantEntities.First();
             
-            foreach (CombatantEntity combatantEntity in combatants)
+            foreach (CombatantEntity combatantEntity in combatantEntities)
             {
                 CombatantStatsComponent combatantStatsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
+                if (combatantStatsComponent.StatCard.Health == 0)
+                {
+                    continue;
+                }
+
                 if (combatantStatsComponent.StatCard.Attack <= highestAttack)
                 {
                     continue;
                 }
 
                 highestAttack = combatantStatsComponent.StatCard.Attack;
-                combatantID = combatantEntity.CombatantID;
+                highestAttackEntity = combatantEntity;
             }
             
-            return combatantID;
+            return highestAttackEntity;
         }
     }
 }

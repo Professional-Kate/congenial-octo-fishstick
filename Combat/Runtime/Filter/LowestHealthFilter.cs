@@ -13,16 +13,23 @@ namespace IdelPog.Combat.Runtime.Filter
             _collectionAssertion = collectionAssertion;
         }
 
-        public byte GetEntity(CombatantEntity[] combatants)
+        public CombatantEntity GetEntity(IEnumerable<CombatantEntity> combatants)
         {
-            _collectionAssertion.AssertHasElements(combatants);
+            CombatantEntity[] combatantEntities = combatants.ToArray();
+            _collectionAssertion.AssertHasElements(combatantEntities);
             
             uint lowestHealth = uint.MaxValue;
-            byte combatantID = 0;
+            CombatantEntity highestAttackEntity = combatantEntities.First();
             
-            foreach (CombatantEntity combatantEntity in combatants)
+            
+            foreach (CombatantEntity combatantEntity in combatantEntities)
             {
                 CombatantStatsComponent combatantStatsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
+                if (combatantStatsComponent.StatCard.Health == 0)
+                {
+                    continue;
+                }
+                
                 if (combatantStatsComponent.StatCard.Health >= lowestHealth)
                 {
                     continue;
@@ -30,14 +37,14 @@ namespace IdelPog.Combat.Runtime.Filter
 
                 if (combatantStatsComponent.StatCard.Health == 1)
                 {
-                    return combatantEntity.CombatantID;
+                    return combatantEntity;
                 }
 
                 lowestHealth = combatantStatsComponent.StatCard.Health;
-                combatantID = combatantEntity.CombatantID;
+                highestAttackEntity =  combatantEntity;
             }
             
-            return combatantID;
+            return highestAttackEntity;
         }
     }
 }

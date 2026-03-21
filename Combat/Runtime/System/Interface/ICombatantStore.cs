@@ -8,8 +8,10 @@ namespace IdelPog.Combat.Runtime.System.Interface
         public LowestHealthCombatant LowestHealthCombatant { get; }
         public HighestAttackCombatant HighestAttackCombatant { get; }
 
+        public void RegisterInitial(IEnumerable<CombatantEntity> combatants);
+        
         public void RegisterCombatantChange(byte combatantID, StatCard statCard);
 
-        public void RegisterCombatantDeath(byte combatantID);
+        public void RegisterCombatantDeath(byte combatantID, IEnumerable<CombatantEntity> combatants);
     }
 }

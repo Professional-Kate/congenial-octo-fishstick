@@ -29,9 +29,9 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         [Test]
         public void Positive_GetEntity_FindsHighestAttackEntity()
         {
-            byte combatantID = _highestAttackFilter.GetEntity([_lowAttackEntity, _lowAttackEntity, _highAttackEntity, _lowAttackEntity]);
+            CombatantEntity combatant = _highestAttackFilter.GetEntity([_lowAttackEntity, _lowAttackEntity, _highAttackEntity, _lowAttackEntity]);
             
-            Assert.That(combatantID, Is.EqualTo(_highAttackEntity.CombatantID));
+            Assert.That(combatant, Is.EqualTo(_highAttackEntity));
         }
         
         [Test]
@@ -39,9 +39,9 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         {
             CombatantEntity maxAttack = new(_repositoryAsserter, new StatCard { Attack = uint.MaxValue, Health = 1, Speed = 5 }) { IsFriendly = true, CombatantID = 25 };
             
-            byte combatantID = _highestAttackFilter.GetEntity([_highAttackEntity, maxAttack, _highAttackEntity, _lowAttackEntity]);
+            CombatantEntity combatantID = _highestAttackFilter.GetEntity([_highAttackEntity, maxAttack, _highAttackEntity, _lowAttackEntity]);
             
-            Assert.That(combatantID, Is.EqualTo(maxAttack.CombatantID));
+            Assert.That(combatantID, Is.EqualTo(maxAttack));
         }
 
         [Test]

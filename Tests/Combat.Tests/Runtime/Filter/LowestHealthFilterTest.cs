@@ -29,9 +29,9 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         [Test]
         public void Positive_GetEntity_FindsLowestHealthEntity()
         {
-            byte combatantID = _lowestHealthFilter.GetEntity([_highHealthEntity, _lowHealthEntity, _highHealthEntity, _highHealthEntity]);
+            CombatantEntity combatant = _lowestHealthFilter.GetEntity([_highHealthEntity, _lowHealthEntity, _highHealthEntity, _highHealthEntity]);
             
-            Assert.That(combatantID, Is.EqualTo(_lowHealthEntity.CombatantID));
+            Assert.That(combatant, Is.EqualTo(_lowHealthEntity));
         }
 
         [Test]
@@ -39,9 +39,9 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         {
             CombatantEntity oneHealth = new(_repositoryAsserter, new StatCard { Attack = 5, Health = 1, Speed = 5 }) { IsFriendly = true, CombatantID = 12 };
             
-            byte combatantID = _lowestHealthFilter.GetEntity([_lowHealthEntity, oneHealth, _lowHealthEntity, _highHealthEntity]);
+            CombatantEntity combatant = _lowestHealthFilter.GetEntity([_lowHealthEntity, oneHealth, _lowHealthEntity, _highHealthEntity]);
             
-            Assert.That(combatantID, Is.EqualTo(oneHealth.CombatantID));
+            Assert.That(combatant, Is.EqualTo(oneHealth));
         }
 
         [Test]
