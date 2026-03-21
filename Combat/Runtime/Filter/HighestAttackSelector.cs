@@ -4,11 +4,11 @@ using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Runtime.Filter
 {
-    public sealed class LowestHealthFilter : ICombatantFilter
+    public sealed class HighestAttackSelector : ICombatantSelector
     {
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public LowestHealthFilter(ICollectionAssertion collectionAssertion)
+        public HighestAttackSelector(ICollectionAssertion collectionAssertion)
         {
             _collectionAssertion = collectionAssertion;
         }
@@ -18,9 +18,8 @@ namespace IdelPog.Combat.Runtime.Filter
             CombatantEntity[] combatantEntities = combatants.ToArray();
             _collectionAssertion.AssertHasElements(combatantEntities);
             
-            uint lowestHealth = uint.MaxValue;
+            uint highestAttack = uint.MinValue;
             CombatantEntity highestAttackEntity = combatantEntities.First();
-            
             
             foreach (CombatantEntity combatantEntity in combatantEntities)
             {
@@ -29,19 +28,14 @@ namespace IdelPog.Combat.Runtime.Filter
                 {
                     continue;
                 }
-                
-                if (combatantStatsComponent.StatCard.Health >= lowestHealth)
+
+                if (combatantStatsComponent.StatCard.Attack <= highestAttack)
                 {
                     continue;
                 }
 
-                if (combatantStatsComponent.StatCard.Health == 1)
-                {
-                    return combatantEntity;
-                }
-
-                lowestHealth = combatantStatsComponent.StatCard.Health;
-                highestAttackEntity =  combatantEntity;
+                highestAttack = combatantStatsComponent.StatCard.Attack;
+                highestAttackEntity = combatantEntity;
             }
             
             return highestAttackEntity;

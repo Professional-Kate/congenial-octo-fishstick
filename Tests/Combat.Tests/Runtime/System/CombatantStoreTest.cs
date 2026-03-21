@@ -18,8 +18,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
     {
         private CombatantStore _combatantStore;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
-        private Mock<ICombatantFilter> _lowestHealthFilterMock;
-        private Mock<ICombatantFilter> _highestAttackFilterMock;
+        private Mock<ICombatantSelector> _lowestHealthFilterMock;
+        private Mock<ICombatantSelector> _highestAttackFilterMock;
         private RepositoryAsserter _repositoryAsserter;
         
         private CombatantEntity _lowHealthEntity;
@@ -32,8 +32,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
-            _lowestHealthFilterMock = new Mock<ICombatantFilter>();
-            _highestAttackFilterMock = new Mock<ICombatantFilter>();
+            _lowestHealthFilterMock = new Mock<ICombatantSelector>();
+            _highestAttackFilterMock = new Mock<ICombatantSelector>();
         }
 
         [SetUp]

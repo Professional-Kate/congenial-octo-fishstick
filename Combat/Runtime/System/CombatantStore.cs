@@ -13,15 +13,15 @@ namespace IdelPog.Combat.Runtime.System
         public LowestHealthCombatant LowestHealthCombatant { get; private set; }
         public HighestAttackCombatant HighestAttackCombatant { get; private set; }
 
-        private readonly ICombatantFilter _lowestHealthFilter;
-        private readonly ICombatantFilter _highestAttackFilter;
+        private readonly ICombatantSelector _lowestHealthSelector;
+        private readonly ICombatantSelector _highestAttackSelector;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly INumberAssertion _numberAssertion;
         
-        public CombatantStore(ICombatantFilter lowestHealthFilter, ICombatantFilter highestAttackFilter, ICollectionAssertion collectionAssertion, INumberAssertion numberAssertion)
+        public CombatantStore(ICombatantSelector lowestHealthSelector, ICombatantSelector highestAttackSelector, ICollectionAssertion collectionAssertion, INumberAssertion numberAssertion)
         {
-            _lowestHealthFilter = lowestHealthFilter;
-            _highestAttackFilter = highestAttackFilter;
+            _lowestHealthSelector = lowestHealthSelector;
+            _highestAttackSelector = highestAttackSelector;
             _collectionAssertion = collectionAssertion;
             _numberAssertion = numberAssertion;
 
@@ -70,7 +70,7 @@ namespace IdelPog.Combat.Runtime.System
 
         private void RegisterLowestHealthCombatant(IEnumerable<CombatantEntity> combatants)
         {
-            CombatantEntity combatantEntity = _lowestHealthFilter.GetEntity(combatants);
+            CombatantEntity combatantEntity = _lowestHealthSelector.GetEntity(combatants);
             CombatantStatsComponent statsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
             _numberAssertion.AssertNumberNotZero(statsComponent.StatCard.Health, statsComponent.StatCard.ToString());
             
@@ -79,7 +79,7 @@ namespace IdelPog.Combat.Runtime.System
 
         private void RegisterHighestAttackCombatant(IEnumerable<CombatantEntity> combatants)
         {
-            CombatantEntity combatantEntity = _highestAttackFilter.GetEntity(combatants);
+            CombatantEntity combatantEntity = _highestAttackSelector.GetEntity(combatants);
             CombatantStatsComponent statsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
             _numberAssertion.AssertNumberNotZero(statsComponent.StatCard.Health, statsComponent.StatCard.ToString());
             
@@ -89,6 +89,5 @@ namespace IdelPog.Combat.Runtime.System
         private static LowestHealthCombatant ConstructLowestHealthCombatant(byte combatantID, uint health) => new() { CombatantID = combatantID, Health = health };
         
         private static HighestAttackCombatant ConstructHighestAttackCombatant(byte combatantID, uint attack) => new() { CombatantID = combatantID, Attack = attack };
-        
     }
 }

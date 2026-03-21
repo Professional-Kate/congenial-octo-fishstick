@@ -8,9 +8,9 @@ using IdelPog.Core.Validation.Exceptions;
 namespace IdelPog.Combat.Tests.Runtime.Filter
 {
     [TestFixture]
-    public sealed class HighestAttackFilterTest
+    public sealed class HighestAttackSelectorTest
     {
-        private HighestAttackFilter _highestAttackFilter;
+        private HighestAttackSelector _highestAttackSelector;
         private RepositoryAsserter _repositoryAsserter;
         
         private CombatantEntity _highAttackEntity;
@@ -19,7 +19,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _highestAttackFilter = new HighestAttackFilter(new CollectionAssertion());
+            _highestAttackSelector = new HighestAttackSelector(new CollectionAssertion());
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
 
             _highAttackEntity = new CombatantEntity(_repositoryAsserter, new StatCard { Attack = 8, Health = 7, Speed = 5 }) { IsFriendly = true, CombatantID = 12 };
@@ -29,7 +29,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         [Test]
         public void Positive_GetEntity_FindsHighestAttackEntity()
         {
-            CombatantEntity combatant = _highestAttackFilter.GetEntity([_lowAttackEntity, _lowAttackEntity, _highAttackEntity, _lowAttackEntity]);
+            CombatantEntity combatant = _highestAttackSelector.GetEntity([_lowAttackEntity, _lowAttackEntity, _highAttackEntity, _lowAttackEntity]);
             
             Assert.That(combatant, Is.EqualTo(_highAttackEntity));
         }
@@ -39,7 +39,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         {
             CombatantEntity maxAttack = new(_repositoryAsserter, new StatCard { Attack = uint.MaxValue, Health = 1, Speed = 5 }) { IsFriendly = true, CombatantID = 25 };
             
-            CombatantEntity combatantID = _highestAttackFilter.GetEntity([_highAttackEntity, maxAttack, _highAttackEntity, _lowAttackEntity]);
+            CombatantEntity combatantID = _highestAttackSelector.GetEntity([_highAttackEntity, maxAttack, _highAttackEntity, _lowAttackEntity]);
             
             Assert.That(combatantID, Is.EqualTo(maxAttack));
         }
@@ -47,7 +47,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         [Test]
         public void Negative_GetEntity_EmptyCollection_Throws()
         { 
-            Assert.Throws<EmptyCollectionException>(() => _highestAttackFilter.GetEntity([]));
+            Assert.Throws<EmptyCollectionException>(() => _highestAttackSelector.GetEntity([]));
         }
     }
 }
