@@ -2,6 +2,7 @@
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Runtime.System
@@ -12,13 +13,15 @@ namespace IdelPog.Combat.Runtime.System
         private readonly IFoundAssertion _foundAssertion;
         private readonly INumberAssertion _numberAssertion;
         private readonly ITargetFinder _targetFinder;
+        private readonly ICombatantStoreService _combatantStoreService;
 
-        public DamageSystem(ICombatantRepository combatantRepository, IFoundAssertion foundAssertion, INumberAssertion numberAssertion, ITargetFinder targetFinder)
+        public DamageSystem(ICombatantRepository combatantRepository, IFoundAssertion foundAssertion, INumberAssertion numberAssertion, ITargetFinder targetFinder, ICombatantStoreService combatantStoreService)
         {
             _combatantRepository = combatantRepository;
             _foundAssertion = foundAssertion;
             _numberAssertion = numberAssertion;
             _targetFinder = targetFinder;
+            _combatantStoreService = combatantStoreService;
         }
 
         public void ApplyDamage(byte combatantID)
@@ -33,6 +36,10 @@ namespace IdelPog.Combat.Runtime.System
             CombatantEntity targetEntity = _targetFinder.FindBestTarget(attackingEntity);
             StatCard targetStats = targetEntity.GetComponent<CombatantStatsComponent>().StatCard;
             targetEntity.UpdateCombatantStats(targetStats with { Health = targetStats.Health - attackerStats.Attack });
+            
+            // TODO: see if health is zero, if zero murder entity and inform ICombatantStoreService
+            
+            _combatantStoreService.RegisterCombatantChange(targetEntity);
         }
     }
 }

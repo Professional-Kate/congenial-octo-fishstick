@@ -6,6 +6,7 @@ using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -20,6 +21,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private Mock<ICombatantRepository> _repositoryMock;
         private RepositoryAsserter _repositoryAsserter;
         private Mock<ITargetFinder> _targetFinderMock;
+        private Mock<ICombatantStoreService> _combatantStoreServiceMock;
         
         private CombatantEntity _combatantEntity;
         private StatCard _statCard;
@@ -31,8 +33,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             _repositoryMock = new Mock<ICombatantRepository>();
             _targetFinderMock = new Mock<ITargetFinder>();
+            _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
             
-            _damageSystem = new DamageSystem(_repositoryMock.Object, new FoundAssertion(), new NumberAssertion(), _targetFinderMock.Object);
+            _damageSystem = new DamageSystem(_repositoryMock.Object, new FoundAssertion(), new NumberAssertion(), _targetFinderMock.Object, _combatantStoreServiceMock.Object);
 
             _statCard = new StatCard { Health = 10, Attack = 5, Speed = 3 };
             _combatantCard = new CombatantCard { StatCard = _statCard, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN };

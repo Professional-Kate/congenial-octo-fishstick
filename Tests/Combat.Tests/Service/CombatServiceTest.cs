@@ -4,6 +4,7 @@ using IdelPog.Combat.Contracts.Deck;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Core.Repository.Asset;
@@ -21,6 +22,7 @@ namespace IdelPog.Combat.Tests.Service
         private Mock<IAttackScheduler> _attackSchedulerMock;
         private Mock<ICombatQueue> _combatQueueMock;
         private Mock<IAssetRepository<EventType, IEventResolver>> _repositoryMock;
+        private Mock<ICombatantStoreService> _combatantStoreServiceMock;
         
         private BasicEncounterDeck _basicEncounterDeck;
 
@@ -31,8 +33,9 @@ namespace IdelPog.Combat.Tests.Service
             _attackSchedulerMock = new Mock<IAttackScheduler>();
             _combatQueueMock = new Mock<ICombatQueue>();
             _repositoryMock = new Mock<IAssetRepository<EventType, IEventResolver>>();
+            _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
             
-            _combatService = new CombatService(_combatantFactoryMock.Object, _attackSchedulerMock.Object, _combatQueueMock.Object, _repositoryMock.Object, new CollectionAssertion());
+            _combatService = new CombatService(_combatantFactoryMock.Object, _attackSchedulerMock.Object, _combatQueueMock.Object, _repositoryMock.Object, new CollectionAssertion(), _combatantStoreServiceMock.Object);
             _basicEncounterDeck = new BasicEncounterDeck
             {
                 FriendlyCombatantCards = [new CombatantCard { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5}, IsFriendly = false, TargetingType = TargetingType.LOW_HEALTH }],
