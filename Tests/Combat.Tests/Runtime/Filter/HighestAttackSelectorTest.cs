@@ -23,8 +23,8 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
             _highestAttackSelector = new HighestAttackSelector(new CollectionAssertion());
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
 
-            _highAttackEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 8, Health = 7, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 12 };
-            _lowAttackEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 2, Health = 6, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 27 };
+            _highAttackEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 8, Health = 7, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 12, IsAlive = true };
+            _lowAttackEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 2, Health = 6, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 27, IsAlive = true };
         }
         
         [Test]
@@ -38,7 +38,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         [Test]
         public void Positive_GetEntity_MaxAttack_ReturnsExpected()
         {
-            CombatantEntity maxAttack = new(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = uint.MaxValue, Health = 1, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 25 };
+            CombatantEntity maxAttack = new(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = uint.MaxValue, Health = 1, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 25, IsAlive = true };
             
             CombatantEntity combatantID = _highestAttackSelector.GetEntity([_highAttackEntity, maxAttack, _highAttackEntity, _lowAttackEntity]);
             

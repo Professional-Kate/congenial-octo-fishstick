@@ -46,10 +46,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _combatantStore = new CombatantStore(_lowestHealthFilterMock.Object, _highestAttackFilterMock.Object, new CollectionAssertion(), new NumberAssertion());
             
-            _highHealthEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 6, Health = 10, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 17 };
-            _lowHealthEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 7, Health = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 15 };
-            _highAttackEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 10, Health = 7, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 12 };
-            _lowAttackEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 5, Health = 6, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 27 };
+            _highHealthEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 6, Health = 10, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 17, IsAlive = true };
+            _lowHealthEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 7, Health = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 15, IsAlive = true };
+            _highAttackEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 10, Health = 7, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 12, IsAlive = true };
+            _lowAttackEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 5, Health = 6, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 27, IsAlive = true };
         }
 
         private static StatCard GetStatCard(CombatantEntity combatantEntity) => combatantEntity.GetComponent<CombatantStatsComponent>().StatCard;
@@ -126,7 +126,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_RegisterInitial_ZeroHealthFromFilter_Throws()
         { 
-            CombatantEntity zeroHealthEntity = new(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Health = 0, Attack = 100, Speed = 20 }, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 52 };
+            CombatantEntity zeroHealthEntity = new(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Health = 0, Attack = 100, Speed = 20 }, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 52, IsAlive = true };
             SetupHighestAttackFilter(zeroHealthEntity, 5);
             SetupLowestHealthFilter(zeroHealthEntity, 5);
             SetupRepositoryGet(zeroHealthEntity, zeroHealthEntity.CombatantID);
@@ -205,7 +205,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_RegisterCombatantDeath_ZeroHealthFromFilter_Throws()
         { 
-            CombatantEntity zeroHealthEntity = new(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Health = 0, Attack = 100, Speed = 20 }, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 52 };
+            CombatantEntity zeroHealthEntity = new(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Health = 0, Attack = 100, Speed = 20 }, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 52, IsAlive = true };
             SetupHighestAttackFilter(_highAttackEntity,4);
             SetupLowestHealthFilter(_lowHealthEntity, 4);
             SetupRepositoryGet(zeroHealthEntity, zeroHealthEntity.CombatantID);

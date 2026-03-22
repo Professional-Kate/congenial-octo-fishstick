@@ -8,6 +8,7 @@ namespace IdelPog.Combat.Runtime
     public sealed record CombatantEntity : Entity
     {
         public required byte CombatantID { get; init; }
+        public required bool IsAlive { get; init; }
         public readonly bool IsFriendly;
 
         public CombatantEntity(IRepositoryAsserter repositoryAsserter, CombatantCard combatantCard) 

@@ -41,11 +41,11 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
             _friendlyStats = new StatCard { Health = 25, Attack = 10, Speed = 10 };
             _friendlyCard = new CombatantCard { StatCard = _friendlyStats, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = true, CombatantType = CombatantType.BEAR };
-            _friendlyEntity = new CombatantEntity(_repositoryAsserter, _friendlyCard) { CombatantID = 0 };
+            _friendlyEntity = new CombatantEntity(_repositoryAsserter, _friendlyCard) { CombatantID = 1, IsAlive = true };
             
             _enemyStats = new StatCard { Health = 15, Attack = 15, Speed = 10 };
             _enemyCard = new CombatantCard { StatCard = _enemyStats, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = false, CombatantType = CombatantType.HUMAN };
-            _enemyEntity = new CombatantEntity(_repositoryAsserter, _enemyCard) { CombatantID = 1 };
+            _enemyEntity = new CombatantEntity(_repositoryAsserter, _enemyCard) { CombatantID = 2, IsAlive = true };
         }
 
         [SetUp]
@@ -141,7 +141,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Negative_FindBestTarget_TargetingType_OutOfRange_Throws()
         {
             CombatantCard badTargetingTypeCard = new() { StatCard = _friendlyStats, TargetingType = (TargetingType) 90, IsFriendly = true, CombatantType = CombatantType.BEAR };
-            CombatantEntity badEntity = new(_repositoryAsserter, badTargetingTypeCard) { CombatantID = 2 };
+            CombatantEntity badEntity = new(_repositoryAsserter, badTargetingTypeCard) { CombatantID = 3, IsAlive = true };
             
             Assert.Throws<ArgumentOutOfRangeException>(() => _targetFinder.FindBestTarget(badEntity));
         }

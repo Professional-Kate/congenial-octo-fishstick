@@ -40,7 +40,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
             _attackerCard = new CombatantCard { StatCard = _attackerStats, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN };
             
-            _combatantEntity = new CombatantEntity(_repositoryAsserter, _attackerCard) { CombatantID = 0 };
+            _combatantEntity = new CombatantEntity(_repositoryAsserter, _attackerCard) { CombatantID = 0, IsAlive = true };
         }
 
         [SetUp]
@@ -118,7 +118,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_EnqueueInitial_ZeroSpeed_Throws()
         {
-            CombatantEntity zeroSpeedEntity = new(_repositoryAsserter, _attackerCard with { StatCard = _attackerStats with { Speed = 0 } }) { CombatantID = 0 };
+            CombatantEntity zeroSpeedEntity = new(_repositoryAsserter, _attackerCard with { StatCard = _attackerStats with { Speed = 0 } }) { CombatantID = 0, IsAlive = true };
             SetupRepositoryGetAll(zeroSpeedEntity);
             
             Assert.Throws<NumberZeroException>(() => _attackScheduler.EnqueueInitial(1d));

@@ -24,8 +24,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _wolfStatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 };
             _wolfCard = new CombatantCard { StatCard = _wolfStatCard, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = false,  CombatantType = CombatantType.WOLF };
             
-            _enemyWolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard) {  CombatantID = 0 };
-            _friendlyWolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard with { IsFriendly = true }) {  CombatantID = 1 };
+            _enemyWolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard) {  CombatantID = 0, IsAlive = true };
+            _friendlyWolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard with { IsFriendly = true }) {  CombatantID = 1, IsAlive = true };
         }
 
         [SetUp]
@@ -171,6 +171,16 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             Assert.That(combatantEntities, Has.Length.EqualTo(0));
         }
+
+        [Test]
+        public void Positive_GetFriendlies_NoAliveEntities_ReturnsEmptyArray()
+        {
+            _combatantRepository.Add(_friendlyWolfEntity with { IsAlive = false });
+            
+            CombatantEntity[] combatantEntities = _combatantRepository.GetFriendlies().ToArray();
+         
+            Assert.That(combatantEntities, Has.Length.EqualTo(0));
+        }
         
         [Test]
         public void Positive_GetEnemies_ReturnsAllFriendlies()
@@ -191,6 +201,16 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             CombatantEntity[] combatantEntities = _combatantRepository.GetEnemies().ToArray();
             
+            Assert.That(combatantEntities, Has.Length.EqualTo(0));
+        }
+        
+        [Test]
+        public void Positive_GetEnemies_NoAliveEntities_ReturnsEmptyArray()
+        {
+            _combatantRepository.Add(_enemyWolfEntity with { IsAlive = false });
+            
+            CombatantEntity[] combatantEntities = _combatantRepository.GetEnemies().ToArray();
+         
             Assert.That(combatantEntities, Has.Length.EqualTo(0));
         }
     }

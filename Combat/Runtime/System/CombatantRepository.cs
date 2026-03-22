@@ -59,6 +59,11 @@ namespace IdelPog.Combat.Runtime.System
             List<CombatantEntity> combatantEntities = [];
             foreach (CombatantEntity combatantEntity in _combatantRepository.Values)
             {
+                if (combatantEntity.IsAlive == false)
+                {
+                    continue;
+                }
+                
                 if (combatantEntity.IsFriendly == isFriendly)
                 {
                     combatantEntities.Add(combatantEntity);
