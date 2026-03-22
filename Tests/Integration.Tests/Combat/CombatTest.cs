@@ -2,6 +2,7 @@
 using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Deck;
+using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Service.Interface;
 
 namespace IdelPog.Integration.Tests.Combat
@@ -50,7 +51,9 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_FriendlyVictory()
         { 
-            _combatService.RunEncounter(_basicEncounterDeck);
+            EncounterResponse encounterResponse = _combatService.RunEncounter(_basicEncounterDeck);
+            
+            System.Console.WriteLine(encounterResponse);
         }
     }
 }

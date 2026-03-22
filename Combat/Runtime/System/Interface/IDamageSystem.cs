@@ -2,6 +2,6 @@
 {
     public interface IDamageSystem
     {
-        public void ApplyDamage(byte combatantID);
+        public void ApplyDamage(byte attackingCombatantID);
     }
 }

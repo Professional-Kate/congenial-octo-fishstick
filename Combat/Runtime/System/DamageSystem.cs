@@ -10,25 +10,27 @@ namespace IdelPog.Combat.Runtime.System
     public sealed class DamageSystem : IDamageSystem
     {
         private readonly ICombatantRepository _combatantRepository;
+        private readonly ITargetFinder _targetFinder;
+        private readonly ICombatStateService _combatStateService;
+        private readonly ICombatantStoreService _combatantStoreService;
         private readonly IFoundAssertion _foundAssertion;
         private readonly INumberAssertion _numberAssertion;
-        private readonly ITargetFinder _targetFinder;
-        private readonly ICombatantStoreService _combatantStoreService;
 
-        public DamageSystem(ICombatantRepository combatantRepository, IFoundAssertion foundAssertion, INumberAssertion numberAssertion, ITargetFinder targetFinder, ICombatantStoreService combatantStoreService)
+        public DamageSystem(ICombatantRepository combatantRepository, ITargetFinder targetFinder, ICombatStateService combatStateService, ICombatantStoreService combatantStoreService, IFoundAssertion foundAssertion, INumberAssertion numberAssertion)
         {
             _combatantRepository = combatantRepository;
+            _targetFinder = targetFinder;
+            _combatStateService = combatStateService;
+            _combatantStoreService = combatantStoreService;
             _foundAssertion = foundAssertion;
             _numberAssertion = numberAssertion;
-            _targetFinder = targetFinder;
-            _combatantStoreService = combatantStoreService;
         }
 
-        public void ApplyDamage(byte combatantID)
+        public void ApplyDamage(byte attackingCombatantID)
         {
-            _foundAssertion.AssertFound(combatantID, _combatantRepository.Contains(combatantID));
+            _foundAssertion.AssertFound(attackingCombatantID, _combatantRepository.Contains(attackingCombatantID));
             
-            CombatantEntity attackingEntity = _combatantRepository.Get(combatantID);
+            CombatantEntity attackingEntity = _combatantRepository.Get(attackingCombatantID);
             StatCard attackerStats = attackingEntity.GetComponent<CombatantStatsComponent>().StatCard;
             
             _numberAssertion.AssertNumberNotZero(attackerStats.Attack, attackerStats.ToString());
@@ -36,18 +38,34 @@ namespace IdelPog.Combat.Runtime.System
             CombatantEntity targetEntity = _targetFinder.FindBestTarget(attackingEntity);
             StatCard targetStats = targetEntity.GetComponent<CombatantStatsComponent>().StatCard;
 
-
-            uint newHealth = targetStats.Health - attackerStats.Attack;
+            uint newHealth = CalculateNewHealth(targetStats.Health, attackerStats.Attack);
             targetEntity.UpdateCombatantStats(targetStats with { Health = newHealth });
-
+            
             if (newHealth == 0)
             {
                 targetEntity.UpdateLifeStatus(false);
+                
+                _combatStateService.Evaluate();
+                if (_combatStateService.IsCombatOver)
+                {
+                    return;
+                }
+                
                 _combatantStoreService.RegisterCombatantDeath(targetEntity);
                 return;
             }
             
             _combatantStoreService.RegisterCombatantChange(targetEntity);
+        }
+
+        private static uint CalculateNewHealth(uint defenderHealth, uint attackerAttack)
+        {
+            if (defenderHealth <= attackerAttack)
+            {
+                return 0;
+            }
+
+            return defenderHealth - attackerAttack;
         }
     }
 }

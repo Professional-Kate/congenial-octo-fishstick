@@ -14,47 +14,43 @@ namespace IdelPog.Combat.Service
     public sealed class CombatService : ICombatService
     {
         private readonly ICombatantFactory _combatantFactory;
+        private readonly ICombatantStoreService _combatantStoreService;
         private readonly IAttackScheduler _attackScheduler;
         private readonly ICombatQueue _combatQueue;
         private readonly IAssetRepository<EventType, IEventResolver> _resolverRepository;
-        private readonly ICombatantStoreService _combatantStoreService;
+        private readonly ICombatStateService _combatStateService;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public CombatService(ICombatantFactory combatantFactory, IAttackScheduler attackScheduler, ICombatQueue combatQueue, IAssetRepository<EventType, IEventResolver> resolverRepository, ICollectionAssertion collectionAssertion, ICombatantStoreService combatantStoreService)
+        public CombatService(ICombatantFactory combatantFactory, ICombatantStoreService combatantStoreService, IAttackScheduler attackScheduler, ICombatQueue combatQueue, IAssetRepository<EventType, IEventResolver> resolverRepository, ICombatStateService combatStateService, ICollectionAssertion collectionAssertion)
         {
             _combatantFactory = combatantFactory;
+            _combatantStoreService = combatantStoreService;
             _attackScheduler = attackScheduler;
             _combatQueue = combatQueue;
             _resolverRepository = resolverRepository;
+            _combatStateService = combatStateService;
             _collectionAssertion = collectionAssertion;
-            _combatantStoreService = combatantStoreService;
         }
 
         public EncounterResponse RunEncounter(BasicEncounterDeck basicEncounterDeck)
         {
             RegisterCombatants(basicEncounterDeck);
 
-            while (true)
+            while (_combatStateService.IsCombatOver == false)
             { 
                 ICombatEvent combatEvent = _combatQueue.Dequeue();
                 double currentTick = combatEvent.Tick;
 
-                if (_resolverRepository.Contains(combatEvent.EventType))
-                {
-                    IEventResolver resolver = _resolverRepository.Get(combatEvent.EventType);
-                    resolver.ResolveEvent(currentTick, combatEvent.AttackerID);
-                }
+                IEventResolver resolver = _resolverRepository.Get(combatEvent.EventType);
+                resolver.ResolveEvent(currentTick, combatEvent.AttackerID);
                 
-                // TODO: utility class that decides when combat is over, loop on that.
-                // TODO: That class will be reported changes by each Resolver that affects an Entity.
-                
-                break;
-            }
+                _combatStateService.Evaluate();
+            } 
 
             return new EncounterResponse
             {
                 BasicEncounterDeck = basicEncounterDeck,
-                FriendlyWin = false 
+                FriendlyWin = _combatStateService.FriendlyVictory 
             };
         }
 

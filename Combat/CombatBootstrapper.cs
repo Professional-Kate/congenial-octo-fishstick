@@ -41,13 +41,14 @@ namespace IdelPog.Combat
             IAttackScheduler attackScheduler = new AttackScheduler(combatQueue, numberAssertion, combatantRepository, foundAssertion);
             IAssetRepository<EventType, IEventResolver> resolverRepository = new AssetRepository<EventType, IEventResolver>(repositoryAsserter);
             ICombatantStoreService combatantStoreService = new CombatantStoreService(friendlyCombatantStore, enemyCombatantStore, combatantRepository, collectionAssertion);
-            IDamageSystem damageSystem = new DamageSystem(combatantRepository, foundAssertion, numberAssertion, targetFinder, combatantStoreService);
-
+            ICombatStateService combatStateService = new CombatStateService(combatantRepository);
+            
             // TODO: move this out eventually 
+            IDamageSystem damageSystem = new DamageSystem(combatantRepository, targetFinder, combatStateService, combatantStoreService, foundAssertion, numberAssertion);
             AttackEventResolver attackEventResolver = new(damageSystem, attackScheduler);
             resolverRepository.Add(EventType.BASIC_ATTACK, attackEventResolver);
             
-            CombatService combatService = new(combatantFactory, attackScheduler, combatQueue, resolverRepository, collectionAssertion, combatantStoreService);
+            CombatService combatService = new(combatantFactory, combatantStoreService, attackScheduler, combatQueue, resolverRepository, combatStateService, collectionAssertion);
 
             return combatService;
         }

@@ -19,9 +19,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
     {
         private DamageSystem _damageSystem;
         private Mock<ICombatantRepository> _repositoryMock;
-        private RepositoryAsserter _repositoryAsserter;
         private Mock<ITargetFinder> _targetFinderMock;
+        private Mock<ICombatStateService> _combatantStateServiceMock;
         private Mock<ICombatantStoreService> _combatantStoreServiceMock;
+        private RepositoryAsserter _repositoryAsserter;
         
         private CombatantEntity _combatantEntity;
         private StatCard _statCard;
@@ -33,20 +34,23 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             _repositoryMock = new Mock<ICombatantRepository>();
             _targetFinderMock = new Mock<ITargetFinder>();
+            _combatantStateServiceMock = new Mock<ICombatStateService>();
             _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
             
-            _damageSystem = new DamageSystem(_repositoryMock.Object, new FoundAssertion(), new NumberAssertion(), _targetFinderMock.Object, _combatantStoreServiceMock.Object);
+            _damageSystem = new DamageSystem(_repositoryMock.Object, _targetFinderMock.Object, _combatantStateServiceMock.Object, _combatantStoreServiceMock.Object, new FoundAssertion(), new NumberAssertion());
 
-            _statCard = new StatCard { Health = 10, Attack = 5, Speed = 3 };
+            _statCard = new StatCard { Health = 11, Attack = 5, Speed = 3 };
             _combatantCard = new CombatantCard { StatCard = _statCard, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN };
         }
 
         [SetUp]
-        public void SetUp()
+        public void Setup()
         { 
-            _combatantEntity = new CombatantEntity(_repositoryAsserter, _combatantCard) { CombatantID = 0 };
+            _combatantEntity = new CombatantEntity(_repositoryAsserter, _combatantCard) { CombatantID = 1 };
             _repositoryMock.Reset();
             _targetFinderMock.Reset();
+            _combatantStateServiceMock.Reset();
+            _combatantStoreServiceMock.Reset();
         }
 
         private void SetupTargetFinder(CombatantEntity combatantEntity)
@@ -66,8 +70,23 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
         private void SetupRepository(CombatantEntity combatantEntity)
         {
-            _repositoryMock.Setup(library => library.Contains(0)).Returns(true).Verifiable();
-            _repositoryMock.Setup(library => library.Get(0)).Returns(combatantEntity).Verifiable();
+            _repositoryMock.Setup(library => library.Contains(combatantEntity.CombatantID)).Returns(true).Verifiable();
+            _repositoryMock.Setup(library => library.Get(combatantEntity.CombatantID)).Returns(combatantEntity).Verifiable();
+        }
+
+        private void VerifyStoreRegisterCombatantChange(CombatantEntity combatantEntity, Times times)
+        {
+            _combatantStoreServiceMock.Verify(library => library.RegisterCombatantChange(combatantEntity), times);
+        }
+
+        private void VerifyStateServiceEvaluate()
+        {
+            _combatantStateServiceMock.Verify(library => library.Evaluate(), Times.Once);
+        }
+        
+        private void VerifyStateServiceIsCombatOver()
+        {
+            _combatantStateServiceMock.Verify(library => library.IsCombatOver, Times.Once);
         }
 
         private void VerifyRepository()
@@ -82,18 +101,33 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _targetFinderMock.VerifyNoOtherCalls();
         }
 
+        private void VerifyStateService()
+        {
+            _combatantStateServiceMock.Verify();
+            _combatantStateServiceMock.VerifyNoOtherCalls();
+        }
+
+        private void VerifyCombatantStoreService()
+        {
+            _combatantStoreServiceMock.Verify();
+            _combatantStoreServiceMock.VerifyNoOtherCalls();
+        }
+
         [Test]
         public void Positive_ApplyDamage_RemovesHealthFromTarget()
         {
             SetupTargetFinder(_combatantEntity);
             SetupRepository(_combatantEntity);
             
-            _damageSystem.ApplyDamage(0);
+            _damageSystem.ApplyDamage(_combatantEntity.CombatantID);
             
-            VerifyComponent(_statCard with { Health = 5 }, GetComponent());
+            VerifyComponent(_statCard with { Health = 6 }, GetComponent());
 
+            VerifyStoreRegisterCombatantChange(_combatantEntity, Times.Once());
             VerifyRepository();
             VerifyTargetFinder();
+            VerifyStateService();
+            VerifyCombatantStoreService();
         }
 
         [Test]
@@ -102,22 +136,51 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupTargetFinder(_combatantEntity);
             SetupRepository(_combatantEntity);
             
-            _damageSystem.ApplyDamage(0);
-            VerifyComponent(_statCard with { Health = 5 }, GetComponent());
-
-            _damageSystem.ApplyDamage(0);
-            VerifyComponent(_statCard with { Health = 0 }, GetComponent());
+            _damageSystem.ApplyDamage(_combatantEntity.CombatantID);
+            VerifyComponent(_statCard with { Health = 6 }, GetComponent());
             
+            _damageSystem.ApplyDamage(_combatantEntity.CombatantID);
+            VerifyComponent(_statCard with { Health = 1 }, GetComponent());
+
+            VerifyStoreRegisterCombatantChange(_combatantEntity, Times.Exactly(2));
             VerifyRepository();
             VerifyTargetFinder();
+            VerifyStateService();
+            VerifyCombatantStoreService();
+        }
+
+        [Test]
+        public void Positive_ApplyDamage_CausesDeath_SignalsDeath_EndsCombat()
+        {
+            SetupTargetFinder(_combatantEntity);
+            SetupRepository(_combatantEntity);
+            
+            _damageSystem.ApplyDamage(_combatantEntity.CombatantID);
+            VerifyComponent(_statCard with { Health = 6 }, GetComponent());
+            
+            _damageSystem.ApplyDamage(_combatantEntity.CombatantID);
+            VerifyComponent(_statCard with { Health = 1 }, GetComponent());
+            
+            _damageSystem.ApplyDamage(_combatantEntity.CombatantID);
+            VerifyComponent(_statCard with { Health = 0 }, GetComponent());
+
+            
+            _combatantStoreServiceMock.Verify(library => library.RegisterCombatantDeath(_combatantEntity), Times.Once);
+            VerifyStoreRegisterCombatantChange(_combatantEntity, Times.Exactly(2));
+            VerifyStateServiceEvaluate();
+            VerifyStateServiceIsCombatOver();
+            VerifyRepository();
+            VerifyTargetFinder();
+            VerifyStateService();
+            VerifyCombatantStoreService();
         }
 
         [Test]
         public void Negative_ApplyDamage_InstanceIDUnknown_Throws()
         {
-            Assert.Throws<NotFoundException<byte>>(() => _damageSystem.ApplyDamage(0));
+            Assert.Throws<NotFoundException<byte>>(() => _damageSystem.ApplyDamage(_combatantEntity.CombatantID));
             
-            _repositoryMock.Verify(library => library.Contains(0), Times.Once);
+            _repositoryMock.Verify(library => library.Contains(_combatantEntity.CombatantID), Times.Once);
             VerifyRepository();
             VerifyTargetFinder();
         }
@@ -126,11 +189,11 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Negative_ApplyDamage_ZeroAttack_Throws()
         {
             CombatantCard zeroAttackCard = new() { StatCard = _statCard with { Attack = 0 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN };
-            CombatantEntity zeroAttackEntity = new(_repositoryAsserter, zeroAttackCard) { CombatantID = 0 };
+            CombatantEntity zeroAttackEntity = new(_repositoryAsserter, zeroAttackCard) { CombatantID = 2 };
             
             SetupRepository(zeroAttackEntity);
             
-            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _damageSystem.ApplyDamage(0));
+            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _damageSystem.ApplyDamage(zeroAttackEntity.CombatantID));
             
             Assert.That(exception.Source, Is.EqualTo(zeroAttackCard.StatCard.ToString()));
             

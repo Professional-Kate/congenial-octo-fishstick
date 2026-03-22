@@ -1,0 +1,109 @@
+﻿using IdelPog.Combat.Contracts;
+using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Runtime;
+using IdelPog.Combat.Runtime.System;
+using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Core.Repository.Asserter;
+using IdelPog.Core.Validation.Assertion;
+using Moq;
+
+namespace IdelPog.Combat.Tests.Runtime.System
+{
+    [TestFixture]
+    public sealed class CombatStateServiceTest
+    {
+        private CombatStateService _combatStateService;
+        private Mock<ICombatantFilters> _combatantFiltersMock;
+        private RepositoryAsserter _repositoryAsserter;
+
+        private CombatantEntity _friendlyEntity;
+        private CombatantEntity _enemyEntity;
+
+        [OneTimeSetUp]
+        public void OneTimeSetup()
+        {
+            _combatantFiltersMock = new Mock<ICombatantFilters>();
+            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
+            
+            _combatStateService = new CombatStateService(_combatantFiltersMock.Object);
+            
+            StatCard entityStats = new() { Health = 10, Attack = 10,  Speed = 3 };
+            CombatantCard entityCard = new()
+            {
+                CombatantType = CombatantType.BEAR, StatCard = entityStats, IsFriendly = true, TargetingType = TargetingType.LOW_HEALTH
+            };
+            
+            _friendlyEntity = new CombatantEntity(_repositoryAsserter, entityCard) { CombatantID = 1 };
+            _enemyEntity = new CombatantEntity(_repositoryAsserter, entityCard with { IsFriendly = false, CombatantType = CombatantType.GOBLIN }) { CombatantID = 2 };
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            _combatantFiltersMock.Reset();
+        }
+
+        private void SetupFriendlyCombatantFilter(params CombatantEntity[] combatants)
+        {
+            _combatantFiltersMock.Setup(library => library.GetFriendlies()).Returns(combatants).Verifiable();
+        }
+        
+        private void SetupEnemyCombatantFilter(params CombatantEntity[] combatants)
+        {
+            _combatantFiltersMock.Setup(library => library.GetEnemies()).Returns(combatants).Verifiable();
+        }
+
+        private void VerifyIsCombatOver(bool expected)
+        {
+            Assert.That(_combatStateService.IsCombatOver, Is.EqualTo(expected));
+        }
+
+        private void VerifyFriendlyVictory(bool expected)
+        {
+            Assert.That(_combatStateService.FriendlyVictory, Is.EqualTo(expected));
+        }
+
+        private void VerifyCombatantFilter()
+        {
+            _combatantFiltersMock.Verify();
+            _combatantFiltersMock.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void Positive_Evaluate_CombatantsExist_CombatNotEnded()
+        {
+            SetupFriendlyCombatantFilter(_friendlyEntity);
+            SetupEnemyCombatantFilter(_enemyEntity);
+            
+            Assert.DoesNotThrow(() => _combatStateService.Evaluate());
+
+            VerifyIsCombatOver(false);
+            VerifyCombatantFilter();
+        }
+
+        [Test]
+        public void Positive_Evaluate_NoEnemies_CombatEnded()
+        {
+            SetupEnemyCombatantFilter();
+            
+            Assert.DoesNotThrow(() => _combatStateService.Evaluate());
+
+            VerifyIsCombatOver(true);
+            VerifyFriendlyVictory(true);
+            VerifyCombatantFilter();
+        }
+        
+        [Test]
+        public void Positive_Evaluate_NoFriendly_CombatEnded()
+        {
+            SetupFriendlyCombatantFilter();
+            SetupEnemyCombatantFilter(_enemyEntity);
+            
+            Assert.DoesNotThrow(() => _combatStateService.Evaluate());
+
+            VerifyIsCombatOver(true);
+            VerifyFriendlyVictory(false);
+            VerifyCombatantFilter();
+        }
+    }
+}
