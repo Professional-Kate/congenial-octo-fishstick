@@ -2,7 +2,7 @@
 
 namespace IdelPog.Combat.Runtime.System.Store.Interface
 {
-    public interface ICombatantStore : ICombatantStoreGet
+    public interface ICombatantStore : ICombatantStoreRead
     {
         public void RegisterInitial(IEnumerable<CombatantEntity> combatants);
         

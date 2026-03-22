@@ -8,12 +8,12 @@ namespace IdelPog.Combat.Runtime.System
 {
     public sealed class TargetFinder : ITargetFinder
     {
-        private readonly ICombatantStore _friendlyCombatantStore;
-        private readonly ICombatantStore _enemyCombatantStore;
+        private readonly ICombatantStoreRead _friendlyCombatantStore;
+        private readonly ICombatantStoreRead _enemyCombatantStore;
         private readonly ICombatantRepository _combatantRepository;
         private readonly IObjectNullAssertion _objectNullAssertion;
 
-        public TargetFinder(ICombatantStore friendlyCombatantStore, ICombatantStore enemyCombatantStore, ICombatantRepository combatantRepository, IObjectNullAssertion objectNullAssertion)
+        public TargetFinder(ICombatantStoreRead friendlyCombatantStore, ICombatantStoreRead enemyCombatantStore, ICombatantRepository combatantRepository, IObjectNullAssertion objectNullAssertion)
         {
             _friendlyCombatantStore = friendlyCombatantStore;
             _enemyCombatantStore = enemyCombatantStore;
@@ -26,7 +26,7 @@ namespace IdelPog.Combat.Runtime.System
             return DetermineTarget(attackingEntity.IsFriendly ? _enemyCombatantStore : _friendlyCombatantStore, attackingEntity);
         }
 
-        private CombatantEntity DetermineTarget(ICombatantStore combatantSelector, CombatantEntity attackingEntity)
+        private CombatantEntity DetermineTarget(ICombatantStoreRead combatantStore, CombatantEntity attackingEntity)
         {
             TargetingTypeComponent targetingTypeComponent = attackingEntity.GetComponent<TargetingTypeComponent>();
             CombatantEntity target;
@@ -34,10 +34,10 @@ namespace IdelPog.Combat.Runtime.System
             switch (targetingTypeComponent.TargetingType)
             {
                 case TargetingType.LOW_HEALTH:
-                    target = _combatantRepository.Get(combatantSelector.LowestHealthCombatant.CombatantID);
+                    target = _combatantRepository.Get(combatantStore.LowestHealthCombatant.CombatantID);
                     break;
                 case TargetingType.HIGH_ATTACK:
-                    target = _combatantRepository.Get(combatantSelector.HighestAttackCombatant.CombatantID);
+                    target = _combatantRepository.Get(combatantStore.HighestAttackCombatant.CombatantID);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(attackingEntity));
