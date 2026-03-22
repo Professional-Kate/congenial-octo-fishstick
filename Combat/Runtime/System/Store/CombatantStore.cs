@@ -25,7 +25,7 @@ namespace IdelPog.Combat.Runtime.System.Store
             _collectionAssertion = collectionAssertion;
             _numberAssertion = numberAssertion;
 
-            // initial values. Setting uint's to opposite means first RegisterCombatantChange() will trigger an update
+            // initial values. Setting uint's to opposite means first RegisterCombatantChange() will trigger an update even without RegisterInitial()
             LowestHealthCombatant = new LowestHealthCombatant { CombatantID = 0, Health = uint.MaxValue };
             HighestAttackCombatant = new HighestAttackCombatant { CombatantID = 0, Attack = uint.MinValue };
         }
