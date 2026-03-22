@@ -35,9 +35,17 @@ namespace IdelPog.Combat.Runtime.System
             
             CombatantEntity targetEntity = _targetFinder.FindBestTarget(attackingEntity);
             StatCard targetStats = targetEntity.GetComponent<CombatantStatsComponent>().StatCard;
-            targetEntity.UpdateCombatantStats(targetStats with { Health = targetStats.Health - attackerStats.Attack });
-            
-            // TODO: see if health is zero, if zero murder entity and inform ICombatantStoreService
+
+
+            uint newHealth = targetStats.Health - attackerStats.Attack;
+            targetEntity.UpdateCombatantStats(targetStats with { Health = newHealth });
+
+            if (newHealth == 0)
+            {
+                targetEntity.UpdateLifeStatus(false);
+                _combatantStoreService.RegisterCombatantDeath(targetEntity);
+                return;
+            }
             
             _combatantStoreService.RegisterCombatantChange(targetEntity);
         }

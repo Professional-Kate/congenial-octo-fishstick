@@ -31,8 +31,7 @@ namespace IdelPog.Combat.Runtime.System
                 
                 CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard)
                 {
-                    CombatantID = nextCombatantID,
-                    IsAlive = true
+                    CombatantID = nextCombatantID
                 };
 
                 _combatantRepository.Add(combatantEntity);

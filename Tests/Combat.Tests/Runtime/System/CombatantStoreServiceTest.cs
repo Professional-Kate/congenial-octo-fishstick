@@ -40,7 +40,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
                     CombatantType = CombatantType.HUMAN, 
                     TargetingType = TargetingType.HIGH_ATTACK, 
                     IsFriendly = true, 
-                    StatCard = new StatCard { Health = 1, Attack = 2, Speed = 3 } }) { CombatantID = 1, IsAlive = true };
+                    StatCard = new StatCard { Health = 1, Attack = 2, Speed = 3 } }) { CombatantID = 1 };
             
             _enemyCombatant = new CombatantEntity(
                 _repositoryAsserter, 
@@ -48,7 +48,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
                     CombatantType = CombatantType.BEAR, 
                     TargetingType = TargetingType.LOW_HEALTH, 
                     IsFriendly = false, 
-                    StatCard = new StatCard { Health = 3, Attack = 1, Speed = 2 } }) { CombatantID = 2, IsAlive = true };
+                    StatCard = new StatCard { Health = 3, Attack = 1, Speed = 2 } }) { CombatantID = 2 };
         }
 
         [SetUp]

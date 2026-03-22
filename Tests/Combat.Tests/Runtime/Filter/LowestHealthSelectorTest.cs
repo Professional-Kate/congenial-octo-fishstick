@@ -23,8 +23,8 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
             _lowestHealthSelector = new LowestHealthSelector(new CollectionAssertion());
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             
-            _highHealthEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 1, IsAlive = true };
-            _lowHealthEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 4, Health = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 15, IsAlive = true };
+            _highHealthEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 1 };
+            _lowHealthEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 4, Health = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 15 };
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         [Test]
         public void Positive_GetEntity_OneHP_EarlyReturn()
         {
-            CombatantEntity oneHealth = new(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 4, Health = 1, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 12, IsAlive = true };
+            CombatantEntity oneHealth = new(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 4, Health = 1, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN }) { CombatantID = 12 };
             
             CombatantEntity combatant = _lowestHealthSelector.GetEntity([_lowHealthEntity, oneHealth, _lowHealthEntity, _highHealthEntity]);
             

@@ -44,7 +44,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void SetUp()
         { 
-            _combatantEntity = new CombatantEntity(_repositoryAsserter, _combatantCard) { CombatantID = 0, IsAlive = true };
+            _combatantEntity = new CombatantEntity(_repositoryAsserter, _combatantCard) { CombatantID = 0 };
             _repositoryMock.Reset();
             _targetFinderMock.Reset();
         }
@@ -126,7 +126,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Negative_ApplyDamage_ZeroAttack_Throws()
         {
             CombatantCard zeroAttackCard = new() { StatCard = _statCard with { Attack = 0 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN };
-            CombatantEntity zeroAttackEntity = new(_repositoryAsserter, zeroAttackCard) { CombatantID = 0, IsAlive = true };
+            CombatantEntity zeroAttackEntity = new(_repositoryAsserter, zeroAttackCard) { CombatantID = 0 };
             
             SetupRepository(zeroAttackEntity);
             

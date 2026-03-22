@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Runtime.System.Interface;
+﻿using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Runtime.System
@@ -59,7 +60,7 @@ namespace IdelPog.Combat.Runtime.System
             List<CombatantEntity> combatantEntities = [];
             foreach (CombatantEntity combatantEntity in _combatantRepository.Values)
             {
-                if (combatantEntity.IsAlive == false)
+                if (combatantEntity.GetComponent<LifeStatusComponent>().IsAlive == false)
                 {
                     continue;
                 }
