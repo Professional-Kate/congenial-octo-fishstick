@@ -11,22 +11,31 @@ namespace IdelPog.Combat.Runtime
         public readonly bool IsFriendly;
 
         public CombatantEntity(IRepositoryAsserter repositoryAsserter, CombatantCard combatantCard) 
-            : base(repositoryAsserter, new CombatantStatsComponent { StatCard = combatantCard.StatCard }, new TargetingTypeComponent { TargetingType = combatantCard.TargetingType })
+            : base(repositoryAsserter, BuildCombatantStatsComponent(combatantCard.StatCard), new TargetingTypeComponent { TargetingType = combatantCard.TargetingType }, new LifeStatusComponent { IsAlive = true })
         { 
             IsFriendly = combatantCard.IsFriendly;
-            AddComponent(new LifeStatusComponent { IsAlive = true });
         }
 
-        public void UpdateCombatantStats(StatCard statCard)
+        public void UpdateCombatantStats(CombatantStatsComponent combatantStatsComponent)
         { 
             RemoveComponent<CombatantStatsComponent>();
-            AddComponent(new CombatantStatsComponent { StatCard = statCard });
+            AddComponent(combatantStatsComponent);
         }
 
         public void UpdateLifeStatus(bool isAlive)
         {
             RemoveComponent<LifeStatusComponent>();
             AddComponent(new LifeStatusComponent { IsAlive = isAlive });
+        }
+
+        private static CombatantStatsComponent BuildCombatantStatsComponent(StatCard statCardSource)
+        {
+            return new CombatantStatsComponent
+            {
+                Attack = statCardSource.Attack,
+                Health = statCardSource.Health,
+                Speed = statCardSource.Speed
+            };
         }
     }
 }

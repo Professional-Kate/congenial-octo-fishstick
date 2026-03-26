@@ -1,16 +1,15 @@
-﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Runtime.Component;
+﻿using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
 
 namespace IdelPog.Combat.Runtime.System
 {
     public sealed class DamageSystem : IDamageSystem
     {
-        public uint DealDamage(CombatantEntity targetCombatant, StatCard attackerStats)
+        public uint DealDamage(CombatantEntity targetCombatant, uint attack)
         {
-            StatCard targetStats = targetCombatant.GetComponent<CombatantStatsComponent>().StatCard;
+            CombatantStatsComponent targetStats = targetCombatant.GetComponent<CombatantStatsComponent>();
             
-            uint newHealth = CalculateNewHealth(targetStats.Health, attackerStats.Attack);
+            uint newHealth = CalculateNewHealth(targetStats.Health, attack);
             targetCombatant.UpdateCombatantStats(targetStats with { Health = newHealth });
             
             return newHealth;

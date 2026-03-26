@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime;
+using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System;
 
 namespace IdelPog.Combat.Tests.Runtime.System
@@ -10,22 +11,22 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private DamageSystem _damageSystem;
         
         private CombatantEntity _targetEntity;
-        private StatCard _targetEntityStats;
         private StatCard _attackerStats;
+        private CombatantStatsComponent _combatantStatsComponent;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _damageSystem = new DamageSystem();
 
-            _targetEntityStats = new StatCard { Attack = 10, Health = 20, Speed = 5 };
-            _attackerStats = new StatCard { Attack = 5, Health = 10, Speed = 5 };
+            _attackerStats = new StatCard { Attack = 1, Health = 10, Speed = 5 };
         }
 
         [SetUp]
         public void Setup()
         {
-            _targetEntity = CombatantEntityFactory.CreateCombatantEntity(0, _targetEntityStats);
+            _targetEntity = CombatantEntityFactory.CreateCombatantEntity(0);
+            _combatantStatsComponent = _targetEntity.GetComponent<CombatantStatsComponent>();
         }
 
         private static void AssertNewHealth(uint newHealth, uint expectedHealth)
@@ -36,15 +37,15 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_DealDamage_DamagesEntity()
         {
-            uint newHealth = _damageSystem.DealDamage(_targetEntity, _attackerStats);
+            uint newHealth = _damageSystem.DealDamage(_targetEntity, _attackerStats.Attack);
             
-            AssertNewHealth(newHealth,_targetEntityStats.Health - _attackerStats.Attack);
+            AssertNewHealth(newHealth,_combatantStatsComponent.Health - _attackerStats.Attack);
         }
 
         [Test]
         public void Positive_DealDamage_DamagesEntity_MoreAttackThanHealth_ReturnsZero()
         {
-            uint newHealth = _damageSystem.DealDamage(_targetEntity, _attackerStats with { Attack = 200 });
+            uint newHealth = _damageSystem.DealDamage(_targetEntity, 200);
             
             AssertNewHealth(newHealth, 0);
         }

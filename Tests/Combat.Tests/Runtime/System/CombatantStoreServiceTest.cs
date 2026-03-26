@@ -5,7 +5,6 @@ using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store;
 using IdelPog.Combat.Runtime.System.Store.Interface;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -19,7 +18,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private Mock<ICombatantStore> _friendlyCombatantStoreMock;
         private Mock<ICombatantStore> _enemyCombatantStoreMock;
         private Mock<ICombatantFilters> _combatantFiltersMock;
-        private RepositoryAsserter _repositoryAsserter;
         
         private CombatantEntity _friendlyCombatant;
         private CombatantEntity _enemyCombatant;
@@ -30,25 +28,24 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _friendlyCombatantStoreMock = new Mock<ICombatantStore>();
             _enemyCombatantStoreMock = new Mock<ICombatantStore>();
             _combatantFiltersMock = new Mock<ICombatantFilters>();
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(),  new UniqueAssertion());
             
             _combatantStoreService = new CombatantStoreService(_friendlyCombatantStoreMock.Object, _enemyCombatantStoreMock.Object, _combatantFiltersMock.Object, new CollectionAssertion());
 
-            _friendlyCombatant = new CombatantEntity(
-                _repositoryAsserter, 
-                new CombatantCard { 
-                    CombatantType = CombatantType.HUMAN, 
-                    TargetingType = TargetingType.HIGH_ATTACK, 
-                    IsFriendly = true, 
-                    StatCard = new StatCard { Health = 1, Attack = 2, Speed = 3 } }) { CombatantID = 1 };
-            
-            _enemyCombatant = new CombatantEntity(
-                _repositoryAsserter, 
-                new CombatantCard { 
-                    CombatantType = CombatantType.BEAR, 
-                    TargetingType = TargetingType.LOW_HEALTH, 
-                    IsFriendly = false, 
-                    StatCard = new StatCard { Health = 3, Attack = 1, Speed = 2 } }) { CombatantID = 2 };
+            _friendlyCombatant = CombatantEntityFactory.CreateCombatantEntity(1, new CombatantCard
+            {
+                CombatantType = CombatantType.HUMAN,
+                TargetingType = TargetingType.HIGH_ATTACK,
+                IsFriendly = true,
+                StatCard = new StatCard { Health = 1, Attack = 2, Speed = 3 }
+            });
+
+            _enemyCombatant = CombatantEntityFactory.CreateCombatantEntity(2, new CombatantCard
+            {
+                CombatantType = CombatantType.BEAR,
+                TargetingType = TargetingType.LOW_HEALTH,
+                IsFriendly = false,
+                StatCard = new StatCard { Health = 3, Attack = 1, Speed = 2 }
+            });
         }
 
         [SetUp]
@@ -76,7 +73,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
         private static void VerifyCombatantChange(Mock<ICombatantStore> combatantStoreMock, CombatantEntity changedCombatant)
         {
-            combatantStoreMock.Verify(library => library.RegisterCombatantChange(changedCombatant.CombatantID, changedCombatant.GetComponent<CombatantStatsComponent>().StatCard), Times.Once);
+            combatantStoreMock.Verify(library => library.RegisterCombatantChange(changedCombatant.CombatantID, changedCombatant.GetComponent<CombatantStatsComponent>()), Times.Once);
         }
 
         private static void SetupHighestAttackCombatant(Mock<ICombatantStore> combatantStoreMock, HighestAttackCombatant highestAttackCombatant)
@@ -160,8 +157,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_RegisterCombatantChange_FriendlyCombatant_RegistersFriendlyChange()
         {
-            StatCard changedCard = new() { Attack = 10, Health = 20, Speed = 15 };
-            _friendlyCombatant.UpdateCombatantStats(changedCard);
+            CombatantStatsComponent changedStats = new() { Attack = 10, Health = 20, Speed = 15 };
+            _friendlyCombatant.UpdateCombatantStats(changedStats);
             
             Assert.DoesNotThrow(() => _combatantStoreService.RegisterCombatantChange(_friendlyCombatant));
             
@@ -173,8 +170,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_RegisterCombatantChange_EnemyCombatant_RegistersFriendlyChange()
         {
-            StatCard changedCard = new() { Attack = 10, Health = 20, Speed = 15 };
-            _enemyCombatant.UpdateCombatantStats(changedCard);
+            CombatantStatsComponent changedStats = new() { Attack = 10, Health = 20, Speed = 15 };
+            _enemyCombatant.UpdateCombatantStats(changedStats);
             
             Assert.DoesNotThrow(() => _combatantStoreService.RegisterCombatantChange(_enemyCombatant));
             

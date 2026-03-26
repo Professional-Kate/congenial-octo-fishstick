@@ -30,11 +30,11 @@ namespace IdelPog.Combat.Runtime.System.Store
         {
             if (combatantEntity.IsFriendly)
             {
-                _friendlyCombatantStore.RegisterCombatantChange(combatantEntity.CombatantID, combatantEntity.GetComponent<CombatantStatsComponent>().StatCard);
+                _friendlyCombatantStore.RegisterCombatantChange(combatantEntity.CombatantID, combatantEntity.GetComponent<CombatantStatsComponent>());
             }
             else
             {
-                _enemyCombatantStore.RegisterCombatantChange(combatantEntity.CombatantID, combatantEntity.GetComponent<CombatantStatsComponent>().StatCard);
+                _enemyCombatantStore.RegisterCombatantChange(combatantEntity.CombatantID, combatantEntity.GetComponent<CombatantStatsComponent>());
             }
         }
 

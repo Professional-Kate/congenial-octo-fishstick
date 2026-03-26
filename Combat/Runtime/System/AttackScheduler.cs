@@ -43,9 +43,9 @@ namespace IdelPog.Combat.Runtime.System
         {
             CombatantStatsComponent combatantStatsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
             
-            _numberAssertion.AssertNumberNotZero(combatantStatsComponent.StatCard.Speed, combatantStatsComponent.StatCard.ToString());
+            _numberAssertion.AssertNumberNotZero(combatantStatsComponent.Speed, combatantStatsComponent.ToString());
             
-            double interval = 1.0 / combatantStatsComponent.StatCard.Speed;
+            double interval = 1.0 / combatantStatsComponent.Speed;
             double nextTick = tick + interval;
             
             AttackEvent attackEvent = new() { AttackerID = combatantEntity.CombatantID, Tick =  nextTick };

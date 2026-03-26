@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Runtime.Component;
 
 namespace IdelPog.Combat.Runtime.System.Store.Interface
 {
@@ -6,7 +6,7 @@ namespace IdelPog.Combat.Runtime.System.Store.Interface
     {
         public void RegisterInitial(IEnumerable<CombatantEntity> combatants);
         
-        public void RegisterCombatantChange(byte combatantID, StatCard statCard);
+        public void RegisterCombatantChange(byte combatantID, CombatantStatsComponent combatantStatsComponent);
 
         public void RegisterCombatantDeath(byte combatantID, IEnumerable<CombatantEntity> combatants);
     }

@@ -3,6 +3,7 @@ using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Deck;
 using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Service.Interface;
 
 namespace IdelPog.Integration.Tests.Combat
@@ -53,17 +54,17 @@ namespace IdelPog.Integration.Tests.Combat
             string attacker = combatEventLog.AttackerID == 0 ? "Human" : "Goblin";
             string defender = combatEventLog.DefenderID == 0 ? "Human" : "Goblin";
             
-            StatCard attackerStatCard = combatEventLog.AttackerStatCard;
-            StatCard defenderStatCard = combatEventLog.DefenderStatCard;
+            CombatantStatsComponent attackerStats = combatEventLog.AttackerStats;
+            CombatantStatsComponent defenderStats = combatEventLog.DefenderStats;
             
-            System.Console.WriteLine($"-> The {attacker} ({combatEventLog.AttackerID}) attacks the {defender} ({combatEventLog.DefenderID}) for {attackerStatCard.Attack} damage!");
+            System.Console.WriteLine($"-> The {attacker} ({combatEventLog.AttackerID}) attacks the {defender} ({combatEventLog.DefenderID}) for {attackerStats.Attack} damage!");
 
-            if (defenderStatCard.Health == 0)
+            if (defenderStats.Health == 0)
             {
                 System.Console.WriteLine($"--> The {defender} ({combatEventLog.DefenderID}) has died! Killed by the {attacker} ({combatEventLog.AttackerID})!");
                 return;
             }
-            System.Console.WriteLine($"--> The {defender} ({combatEventLog.DefenderID}) has {defenderStatCard.Health} health remaining...");
+            System.Console.WriteLine($"--> The {defender} ({combatEventLog.DefenderID}) has {defenderStats.Health} health remaining...");
         }
 
         [Test]

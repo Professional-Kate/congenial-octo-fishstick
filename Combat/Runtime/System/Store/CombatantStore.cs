@@ -1,6 +1,5 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
 using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Filter.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
@@ -39,17 +38,17 @@ namespace IdelPog.Combat.Runtime.System.Store
             RegisterHighestAttackCombatant(combatantEntities);
         }
 
-        public void RegisterCombatantChange(byte combatantID, StatCard statCard)
+        public void RegisterCombatantChange(byte combatantID, CombatantStatsComponent combatantStatsComponent)
         {
-            _numberAssertion.AssertNumberNotZero(statCard.Health, statCard.ToString());
+            _numberAssertion.AssertNumberNotZero(combatantStatsComponent.Health, combatantStatsComponent.ToString());
             
-            if (statCard.Health < LowestHealthCombatant.Health)
+            if (combatantStatsComponent.Health < LowestHealthCombatant.Health)
             {
-                LowestHealthCombatant = ConstructLowestHealthCombatant(combatantID, statCard.Health);
+                LowestHealthCombatant = ConstructLowestHealthCombatant(combatantID, combatantStatsComponent.Health);
             } 
-            if (statCard.Attack > HighestAttackCombatant.Attack)
+            if (combatantStatsComponent.Attack > HighestAttackCombatant.Attack)
             {
-                HighestAttackCombatant = ConstructHighestAttackCombatant(combatantID, statCard.Attack);
+                HighestAttackCombatant = ConstructHighestAttackCombatant(combatantID, combatantStatsComponent.Attack);
             }
         }
 
@@ -72,18 +71,18 @@ namespace IdelPog.Combat.Runtime.System.Store
         {
             CombatantEntity combatantEntity = _lowestHealthSelector.GetEntity(combatants);
             CombatantStatsComponent statsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
-            _numberAssertion.AssertNumberNotZero(statsComponent.StatCard.Health, statsComponent.StatCard.ToString());
+            _numberAssertion.AssertNumberNotZero(statsComponent.Health, statsComponent.ToString());
             
-            LowestHealthCombatant = ConstructLowestHealthCombatant(combatantEntity.CombatantID, statsComponent.StatCard.Health);
+            LowestHealthCombatant = ConstructLowestHealthCombatant(combatantEntity.CombatantID, statsComponent.Health);
         }
 
         private void RegisterHighestAttackCombatant(IEnumerable<CombatantEntity> combatants)
         {
             CombatantEntity combatantEntity = _highestAttackSelector.GetEntity(combatants);
             CombatantStatsComponent statsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
-            _numberAssertion.AssertNumberNotZero(statsComponent.StatCard.Health, statsComponent.StatCard.ToString());
+            _numberAssertion.AssertNumberNotZero(statsComponent.Health, statsComponent.ToString());
             
-            HighestAttackCombatant = ConstructHighestAttackCombatant(combatantEntity.CombatantID, statsComponent.StatCard.Attack);
+            HighestAttackCombatant = ConstructHighestAttackCombatant(combatantEntity.CombatantID, statsComponent.Attack);
         }
 
         private static LowestHealthCombatant ConstructLowestHealthCombatant(byte combatantID, uint health) => new() { CombatantID = combatantID, Health = health };

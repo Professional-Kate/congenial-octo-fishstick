@@ -15,7 +15,7 @@ namespace IdelPog.Combat.Tests
             CombatantCard combatantCard = new()
             {
                 CombatantType = CombatantType.GOBLIN, IsFriendly = true, TargetingType = TargetingType.HIGH_ATTACK,
-                StatCard = new StatCard { Attack = 4, Health = 1, Speed = 1 }
+                StatCard = new StatCard { Attack = 4, Health = 50, Speed = 1 }
             };
             
             CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard)

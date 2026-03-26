@@ -1,5 +1,4 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
-using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
@@ -39,13 +38,13 @@ namespace IdelPog.Combat.Runtime.System
         {
             CombatantEntity attackingCombatant = GetAttackingEntity(attackingCombatantID);
             
-            StatCard attackerStats = attackingCombatant.GetComponent<CombatantStatsComponent>().StatCard;
+            CombatantStatsComponent attackerStats = attackingCombatant.GetComponent<CombatantStatsComponent>();
             _numberAssertion.AssertNumberNotZero(attackerStats.Attack, attackerStats.ToString());
             
             CombatantEntity targetCombatant = _targetFinder.FindBestTarget(attackingCombatant);
             _combatantAssertion.AssertCombatantAlive(targetCombatant);
 
-            uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats);
+            uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats.Attack);
             _combatLog.Append(targetCombatant, attackingCombatant);
             
             if (newHealth == 0)

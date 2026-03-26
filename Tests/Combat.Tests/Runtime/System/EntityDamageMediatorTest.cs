@@ -2,6 +2,7 @@
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime;
+using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
@@ -24,7 +25,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private Mock<ICombatantStoreService> _combatantStoreServiceMock;
         
         private CombatantEntity _combatantEntity;
-        private StatCard _statCard;
+        private CombatantStatsComponent _combatantStatsComponent;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -37,14 +38,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
             
             _entityDamageMediator = new EntityDamageMediator(_repositoryMock.Object, _targetFinderMock.Object, _damageSystemMock.Object, _combatLogMock.Object, _combatantStateServiceMock.Object, _combatantStoreServiceMock.Object, new FoundAssertion(), new CombatantAssertion(), new NumberAssertion());
-
-            _statCard = new StatCard { Health = 11, Attack = 5, Speed = 3 };
         }
 
         [SetUp]
         public void Setup()
         { 
-            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, _statCard);
+            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1);
+            _combatantStatsComponent = _combatantEntity.GetComponent<CombatantStatsComponent>();
+            
             _repositoryMock.Reset();
             _targetFinderMock.Reset();
             _combatantStateServiceMock.Reset();
@@ -63,9 +64,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _repositoryMock.Setup(library => library.Get(combatantEntity.CombatantID)).Returns(combatantEntity).Verifiable();
         }
 
-        private void SetupDamageSystem(CombatantEntity targetCombatant, StatCard attackerStats, uint newHealth)
+        private void SetupDamageSystem(CombatantEntity targetCombatant, CombatantStatsComponent attackerStats, uint newHealth)
         {
-            _damageSystemMock.Setup(library => library.DealDamage(targetCombatant, attackerStats)).Returns(newHealth).Verifiable();
+            _damageSystemMock.Setup(library => library.DealDamage(targetCombatant, attackerStats.Attack)).Returns(newHealth).Verifiable();
         }
 
         private void SetupIsCombatOver(bool isCombatOver)
@@ -109,7 +110,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_ApplyDamage_RemovesHealthFromTarget()
         {
-            SetupDamageSystem(_combatantEntity, _statCard, 1);
+            SetupDamageSystem(_combatantEntity, _combatantStatsComponent, 1);
             SetupTargetFinder(_combatantEntity);
             SetupRepository(_combatantEntity);
             
@@ -123,7 +124,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Positive_ApplyDamage_CausesDeath_CombatNotOver()
         {
             SetupIsCombatOver(false);
-            SetupDamageSystem(_combatantEntity, _statCard, 0);
+            SetupDamageSystem(_combatantEntity, _combatantStatsComponent, 0);
             SetupTargetFinder(_combatantEntity);
             SetupRepository(_combatantEntity);
             
@@ -139,7 +140,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Positive_ApplyDamage_CausesDeath_CombatIsOver()
         {
             SetupIsCombatOver(true);
-            SetupDamageSystem(_combatantEntity, _statCard, 0);
+            SetupDamageSystem(_combatantEntity, _combatantStatsComponent, 0);
             SetupTargetFinder(_combatantEntity);
             SetupRepository(_combatantEntity);
             
@@ -162,14 +163,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_ApplyDamage_ZeroAttack_Throws()
         {
-            StatCard zeroAttackCard = _statCard with { Attack = 0 };
-            CombatantEntity zeroAttackEntity = CombatantEntityFactory.CreateCombatantEntity(0, zeroAttackCard);
+            StatCard zeroAttackCard = new() { Attack = 0, Health = 10, Speed = 10 };
+            CombatantEntity zeroAttackEntity = CombatantEntityFactory.CreateCombatantEntity(1, zeroAttackCard);
             
             SetupRepository(zeroAttackEntity);
             
             NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _entityDamageMediator.ApplyDamage(zeroAttackEntity.CombatantID));
             
-            Assert.That(exception.Source, Is.EqualTo(zeroAttackCard.ToString()));
+            Assert.That(exception.Source, Is.EqualTo(zeroAttackEntity.GetComponent<CombatantStatsComponent>().ToString()));
             
             VerifyMocks();
         }

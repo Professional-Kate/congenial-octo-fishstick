@@ -14,9 +14,9 @@ namespace IdelPog.Combat.Service
             CombatEventLog combatEventLog = new()
             {
                 AttackerID = attackingCombatant.CombatantID,
-                AttackerStatCard =  attackingCombatant.GetComponent<CombatantStatsComponent>().StatCard,
+                AttackerStats =  attackingCombatant.GetComponent<CombatantStatsComponent>(),
                 DefenderID = defendingCombatant.CombatantID, 
-                DefenderStatCard =  defendingCombatant.GetComponent<CombatantStatsComponent>().StatCard
+                DefenderStats =  defendingCombatant.GetComponent<CombatantStatsComponent>()
             };
             
             _combatEvents.Add(combatEventLog);

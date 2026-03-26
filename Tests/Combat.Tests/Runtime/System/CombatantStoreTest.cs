@@ -46,13 +46,13 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _combatantStore = new CombatantStore(_lowestHealthFilterMock.Object, _highestAttackFilterMock.Object, new CollectionAssertion(), new NumberAssertion());
             
-            _highHealthEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 6, Health = 10, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 17 };
-            _lowHealthEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 7, Health = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 15 };
-            _highAttackEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 10, Health = 7, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 12 };
-            _lowAttackEntity = new CombatantEntity(_repositoryAsserter, new CombatantCard { StatCard = new StatCard { Attack = 5, Health = 6, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN }) { CombatantID = 27 };
+            _highHealthEntity = CombatantEntityFactory.CreateCombatantEntity(17, new CombatantCard { StatCard = new StatCard { Attack = 6, Health = 10, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN });
+            _lowHealthEntity = CombatantEntityFactory.CreateCombatantEntity(15, new CombatantCard { StatCard = new StatCard { Attack = 7, Health = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN });
+            _highAttackEntity = CombatantEntityFactory.CreateCombatantEntity(12, new CombatantCard { StatCard = new StatCard { Attack = 10, Health = 7, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN });
+            _lowAttackEntity = CombatantEntityFactory.CreateCombatantEntity(27, new CombatantCard { StatCard = new StatCard { Attack = 5, Health = 6, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.GOBLIN });
         }
 
-        private static StatCard GetStatCard(CombatantEntity combatantEntity) => combatantEntity.GetComponent<CombatantStatsComponent>().StatCard;
+        private static CombatantStatsComponent GetCombatantStatsComponent(CombatantEntity combatantEntity) => combatantEntity.GetComponent<CombatantStatsComponent>();
 
         private void SetupHighestAttackFilter(CombatantEntity expectedEntity, int expectedLength)
         {
@@ -137,7 +137,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_RegisterCombatantChange_SingleCombatant_RegistersNewCombatant()
         {
-            Assert.DoesNotThrow(() => _combatantStore.RegisterCombatantChange(_lowHealthEntity.CombatantID, GetStatCard(_lowHealthEntity)));
+            Assert.DoesNotThrow(() => _combatantStore.RegisterCombatantChange(_lowHealthEntity.CombatantID, GetCombatantStatsComponent(_lowHealthEntity)));
 
             AssertLowestHealthEntity(_lowHealthEntity);
             AssertHighestAttackEntity(_lowHealthEntity);
@@ -146,10 +146,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_RegisterCombatantChange_MultipleCombatants_RegistersNewCombatants()
         {
-            Assert.DoesNotThrow(() => _combatantStore.RegisterCombatantChange(_highHealthEntity.CombatantID, GetStatCard(_highHealthEntity)));
-            Assert.DoesNotThrow(() => _combatantStore.RegisterCombatantChange(_lowHealthEntity.CombatantID, GetStatCard(_lowHealthEntity)));
-            Assert.DoesNotThrow(() => _combatantStore.RegisterCombatantChange(_highAttackEntity.CombatantID, GetStatCard(_highAttackEntity)));
-            Assert.DoesNotThrow(() => _combatantStore.RegisterCombatantChange(_lowAttackEntity.CombatantID, GetStatCard(_lowAttackEntity)));
+            Assert.DoesNotThrow(() => _combatantStore.RegisterCombatantChange(_highHealthEntity.CombatantID, GetCombatantStatsComponent(_highHealthEntity)));
+            Assert.DoesNotThrow(() => _combatantStore.RegisterCombatantChange(_lowHealthEntity.CombatantID, GetCombatantStatsComponent(_lowHealthEntity)));
+            Assert.DoesNotThrow(() => _combatantStore.RegisterCombatantChange(_highAttackEntity.CombatantID, GetCombatantStatsComponent(_highAttackEntity)));
+            Assert.DoesNotThrow(() => _combatantStore.RegisterCombatantChange(_lowAttackEntity.CombatantID, GetCombatantStatsComponent(_lowAttackEntity)));
             
             AssertLowestHealthEntity(_lowHealthEntity);
             AssertHighestAttackEntity(_highAttackEntity);
@@ -158,7 +158,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_RegisterCombatantChange_ZeroHealth_Throws()
         { 
-            Assert.Throws<NumberZeroException>(() => _combatantStore.RegisterCombatantChange(0, new StatCard { Health = 0, Attack = 5, Speed = 5 }));
+            Assert.Throws<NumberZeroException>(() => _combatantStore.RegisterCombatantChange(0, new CombatantStatsComponent { Health = 0, Attack = 5, Speed = 5 }));
         }
 
         [Test]
