@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Assertion;
+using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime;
 
 namespace IdelPog.Combat.Tests.Assertion
@@ -25,11 +26,13 @@ namespace IdelPog.Combat.Tests.Assertion
         }
         
         [Test]
-        public void Positive_AssertCombatantAlive_CombatantNotAlive_Throws()
+        public void Negative_AssertCombatantAlive_CombatantNotAlive_Throws()
         { 
             _combatant.UpdateLifeStatus(false);
             
-            Assert.Throws<Exception>(() => _combatantAssertion.AssertCombatantAlive(_combatant));
+            CombatantDeadException exception = Assert.Throws<CombatantDeadException>(() => _combatantAssertion.AssertCombatantAlive(_combatant));
+            
+            Assert.That(exception.CombatantID, Is.EqualTo(_combatant.CombatantID));
         }
     }
 }

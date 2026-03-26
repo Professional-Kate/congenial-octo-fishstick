@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
+using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
 
@@ -10,7 +11,7 @@ namespace IdelPog.Combat.Assertion
         {
             if (combatantEntity.GetComponent<LifeStatusComponent>().IsAlive == false)
             {
-                throw new Exception();
+                throw new CombatantDeadException(combatantEntity.CombatantID);
             }
         }
     }

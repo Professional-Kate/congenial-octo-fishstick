@@ -12,15 +12,17 @@ namespace IdelPog.Combat.Runtime.System
     {
         private readonly ICombatantRepository _combatantRepository;
         private readonly ITargetFinder _targetFinder;
-        private readonly ICombatStateService _combatStateService;
-        private readonly ICombatantStoreService _combatantStoreService;
         private readonly IDamageSystem _damageSystem;
         private readonly ICombatLog _combatLog;
+        private readonly ICombatStateService _combatStateService;
+        private readonly ICombatantStoreService _combatantStoreService;
         private readonly IFoundAssertion _foundAssertion;
-        private readonly INumberAssertion _numberAssertion;
         private readonly ICombatantAssertion _combatantAssertion;
+        private readonly INumberAssertion _numberAssertion;
 
-        public EntityDamageMediator(ICombatantRepository combatantRepository, ITargetFinder targetFinder, ICombatStateService combatStateService, ICombatantStoreService combatantStoreService, IFoundAssertion foundAssertion, INumberAssertion numberAssertion, ICombatLog combatLog, ICombatantAssertion combatantAssertion, IDamageSystem damageSystem)
+        public EntityDamageMediator(ICombatantRepository combatantRepository, ITargetFinder targetFinder, IDamageSystem damageSystem, ICombatLog combatLog,
+            ICombatStateService combatStateService, ICombatantStoreService combatantStoreService, IFoundAssertion foundAssertion,
+            ICombatantAssertion combatantAssertion, INumberAssertion numberAssertion)
         {
             _combatantRepository = combatantRepository;
             _targetFinder = targetFinder;
@@ -35,10 +37,7 @@ namespace IdelPog.Combat.Runtime.System
 
         public void ApplyDamage(byte attackingCombatantID)
         {
-            _foundAssertion.AssertFound(attackingCombatantID, _combatantRepository.Contains(attackingCombatantID));
-            
-            CombatantEntity attackingCombatant = _combatantRepository.Get(attackingCombatantID);
-            _combatantAssertion.AssertCombatantAlive(attackingCombatant);
+            CombatantEntity attackingCombatant = GetAttackingEntity(attackingCombatantID);
             
             StatCard attackerStats = attackingCombatant.GetComponent<CombatantStatsComponent>().StatCard;
             _numberAssertion.AssertNumberNotZero(attackerStats.Attack, attackerStats.ToString());
@@ -64,6 +63,16 @@ namespace IdelPog.Combat.Runtime.System
             }
             
             _combatantStoreService.RegisterCombatantChange(targetCombatant);
+        }
+
+        private CombatantEntity GetAttackingEntity(byte combatantID)
+        {
+            _foundAssertion.AssertFound(combatantID, _combatantRepository.Contains(combatantID));
+            
+            CombatantEntity attackingCombatant = _combatantRepository.Get(combatantID);
+            _combatantAssertion.AssertCombatantAlive(attackingCombatant);
+            
+            return attackingCombatant;
         }
     }
 }

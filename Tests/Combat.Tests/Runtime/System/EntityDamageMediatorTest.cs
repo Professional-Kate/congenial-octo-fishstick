@@ -18,10 +18,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private EntityDamageMediator _entityDamageMediator;
         private Mock<ICombatantRepository> _repositoryMock;
         private Mock<ITargetFinder> _targetFinderMock;
+        private Mock<IDamageSystem> _damageSystemMock;
+        private Mock<ICombatLog> _combatLogMock;
         private Mock<ICombatStateService> _combatantStateServiceMock;
         private Mock<ICombatantStoreService> _combatantStoreServiceMock;
-        private Mock<ICombatLog> _combatLogMock;
-        private Mock<IDamageSystem> _damageSystemMock;
         
         private CombatantEntity _combatantEntity;
         private StatCard _statCard;
@@ -31,12 +31,12 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             _repositoryMock = new Mock<ICombatantRepository>();
             _targetFinderMock = new Mock<ITargetFinder>();
+            _damageSystemMock = new Mock<IDamageSystem>();
+            _combatLogMock = new Mock<ICombatLog>();
             _combatantStateServiceMock = new Mock<ICombatStateService>();
             _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
-            _combatLogMock = new Mock<ICombatLog>();
-            _damageSystemMock = new Mock<IDamageSystem>();
             
-            _entityDamageMediator = new EntityDamageMediator(_repositoryMock.Object, _targetFinderMock.Object, _combatantStateServiceMock.Object, _combatantStoreServiceMock.Object, new FoundAssertion(), new NumberAssertion(), _combatLogMock.Object, new CombatantAssertion(), _damageSystemMock.Object);
+            _entityDamageMediator = new EntityDamageMediator(_repositoryMock.Object, _targetFinderMock.Object, _damageSystemMock.Object, _combatLogMock.Object, _combatantStateServiceMock.Object, _combatantStoreServiceMock.Object, new FoundAssertion(), new CombatantAssertion(), new NumberAssertion());
 
             _statCard = new StatCard { Health = 11, Attack = 5, Speed = 3 };
         }
@@ -182,8 +182,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             SetupRepository(deadEntity);
             
-            Assert.Throws<Exception>(() => _entityDamageMediator.ApplyDamage(deadEntity.CombatantID));
+            CombatantDeadException exception = Assert.Throws<CombatantDeadException>(() => _entityDamageMediator.ApplyDamage(deadEntity.CombatantID));
             
+            Assert.That(exception.CombatantID, Is.EqualTo(deadEntity.CombatantID));
             VerifyMocks();
         }
     }

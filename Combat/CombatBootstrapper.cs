@@ -47,7 +47,7 @@ namespace IdelPog.Combat
             IDamageSystem damageSystem = new DamageSystem();
             
             // TODO: move this out eventually 
-            IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(combatantRepository, targetFinder, combatStateService, combatantStoreService, foundAssertion, numberAssertion, combatLog, combatantAssertion, damageSystem);
+            IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(combatantRepository, targetFinder, damageSystem, combatLog, combatStateService, combatantStoreService, foundAssertion, combatantAssertion, numberAssertion);
             AttackEventResolver attackEventResolver = new(entityDamageMediator, attackScheduler, combatantRepository, foundAssertion);
             resolverRepository.Add(EventType.BASIC_ATTACK, attackEventResolver);
             
