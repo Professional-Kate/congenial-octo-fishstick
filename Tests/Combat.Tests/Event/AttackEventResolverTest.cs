@@ -12,7 +12,7 @@ namespace IdelPog.Combat.Tests.Event
     public sealed class AttackEventResolverTest
     {
         private AttackEventResolver _attackEventResolver;
-        private Mock<IEntityDamageSystem> _damageSystemMock;
+        private Mock<IEntityDamageMediator> _damageSystemMock;
         private Mock<IAttackScheduler> _attackSchedulerMock;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
 
@@ -22,7 +22,7 @@ namespace IdelPog.Combat.Tests.Event
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _damageSystemMock = new Mock<IEntityDamageSystem>();
+            _damageSystemMock = new Mock<IEntityDamageMediator>();
             _attackSchedulerMock = new Mock<IAttackScheduler>();
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
             

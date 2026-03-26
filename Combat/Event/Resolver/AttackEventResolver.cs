@@ -7,14 +7,14 @@ namespace IdelPog.Combat.Event.Resolver
 {
     public sealed class AttackEventResolver : IEventResolver
     {
-        private readonly IEntityDamageSystem _entityDamageSystem;
+        private readonly IEntityDamageMediator _entityDamageMediator;
         private readonly IAttackScheduler _attackScheduler;
         private readonly ICombatantRepository _combatantRepository;
         private readonly IFoundAssertion _foundAssertion;
 
-        public AttackEventResolver(IEntityDamageSystem entityDamageSystem, IAttackScheduler attackScheduler, ICombatantRepository combatantRepository, IFoundAssertion foundAssertion)
+        public AttackEventResolver(IEntityDamageMediator entityDamageMediator, IAttackScheduler attackScheduler, ICombatantRepository combatantRepository, IFoundAssertion foundAssertion)
         {
-            _entityDamageSystem = entityDamageSystem;
+            _entityDamageMediator = entityDamageMediator;
             _attackScheduler = attackScheduler;
             _combatantRepository = combatantRepository;
             _foundAssertion = foundAssertion;
@@ -31,7 +31,7 @@ namespace IdelPog.Combat.Event.Resolver
                 return;
             }           
             
-            _entityDamageSystem.ApplyDamage(attackerID);
+            _entityDamageMediator.ApplyDamage(attackerID);
             _attackScheduler.EnqueueAttack(tick, attackerID);
         }
     }
