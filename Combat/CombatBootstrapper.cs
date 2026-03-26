@@ -27,6 +27,7 @@ namespace IdelPog.Combat
             IFoundAssertion foundAssertion = new FoundAssertion();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             INumberAssertion numberAssertion = new NumberAssertion();
+            ICombatantAssertion combatantAssertion = new CombatantAssertion();
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
 
             ICombatantSelector lowHealthSelector = new LowestHealthSelector(collectionAssertion);
@@ -36,6 +37,7 @@ namespace IdelPog.Combat
             CombatantRepository combatantRepository = new(foundAssertion);
             ITargetFinder targetFinder = new TargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantRepository, objectNullAssertion);
             CombatQueue combatQueue = new();
+            ICombatLog combatLog = new CombatLog();
             
             ICombatantFactory combatantFactory = new CombatantFactory(combatantRepository, collectionAssertion, uniqueAssertion, repositoryAsserter);
             IAttackScheduler attackScheduler = new AttackScheduler(combatQueue, numberAssertion, combatantRepository, foundAssertion);
@@ -44,11 +46,11 @@ namespace IdelPog.Combat
             ICombatStateService combatStateService = new CombatStateService(combatantRepository);
             
             // TODO: move this out eventually 
-            IDamageSystem damageSystem = new DamageSystem(combatantRepository, targetFinder, combatStateService, combatantStoreService, foundAssertion, numberAssertion);
-            AttackEventResolver attackEventResolver = new(damageSystem, attackScheduler);
+            IEntityDamageSystem entityDamageSystem = new EntityDamageSystem(combatantRepository, targetFinder, combatStateService, combatantStoreService, foundAssertion, numberAssertion, combatLog, combatantAssertion);
+            AttackEventResolver attackEventResolver = new(entityDamageSystem, attackScheduler, combatantRepository, foundAssertion);
             resolverRepository.Add(EventType.BASIC_ATTACK, attackEventResolver);
             
-            CombatService combatService = new(combatantFactory, combatantStoreService, attackScheduler, combatQueue, resolverRepository, combatStateService, collectionAssertion);
+            CombatService combatService = new(combatantFactory, combatantStoreService, attackScheduler, combatQueue, resolverRepository, combatStateService, collectionAssertion, combatLog);
 
             return combatService;
         }

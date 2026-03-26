@@ -23,15 +23,15 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 CombatantType = CombatantType.HUMAN, 
                 IsFriendly = true, 
-                StatCard = new StatCard { Health = 9, Attack = 5, Speed = 5 },
-                TargetingType = TargetingType.HIGH_ATTACK
+                StatCard = new StatCard { Health = 90, Attack = 5, Speed = 5 },
+                TargetingType = TargetingType.LOW_HEALTH
             };
             
             _goblinCard = new CombatantCard
             {
                 CombatantType = CombatantType.GOBLIN, 
                 IsFriendly = false, 
-                StatCard = new StatCard { Health = 5, Attack = 3, Speed = 10 },
+                StatCard = new StatCard { Health = 9, Attack = 2, Speed = 10 },
                 TargetingType = TargetingType.LOW_HEALTH
             };
             
@@ -48,12 +48,37 @@ namespace IdelPog.Integration.Tests.Combat
             _combatService = CombatBootstrapper.SetupCombat();
         }
 
+        private static void TranslateEventLog(CombatEventLog combatEventLog)
+        {
+            string attacker = combatEventLog.AttackerID == 0 ? "Human" : "Goblin";
+            string defender = combatEventLog.DefenderID == 0 ? "Human" : "Goblin";
+            
+            StatCard attackerStatCard = combatEventLog.AttackerStatCard;
+            StatCard defenderStatCard = combatEventLog.DefenderStatCard;
+            
+            System.Console.WriteLine($"-> The {attacker} ({combatEventLog.AttackerID}) attacks the {defender} ({combatEventLog.DefenderID}) for {attackerStatCard.Attack} damage!");
+
+            if (defenderStatCard.Health == 0)
+            {
+                System.Console.WriteLine($"--> The {defender} ({combatEventLog.DefenderID}) has died! Killed by the {attacker} ({combatEventLog.AttackerID})!");
+                return;
+            }
+            System.Console.WriteLine($"--> The {defender} ({combatEventLog.DefenderID}) has {defenderStatCard.Health} health remaining...");
+        }
+
         [Test]
         public void Positive_SimulateCombat_FriendlyVictory()
         { 
             EncounterResponse encounterResponse = _combatService.RunEncounter(_basicEncounterDeck);
             
-            System.Console.WriteLine(encounterResponse);
+            ICombatLogReader logReader = encounterResponse.CombatLogReader;
+            while (logReader.NextCombatState())
+            {
+                CombatEventLog combatEventLog = logReader.CurrentCombatState;
+                TranslateEventLog(combatEventLog);
+            }
+            
+            logReader.Dispose();
         }
     }
 }

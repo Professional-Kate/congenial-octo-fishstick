@@ -1,6 +1,8 @@
-﻿using IdelPog.Combat.Runtime.System.Interface;
+﻿using IdelPog.Combat.Runtime;
+using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Service.Interface;
 
-namespace IdelPog.Combat.Runtime.System
+namespace IdelPog.Combat.Service
 {
     public sealed class CombatStateService : ICombatStateService
     {
@@ -14,7 +16,7 @@ namespace IdelPog.Combat.Runtime.System
         public bool IsCombatOver { get; private set; }
         public bool FriendlyVictory { get; private set; }
 
-        public void Evaluate()
+        public void Evaluate(CombatantEntity changedCombatant)
         { 
             IsCombatOver = IsCombatResolved();
         }

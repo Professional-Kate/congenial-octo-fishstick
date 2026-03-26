@@ -19,7 +19,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
     {
         private AttackScheduler _attackScheduler;
         private Mock<ICombatQueue> _combatQueueMock;
-        private Mock<IDamageSystem> _damageSystemMock;
+        private Mock<IEntityDamageSystem> _damageSystemMock;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
         private RepositoryAsserter _repositoryAsserter;
         
@@ -31,7 +31,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void OneTimeSetup()
         {
             _combatQueueMock = new Mock<ICombatQueue>();
-            _damageSystemMock = new Mock<IDamageSystem>();
+            _damageSystemMock = new Mock<IEntityDamageSystem>();
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
             _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             

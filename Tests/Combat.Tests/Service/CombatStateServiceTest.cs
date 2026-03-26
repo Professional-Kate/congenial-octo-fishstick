@@ -1,13 +1,13 @@
 ﻿using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime;
-using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Service;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using Moq;
 
-namespace IdelPog.Combat.Tests.Runtime.System
+namespace IdelPog.Combat.Tests.Service
 {
     [TestFixture]
     public sealed class CombatStateServiceTest
@@ -75,7 +75,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupFriendlyCombatantFilter(_friendlyEntity);
             SetupEnemyCombatantFilter(_enemyEntity);
             
-            Assert.DoesNotThrow(() => _combatStateService.Evaluate());
+            Assert.DoesNotThrow(() => _combatStateService.Evaluate(_friendlyEntity));
 
             VerifyIsCombatOver(false);
             VerifyCombatantFilter();
@@ -86,7 +86,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             SetupEnemyCombatantFilter();
             
-            Assert.DoesNotThrow(() => _combatStateService.Evaluate());
+            Assert.DoesNotThrow(() => _combatStateService.Evaluate(_enemyEntity));
 
             VerifyIsCombatOver(true);
             VerifyFriendlyVictory(true);
@@ -99,7 +99,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupFriendlyCombatantFilter();
             SetupEnemyCombatantFilter(_enemyEntity);
             
-            Assert.DoesNotThrow(() => _combatStateService.Evaluate());
+            Assert.DoesNotThrow(() => _combatStateService.Evaluate(_friendlyEntity));
 
             VerifyIsCombatOver(true);
             VerifyFriendlyVictory(false);
