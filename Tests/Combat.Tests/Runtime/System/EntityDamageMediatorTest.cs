@@ -24,8 +24,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private Mock<ICombatantStoreService> _combatantStoreServiceMock;
         private Mock<IDeathSystem> _deathSystemMock;
         
-        private CombatantEntity _combatantEntity;
-        private CombatantStatsComponent _combatantStatsComponent;
+        private CombatantEntity _targetCombatant;
+        private CombatantEntity _attackingCombatant;
+        private CombatantStatsComponent _attackerStatsComponent;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -43,8 +44,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         { 
-            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1);
-            _combatantStatsComponent = _combatantEntity.GetComponent<CombatantStatsComponent>();
+            _targetCombatant = CombatantEntityFactory.CreateCombatantEntity(1);
+
+            _attackingCombatant = CombatantEntityFactory.CreateCombatantEntity(2);
+            _attackerStatsComponent = _attackingCombatant.GetComponent<CombatantStatsComponent>();
             
             _repositoryMock.Reset();
             _targetFinderMock.Reset();
@@ -53,9 +56,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _deathSystemMock.Reset();
         }
 
-        private void SetupTargetFinder(CombatantEntity combatantEntity)
+        private void SetupTargetFinder(CombatantEntity attacker, CombatantEntity target)
         {
-            _targetFinderMock.Setup(library => library.FindBestTarget(combatantEntity)).Returns(combatantEntity).Verifiable();
+            _targetFinderMock.Setup(library => library.FindBestTarget(attacker)).Returns(target).Verifiable();
         }
 
         private void SetupRepository(CombatantEntity combatantEntity)
@@ -95,35 +98,35 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_ApplyDamage_RemovesHealthFromTarget()
         {
-            SetupDamageSystem(_combatantEntity, _combatantStatsComponent, 1);
-            SetupTargetFinder(_combatantEntity);
-            SetupRepository(_combatantEntity);
+            SetupDamageSystem(_targetCombatant, _attackerStatsComponent, 1);
+            SetupTargetFinder(_attackingCombatant, _targetCombatant);
+            SetupRepository(_attackingCombatant);
             
-            _entityDamageMediator.ApplyDamage(_combatantEntity.CombatantID);
+            _entityDamageMediator.ApplyDamage(_attackingCombatant.CombatantID);
             
-            VerifyStoreRegisterCombatantChange(_combatantEntity, Times.Once());
+            VerifyStoreRegisterCombatantChange(_targetCombatant, Times.Once());
             VerifyMocks();
         }
 
         [Test]
         public void Positive_ApplyDamage_CausesDeath()
         {
-            SetupDamageSystem(_combatantEntity, _combatantStatsComponent, 0);
-            SetupTargetFinder(_combatantEntity);
-            SetupRepository(_combatantEntity);
+            SetupDamageSystem(_targetCombatant, _attackerStatsComponent, 0);
+            SetupTargetFinder(_attackingCombatant, _targetCombatant);
+            SetupRepository(_attackingCombatant);
             
-            _entityDamageMediator.ApplyDamage(_combatantEntity.CombatantID);
+            _entityDamageMediator.ApplyDamage(_attackingCombatant.CombatantID);
             
-            _deathSystemMock.Verify(library => library.KillEntity(_combatantEntity), Times.Once);
+            _deathSystemMock.Verify(library => library.KillEntity(_targetCombatant), Times.Once);
             VerifyMocks();
         }
 
         [Test]
         public void Negative_ApplyDamage_InstanceIDUnknown_Throws()
         {
-            Assert.Throws<NotFoundException<byte>>(() => _entityDamageMediator.ApplyDamage(_combatantEntity.CombatantID));
+            Assert.Throws<NotFoundException<byte>>(() => _entityDamageMediator.ApplyDamage(_targetCombatant.CombatantID));
             
-            _repositoryMock.Verify(library => library.Contains(_combatantEntity.CombatantID), Times.Once);
+            _repositoryMock.Verify(library => library.Contains(_targetCombatant.CombatantID), Times.Once);
             VerifyMocks();
         }
 
