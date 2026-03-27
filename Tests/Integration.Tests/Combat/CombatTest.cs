@@ -16,6 +16,7 @@ namespace IdelPog.Integration.Tests.Combat
 
         private CombatantCard _humanCard;
         private CombatantCard _goblinCard;
+        private CombatantCard _bearCard;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -23,23 +24,28 @@ namespace IdelPog.Integration.Tests.Combat
             _humanCard = new CombatantCard
             {
                 CombatantType = CombatantType.HUMAN, 
-                IsFriendly = true, 
                 StatCard = new StatCard { Health = 90, Attack = 5, Speed = 5 },
-                TargetingType = TargetingType.LOW_HEALTH
+                TargetingType = TargetingType.HIGH_ATTACK
             };
             
             _goblinCard = new CombatantCard
             {
                 CombatantType = CombatantType.GOBLIN, 
-                IsFriendly = false, 
-                StatCard = new StatCard { Health = 9, Attack = 2, Speed = 10 },
+                StatCard = new StatCard { Health = 9, Attack = 2, Speed = 11 },
                 TargetingType = TargetingType.LOW_HEALTH
+            };
+
+            _bearCard = new CombatantCard
+            {
+                CombatantType = CombatantType.BEAR,
+                StatCard = new StatCard { Health = 5, Attack = 10, Speed = 3 },
+                TargetingType = TargetingType.HIGH_ATTACK
             };
             
             _basicEncounterDeck = new BasicEncounterDeck
             {
                 FriendlyCombatantCards = [_humanCard],
-                EnemyCombatantCards = [_goblinCard]
+                EnemyCombatantCards = [_goblinCard, _bearCard]
             };
         }
         

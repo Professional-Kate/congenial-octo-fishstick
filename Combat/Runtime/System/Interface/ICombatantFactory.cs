@@ -4,6 +4,6 @@ namespace IdelPog.Combat.Runtime.System.Interface
 {
     public interface ICombatantFactory
     { 
-        public void SpawnCombatants(IReadOnlyList<CombatantCard> combatants);
+        public void SpawnCombatants(IReadOnlyList<CombatantCard> combatants, bool isFriendly);
     }
 }

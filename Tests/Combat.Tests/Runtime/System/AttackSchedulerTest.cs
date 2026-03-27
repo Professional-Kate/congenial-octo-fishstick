@@ -7,7 +7,6 @@ using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service.Interface;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -21,7 +20,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private Mock<ICombatQueue> _combatQueueMock;
         private Mock<IEntityDamageMediator> _damageSystemMock;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
-        private RepositoryAsserter _repositoryAsserter;
         
         private CombatantEntity _combatantEntity;
         private StatCard _attackerStats;
@@ -33,14 +31,12 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatQueueMock = new Mock<ICombatQueue>();
             _damageSystemMock = new Mock<IEntityDamageMediator>();
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             
             _attackScheduler = new AttackScheduler(_combatQueueMock.Object, new NumberAssertion(), _combatantRepositoryMock.Object, new FoundAssertion());
 
             _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
-            _attackerCard = new CombatantCard { StatCard = _attackerStats, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = true, CombatantType = CombatantType.HUMAN };
-            
-            _combatantEntity = new CombatantEntity(_repositoryAsserter, _attackerCard) { CombatantID = 0 };
+            _attackerCard = new CombatantCard { StatCard = _attackerStats, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN };
+            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _attackerCard);
         }
 
         [SetUp]
@@ -118,7 +114,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_EnqueueInitial_ZeroSpeed_Throws()
         {
-            CombatantEntity zeroSpeedEntity = new(_repositoryAsserter, _attackerCard with { StatCard = _attackerStats with { Speed = 0 } }) { CombatantID = 0 };
+            CombatantEntity zeroSpeedEntity = CombatantEntityFactory.CreateCombatantEntity(2, true, _attackerStats with { Speed = 0 });
             SetupRepositoryGetAll(zeroSpeedEntity);
             
             Assert.Throws<NumberZeroException>(() => _attackScheduler.EnqueueInitial(1d));

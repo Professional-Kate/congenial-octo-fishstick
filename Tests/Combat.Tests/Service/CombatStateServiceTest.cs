@@ -3,8 +3,6 @@ using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service;
-using IdelPog.Core.Repository.Asserter;
-using IdelPog.Core.Validation.Assertion;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Service
@@ -14,7 +12,6 @@ namespace IdelPog.Combat.Tests.Service
     {
         private CombatStateService _combatStateService;
         private Mock<ICombatantFilters> _combatantFiltersMock;
-        private RepositoryAsserter _repositoryAsserter;
 
         private CombatantEntity _friendlyEntity;
         private CombatantEntity _enemyEntity;
@@ -23,18 +20,17 @@ namespace IdelPog.Combat.Tests.Service
         public void OneTimeSetup()
         {
             _combatantFiltersMock = new Mock<ICombatantFilters>();
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             
             _combatStateService = new CombatStateService(_combatantFiltersMock.Object);
             
             StatCard entityStats = new() { Health = 10, Attack = 10,  Speed = 3 };
             CombatantCard entityCard = new()
             {
-                CombatantType = CombatantType.BEAR, StatCard = entityStats, IsFriendly = true, TargetingType = TargetingType.LOW_HEALTH
+                CombatantType = CombatantType.BEAR, StatCard = entityStats, TargetingType = TargetingType.LOW_HEALTH
             };
             
-            _friendlyEntity = new CombatantEntity(_repositoryAsserter, entityCard) { CombatantID = 1 };
-            _enemyEntity = new CombatantEntity(_repositoryAsserter, entityCard with { IsFriendly = false, CombatantType = CombatantType.GOBLIN }) { CombatantID = 2 };
+            _friendlyEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, entityCard);
+            _enemyEntity = CombatantEntityFactory.CreateCombatantEntity(2, false, entityCard with { CombatantType = CombatantType.GOBLIN });
         }
 
         [SetUp]

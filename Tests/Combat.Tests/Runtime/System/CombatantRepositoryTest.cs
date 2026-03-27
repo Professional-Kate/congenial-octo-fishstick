@@ -2,7 +2,6 @@
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 
@@ -22,15 +21,15 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void OneTimeSetup()
         {
             _wolfStatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 };
-            _wolfCard = new CombatantCard { StatCard = _wolfStatCard, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = false,  CombatantType = CombatantType.WOLF };
+            _wolfCard = new CombatantCard { StatCard = _wolfStatCard, TargetingType = TargetingType.LOW_HEALTH,  CombatantType = CombatantType.WOLF };
         }
 
         [SetUp]
         public void SetUp()
         {
             _combatantRepository = new CombatantRepository(new FoundAssertion());
-            _enemyWolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard) {  CombatantID = 0 };
-            _friendlyWolfEntity = new CombatantEntity(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()), _wolfCard with { IsFriendly = true }) {  CombatantID = 1 };
+            _enemyWolfEntity = CombatantEntityFactory.CreateCombatantEntity(1, false, _wolfCard);
+            _friendlyWolfEntity = CombatantEntityFactory.CreateCombatantEntity(2, true, _wolfCard);
         }
 
         private void VerifyContains(byte id, bool contains)

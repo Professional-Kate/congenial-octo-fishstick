@@ -8,12 +8,11 @@ namespace IdelPog.Combat.Runtime
     public sealed record CombatantEntity : Entity
     {
         public required byte CombatantID { get; init; }
-        public readonly bool IsFriendly;
+        public required bool IsFriendly { get; init; }
 
         public CombatantEntity(IRepositoryAsserter repositoryAsserter, CombatantCard combatantCard) 
             : base(repositoryAsserter, BuildCombatantStatsComponent(combatantCard.StatCard), new TargetingTypeComponent { TargetingType = combatantCard.TargetingType }, new LifeStatusComponent { IsAlive = true })
         { 
-            IsFriendly = combatantCard.IsFriendly;
         }
 
         public void UpdateCombatantStats(CombatantStatsComponent combatantStatsComponent)

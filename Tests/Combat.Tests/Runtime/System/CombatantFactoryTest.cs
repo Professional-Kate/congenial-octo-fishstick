@@ -27,7 +27,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _combatService = new CombatantFactory(_combatantRepositoryMock.Object, new CollectionAssertion(), new UniqueAssertion(), new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
 
-            _wolfCard = new CombatantCard { CombatantType = CombatantType.WOLF, StatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 }, IsFriendly = true, TargetingType = TargetingType.HIGH_ATTACK };
+            _wolfCard = new CombatantCard { CombatantType = CombatantType.WOLF, StatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK };
             _combatantStatsComponent = new CombatantStatsComponent { Health = 3, Attack = 5, Speed = 5 };
         }
 
@@ -69,7 +69,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         { 
             SetupContains(0);
             
-            _combatService.SpawnCombatants([_wolfCard]);
+            _combatService.SpawnCombatants([_wolfCard], true);
             
             VerifyRepositoryAdd(_combatantStatsComponent, true);
             VerifyRepositoryNextCombatantID(Times.Once());
@@ -83,7 +83,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupContains(1);
             SetupNextCombatantIDSequence();
             
-            _combatService.SpawnCombatants([_wolfCard, _wolfCard]);
+            _combatService.SpawnCombatants([_wolfCard, _wolfCard], true);
             
             VerifyRepositoryAdd(_combatantStatsComponent, true);
             VerifyRepositoryAdd(_combatantStatsComponent, true);
@@ -98,11 +98,11 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupContains(1);
             SetupNextCombatantIDSequence();
             
-            CombatantCard humanCard = new() { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Health = 10, Attack = 3, Speed = 3 }, IsFriendly = false, TargetingType = TargetingType.LOW_HEALTH };
-            _combatService.SpawnCombatants([_wolfCard, humanCard]);
+            CombatantCard humanCard = new() { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Health = 10, Attack = 3, Speed = 3 }, TargetingType = TargetingType.LOW_HEALTH };
+            _combatService.SpawnCombatants([_wolfCard, humanCard], true);
             
             VerifyRepositoryAdd(_combatantStatsComponent, true);
-            VerifyRepositoryAdd(new CombatantStatsComponent { Health = 10, Attack = 3, Speed = 3 }, false);
+            VerifyRepositoryAdd(new CombatantStatsComponent { Health = 10, Attack = 3, Speed = 3 }, true);
             VerifyRepositoryNextCombatantID(Times.Exactly(2));
             VerifyRepository();
         }
@@ -110,7 +110,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_SpawnCombatants_EmptyCollection_Throws()
         {
-            Assert.Throws<EmptyCollectionException>(() => _combatService.SpawnCombatants([]));
+            Assert.Throws<EmptyCollectionException>(() => _combatService.SpawnCombatants([], true));
 
             VerifyRepository();
         }
@@ -120,7 +120,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         { 
             _combatantRepositoryMock.Setup(library => library.Contains(0)).Returns(true).Verifiable();
             
-            Assert.Throws<DuplicateEntityException>(() => _combatService.SpawnCombatants([_wolfCard]));
+            Assert.Throws<DuplicateEntityException>(() => _combatService.SpawnCombatants([_wolfCard], true));
             
             VerifyRepositoryNextCombatantID(Times.Exactly(1));
             VerifyRepository();

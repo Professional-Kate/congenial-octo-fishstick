@@ -20,7 +20,7 @@ namespace IdelPog.Combat.Runtime.System
             _uniqueAssertion = uniqueAssertion;
         }
         
-        public void SpawnCombatants(IReadOnlyList<CombatantCard> combatants)
+        public void SpawnCombatants(IReadOnlyList<CombatantCard> combatants, bool isFriendly)
         {
             _collectionAssertion.AssertHasElements(combatants);
             
@@ -31,7 +31,8 @@ namespace IdelPog.Combat.Runtime.System
                 
                 CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard)
                 {
-                    CombatantID = nextCombatantID
+                    CombatantID = nextCombatantID,
+                    IsFriendly = isFriendly
                 };
 
                 _combatantRepository.Add(combatantEntity);

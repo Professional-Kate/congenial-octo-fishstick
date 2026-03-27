@@ -134,7 +134,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Negative_ApplyDamage_ZeroAttack_Throws()
         {
             StatCard zeroAttackCard = new() { Attack = 0, Health = 10, Speed = 10 };
-            CombatantEntity zeroAttackEntity = CombatantEntityFactory.CreateCombatantEntity(1, zeroAttackCard);
+            CombatantEntity zeroAttackEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, zeroAttackCard);
             
             SetupRepository(zeroAttackEntity);
             

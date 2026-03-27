@@ -4,7 +4,6 @@ using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using Moq;
 
@@ -17,7 +16,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private Mock<ICombatantStore> _friendlyCombatantStoreMock;
         private Mock<ICombatantStore> _enemyCombatantStoreMock;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
-        private RepositoryAsserter _repositoryAsserter;
 
         private StatCard _friendlyStats;
         private CombatantCard _friendlyCard;
@@ -37,15 +35,13 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _targetFinder = new TargetFinder(_friendlyCombatantStoreMock.Object, _enemyCombatantStoreMock.Object, _combatantRepositoryMock.Object, new ObjectNullAssertion());
 
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
-
             _friendlyStats = new StatCard { Health = 25, Attack = 10, Speed = 10 };
-            _friendlyCard = new CombatantCard { StatCard = _friendlyStats, TargetingType = TargetingType.LOW_HEALTH, IsFriendly = true, CombatantType = CombatantType.BEAR };
-            _friendlyEntity = new CombatantEntity(_repositoryAsserter, _friendlyCard) { CombatantID = 1 };
+            _friendlyCard = new CombatantCard { StatCard = _friendlyStats, TargetingType = TargetingType.LOW_HEALTH, CombatantType = CombatantType.BEAR };
+            _friendlyEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _friendlyCard);
             
             _enemyStats = new StatCard { Health = 15, Attack = 15, Speed = 10 };
-            _enemyCard = new CombatantCard { StatCard = _enemyStats, TargetingType = TargetingType.HIGH_ATTACK, IsFriendly = false, CombatantType = CombatantType.HUMAN };
-            _enemyEntity = new CombatantEntity(_repositoryAsserter, _enemyCard) { CombatantID = 2 };
+            _enemyCard = new CombatantCard { StatCard = _enemyStats, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN };
+            _enemyEntity = CombatantEntityFactory.CreateCombatantEntity(2, false, _enemyCard);
         }
 
         [SetUp]
@@ -140,8 +136,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_FindBestTarget_TargetingType_OutOfRange_Throws()
         {
-            CombatantCard badTargetingTypeCard = new() { StatCard = _friendlyStats, TargetingType = (TargetingType) 90, IsFriendly = true, CombatantType = CombatantType.BEAR };
-            CombatantEntity badEntity = new(_repositoryAsserter, badTargetingTypeCard) { CombatantID = 3 };
+            CombatantCard badTargetingTypeCard = new() { StatCard = _friendlyStats, TargetingType = (TargetingType) 90, CombatantType = CombatantType.BEAR };
+            CombatantEntity badEntity = CombatantEntityFactory.CreateCombatantEntity(3, true, badTargetingTypeCard);
             
             Assert.Throws<ArgumentOutOfRangeException>(() => _targetFinder.FindBestTarget(badEntity));
         }

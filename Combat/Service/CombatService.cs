@@ -60,8 +60,8 @@ namespace IdelPog.Combat.Service
             _collectionAssertion.AssertHasElements(basicEncounterDeck.FriendlyCombatantCards);
             _collectionAssertion.AssertHasElements(basicEncounterDeck.EnemyCombatantCards);
             
-            _combatantFactory.SpawnCombatants(basicEncounterDeck.FriendlyCombatantCards);
-            _combatantFactory.SpawnCombatants(basicEncounterDeck.EnemyCombatantCards);
+            _combatantFactory.SpawnCombatants(basicEncounterDeck.FriendlyCombatantCards, true);
+            _combatantFactory.SpawnCombatants(basicEncounterDeck.EnemyCombatantCards, false);
             
             _combatantStoreService.RegisterInitial();
             _attackScheduler.EnqueueInitial(0);

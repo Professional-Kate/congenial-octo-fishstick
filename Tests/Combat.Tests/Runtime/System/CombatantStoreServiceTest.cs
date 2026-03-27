@@ -31,19 +31,17 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _combatantStoreService = new CombatantStoreService(_friendlyCombatantStoreMock.Object, _enemyCombatantStoreMock.Object, _combatantFiltersMock.Object, new CollectionAssertion());
 
-            _friendlyCombatant = CombatantEntityFactory.CreateCombatantEntity(1, new CombatantCard
+            _friendlyCombatant = CombatantEntityFactory.CreateCombatantEntity(1, true, new CombatantCard
             {
                 CombatantType = CombatantType.HUMAN,
                 TargetingType = TargetingType.HIGH_ATTACK,
-                IsFriendly = true,
                 StatCard = new StatCard { Health = 1, Attack = 2, Speed = 3 }
             });
 
-            _enemyCombatant = CombatantEntityFactory.CreateCombatantEntity(2, new CombatantCard
+            _enemyCombatant = CombatantEntityFactory.CreateCombatantEntity(2, false, new CombatantCard
             {
                 CombatantType = CombatantType.BEAR,
                 TargetingType = TargetingType.LOW_HEALTH,
-                IsFriendly = false,
                 StatCard = new StatCard { Health = 3, Attack = 1, Speed = 2 }
             });
         }
