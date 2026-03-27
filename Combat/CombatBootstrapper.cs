@@ -45,9 +45,10 @@ namespace IdelPog.Combat
             ICombatantStoreService combatantStoreService = new CombatantStoreService(friendlyCombatantStore, enemyCombatantStore, combatantRepository, collectionAssertion);
             ICombatStateService combatStateService = new CombatStateService(combatantRepository);
             IDamageSystem damageSystem = new DamageSystem();
+            IDeathSystem deathSystem = new DeathSystem(combatStateService, combatantStoreService, combatantAssertion);
             
+            IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(combatantRepository, targetFinder, damageSystem, combatLog, deathSystem, combatantStoreService, foundAssertion, combatantAssertion, numberAssertion);
             // TODO: move this out eventually 
-            IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(combatantRepository, targetFinder, damageSystem, combatLog, combatStateService, combatantStoreService, foundAssertion, combatantAssertion, numberAssertion);
             AttackEventResolver attackEventResolver = new(entityDamageMediator, attackScheduler, combatantRepository, foundAssertion);
             resolverRepository.Add(EventType.BASIC_ATTACK, attackEventResolver);
             

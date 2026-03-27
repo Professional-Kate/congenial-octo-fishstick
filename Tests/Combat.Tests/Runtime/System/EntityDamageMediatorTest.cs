@@ -21,8 +21,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private Mock<ITargetFinder> _targetFinderMock;
         private Mock<IDamageSystem> _damageSystemMock;
         private Mock<ICombatLog> _combatLogMock;
-        private Mock<ICombatStateService> _combatantStateServiceMock;
         private Mock<ICombatantStoreService> _combatantStoreServiceMock;
+        private Mock<IDeathSystem> _deathSystemMock;
         
         private CombatantEntity _combatantEntity;
         private CombatantStatsComponent _combatantStatsComponent;
@@ -34,10 +34,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _targetFinderMock = new Mock<ITargetFinder>();
             _damageSystemMock = new Mock<IDamageSystem>();
             _combatLogMock = new Mock<ICombatLog>();
-            _combatantStateServiceMock = new Mock<ICombatStateService>();
             _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
+            _deathSystemMock = new Mock<IDeathSystem>();
             
-            _entityDamageMediator = new EntityDamageMediator(_repositoryMock.Object, _targetFinderMock.Object, _damageSystemMock.Object, _combatLogMock.Object, _combatantStateServiceMock.Object, _combatantStoreServiceMock.Object, new FoundAssertion(), new CombatantAssertion(), new NumberAssertion());
+            _entityDamageMediator = new EntityDamageMediator(_repositoryMock.Object, _targetFinderMock.Object, _damageSystemMock.Object, _combatLogMock.Object, _deathSystemMock.Object, _combatantStoreServiceMock.Object, new FoundAssertion(), new CombatantAssertion(), new NumberAssertion());
         }
 
         [SetUp]
@@ -48,9 +48,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _repositoryMock.Reset();
             _targetFinderMock.Reset();
-            _combatantStateServiceMock.Reset();
             _combatantStoreServiceMock.Reset();
             _damageSystemMock.Reset();
+            _deathSystemMock.Reset();
         }
 
         private void SetupTargetFinder(CombatantEntity combatantEntity)
@@ -69,24 +69,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _damageSystemMock.Setup(library => library.DealDamage(targetCombatant, attackerStats.Attack)).Returns(newHealth).Verifiable();
         }
 
-        private void SetupIsCombatOver(bool isCombatOver)
-        {
-            _combatantStateServiceMock.Setup(library => library.IsCombatOver).Returns(isCombatOver).Verifiable();
-        }
-
         private void VerifyStoreRegisterCombatantChange(CombatantEntity combatantEntity, Times times)
         {
             _combatantStoreServiceMock.Verify(library => library.RegisterCombatantChange(combatantEntity), times);
-        }
-
-        private void VerifyStateServiceEvaluate(CombatantEntity combatantEntity)
-        {
-            _combatantStateServiceMock.Verify(library => library.Evaluate(combatantEntity), Times.Once);
-        }
-        
-        private void VerifyStateServiceIsCombatOver()
-        {
-            _combatantStateServiceMock.Verify(library => library.IsCombatOver, Times.Once);
         }
 
         private void VerifyMocks()
@@ -97,14 +82,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _targetFinderMock.Verify();
             _targetFinderMock.VerifyNoOtherCalls();
             
-            _combatantStateServiceMock.Verify();
-            _combatantStateServiceMock.VerifyNoOtherCalls();
-            
             _combatantStoreServiceMock.Verify();
             _combatantStoreServiceMock.VerifyNoOtherCalls();
             
             _damageSystemMock.Verify();
             _damageSystemMock.VerifyNoOtherCalls();
+            
+            _deathSystemMock.Verify();
+            _deathSystemMock.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -121,33 +106,15 @@ namespace IdelPog.Combat.Tests.Runtime.System
         }
 
         [Test]
-        public void Positive_ApplyDamage_CausesDeath_CombatNotOver()
+        public void Positive_ApplyDamage_CausesDeath()
         {
-            SetupIsCombatOver(false);
             SetupDamageSystem(_combatantEntity, _combatantStatsComponent, 0);
             SetupTargetFinder(_combatantEntity);
             SetupRepository(_combatantEntity);
             
             _entityDamageMediator.ApplyDamage(_combatantEntity.CombatantID);
             
-            _combatantStoreServiceMock.Verify(library => library.RegisterCombatantDeath(_combatantEntity), Times.Once);
-            VerifyStateServiceEvaluate(_combatantEntity);
-            VerifyStateServiceIsCombatOver();
-            VerifyMocks();
-        }
-        
-        [Test]
-        public void Positive_ApplyDamage_CausesDeath_CombatIsOver()
-        {
-            SetupIsCombatOver(true);
-            SetupDamageSystem(_combatantEntity, _combatantStatsComponent, 0);
-            SetupTargetFinder(_combatantEntity);
-            SetupRepository(_combatantEntity);
-            
-            _entityDamageMediator.ApplyDamage(_combatantEntity.CombatantID);
-            
-            VerifyStateServiceEvaluate(_combatantEntity);
-            VerifyStateServiceIsCombatOver();
+            _deathSystemMock.Verify(library => library.KillEntity(_combatantEntity), Times.Once);
             VerifyMocks();
         }
 

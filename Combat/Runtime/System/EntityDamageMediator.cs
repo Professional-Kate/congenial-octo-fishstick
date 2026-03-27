@@ -13,25 +13,25 @@ namespace IdelPog.Combat.Runtime.System
         private readonly ITargetFinder _targetFinder;
         private readonly IDamageSystem _damageSystem;
         private readonly ICombatLog _combatLog;
-        private readonly ICombatStateService _combatStateService;
+        private readonly IDeathSystem _deathSystem;
         private readonly ICombatantStoreService _combatantStoreService;
         private readonly IFoundAssertion _foundAssertion;
         private readonly ICombatantAssertion _combatantAssertion;
         private readonly INumberAssertion _numberAssertion;
 
         public EntityDamageMediator(ICombatantRepository combatantRepository, ITargetFinder targetFinder, IDamageSystem damageSystem, ICombatLog combatLog,
-            ICombatStateService combatStateService, ICombatantStoreService combatantStoreService, IFoundAssertion foundAssertion,
+            IDeathSystem deathSystem, ICombatantStoreService combatantStoreService, IFoundAssertion foundAssertion,
             ICombatantAssertion combatantAssertion, INumberAssertion numberAssertion)
         {
             _combatantRepository = combatantRepository;
             _targetFinder = targetFinder;
-            _combatStateService = combatStateService;
+            _damageSystem = damageSystem;
+            _combatLog = combatLog;
+            _deathSystem = deathSystem;
             _combatantStoreService = combatantStoreService;
             _foundAssertion = foundAssertion;
-            _numberAssertion = numberAssertion;
-            _combatLog = combatLog;
             _combatantAssertion = combatantAssertion;
-            _damageSystem = damageSystem;
+            _numberAssertion = numberAssertion;
         }
 
         public void ApplyDamage(byte attackingCombatantID)
@@ -49,15 +49,7 @@ namespace IdelPog.Combat.Runtime.System
             
             if (newHealth == 0)
             {
-                targetCombatant.UpdateLifeStatus(false);    
-                
-                _combatStateService.Evaluate(targetCombatant);
-                if (_combatStateService.IsCombatOver)
-                {
-                    return;
-                }
-                
-                _combatantStoreService.RegisterCombatantDeath(targetCombatant);
+                _deathSystem.KillEntity(attackingCombatant);
                 return;
             }
             
