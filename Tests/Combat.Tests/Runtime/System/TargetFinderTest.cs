@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;

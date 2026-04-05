@@ -1,8 +1,11 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Assertion.Interface;
+using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver;
 using IdelPog.Combat.Event.Resolver.Interface;
+using IdelPog.Combat.Factory;
 using IdelPog.Combat.Runtime.Filter;
 using IdelPog.Combat.Runtime.Filter.Interface;
 using IdelPog.Combat.Runtime.System;
@@ -11,6 +14,17 @@ using IdelPog.Combat.Runtime.System.Store;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service;
 using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Service.Logging;
+using IdelPog.Combat.Service.Logging.Interface;
+using IdelPog.Core.Factory;
+using IdelPog.Core.Flows.Registry;
+using IdelPog.Core.Logging;
+using IdelPog.Core.Logging.Writer;
+using IdelPog.Core.Messaging.Buffer.Manager;
+using IdelPog.Core.Messaging.Controller;
+using IdelPog.Core.Messaging.Dispatcher;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
+using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
@@ -20,7 +34,7 @@ namespace IdelPog.Combat
 {
     public static class CombatBootstrapper
     {
-        public static ICombatService SetupCombat()
+        public static void SetupCombat(IBufferManager bufferManager, IBatchRegister flowRegister)
         {
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
             IUniqueAssertion uniqueAssertion = new UniqueAssertion();
@@ -37,7 +51,6 @@ namespace IdelPog.Combat
             CombatantRepository combatantRepository = new(foundAssertion);
             ITargetFinder targetFinder = new TargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantRepository, objectNullAssertion);
             CombatQueue combatQueue = new();
-            ICombatLog combatLog = new CombatLog();
             
             ICombatantFactory combatantFactory = new CombatantFactory(combatantRepository, collectionAssertion, uniqueAssertion, repositoryAsserter);
             IAttackScheduler attackScheduler = new AttackScheduler(combatQueue, numberAssertion, combatantRepository, foundAssertion);
@@ -46,15 +59,22 @@ namespace IdelPog.Combat
             ICombatStateService combatStateService = new CombatStateService(combatantRepository);
             IDamageSystem damageSystem = new DamageSystem();
             IDeathSystem deathSystem = new DeathSystem(combatStateService, combatantStoreService, combatantAssertion);
+
+            IBufferLogger bufferLogger = new BufferLoggingService(new ConsoleWriter());
             
-            IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(combatantRepository, targetFinder, damageSystem, combatLog, deathSystem, combatantStoreService, foundAssertion, combatantAssertion, numberAssertion);
+            ICombatantLogger combatantLogger = new CombatantLogger(objectNullAssertion);
+            IDispatchMany<BasicEncounterDeckResponse> responseDispatcher = new ManagedDispatcher<BasicEncounterDeckResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
+            IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(combatantRepository, targetFinder, damageSystem, deathSystem, combatantStoreService, foundAssertion, combatantAssertion, numberAssertion, combatantLogger);
             // TODO: move this out eventually 
             AttackEventResolver attackEventResolver = new(entityDamageMediator, attackScheduler, combatantRepository, foundAssertion);
             resolverRepository.Add(EventType.BASIC_ATTACK, attackEventResolver);
             
-            CombatService combatService = new(combatantFactory, combatantStoreService, attackScheduler, combatQueue, resolverRepository, combatStateService, collectionAssertion, combatLog);
-
-            return combatService;
+            BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantFactory, combatantStoreService, attackScheduler, combatQueue, resolverRepository, combatStateService, collectionAssertion, responseDispatcher, combatantLogger);
+            IBatchController<BasicEncounterDeck> controller = new ManagedBatchController<BasicEncounterDeck>(basicEncounterDeckMediator);
+            BasicEncounterDeckErrorFactory errorFactory = new(new BaseErrorFactory());
+                        
+            flowRegister.RegisterBatch(controller, errorFactory);
         }
     }
 }

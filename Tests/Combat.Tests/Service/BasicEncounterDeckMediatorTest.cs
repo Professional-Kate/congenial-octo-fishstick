@@ -1,12 +1,15 @@
-﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Deck;
+﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service;
 using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Service.Logging.Interface;
+using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -15,16 +18,17 @@ using Moq;
 namespace IdelPog.Combat.Tests.Service
 {
     [TestFixture]
-    public sealed class CombatServiceTest
+    public sealed class BasicEncounterDeckMediatorTest
     {
-        private CombatService _combatService;
+        private BasicEncounterDeckMediator _basicEncounterDeckMediator;
         private Mock<ICombatantFactory> _combatantFactoryMock;
         private Mock<IAttackScheduler> _attackSchedulerMock;
         private Mock<ICombatQueue> _combatQueueMock;
         private Mock<IAssetRepository<EventType, IEventResolver>> _repositoryMock;
         private Mock<ICombatantStoreService> _combatantStoreServiceMock;
         private Mock<ICombatStateService> _combatStateServiceMock;
-        private Mock<ICombatLog> _combatLogMock;
+        private Mock<ICombatantLogger> _combatantLoggerMock;
+        private Mock<IDispatchMany<BasicEncounterDeckResponse>> _responseDispatcherMock;
         
         private BasicEncounterDeck _basicEncounterDeck;
 
@@ -37,9 +41,10 @@ namespace IdelPog.Combat.Tests.Service
             _repositoryMock = new Mock<IAssetRepository<EventType, IEventResolver>>();
             _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
             _combatStateServiceMock = new Mock<ICombatStateService>();
-            _combatLogMock = new Mock<ICombatLog>();
+            _combatantLoggerMock = new Mock<ICombatantLogger>();
+            _responseDispatcherMock = new Mock<IDispatchMany<BasicEncounterDeckResponse>>();
             
-            _combatService = new CombatService(_combatantFactoryMock.Object, _combatantStoreServiceMock.Object, _attackSchedulerMock.Object, _combatQueueMock.Object, _repositoryMock.Object, _combatStateServiceMock.Object, new CollectionAssertion(), _combatLogMock.Object);
+            _basicEncounterDeckMediator = new BasicEncounterDeckMediator(_combatantFactoryMock.Object, _combatantStoreServiceMock.Object, _attackSchedulerMock.Object, _combatQueueMock.Object, _repositoryMock.Object, _combatStateServiceMock.Object, new CollectionAssertion(), _responseDispatcherMock.Object, _combatantLoggerMock.Object);
             _basicEncounterDeck = new BasicEncounterDeck
             {
                 FriendlyCombatantCards = [new CombatantCard { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5}, TargetingType = TargetingType.LOW_HEALTH }],
@@ -50,19 +55,19 @@ namespace IdelPog.Combat.Tests.Service
         [Test]
         public void Negative_RunEncounter_EmptyDeck_Throws()
         {
-            Assert.Throws<EmptyCollectionException>(() => _combatService.RunEncounter(new BasicEncounterDeck { FriendlyCombatantCards = [], EnemyCombatantCards = [] }));
+            Assert.Throws<EmptyCollectionException>(() => _basicEncounterDeckMediator.HandleMessages([new BasicEncounterDeck { FriendlyCombatantCards = [], EnemyCombatantCards = [] }]));
         }
         
         [Test]
         public void Negative_RunEncounter_EmptyFriendlyCards_Throws()
         {
-            Assert.Throws<EmptyCollectionException>(() => _combatService.RunEncounter(_basicEncounterDeck with { FriendlyCombatantCards = [] }));
+            Assert.Throws<EmptyCollectionException>(() => _basicEncounterDeckMediator.HandleMessages([_basicEncounterDeck with { FriendlyCombatantCards = [] }]));
         }
         
         [Test]
         public void Negative_RunEncounter_EmptyEnemyCards_Throws()
         {
-            Assert.Throws<EmptyCollectionException>(() => _combatService.RunEncounter(_basicEncounterDeck with { EnemyCombatantCards = [] }));
+            Assert.Throws<EmptyCollectionException>(() => _basicEncounterDeckMediator.HandleMessages([_basicEncounterDeck with { EnemyCombatantCards = [] }]));
         }
     }
 }

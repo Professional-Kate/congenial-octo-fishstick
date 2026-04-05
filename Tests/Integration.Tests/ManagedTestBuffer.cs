@@ -1,4 +1,5 @@
-﻿using IdelPog.Core.Flows;
+﻿using IdelPog.Combat;
+using IdelPog.Core.Flows;
 using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Messaging.Assertion;
 using IdelPog.Core.Messaging.Assertion.Interface;
@@ -52,6 +53,7 @@ namespace IdelPog.Integration.Tests
             SkillBootstrapper.RegisterFlows(BufferManager, flowRegister);
             ContentEngineBootstrapper.RegisterFlows(BufferManager, flowRegister);
             InventoryBootstrapper.RegisterFlows(BufferManager, flowRegister);
+            CombatBootstrapper.SetupCombat(BufferManager, flowRegister);
             FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
         }
 

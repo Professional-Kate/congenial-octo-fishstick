@@ -1,18 +1,18 @@
-﻿using IdelPog.Combat;
-using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Deck;
+﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Contracts.Error;
 using IdelPog.Combat.Contracts.Response;
-using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Service.Interface;
+using IdelPog.Core.Messaging.Buffer;
 
 namespace IdelPog.Integration.Tests.Combat
 {
     [TestFixture]
-    public sealed class CombatTest
+    public sealed class CombatTest : ManagedTestBuffer
     {
-        private ICombatService _combatService;
         private BasicEncounterDeck _basicEncounterDeck;
+        private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
+        private ManagedErrorListener<BasicEncounterDeckError> _errorListener;
 
         private CombatantCard _humanCard;
         private CombatantCard _goblinCard;
@@ -51,41 +51,25 @@ namespace IdelPog.Integration.Tests.Combat
         
         [SetUp]
         public void Setup()
-        { 
-            _combatService = CombatBootstrapper.SetupCombat();
+        {
+            _responseListener = new ManagedResponseListener<BasicEncounterDeckResponse>();
+            _errorListener = new ManagedErrorListener<BasicEncounterDeckError>();
+            
+            ManagedSubscribe(_responseListener);
+            ManagedSubscribe(_errorListener);
         }
 
-        private static void TranslateEventLog(CombatEventLog combatEventLog)
+        private void DispatchBasicEncounterDeck(params BasicEncounterDeck[] basicEncounterDecks)
         {
-            string attacker = combatEventLog.AttackerID == 0 ? "Human" : "Goblin";
-            string defender = combatEventLog.DefenderID == 0 ? "Human" : "Goblin";
-            
-            CombatantStatsComponent attackerStats = combatEventLog.AttackerStats;
-            CombatantStatsComponent defenderStats = combatEventLog.DefenderStats;
-            
-            System.Console.WriteLine($"-> The {attacker} ({combatEventLog.AttackerID}) attacks the {defender} ({combatEventLog.DefenderID}) for {attackerStats.Attack} damage!");
-
-            if (defenderStats.Health == 0)
-            {
-                System.Console.WriteLine($"--> The {defender} ({combatEventLog.DefenderID}) has died! Killed by the {attacker} ({combatEventLog.AttackerID})!");
-                return;
-            }
-            System.Console.WriteLine($"--> The {defender} ({combatEventLog.DefenderID}) has {defenderStats.Health} health remaining...");
+            IBuffer<BasicEncounterDeck> buffer = BufferManager.RequestBuffer<BasicEncounterDeck>(new BufferRequest(basicEncounterDecks.Length));
+            buffer.Assign(basicEncounterDecks);
+            buffer.MarkReady();
         }
 
         [Test]
         public void Positive_SimulateCombat_FriendlyVictory()
         { 
-            EncounterResponse encounterResponse = _combatService.RunEncounter(_basicEncounterDeck);
-            
-            ICombatLogReader logReader = encounterResponse.CombatLogReader;
-            while (logReader.NextCombatState())
-            {
-                CombatEventLog combatEventLog = logReader.CurrentCombatState;
-                TranslateEventLog(combatEventLog);
-            }
-            
-            logReader.Dispose();
+            DispatchBasicEncounterDeck(_basicEncounterDeck);
         }
     }
 }

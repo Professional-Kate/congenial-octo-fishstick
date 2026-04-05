@@ -6,7 +6,7 @@ using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
-using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -20,9 +20,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private Mock<ICombatantRepository> _repositoryMock;
         private Mock<ITargetFinder> _targetFinderMock;
         private Mock<IDamageSystem> _damageSystemMock;
-        private Mock<ICombatLog> _combatLogMock;
         private Mock<ICombatantStoreService> _combatantStoreServiceMock;
         private Mock<IDeathSystem> _deathSystemMock;
+        private Mock<ICombatantLogger> _combatantLoggerMock;
         
         private CombatantEntity _targetCombatant;
         private CombatantEntity _attackingCombatant;
@@ -34,11 +34,11 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _repositoryMock = new Mock<ICombatantRepository>();
             _targetFinderMock = new Mock<ITargetFinder>();
             _damageSystemMock = new Mock<IDamageSystem>();
-            _combatLogMock = new Mock<ICombatLog>();
             _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
             _deathSystemMock = new Mock<IDeathSystem>();
+            _combatantLoggerMock = new Mock<ICombatantLogger>();
             
-            _entityDamageMediator = new EntityDamageMediator(_repositoryMock.Object, _targetFinderMock.Object, _damageSystemMock.Object, _combatLogMock.Object, _deathSystemMock.Object, _combatantStoreServiceMock.Object, new FoundAssertion(), new CombatantAssertion(), new NumberAssertion());
+            _entityDamageMediator = new EntityDamageMediator(_repositoryMock.Object, _targetFinderMock.Object, _damageSystemMock.Object, _deathSystemMock.Object, _combatantStoreServiceMock.Object, new FoundAssertion(), new CombatantAssertion(), new NumberAssertion(), _combatantLoggerMock.Object);
         }
 
         [SetUp]

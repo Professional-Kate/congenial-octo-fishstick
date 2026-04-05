@@ -2,7 +2,7 @@
 
 namespace IdelPog.Combat.Contracts
 {
-    public readonly record struct ReadOnlyCombatant
+    public readonly record struct CombatantStateChange
     {
         public required byte CombatantID { get; init; }
         public required CombatantCard CombatantCard { get; init; }

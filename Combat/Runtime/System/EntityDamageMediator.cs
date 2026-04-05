@@ -2,7 +2,7 @@
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
-using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Runtime.System
@@ -12,26 +12,26 @@ namespace IdelPog.Combat.Runtime.System
         private readonly ICombatantRepository _combatantRepository;
         private readonly ITargetFinder _targetFinder;
         private readonly IDamageSystem _damageSystem;
-        private readonly ICombatLog _combatLog;
         private readonly IDeathSystem _deathSystem;
+        private readonly ICombatantLogger _combatantLogger;
         private readonly ICombatantStoreService _combatantStoreService;
         private readonly IFoundAssertion _foundAssertion;
         private readonly ICombatantAssertion _combatantAssertion;
         private readonly INumberAssertion _numberAssertion;
 
-        public EntityDamageMediator(ICombatantRepository combatantRepository, ITargetFinder targetFinder, IDamageSystem damageSystem, ICombatLog combatLog,
+        public EntityDamageMediator(ICombatantRepository combatantRepository, ITargetFinder targetFinder, IDamageSystem damageSystem,
             IDeathSystem deathSystem, ICombatantStoreService combatantStoreService, IFoundAssertion foundAssertion,
-            ICombatantAssertion combatantAssertion, INumberAssertion numberAssertion)
+            ICombatantAssertion combatantAssertion, INumberAssertion numberAssertion, ICombatantLogger combatantLogger)
         {
             _combatantRepository = combatantRepository;
             _targetFinder = targetFinder;
             _damageSystem = damageSystem;
-            _combatLog = combatLog;
             _deathSystem = deathSystem;
             _combatantStoreService = combatantStoreService;
             _foundAssertion = foundAssertion;
             _combatantAssertion = combatantAssertion;
             _numberAssertion = numberAssertion;
+            _combatantLogger = combatantLogger;
         }
 
         public void ApplyDamage(byte attackingCombatantID)
@@ -48,7 +48,7 @@ namespace IdelPog.Combat.Runtime.System
             _combatantAssertion.AssertCombatantAlive(targetCombatant);
 
             uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats.Attack);
-            _combatLog.Append(targetCombatant, attackingCombatant);
+            _combatantLogger.LogCombatantChange(targetCombatant);
             
             if (newHealth == 0)
             {

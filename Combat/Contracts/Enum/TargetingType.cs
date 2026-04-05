@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Combat.Contracts
+﻿namespace IdelPog.Combat.Contracts.Enum
 {
     public enum TargetingType : byte
     {

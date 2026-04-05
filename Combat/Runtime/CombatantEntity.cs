@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.ECS.Entity;
@@ -9,10 +10,12 @@ namespace IdelPog.Combat.Runtime
     {
         public required byte CombatantID { get; init; }
         public required bool IsFriendly { get; init; }
+        public readonly CombatantType CombatantType;
 
         public CombatantEntity(IRepositoryAsserter repositoryAsserter, CombatantCard combatantCard) 
             : base(repositoryAsserter, BuildCombatantStatsComponent(combatantCard.StatCard), new TargetingTypeComponent { TargetingType = combatantCard.TargetingType }, new LifeStatusComponent { IsAlive = true })
         { 
+            CombatantType = combatantCard.CombatantType;
         }
 
         public void UpdateCombatantStats(CombatantStatsComponent combatantStatsComponent)

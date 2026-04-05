@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Card;
 
-namespace IdelPog.Combat.Contracts.Deck
+namespace IdelPog.Combat.Contracts.Command
 {
     public readonly record struct BasicEncounterDeck
     {
