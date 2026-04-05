@@ -13,22 +13,22 @@ namespace IdelPog.Combat.Tests.Event
     {
         private AttackEventResolver _attackEventResolver;
         private Mock<IEntityDamageMediator> _damageSystemMock;
-        private Mock<IAttackScheduler> _attackSchedulerMock;
+        private Mock<IBasicAttackScheduler> _attackSchedulerMock;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
 
-        private AttackEvent _attackEvent;
+        private BasicAttackEvent _basicAttackEvent;
         private CombatantEntity _combatantEntity;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _damageSystemMock = new Mock<IEntityDamageMediator>();
-            _attackSchedulerMock = new Mock<IAttackScheduler>();
+            _attackSchedulerMock = new Mock<IBasicAttackScheduler>();
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
             
             _attackEventResolver = new AttackEventResolver(_damageSystemMock.Object, _attackSchedulerMock.Object, _combatantRepositoryMock.Object, new FoundAssertion());
 
-            _attackEvent = new AttackEvent { AttackerID = 0, Tick = 0 };
+            _basicAttackEvent = new BasicAttackEvent { AttackerID = 0, Tick = 0 };
 
             _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(0);
         }
@@ -43,12 +43,12 @@ namespace IdelPog.Combat.Tests.Event
 
         private void VerifyDamageApplied()
         {
-            _damageSystemMock.Verify(library => library.ApplyDamage(_attackEvent.AttackerID), Times.Once);
+            _damageSystemMock.Verify(library => library.ApplyDamage(_basicAttackEvent.AttackerID), Times.Once);
         }
 
         private void VerifyEventEnqueued()
         {
-            _attackSchedulerMock.Verify(library => library.EnqueueAttack(_attackEvent.Tick, _attackEvent.AttackerID), Times.Once);
+            _attackSchedulerMock.Verify(library => library.EnqueueAttack(_basicAttackEvent.Tick, _basicAttackEvent.AttackerID), Times.Once);
         }
 
         private void SetupRepositoryContains(byte combatantID)
@@ -76,10 +76,10 @@ namespace IdelPog.Combat.Tests.Event
         [Test]
         public void Positive_ResolveEvent_AppliesDamage_EnqueuesAttack()
         {
-            SetupRepositoryContains(_attackEvent.AttackerID);
+            SetupRepositoryContains(_basicAttackEvent.AttackerID);
             SetupRepositoryGet(_combatantEntity);
             
-            Assert.DoesNotThrow(() => _attackEventResolver.ResolveEvent(_attackEvent.Tick, _attackEvent.AttackerID));
+            Assert.DoesNotThrow(() => _attackEventResolver.ResolveEvent(_basicAttackEvent.Tick, _basicAttackEvent.AttackerID));
 
             VerifyDamageApplied();
             VerifyEventEnqueued();
@@ -95,7 +95,7 @@ namespace IdelPog.Combat.Tests.Event
             SetupRepositoryContains(deadEntity.CombatantID);
             SetupRepositoryGet(deadEntity);
             
-            Assert.DoesNotThrow(() => _attackEventResolver.ResolveEvent(_attackEvent.Tick, deadEntity.CombatantID));
+            Assert.DoesNotThrow(() => _attackEventResolver.ResolveEvent(_basicAttackEvent.Tick, deadEntity.CombatantID));
             
             VerifyMocks();
         }
@@ -103,9 +103,9 @@ namespace IdelPog.Combat.Tests.Event
         [Test]
         public void Negative_ResolveEvent_CombatantNotFound_Throws()
         {
-            Assert.Throws<NotFoundException<byte>>(() => _attackEventResolver.ResolveEvent(_attackEvent.Tick, _attackEvent.AttackerID));
+            Assert.Throws<NotFoundException<byte>>(() => _attackEventResolver.ResolveEvent(_basicAttackEvent.Tick, _basicAttackEvent.AttackerID));
             
-            _combatantRepositoryMock.Verify(library => library.Contains(_attackEvent.AttackerID), Times.Once);
+            _combatantRepositoryMock.Verify(library => library.Contains(_basicAttackEvent.AttackerID), Times.Once);
             VerifyMocks();
         }
     }

@@ -22,7 +22,7 @@ namespace IdelPog.Combat.Tests.Service
     {
         private BasicEncounterDeckMediator _basicEncounterDeckMediator;
         private Mock<ICombatantFactory> _combatantFactoryMock;
-        private Mock<IAttackScheduler> _attackSchedulerMock;
+        private Mock<IBasicAttackScheduler> _attackSchedulerMock;
         private Mock<ICombatQueue> _combatQueueMock;
         private Mock<IAssetRepository<EventType, IEventResolver>> _repositoryMock;
         private Mock<ICombatantStoreService> _combatantStoreServiceMock;
@@ -36,7 +36,7 @@ namespace IdelPog.Combat.Tests.Service
         public void OneTimeSetup()
         {
             _combatantFactoryMock = new Mock<ICombatantFactory>();
-            _attackSchedulerMock = new Mock<IAttackScheduler>();
+            _attackSchedulerMock = new Mock<IBasicAttackScheduler>();
             _combatQueueMock = new Mock<ICombatQueue>();
             _repositoryMock = new Mock<IAssetRepository<EventType, IEventResolver>>();
             _combatantStoreServiceMock = new Mock<ICombatantStoreService>();

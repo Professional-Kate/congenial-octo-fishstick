@@ -1,6 +1,6 @@
 ﻿namespace IdelPog.Combat.Runtime.System.Interface
 {
-    public interface IAttackScheduler
+    public interface IBasicAttackScheduler
     { 
         public void EnqueueInitial(double tick);
 

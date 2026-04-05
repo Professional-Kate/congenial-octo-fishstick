@@ -2,7 +2,7 @@
 
 namespace IdelPog.Combat.Event
 {
-    public readonly record struct AttackEvent : ICombatEvent
+    public readonly record struct BasicAttackEvent : ICombatEvent
     {
         public EventType EventType => EventType.BASIC_ATTACK;
         public required double Tick { get; init; }

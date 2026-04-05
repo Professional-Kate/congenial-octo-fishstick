@@ -7,14 +7,14 @@ using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Runtime.System
 {
-    public sealed class AttackScheduler : IAttackScheduler
+    public sealed class BasicAttackScheduler : IBasicAttackScheduler
     { 
         private readonly ICombatQueue _combatQueue;
         private readonly ICombatantRepository _combatantRepository;
         private readonly INumberAssertion _numberAssertion;
         private readonly IFoundAssertion _foundAssertion;
 
-        public AttackScheduler(ICombatQueue combatQueue, INumberAssertion numberAssertion, ICombatantRepository combatantRepository, IFoundAssertion foundAssertion)
+        public BasicAttackScheduler(ICombatQueue combatQueue, INumberAssertion numberAssertion, ICombatantRepository combatantRepository, IFoundAssertion foundAssertion)
         {
             _combatQueue = combatQueue;
             _numberAssertion = numberAssertion;
@@ -26,6 +26,7 @@ namespace IdelPog.Combat.Runtime.System
         {
             foreach (CombatantEntity combatantEntity in _combatantRepository.GetAll())
             { 
+                // TODO: check if they can BasicAttack, component?
                 Enqueue(combatantEntity, tick);
             }
         }
@@ -48,8 +49,8 @@ namespace IdelPog.Combat.Runtime.System
             double interval = 1.0 / combatantStatsComponent.Speed;
             double nextTick = tick + interval;
             
-            AttackEvent attackEvent = new() { AttackerID = combatantEntity.CombatantID, Tick =  nextTick };
-            _combatQueue.Enqueue(attackEvent, nextTick);
+            BasicAttackEvent basicAttackEvent = new() { AttackerID = combatantEntity.CombatantID, Tick =  nextTick };
+            _combatQueue.Enqueue(basicAttackEvent, nextTick);
         }
     }
 }

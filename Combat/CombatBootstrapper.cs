@@ -53,7 +53,7 @@ namespace IdelPog.Combat
             CombatQueue combatQueue = new();
             
             ICombatantFactory combatantFactory = new CombatantFactory(combatantRepository, collectionAssertion, uniqueAssertion, repositoryAsserter);
-            IAttackScheduler attackScheduler = new AttackScheduler(combatQueue, numberAssertion, combatantRepository, foundAssertion);
+            IBasicAttackScheduler basicAttackScheduler = new BasicAttackScheduler(combatQueue, numberAssertion, combatantRepository, foundAssertion);
             IAssetRepository<EventType, IEventResolver> resolverRepository = new AssetRepository<EventType, IEventResolver>(repositoryAsserter);
             ICombatantStoreService combatantStoreService = new CombatantStoreService(friendlyCombatantStore, enemyCombatantStore, combatantRepository, collectionAssertion);
             ICombatStateService combatStateService = new CombatStateService(combatantRepository);
@@ -67,10 +67,10 @@ namespace IdelPog.Combat
             
             IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(combatantRepository, targetFinder, damageSystem, deathSystem, combatantStoreService, foundAssertion, combatantAssertion, numberAssertion, combatantLogger);
             // TODO: move this out eventually 
-            AttackEventResolver attackEventResolver = new(entityDamageMediator, attackScheduler, combatantRepository, foundAssertion);
+            AttackEventResolver attackEventResolver = new(entityDamageMediator, basicAttackScheduler, combatantRepository, foundAssertion);
             resolverRepository.Add(EventType.BASIC_ATTACK, attackEventResolver);
             
-            BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantFactory, combatantStoreService, attackScheduler, combatQueue, resolverRepository, combatStateService, collectionAssertion, responseDispatcher, combatantLogger);
+            BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantFactory, combatantStoreService, basicAttackScheduler, combatQueue, resolverRepository, combatStateService, collectionAssertion, responseDispatcher, combatantLogger);
             IBatchController<BasicEncounterDeck> controller = new ManagedBatchController<BasicEncounterDeck>(basicEncounterDeckMediator);
             BasicEncounterDeckErrorFactory errorFactory = new(new BaseErrorFactory());
                         

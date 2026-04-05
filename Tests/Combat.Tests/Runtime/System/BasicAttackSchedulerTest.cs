@@ -14,9 +14,9 @@ using Moq;
 namespace IdelPog.Combat.Tests.Runtime.System
 {
     [TestFixture]
-    public sealed class AttackSchedulerTest
+    public sealed class BasicAttackSchedulerTest
     {
-        private AttackScheduler _attackScheduler;
+        private BasicAttackScheduler _basicAttackScheduler;
         private Mock<ICombatQueue> _combatQueueMock;
         private Mock<IEntityDamageMediator> _damageSystemMock;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
@@ -32,7 +32,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _damageSystemMock = new Mock<IEntityDamageMediator>();
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
             
-            _attackScheduler = new AttackScheduler(_combatQueueMock.Object, new NumberAssertion(), _combatantRepositoryMock.Object, new FoundAssertion());
+            _basicAttackScheduler = new BasicAttackScheduler(_combatQueueMock.Object, new NumberAssertion(), _combatantRepositoryMock.Object, new FoundAssertion());
 
             _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
             _attackerCard = new CombatantCard { StatCard = _attackerStats, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN };
@@ -58,7 +58,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
         private void VerifyQueueCalled(double tickTime, Times times)
         {
-            _combatQueueMock.Verify(library => library.Enqueue(It.IsAny<AttackEvent>(), It.Is<double>(number => Math.Abs(number - tickTime) < 0.0001)), times);
+            _combatQueueMock.Verify(library => library.Enqueue(It.IsAny<BasicAttackEvent>(), It.Is<double>(number => Math.Abs(number - tickTime) < 0.0001)), times);
         }
 
         private void VerifyQueue()
@@ -72,7 +72,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             SetupRepositoryGetAll(_combatantEntity);
             
-            Assert.DoesNotThrow(() => _attackScheduler.EnqueueInitial(1d));
+            Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
 
             VerifyQueueCalled(1.1d, Times.Once());
             VerifyQueue();
@@ -83,7 +83,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             SetupRepositoryGetAll(_combatantEntity, _combatantEntity, _combatantEntity, _combatantEntity, _combatantEntity);
             
-            Assert.DoesNotThrow(() => _attackScheduler.EnqueueInitial(1d));
+            Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
 
             VerifyQueueCalled(1.1d, Times.Exactly(5));
             VerifyQueue();
@@ -94,7 +94,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             SetupRepositoryGetAll(_combatantEntity);
             
-            Assert.DoesNotThrow(() => _attackScheduler.EnqueueInitial(0d));
+            Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(0d));
             
             VerifyQueueCalled(0.1d, Times.Once());
             VerifyQueue();
@@ -105,9 +105,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             SetupRepositoryGetAll();
             
-            Assert.DoesNotThrow(() => _attackScheduler.EnqueueInitial(1d));
+            Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
             
-            _combatQueueMock.Verify(library => library.Enqueue(It.IsAny<AttackEvent>(), It.IsAny<double>()), Times.Never());
+            _combatQueueMock.Verify(library => library.Enqueue(It.IsAny<BasicAttackEvent>(), It.IsAny<double>()), Times.Never());
             VerifyQueue();
         }
         
@@ -117,7 +117,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             CombatantEntity zeroSpeedEntity = CombatantEntityFactory.CreateCombatantEntity(2, true, _attackerStats with { Speed = 0 });
             SetupRepositoryGetAll(zeroSpeedEntity);
             
-            Assert.Throws<NumberZeroException>(() => _attackScheduler.EnqueueInitial(1d));
+            Assert.Throws<NumberZeroException>(() => _basicAttackScheduler.EnqueueInitial(1d));
             
             VerifyQueue();
         }
@@ -128,7 +128,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupRepositoryGet(0);
             _combatantRepositoryMock.Setup(library => library.Contains(0)).Returns(true).Verifiable();
             
-            Assert.DoesNotThrow(() => _attackScheduler.EnqueueAttack(1d, 0));
+            Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueAttack(1d, 0));
             
             VerifyQueueCalled(1.1d, Times.Once());
             VerifyQueue();
@@ -137,7 +137,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_EnqueueAttack_IDNotFound_Throws()
         {
-            Assert.Throws<NotFoundException<byte>>(() => _attackScheduler.EnqueueAttack(1d, 0));
+            Assert.Throws<NotFoundException<byte>>(() => _basicAttackScheduler.EnqueueAttack(1d, 0));
             
             VerifyQueue();
         }

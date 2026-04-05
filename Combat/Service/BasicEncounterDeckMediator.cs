@@ -18,7 +18,7 @@ namespace IdelPog.Combat.Service
     {
         private readonly ICombatantFactory _combatantFactory;
         private readonly ICombatantStoreService _combatantStoreService;
-        private readonly IAttackScheduler _attackScheduler;
+        private readonly IBasicAttackScheduler _basicAttackScheduler;
         private readonly ICombatQueue _combatQueue;
         private readonly IAssetRepository<EventType, IEventResolver> _resolverRepository;
         private readonly ICombatantLogger _combatantLogger;
@@ -26,11 +26,11 @@ namespace IdelPog.Combat.Service
         private readonly ICombatStateService _combatStateService;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public BasicEncounterDeckMediator(ICombatantFactory combatantFactory, ICombatantStoreService combatantStoreService, IAttackScheduler attackScheduler, ICombatQueue combatQueue, IAssetRepository<EventType, IEventResolver> resolverRepository, ICombatStateService combatStateService, ICollectionAssertion collectionAssertion, IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICombatantLogger combatantLogger)
+        public BasicEncounterDeckMediator(ICombatantFactory combatantFactory, ICombatantStoreService combatantStoreService, IBasicAttackScheduler basicAttackScheduler, ICombatQueue combatQueue, IAssetRepository<EventType, IEventResolver> resolverRepository, ICombatStateService combatStateService, ICollectionAssertion collectionAssertion, IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICombatantLogger combatantLogger)
         {
             _combatantFactory = combatantFactory;
             _combatantStoreService = combatantStoreService;
-            _attackScheduler = attackScheduler;
+            _basicAttackScheduler = basicAttackScheduler;
             _combatQueue = combatQueue;
             _resolverRepository = resolverRepository;
             _combatStateService = combatStateService;
@@ -72,7 +72,7 @@ namespace IdelPog.Combat.Service
             _combatantFactory.SpawnCombatants(basicEncounterDeck.EnemyCombatantCards, false);
             
             _combatantStoreService.RegisterInitial();
-            _attackScheduler.EnqueueInitial(0);
+            _basicAttackScheduler.EnqueueInitial(0);
         }
 
         private BasicEncounterDeckResponse ConstructResponse(BasicEncounterDeck basicEncounterDeck)
