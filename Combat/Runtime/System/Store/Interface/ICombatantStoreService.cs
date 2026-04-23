@@ -1,4 +1,6 @@
-﻿namespace IdelPog.Combat.Runtime.System.Store.Interface
+﻿using IdelPog.Combat.Runtime.Entities.Combatant;
+
+namespace IdelPog.Combat.Runtime.System.Store.Interface
 {
     public interface ICombatantStoreService
     {

@@ -2,7 +2,7 @@
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Skill;
-using IdelPog.Combat.Runtime;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
@@ -12,9 +12,9 @@ using Moq;
 namespace IdelPog.Combat.Tests.Runtime.System
 {
     [TestFixture]
-    public sealed class TargetFinderTest
+    public sealed class EnemyTargetFinderTest
     {
-        private TargetFinder _targetFinder;
+        private EnemyTargetFinder _enemyTargetFinder;
         private Mock<ICombatantStore> _friendlyCombatantStoreMock;
         private Mock<ICombatantStore> _enemyCombatantStoreMock;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
@@ -35,7 +35,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _enemyCombatantStoreMock = new Mock<ICombatantStore>();
             _combatantRepositoryMock =  new Mock<ICombatantRepository>();
             
-            _targetFinder = new TargetFinder(_friendlyCombatantStoreMock.Object, _enemyCombatantStoreMock.Object, _combatantRepositoryMock.Object, new ObjectNullAssertion(), new FoundAssertion());
+            _enemyTargetFinder = new EnemyTargetFinder(_friendlyCombatantStoreMock.Object, _enemyCombatantStoreMock.Object, _combatantRepositoryMock.Object, new ObjectNullAssertion(), new FoundAssertion());
 
             _friendlyStats = new StatCard { Health = 25, Attack = 10, Speed = 10 };
             _friendlyCard = CombatantCardFactory.CreateCombatantCard(CombatantType.BEAR, _friendlyStats);
@@ -101,7 +101,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupRepositoryGet(_enemyEntity);
             SetupLowestHealthStore(_enemyCombatantStoreMock, new LowestHealthCombatant { CombatantID = _enemyEntity.CombatantID, Health = _enemyStats.Health });
             
-            CombatantEntity combatantEntity = _targetFinder.FindBestTarget(lowHealthAttacker, SkillType.BASIC_ATTACK);
+            CombatantEntity combatantEntity = _enemyTargetFinder.FindBestTarget(lowHealthAttacker, SkillType.BASIC_ATTACK);
 
             AssertLowestHealthCombatant(_enemyCombatantStoreMock, Times.Once());
             AssertLowestHealthCombatant(_friendlyCombatantStoreMock, Times.Never());
@@ -116,7 +116,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupRepositoryGet(_friendlyEntity);
             SetupHighestAttackStore(_friendlyCombatantStoreMock, new HighestAttackCombatant { CombatantID = _friendlyEntity.CombatantID, Attack = _friendlyStats.Attack });
             
-            CombatantEntity combatantEntity = _targetFinder.FindBestTarget(_enemyEntity, SkillType.BASIC_ATTACK);
+            CombatantEntity combatantEntity = _enemyTargetFinder.FindBestTarget(_enemyEntity, SkillType.BASIC_ATTACK);
 
             AssertHighestAttackCombatant(_friendlyCombatantStoreMock, Times.Once());
             AssertHighestAttackCombatant(_enemyCombatantStoreMock, Times.Never());
@@ -128,8 +128,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_FindBestTarget_StoresReturnNull_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _targetFinder.FindBestTarget(_friendlyEntity, SkillType.BASIC_ATTACK));
-            Assert.Throws<ArgumentNullException>(() => _targetFinder.FindBestTarget(_enemyEntity, SkillType.BASIC_ATTACK));
+            Assert.Throws<ArgumentNullException>(() => _enemyTargetFinder.FindBestTarget(_friendlyEntity, SkillType.BASIC_ATTACK));
+            Assert.Throws<ArgumentNullException>(() => _enemyTargetFinder.FindBestTarget(_enemyEntity, SkillType.BASIC_ATTACK));
             
             AssertLowestHealthCombatant(_enemyCombatantStoreMock, Times.Never());
             AssertHighestAttackCombatant(_enemyCombatantStoreMock, Times.Once());
@@ -146,7 +146,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             CombatantCard badTargetingTypeCard = CombatantCardFactory.CreateCombatantCard(CombatantType.BEAR, _friendlyStats);
             CombatantEntity badEntity = CombatantEntityFactory.CreateCombatantEntity(3, true, badTargetingTypeCard with { SkillCards = [badSkillCard]});
             
-            Assert.Throws<ArgumentOutOfRangeException>(() => _targetFinder.FindBestTarget(badEntity, SkillType.BASIC_ATTACK));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _enemyTargetFinder.FindBestTarget(badEntity, SkillType.BASIC_ATTACK));
         }
     }
 }

@@ -2,8 +2,8 @@
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.Filter.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store;

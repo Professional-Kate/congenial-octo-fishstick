@@ -1,23 +1,20 @@
 ﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Contracts.Skill;
-using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.System;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
 
-namespace IdelPog.Combat.Tests.Runtime.System
+namespace IdelPog.Combat.Tests.Runtime.Factory
 {
     [TestFixture]
-    public sealed class CombatantFactoryTest
+    public sealed class CombatantEntityFactoryTest
     {
-        private CombatantFactory _combatService;
+        private Combat.Runtime.System.Factory.CombatantEntityFactory _combatService;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
-        private Mock<ISkillComponentFactory> _skillComponentFactoryMock;
 
         private CombatantCard _wolfCard;
         private CombatantStatsComponent _combatantStatsComponent;
@@ -26,9 +23,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void OneTimeSetup()
         {
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
-            _skillComponentFactoryMock = new Mock<ISkillComponentFactory>();
             
-            _combatService = new CombatantFactory(_combatantRepositoryMock.Object, _skillComponentFactoryMock.Object, new CollectionAssertion(), new UniqueAssertion(), new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
+            _combatService = new Combat.Runtime.System.Factory.CombatantEntityFactory(_combatantRepositoryMock.Object, new CollectionAssertion(), new UniqueAssertion(), new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
 
             _combatantStatsComponent = new CombatantStatsComponent { Health = 3, Attack = 5, Speed = 5 };
             _wolfCard = CombatantCardFactory.CreateCombatantCard(CombatantType.WOLF, new StatCard { Health = 3, Attack = 5, Speed = 5 });
@@ -38,15 +34,12 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Setup()
         {
             _combatantRepositoryMock.Reset();
-            _skillComponentFactoryMock.Reset();
         }
 
         private void VerifyMocks()
         {
             _combatantRepositoryMock.Verify();
             _combatantRepositoryMock.VerifyNoOtherCalls();
-            _skillComponentFactoryMock.Verify();
-            _skillComponentFactoryMock.VerifyNoOtherCalls();
         }
 
         private void SetupContains(byte id)
@@ -65,11 +58,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantRepositoryMock.Verify(library => library.NextCombatantID, times);
         }
 
-        private void SetupFactoryCreate(SkillCard[] skillCards)
-        {
-            _skillComponentFactoryMock.Setup(library => library.CreateMultiple(skillCards)).Returns([new SkillComponent { SkillType = SkillType.BASIC_ATTACK, TargetingType = TargetingType.HIGH_ATTACK }]).Verifiable();
-        }
-
         private void SetupNextCombatantIDSequence()
         {
             _combatantRepositoryMock.SetupSequence(library => library.NextCombatantID).Returns(0).Returns(1);
@@ -79,7 +67,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Positive_SpawnCombatants_SingleCard_CreatesOneCombatant()
         { 
             SetupContains(0);
-            SetupFactoryCreate(_wolfCard.SkillCards);
             
             _combatService.SpawnCombatants([_wolfCard], true);
             
@@ -94,7 +81,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupContains(0);
             SetupContains(1);
             SetupNextCombatantIDSequence();
-            SetupFactoryCreate(_wolfCard.SkillCards);
             
             _combatService.SpawnCombatants([_wolfCard, _wolfCard], true);
             
@@ -112,7 +98,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupContains(0);
             SetupContains(1);
             SetupNextCombatantIDSequence();
-            SetupFactoryCreate(_wolfCard.SkillCards);
             
             _combatService.SpawnCombatants([_wolfCard, humanCard], true);
             

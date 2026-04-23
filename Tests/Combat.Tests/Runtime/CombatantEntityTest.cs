@@ -1,5 +1,5 @@
-﻿using IdelPog.Combat.Runtime;
-using IdelPog.Combat.Runtime.Component;
+﻿using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 
 namespace IdelPog.Combat.Tests.Runtime
 {

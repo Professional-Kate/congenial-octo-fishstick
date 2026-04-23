@@ -1,7 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime;
-using IdelPog.Combat.Runtime.System;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
@@ -11,7 +10,6 @@ namespace IdelPog.Combat.Tests
     internal static class CombatantEntityFactory
     {
         private static readonly RepositoryAsserter _repositoryAsserter = new(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
-        private static readonly SkillComponentFactory _skillComponentFactory = new();
 
         internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly = true)
         {
@@ -27,7 +25,7 @@ namespace IdelPog.Combat.Tests
 
         internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly, CombatantCard combatantCard)
         {
-            CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard.StatCard, _skillComponentFactory.CreateMultiple(combatantCard.SkillCards))
+            CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard.StatCard)
             {
                 CombatantID = entityID,
                 IsFriendly = isFriendly,

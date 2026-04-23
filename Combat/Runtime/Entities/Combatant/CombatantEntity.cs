@@ -3,10 +3,9 @@ using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
-using IdelPog.ECS.Component;
 using IdelPog.ECS.Entity;
 
-namespace IdelPog.Combat.Runtime
+namespace IdelPog.Combat.Runtime.Entities.Combatant
 {
     public sealed record CombatantEntity : Entity
     {
@@ -15,11 +14,10 @@ namespace IdelPog.Combat.Runtime
         public required CombatantType CombatantType { get; init; }
         public required Information CombatantInformation { get; init; }
 
-        public CombatantEntity(IRepositoryAsserter repositoryAsserter, StatCard statCard, params SkillComponent[] skills) 
+        public CombatantEntity(IRepositoryAsserter repositoryAsserter, StatCard statCard) 
             : base(repositoryAsserter, BuildCombatantStatsComponent(statCard))
         { 
             AddComponent(new LifeStatusComponent { IsAlive = true });
-            AddComponent(new ComponentStore<SkillComponent>(skills));
         }
 
         public void UpdateCombatantStats(CombatantStatsComponent combatantStatsComponent)

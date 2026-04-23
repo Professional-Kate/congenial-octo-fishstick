@@ -1,14 +1,13 @@
 ﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Skill;
-using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
-using IdelPog.ECS.Component;
 
 namespace IdelPog.Combat.Runtime.System
 {
-    public sealed class TargetFinder : ITargetFinder
+    public sealed class EnemyTargetFinder : ITargetFinder
     {
         private readonly ICombatantStoreRead _friendlyCombatantStore;
         private readonly ICombatantStoreRead _enemyCombatantStore;
@@ -16,7 +15,7 @@ namespace IdelPog.Combat.Runtime.System
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly IFoundAssertion _foundAssertion;
 
-        public TargetFinder(ICombatantStoreRead friendlyCombatantStore, ICombatantStoreRead enemyCombatantStore, ICombatantRepository combatantRepository, IObjectNullAssertion objectNullAssertion, IFoundAssertion foundAssertion)
+        public EnemyTargetFinder(ICombatantStoreRead friendlyCombatantStore, ICombatantStoreRead enemyCombatantStore, ICombatantRepository combatantRepository, IObjectNullAssertion objectNullAssertion, IFoundAssertion foundAssertion)
         {
             _friendlyCombatantStore = friendlyCombatantStore;
             _enemyCombatantStore = enemyCombatantStore;
@@ -25,9 +24,9 @@ namespace IdelPog.Combat.Runtime.System
             _foundAssertion = foundAssertion;
         }
 
-        public CombatantEntity FindBestTarget(CombatantEntity attackingEntity, SkillType skillType)
+        public CombatantEntity FindBestTarget(CombatantEntity instigatingEntity, SkillType skillType)
         {
-            return DetermineTarget(attackingEntity.IsFriendly ? _enemyCombatantStore : _friendlyCombatantStore, attackingEntity, skillType);
+            return DetermineTarget(instigatingEntity.IsFriendly ? _enemyCombatantStore : _friendlyCombatantStore, instigatingEntity, skillType);
         }
 
         private CombatantEntity DetermineTarget(ICombatantStoreRead combatantStore, CombatantEntity attackingEntity, SkillType skillType)
@@ -54,21 +53,20 @@ namespace IdelPog.Combat.Runtime.System
 
         private TargetingType GetTargetingType(CombatantEntity attackingEntity, SkillType skillType)
         {
-            ComponentStore<SkillComponent> skillComponentStore = attackingEntity.GetComponent<ComponentStore<SkillComponent>>();
-            _foundAssertion.AssertFound(skillType, skillComponentStore.ContainsComponent(component => component.SkillType == skillType));
-            
-            foreach (SkillComponent skillComponent in skillComponentStore.GetAllComponents())
-            {
-                if (skillComponent.SkillType != skillType)
-                {
-                    continue;
-                }
+            // foreach (BasicAttackComponent skillComponent in skillComponentStore.GetAllComponents())
+            // {
+            //     if (skillComponent.SkillType != skillType)
+            //     {
+            //         continue;
+            //     }
+            //
+            //     return skillComponent.TargetingType;
+            // }
+            //
+            // // TODO: figure out something better
+            // throw new InvalidOperationException();
 
-                return skillComponent.TargetingType;
-            }
-
-            // TODO: figure out something better
-            throw new InvalidOperationException();
+            return TargetingType.HIGH_ATTACK;
         }
     }
 }

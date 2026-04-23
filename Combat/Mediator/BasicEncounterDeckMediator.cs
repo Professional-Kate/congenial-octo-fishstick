@@ -3,6 +3,7 @@ using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Interface;
 using IdelPog.Combat.Event.Resolver.Interface;
+using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service.Interface;
@@ -12,11 +13,11 @@ using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion.Interface;
 
-namespace IdelPog.Combat.Service
+namespace IdelPog.Combat.Mediator
 {
     public sealed class BasicEncounterDeckMediator : IBatchMediator<BasicEncounterDeck>
     {
-        private readonly ICombatantFactory _combatantFactory;
+        private readonly ICombatantEntityFactory _combatantEntityFactory;
         private readonly ICombatantStoreService _combatantStoreService;
         private readonly IBasicAttackScheduler _basicAttackScheduler;
         private readonly ICombatQueue _combatQueue;
@@ -26,9 +27,9 @@ namespace IdelPog.Combat.Service
         private readonly ICombatStateService _combatStateService;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public BasicEncounterDeckMediator(ICombatantFactory combatantFactory, ICombatantStoreService combatantStoreService, IBasicAttackScheduler basicAttackScheduler, ICombatQueue combatQueue, IAssetRepository<EventType, IEventResolver> resolverRepository, ICombatStateService combatStateService, ICollectionAssertion collectionAssertion, IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICombatantLogger combatantLogger)
+        public BasicEncounterDeckMediator(ICombatantEntityFactory combatantEntityFactory, ICombatantStoreService combatantStoreService, IBasicAttackScheduler basicAttackScheduler, ICombatQueue combatQueue, IAssetRepository<EventType, IEventResolver> resolverRepository, ICombatStateService combatStateService, ICollectionAssertion collectionAssertion, IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICombatantLogger combatantLogger)
         {
-            _combatantFactory = combatantFactory;
+            _combatantEntityFactory = combatantEntityFactory;
             _combatantStoreService = combatantStoreService;
             _basicAttackScheduler = basicAttackScheduler;
             _combatQueue = combatQueue;
@@ -68,8 +69,8 @@ namespace IdelPog.Combat.Service
             _collectionAssertion.AssertHasElements(basicEncounterDeck.FriendlyCombatantCards);
             _collectionAssertion.AssertHasElements(basicEncounterDeck.EnemyCombatantCards);
             
-            _combatantFactory.SpawnCombatants(basicEncounterDeck.FriendlyCombatantCards, true);
-            _combatantFactory.SpawnCombatants(basicEncounterDeck.EnemyCombatantCards, false);
+            _combatantEntityFactory.SpawnCombatants(basicEncounterDeck.FriendlyCombatantCards, true);
+            _combatantEntityFactory.SpawnCombatants(basicEncounterDeck.EnemyCombatantCards, false);
             
             _combatantStoreService.RegisterInitial();
             _basicAttackScheduler.EnqueueInitial(0);

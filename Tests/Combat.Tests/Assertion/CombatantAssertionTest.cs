@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Runtime;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 
 namespace IdelPog.Combat.Tests.Assertion
 {

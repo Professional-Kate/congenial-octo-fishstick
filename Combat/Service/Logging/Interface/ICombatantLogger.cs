@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Runtime;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 
 namespace IdelPog.Combat.Service.Logging.Interface
 {

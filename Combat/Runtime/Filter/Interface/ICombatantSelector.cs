@@ -1,4 +1,6 @@
-﻿namespace IdelPog.Combat.Runtime.Filter.Interface
+﻿using IdelPog.Combat.Runtime.Entities.Combatant;
+
+namespace IdelPog.Combat.Runtime.Filter.Interface
 {
     public interface ICombatantSelector
     { 

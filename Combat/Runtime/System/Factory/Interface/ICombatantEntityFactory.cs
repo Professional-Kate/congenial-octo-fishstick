@@ -1,8 +1,8 @@
 ﻿using IdelPog.Combat.Contracts.Card;
 
-namespace IdelPog.Combat.Runtime.System.Interface
+namespace IdelPog.Combat.Runtime.System.Factory.Interface
 {
-    public interface ICombatantFactory
+    public interface ICombatantEntityFactory
     { 
         public void SpawnCombatants(IReadOnlyList<CombatantCard> combatants, bool isFriendly);
     }

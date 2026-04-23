@@ -4,9 +4,10 @@ using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver.Interface;
+using IdelPog.Combat.Mediator;
+using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
-using IdelPog.Combat.Service;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
@@ -21,7 +22,7 @@ namespace IdelPog.Combat.Tests.Service
     public sealed class BasicEncounterDeckMediatorTest
     {
         private BasicEncounterDeckMediator _basicEncounterDeckMediator;
-        private Mock<ICombatantFactory> _combatantFactoryMock;
+        private Mock<ICombatantEntityFactory> _combatantFactoryMock;
         private Mock<IBasicAttackScheduler> _attackSchedulerMock;
         private Mock<ICombatQueue> _combatQueueMock;
         private Mock<IAssetRepository<EventType, IEventResolver>> _repositoryMock;
@@ -35,7 +36,7 @@ namespace IdelPog.Combat.Tests.Service
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _combatantFactoryMock = new Mock<ICombatantFactory>();
+            _combatantFactoryMock = new Mock<ICombatantEntityFactory>();
             _attackSchedulerMock = new Mock<IBasicAttackScheduler>();
             _combatQueueMock = new Mock<ICombatQueue>();
             _repositoryMock = new Mock<IAssetRepository<EventType, IEventResolver>>();

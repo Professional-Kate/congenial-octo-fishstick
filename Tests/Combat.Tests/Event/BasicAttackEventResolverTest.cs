@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Contracts.Skill;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver;
-using IdelPog.Combat.Runtime;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;

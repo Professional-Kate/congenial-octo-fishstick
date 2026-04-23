@@ -1,6 +1,7 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
 using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.Filter.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
