@@ -3,6 +3,7 @@ using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
+using IdelPog.ECS.Component;
 using IdelPog.ECS.Entity;
 
 namespace IdelPog.Combat.Runtime
@@ -11,14 +12,14 @@ namespace IdelPog.Combat.Runtime
     {
         public required byte CombatantID { get; init; }
         public required bool IsFriendly { get; init; }
-        public readonly CombatantType CombatantType;
-        public readonly Information CombatantInformation;
+        public required CombatantType CombatantType { get; init; }
+        public required Information CombatantInformation { get; init; }
 
-        public CombatantEntity(IRepositoryAsserter repositoryAsserter, CombatantCard combatantCard) 
-            : base(repositoryAsserter, BuildCombatantStatsComponent(combatantCard.StatCard), new TargetingTypeComponent { TargetingType = combatantCard.TargetingType }, new LifeStatusComponent { IsAlive = true })
+        public CombatantEntity(IRepositoryAsserter repositoryAsserter, StatCard statCard, params SkillComponent[] skills) 
+            : base(repositoryAsserter, BuildCombatantStatsComponent(statCard))
         { 
-            CombatantType = combatantCard.CombatantType;
-            CombatantInformation = combatantCard.Information;
+            AddComponent(new LifeStatusComponent { IsAlive = true });
+            AddComponent(new ComponentStore<SkillComponent>(skills));
         }
 
         public void UpdateCombatantStats(CombatantStatsComponent combatantStatsComponent)

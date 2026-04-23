@@ -4,7 +4,6 @@ using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Service.Logging;
-using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Assertion;
 
 namespace IdelPog.Combat.Tests.Service
@@ -20,13 +19,7 @@ namespace IdelPog.Combat.Tests.Service
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _combatantCard = new CombatantCard
-            {
-                CombatantType = CombatantType.WOLF,
-                StatCard = new StatCard { Attack = 10, Health = 10, Speed = 10 },
-                TargetingType = TargetingType.LOW_HEALTH,
-                Information = new Information { Name = "", Description = "" }
-            };
+            _combatantCard = CombatantCardFactory.CreateCombatantCard(CombatantType.WOLF);
         }
         
         [SetUp]

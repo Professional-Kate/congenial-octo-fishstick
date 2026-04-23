@@ -22,7 +22,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         public void OneTimeSetup()
         {
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
-            _skillNodeEntity = new SkillNodeEntity(repositoryAsserter, new SkillComponent { SkillID = SkillID.FORAGING},[new HarvestTargetComponent() { HarvestTarget = ResourceID.COPPER_CLUSTER}]);
+            _skillNodeEntity = new SkillNodeEntity(repositoryAsserter, new SkillComponent { SkillID = SkillID.FORAGING},[new HarvestTargetComponent { HarvestTarget = ResourceID.COPPER_CLUSTER}]);
             _repositoryMock = new Mock<IAssetRepository<SkillID, SkillNodeEntity>>();
             
             _skillNodeAccessValidator = new SkillNodeAccessValidator(_repositoryMock.Object, new FoundAssertion());

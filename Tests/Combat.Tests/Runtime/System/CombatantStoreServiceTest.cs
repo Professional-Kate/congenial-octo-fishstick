@@ -1,12 +1,10 @@
 ﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store;
 using IdelPog.Combat.Runtime.System.Store.Interface;
-using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -33,21 +31,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _combatantStoreService = new CombatantStoreService(_friendlyCombatantStoreMock.Object, _enemyCombatantStoreMock.Object, _combatantFiltersMock.Object, new CollectionAssertion());
 
-            _friendlyCombatant = CombatantEntityFactory.CreateCombatantEntity(1, true, new CombatantCard
-            {
-                CombatantType = CombatantType.HUMAN,
-                TargetingType = TargetingType.HIGH_ATTACK,
-                StatCard = new StatCard { Health = 1, Attack = 2, Speed = 3 },
-                Information = new Information { Name = "", Description = "" }
-            });
-
-            _enemyCombatant = CombatantEntityFactory.CreateCombatantEntity(2, false, new CombatantCard
-            {
-                CombatantType = CombatantType.BEAR,
-                TargetingType = TargetingType.LOW_HEALTH,
-                StatCard = new StatCard { Health = 3, Attack = 1, Speed = 2 },
-                Information = new Information { Name = "", Description = "" }
-            });
+            _friendlyCombatant = CombatantEntityFactory.CreateCombatantEntity(1, true, CombatantCardFactory.CreateCombatantCard(CombatantType.HUMAN));
+            _enemyCombatant = CombatantEntityFactory.CreateCombatantEntity(2, false, CombatantCardFactory.CreateCombatantCard(CombatantType.BEAR));
+            
         }
 
         [SetUp]

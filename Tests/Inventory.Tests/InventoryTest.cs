@@ -84,7 +84,7 @@ namespace IdelPog.Inventory.Tests
         [Test]
         public void Positive_RemoveAmount_RemovesItem()
         {
-            Item singleAmountItem = new(ItemID.STONE, 0, new Information() { Description = "", Name = ""}, 1);
+            Item singleAmountItem = new(ItemID.STONE, 0, new Information { Description = "", Name = ""}, 1);
             
             _repositoryMock.Setup(library => library.Contains(singleAmountItem.ItemID)).Returns(true);
             _repositoryMock.Setup(library => library.Get(singleAmountItem.ItemID)).Returns(singleAmountItem);

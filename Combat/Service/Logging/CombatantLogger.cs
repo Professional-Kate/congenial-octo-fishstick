@@ -42,9 +42,10 @@ namespace IdelPog.Combat.Service.Logging
             return new CombatantCard
             {
                 CombatantType = combatantEntity.CombatantType,
-                TargetingType = combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType,
                 StatCard = CreateStatCard(combatantEntity.GetComponent<CombatantStatsComponent>()),
-                Information = combatantEntity.CombatantInformation
+                Information = combatantEntity.CombatantInformation,
+                // TODO: we don't need to track SkillCards in the Logger
+                SkillCards = []
             };
         }
 

@@ -3,7 +3,6 @@ using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service;
-using IdelPog.Core.Contracts;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Service
@@ -25,10 +24,7 @@ namespace IdelPog.Combat.Tests.Service
             _combatStateService = new CombatStateService(_combatantFiltersMock.Object);
             
             StatCard entityStats = new() { Health = 10, Attack = 10,  Speed = 3 };
-            CombatantCard entityCard = new()
-            {
-                CombatantType = CombatantType.BEAR, StatCard = entityStats, TargetingType = TargetingType.LOW_HEALTH, Information = new Information { Name = "", Description = "" }
-            };
+            CombatantCard entityCard = CombatantCardFactory.CreateCombatantCard(CombatantType.BEAR, entityStats);
             
             _friendlyEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, entityCard);
             _enemyEntity = CombatantEntityFactory.CreateCombatantEntity(2, false, entityCard with { CombatantType = CombatantType.GOBLIN });

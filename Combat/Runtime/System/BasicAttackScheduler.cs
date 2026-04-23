@@ -1,9 +1,11 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
+using IdelPog.Combat.Contracts.Skill;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
+using IdelPog.ECS.Component;
 
 namespace IdelPog.Combat.Runtime.System
 {
@@ -25,9 +27,12 @@ namespace IdelPog.Combat.Runtime.System
         public void EnqueueInitial(double tick)
         {
             foreach (CombatantEntity combatantEntity in _combatantRepository.GetAll())
-            { 
-                // TODO: check if they can BasicAttack, component?
-                Enqueue(combatantEntity, tick);
+            {
+                ComponentStore<SkillComponent> componentStore = combatantEntity.GetComponent<ComponentStore<SkillComponent>>();
+                if (componentStore.ContainsComponent(component => component.SkillType == SkillType.BASIC_ATTACK))
+                { 
+                    Enqueue(combatantEntity, tick);
+                }
             }
         }
 

@@ -52,10 +52,11 @@ namespace IdelPog.Combat
             CombatantRepository combatantRepository = new(foundAssertion);
             ITargetFinder targetFinder = new TargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantRepository, objectNullAssertion);
             CombatQueue combatQueue = new();
+            ISkillComponentFactory skillComponentFactory = new SkillComponentFactory();
             
-            ICombatantFactory combatantFactory = new CombatantFactory(combatantRepository, collectionAssertion, uniqueAssertion, repositoryAsserter);
+            ICombatantFactory combatantFactory = new CombatantFactory(combatantRepository, skillComponentFactory, collectionAssertion, uniqueAssertion, repositoryAsserter);
             IBasicAttackScheduler basicAttackScheduler = new BasicAttackScheduler(combatQueue, numberAssertion, combatantRepository, foundAssertion);
-            IAssetRepository<EventType, IEventResolver> resolverRepository = new AssetRepository<EventType, IEventResolver>(repositoryAsserter);
+            AssetRepository<EventType, IEventResolver> resolverRepository = new(repositoryAsserter);
             ICombatantStoreService combatantStoreService = new CombatantStoreService(friendlyCombatantStore, enemyCombatantStore, combatantRepository, collectionAssertion);
             ICombatStateService combatStateService = new CombatStateService(combatantRepository);
             IDamageSystem damageSystem = new DamageSystem();

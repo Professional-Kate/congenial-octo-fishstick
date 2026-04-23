@@ -39,7 +39,7 @@ namespace IdelPog.Inventory.Tests.Mediator
             _goldUpdate = new InventoryUpdate { ItemID = ItemID.GOLD, Amount = 1, ActionType = ActionType.ADD };
             _goldUpdateResponse = new InventoryUpdateResponse
             {
-                ItemInfo = new ItemInfo { Amount = 1, BaseSellPrice = 1, ItemID = ItemID.GOLD, Information = new Information() { Name = "", Description = ""} },
+                ItemInfo = new ItemInfo { Amount = 1, BaseSellPrice = 1, ItemID = ItemID.GOLD, Information = new Information { Name = "", Description = ""} },
                 MutateType = MutateType.CHANGED
             };
             

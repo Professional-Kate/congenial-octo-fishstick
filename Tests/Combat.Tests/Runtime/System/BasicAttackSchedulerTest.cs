@@ -7,7 +7,6 @@ using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service.Interface;
-using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -36,7 +35,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _basicAttackScheduler = new BasicAttackScheduler(_combatQueueMock.Object, new NumberAssertion(), _combatantRepositoryMock.Object, new FoundAssertion());
 
             _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
-            _attackerCard = new CombatantCard { StatCard = _attackerStats, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN, Information = new Information { Name = "", Description = "" } };
+            _attackerCard = CombatantCardFactory.CreateCombatantCard(CombatantType.HUMAN, _attackerStats);
             _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _attackerCard);
         }
 
@@ -68,6 +67,19 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatQueueMock.VerifyNoOtherCalls();
         }
 
+        // [Test]
+        public void Positive_EnqueueInitial_NoMatchingComponent_NoEnqueue()
+        {
+            // TODO: need to add another SkillComponent
+            CombatantCard combatantCard = CombatantCardFactory.CreateCombatantCard(CombatantType.HUMAN, _attackerStats, _attackerCard.Information, []);
+            CombatantEntity combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, combatantCard);
+            SetupRepositoryGetAll(combatantEntity);
+            
+            Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
+
+            VerifyQueue();
+        }
+        
         [Test]
         public void Positive_EnqueueInitial_EnqueuesSingleAttackEvent()
         {
