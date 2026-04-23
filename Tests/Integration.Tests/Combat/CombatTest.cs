@@ -143,13 +143,8 @@ namespace IdelPog.Integration.Tests.Combat
         }
         
         private void AssertFirstDead(CombatantCard card)
-        {
-            Information firstDeadInformation = _combatTools.FirstDeadCombatant.CombatantCard.Information;
-            
-            if (firstDeadInformation != card.Information)
-            {
-                Assert.Fail($"Expected: {card.Information}\nActual: {firstDeadInformation}");
-            }
+        { 
+            Assert.That(card.Information, Is.EqualTo(_combatTools.FirstDeadCombatant.CombatantCard.Information));
         }
 
         private void AssertZeroAttacks(params CombatantCard[] combatantCards)
