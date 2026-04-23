@@ -193,7 +193,8 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_HighAttack_TargetsHighAttack()
         {
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCard], [_goblinCard, _bearCard]);
+            SkillCard highAttackCard = new() { SkillType = SkillType.BASIC_ATTACK, Strategy = new Strategy { TargetingType = TargetingType.HIGH_ATTACK } };
+            BasicEncounterDeck returnedDeck = RunCombat([_humanCard with { SkillCards = [highAttackCard]}], [_goblinCard, _bearCard]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -210,7 +211,8 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_LowHealth_TargetsLowHealth()
         {
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCard], [_wolfCard, _bearCard]);
+            SkillCard lowHealthCard = new() { SkillType = SkillType.BASIC_ATTACK, Strategy = new Strategy { TargetingType = TargetingType.LOW_HEALTH } };
+            BasicEncounterDeck returnedDeck = RunCombat([_humanCard with { SkillCards = [lowHealthCard]}], [_wolfCard, _bearCard]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);

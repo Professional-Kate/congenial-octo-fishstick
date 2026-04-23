@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Event.Resolver.Interface;
+﻿using IdelPog.Combat.Contracts.Skill;
+using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
@@ -29,7 +30,7 @@ namespace IdelPog.Combat.Event.Resolver
                 return;
             }           
             
-            _entityDamageMediator.ApplyDamage(attackerID);
+            _entityDamageMediator.ApplyDamage(attackerID, SkillType.BASIC_ATTACK);
             _basicAttackScheduler.EnqueueAttack(tick, attackerID);
         }
     }

@@ -50,7 +50,7 @@ namespace IdelPog.Combat
             ICombatantStore friendlyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
             ICombatantStore enemyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
             CombatantRepository combatantRepository = new(foundAssertion);
-            ITargetFinder targetFinder = new TargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantRepository, objectNullAssertion);
+            ITargetFinder targetFinder = new TargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantRepository, objectNullAssertion, foundAssertion);
             CombatQueue combatQueue = new();
             ISkillComponentFactory skillComponentFactory = new SkillComponentFactory();
             
