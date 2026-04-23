@@ -5,7 +5,7 @@ namespace IdelPog.Combat.Service.Logging.Interface
 {
     public interface ICombatantLogger
     {
-        public void LogCombatantChange(CombatantEntity changedEntity);
+        public void LogCombatantChange(CombatantEntity changedEntity, byte attackerID);
         
         public IReadOnlyList<CombatantStateChange> GetStateChanges();
         

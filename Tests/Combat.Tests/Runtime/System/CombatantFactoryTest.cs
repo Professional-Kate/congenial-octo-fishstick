@@ -4,6 +4,7 @@ using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -27,7 +28,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _combatService = new CombatantFactory(_combatantRepositoryMock.Object, new CollectionAssertion(), new UniqueAssertion(), new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
 
-            _wolfCard = new CombatantCard { CombatantType = CombatantType.WOLF, StatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK };
+            _wolfCard = new CombatantCard { CombatantType = CombatantType.WOLF, StatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, Information = new Information { Name = "", Description = "" } };
             _combatantStatsComponent = new CombatantStatsComponent { Health = 3, Attack = 5, Speed = 5 };
         }
 
@@ -98,7 +99,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupContains(1);
             SetupNextCombatantIDSequence();
             
-            CombatantCard humanCard = new() { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Health = 10, Attack = 3, Speed = 3 }, TargetingType = TargetingType.LOW_HEALTH };
+            CombatantCard humanCard = new() { CombatantType = CombatantType.HUMAN, StatCard = new StatCard { Health = 10, Attack = 3, Speed = 3 }, TargetingType = TargetingType.LOW_HEALTH, Information = new Information { Name = "", Description = "" } };
             _combatService.SpawnCombatants([_wolfCard, humanCard], true);
             
             VerifyRepositoryAdd(_combatantStatsComponent, true);

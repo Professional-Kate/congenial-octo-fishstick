@@ -5,6 +5,7 @@ using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Assertion;
 using Moq;
 
@@ -37,11 +38,11 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _targetFinder = new TargetFinder(_friendlyCombatantStoreMock.Object, _enemyCombatantStoreMock.Object, _combatantRepositoryMock.Object, new ObjectNullAssertion());
 
             _friendlyStats = new StatCard { Health = 25, Attack = 10, Speed = 10 };
-            _friendlyCard = new CombatantCard { StatCard = _friendlyStats, TargetingType = TargetingType.LOW_HEALTH, CombatantType = CombatantType.BEAR };
+            _friendlyCard = new CombatantCard { StatCard = _friendlyStats, TargetingType = TargetingType.LOW_HEALTH, CombatantType = CombatantType.BEAR, Information = new Information { Name = "", Description = "" } };
             _friendlyEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _friendlyCard);
             
             _enemyStats = new StatCard { Health = 15, Attack = 15, Speed = 10 };
-            _enemyCard = new CombatantCard { StatCard = _enemyStats, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN };
+            _enemyCard = new CombatantCard { StatCard = _enemyStats, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN, Information = new Information { Name = "", Description = "" } };
             _enemyEntity = CombatantEntityFactory.CreateCombatantEntity(2, false, _enemyCard);
         }
 
@@ -137,7 +138,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_FindBestTarget_TargetingType_OutOfRange_Throws()
         {
-            CombatantCard badTargetingTypeCard = new() { StatCard = _friendlyStats, TargetingType = (TargetingType) 90, CombatantType = CombatantType.BEAR };
+            CombatantCard badTargetingTypeCard = new() { StatCard = _friendlyStats, TargetingType = (TargetingType) 90, CombatantType = CombatantType.BEAR, Information = new Information { Name = "", Description = "" } };
             CombatantEntity badEntity = CombatantEntityFactory.CreateCombatantEntity(3, true, badTargetingTypeCard);
             
             Assert.Throws<ArgumentOutOfRangeException>(() => _targetFinder.FindBestTarget(badEntity));

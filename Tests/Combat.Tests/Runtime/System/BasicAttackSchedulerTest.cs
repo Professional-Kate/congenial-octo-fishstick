@@ -7,6 +7,7 @@ using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service.Interface;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -35,7 +36,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _basicAttackScheduler = new BasicAttackScheduler(_combatQueueMock.Object, new NumberAssertion(), _combatantRepositoryMock.Object, new FoundAssertion());
 
             _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
-            _attackerCard = new CombatantCard { StatCard = _attackerStats, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN };
+            _attackerCard = new CombatantCard { StatCard = _attackerStats, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN, Information = new Information { Name = "", Description = "" } };
             _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _attackerCard);
         }
 

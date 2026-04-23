@@ -17,7 +17,7 @@ namespace IdelPog.Combat.Service.Logging
             _objectNullAssertion = objectNullAssertion;
         }
 
-        public void LogCombatantChange(CombatantEntity changedEntity)
+        public void LogCombatantChange(CombatantEntity changedEntity, byte attackerID)
         {
             _objectNullAssertion.AssertNotNull(changedEntity, nameof(changedEntity));
             
@@ -25,6 +25,7 @@ namespace IdelPog.Combat.Service.Logging
             {
                 CombatantCard = CreateCombatantCard(changedEntity),
                 CombatantID = changedEntity.CombatantID,
+                AttackerID =  attackerID,
                 IsFriendly = changedEntity.IsFriendly,
                 IsAlive = changedEntity.GetComponent<LifeStatusComponent>().IsAlive
             };
@@ -42,7 +43,8 @@ namespace IdelPog.Combat.Service.Logging
             {
                 CombatantType = combatantEntity.CombatantType,
                 TargetingType = combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType,
-                StatCard = CreateStatCard(combatantEntity.GetComponent<CombatantStatsComponent>())
+                StatCard = CreateStatCard(combatantEntity.GetComponent<CombatantStatsComponent>()),
+                Information = combatantEntity.CombatantInformation
             };
         }
 

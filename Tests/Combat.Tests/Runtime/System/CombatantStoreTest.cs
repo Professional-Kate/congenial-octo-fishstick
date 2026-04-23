@@ -7,6 +7,7 @@ using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Filter.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -21,8 +22,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private Mock<ICombatantRepository> _combatantRepositoryMock;
         private Mock<ICombatantSelector> _lowestHealthFilterMock;
         private Mock<ICombatantSelector> _highestAttackFilterMock;
-        private RepositoryAsserter _repositoryAsserter;
-        
+
         private CombatantEntity _lowHealthEntity;
         private CombatantEntity _highHealthEntity;
         private CombatantEntity _lowAttackEntity;
@@ -31,7 +31,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
+            new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
             _lowestHealthFilterMock = new Mock<ICombatantSelector>();
             _highestAttackFilterMock = new Mock<ICombatantSelector>();
@@ -46,10 +46,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _combatantStore = new CombatantStore(_lowestHealthFilterMock.Object, _highestAttackFilterMock.Object, new CollectionAssertion(), new NumberAssertion());
             
-            _highHealthEntity = CombatantEntityFactory.CreateCombatantEntity(17, true, new CombatantCard { StatCard = new StatCard { Attack = 6, Health = 10, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.GOBLIN });
-            _lowHealthEntity = CombatantEntityFactory.CreateCombatantEntity(15, true, new CombatantCard { StatCard = new StatCard { Attack = 7, Health = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.GOBLIN });
-            _highAttackEntity = CombatantEntityFactory.CreateCombatantEntity(12, true, new CombatantCard { StatCard = new StatCard { Attack = 10, Health = 7, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.GOBLIN });
-            _lowAttackEntity = CombatantEntityFactory.CreateCombatantEntity(27, true, new CombatantCard { StatCard = new StatCard { Attack = 5, Health = 6, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.GOBLIN });
+            _highHealthEntity = CombatantEntityFactory.CreateCombatantEntity(17, true, new CombatantCard { StatCard = new StatCard { Attack = 6, Health = 10, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.GOBLIN, Information = new Information { Name = "", Description = "" } });
+            _lowHealthEntity = CombatantEntityFactory.CreateCombatantEntity(15, true, new CombatantCard { StatCard = new StatCard { Attack = 7, Health = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.GOBLIN, Information = new Information { Name = "", Description = "" } });
+            _highAttackEntity = CombatantEntityFactory.CreateCombatantEntity(12, true, new CombatantCard { StatCard = new StatCard { Attack = 10, Health = 7, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.GOBLIN, Information = new Information { Name = "", Description = "" } });
+            _lowAttackEntity = CombatantEntityFactory.CreateCombatantEntity(27, true, new CombatantCard { StatCard = new StatCard { Attack = 5, Health = 6, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.GOBLIN, Information = new Information { Name = "", Description = "" } });
         }
 
         private static CombatantStatsComponent GetCombatantStatsComponent(CombatantEntity combatantEntity) => combatantEntity.GetComponent<CombatantStatsComponent>();
@@ -130,7 +130,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 new CombatantCard
                 {
                     StatCard = new StatCard { Health = 0, Attack = 100, Speed = 20 }, TargetingType = TargetingType.LOW_HEALTH,
-                    CombatantType = CombatantType.HUMAN
+                    CombatantType = CombatantType.HUMAN,
+                    Information = new Information { Name = "", Description = "" }
                 });
             SetupHighestAttackFilter(zeroHealthEntity, 5);
             SetupLowestHealthFilter(zeroHealthEntity, 5);
@@ -214,7 +215,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 new CombatantCard
                 {
                     StatCard = new StatCard { Health = 0, Attack = 100, Speed = 20 }, TargetingType = TargetingType.LOW_HEALTH,
-                    CombatantType = CombatantType.HUMAN
+                    CombatantType = CombatantType.HUMAN,
+                    Information = new Information { Name = "", Description = "" }
                 });
             SetupHighestAttackFilter(_highAttackEntity,4);
             SetupLowestHealthFilter(_lowHealthEntity, 4);

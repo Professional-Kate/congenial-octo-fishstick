@@ -6,6 +6,7 @@ using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store;
 using IdelPog.Combat.Runtime.System.Store.Interface;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -36,14 +37,16 @@ namespace IdelPog.Combat.Tests.Runtime.System
             {
                 CombatantType = CombatantType.HUMAN,
                 TargetingType = TargetingType.HIGH_ATTACK,
-                StatCard = new StatCard { Health = 1, Attack = 2, Speed = 3 }
+                StatCard = new StatCard { Health = 1, Attack = 2, Speed = 3 },
+                Information = new Information { Name = "", Description = "" }
             });
 
             _enemyCombatant = CombatantEntityFactory.CreateCombatantEntity(2, false, new CombatantCard
             {
                 CombatantType = CombatantType.BEAR,
                 TargetingType = TargetingType.LOW_HEALTH,
-                StatCard = new StatCard { Health = 3, Attack = 1, Speed = 2 }
+                StatCard = new StatCard { Health = 3, Attack = 1, Speed = 2 },
+                Information = new Information { Name = "", Description = "" }
             });
         }
 

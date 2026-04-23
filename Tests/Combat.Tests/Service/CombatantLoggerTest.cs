@@ -4,6 +4,7 @@ using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Service.Logging;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Assertion;
 
 namespace IdelPog.Combat.Tests.Service
@@ -23,7 +24,8 @@ namespace IdelPog.Combat.Tests.Service
             {
                 CombatantType = CombatantType.WOLF,
                 StatCard = new StatCard { Attack = 10, Health = 10, Speed = 10 },
-                TargetingType = TargetingType.LOW_HEALTH
+                TargetingType = TargetingType.LOW_HEALTH,
+                Information = new Information { Name = "", Description = "" }
             };
         }
         
@@ -61,7 +63,7 @@ namespace IdelPog.Combat.Tests.Service
         {
             _combatantEntity.UpdateLifeStatus(false);
             
-            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity));
+            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity, 2));
 
             IReadOnlyList<CombatantStateChange> stateChanges = _combatantLogger.GetStateChanges();
             AssertStateChangesLength(stateChanges, 1);
@@ -73,8 +75,8 @@ namespace IdelPog.Combat.Tests.Service
         {
             _combatantEntity.UpdateCombatantStats(new CombatantStatsComponent { Attack = 4, Health = 5, Speed = 3 });
             
-            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity));
-            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity));
+            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity, 2));
+            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity, 2));
 
             IReadOnlyList<CombatantStateChange> stateChanges = _combatantLogger.GetStateChanges();
             AssertStateChangesLength(stateChanges, 2);
@@ -92,7 +94,7 @@ namespace IdelPog.Combat.Tests.Service
         [Test]
         public void Positive_GetStateChanges_MultipleTimes_ReturnsSameArray()
         {
-            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity));
+            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity, 2));
             
             IReadOnlyList<CombatantStateChange> stateChanges = _combatantLogger.GetStateChanges();
             Assert.That(stateChanges, Is.EquivalentTo(_combatantLogger.GetStateChanges()));
@@ -101,7 +103,7 @@ namespace IdelPog.Combat.Tests.Service
         [Test]
         public void Positive_ClearStateChanges_ClearsStates()
         {
-            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity));
+            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity, 2));
             AssertStateChangesLength(_combatantLogger.GetStateChanges(), 1);
             
             Assert.DoesNotThrow(() => _combatantLogger.ClearStateChanges());
@@ -121,7 +123,7 @@ namespace IdelPog.Combat.Tests.Service
         [Test]
         public void Negative_LogCombatantChange_NullEntity_Throws()
         { 
-            Assert.Throws<ArgumentNullException>(() => _combatantLogger.LogCombatantChange(null!));
+            Assert.Throws<ArgumentNullException>(() => _combatantLogger.LogCombatantChange(null!, 2));
             
             IReadOnlyList<CombatantStateChange> stateChanges = _combatantLogger.GetStateChanges();
             AssertStateChangesLength(stateChanges, 0);

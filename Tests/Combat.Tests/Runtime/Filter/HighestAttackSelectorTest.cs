@@ -2,6 +2,7 @@
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Filter;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -12,8 +13,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
     public sealed class HighestAttackSelectorTest
     {
         private HighestAttackSelector _highestAttackSelector;
-        private RepositoryAsserter _repositoryAsserter;
-        
+
         private CombatantEntity _highAttackEntity;
         private CombatantEntity _lowAttackEntity;
         
@@ -21,17 +21,24 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         public void OneTimeSetup()
         {
             _highestAttackSelector = new HighestAttackSelector(new CollectionAssertion());
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
+            new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
 
             _highAttackEntity = CombatantEntityFactory.CreateCombatantEntity(12, true, 
                 new CombatantCard
                 {
-                    StatCard = new StatCard { Attack = 8, Health = 7, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN
+                    StatCard = new StatCard { Attack = 8, Health = 7, Speed = 5 }, 
+                    TargetingType = TargetingType.HIGH_ATTACK, 
+                    CombatantType = CombatantType.HUMAN,
+                    Information = new Information { Name = "", Description = "" }
                 });
+            
             _lowAttackEntity = CombatantEntityFactory.CreateCombatantEntity(27, true,
                 new CombatantCard
                 {
-                    StatCard = new StatCard { Attack = 2, Health = 6, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN
+                    StatCard = new StatCard { Attack = 2, Health = 6, Speed = 5 }, 
+                    TargetingType = TargetingType.HIGH_ATTACK,
+                    CombatantType = CombatantType.HUMAN,
+                    Information = new Information { Name = "", Description = "" }
                 });
         }
         
@@ -49,8 +56,10 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
             CombatantEntity maxAttack = CombatantEntityFactory.CreateCombatantEntity(25, true,
                 new CombatantCard
                 {
-                    StatCard = new StatCard { Attack = uint.MaxValue, Health = 1, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK,
-                    CombatantType = CombatantType.HUMAN
+                    StatCard = new StatCard { Attack = uint.MaxValue, Health = 1, Speed = 5 }, 
+                    TargetingType = TargetingType.HIGH_ATTACK,
+                    CombatantType = CombatantType.HUMAN,
+                    Information = new Information { Name = "", Description = "" }
                 });
             
             CombatantEntity combatantID = _highestAttackSelector.GetEntity([_highAttackEntity, maxAttack, _highAttackEntity, _lowAttackEntity]);

@@ -5,7 +5,7 @@ using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
 
-namespace IdelPog.Combat.Runtime.System
+namespace IdelPog.Combat.Runtime.System.Mediator
 {
     public sealed class EntityDamageMediator : IEntityDamageMediator
     {
@@ -48,15 +48,16 @@ namespace IdelPog.Combat.Runtime.System
             _combatantAssertion.AssertCombatantAlive(targetCombatant);
 
             uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats.Attack);
-            _combatantLogger.LogCombatantChange(targetCombatant);
-            
             if (newHealth == 0)
-            {
+            { 
                 _deathSystem.KillEntity(targetCombatant);
-                return;
+            }
+            else
+            {
+                _combatantStoreService.RegisterCombatantChange(targetCombatant);
             }
             
-            _combatantStoreService.RegisterCombatantChange(targetCombatant);
+            _combatantLogger.LogCombatantChange(targetCombatant, attackingCombatant.CombatantID);
         }
     }
 }

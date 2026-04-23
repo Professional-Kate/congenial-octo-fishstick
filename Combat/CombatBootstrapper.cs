@@ -10,6 +10,7 @@ using IdelPog.Combat.Runtime.Filter;
 using IdelPog.Combat.Runtime.Filter.Interface;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Mediator;
 using IdelPog.Combat.Runtime.System.Store;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service;
@@ -67,8 +68,8 @@ namespace IdelPog.Combat
             
             IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(combatantRepository, targetFinder, damageSystem, deathSystem, combatantStoreService, foundAssertion, combatantAssertion, numberAssertion, combatantLogger);
             // TODO: move this out eventually 
-            AttackEventResolver attackEventResolver = new(entityDamageMediator, basicAttackScheduler, combatantRepository, foundAssertion);
-            resolverRepository.Add(EventType.BASIC_ATTACK, attackEventResolver);
+            BasicAttackEventResolver basicAttackEventResolver = new(entityDamageMediator, basicAttackScheduler, combatantRepository, foundAssertion);
+            resolverRepository.Add(EventType.BASIC_ATTACK, basicAttackEventResolver);
             
             BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantFactory, combatantStoreService, basicAttackScheduler, combatQueue, resolverRepository, combatStateService, collectionAssertion, responseDispatcher, combatantLogger);
             IBatchController<BasicEncounterDeck> controller = new ManagedBatchController<BasicEncounterDeck>(basicEncounterDeckMediator);

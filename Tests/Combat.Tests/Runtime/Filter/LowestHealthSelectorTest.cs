@@ -2,6 +2,7 @@
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.Filter;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -26,13 +27,13 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
             _highHealthEntity = CombatantEntityFactory.CreateCombatantEntity(1, true,
                 new CombatantCard
                 {
-                    StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN
+                    StatCard = new StatCard { Attack = 5, Health = 10, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN, Information = new Information { Name = "", Description = "" }
                 });
 
             _lowHealthEntity = CombatantEntityFactory.CreateCombatantEntity(15, true,
                 new CombatantCard
                 {
-                    StatCard = new StatCard { Attack = 4, Health = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN
+                    StatCard = new StatCard { Attack = 4, Health = 5, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN, Information = new Information { Name = "", Description = "" }
                 });
         }
 
@@ -50,7 +51,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
             CombatantEntity oneHealth = CombatantEntityFactory.CreateCombatantEntity(12, true,
                 new CombatantCard
                 {
-                    StatCard = new StatCard { Attack = 4, Health = 1, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN
+                    StatCard = new StatCard { Attack = 4, Health = 1, Speed = 5 }, TargetingType = TargetingType.HIGH_ATTACK, CombatantType = CombatantType.HUMAN, Information = new Information { Name = "", Description = "" }
                 });
             
             CombatantEntity combatant = _lowestHealthSelector.GetEntity([_lowHealthEntity, oneHealth, _lowHealthEntity, _highHealthEntity]);

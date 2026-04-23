@@ -2,6 +2,7 @@
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime;
 using IdelPog.Combat.Runtime.System;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 
@@ -21,7 +22,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void OneTimeSetup()
         {
             _wolfStatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 };
-            _wolfCard = new CombatantCard { StatCard = _wolfStatCard, TargetingType = TargetingType.LOW_HEALTH,  CombatantType = CombatantType.WOLF };
+            _wolfCard = new CombatantCard { StatCard = _wolfStatCard, TargetingType = TargetingType.LOW_HEALTH,  CombatantType = CombatantType.WOLF, Information = new Information { Name = "", Description = "" } };
         }
 
         [SetUp]

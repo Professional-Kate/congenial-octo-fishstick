@@ -5,14 +5,14 @@ using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Event.Resolver
 {
-    public sealed class AttackEventResolver : IEventResolver
+    public sealed class BasicAttackEventResolver : IEventResolver
     {
         private readonly IEntityDamageMediator _entityDamageMediator;
         private readonly IBasicAttackScheduler _basicAttackScheduler;
         private readonly ICombatantRepository _combatantRepository;
         private readonly IFoundAssertion _foundAssertion;
 
-        public AttackEventResolver(IEntityDamageMediator entityDamageMediator, IBasicAttackScheduler basicAttackScheduler, ICombatantRepository combatantRepository, IFoundAssertion foundAssertion)
+        public BasicAttackEventResolver(IEntityDamageMediator entityDamageMediator, IBasicAttackScheduler basicAttackScheduler, ICombatantRepository combatantRepository, IFoundAssertion foundAssertion)
         {
             _entityDamageMediator = entityDamageMediator;
             _basicAttackScheduler = basicAttackScheduler;
@@ -20,8 +20,6 @@ namespace IdelPog.Combat.Event.Resolver
             _foundAssertion = foundAssertion;
         }
 
-        public EventType EventType => EventType.BASIC_ATTACK;
-        
         public void ResolveEvent(double tick, byte attackerID)
         { 
             _foundAssertion.AssertFound(attackerID, _combatantRepository.Contains(attackerID));
