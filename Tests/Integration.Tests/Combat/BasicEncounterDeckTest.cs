@@ -1,6 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Card.Combatant;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
@@ -21,36 +20,36 @@ namespace IdelPog.Integration.Tests.Combat
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
         private ManagedErrorListener<BasicEncounterDeckError> _errorListener;
 
-        private CombatantCard _humanCard;
-        private CombatantCard _goblinCard;
-        private CombatantCard _bearCard;
-        private CombatantCard _wolfCard;
+        private CombatantCreation _humanCreation;
+        private CombatantCreation _goblinCreation;
+        private CombatantCreation _bearCreation;
+        private CombatantCreation _wolfCreation;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _humanCard = new CombatantCard
+            _humanCreation = new CombatantCreation
             {
                 CombatantType = CombatantType.HUMAN, 
                 StatCard = new StatCard { Health = 14, Attack = 5, Speed = 5 },
                 Information = new Information { Name = "John Idle", Description = "He the man" }
             };
             
-            _goblinCard = new CombatantCard
+            _goblinCreation = new CombatantCreation
             {
                 CombatantType = CombatantType.GOBLIN, 
                 StatCard = new StatCard { Health = 9, Attack = 2, Speed = 11 },
                 Information = new Information { Name = "Goblin", Description = "green guy" }
             };
 
-            _bearCard = new CombatantCard
+            _bearCreation = new CombatantCreation
             {
                 CombatantType = CombatantType.BEAR,
                 StatCard = new StatCard { Health = 5, Attack = 10, Speed = 3 },
                 Information = new Information { Name = "Bear", Description = "rawr" }
             };
             
-            _wolfCard = new CombatantCard
+            _wolfCreation = new CombatantCreation
             {
                 CombatantType = CombatantType.WOLF,
                 StatCard = new StatCard { Health = 3, Attack = 7, Speed = 3 },
@@ -76,7 +75,7 @@ namespace IdelPog.Integration.Tests.Combat
             buffer.MarkReady();
         }
 
-        private BasicEncounterDeck RunCombat(CombatantCard[] friendlyCombatants, CombatantCard[] enemyCombatants)
+        private BasicEncounterDeck RunCombat(CombatantCreation[] friendlyCombatants, CombatantCreation[] enemyCombatants)
         {
             BasicEncounterDeck basicEncounterDeck = new()
             {
@@ -141,23 +140,23 @@ namespace IdelPog.Integration.Tests.Combat
             _combatTools.RegisterChanges(basicEncounterDeckResponse.CombatantStateChanges);
         }
         
-        private void AssertFirstDead(CombatantCard card)
+        private void AssertFirstDead(CombatantCreation creation)
         { 
-            Assert.That(card.Information, Is.EqualTo(_combatTools.FirstDeadCombatant.CombatantCard.Information));
+            Assert.That(creation.Information, Is.EqualTo(_combatTools.FirstDeadCombatant.CombatantCreation.Information));
         }
 
-        private void AssertZeroAttacks(params CombatantCard[] combatantCards)
+        private void AssertZeroAttacks(params CombatantCreation[] combatantCards)
         {
-            foreach (CombatantCard combatantCard in combatantCards)
+            foreach (CombatantCreation combatantCard in combatantCards)
             {
                 CombatantTracker tracker = _combatTools.GetCombatantTracker(combatantCard);
                 Assert.That(tracker.TotalAttacks, Is.EqualTo(0));
             }
         }
 
-        private void AssertOneOrMoreAttacks(params CombatantCard[] combatantCards)
+        private void AssertOneOrMoreAttacks(params CombatantCreation[] combatantCards)
         {
-            foreach (CombatantCard combatantCard in combatantCards)
+            foreach (CombatantCreation combatantCard in combatantCards)
             {
                 CombatantTracker tracker = _combatTools.GetCombatantTracker(combatantCard);
                 Assert.That(tracker.TotalAttacks, Is.GreaterThanOrEqualTo(1));
@@ -167,7 +166,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_FriendlyVictory()
         { 
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCard], [_goblinCard]);
+            BasicEncounterDeck returnedDeck = RunCombat([_humanCreation], [_goblinCreation]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -179,7 +178,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_EnemyVictory()
         { 
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCard], [_goblinCard, _bearCard, _wolfCard]);
+            BasicEncounterDeck returnedDeck = RunCombat([_humanCreation], [_goblinCreation, _bearCreation, _wolfCreation]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -192,7 +191,7 @@ namespace IdelPog.Integration.Tests.Combat
         public void Positive_SimulateCombat_HighAttack_TargetsHighAttack()
         {
             AbilityCard highAttackCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK } };
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCard with { }], [_goblinCard, _bearCard]);
+            BasicEncounterDeck returnedDeck = RunCombat([_humanCreation with { }], [_goblinCreation, _bearCreation]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -201,16 +200,16 @@ namespace IdelPog.Integration.Tests.Combat
             
             AssertFriendlyVictory(_responseListener.Responses[0]);
             RegisterStateChanges(_responseListener.Responses[0]);
-            AssertFirstDead(_bearCard);
-            AssertZeroAttacks(_bearCard);
-            AssertOneOrMoreAttacks(_humanCard, _goblinCard);
+            AssertFirstDead(_bearCreation);
+            AssertZeroAttacks(_bearCreation);
+            AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
         }
         
         [Test]
         public void Positive_SimulateCombat_LowHealth_TargetsLowHealth()
         {
             AbilityCard lowHealthCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.LOW_HEALTH } };
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCard with { }], [_wolfCard, _bearCard]);
+            BasicEncounterDeck returnedDeck = RunCombat([_humanCreation with { }], [_wolfCreation, _bearCreation]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -219,16 +218,16 @@ namespace IdelPog.Integration.Tests.Combat
             
             AssertFriendlyVictory(_responseListener.Responses[0]);
             RegisterStateChanges(_responseListener.Responses[0]);
-            AssertFirstDead(_wolfCard);
-            AssertZeroAttacks(_wolfCard);
-            AssertOneOrMoreAttacks(_humanCard, _bearCard);
+            AssertFirstDead(_wolfCreation);
+            AssertZeroAttacks(_wolfCreation);
+            AssertOneOrMoreAttacks(_humanCreation, _bearCreation);
         }
         
         // Exception Tests
         [Test]
         public void Negative_EmptyFriendlyCombatants_DispatchesError()
         {
-            BasicEncounterDeck emptyFriendlyCombatants = new() { FriendlyCombatantCards = [], EnemyCombatantCards = [_wolfCard] };
+            BasicEncounterDeck emptyFriendlyCombatants = new() { FriendlyCombatantCards = [], EnemyCombatantCards = [_wolfCreation] };
 
             DispatchBasicEncounterDeck(emptyFriendlyCombatants);
             
@@ -241,7 +240,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_EmptyEnemyCombatants_DispatchesError()
         {
-            BasicEncounterDeck emptyEnemyCombatants = new() { FriendlyCombatantCards = [_wolfCard], EnemyCombatantCards = [] };
+            BasicEncounterDeck emptyEnemyCombatants = new() { FriendlyCombatantCards = [_wolfCreation], EnemyCombatantCards = [] };
             
             DispatchBasicEncounterDeck(emptyEnemyCombatants);
             
@@ -254,14 +253,14 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_ZeroSpeed_DispatchesError()
         {
-            CombatantCard zeroSpeed = new()
+            CombatantCreation zeroSpeed = new()
             {
                 CombatantType = CombatantType.HUMAN, 
                 StatCard = new StatCard { Health = 14, Attack = 5, Speed = 0 },
                 Information = new Information { Name = "Captain Slow", Description = "The slowest man... In the world" }
             };
             
-            BasicEncounterDeck deck = new() { FriendlyCombatantCards = [zeroSpeed], EnemyCombatantCards = [_wolfCard] };
+            BasicEncounterDeck deck = new() { FriendlyCombatantCards = [zeroSpeed], EnemyCombatantCards = [_wolfCreation] };
             DispatchBasicEncounterDeck(deck);
             
             AssertResponseListenerCalled(false);
@@ -273,14 +272,14 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_ZeroHealth_DispatchesError()
         {
-            CombatantCard zeroHealth = new()
+            CombatantCreation zeroHealth = new()
             {
                 CombatantType = CombatantType.HUMAN, 
                 StatCard = new StatCard { Health = 0, Attack = 5, Speed = 200 },
                 Information = new Information { Name = "corpse", Description = "He kinda dead already" }
             };
             
-            BasicEncounterDeck deck = new() { FriendlyCombatantCards = [zeroHealth], EnemyCombatantCards = [_wolfCard] };
+            BasicEncounterDeck deck = new() { FriendlyCombatantCards = [zeroHealth], EnemyCombatantCards = [_wolfCreation] };
             DispatchBasicEncounterDeck(deck);
             
             AssertResponseListenerCalled(false);

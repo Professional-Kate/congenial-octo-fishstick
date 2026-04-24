@@ -1,9 +1,12 @@
-﻿using IdelPog.Combat.Contracts.Card.Combatant;
+﻿using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 
 namespace IdelPog.Combat.Runtime.System.Factory.Interface
 {
     public interface ICombatantEntityFactory
-    { 
-        public void SpawnCombatants(IReadOnlyList<CombatantCard> combatants, bool isFriendly);
+    {
+        public CombatantEntity CreateEntity(CombatantCreation combatantCreation);
+        
+        public void SpawnCombatants(IReadOnlyList<CombatantCreation> combatants, bool isFriendly);
     }
 }

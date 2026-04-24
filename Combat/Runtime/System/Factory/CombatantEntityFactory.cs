@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Card.Combatant;
+﻿using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
@@ -21,12 +21,25 @@ namespace IdelPog.Combat.Runtime.System.Factory
             _repositoryAsserter = repositoryAsserter;
             _uniqueAssertion = uniqueAssertion;
         }
-        
-        public void SpawnCombatants(IReadOnlyList<CombatantCard> combatants, bool isFriendly)
+
+        public CombatantEntity CreateEntity(CombatantCreation combatantCreation)
+        {
+            byte nextCombatantID = _combatantRepository.NextCombatantID;
+            _uniqueAssertion.AssertUnique(nextCombatantID, _combatantRepository.Contains(nextCombatantID));
+            
+            return new CombatantEntity(_repositoryAsserter, combatantCreation.StatCard)
+            {
+                CombatantID = nextCombatantID,
+                CombatantType =  combatantCreation.CombatantType,
+                CombatantInformation = combatantCreation.Information
+            };
+        }
+
+        public void SpawnCombatants(IReadOnlyList<CombatantCreation> combatants, bool isFriendly)
         {
             _collectionAssertion.AssertHasElements(combatants);
             
-            foreach (CombatantCard combatantCard in combatants)
+            foreach (CombatantCreation combatantCard in combatants)
             {
                 byte nextCombatantID = _combatantRepository.NextCombatantID;
                 _uniqueAssertion.AssertUnique(nextCombatantID, _combatantRepository.Contains(nextCombatantID));
@@ -34,7 +47,6 @@ namespace IdelPog.Combat.Runtime.System.Factory
                 CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard.StatCard)
                 {
                     CombatantID = nextCombatantID,
-                    IsFriendly = isFriendly,
                     CombatantType =  combatantCard.CombatantType,
                     CombatantInformation = combatantCard.Information
                 };

@@ -10,7 +10,6 @@ namespace IdelPog.Combat.Runtime.Entities.Combatant
     public sealed record CombatantEntity : Entity
     {
         public required byte CombatantID { get; init; }
-        public required bool IsFriendly { get; init; }
         public required CombatantType CombatantType { get; init; }
         public required Information CombatantInformation { get; init; }
 

@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Card.Combatant;
+using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -15,19 +15,19 @@ namespace IdelPog.Combat.Tests.Service
         private CombatantLogger _combatantLogger;
 
         private CombatantEntity _combatantEntity;
-        private CombatantCard _combatantCard;
+        private CombatantCreation _combatantCreation;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _combatantCard = CombatantCardFactory.CreateCombatantCard(CombatantType.WOLF);
+            _combatantCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF);
         }
         
         [SetUp]
         public void Setup()
         {
             _combatantLogger = new CombatantLogger(new ObjectNullAssertion());
-            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _combatantCard);
+            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _combatantCreation);
         }
 
         private static void AssertStateChangesLength(IReadOnlyList<CombatantStateChange> stateChanges, int expectedLength)
@@ -41,10 +41,10 @@ namespace IdelPog.Combat.Tests.Service
             {
                 Assert.That(combatantStateChange.CombatantID, Is.EqualTo(combatantEntity.CombatantID));
                 Assert.That(combatantStateChange.IsAlive, Is.EqualTo(combatantEntity.GetComponent<LifeStatusComponent>().IsAlive));
-                Assert.That(combatantStateChange.IsFriendly, Is.EqualTo(combatantEntity.IsFriendly));
+                Assert.That(combatantStateChange.IsFriendly, Is.EqualTo(combatantEntity.GetComponent<FriendlyStatusComponent>().IsFriendly));
                 
                 CombatantStatsComponent combatantStatsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
-                StatCard stateChangeStats = combatantStateChange.CombatantCard.StatCard;
+                StatCard stateChangeStats = combatantStateChange.CombatantCreation.StatCard;
                 
                 Assert.That(stateChangeStats.Attack, Is.EqualTo(combatantStatsComponent.Attack));
                 Assert.That(stateChangeStats.Health, Is.EqualTo(combatantStatsComponent.Health));

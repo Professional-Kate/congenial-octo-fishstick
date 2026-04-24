@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Card.Combatant;
+using IdelPog.Combat.Contracts.Command;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {
@@ -35,11 +35,11 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             }
         }
         
-        internal CombatantTracker GetCombatantTracker(CombatantCard combatantCard)
+        internal CombatantTracker GetCombatantTracker(CombatantCreation combatantCreation)
         {
             foreach (CombatantTracker combatantCardsValue in _combatantCards.Values)
             {
-                if (combatantCardsValue.CombatantCard.Information == combatantCard.Information)
+                if (combatantCardsValue.CombatantCreation.Information == combatantCreation.Information)
                 {
                     return combatantCardsValue;
                 }
@@ -62,7 +62,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
 
         private void AddCombatantCard(CombatantStateChange combatantStateChange)
         { 
-            CombatantTracker combatantTracker = new(combatantStateChange.CombatantCard);
+            CombatantTracker combatantTracker = new(combatantStateChange.CombatantCreation);
             _combatantCards.Add(combatantStateChange.CombatantID, combatantTracker);
             
             UpdateCombatantCard(combatantStateChange);
@@ -70,7 +70,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
 
         private void UpdateCombatantCard(CombatantStateChange combatantStateChange)
         {
-            _combatantCards[combatantStateChange.CombatantID].CombatantCard = combatantStateChange.CombatantCard;
+            _combatantCards[combatantStateChange.CombatantID].CombatantCreation = combatantStateChange.CombatantCreation;
 
             if (_combatantCards.ContainsKey(combatantStateChange.AttackerID) == false)
             {

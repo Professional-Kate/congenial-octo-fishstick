@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Card.Combatant;
+using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Exceptions;
@@ -24,7 +24,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         
         private CombatantEntity _combatantEntity;
         private StatCard _attackerStats;
-        private CombatantCard _attackerCard;
+        private CombatantCreation _attackerCreation;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -36,8 +36,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _basicAttackScheduler = new BasicAttackScheduler(_combatQueueMock.Object, new NumberAssertion(), _combatantRepositoryMock.Object, new FoundAssertion());
 
             _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
-            _attackerCard = CombatantCardFactory.CreateCombatantCard(CombatantType.HUMAN, _attackerStats);
-            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _attackerCard);
+            _attackerCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, _attackerStats);
+            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _attackerCreation);
         }
 
         [SetUp]
@@ -72,8 +72,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Positive_EnqueueInitial_NoMatchingComponent_NoEnqueue()
         {
             // TODO: need to add another SkillComponent
-            CombatantCard combatantCard = CombatantCardFactory.CreateCombatantCard(CombatantType.HUMAN, _attackerStats, _attackerCard.Information, []);
-            CombatantEntity combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, combatantCard);
+            CombatantCreation combatantCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, _attackerStats, _attackerCreation.Information, []);
+            CombatantEntity combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, combatantCreation);
             SetupRepositoryGetAll(combatantEntity);
             
             Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));

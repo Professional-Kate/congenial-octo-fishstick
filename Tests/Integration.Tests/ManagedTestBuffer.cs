@@ -1,10 +1,13 @@
 ﻿using IdelPog.Combat;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Flows;
 using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Messaging.Assertion;
 using IdelPog.Core.Messaging.Assertion.Interface;
+using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Buffer.Factory;
 using IdelPog.Core.Messaging.Buffer.Manager;
+using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Messaging.Listener;
 using IdelPog.Core.Messaging.Messenger;
 using IdelPog.Core.Validation.Assertion;
@@ -19,7 +22,7 @@ namespace IdelPog.Integration.Tests
     public class ManagedTestBuffer
     {
         protected IBufferManager BufferManager { get; private set; }
-        private IBufferMessenger _bufferMessenger { get; set; }
+        private BufferMessenger _bufferMessenger;
         private IBufferFactory _bufferFactory;
         private IObjectNullAssertion _objectNullAssertion;
 
@@ -42,7 +45,7 @@ namespace IdelPog.Integration.Tests
             IBufferAssertion bufferAssertion = new BufferAssertion();
 
             _bufferMessenger = new BufferMessenger(_objectNullAssertion, listenerAssertion);
-            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, (IBufferDispatcher)_bufferMessenger);
+            _bufferFactory = new BufferFactory(bufferAssertion, _objectNullAssertion, _bufferMessenger);
             BufferManager = new BufferManager(_bufferFactory, _objectNullAssertion);
         }
 
@@ -60,6 +63,22 @@ namespace IdelPog.Integration.Tests
         protected void ManagedSubscribe(IListener listener)
         {
             _bufferMessenger.Subscribe(listener);
+        }
+
+        protected void DispatchMessage<TMessage>(params TMessage[] messages) where TMessage : struct
+        {
+            IBuffer<TMessage> buffer = BufferManager.RequestBuffer<TMessage>(new BufferRequest(messages.Length));
+            buffer.Assign(messages);
+            buffer.MarkReady();
+        }
+
+        protected static void AssertBaseError<TException>(BaseError baseError)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(baseError.Exception, Is.TypeOf<ControllerThrownException>());
+                Assert.That(baseError.Exception.GetBaseException(), Is.TypeOf<TException>());
+            });
         }
     }
 }

@@ -13,5 +13,10 @@ namespace IdelPog.Integration.Tests
             WasCalled = true;
             Error = message;
         }
+        
+        internal void AssertWasCalled(bool wasCalled)
+        { 
+            Assert.That(WasCalled, Is.EqualTo(wasCalled));
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Card.Combatant;
+using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
@@ -19,20 +20,21 @@ namespace IdelPog.Combat.Tests
 
         internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly, StatCard statCard)
         {
-            CombatantCard combatantCard = CombatantCardFactory.CreateCombatantCard(CombatantType.GOBLIN, statCard, new Information { Name = "Goblin", Description = "A guy!" });
+            CombatantCreation combatantCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, statCard, new Information { Name = "Goblin", Description = "A guy!" });
             
-            return CreateCombatantEntity(entityID, isFriendly, combatantCard);
+            return CreateCombatantEntity(entityID, isFriendly, combatantCreation);
         }
 
-        internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly, CombatantCard combatantCard)
+        internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly, CombatantCreation combatantCreation)
         {
-            CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard.StatCard)
+            CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCreation.StatCard)
             {
                 CombatantID = entityID,
-                IsFriendly = isFriendly,
-                CombatantType = combatantCard.CombatantType,
-                CombatantInformation = combatantCard.Information
+                CombatantType = combatantCreation.CombatantType,
+                CombatantInformation = combatantCreation.Information
             };
+            
+            combatantEntity.AddComponent(new FriendlyStatusComponent { IsFriendly = isFriendly });
             
             return combatantEntity;
         }

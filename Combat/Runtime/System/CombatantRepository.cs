@@ -66,7 +66,7 @@ namespace IdelPog.Combat.Runtime.System
                     continue;
                 }
                 
-                if (combatantEntity.IsFriendly == isFriendly)
+                if (combatantEntity.GetComponent<FriendlyStatusComponent>().IsFriendly == isFriendly)
                 {
                     combatantEntities.Add(combatantEntity);
                 }

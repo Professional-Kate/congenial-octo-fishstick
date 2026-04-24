@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Card.Combatant;
+using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Service.Logging.Interface;
@@ -24,10 +24,10 @@ namespace IdelPog.Combat.Service.Logging
             
             CombatantStateChange combatantStateChange = new()
             {
-                CombatantCard = CreateCombatantCard(changedEntity),
+                CombatantCreation = CreateCombatantCard(changedEntity),
                 CombatantID = changedEntity.CombatantID,
                 AttackerID =  attackerID,
-                IsFriendly = changedEntity.IsFriendly,
+                IsFriendly = changedEntity.GetComponent<FriendlyStatusComponent>().IsFriendly,
                 IsAlive = changedEntity.GetComponent<LifeStatusComponent>().IsAlive
             };
             
@@ -38,9 +38,9 @@ namespace IdelPog.Combat.Service.Logging
         
         public void ClearStateChanges() => _combatantStateChanges.Clear();
 
-        private static CombatantCard CreateCombatantCard(CombatantEntity combatantEntity)
+        private static CombatantCreation CreateCombatantCard(CombatantEntity combatantEntity)
         {
-            return new CombatantCard
+            return new CombatantCreation
             {
                 CombatantType = combatantEntity.CombatantType,
                 StatCard = CreateStatCard(combatantEntity.GetComponent<CombatantStatsComponent>()),

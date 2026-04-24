@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Card.Combatant;
+using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
@@ -25,10 +25,10 @@ namespace IdelPog.Combat.Tests.Service
             _combatStateService = new CombatStateService(_combatantFiltersMock.Object);
             
             StatCard entityStats = new() { Health = 10, Attack = 10,  Speed = 3 };
-            CombatantCard entityCard = CombatantCardFactory.CreateCombatantCard(CombatantType.BEAR, entityStats);
+            CombatantCreation entityCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.BEAR, entityStats);
             
-            _friendlyEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, entityCard);
-            _enemyEntity = CombatantEntityFactory.CreateCombatantEntity(2, false, entityCard with { CombatantType = CombatantType.GOBLIN });
+            _friendlyEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, entityCreation);
+            _enemyEntity = CombatantEntityFactory.CreateCombatantEntity(2, false, entityCreation with { CombatantType = CombatantType.GOBLIN });
         }
 
         [SetUp]

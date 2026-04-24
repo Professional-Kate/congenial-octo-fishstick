@@ -1,10 +1,10 @@
-﻿using IdelPog.Combat.Contracts.Card.Combatant;
+﻿using IdelPog.Combat.Contracts.Command;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {
     internal sealed class CombatantTracker
     {
-        internal CombatantCard CombatantCard { get; set; }
+        internal CombatantCreation CombatantCreation { get; set; }
         internal int TotalAttacks { get; set; }
         
         internal CombatantTracker(int totalAttacks)
@@ -12,9 +12,9 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             TotalAttacks = totalAttacks;
         }
         
-        internal CombatantTracker(CombatantCard combatantCard)
+        internal CombatantTracker(CombatantCreation combatantCreation)
         {
-            CombatantCard = combatantCard;
+            CombatantCreation = combatantCreation;
         }
     }
 }

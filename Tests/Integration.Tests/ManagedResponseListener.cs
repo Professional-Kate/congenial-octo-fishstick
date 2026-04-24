@@ -13,5 +13,15 @@ namespace IdelPog.Integration.Tests
             WasCalled = true;
             Responses = buffer.ToArray();
         }
+
+        internal void AssertWasCalled(bool wasCalled)
+        { 
+            Assert.That(WasCalled, Is.EqualTo(wasCalled));
+        }
+
+        internal void AssertResponseLength(int length)
+        {
+            Assert.That(Responses, Has.Length.EqualTo(length));
+        }
     }
 }

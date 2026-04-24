@@ -48,8 +48,8 @@ namespace IdelPog.Combat.Tests.Service
             _basicEncounterDeckMediator = new BasicEncounterDeckMediator(_combatantFactoryMock.Object, _combatantStoreServiceMock.Object, _attackSchedulerMock.Object, _combatStateServiceMock.Object, _combatQueueMock.Object, _repositoryMock.Object, _combatantLoggerMock.Object, _responseDispatcherMock.Object, new CollectionAssertion());
             _basicEncounterDeck = new BasicEncounterDeck
             {
-                FriendlyCombatantCards = [CombatantCardFactory.CreateCombatantCard(CombatantType.HUMAN, new StatCard { Attack = 5, Health = 10, Speed = 5})],
-                EnemyCombatantCards = [CombatantCardFactory.CreateCombatantCard(CombatantType.WOLF, new StatCard { Attack = 3, Health = 10, Speed = 9 })]
+                FriendlyCombatantCards = [CombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 5, Health = 10, Speed = 5})],
+                EnemyCombatantCards = [CombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, new StatCard { Attack = 3, Health = 10, Speed = 9 })]
             };
         }
         

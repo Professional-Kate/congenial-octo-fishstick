@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
@@ -26,7 +27,8 @@ namespace IdelPog.Combat.Runtime.System
 
         public CombatantEntity FindBestTarget(CombatantEntity instigatingEntity, AbilityType abilityType)
         {
-            return DetermineTarget(instigatingEntity.IsFriendly ? _enemyCombatantStore : _friendlyCombatantStore, instigatingEntity, abilityType);
+            bool isEntityFriendly = instigatingEntity.GetComponent<FriendlyStatusComponent>().IsFriendly;
+            return DetermineTarget(isEntityFriendly ? _enemyCombatantStore : _friendlyCombatantStore, instigatingEntity, abilityType);
         }
 
         private CombatantEntity DetermineTarget(ICombatantStoreRead combatantStore, CombatantEntity attackingEntity, AbilityType abilityType)

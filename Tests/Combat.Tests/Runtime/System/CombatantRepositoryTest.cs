@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Card.Combatant;
+using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System;
@@ -14,7 +14,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private CombatantRepository _combatantRepository;
 
         private StatCard _wolfStatCard;
-        private CombatantCard _wolfCard;
+        private CombatantCreation _wolfCreation;
         private CombatantEntity _enemyWolfEntity;
         private CombatantEntity _friendlyWolfEntity;
         
@@ -22,15 +22,15 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void OneTimeSetup()
         {
             _wolfStatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 };
-            _wolfCard = CombatantCardFactory.CreateCombatantCard(CombatantType.WOLF, _wolfStatCard);
+            _wolfCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, _wolfStatCard);
         }
 
         [SetUp]
         public void SetUp()
         {
             _combatantRepository = new CombatantRepository(new FoundAssertion());
-            _enemyWolfEntity = CombatantEntityFactory.CreateCombatantEntity(1, false, _wolfCard);
-            _friendlyWolfEntity = CombatantEntityFactory.CreateCombatantEntity(2, true, _wolfCard);
+            _enemyWolfEntity = CombatantEntityFactory.CreateCombatantEntity(1, false, _wolfCreation);
+            _friendlyWolfEntity = CombatantEntityFactory.CreateCombatantEntity(2, true, _wolfCreation);
         }
 
         private void VerifyContains(byte id, bool contains)

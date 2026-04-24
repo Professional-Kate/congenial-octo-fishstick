@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Card.Combatant;
+using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -17,7 +17,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         private Combat.Runtime.System.Factory.CombatantEntityFactory _combatService;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
 
-        private CombatantCard _wolfCard;
+        private CombatantCreation _wolfCreation;
         private CombatantStatsComponent _combatantStatsComponent;
 
         [OneTimeSetUp]
@@ -28,7 +28,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             _combatService = new Combat.Runtime.System.Factory.CombatantEntityFactory(_combatantRepositoryMock.Object, new CollectionAssertion(), new UniqueAssertion(), new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
 
             _combatantStatsComponent = new CombatantStatsComponent { Health = 3, Attack = 5, Speed = 5 };
-            _wolfCard = CombatantCardFactory.CreateCombatantCard(CombatantType.WOLF, new StatCard { Health = 3, Attack = 5, Speed = 5 });
+            _wolfCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, new StatCard { Health = 3, Attack = 5, Speed = 5 });
         }
 
         [SetUp]
@@ -51,7 +51,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         private void VerifyRepositoryAdd(CombatantStatsComponent expectedStats, bool isFriendly)
         {
             // :) CombatantEntity -> Get CombatantStatsComponent -> Compare StatCard to provided AND compare if Entity is friend
-            _combatantRepositoryMock.Verify(library => library.Add(It.Is<CombatantEntity>(entity => entity.GetComponent<CombatantStatsComponent>() == expectedStats && entity.IsFriendly == isFriendly)));
+            _combatantRepositoryMock.Verify(library => library.Add(It.Is<CombatantEntity>(entity => entity.GetComponent<CombatantStatsComponent>() == expectedStats && entity.GetComponent<FriendlyStatusComponent>().IsFriendly == isFriendly)));
         }
 
         private void VerifyRepositoryNextCombatantID(Times times)
@@ -69,7 +69,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         { 
             SetupContains(0);
             
-            _combatService.SpawnCombatants([_wolfCard], true);
+            _combatService.SpawnCombatants([_wolfCreation], true);
             
             VerifyRepositoryAdd(_combatantStatsComponent, true);
             VerifyRepositoryNextCombatantID(Times.Once());
@@ -83,7 +83,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             SetupContains(1);
             SetupNextCombatantIDSequence();
             
-            _combatService.SpawnCombatants([_wolfCard, _wolfCard], true);
+            _combatService.SpawnCombatants([_wolfCreation, _wolfCreation], true);
             
             VerifyRepositoryAdd(_combatantStatsComponent, true);
             VerifyRepositoryAdd(_combatantStatsComponent, true);
@@ -94,13 +94,13 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         [Test]
         public void Positive_SpawnCombatants_MultipleCards_CreatesMultipleCombatant()
         {
-            CombatantCard humanCard = CombatantCardFactory.CreateCombatantCard(CombatantType.HUMAN, new StatCard { Health = 10, Attack = 3, Speed = 3 });
+            CombatantCreation humanCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Health = 10, Attack = 3, Speed = 3 });
             
             SetupContains(0);
             SetupContains(1);
             SetupNextCombatantIDSequence();
             
-            _combatService.SpawnCombatants([_wolfCard, humanCard], true);
+            _combatService.SpawnCombatants([_wolfCreation, humanCreation], true);
             
             VerifyRepositoryAdd(_combatantStatsComponent, true);
             VerifyRepositoryAdd(new CombatantStatsComponent { Health = 10, Attack = 3, Speed = 3 }, true);
@@ -122,7 +122,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         { 
             _combatantRepositoryMock.Setup(library => library.Contains(0)).Returns(true).Verifiable();
             
-            Assert.Throws<DuplicateEntityException>(() => _combatService.SpawnCombatants([_wolfCard], true));
+            Assert.Throws<DuplicateEntityException>(() => _combatService.SpawnCombatants([_wolfCreation], true));
             
             VerifyRepositoryNextCombatantID(Times.Exactly(1));
             VerifyMocks();
@@ -132,7 +132,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         public void Negative_SpawnCombatants_EmptySkills_Throws()
         {
             SetupContains(0);
-            CombatantCard noSkills = _wolfCard;
+            CombatantCreation noSkills = _wolfCreation;
             
             Assert.Throws<EmptyCollectionException>(() => _combatService.SpawnCombatants([noSkills], true));
             

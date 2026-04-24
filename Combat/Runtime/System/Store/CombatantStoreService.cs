@@ -29,7 +29,7 @@ namespace IdelPog.Combat.Runtime.System.Store
 
         public void RegisterCombatantChange(CombatantEntity combatantEntity)
         {
-            if (combatantEntity.IsFriendly)
+            if (GetIsFriendly(combatantEntity))
             {
                 _friendlyCombatantStore.RegisterCombatantChange(combatantEntity.CombatantID, combatantEntity.GetComponent<CombatantStatsComponent>());
             }
@@ -41,12 +41,12 @@ namespace IdelPog.Combat.Runtime.System.Store
 
         public void RegisterCombatantDeath(CombatantEntity deadCombatant)
         {
-            if (DoesCombatantIDMatch(deadCombatant, deadCombatant.IsFriendly ? _friendlyCombatantStore : _enemyCombatantStore) == false)
+            if (DoesCombatantIDMatch(deadCombatant, GetIsFriendly(deadCombatant) ? _friendlyCombatantStore : _enemyCombatantStore) == false)
             {
                 return;
             }
             
-            if (deadCombatant.IsFriendly)
+            if (GetIsFriendly(deadCombatant))
             {
                 _friendlyCombatantStore.RegisterCombatantDeath(deadCombatant.CombatantID, GetCombatantEntities(true));
             }
@@ -81,5 +81,7 @@ namespace IdelPog.Combat.Runtime.System.Store
                 return combatantEntities;
             }
         }
+
+        private static bool GetIsFriendly(CombatantEntity combatantEntity) => combatantEntity.GetComponent<FriendlyStatusComponent>().IsFriendly;
     }
 }
