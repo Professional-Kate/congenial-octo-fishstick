@@ -131,7 +131,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         public void Negative_SpawnCombatants_EmptySkills_Throws()
         {
             SetupContains(0);
-            CombatantCard noSkills = _wolfCard with { SkillCards = [] };
+            CombatantCard noSkills = _wolfCard with { AbilityCards = [] };
             
             Assert.Throws<EmptyCollectionException>(() => _combatService.SpawnCombatants([noSkills], true));
             

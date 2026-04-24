@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Skill;
+﻿using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Core.Contracts;
 using IdelPog.Core.Repository.Asserter;
@@ -6,12 +6,12 @@ using IdelPog.ECS.Entity;
 
 namespace IdelPog.Combat.Runtime.Entities
 {
-    public sealed record SkillEntity : Entity
+    public sealed record AbilityEntity : Entity
     {
-        public required SkillType SkillType { get; init; }
+        public required AbilityType AbilityType { get; init; }
         public required Information Information { get; init; }
         
-        public SkillEntity(IRepositoryAsserter repositoryAsserter, SpeedComponent speedComponent, DamageComponent damageComponent) 
+        public AbilityEntity(IRepositoryAsserter repositoryAsserter, SpeedComponent speedComponent, DamageComponent damageComponent) 
             : base(repositoryAsserter, speedComponent, damageComponent)
         {
         }

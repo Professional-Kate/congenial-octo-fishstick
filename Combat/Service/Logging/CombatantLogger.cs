@@ -45,7 +45,7 @@ namespace IdelPog.Combat.Service.Logging
                 StatCard = CreateStatCard(combatantEntity.GetComponent<CombatantStatsComponent>()),
                 Information = combatantEntity.CombatantInformation,
                 // TODO: we don't need to track SkillCards in the Logger
-                SkillCards = []
+                AbilityCards = []
             };
         }
 

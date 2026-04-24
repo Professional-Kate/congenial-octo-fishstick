@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Contracts;
+using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Contracts.Skill;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
@@ -95,13 +95,13 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_FindBestTarget_FriendlyCombatant_UsesEnemyCombatantStore()
         {
-            SkillCard lowHealthCard = new() { SkillType = SkillType.BASIC_ATTACK, Strategy = new Strategy { TargetingType = TargetingType.LOW_HEALTH } };
-            CombatantEntity lowHealthAttacker = CombatantEntityFactory.CreateCombatantEntity(1, true, _friendlyCard with { SkillCards = [lowHealthCard]});
+            AbilityCard lowHealthCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.LOW_HEALTH } };
+            CombatantEntity lowHealthAttacker = CombatantEntityFactory.CreateCombatantEntity(1, true, _friendlyCard with { AbilityCards = [lowHealthCard]});
             
             SetupRepositoryGet(_enemyEntity);
             SetupLowestHealthStore(_enemyCombatantStoreMock, new LowestHealthCombatant { CombatantID = _enemyEntity.CombatantID, Health = _enemyStats.Health });
             
-            CombatantEntity combatantEntity = _enemyTargetFinder.FindBestTarget(lowHealthAttacker, SkillType.BASIC_ATTACK);
+            CombatantEntity combatantEntity = _enemyTargetFinder.FindBestTarget(lowHealthAttacker, AbilityType.BASIC_ATTACK);
 
             AssertLowestHealthCombatant(_enemyCombatantStoreMock, Times.Once());
             AssertLowestHealthCombatant(_friendlyCombatantStoreMock, Times.Never());
@@ -116,7 +116,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupRepositoryGet(_friendlyEntity);
             SetupHighestAttackStore(_friendlyCombatantStoreMock, new HighestAttackCombatant { CombatantID = _friendlyEntity.CombatantID, Attack = _friendlyStats.Attack });
             
-            CombatantEntity combatantEntity = _enemyTargetFinder.FindBestTarget(_enemyEntity, SkillType.BASIC_ATTACK);
+            CombatantEntity combatantEntity = _enemyTargetFinder.FindBestTarget(_enemyEntity, AbilityType.BASIC_ATTACK);
 
             AssertHighestAttackCombatant(_friendlyCombatantStoreMock, Times.Once());
             AssertHighestAttackCombatant(_enemyCombatantStoreMock, Times.Never());
@@ -128,8 +128,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_FindBestTarget_StoresReturnNull_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _enemyTargetFinder.FindBestTarget(_friendlyEntity, SkillType.BASIC_ATTACK));
-            Assert.Throws<ArgumentNullException>(() => _enemyTargetFinder.FindBestTarget(_enemyEntity, SkillType.BASIC_ATTACK));
+            Assert.Throws<ArgumentNullException>(() => _enemyTargetFinder.FindBestTarget(_friendlyEntity, AbilityType.BASIC_ATTACK));
+            Assert.Throws<ArgumentNullException>(() => _enemyTargetFinder.FindBestTarget(_enemyEntity, AbilityType.BASIC_ATTACK));
             
             AssertLowestHealthCombatant(_enemyCombatantStoreMock, Times.Never());
             AssertHighestAttackCombatant(_enemyCombatantStoreMock, Times.Once());
@@ -141,12 +141,12 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_FindBestTarget_TargetingType_OutOfRange_Throws()
         {
-            SkillCard badSkillCard = new() { SkillType = SkillType.BASIC_ATTACK,  Strategy = new Strategy { TargetingType = (TargetingType) 15 }};
+            AbilityCard badAbilityCard = new() { AbilityType = AbilityType.BASIC_ATTACK,  StrategyCard = new StrategyCard { TargetingType = (TargetingType) 15 }};
             
             CombatantCard badTargetingTypeCard = CombatantCardFactory.CreateCombatantCard(CombatantType.BEAR, _friendlyStats);
-            CombatantEntity badEntity = CombatantEntityFactory.CreateCombatantEntity(3, true, badTargetingTypeCard with { SkillCards = [badSkillCard]});
+            CombatantEntity badEntity = CombatantEntityFactory.CreateCombatantEntity(3, true, badTargetingTypeCard with { AbilityCards = [badAbilityCard]});
             
-            Assert.Throws<ArgumentOutOfRangeException>(() => _enemyTargetFinder.FindBestTarget(badEntity, SkillType.BASIC_ATTACK));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _enemyTargetFinder.FindBestTarget(badEntity, AbilityType.BASIC_ATTACK));
         }
     }
 }

@@ -3,8 +3,8 @@ using IdelPog.Combat.Runtime.Entities;
 
 namespace IdelPog.Combat.Runtime.System.Factory.Interface
 {
-    public interface ISkillEntityFactory
+    public interface IAbilityEntityFactory
     {
-        public SkillEntity CreateSkillEntity(CombatantSkillCreation combatantSkillCreation);
+        public AbilityEntity CreateAbilityEntity(CombatantAbilityCreation combatantAbilityCreation);
     }
 }

@@ -1,5 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Contracts.Skill;
+﻿using IdelPog.Combat.Contracts.Ability;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
@@ -24,14 +24,14 @@ namespace IdelPog.Combat.Runtime.System
             _foundAssertion = foundAssertion;
         }
 
-        public CombatantEntity FindBestTarget(CombatantEntity instigatingEntity, SkillType skillType)
+        public CombatantEntity FindBestTarget(CombatantEntity instigatingEntity, AbilityType abilityType)
         {
-            return DetermineTarget(instigatingEntity.IsFriendly ? _enemyCombatantStore : _friendlyCombatantStore, instigatingEntity, skillType);
+            return DetermineTarget(instigatingEntity.IsFriendly ? _enemyCombatantStore : _friendlyCombatantStore, instigatingEntity, abilityType);
         }
 
-        private CombatantEntity DetermineTarget(ICombatantStoreRead combatantStore, CombatantEntity attackingEntity, SkillType skillType)
+        private CombatantEntity DetermineTarget(ICombatantStoreRead combatantStore, CombatantEntity attackingEntity, AbilityType abilityType)
         {
-            TargetingType targetingType = GetTargetingType(attackingEntity, skillType);
+            TargetingType targetingType = GetTargetingType(attackingEntity, abilityType);
             CombatantEntity target;
                 
             switch (targetingType)
@@ -51,7 +51,7 @@ namespace IdelPog.Combat.Runtime.System
             return target;
         }
 
-        private TargetingType GetTargetingType(CombatantEntity attackingEntity, SkillType skillType)
+        private TargetingType GetTargetingType(CombatantEntity attackingEntity, AbilityType abilityType)
         {
             // foreach (BasicAttackComponent skillComponent in skillComponentStore.GetAllComponents())
             // {

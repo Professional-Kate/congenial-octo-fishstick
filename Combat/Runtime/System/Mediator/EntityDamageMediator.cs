@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
-using IdelPog.Combat.Contracts.Skill;
+using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
@@ -36,7 +36,7 @@ namespace IdelPog.Combat.Runtime.System.Mediator
             _combatantLogger = combatantLogger;
         }
 
-        public void ApplyDamage(byte attackingCombatantID, SkillType skillType)
+        public void ApplyDamage(byte attackingCombatantID, AbilityType abilityType)
         {
             _foundAssertion.AssertFound(attackingCombatantID, _combatantRepository.Contains(attackingCombatantID));
             
@@ -46,7 +46,7 @@ namespace IdelPog.Combat.Runtime.System.Mediator
             CombatantStatsComponent attackerStats = attackingCombatant.GetComponent<CombatantStatsComponent>();
             _numberAssertion.AssertNumberNotZero(attackerStats.Attack, attackerStats.ToString());
             
-            CombatantEntity targetCombatant = _targetFinder.FindBestTarget(attackingCombatant, skillType);
+            CombatantEntity targetCombatant = _targetFinder.FindBestTarget(attackingCombatant, abilityType);
             _combatantAssertion.AssertCombatantAlive(targetCombatant);
 
             uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats.Attack);

@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Skill;
+﻿using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -44,7 +44,7 @@ namespace IdelPog.Combat.Tests.Event
 
         private void VerifyDamageApplied()
         {
-            _damageSystemMock.Verify(library => library.ApplyDamage(_basicAttackEvent.AttackerID, SkillType.BASIC_ATTACK), Times.Once);
+            _damageSystemMock.Verify(library => library.ApplyDamage(_basicAttackEvent.AttackerID, AbilityType.BASIC_ATTACK), Times.Once);
         }
 
         private void VerifyEventEnqueued()

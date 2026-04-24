@@ -3,11 +3,11 @@ using IdelPog.ECS.Entity;
 
 namespace IdelPog.Combat.Runtime.Entities.Combatant
 {
-    public sealed record CombatantSkillEntity : Entity
+    public sealed record CombatantAbilityEntity : Entity
     {
         public required byte CombatantID { get; init; }
         
-        public CombatantSkillEntity(IRepositoryAsserter repositoryAsserter) 
+        public CombatantAbilityEntity(IRepositoryAsserter repositoryAsserter) 
             : base(repositoryAsserter)
         {
         }

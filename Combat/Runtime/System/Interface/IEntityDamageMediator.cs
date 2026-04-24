@@ -1,9 +1,9 @@
-﻿using IdelPog.Combat.Contracts.Skill;
+﻿using IdelPog.Combat.Contracts.Ability;
 
 namespace IdelPog.Combat.Runtime.System.Interface
 {
     public interface IEntityDamageMediator
     {
-        public void ApplyDamage(byte attackingCombatantID, SkillType skillType);
+        public void ApplyDamage(byte attackingCombatantID, AbilityType abilityType);
     }
 }

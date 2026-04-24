@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Assertion;
+using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Skill;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -59,7 +59,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
         private void SetupTargetFinder(CombatantEntity attacker, CombatantEntity target)
         {
-            _targetFinderMock.Setup(library => library.FindBestTarget(attacker, SkillType.BASIC_ATTACK)).Returns(target).Verifiable();
+            _targetFinderMock.Setup(library => library.FindBestTarget(attacker, AbilityType.BASIC_ATTACK)).Returns(target).Verifiable();
         }
 
         private void SetupRepository(CombatantEntity combatantEntity)
@@ -103,7 +103,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupTargetFinder(_attackingCombatant, _targetCombatant);
             SetupRepository(_attackingCombatant);
             
-            _entityDamageMediator.ApplyDamage(_attackingCombatant.CombatantID, SkillType.BASIC_ATTACK);
+            _entityDamageMediator.ApplyDamage(_attackingCombatant.CombatantID, AbilityType.BASIC_ATTACK);
             
             VerifyStoreRegisterCombatantChange(_targetCombatant, Times.Once());
             VerifyMocks();
@@ -116,7 +116,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupTargetFinder(_attackingCombatant, _targetCombatant);
             SetupRepository(_attackingCombatant);
             
-            _entityDamageMediator.ApplyDamage(_attackingCombatant.CombatantID, SkillType.BASIC_ATTACK);
+            _entityDamageMediator.ApplyDamage(_attackingCombatant.CombatantID, AbilityType.BASIC_ATTACK);
             
             _deathSystemMock.Verify(library => library.KillEntity(_targetCombatant), Times.Once);
             VerifyMocks();
@@ -125,7 +125,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_ApplyDamage_InstanceIDUnknown_Throws()
         {
-            Assert.Throws<NotFoundException<byte>>(() => _entityDamageMediator.ApplyDamage(_targetCombatant.CombatantID, SkillType.BASIC_ATTACK));
+            Assert.Throws<NotFoundException<byte>>(() => _entityDamageMediator.ApplyDamage(_targetCombatant.CombatantID, AbilityType.BASIC_ATTACK));
             
             _repositoryMock.Verify(library => library.Contains(_targetCombatant.CombatantID), Times.Once);
             VerifyMocks();
@@ -139,7 +139,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             SetupRepository(zeroAttackEntity);
             
-            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _entityDamageMediator.ApplyDamage(zeroAttackEntity.CombatantID, SkillType.BASIC_ATTACK));
+            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _entityDamageMediator.ApplyDamage(zeroAttackEntity.CombatantID, AbilityType.BASIC_ATTACK));
             
             Assert.That(exception.Source, Is.EqualTo(zeroAttackEntity.GetComponent<CombatantStatsComponent>().ToString()));
             
@@ -154,7 +154,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             SetupRepository(deadEntity);
             
-            CombatantDeadException exception = Assert.Throws<CombatantDeadException>(() => _entityDamageMediator.ApplyDamage(deadEntity.CombatantID, SkillType.BASIC_ATTACK));
+            CombatantDeadException exception = Assert.Throws<CombatantDeadException>(() => _entityDamageMediator.ApplyDamage(deadEntity.CombatantID, AbilityType.BASIC_ATTACK));
             
             Assert.That(exception.CombatantID, Is.EqualTo(deadEntity.CombatantID));
             VerifyMocks();

@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Card;
 
-namespace IdelPog.Integration.Tests.Combat
+namespace IdelPog.Integration.Tests.Combat.Tools
 {
     internal sealed class CombatantTracker
     {
