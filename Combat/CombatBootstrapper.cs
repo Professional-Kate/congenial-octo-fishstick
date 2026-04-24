@@ -84,7 +84,7 @@ namespace IdelPog.Combat
             BasicAttackEventResolver basicAttackEventResolver = new(entityDamageMediator, basicAttackScheduler, combatantRepository, foundAssertion);
             resolverRepository.Add(EventType.BASIC_ATTACK, basicAttackEventResolver);
             
-            BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantEntityFactory, combatantStoreService, basicAttackScheduler, combatQueue, resolverRepository, combatStateService, collectionAssertion, responseDispatcher, combatantLogger);
+            BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantEntityFactory, combatantStoreService, basicAttackScheduler, combatStateService, combatQueue, resolverRepository, combatantLogger, responseDispatcher, collectionAssertion);
             IBatchController<BasicEncounterDeck> controller = new ManagedBatchController<BasicEncounterDeck>(basicEncounterDeckMediator);
             BasicEncounterDeckErrorFactory errorFactory = new(new BaseErrorFactory());
                         

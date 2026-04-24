@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Card.Combatant;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -131,7 +132,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         public void Negative_SpawnCombatants_EmptySkills_Throws()
         {
             SetupContains(0);
-            CombatantCard noSkills = _wolfCard with { AbilityCards = [] };
+            CombatantCard noSkills = _wolfCard;
             
             Assert.Throws<EmptyCollectionException>(() => _combatService.SpawnCombatants([noSkills], true));
             

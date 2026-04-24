@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Card.Combatant;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {

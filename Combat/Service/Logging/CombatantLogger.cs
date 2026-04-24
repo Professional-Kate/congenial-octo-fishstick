@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Card.Combatant;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Service.Logging.Interface;
@@ -43,9 +44,7 @@ namespace IdelPog.Combat.Service.Logging
             {
                 CombatantType = combatantEntity.CombatantType,
                 StatCard = CreateStatCard(combatantEntity.GetComponent<CombatantStatsComponent>()),
-                Information = combatantEntity.CombatantInformation,
-                // TODO: we don't need to track SkillCards in the Logger
-                AbilityCards = []
+                Information = combatantEntity.CombatantInformation
             };
         }
 

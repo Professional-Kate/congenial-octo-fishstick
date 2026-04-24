@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Card.Combatant;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Core.Contracts;
 
@@ -13,8 +14,7 @@ namespace IdelPog.Combat.Tests
             {
                 CombatantType = combatantType,
                 Information = information,
-                StatCard = statCard,
-                AbilityCards = skillCards
+                StatCard = statCard
             };
         }
         

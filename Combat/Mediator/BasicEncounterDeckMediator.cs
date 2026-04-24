@@ -17,27 +17,32 @@ namespace IdelPog.Combat.Mediator
 {
     public sealed class BasicEncounterDeckMediator : IBatchMediator<BasicEncounterDeck>
     {
+        private const uint MAX_ITERATIONS = 10000;
+        
         private readonly ICombatantEntityFactory _combatantEntityFactory;
         private readonly ICombatantStoreService _combatantStoreService;
         private readonly IBasicAttackScheduler _basicAttackScheduler;
+        private readonly ICombatStateService _combatStateService;
         private readonly ICombatQueue _combatQueue;
         private readonly IAssetRepository<EventType, IEventResolver> _resolverRepository;
         private readonly ICombatantLogger _combatantLogger;
         private readonly IDispatchMany<BasicEncounterDeckResponse> _responseDispatcher;
-        private readonly ICombatStateService _combatStateService;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public BasicEncounterDeckMediator(ICombatantEntityFactory combatantEntityFactory, ICombatantStoreService combatantStoreService, IBasicAttackScheduler basicAttackScheduler, ICombatQueue combatQueue, IAssetRepository<EventType, IEventResolver> resolverRepository, ICombatStateService combatStateService, ICollectionAssertion collectionAssertion, IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICombatantLogger combatantLogger)
+        public BasicEncounterDeckMediator(ICombatantEntityFactory combatantEntityFactory, ICombatantStoreService combatantStoreService,
+            IBasicAttackScheduler basicAttackScheduler, ICombatStateService combatStateService, ICombatQueue combatQueue,
+            IAssetRepository<EventType, IEventResolver> resolverRepository, ICombatantLogger combatantLogger,
+            IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
         {
             _combatantEntityFactory = combatantEntityFactory;
             _combatantStoreService = combatantStoreService;
             _basicAttackScheduler = basicAttackScheduler;
+            _combatStateService = combatStateService;
             _combatQueue = combatQueue;
             _resolverRepository = resolverRepository;
-            _combatStateService = combatStateService;
-            _collectionAssertion = collectionAssertion;
-            _responseDispatcher = responseDispatcher;
             _combatantLogger = combatantLogger;
+            _responseDispatcher = responseDispatcher;
+            _collectionAssertion = collectionAssertion;
         }
 
         public void HandleMessages(IReadOnlyList<BasicEncounterDeck> messages)
@@ -48,8 +53,14 @@ namespace IdelPog.Combat.Mediator
                 BasicEncounterDeck basicEncounterDeck = messages[i];
                 RegisterCombatants(basicEncounterDeck);
 
+                uint iterations = 0;
                 while (_combatStateService.IsCombatOver == false)
                 {
+                    if (++iterations > MAX_ITERATIONS)
+                    {
+                        return;
+                    }
+                    
                     ICombatEvent combatEvent = _combatQueue.Dequeue();
                     double currentTick = combatEvent.Tick;
 

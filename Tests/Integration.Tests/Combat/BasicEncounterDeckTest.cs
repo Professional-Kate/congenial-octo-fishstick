@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Card.Combatant;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
@@ -32,32 +33,28 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 CombatantType = CombatantType.HUMAN, 
                 StatCard = new StatCard { Health = 14, Attack = 5, Speed = 5 },
-                Information = new Information { Name = "John Idle", Description = "He the man" },
-                AbilityCards = [new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }}]
+                Information = new Information { Name = "John Idle", Description = "He the man" }
             };
             
             _goblinCard = new CombatantCard
             {
                 CombatantType = CombatantType.GOBLIN, 
                 StatCard = new StatCard { Health = 9, Attack = 2, Speed = 11 },
-                Information = new Information { Name = "Goblin", Description = "green guy" },
-                AbilityCards = [new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.LOW_HEALTH }}]
+                Information = new Information { Name = "Goblin", Description = "green guy" }
             };
 
             _bearCard = new CombatantCard
             {
                 CombatantType = CombatantType.BEAR,
                 StatCard = new StatCard { Health = 5, Attack = 10, Speed = 3 },
-                Information = new Information { Name = "Bear", Description = "rawr" },
-                AbilityCards = [new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }}]
+                Information = new Information { Name = "Bear", Description = "rawr" }
             };
             
             _wolfCard = new CombatantCard
             {
                 CombatantType = CombatantType.WOLF,
                 StatCard = new StatCard { Health = 3, Attack = 7, Speed = 3 },
-                Information = new Information { Name = "Wolf", Description = "awoooo" },
-                AbilityCards = [new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }}]
+                Information = new Information { Name = "Wolf", Description = "awoooo" }
             };
         }
         
@@ -195,7 +192,7 @@ namespace IdelPog.Integration.Tests.Combat
         public void Positive_SimulateCombat_HighAttack_TargetsHighAttack()
         {
             AbilityCard highAttackCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK } };
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCard with { AbilityCards = [highAttackCard]}], [_goblinCard, _bearCard]);
+            BasicEncounterDeck returnedDeck = RunCombat([_humanCard with { }], [_goblinCard, _bearCard]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -213,7 +210,7 @@ namespace IdelPog.Integration.Tests.Combat
         public void Positive_SimulateCombat_LowHealth_TargetsLowHealth()
         {
             AbilityCard lowHealthCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.LOW_HEALTH } };
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCard with { AbilityCards = [lowHealthCard]}], [_wolfCard, _bearCard]);
+            BasicEncounterDeck returnedDeck = RunCombat([_humanCard with { }], [_wolfCard, _bearCard]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -261,8 +258,7 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 CombatantType = CombatantType.HUMAN, 
                 StatCard = new StatCard { Health = 14, Attack = 5, Speed = 0 },
-                Information = new Information { Name = "Captain Slow", Description = "The slowest man... In the world" },
-                AbilityCards = [new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }}]
+                Information = new Information { Name = "Captain Slow", Description = "The slowest man... In the world" }
             };
             
             BasicEncounterDeck deck = new() { FriendlyCombatantCards = [zeroSpeed], EnemyCombatantCards = [_wolfCard] };
@@ -281,8 +277,7 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 CombatantType = CombatantType.HUMAN, 
                 StatCard = new StatCard { Health = 0, Attack = 5, Speed = 200 },
-                Information = new Information { Name = "corpse", Description = "He kinda dead already" },
-                AbilityCards = [new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }}]
+                Information = new Information { Name = "corpse", Description = "He kinda dead already" }
             };
             
             BasicEncounterDeck deck = new() { FriendlyCombatantCards = [zeroHealth], EnemyCombatantCards = [_wolfCard] };

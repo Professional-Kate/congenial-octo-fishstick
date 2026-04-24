@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Contracts.Card.Combatant;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
@@ -30,7 +30,6 @@ namespace IdelPog.Combat.Runtime.System.Factory
             {
                 byte nextCombatantID = _combatantRepository.NextCombatantID;
                 _uniqueAssertion.AssertUnique(nextCombatantID, _combatantRepository.Contains(nextCombatantID));
-                _collectionAssertion.AssertHasElements(combatantCard.AbilityCards);
                 
                 CombatantEntity combatantEntity = new(_repositoryAsserter, combatantCard.StatCard)
                 {
