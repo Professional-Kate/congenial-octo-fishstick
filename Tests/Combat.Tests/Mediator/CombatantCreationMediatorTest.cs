@@ -1,7 +1,9 @@
 ﻿using IdelPog.Combat.Assertion;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Mediator;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
@@ -17,11 +19,11 @@ namespace IdelPog.Combat.Tests.Mediator
     public sealed class CombatantCreationMediatorTest
     {
         private CombatantCreationMediator _mediator;
-        
-        private CombatantCreation _combatantCreation;
         private Mock<ICombatantRepository> _repositoryMock;
         private Mock<ICombatantEntityFactory> _factoryMock;
         private Mock<IDispatchMany<CombatantCreationResponse>> _responseDispatcherMock;
+        
+        private CombatantCreation _combatantCreation;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -108,6 +110,30 @@ namespace IdelPog.Combat.Tests.Mediator
         {
             Assert.Throws<ArgumentNullException>(() => _mediator.HandleMessages(null!));
 
+            VerifyMocks();
+        }
+
+        [Test]
+        public void Negative_HandleMessages_CombatantHasZeroSpeed_Throws()
+        {
+            StatCard zeroSpeedStatCard = _combatantCreation.StatCard with { Speed = 0 };
+            CombatantCreation zeroSpeedCombatant = _combatantCreation with { StatCard =  zeroSpeedStatCard };
+
+            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _mediator.HandleMessages([zeroSpeedCombatant]));
+            Assert.That(exception.Source, Is.EqualTo(nameof(zeroSpeedStatCard.Speed)));
+            
+            VerifyMocks();
+        }
+        
+        [Test]
+        public void Negative_HandleMessages_CombatantHasZeroHealth_Throws()
+        {
+            StatCard zeroHealthStatCard = _combatantCreation.StatCard with { Health = 0 };
+            CombatantCreation zeroHealthCombatant = _combatantCreation with { StatCard =  zeroHealthStatCard };
+
+            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _mediator.HandleMessages([zeroHealthCombatant]));
+            Assert.That(exception.Source, Is.EqualTo(nameof(zeroHealthStatCard.Health)));
+            
             VerifyMocks();
         }
     }
