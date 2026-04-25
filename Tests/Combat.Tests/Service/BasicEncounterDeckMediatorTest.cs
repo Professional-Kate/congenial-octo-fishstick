@@ -45,11 +45,11 @@ namespace IdelPog.Combat.Tests.Service
             _combatantLoggerMock = new Mock<ICombatantLogger>();
             _responseDispatcherMock = new Mock<IDispatchMany<BasicEncounterDeckResponse>>();
             
-            _basicEncounterDeckMediator = new BasicEncounterDeckMediator(_combatantFactoryMock.Object, _combatantStoreServiceMock.Object, _attackSchedulerMock.Object, _combatStateServiceMock.Object, _combatQueueMock.Object, _repositoryMock.Object, _combatantLoggerMock.Object, _responseDispatcherMock.Object, new CollectionAssertion());
+            _basicEncounterDeckMediator = new BasicEncounterDeckMediator(_combatantStoreServiceMock.Object, _attackSchedulerMock.Object, _combatStateServiceMock.Object, _combatQueueMock.Object, _repositoryMock.Object, _combatantLoggerMock.Object, _responseDispatcherMock.Object, new CollectionAssertion());
             _basicEncounterDeck = new BasicEncounterDeck
             {
-                FriendlyCombatantCards = [CombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 5, Health = 10, Speed = 5})],
-                EnemyCombatantCards = [CombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, new StatCard { Attack = 3, Health = 10, Speed = 9 })]
+                FriendlyCombatantCards = [TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 5, Health = 10, Speed = 5})],
+                EnemyCombatantCards = [TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, new StatCard { Attack = 3, Health = 10, Speed = 9 })]
             };
         }
         

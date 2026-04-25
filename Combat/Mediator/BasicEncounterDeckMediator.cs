@@ -3,7 +3,6 @@ using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Interface;
 using IdelPog.Combat.Event.Resolver.Interface;
-using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service.Interface;
@@ -18,8 +17,7 @@ namespace IdelPog.Combat.Mediator
     public sealed class BasicEncounterDeckMediator : IBatchMediator<BasicEncounterDeck>
     {
         private const uint MAX_ITERATIONS = 10000;
-        
-        private readonly ICombatantEntityFactory _combatantEntityFactory;
+
         private readonly ICombatantStoreService _combatantStoreService;
         private readonly IBasicAttackScheduler _basicAttackScheduler;
         private readonly ICombatStateService _combatStateService;
@@ -29,12 +27,11 @@ namespace IdelPog.Combat.Mediator
         private readonly IDispatchMany<BasicEncounterDeckResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public BasicEncounterDeckMediator(ICombatantEntityFactory combatantEntityFactory, ICombatantStoreService combatantStoreService,
+        public BasicEncounterDeckMediator(ICombatantStoreService combatantStoreService,
             IBasicAttackScheduler basicAttackScheduler, ICombatStateService combatStateService, ICombatQueue combatQueue,
             IAssetRepository<EventType, IEventResolver> resolverRepository, ICombatantLogger combatantLogger,
             IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
         {
-            _combatantEntityFactory = combatantEntityFactory;
             _combatantStoreService = combatantStoreService;
             _basicAttackScheduler = basicAttackScheduler;
             _combatStateService = combatStateService;
@@ -79,9 +76,6 @@ namespace IdelPog.Combat.Mediator
         {
             _collectionAssertion.AssertHasElements(basicEncounterDeck.FriendlyCombatantCards);
             _collectionAssertion.AssertHasElements(basicEncounterDeck.EnemyCombatantCards);
-            
-            _combatantEntityFactory.SpawnCombatants(basicEncounterDeck.FriendlyCombatantCards, true);
-            _combatantEntityFactory.SpawnCombatants(basicEncounterDeck.EnemyCombatantCards, false);
             
             _combatantStoreService.RegisterInitial();
             _basicAttackScheduler.EnqueueInitial(0);

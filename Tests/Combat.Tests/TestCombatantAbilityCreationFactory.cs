@@ -4,7 +4,7 @@ using IdelPog.Core.Contracts;
 
 namespace IdelPog.Combat.Tests
 {
-    internal static class CombatantAbilityCreationFactory
+    internal static class TestCombatantAbilityCreationFactory
     {
         public static CombatantAbilityCreation Create(AbilityType abilityType)
         {

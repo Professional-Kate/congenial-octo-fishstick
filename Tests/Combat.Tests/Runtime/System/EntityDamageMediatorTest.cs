@@ -45,9 +45,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         { 
-            _targetCombatant = CombatantEntityFactory.CreateCombatantEntity(1);
+            _targetCombatant = TestCombatantEntityFactory.CreateCombatantEntity(1);
 
-            _attackingCombatant = CombatantEntityFactory.CreateCombatantEntity(2);
+            _attackingCombatant = TestCombatantEntityFactory.CreateCombatantEntity(2);
             _attackerStatsComponent = _attackingCombatant.GetComponent<CombatantStatsComponent>();
             
             _repositoryMock.Reset();
@@ -135,7 +135,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Negative_ApplyDamage_ZeroAttack_Throws()
         {
             StatCard zeroAttackCard = new() { Attack = 0, Health = 10, Speed = 10 };
-            CombatantEntity zeroAttackEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, zeroAttackCard);
+            CombatantEntity zeroAttackEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, zeroAttackCard);
             
             SetupRepository(zeroAttackEntity);
             
@@ -149,7 +149,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_ApplyDamage_AttackingCombatantNotAlive_Throws()
         { 
-            CombatantEntity deadEntity = CombatantEntityFactory.CreateCombatantEntity(1);
+            CombatantEntity deadEntity = TestCombatantEntityFactory.CreateCombatantEntity(1);
             deadEntity.UpdateLifeStatus(false);
             
             SetupRepository(deadEntity);

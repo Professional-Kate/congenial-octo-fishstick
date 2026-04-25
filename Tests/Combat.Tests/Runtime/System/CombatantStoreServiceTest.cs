@@ -31,8 +31,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _combatantStoreService = new CombatantStoreService(_friendlyCombatantStoreMock.Object, _enemyCombatantStoreMock.Object, _combatantFiltersMock.Object, new CollectionAssertion());
 
-            _friendlyCombatant = CombatantEntityFactory.CreateCombatantEntity(1, true, CombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN));
-            _enemyCombatant = CombatantEntityFactory.CreateCombatantEntity(2, false, CombatantCreationFactory.CreateCombatantCreation(CombatantType.BEAR));
+            _friendlyCombatant = TestCombatantEntityFactory.CreateCombatantEntity(1, true, TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN));
+            _enemyCombatant = TestCombatantEntityFactory.CreateCombatantEntity(2, false, TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.BEAR));
             
         }
 

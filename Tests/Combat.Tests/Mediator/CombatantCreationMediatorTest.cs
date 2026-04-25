@@ -34,7 +34,7 @@ namespace IdelPog.Combat.Tests.Mediator
             
             _mediator = new CombatantCreationMediator(_repositoryMock.Object, _factoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new StatCardAsserter(new NumberAssertion()));
 
-            _combatantCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.BEAR);
+            _combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.BEAR);
         }
 
         [SetUp]
@@ -57,7 +57,7 @@ namespace IdelPog.Combat.Tests.Mediator
 
         private void SetupFactory(CombatantCreation combatantCreation)
         {
-            _factoryMock.Setup(library => library.CreateEntity(combatantCreation)).Returns(CombatantEntityFactory.CreateCombatantEntity(0, true, combatantCreation));
+            _factoryMock.Setup(library => library.CreateEntity(combatantCreation)).Returns(TestCombatantEntityFactory.CreateCombatantEntity(0, true, combatantCreation));
         }
 
         private void VerifyRepository(CombatantType combatantType)

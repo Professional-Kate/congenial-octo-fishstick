@@ -25,7 +25,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         {
-            _targetEntity = CombatantEntityFactory.CreateCombatantEntity(0);
+            _targetEntity = TestCombatantEntityFactory.CreateCombatantEntity(0);
             _combatantStatsComponent = _targetEntity.GetComponent<CombatantStatsComponent>();
         }
 

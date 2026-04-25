@@ -7,6 +7,7 @@ using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Mediator.Interface;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -36,8 +37,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _basicAttackScheduler = new BasicAttackScheduler(_combatQueueMock.Object, new NumberAssertion(), _combatantRepositoryMock.Object, new FoundAssertion());
 
             _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
-            _attackerCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, _attackerStats);
-            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _attackerCreation);
+            _attackerCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, _attackerStats);
+            _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, _attackerCreation);
         }
 
         [SetUp]
@@ -72,8 +73,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Positive_EnqueueInitial_NoMatchingComponent_NoEnqueue()
         {
             // TODO: need to add another SkillComponent
-            CombatantCreation combatantCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, _attackerStats, _attackerCreation.Information, []);
-            CombatantEntity combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, combatantCreation);
+            CombatantCreation combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, _attackerStats, _attackerCreation.Information, []);
+            CombatantEntity combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, combatantCreation);
             SetupRepositoryGetAll(combatantEntity);
             
             Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
@@ -128,7 +129,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_EnqueueInitial_ZeroSpeed_Throws()
         {
-            CombatantEntity zeroSpeedEntity = CombatantEntityFactory.CreateCombatantEntity(2, true, _attackerStats with { Speed = 0 });
+            CombatantEntity zeroSpeedEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, true, _attackerStats with { Speed = 0 });
             SetupRepositoryGetAll(zeroSpeedEntity);
             
             Assert.Throws<NumberZeroException>(() => _basicAttackScheduler.EnqueueInitial(1d));

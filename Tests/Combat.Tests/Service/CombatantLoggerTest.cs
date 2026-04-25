@@ -20,14 +20,14 @@ namespace IdelPog.Combat.Tests.Service
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _combatantCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF);
+            _combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF);
         }
         
         [SetUp]
         public void Setup()
         {
             _combatantLogger = new CombatantLogger(new ObjectNullAssertion());
-            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, _combatantCreation);
+            _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, _combatantCreation);
         }
 
         private static void AssertStateChangesLength(IReadOnlyList<CombatantStateChange> stateChanges, int expectedLength)

@@ -6,7 +6,7 @@ using IdelPog.Core.Contracts;
 
 namespace IdelPog.Combat.Tests
 {
-    public static class CombatantCreationFactory
+    public static class TestCombatantCreationFactory
     {
         public static CombatantCreation CreateCombatantCreation(CombatantType combatantType, StatCard statCard, Information information, params AbilityCard[] skillCards)
         {

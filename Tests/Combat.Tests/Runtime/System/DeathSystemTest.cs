@@ -30,7 +30,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         {
-            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(1);
+            _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(1);
         }
 
         private void VerifyMocks()

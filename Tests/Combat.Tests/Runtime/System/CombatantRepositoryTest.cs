@@ -22,15 +22,15 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void OneTimeSetup()
         {
             _wolfStatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 };
-            _wolfCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, _wolfStatCard);
+            _wolfCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, _wolfStatCard);
         }
 
         [SetUp]
         public void SetUp()
         {
             _combatantRepository = new CombatantRepository(new FoundAssertion());
-            _enemyWolfEntity = CombatantEntityFactory.CreateCombatantEntity(1, false, _wolfCreation);
-            _friendlyWolfEntity = CombatantEntityFactory.CreateCombatantEntity(2, true, _wolfCreation);
+            _enemyWolfEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, false, _wolfCreation);
+            _friendlyWolfEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, true, _wolfCreation);
         }
 
         private void VerifyContains(byte id, bool contains)

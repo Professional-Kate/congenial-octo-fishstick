@@ -19,7 +19,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         public void OneTimeSetup()
         { 
             _abilityEntityFactory = new AbilityEntityFactory(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
-            _combatantAbilityCreation = CombatantAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
+            _combatantAbilityCreation = TestCombatantAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
         }
 
         private static void AssertSkillEntity(AbilityEntity abilityEntity, CombatantAbilityCreation combatantAbilityCreation)

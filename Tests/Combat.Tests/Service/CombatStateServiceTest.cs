@@ -25,10 +25,10 @@ namespace IdelPog.Combat.Tests.Service
             _combatStateService = new CombatStateService(_combatantFiltersMock.Object);
             
             StatCard entityStats = new() { Health = 10, Attack = 10,  Speed = 3 };
-            CombatantCreation entityCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.BEAR, entityStats);
+            CombatantCreation entityCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.BEAR, entityStats);
             
-            _friendlyEntity = CombatantEntityFactory.CreateCombatantEntity(1, true, entityCreation);
-            _enemyEntity = CombatantEntityFactory.CreateCombatantEntity(2, false, entityCreation with { CombatantType = CombatantType.GOBLIN });
+            _friendlyEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, entityCreation);
+            _enemyEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, false, entityCreation with { CombatantType = CombatantType.GOBLIN });
         }
 
         [SetUp]

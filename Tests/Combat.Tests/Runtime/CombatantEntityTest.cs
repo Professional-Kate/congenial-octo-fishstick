@@ -13,7 +13,7 @@ namespace IdelPog.Combat.Tests.Runtime
         [SetUp]
         public void Setup()
         { 
-            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(0);
+            _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(0);
             _combatantStatsComponent = _combatantEntity.GetComponent<CombatantStatsComponent>();
         }
 

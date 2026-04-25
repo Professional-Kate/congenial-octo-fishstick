@@ -9,7 +9,7 @@ using IdelPog.Core.Validation.Assertion;
 
 namespace IdelPog.Combat.Tests
 {
-    internal static class CombatantEntityFactory
+    internal static class TestCombatantEntityFactory
     {
         private static readonly RepositoryAsserter _repositoryAsserter = new(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
 
@@ -20,7 +20,7 @@ namespace IdelPog.Combat.Tests
 
         internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly, StatCard statCard)
         {
-            CombatantCreation combatantCreation = CombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, statCard, new Information { Name = "Goblin", Description = "A guy!" });
+            CombatantCreation combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, statCard, new Information { Name = "Goblin", Description = "A guy!" });
             
             return CreateCombatantEntity(entityID, isFriendly, combatantCreation);
         }

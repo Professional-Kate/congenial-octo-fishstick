@@ -72,7 +72,7 @@ namespace IdelPog.Combat
             ICombatantStore friendlyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
             ICombatantStore enemyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
             
-            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory(combatantRepository, collectionAssertion, uniqueAssertion, repositoryAsserter);
+            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory(combatantRepository, uniqueAssertion, repositoryAsserter);
             ICombatantStoreService combatantStoreService = new CombatantStoreService(friendlyCombatantStore, enemyCombatantStore, combatantRepository, collectionAssertion);
             IBasicAttackScheduler basicAttackScheduler = new BasicAttackScheduler(combatQueue, numberAssertion, combatantRepository, foundAssertion);
             AssetRepository<EventType, IEventResolver> resolverRepository = new(repositoryAsserter);
@@ -85,7 +85,7 @@ namespace IdelPog.Combat
             BasicAttackEventResolver basicAttackEventResolver = new(entityDamageMediator, basicAttackScheduler, combatantRepository, foundAssertion);
             resolverRepository.Add(EventType.BASIC_ATTACK, basicAttackEventResolver);
             
-            BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantEntityFactory, combatantStoreService, basicAttackScheduler, combatStateService, combatQueue, resolverRepository, combatantLogger, responseDispatcher, collectionAssertion);
+            BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantStoreService, basicAttackScheduler, combatStateService, combatQueue, resolverRepository, combatantLogger, responseDispatcher, collectionAssertion);
             IBatchController<BasicEncounterDeck> controller = new ManagedBatchController<BasicEncounterDeck>(basicEncounterDeckMediator);
             BasicEncounterDeckErrorFactory errorFactory = new(new BaseErrorFactory());
                         
@@ -116,7 +116,7 @@ namespace IdelPog.Combat
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
             IStatCardAsserter statCardAsserter = new StatCardAsserter(numberAssertion);
             
-            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory(combatantRepository, collectionAssertion, uniqueAssertion, repositoryAsserter);
+            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory(combatantRepository, uniqueAssertion, repositoryAsserter);
             IDispatchMany<CombatantCreationResponse> responseDispatcher =  new ManagedDispatcher<CombatantCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             CombatantCreationMediator mediator = new(combatantRepository, combatantEntityFactory, responseDispatcher, collectionAssertion, statCardAsserter);

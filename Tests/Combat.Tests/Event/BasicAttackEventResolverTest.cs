@@ -3,6 +3,7 @@ using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Mediator.Interface;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -31,7 +32,7 @@ namespace IdelPog.Combat.Tests.Event
 
             _basicAttackEvent = new BasicAttackEvent { AttackerID = 0, Tick = 0 };
 
-            _combatantEntity = CombatantEntityFactory.CreateCombatantEntity(0);
+            _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(0);
         }
 
         [SetUp]
@@ -90,7 +91,7 @@ namespace IdelPog.Combat.Tests.Event
         [Test]
         public void Positive_ResolveEvent_CombatantNotAlive_Returns()
         {
-            CombatantEntity deadEntity = CombatantEntityFactory.CreateCombatantEntity(1);
+            CombatantEntity deadEntity = TestCombatantEntityFactory.CreateCombatantEntity(1);
             deadEntity.UpdateLifeStatus(false);
             
             SetupRepositoryContains(deadEntity.CombatantID);

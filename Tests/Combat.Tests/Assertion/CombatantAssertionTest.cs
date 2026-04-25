@@ -16,7 +16,7 @@ namespace IdelPog.Combat.Tests.Assertion
         {
             _combatantAssertion = new CombatantAssertion();
 
-            _combatant = CombatantEntityFactory.CreateCombatantEntity(0);
+            _combatant = TestCombatantEntityFactory.CreateCombatantEntity(0);
         }
 
         [Test]

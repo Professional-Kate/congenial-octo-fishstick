@@ -3,6 +3,7 @@ using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Mediator.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;

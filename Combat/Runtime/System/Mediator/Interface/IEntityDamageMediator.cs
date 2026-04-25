@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
 
-namespace IdelPog.Combat.Runtime.System.Interface
+namespace IdelPog.Combat.Runtime.System.Mediator.Interface
 {
     public interface IEntityDamageMediator
     {

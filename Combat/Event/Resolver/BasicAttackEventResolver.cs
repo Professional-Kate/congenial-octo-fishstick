@@ -2,6 +2,7 @@
 using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Mediator.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Event.Resolver

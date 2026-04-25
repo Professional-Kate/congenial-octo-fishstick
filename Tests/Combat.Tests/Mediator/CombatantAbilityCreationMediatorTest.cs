@@ -32,7 +32,7 @@ namespace IdelPog.Combat.Tests.Mediator
             _responseDispatcherMock = new Mock<IDispatchMany<CombatantAbilityCreationResponse>>();
             
             _mediator = new CombatantAbilityCreationMediator(_repositoryMock.Object, _factoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new UniqueAssertion(), new NumberAssertion());
-            _combatantAbilityCreation = CombatantAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
+            _combatantAbilityCreation = TestCombatantAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
         }
 
         [SetUp]
