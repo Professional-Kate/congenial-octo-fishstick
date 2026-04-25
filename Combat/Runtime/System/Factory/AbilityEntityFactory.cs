@@ -15,15 +15,15 @@ namespace IdelPog.Combat.Runtime.System.Factory
             _repositoryAsserter = repositoryAsserter;
         }
 
-        public AbilityEntity CreateAbilityEntity(CombatantAbilityCreation combatantAbilityCreation)
+        public AbilityEntity CreateAbilityEntity(AbilityCreation abilityCreation)
         {
-            SpeedComponent speedComponent = new() { Speed = combatantAbilityCreation.Speed };
-            DamageComponent damageComponent = new() { Damage = combatantAbilityCreation.Damage };
+            SpeedComponent speedComponent = new() { Speed = abilityCreation.Speed };
+            DamageComponent damageComponent = new() { Damage = abilityCreation.Damage };
 
             return new AbilityEntity(_repositoryAsserter, speedComponent, damageComponent)
             {
-                AbilityType = combatantAbilityCreation.AbilityType,
-                Information = combatantAbilityCreation.Information
+                AbilityType = abilityCreation.AbilityType,
+                Information = abilityCreation.Information
             };
         }
     }

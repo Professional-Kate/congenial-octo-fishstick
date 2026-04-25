@@ -55,9 +55,9 @@ namespace IdelPog.Combat.Tests.Mediator
             _responseDispatcherMock.VerifyNoOtherCalls();
         }
 
-        private void SetupFactory(CombatantCreation combatantCreation)
+        private void SetupFactory(CombatantCreation combatantCreation, byte combatantID)
         {
-            _factoryMock.Setup(library => library.CreateEntity(combatantCreation)).Returns(TestCombatantEntityFactory.CreateCombatantEntity(0, true, combatantCreation));
+            _factoryMock.Setup(library => library.CreateEntity(combatantCreation, combatantID)).Returns(TestCombatantEntityFactory.CreateCombatantEntity(combatantID, true, combatantCreation));
         }
 
         private void VerifyRepository(CombatantType combatantType)
@@ -69,11 +69,17 @@ namespace IdelPog.Combat.Tests.Mediator
         {
             _responseDispatcherMock.Verify(library => library.Dispatch(It.Is<CombatantCreationResponse[]>(collection => collection.Length == length)), Times.Once);
         }
+
+        private void SetupRepositoryNextCombatantID()
+        {
+            _repositoryMock.SetupSequence(library => library.NextCombatantID).Returns(1).Returns(2);
+        }
         
         [Test]
         public void Positive_HandleMessages_CreatesSingleCombatant()
         { 
-            SetupFactory(_combatantCreation);
+            SetupRepositoryNextCombatantID();
+            SetupFactory(_combatantCreation, 1);
             
             Assert.DoesNotThrow(() => _mediator.HandleMessages([_combatantCreation]));
 
@@ -85,9 +91,10 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Positive_HandleMessages_CreatesCombatants()
         {
+            SetupRepositoryNextCombatantID();
             CombatantCreation humanCreation = _combatantCreation with { CombatantType = CombatantType.HUMAN };
-            SetupFactory(_combatantCreation);
-            SetupFactory(humanCreation);
+            SetupFactory(_combatantCreation,1);
+            SetupFactory(humanCreation, 2);
             
             Assert.DoesNotThrow(() => _mediator.HandleMessages([_combatantCreation, humanCreation]));
 

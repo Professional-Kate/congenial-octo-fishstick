@@ -5,6 +5,6 @@ namespace IdelPog.Combat.Runtime.System.Factory.Interface
 {
     public interface ICombatantEntityFactory
     {
-        public CombatantEntity CreateEntity(CombatantCreation combatantCreation);
+        public CombatantEntity CreateEntity(CombatantCreation combatantCreation, byte combatantID);
     }
 }

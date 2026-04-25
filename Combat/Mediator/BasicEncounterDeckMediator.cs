@@ -18,6 +18,7 @@ namespace IdelPog.Combat.Mediator
     {
         private const uint MAX_ITERATIONS = 10000;
 
+        private readonly IFriendlyStatusAssigner _friendlyStatusAssigner;
         private readonly ICombatantStoreService _combatantStoreService;
         private readonly IBasicAttackScheduler _basicAttackScheduler;
         private readonly ICombatStateService _combatStateService;
@@ -27,11 +28,12 @@ namespace IdelPog.Combat.Mediator
         private readonly IDispatchMany<BasicEncounterDeckResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public BasicEncounterDeckMediator(ICombatantStoreService combatantStoreService,
+        public BasicEncounterDeckMediator(IFriendlyStatusAssigner friendlyStatusAssigner, ICombatantStoreService combatantStoreService,
             IBasicAttackScheduler basicAttackScheduler, ICombatStateService combatStateService, ICombatQueue combatQueue,
             IAssetRepository<EventType, IEventResolver> resolverRepository, ICombatantLogger combatantLogger,
             IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
         {
+            _friendlyStatusAssigner = friendlyStatusAssigner;
             _combatantStoreService = combatantStoreService;
             _basicAttackScheduler = basicAttackScheduler;
             _combatStateService = combatStateService;
@@ -44,6 +46,8 @@ namespace IdelPog.Combat.Mediator
 
         public void HandleMessages(IReadOnlyList<BasicEncounterDeck> messages)
         {
+            _collectionAssertion.AssertHasElements(messages);
+            
             BasicEncounterDeckResponse[] responses = new BasicEncounterDeckResponse[messages.Count];
             for (int i = 0; i < messages.Count; i++)
             {
@@ -74,10 +78,12 @@ namespace IdelPog.Combat.Mediator
         
         private void RegisterCombatants(BasicEncounterDeck basicEncounterDeck)
         {
-            _collectionAssertion.AssertHasElements(basicEncounterDeck.FriendlyCombatantCards);
-            _collectionAssertion.AssertHasElements(basicEncounterDeck.EnemyCombatantCards);
+            _collectionAssertion.AssertHasElements(basicEncounterDeck.FriendlyCombatantIDs);
+            _collectionAssertion.AssertHasElements(basicEncounterDeck.EnemyCombatantIDs);
             
-            _combatantStoreService.RegisterInitial();
+            _friendlyStatusAssigner.AssignFriendlyStatus(basicEncounterDeck.FriendlyCombatantIDs, basicEncounterDeck.EnemyCombatantIDs);
+            
+            _combatantStoreService.RegisterInitialTargets();
             _basicAttackScheduler.EnqueueInitial(0);
         }
 

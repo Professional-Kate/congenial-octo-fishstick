@@ -5,6 +5,6 @@ namespace IdelPog.Combat.Runtime.System.Factory.Interface
 {
     public interface IAbilityEntityFactory
     {
-        public AbilityEntity CreateAbilityEntity(CombatantAbilityCreation combatantAbilityCreation);
+        public AbilityEntity CreateAbilityEntity(AbilityCreation abilityCreation);
     }
 }

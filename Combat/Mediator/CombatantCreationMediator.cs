@@ -1,6 +1,7 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
@@ -35,22 +36,24 @@ namespace IdelPog.Combat.Mediator
             {
                 CombatantCreation combatantCreation = messages[i];
                 _statCardAsserter.AssertStatCard(combatantCreation.StatCard);
-                
-                _combatantRepository.Add(_combatantEntityFactory.CreateEntity(combatantCreation));
 
-                responses[i] = CreateResponse(combatantCreation);
+                CombatantEntity newEntity = _combatantEntityFactory.CreateEntity(combatantCreation, _combatantRepository.NextCombatantID);
+                _combatantRepository.Add(newEntity);
+
+                responses[i] = CreateResponse(combatantCreation, newEntity.CombatantID);
             }
             
             _responseDispatcher.Dispatch(responses);
         }
 
-        private static CombatantCreationResponse CreateResponse(CombatantCreation combatantCreation)
+        private static CombatantCreationResponse CreateResponse(CombatantCreation combatantCreation, byte combatantID)
         {
             return new CombatantCreationResponse
             {
                 CombatantType = combatantCreation.CombatantType,
                 Information = combatantCreation.Information,
-                StatCard = combatantCreation.StatCard
+                StatCard = combatantCreation.StatCard,
+                CombatantID = combatantID
             };
         }
     }

@@ -1,9 +1,9 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Core.Contracts;
 
-namespace IdelPog.Combat.Contracts.Command
+namespace IdelPog.Combat.Contracts.Response
 {
-    public readonly record struct CombatantAbilityCreation
+    public readonly record struct AbilityCreationResponse
     {
         public required Information Information { get; init; }
         public required AbilityType AbilityType { get; init; }

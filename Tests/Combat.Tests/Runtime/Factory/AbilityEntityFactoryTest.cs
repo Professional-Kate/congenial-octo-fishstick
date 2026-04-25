@@ -13,33 +13,33 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
     {
         private AbilityEntityFactory _abilityEntityFactory;
         
-        private CombatantAbilityCreation _combatantAbilityCreation;
+        private AbilityCreation _abilityCreation;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         { 
             _abilityEntityFactory = new AbilityEntityFactory(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
-            _combatantAbilityCreation = TestCombatantAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
+            _abilityCreation = TestAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
         }
 
-        private static void AssertSkillEntity(AbilityEntity abilityEntity, CombatantAbilityCreation combatantAbilityCreation)
+        private static void AssertSkillEntity(AbilityEntity abilityEntity, AbilityCreation abilityCreation)
         {
             Assert.Multiple(() =>
             {
                 Assert.That(abilityEntity, Is.Not.Null);
-                Assert.That(abilityEntity.AbilityType, Is.EqualTo(combatantAbilityCreation.AbilityType));
-                Assert.That(abilityEntity.Information, Is.EqualTo(combatantAbilityCreation.Information));
-                Assert.That(abilityEntity.GetComponent<SpeedComponent>().Speed, Is.EqualTo(combatantAbilityCreation.Speed));
-                Assert.That(abilityEntity.GetComponent<DamageComponent>().Damage, Is.EqualTo(combatantAbilityCreation.Damage));
+                Assert.That(abilityEntity.AbilityType, Is.EqualTo(abilityCreation.AbilityType));
+                Assert.That(abilityEntity.Information, Is.EqualTo(abilityCreation.Information));
+                Assert.That(abilityEntity.GetComponent<SpeedComponent>().Speed, Is.EqualTo(abilityCreation.Speed));
+                Assert.That(abilityEntity.GetComponent<DamageComponent>().Damage, Is.EqualTo(abilityCreation.Damage));
             });
         }
 
         [Test]
         public void Positive_CreateSkillEntity_CreatesSkillEntity()
         {
-            AbilityEntity abilityEntity = _abilityEntityFactory.CreateAbilityEntity(_combatantAbilityCreation);
+            AbilityEntity abilityEntity = _abilityEntityFactory.CreateAbilityEntity(_abilityCreation);
 
-            AssertSkillEntity(abilityEntity, _combatantAbilityCreation);
+            AssertSkillEntity(abilityEntity, _abilityCreation);
         }
     }
 }

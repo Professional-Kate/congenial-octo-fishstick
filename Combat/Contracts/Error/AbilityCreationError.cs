@@ -3,9 +3,9 @@ using IdelPog.Core.Contracts;
 
 namespace IdelPog.Combat.Contracts.Error
 {
-    public readonly record struct CombatantAbilityCreationError
+    public readonly record struct AbilityCreationError
     {
-        public required CombatantAbilityCreation[] CombatantAbilityCreations { get; init; }
+        public required AbilityCreation[] AbilityCreations { get; init; }
         public required BaseError BaseError { get; init; }
     }
 }

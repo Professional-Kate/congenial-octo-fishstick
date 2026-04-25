@@ -21,7 +21,7 @@ namespace IdelPog.Combat.Runtime.System.Store
             _collectionAssertion = collectionAssertion;
         }
 
-        public void RegisterInitial()
+        public void RegisterInitialTargets()
         {
             _friendlyCombatantStore.RegisterInitial(GetCombatantEntities(true));
             _enemyCombatantStore.RegisterInitial(GetCombatantEntities(false));

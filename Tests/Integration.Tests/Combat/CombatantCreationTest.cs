@@ -66,6 +66,7 @@ namespace IdelPog.Integration.Tests.Combat
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], _humanCombatantCreation);
+            Assert.That(_responseListener.Responses[0].CombatantID, Is.EqualTo(0));
         }
 
         [Test]
@@ -78,6 +79,7 @@ namespace IdelPog.Integration.Tests.Combat
             _responseListener.AssertResponseLength(2);
             AssertResponse(_responseListener.Responses[0], _humanCombatantCreation with { CombatantType = CombatantType.GOBLIN });
             AssertResponse(_responseListener.Responses[1], _humanCombatantCreation);
+            Assert.That(_responseListener.Responses[0].CombatantID, Is.Not.EqualTo(_responseListener.Responses[1].CombatantID));
         }
 
         [Test]
@@ -90,6 +92,7 @@ namespace IdelPog.Integration.Tests.Combat
             _responseListener.AssertResponseLength(2);
             AssertResponse(_responseListener.Responses[0], _humanCombatantCreation);
             AssertResponse(_responseListener.Responses[1], _humanCombatantCreation);
+            Assert.That(_responseListener.Responses[0].CombatantID, Is.Not.EqualTo(_responseListener.Responses[1].CombatantID));
         }
 
         [Test]

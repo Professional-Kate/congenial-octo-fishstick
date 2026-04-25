@@ -2,7 +2,7 @@
 {
     public readonly record struct BasicEncounterDeck
     {
-        public required CombatantCreation[] FriendlyCombatantCards { get; init; }
-        public required CombatantCreation[] EnemyCombatantCards { get; init; }
+        public required byte[] FriendlyCombatantIDs { get; init; }
+        public required byte[] EnemyCombatantIDs { get; init; }
     }
 }

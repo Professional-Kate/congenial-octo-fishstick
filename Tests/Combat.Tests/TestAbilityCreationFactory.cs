@@ -4,16 +4,16 @@ using IdelPog.Core.Contracts;
 
 namespace IdelPog.Combat.Tests
 {
-    internal static class TestCombatantAbilityCreationFactory
+    internal static class TestAbilityCreationFactory
     {
-        public static CombatantAbilityCreation Create(AbilityType abilityType)
+        public static AbilityCreation Create(AbilityType abilityType)
         {
             return Create(abilityType, 25, 50);
         }
         
-        public static CombatantAbilityCreation Create(AbilityType abilityType, uint speed, uint damage)
+        public static AbilityCreation Create(AbilityType abilityType, uint speed, uint damage)
         {
-            return new CombatantAbilityCreation
+            return new AbilityCreation
             {
                 Information = new Information { Name = "", Description = "" },
                 AbilityType = abilityType,

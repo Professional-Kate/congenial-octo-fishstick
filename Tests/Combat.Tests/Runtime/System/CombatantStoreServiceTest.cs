@@ -109,7 +109,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupFriendlyFilter(_friendlyCombatant);
             SetupEnemyFilter(_enemyCombatant);
             
-            Assert.DoesNotThrow(() => _combatantStoreService.RegisterInitial());
+            Assert.DoesNotThrow(() => _combatantStoreService.RegisterInitialTargets());
 
             VerifyCombatantStoreRegisterInitial(_friendlyCombatantStoreMock, _friendlyCombatant);
             VerifyCombatantStoreRegisterInitial(_enemyCombatantStoreMock, _enemyCombatant);
@@ -122,7 +122,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             SetupFriendlyFilter();
             
-            Assert.Throws<EmptyCollectionException>(() => _combatantStoreService.RegisterInitial());
+            Assert.Throws<EmptyCollectionException>(() => _combatantStoreService.RegisterInitialTargets());
             
             _friendlyCombatantStoreMock.Verify(library => library.RegisterInitial(new []{ _friendlyCombatant }), Times.Never);
             VerifyFilter();
@@ -135,7 +135,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupFriendlyFilter(_friendlyCombatant);
             SetupEnemyFilter();
             
-            Assert.Throws<EmptyCollectionException>(() => _combatantStoreService.RegisterInitial());
+            Assert.Throws<EmptyCollectionException>(() => _combatantStoreService.RegisterInitialTargets());
             
             _friendlyCombatantStoreMock.Verify(library => library.RegisterInitial(new []{ _friendlyCombatant }), Times.Once);
             VerifyFilter();

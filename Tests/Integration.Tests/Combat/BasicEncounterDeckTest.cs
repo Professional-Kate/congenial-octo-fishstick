@@ -75,12 +75,12 @@ namespace IdelPog.Integration.Tests.Combat
             buffer.MarkReady();
         }
 
-        private BasicEncounterDeck RunCombat(CombatantCreation[] friendlyCombatants, CombatantCreation[] enemyCombatants)
+        private BasicEncounterDeck RunCombat(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs)
         {
             BasicEncounterDeck basicEncounterDeck = new()
             {
-                FriendlyCombatantCards = friendlyCombatants,
-                EnemyCombatantCards = enemyCombatants
+                FriendlyCombatantIDs = friendlyCombatantIDs,
+                EnemyCombatantIDs = enemyCombatantIDs
             };
             
             DispatchBasicEncounterDeck(basicEncounterDeck);
@@ -166,7 +166,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_FriendlyVictory()
         { 
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCreation], [_goblinCreation]);
+            BasicEncounterDeck returnedDeck = RunCombat([1], [1]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -178,7 +178,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_EnemyVictory()
         { 
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCreation], [_goblinCreation, _bearCreation, _wolfCreation]);
+            BasicEncounterDeck returnedDeck = RunCombat([1], [1, 1, 1]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -191,7 +191,7 @@ namespace IdelPog.Integration.Tests.Combat
         public void Positive_SimulateCombat_HighAttack_TargetsHighAttack()
         {
             AbilityCard highAttackCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK } };
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCreation with { }], [_goblinCreation, _bearCreation]);
+            BasicEncounterDeck returnedDeck = RunCombat([1], [1, 1]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -209,7 +209,7 @@ namespace IdelPog.Integration.Tests.Combat
         public void Positive_SimulateCombat_LowHealth_TargetsLowHealth()
         {
             AbilityCard lowHealthCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.LOW_HEALTH } };
-            BasicEncounterDeck returnedDeck = RunCombat([_humanCreation with { }], [_wolfCreation, _bearCreation]);
+            BasicEncounterDeck returnedDeck = RunCombat([1], [1, 1]);
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
@@ -227,7 +227,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_EmptyFriendlyCombatants_DispatchesError()
         {
-            BasicEncounterDeck emptyFriendlyCombatants = new() { FriendlyCombatantCards = [], EnemyCombatantCards = [_wolfCreation] };
+            BasicEncounterDeck emptyFriendlyCombatants = new() { FriendlyCombatantIDs = [], EnemyCombatantIDs = [1] };
 
             DispatchBasicEncounterDeck(emptyFriendlyCombatants);
             
@@ -240,7 +240,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_EmptyEnemyCombatants_DispatchesError()
         {
-            BasicEncounterDeck emptyEnemyCombatants = new() { FriendlyCombatantCards = [_wolfCreation], EnemyCombatantCards = [] };
+            BasicEncounterDeck emptyEnemyCombatants = new() { FriendlyCombatantIDs = [1], EnemyCombatantIDs = [] };
             
             DispatchBasicEncounterDeck(emptyEnemyCombatants);
             
@@ -260,7 +260,7 @@ namespace IdelPog.Integration.Tests.Combat
                 Information = new Information { Name = "Captain Slow", Description = "The slowest man... In the world" }
             };
             
-            BasicEncounterDeck deck = new() { FriendlyCombatantCards = [zeroSpeed], EnemyCombatantCards = [_wolfCreation] };
+            BasicEncounterDeck deck = new() { FriendlyCombatantIDs = [1], EnemyCombatantIDs = [1] };
             DispatchBasicEncounterDeck(deck);
             
             AssertResponseListenerCalled(false);
@@ -279,7 +279,7 @@ namespace IdelPog.Integration.Tests.Combat
                 Information = new Information { Name = "corpse", Description = "He kinda dead already" }
             };
             
-            BasicEncounterDeck deck = new() { FriendlyCombatantCards = [zeroHealth], EnemyCombatantCards = [_wolfCreation] };
+            BasicEncounterDeck deck = new() { FriendlyCombatantIDs = [1], EnemyCombatantIDs = [1] };
             DispatchBasicEncounterDeck(deck);
             
             AssertResponseListenerCalled(false);

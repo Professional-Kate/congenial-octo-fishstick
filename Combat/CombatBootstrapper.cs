@@ -49,19 +49,18 @@ namespace IdelPog.Combat
             
             ILogWriter logWriter = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(logWriter);
-            IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository = new AssetRepository<AbilityType, AbilityEntity>(repositoryAsserter);
+            IAssetRepository<AbilityType, AbilityEntity> abilityEntityRepository = new AssetRepository<AbilityType, AbilityEntity>(repositoryAsserter);
             CombatantRepository combatantRepository = new(foundAssertion);
             
             SetupBasicEncounterDeck(bufferManager, flowRegister, bufferLogger, repositoryAsserter, combatantRepository);
             SetupCombatantCreation(bufferManager, flowRegister, bufferLogger, combatantRepository);
-            SetupCombatantAbilityCreation(bufferManager, flowRegister, bufferLogger, repositoryAsserter, skillEntityRepository);
+            SetupAbilityCreation(bufferManager, flowRegister, bufferLogger, repositoryAsserter, abilityEntityRepository);
         }
 
         private static void SetupBasicEncounterDeck(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, CombatantRepository combatantRepository)
         {
             IFoundAssertion foundAssertion = new FoundAssertion();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
             INumberAssertion numberAssertion = new NumberAssertion();
             
@@ -71,8 +70,8 @@ namespace IdelPog.Combat
             
             ICombatantStore friendlyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
             ICombatantStore enemyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
-            
-            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory(combatantRepository, uniqueAssertion, repositoryAsserter);
+
+            IFriendlyStatusAssigner friendlyStatusAssigner = new FriendlyStatusAssigner(combatantRepository, collectionAssertion, foundAssertion);
             ICombatantStoreService combatantStoreService = new CombatantStoreService(friendlyCombatantStore, enemyCombatantStore, combatantRepository, collectionAssertion);
             IBasicAttackScheduler basicAttackScheduler = new BasicAttackScheduler(combatQueue, numberAssertion, combatantRepository, foundAssertion);
             AssetRepository<EventType, IEventResolver> resolverRepository = new(repositoryAsserter);
@@ -85,7 +84,7 @@ namespace IdelPog.Combat
             BasicAttackEventResolver basicAttackEventResolver = new(entityDamageMediator, basicAttackScheduler, combatantRepository, foundAssertion);
             resolverRepository.Add(EventType.BASIC_ATTACK, basicAttackEventResolver);
             
-            BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantStoreService, basicAttackScheduler, combatStateService, combatQueue, resolverRepository, combatantLogger, responseDispatcher, collectionAssertion);
+            BasicEncounterDeckMediator basicEncounterDeckMediator = new(friendlyStatusAssigner, combatantStoreService, basicAttackScheduler, combatStateService, combatQueue, resolverRepository, combatantLogger, responseDispatcher, collectionAssertion);
             IBatchController<BasicEncounterDeck> controller = new ManagedBatchController<BasicEncounterDeck>(basicEncounterDeckMediator);
             BasicEncounterDeckErrorFactory errorFactory = new(new BaseErrorFactory());
                         
@@ -116,7 +115,7 @@ namespace IdelPog.Combat
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
             IStatCardAsserter statCardAsserter = new StatCardAsserter(numberAssertion);
             
-            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory(combatantRepository, uniqueAssertion, repositoryAsserter);
+            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory(repositoryAsserter);
             IDispatchMany<CombatantCreationResponse> responseDispatcher =  new ManagedDispatcher<CombatantCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             CombatantCreationMediator mediator = new(combatantRepository, combatantEntityFactory, responseDispatcher, collectionAssertion, statCardAsserter);
@@ -126,7 +125,7 @@ namespace IdelPog.Combat
             flowRegister.RegisterBatch(controller, errorFactory);
         }
         
-        private static void SetupCombatantAbilityCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, IAssetRepository<AbilityType,AbilityEntity> skillEntityRepository)
+        private static void SetupAbilityCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository)
         {
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             IUniqueAssertion uniqueAssertion = new UniqueAssertion();
@@ -134,11 +133,11 @@ namespace IdelPog.Combat
             INumberAssertion numberAssertion = new NumberAssertion();
             
             IAbilityEntityFactory abilityEntityFactory = new AbilityEntityFactory(repositoryAsserter);
-            IDispatchMany<CombatantAbilityCreationResponse> responseDispatcher = new ManagedDispatcher<CombatantAbilityCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            IDispatchMany<AbilityCreationResponse> responseDispatcher = new ManagedDispatcher<AbilityCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
-            CombatantAbilityCreationMediator mediator = new(skillEntityRepository, abilityEntityFactory, responseDispatcher, collectionAssertion, uniqueAssertion, numberAssertion);
-            IBatchController<CombatantAbilityCreation> controller = new ManagedBatchController<CombatantAbilityCreation>(mediator);
-            CombatantAbilityCreationErrorFactory errorFactory = new(new BaseErrorFactory());
+            AbilityCreationMediator mediator = new(skillEntityRepository, abilityEntityFactory, responseDispatcher, collectionAssertion, uniqueAssertion, numberAssertion);
+            IBatchController<AbilityCreation> controller = new ManagedBatchController<AbilityCreation>(mediator);
+            AbilityCreationErrorFactory errorFactory = new(new BaseErrorFactory());
             
             flowRegister.RegisterBatch(controller, errorFactory);
         }
