@@ -5,7 +5,7 @@ using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.Filter.Interface;
-using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Runtime.System.Store;
 using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;

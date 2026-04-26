@@ -11,8 +11,8 @@ namespace IdelPog.Combat.Runtime.Entities
         public required AbilityType AbilityType { get; init; }
         public required Information Information { get; init; }
         
-        public AbilityEntity(IRepositoryAsserter repositoryAsserter, SpeedComponent speedComponent, DamageComponent damageComponent) 
-            : base(repositoryAsserter, speedComponent, damageComponent)
+        public AbilityEntity(IRepositoryAsserter repositoryAsserter, CooldownComponent cooldownComponent, DamageComponent damageComponent) 
+            : base(repositoryAsserter, cooldownComponent, damageComponent)
         {
         }
     }

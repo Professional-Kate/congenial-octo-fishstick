@@ -13,7 +13,7 @@ using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
 
-namespace IdelPog.Combat.Tests.Service
+namespace IdelPog.Combat.Tests.Mediator
 {
     [TestFixture]
     public sealed class BasicEncounterDeckMediatorTest

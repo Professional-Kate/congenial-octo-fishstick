@@ -38,7 +38,7 @@ namespace IdelPog.Combat.Mediator
             for (int i = 0; i < messages.Count; i++)
             {
                 AbilityCreation abilityCreation = messages[i];
-                _numberAssertion.AssertNumberNotZero(abilityCreation.Speed, abilityCreation.ToString());
+                _numberAssertion.AssertNumberNotZero(abilityCreation.Cooldown, abilityCreation.ToString());
                 _uniqueAssertion.AssertUnique(abilityCreation.AbilityType, _skillEntityRepository.Contains(abilityCreation.AbilityType));
                 
                 _skillEntityRepository.Add(abilityCreation.AbilityType, _abilityEntityFactory.CreateAbilityEntity(abilityCreation));
@@ -54,7 +54,7 @@ namespace IdelPog.Combat.Mediator
             {
                 Information = abilityCreation.Information, 
                 AbilityType =  abilityCreation.AbilityType, 
-                Speed =  abilityCreation.Speed,
+                Cooldown =  abilityCreation.Cooldown,
                 Damage = abilityCreation.Damage
             };
         }

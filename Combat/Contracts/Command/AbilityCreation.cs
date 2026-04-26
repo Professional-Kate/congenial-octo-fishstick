@@ -7,7 +7,7 @@ namespace IdelPog.Combat.Contracts.Command
     {
         public required Information Information { get; init; }
         public required AbilityType AbilityType { get; init; }
-        public required uint Speed { get; init; }
+        public required uint Cooldown { get; init; }
         public required uint Damage { get; init; }
     }
 }

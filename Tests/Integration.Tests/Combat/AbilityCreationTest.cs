@@ -25,7 +25,7 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
                 AbilityType = AbilityType.BASIC_ATTACK,
-                Speed = 9,
+                Cooldown = 9,
                 Damage = 3
             };
         }
@@ -63,7 +63,7 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 Assert.That(basicEncounterDeck.Information, Is.EqualTo(expected.Information));
                 Assert.That(basicEncounterDeck.AbilityType, Is.EqualTo(expected.AbilityType));
-                Assert.That(basicEncounterDeck.Speed, Is.EqualTo(expected.Speed));
+                Assert.That(basicEncounterDeck.Cooldown, Is.EqualTo(expected.Cooldown));
                 Assert.That(basicEncounterDeck.Damage, Is.EqualTo(expected.Damage));
             });
         }
@@ -104,7 +104,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_DispatchCommands_CreatesMultipleSkills()
         {
-            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityType = (AbilityType) 2, Damage = 1, Speed = 4 };
+            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityType = (AbilityType) 2, Damage = 1, Cooldown = 4 };
             Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(_basicAttackCreation, abilityCreation));
             
             AssertResponseListenerCalled(true);
@@ -117,7 +117,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_DispatchCommands_ZeroSpeed_DispatchesError()
         {
-            AbilityCreation zeroSpeedAbility = _basicAttackCreation with { Speed = 0 };
+            AbilityCreation zeroSpeedAbility = _basicAttackCreation with { Cooldown = 0 };
             Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(zeroSpeedAbility));
             
             AssertResponseListenerCalled(false);

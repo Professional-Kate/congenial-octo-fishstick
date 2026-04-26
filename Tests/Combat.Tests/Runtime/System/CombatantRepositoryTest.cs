@@ -2,7 +2,7 @@
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
-using IdelPog.Combat.Runtime.System;
+using IdelPog.Combat.Runtime.System.Repository;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 

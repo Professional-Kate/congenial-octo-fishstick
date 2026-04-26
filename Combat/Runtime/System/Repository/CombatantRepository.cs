@@ -1,9 +1,10 @@
 ﻿using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
 
-namespace IdelPog.Combat.Runtime.System
+namespace IdelPog.Combat.Runtime.System.Repository
 {
     public sealed class CombatantRepository : ICombatantRepository, ICombatantFilters
     {

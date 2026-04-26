@@ -128,7 +128,7 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Negative_HandleMessages_ZeroSpeed_Throws()
         { 
-            Assert.Throws<NumberZeroException>(() => _mediator.HandleMessages([_abilityCreation with { Speed = 0 }]));
+            Assert.Throws<NumberZeroException>(() => _mediator.HandleMessages([_abilityCreation with { Cooldown = 0 }]));
         }
     }
 }

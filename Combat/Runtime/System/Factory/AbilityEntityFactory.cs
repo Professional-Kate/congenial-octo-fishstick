@@ -17,10 +17,10 @@ namespace IdelPog.Combat.Runtime.System.Factory
 
         public AbilityEntity CreateAbilityEntity(AbilityCreation abilityCreation)
         {
-            SpeedComponent speedComponent = new() { Speed = abilityCreation.Speed };
+            CooldownComponent cooldownComponent = new() { Cooldown = abilityCreation.Cooldown };
             DamageComponent damageComponent = new() { Damage = abilityCreation.Damage };
 
-            return new AbilityEntity(_repositoryAsserter, speedComponent, damageComponent)
+            return new AbilityEntity(_repositoryAsserter, cooldownComponent, damageComponent)
             {
                 AbilityType = abilityCreation.AbilityType,
                 Information = abilityCreation.Information

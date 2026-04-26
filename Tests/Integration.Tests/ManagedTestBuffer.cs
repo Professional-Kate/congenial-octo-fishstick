@@ -56,7 +56,7 @@ namespace IdelPog.Integration.Tests
             SkillBootstrapper.RegisterFlows(BufferManager, flowRegister);
             ContentEngineBootstrapper.RegisterFlows(BufferManager, flowRegister);
             InventoryBootstrapper.RegisterFlows(BufferManager, flowRegister);
-            CombatBootstrapper.SetupCombat(BufferManager, flowRegister);
+            CombatBootstrapper.RegisterFlows(BufferManager, flowRegister);
             FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
         }
 

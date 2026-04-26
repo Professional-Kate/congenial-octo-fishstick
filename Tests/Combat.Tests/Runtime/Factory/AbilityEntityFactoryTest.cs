@@ -29,7 +29,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
                 Assert.That(abilityEntity, Is.Not.Null);
                 Assert.That(abilityEntity.AbilityType, Is.EqualTo(abilityCreation.AbilityType));
                 Assert.That(abilityEntity.Information, Is.EqualTo(abilityCreation.Information));
-                Assert.That(abilityEntity.GetComponent<SpeedComponent>().Speed, Is.EqualTo(abilityCreation.Speed));
+                Assert.That(abilityEntity.GetComponent<CooldownComponent>().Cooldown, Is.EqualTo(abilityCreation.Cooldown));
                 Assert.That(abilityEntity.GetComponent<DamageComponent>().Damage, Is.EqualTo(abilityCreation.Damage));
             });
         }

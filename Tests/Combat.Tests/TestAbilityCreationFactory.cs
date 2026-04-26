@@ -17,7 +17,7 @@ namespace IdelPog.Combat.Tests
             {
                 Information = new Information { Name = "", Description = "" },
                 AbilityType = abilityType,
-                Speed = speed,
+                Cooldown = speed,
                 Damage = damage
             };
         }

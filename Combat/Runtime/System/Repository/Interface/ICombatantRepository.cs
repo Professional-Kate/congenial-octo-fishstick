@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Runtime.Entities.Combatant;
 
-namespace IdelPog.Combat.Runtime.System.Interface
+namespace IdelPog.Combat.Runtime.System.Repository.Interface
 {
     public interface ICombatantRepository
     {

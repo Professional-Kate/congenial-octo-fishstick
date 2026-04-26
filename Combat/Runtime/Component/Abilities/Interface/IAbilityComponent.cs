@@ -1,10 +1,10 @@
 ﻿
 using IdelPog.ECS.Component;
 
-namespace IdelPog.Combat.Runtime.Component.Skills.Interface
+namespace IdelPog.Combat.Runtime.Component.Abilities.Interface
 {
     public interface IAbilityComponent : IComponent
     {
-        public uint Speed { get; }
+        public uint Cooldown { get; }
     }
 }
