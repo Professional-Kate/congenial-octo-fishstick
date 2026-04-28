@@ -93,15 +93,15 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Positive_HandleMessages_CreatesNewEntities()
         {
-            // TODO: update when we add another AbilityType :)
-            Assert.DoesNotThrow(() => _mediator.HandleMessages([_abilityCreation, _abilityCreation with { AbilityType = (AbilityType) 2 }]));
+            AbilityCreation strongAttackCreation = _abilityCreation with { AbilityType = AbilityType.STRONG_ATTACK };
+            Assert.DoesNotThrow(() => _mediator.HandleMessages([_abilityCreation, strongAttackCreation]));
 
             VerifyFactoryCalled(_abilityCreation);
-            VerifyFactoryCalled(_abilityCreation with { AbilityType = (AbilityType) 2 });
+            VerifyFactoryCalled(strongAttackCreation);
             AssertRepositoryContains(_abilityCreation);
-            AssertRepositoryContains(_abilityCreation with { AbilityType = (AbilityType) 2 });
+            AssertRepositoryContains(strongAttackCreation);
             AssertRepositoryAdd(_abilityCreation);
-            AssertRepositoryAdd(_abilityCreation with { AbilityType = (AbilityType) 2 });
+            AssertRepositoryAdd(strongAttackCreation);
             VerifyDispatcherCalled(2);
         }
 

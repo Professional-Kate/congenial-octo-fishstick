@@ -51,6 +51,10 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             Cooldown = 15,
             Information = new Information { Name = "Strong attack!", Description = "Wack them!!!" }
         };
+
+        internal static CombatantAbilityEquip EquipBasicAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.BASIC_ATTACK);
+
+        internal static CombatantAbilityEquip EquipStrongAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.STRONG_ATTACK);
         
         private static CombatantAbilityEquip EquipAbility(byte combatantID, AbilityType abilityType) => new()
         {
@@ -64,9 +68,5 @@ namespace IdelPog.Integration.Tests.Combat.Tools
                 }
             ]
         };
-
-        internal static CombatantAbilityEquip EquipBasicAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.BASIC_ATTACK);
-
-        internal static CombatantAbilityEquip EquipStrongAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.STRONG_ATTACK);
     }
 }

@@ -17,6 +17,7 @@ namespace IdelPog.Integration.Tests.Combat
         private readonly CombatTools _combatTools = new();
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
         private ManagedErrorListener<BasicEncounterDeckError> _errorListener;
+        private ManagedResponseListener<CombatantCreationResponse> _combatantCreationResponseListener;
 
         private readonly CombatantCreation _humanCreation = StaticCombatCommands.HumanCreation;
         private readonly CombatantCreation _goblinCreation = StaticCombatCommands.GoblinCreation;
@@ -31,13 +32,15 @@ namespace IdelPog.Integration.Tests.Combat
         {
             _responseListener = new ManagedResponseListener<BasicEncounterDeckResponse>();
             _errorListener = new ManagedErrorListener<BasicEncounterDeckError>();
+            _combatantCreationResponseListener = new ManagedResponseListener<CombatantCreationResponse>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
+            ManagedSubscribe(_combatantCreationResponseListener);
             _combatTools.Reset();
         }
 
-        private BasicEncounterDeck RunCombat(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs)
+        private BasicEncounterDeck RunCombat(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs, CombatantCreationResponse[] responses)
         {
             BasicEncounterDeck basicEncounterDeck = new()
             {
@@ -49,7 +52,7 @@ namespace IdelPog.Integration.Tests.Combat
             
             _responseListener.AssertWasCalled(true);
             _responseListener.AssertResponseLength(1);
-            _combatTools.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
+            _combatTools.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges, responses);
             
             return basicEncounterDeck;
         }
@@ -82,13 +85,15 @@ namespace IdelPog.Integration.Tests.Combat
             DispatchMessage(_basicAttackCreation);
             DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 });
             
-            BasicEncounterDeck returnedDeck = RunCombat([0], [1]);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1], _combatantCreationResponseListener.Responses);
             
             _responseListener.AssertWasCalled(true);
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
             CombatTools.AssertVictory(_responseListener.Responses[0], true);
+            
+            _combatTools.AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
         }
         
         [Test]
@@ -98,13 +103,16 @@ namespace IdelPog.Integration.Tests.Combat
             DispatchMessage(_basicAttackCreation);
             DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 }, _equipBasicAttack with { CombatantID = 2 }, _equipBasicAttack with { CombatantID = 3 });
             
-            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3], _combatantCreationResponseListener.Responses);
             
             _responseListener.AssertWasCalled(true);
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
             CombatTools.AssertVictory(_responseListener.Responses[0], false);
+            
+            _combatTools.AssertZeroAttacks(_humanCreation);
+            _combatTools.AssertOneOrMoreAttacks(_goblinCreation, _wolfCreation, _bearCreation);
         }
 
         [Test]
@@ -116,16 +124,17 @@ namespace IdelPog.Integration.Tests.Combat
             DispatchMessage(_basicAttackCreation);
             DispatchMessage(_equipBasicAttack with { AbilityCards = [highAttackCard] }, _equipBasicAttack with { CombatantID = 1 });
             
-            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3], _combatantCreationResponseListener.Responses);
             
-            CombatTools.PrintStateChanges(_responseListener.Responses[0].CombatantStateChanges);
             _responseListener.AssertWasCalled(true);
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
-            
             CombatTools.AssertFirstDeadCombatant(_combatTools.FirstDeadCombatant.CombatantCreation,_bearCreation);
-            _combatTools.AssertZeroAttacks(_bearCreation);
+            
+            _combatTools.AssertZeroAttacks(_bearCreation, _wolfCreation);
+            _combatTools.AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
+
         }
         
         [Test]
@@ -137,14 +146,14 @@ namespace IdelPog.Integration.Tests.Combat
             DispatchMessage(_basicAttackCreation);
             DispatchMessage(_equipBasicAttack with { AbilityCards = [lowHealthCard] }, _equipBasicAttack with { CombatantID = 1 });
             
-            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3], _combatantCreationResponseListener.Responses);
             
             _responseListener.AssertWasCalled(true);
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
-            
             CombatTools.AssertFirstDeadCombatant(_combatTools.FirstDeadCombatant.CombatantCreation,_wolfCreation);
+            
             _combatTools.AssertZeroAttacks(_bearCreation, _wolfCreation);
             _combatTools.AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
         }

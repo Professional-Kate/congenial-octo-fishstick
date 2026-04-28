@@ -14,6 +14,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         private readonly CombatTools _combatTools = new();
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
         private ManagedErrorListener<BasicEncounterDeckError> _errorListener;
+        private ManagedResponseListener<CombatantCreationResponse> _combatantCreationResponseListener;
 
         private readonly CombatantCreation _humanCreation = StaticCombatCommands.HumanCreation;
         private readonly CombatantCreation _goblinCreation = StaticCombatCommands.GoblinCreation;
@@ -31,13 +32,15 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         {
             _responseListener = new ManagedResponseListener<BasicEncounterDeckResponse>();
             _errorListener = new ManagedErrorListener<BasicEncounterDeckError>();
+            _combatantCreationResponseListener = new ManagedResponseListener<CombatantCreationResponse>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
+            ManagedSubscribe(_combatantCreationResponseListener);
             _combatTools.Reset();
         }
         
-        private void RunCombat(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs)
+        private void RunCombat(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs, CombatantCreationResponse[] responses)
         {
             BasicEncounterDeck basicEncounterDeck = new()
             {
@@ -49,7 +52,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             _responseListener.AssertWasCalled(true);
             _responseListener.AssertResponseLength(1);
-            _combatTools.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
+            _combatTools.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges, responses);
         }
 
         [Test]
@@ -59,7 +62,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             DispatchMessage(_basicAttackCreation);
             DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 2 });
 
-            RunCombat([0], [1, 2]);
+            RunCombat([0], [1, 2], _combatantCreationResponseListener.Responses);
             
             _combatTools.AssertZeroAttacks(_goblinCreation);
             _combatTools.AssertOneOrMoreAttacks(_humanCreation, _wolfCreation);
@@ -76,7 +79,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             DispatchMessage(_basicAttackCreation with { Damage = abilityDamage });
             DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 });
 
-            RunCombat([0], [1]);
+            RunCombat([0], [1], _combatantCreationResponseListener.Responses);
             
             CombatTools.AssertVictory(_responseListener.Responses[0], friendlyVictory);
         }
@@ -98,9 +101,12 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             DispatchMessage(_basicAttackCreation with { Damage = 5 }, _strongAttackCreation with { Damage = 5, Cooldown = 1 });
             DispatchMessage(dualAbilityEquip, _equipBasicAttack with { CombatantID = 1 });
 
-            RunCombat([0], [1]);
+            RunCombat([0], [1], _combatantCreationResponseListener.Responses);
             
             CombatTools.AssertVictory(_responseListener.Responses[0], true);
+            
+            _combatTools.AssertZeroAttacks(slightlySlowerBear);
+            _combatTools.AssertOneOrMoreAttacks(slightlyFasterHuman);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
 {
     internal sealed class CombatTools
     {
-        private readonly Dictionary<byte, CombatantTracker> _combatantCards = new();
+        private readonly Dictionary<byte, CombatantTracker> _combatantTrackers = new();
         internal CombatantStateChange FirstDeadCombatant { get; private set; }
 
         /// <summary>
@@ -14,7 +14,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         /// </summary>
         internal void Reset()
         {
-            _combatantCards.Clear();
+            _combatantTrackers.Clear();
             FirstDeadCombatant = default;
         }
 
@@ -22,11 +22,18 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         /// Will update each property of this class
         /// </summary>
         /// <param name="combatantStateChanges">The full array of state changes</param>
-        internal void RegisterChanges(CombatantStateChange[] combatantStateChanges)
+        /// <param name="combatantCreationResponses">Used to seed the <see cref="CombatantTracker"/> collection</param>
+        internal void RegisterChanges(CombatantStateChange[] combatantStateChanges, CombatantCreationResponse[] combatantCreationResponses)
         {
+            foreach (CombatantCreationResponse response in combatantCreationResponses)
+            {
+                CombatantCreation creation = new() { CombatantType = response.CombatantType, Information = response.Information, StatCard = response.StatCard };
+                _combatantTrackers.Add(response.CombatantID, new CombatantTracker(creation));
+            }
+
             foreach (CombatantStateChange combatantStateChange in combatantStateChanges)
             {
-                if (_combatantCards.ContainsKey(combatantStateChange.CombatantID) == false)
+                if (_combatantTrackers.ContainsKey(combatantStateChange.CombatantID) == false)
                 {
                     AddCombatantCard(combatantStateChange);
                     continue;
@@ -34,20 +41,6 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             
                 UpdateCombatantCard(combatantStateChange);
             }
-        }
-        
-        internal CombatantTracker GetCombatantTracker(CombatantCreation combatantCreation)
-        {
-            // TODO: if a Combatant is not attacked they will not be added to the _combatantCards. 
-            foreach (CombatantTracker combatantTracker in _combatantCards.Values)
-            {
-                if (combatantTracker.CombatantCreation.Information == combatantCreation.Information)
-                {
-                    return combatantTracker;
-                }
-            }
-            
-            return new CombatantTracker(combatantCreation);
         }
         
         internal static void PrintStateChanges(CombatantStateChange[] combatantStateChanges)
@@ -89,26 +82,39 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         { 
             Assert.That(basicEncounterDeckResponse.FriendlyVictory, Is.EqualTo(friendlyVictory));
         }
+        
+        private CombatantTracker GetCombatantTracker(CombatantCreation combatantCreation)
+        {
+            foreach (CombatantTracker combatantTracker in _combatantTrackers.Values)
+            {
+                if (combatantTracker.CombatantCreation.Information == combatantCreation.Information)
+                {
+                    return combatantTracker;
+                }
+            }
+            
+            return new CombatantTracker(combatantCreation);
+        }
 
         private void AddCombatantCard(CombatantStateChange combatantStateChange)
         { 
             CombatantTracker combatantTracker = new(combatantStateChange.CombatantCreation);
-            _combatantCards.Add(combatantStateChange.CombatantID, combatantTracker);
+            _combatantTrackers.Add(combatantStateChange.CombatantID, combatantTracker);
             
             UpdateCombatantCard(combatantStateChange);
         }
 
         private void UpdateCombatantCard(CombatantStateChange combatantStateChange)
         {
-            _combatantCards[combatantStateChange.CombatantID].CombatantCreation = combatantStateChange.CombatantCreation;
+            _combatantTrackers[combatantStateChange.CombatantID].CombatantCreation = combatantStateChange.CombatantCreation;
 
-            if (_combatantCards.ContainsKey(combatantStateChange.AttackerID) == false)
+            if (_combatantTrackers.TryGetValue(combatantStateChange.AttackerID, out CombatantTracker? card) == false)
             {
-                _combatantCards.Add(combatantStateChange.AttackerID, new CombatantTracker(1));
+                _combatantTrackers.Add(combatantStateChange.AttackerID, new CombatantTracker(1));
             }
             else
             {
-                _combatantCards[combatantStateChange.AttackerID].TotalAttacks++;
+                card.TotalAttacks++;
             }
             
             if (combatantStateChange.IsAlive)
