@@ -32,7 +32,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         public void Setup()
         {
             _repositoryMock.Reset();
-            _repositoryMock.Setup(library => library.Get(SkillID.FORAGING)).Returns(_skillNodeEntity);
+            _repositoryMock.Setup(library => library.Get(_skillNodeEntity.GetComponent<SkillComponent>().SkillID)).Returns(_skillNodeEntity);
         }
 
         [Test]
