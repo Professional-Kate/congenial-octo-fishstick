@@ -76,8 +76,8 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             CombatantCreation slightlySlowerBear = _bearCreation with { StatCard = new StatCard { Health = 10, Attack = 100, Speed = 9 } };
             
             DispatchMessage(slightlyFasterHuman, slightlySlowerBear);
-            DispatchMessage(_basicAttackCreation with { Damage = abilityDamage });
-            DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 });
+            DispatchMessage(_strongAttackCreation with { Damage = abilityDamage });
+            DispatchMessage(_equipStrongAttack, _equipStrongAttack with { CombatantID = 1 });
 
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);
             

@@ -8,14 +8,14 @@ using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Event.Resolver
 {
-    public sealed class BasicAttackEventResolver : IEventResolver
+    public sealed class DirectDamageEventResolver : IEventResolver
     {
         private readonly IEntityDamageMediator _entityDamageMediator;
         private readonly IBasicAttackScheduler _basicAttackScheduler;
         private readonly ICombatantRepository _combatantRepository;
         private readonly IFoundAssertion _foundAssertion;
 
-        public BasicAttackEventResolver(IEntityDamageMediator entityDamageMediator, IBasicAttackScheduler basicAttackScheduler, ICombatantRepository combatantRepository, IFoundAssertion foundAssertion)
+        public DirectDamageEventResolver(IEntityDamageMediator entityDamageMediator, IBasicAttackScheduler basicAttackScheduler, ICombatantRepository combatantRepository, IFoundAssertion foundAssertion)
         {
             _entityDamageMediator = entityDamageMediator;
             _basicAttackScheduler = basicAttackScheduler;
@@ -32,7 +32,7 @@ namespace IdelPog.Combat.Event.Resolver
                 return;
             }           
             
-            _entityDamageMediator.ApplyDamage(attackerID, AbilityType.BASIC_ATTACK);
+            _entityDamageMediator.ApplyDamage(attackerID, abilityType);
             _basicAttackScheduler.EnqueueAttack(tick, attackerID, abilityType);
         }
     }

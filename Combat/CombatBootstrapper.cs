@@ -86,11 +86,11 @@ namespace IdelPog.Combat
             IDispatchMany<BasicEncounterDeckResponse> responseDispatcher = new ManagedDispatcher<BasicEncounterDeckResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             ICombatantLogger combatantLogger = new CombatantLogger(objectNullAssertion);
             ICombatQueueRunner combatQueueRunner = new CombatQueueRunner(combatStateService, combatQueue, resolverRepository) { MaxIterations = maxIterations };
+            EntityDamageMediator entityDamageMediator = CreateEntityDamageMediator(combatantRepository, friendlyCombatantStore, enemyCombatantStore, combatantStoreService, combatStateService, combatantLogger, combatantAbilityEntityRepository);
             
             // TODO: move this out eventually 
-            EntityDamageMediator entityDamageMediator = CreateEntityDamageMediator(combatantRepository, friendlyCombatantStore, enemyCombatantStore, combatantStoreService, combatStateService, combatantLogger, combatantAbilityEntityRepository);
-            BasicAttackEventResolver basicAttackEventResolver = new(entityDamageMediator, basicAttackScheduler, combatantRepository, foundAssertion);
-            resolverRepository.Add(EventType.BASIC_ATTACK, basicAttackEventResolver);
+            DirectDamageEventResolver directDamageEventResolver = new(entityDamageMediator, basicAttackScheduler, combatantRepository, foundAssertion);
+            resolverRepository.Add(EventType.BASIC_ATTACK, directDamageEventResolver);
             
             BasicEncounterDeckMediator basicEncounterDeckMediator = new(friendlyStatusAssigner, combatantStoreService, basicAttackScheduler, combatQueueRunner, combatStateService, combatantLogger, responseDispatcher, collectionAssertion);
             IBatchController<BasicEncounterDeck> controller = new ManagedBatchController<BasicEncounterDeck>(basicEncounterDeckMediator);
