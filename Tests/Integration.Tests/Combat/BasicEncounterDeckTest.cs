@@ -1,5 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Ability;
-using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat;
+using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
@@ -186,18 +186,21 @@ namespace IdelPog.Integration.Tests.Combat
         }
 
         [Test]
-        // [Ignore("Takes 130ms to run (more time than all of these tests combined), if impatient, uncomment this!!!")]
         public void Negative_LowDamage_HighHealth_ReachesMaxIterations_DispatchesError()
         {
+            const uint maxIterations = 1;
+            RegisterWithOptions(new CombatOptions { MaxIterations = maxIterations });
+            ManagedSubscribe(_responseListener);
+            ManagedSubscribe(_errorListener);
+            
             BasicEncounterDeck basicEncounterDeck = new()
             {
                 FriendlyCombatantIDs = [0],
                 EnemyCombatantIDs = [1]
             };
             
-            StatCard beefyBoiStats = new() { Health = uint.MaxValue, Attack = 1, Speed = 100 };
-            DispatchMessage(_humanCreation with { StatCard = beefyBoiStats }, _goblinCreation with { StatCard = beefyBoiStats });
-            DispatchMessage(_basicAttackCreation with { Damage = 1 });
+            DispatchMessage(_humanCreation, _goblinCreation);
+            DispatchMessage(_basicAttackCreation);
             DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 });
 
             DispatchMessage(basicEncounterDeck);
@@ -210,7 +213,7 @@ namespace IdelPog.Integration.Tests.Combat
             MaxIterationsException maxIterationsException = (_errorListener.Error.BaseError.Exception.GetBaseException() as MaxIterationsException)!;
             Assert.Multiple(() =>
             {
-                Assert.That(maxIterationsException.MaxIterations, Is.EqualTo(10000));
+                Assert.That(maxIterationsException.MaxIterations, Is.EqualTo(maxIterations));
                 Assert.That(maxIterationsException.BasicEncounterDeck, Is.EqualTo(basicEncounterDeck));
             });
         }

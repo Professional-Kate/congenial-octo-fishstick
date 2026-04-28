@@ -36,7 +36,7 @@ namespace IdelPog.Integration.Tests
         protected void BaseSetUp()
         {
             Setup();
-            Register();
+            Register(new CombatOptions { MaxIterations = 10000 });
         }
         
         private void Setup()
@@ -49,15 +49,21 @@ namespace IdelPog.Integration.Tests
             BufferManager = new BufferManager(_bufferFactory, _objectNullAssertion);
         }
 
-        private void Register()
+        private void Register(CombatOptions combatOptions)
         {
             FlowRegister flowRegister = FlowBootstrapper.CreateFlowRegister(BufferManager);
             CurrencyBootstrapper.RegisterFlows(BufferManager, flowRegister);
             SkillBootstrapper.RegisterFlows(BufferManager, flowRegister);
             ContentEngineBootstrapper.RegisterFlows(BufferManager, flowRegister);
             InventoryBootstrapper.RegisterFlows(BufferManager, flowRegister);
-            CombatBootstrapper.RegisterFlows(BufferManager, flowRegister);
+            CombatBootstrapper.RegisterFlows(BufferManager, flowRegister, combatOptions);
             FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
+        }
+
+        protected void RegisterWithOptions(CombatOptions combatOptions)
+        {
+            Setup();
+            Register(combatOptions);
         }
 
         protected void ManagedSubscribe(IListener listener)
