@@ -22,7 +22,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         public void OneTimeSetup()
         {
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
-            _skillNodeEntity = new SkillNodeEntity(repositoryAsserter, new SkillComponent { SkillID = SkillID.FORAGING},[new HarvestTargetComponent { HarvestTarget = ResourceID.COPPER_CLUSTER}]);
+            _skillNodeEntity = new SkillNodeEntity(repositoryAsserter,[new HarvestTargetComponent { HarvestTarget = ResourceID.COPPER_CLUSTER}]) { SkillID = SkillID.FORAGING };
             _repositoryMock = new Mock<IAssetRepository<SkillID, SkillNodeEntity>>();
             
             _skillNodeAccessValidator = new SkillNodeAccessValidator(_repositoryMock.Object, new FoundAssertion());
@@ -32,42 +32,42 @@ namespace IdelPog.HarvestNode.Tests.Service
         public void Setup()
         {
             _repositoryMock.Reset();
-            _repositoryMock.Setup(library => library.Get(_skillNodeEntity.GetComponent<SkillComponent>().SkillID)).Returns(_skillNodeEntity);
+            _repositoryMock.Setup(library => library.Get(_skillNodeEntity.SkillID)).Returns(_skillNodeEntity);
         }
 
         [Test]
         public void Positive_AssertSkillAllows_SkillAllowsResource_NoThrow()
         {
-            _repositoryMock.Setup(library => library.Contains(SkillID.FORAGING)).Returns(true);
+            _repositoryMock.Setup(library => library.Contains(_skillNodeEntity.SkillID)).Returns(true);
             
-            Assert.DoesNotThrow(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FORAGING, ResourceID.COPPER_CLUSTER));
+            Assert.DoesNotThrow(() => _skillNodeAccessValidator.AssertSkillAllows(_skillNodeEntity.SkillID, ResourceID.COPPER_CLUSTER));
             
-            _repositoryMock.Verify(library => library.Get(SkillID.FORAGING), Times.Once);
-            _repositoryMock.Verify(library => library.Contains(SkillID.FORAGING), Times.Once);
+            _repositoryMock.Verify(library => library.Get(_skillNodeEntity.SkillID), Times.Once);
+            _repositoryMock.Verify(library => library.Contains(_skillNodeEntity.SkillID), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
         }
 
         [Test]
         public void Negative_AssertSkillAllows_SkillNotFound_Throws()
         {
-            _repositoryMock.Setup(library => library.Contains(SkillID.FORAGING)).Returns(false);
+            _repositoryMock.Setup(library => library.Contains(_skillNodeEntity.SkillID)).Returns(false);
             
-            Assert.Throws<NotFoundException<SkillID>>(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FORAGING,  ResourceID.COPPER_CLUSTER));
+            Assert.Throws<NotFoundException<SkillID>>(() => _skillNodeAccessValidator.AssertSkillAllows(_skillNodeEntity.SkillID,  ResourceID.COPPER_CLUSTER));
             
-            _repositoryMock.Verify(library => library.Get(SkillID.FORAGING), Times.Never);
-            _repositoryMock.Verify(library => library.Contains(SkillID.FORAGING), Times.Once);
+            _repositoryMock.Verify(library => library.Get(_skillNodeEntity.SkillID), Times.Never);
+            _repositoryMock.Verify(library => library.Contains(_skillNodeEntity.SkillID), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
         }
 
         [Test]
         public void Negative_AssertSkillAllows_ResourceNotFound_Throws()
         {
-            _repositoryMock.Setup(library => library.Contains(SkillID.FORAGING)).Returns(true);
+            _repositoryMock.Setup(library => library.Contains(_skillNodeEntity.SkillID)).Returns(true);
             
-            Assert.Throws<NotFoundException<ResourceID>>(() => _skillNodeAccessValidator.AssertSkillAllows(SkillID.FORAGING,  ResourceID.IRON_CLUSTER));
+            Assert.Throws<NotFoundException<ResourceID>>(() => _skillNodeAccessValidator.AssertSkillAllows(_skillNodeEntity.SkillID,  ResourceID.IRON_CLUSTER));
             
-            _repositoryMock.Verify(library => library.Get(SkillID.FORAGING), Times.Once);
-            _repositoryMock.Verify(library => library.Contains(SkillID.FORAGING), Times.Once);
+            _repositoryMock.Verify(library => library.Get(_skillNodeEntity.SkillID), Times.Once);
+            _repositoryMock.Verify(library => library.Contains(_skillNodeEntity.SkillID), Times.Once);
             _repositoryMock.VerifyNoOtherCalls();
         }
     }

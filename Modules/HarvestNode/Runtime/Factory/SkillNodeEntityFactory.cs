@@ -24,8 +24,7 @@ namespace IdelPog.HarvestNode.Runtime.Factory
                 resourceComponents[i] = new HarvestTargetComponent { HarvestTarget = readOnlyHarvestNodes[i].ResourceID };
             }
             
-            SkillComponent skillComponent = new() { SkillID = skillID };
-            return new SkillNodeEntity(_repositoryAsserter, skillComponent, resourceComponents);
+            return new SkillNodeEntity(_repositoryAsserter, resourceComponents) { SkillID = skillID };
         }
     }
 }
