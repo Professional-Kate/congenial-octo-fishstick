@@ -7,7 +7,9 @@ namespace IdelPog.Combat.Runtime.System.Repository.Interface
     {
         public void Add(byte combatantID, IReadOnlyList<CombatantAbilityEntity> combatantAbilities);
         
-        public CombatantAbilityEntity GetAbilityEntity(byte combatantID, AbilityType abilityType);
+        public bool Contains(byte combatantID);
+        
+        public CombatantAbilityEntity Get(byte combatantID, AbilityType abilityType);
         
         public IReadOnlyList<CombatantAbilityEntity> GetAll(byte combatantID);
     }

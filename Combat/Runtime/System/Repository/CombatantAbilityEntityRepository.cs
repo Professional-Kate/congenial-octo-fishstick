@@ -23,7 +23,12 @@ namespace IdelPog.Combat.Runtime.System.Repository
             _combatantAbilities.Add(combatantID, combatantAbilities);
         }
 
-        public CombatantAbilityEntity GetAbilityEntity(byte combatantID, AbilityType abilityType)
+        public bool Contains(byte combatantID)
+        {
+            return _combatantAbilities.ContainsKey(combatantID);
+        }
+
+        public CombatantAbilityEntity Get(byte combatantID, AbilityType abilityType)
         { 
             _foundAssertion.AssertFound(combatantID, _combatantAbilities.ContainsKey(combatantID));
 

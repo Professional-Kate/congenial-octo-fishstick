@@ -2,6 +2,7 @@
 {
     public enum AbilityType : byte
     {
-        BASIC_ATTACK
+        BASIC_ATTACK,
+        STRONG_ATTACK
     }
 }

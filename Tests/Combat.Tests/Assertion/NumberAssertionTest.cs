@@ -19,13 +19,16 @@ namespace IdelPog.Combat.Tests.Assertion
         public void Positive_AssertNumberNotZero_NumberNotZero_NoThrow()
         {
             Assert.DoesNotThrow(() => _numberAssertion.AssertNumberNotZero(1, SOURCE));
+            Assert.DoesNotThrow(() => _numberAssertion.AssertNumberNotZero(1D, SOURCE));
         }
         
         [Test]
         public void Negative_AssertNumberNotZero_NumberZero_Throws()
         {
             NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _numberAssertion.AssertNumberNotZero(0, SOURCE));
+            Assert.That(exception.Source, Is.EqualTo(SOURCE));
             
+            exception = Assert.Throws<NumberZeroException>(() => _numberAssertion.AssertNumberNotZero(0D, SOURCE));
             Assert.That(exception.Source, Is.EqualTo(SOURCE));
         }
     }

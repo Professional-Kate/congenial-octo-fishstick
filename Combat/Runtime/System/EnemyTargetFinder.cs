@@ -13,17 +13,17 @@ namespace IdelPog.Combat.Runtime.System
     {
         private readonly ICombatantStoreRead _friendlyCombatantStore;
         private readonly ICombatantStoreRead _enemyCombatantStore;
+        private readonly ICombatantAbilityEntityRepository _combatantAbilityEntityRepository;
         private readonly ICombatantRepository _combatantRepository;
         private readonly IObjectNullAssertion _objectNullAssertion;
-        private readonly IFoundAssertion _foundAssertion;
 
-        public EnemyTargetFinder(ICombatantStoreRead friendlyCombatantStore, ICombatantStoreRead enemyCombatantStore, ICombatantRepository combatantRepository, IObjectNullAssertion objectNullAssertion, IFoundAssertion foundAssertion)
+        public EnemyTargetFinder(ICombatantStoreRead friendlyCombatantStore, ICombatantStoreRead enemyCombatantStore, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, ICombatantRepository combatantRepository, IObjectNullAssertion objectNullAssertion, IFoundAssertion foundAssertion)
         {
             _friendlyCombatantStore = friendlyCombatantStore;
             _enemyCombatantStore = enemyCombatantStore;
+            _combatantAbilityEntityRepository = combatantAbilityEntityRepository;
             _combatantRepository = combatantRepository;
             _objectNullAssertion = objectNullAssertion;
-            _foundAssertion = foundAssertion;
         }
 
         public CombatantEntity FindBestTarget(CombatantEntity instigatingEntity, AbilityType abilityType)
@@ -55,21 +55,10 @@ namespace IdelPog.Combat.Runtime.System
         }
 
         private TargetingType GetTargetingType(CombatantEntity attackingEntity, AbilityType abilityType)
-        {
-            // foreach (BasicAttackComponent skillComponent in skillComponentStore.GetAllComponents())
-            // {
-            //     if (skillComponent.SkillType != skillType)
-            //     {
-            //         continue;
-            //     }
-            //
-            //     return skillComponent.TargetingType;
-            // }
-            //
-            // // TODO: figure out something better
-            // throw new InvalidOperationException();
-
-            return TargetingType.HIGH_ATTACK;
+        { 
+            CombatantAbilityEntity combatantAbilityEntity = _combatantAbilityEntityRepository.Get(attackingEntity.CombatantID, abilityType);
+            
+            return combatantAbilityEntity.GetComponent<TargetingTypeComponent>().TargetingType;
         }
     }
 }

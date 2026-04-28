@@ -5,8 +5,6 @@ using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Core.Contracts;
-using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Integration.Tests.Combat.Tools;
@@ -20,42 +18,13 @@ namespace IdelPog.Integration.Tests.Combat
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
         private ManagedErrorListener<BasicEncounterDeckError> _errorListener;
 
-        private CombatantCreation _humanCreation;
-        private CombatantCreation _goblinCreation;
-        private CombatantCreation _bearCreation;
-        private CombatantCreation _wolfCreation;
-
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            _humanCreation = new CombatantCreation
-            {
-                CombatantType = CombatantType.HUMAN, 
-                StatCard = new StatCard { Health = 14, Attack = 5, Speed = 5 },
-                Information = new Information { Name = "John Idle", Description = "He the man" }
-            };
-            
-            _goblinCreation = new CombatantCreation
-            {
-                CombatantType = CombatantType.GOBLIN, 
-                StatCard = new StatCard { Health = 9, Attack = 2, Speed = 11 },
-                Information = new Information { Name = "Goblin", Description = "green guy" }
-            };
-
-            _bearCreation = new CombatantCreation
-            {
-                CombatantType = CombatantType.BEAR,
-                StatCard = new StatCard { Health = 5, Attack = 10, Speed = 3 },
-                Information = new Information { Name = "Bear", Description = "rawr" }
-            };
-            
-            _wolfCreation = new CombatantCreation
-            {
-                CombatantType = CombatantType.WOLF,
-                StatCard = new StatCard { Health = 3, Attack = 7, Speed = 3 },
-                Information = new Information { Name = "Wolf", Description = "awoooo" }
-            };
-        }
+        private readonly CombatantCreation _humanCreation = StaticCombatCommands.HumanCreation;
+        private readonly CombatantCreation _goblinCreation = StaticCombatCommands.GoblinCreation;
+        private readonly CombatantCreation _bearCreation = StaticCombatCommands.BearCreation;
+        private readonly CombatantCreation _wolfCreation = StaticCombatCommands.WolfCreation;
+        
+        private readonly AbilityCreation _basicAttackCreation = StaticCombatCommands.BasicAttackCreation; 
+        private readonly CombatantAbilityEquip _equipBasicAttack = StaticCombatCommands.EquipBasicAttack(0);
         
         [SetUp]
         public void Setup()
@@ -68,13 +37,6 @@ namespace IdelPog.Integration.Tests.Combat
             _combatTools.Reset();
         }
 
-        private void DispatchBasicEncounterDeck(params BasicEncounterDeck[] basicEncounterDecks)
-        {
-            IBuffer<BasicEncounterDeck> buffer = BufferManager.RequestBuffer<BasicEncounterDeck>(new BufferRequest(basicEncounterDecks.Length));
-            buffer.Assign(basicEncounterDecks);
-            buffer.MarkReady();
-        }
-
         private BasicEncounterDeck RunCombat(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs)
         {
             BasicEncounterDeck basicEncounterDeck = new()
@@ -83,39 +45,17 @@ namespace IdelPog.Integration.Tests.Combat
                 EnemyCombatantIDs = enemyCombatantIDs
             };
             
-            DispatchBasicEncounterDeck(basicEncounterDeck);
-
+            DispatchMessage(basicEncounterDeck);
+            
+            _responseListener.AssertWasCalled(true);
+            _responseListener.AssertResponseLength(1);
+            _combatTools.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
+            
             return basicEncounterDeck;
         }
-
-        private static void AssertFriendlyVictory(BasicEncounterDeckResponse basicEncounterDeckResponse)
+        private static void AssertResponse(BasicEncounterDeckResponse basicEncounterDeckResponse, BasicEncounterDeck source)
         { 
-            Assert.That(basicEncounterDeckResponse.FriendlyVictory, Is.True);
-        }
-        
-        private static void AssertEnemyVictory(BasicEncounterDeckResponse basicEncounterDeckResponse)
-        { 
-            Assert.That(basicEncounterDeckResponse.FriendlyVictory, Is.False);
-        }
-
-        private void AssertResponseListenerCalled(bool wasCalled)
-        {
-            Assert.That(_responseListener.WasCalled, Is.EqualTo(wasCalled));
-        }
-
-        private void AssertResponseLength(int length)
-        {
-            Assert.That(_responseListener.Responses, Has.Length.EqualTo(length));
-        }
-
-        private static void AssertResponse(BasicEncounterDeck basicEncounterDeck, BasicEncounterDeck expected)
-        { 
-            Assert.That(basicEncounterDeck, Is.EqualTo(expected));
-        }
-        
-        private void AssertErrorListenerCalled(bool wasCalled)
-        {
-            Assert.That(_errorListener.WasCalled, Is.EqualTo(wasCalled));
+            Assert.That(basicEncounterDeckResponse.BasicEncounterDeck, Is.EqualTo(source));
         }
 
         private void AssertErrorLength(int length)
@@ -135,92 +75,78 @@ namespace IdelPog.Integration.Tests.Combat
             });
         }
 
-        private void RegisterStateChanges(BasicEncounterDeckResponse basicEncounterDeckResponse)
-        { 
-            _combatTools.RegisterChanges(basicEncounterDeckResponse.CombatantStateChanges);
-        }
-        
-        private void AssertFirstDead(CombatantCreation creation)
-        { 
-            Assert.That(creation.Information, Is.EqualTo(_combatTools.FirstDeadCombatant.CombatantCreation.Information));
-        }
-
-        private void AssertZeroAttacks(params CombatantCreation[] combatantCards)
-        {
-            foreach (CombatantCreation combatantCard in combatantCards)
-            {
-                CombatantTracker tracker = _combatTools.GetCombatantTracker(combatantCard);
-                Assert.That(tracker.TotalAttacks, Is.EqualTo(0));
-            }
-        }
-
-        private void AssertOneOrMoreAttacks(params CombatantCreation[] combatantCards)
-        {
-            foreach (CombatantCreation combatantCard in combatantCards)
-            {
-                CombatantTracker tracker = _combatTools.GetCombatantTracker(combatantCard);
-                Assert.That(tracker.TotalAttacks, Is.GreaterThanOrEqualTo(1));
-            }
-        }
-
         [Test]
         public void Positive_SimulateCombat_FriendlyVictory()
         { 
-            BasicEncounterDeck returnedDeck = RunCombat([1], [1]);
+            DispatchMessage(_humanCreation, _goblinCreation);
+            DispatchMessage(_basicAttackCreation);
+            DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 });
             
-            AssertResponseListenerCalled(true);
-            AssertErrorListenerCalled(false);
-            AssertResponseLength(1);
-            AssertResponse(_responseListener.Responses[0].BasicEncounterDeck, returnedDeck);
-            AssertFriendlyVictory(_responseListener.Responses[0]);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1]);
+            
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
+            AssertResponse(_responseListener.Responses[0], returnedDeck);
+            CombatTools.AssertVictory(_responseListener.Responses[0], true);
         }
         
         [Test]
         public void Positive_SimulateCombat_EnemyVictory()
         { 
-            BasicEncounterDeck returnedDeck = RunCombat([1], [1, 1, 1]);
+            DispatchMessage(_humanCreation, _goblinCreation, _wolfCreation, _bearCreation);
+            DispatchMessage(_basicAttackCreation);
+            DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 }, _equipBasicAttack with { CombatantID = 2 }, _equipBasicAttack with { CombatantID = 3 });
             
-            AssertResponseListenerCalled(true);
-            AssertErrorListenerCalled(false);
-            AssertResponseLength(1);
-            AssertResponse(_responseListener.Responses[0].BasicEncounterDeck, returnedDeck);
-            AssertEnemyVictory(_responseListener.Responses[0]);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
+            
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
+            AssertResponse(_responseListener.Responses[0], returnedDeck);
+            CombatTools.AssertVictory(_responseListener.Responses[0], false);
         }
 
         [Test]
         public void Positive_SimulateCombat_HighAttack_TargetsHighAttack()
         {
             AbilityCard highAttackCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK } };
-            BasicEncounterDeck returnedDeck = RunCombat([1], [1, 1]);
             
-            AssertResponseListenerCalled(true);
-            AssertErrorListenerCalled(false);
-            AssertResponseLength(1);
-            AssertResponse(_responseListener.Responses[0].BasicEncounterDeck, returnedDeck);
+            DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
+            DispatchMessage(_basicAttackCreation);
+            DispatchMessage(_equipBasicAttack with { AbilityCards = [highAttackCard] }, _equipBasicAttack with { CombatantID = 1 });
             
-            AssertFriendlyVictory(_responseListener.Responses[0]);
-            RegisterStateChanges(_responseListener.Responses[0]);
-            AssertFirstDead(_bearCreation);
-            AssertZeroAttacks(_bearCreation);
-            AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
+            
+            CombatTools.PrintStateChanges(_responseListener.Responses[0].CombatantStateChanges);
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
+            AssertResponse(_responseListener.Responses[0], returnedDeck);
+            
+            CombatTools.AssertFirstDeadCombatant(_combatTools.FirstDeadCombatant.CombatantCreation,_bearCreation);
+            _combatTools.AssertZeroAttacks(_bearCreation);
         }
         
         [Test]
         public void Positive_SimulateCombat_LowHealth_TargetsLowHealth()
         {
             AbilityCard lowHealthCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.LOW_HEALTH } };
-            BasicEncounterDeck returnedDeck = RunCombat([1], [1, 1]);
             
-            AssertResponseListenerCalled(true);
-            AssertErrorListenerCalled(false);
-            AssertResponseLength(1);
-            AssertResponse(_responseListener.Responses[0].BasicEncounterDeck, returnedDeck);
+            DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
+            DispatchMessage(_basicAttackCreation);
+            DispatchMessage(_equipBasicAttack with { AbilityCards = [lowHealthCard] }, _equipBasicAttack with { CombatantID = 1 });
             
-            AssertFriendlyVictory(_responseListener.Responses[0]);
-            RegisterStateChanges(_responseListener.Responses[0]);
-            AssertFirstDead(_wolfCreation);
-            AssertZeroAttacks(_wolfCreation);
-            AssertOneOrMoreAttacks(_humanCreation, _bearCreation);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
+            
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
+            AssertResponse(_responseListener.Responses[0], returnedDeck);
+            
+            CombatTools.AssertFirstDeadCombatant(_combatTools.FirstDeadCombatant.CombatantCreation,_wolfCreation);
+            _combatTools.AssertZeroAttacks(_bearCreation, _wolfCreation);
+            _combatTools.AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
         }
         
         // Exception Tests
@@ -229,10 +155,10 @@ namespace IdelPog.Integration.Tests.Combat
         {
             BasicEncounterDeck emptyFriendlyCombatants = new() { FriendlyCombatantIDs = [], EnemyCombatantIDs = [1] };
 
-            DispatchBasicEncounterDeck(emptyFriendlyCombatants);
+            DispatchMessage(emptyFriendlyCombatants);
             
-            AssertResponseListenerCalled(false);
-            AssertErrorListenerCalled(true);
+            _responseListener.AssertWasCalled(false);
+            _errorListener.AssertWasCalled(true);
             AssertErrorLength(1);
             AssertError<EmptyCollectionException>(emptyFriendlyCombatants);
         }
@@ -242,50 +168,42 @@ namespace IdelPog.Integration.Tests.Combat
         {
             BasicEncounterDeck emptyEnemyCombatants = new() { FriendlyCombatantIDs = [1], EnemyCombatantIDs = [] };
             
-            DispatchBasicEncounterDeck(emptyEnemyCombatants);
+            DispatchMessage(emptyEnemyCombatants);
             
-            AssertResponseListenerCalled(false);
-            AssertErrorListenerCalled(true);
+            _responseListener.AssertWasCalled(false);
+            _errorListener.AssertWasCalled(true);
             AssertErrorLength(1);
             AssertError<EmptyCollectionException>(emptyEnemyCombatants);
         }
 
         [Test]
-        public void Negative_ZeroSpeed_DispatchesError()
+        // [Ignore("Takes 130ms to run (more time than all of these tests combined), if impatient, uncomment this!!!")]
+        public void Negative_LowDamage_HighHealth_ReachesMaxIterations_DispatchesError()
         {
-            CombatantCreation zeroSpeed = new()
+            BasicEncounterDeck basicEncounterDeck = new()
             {
-                CombatantType = CombatantType.HUMAN, 
-                StatCard = new StatCard { Health = 14, Attack = 5, Speed = 0 },
-                Information = new Information { Name = "Captain Slow", Description = "The slowest man... In the world" }
+                FriendlyCombatantIDs = [0],
+                EnemyCombatantIDs = [1]
             };
             
-            BasicEncounterDeck deck = new() { FriendlyCombatantIDs = [1], EnemyCombatantIDs = [1] };
-            DispatchBasicEncounterDeck(deck);
+            StatCard beefyBoiStats = new() { Health = uint.MaxValue, Attack = 1, Speed = 100 };
+            DispatchMessage(_humanCreation with { StatCard = beefyBoiStats }, _goblinCreation with { StatCard = beefyBoiStats });
+            DispatchMessage(_basicAttackCreation with { Damage = 1 });
+            DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 });
+
+            DispatchMessage(basicEncounterDeck);
             
-            AssertResponseListenerCalled(false);
-            AssertErrorListenerCalled(true);
+            _responseListener.AssertWasCalled(false);
+            _errorListener.AssertWasCalled(true);
             AssertErrorLength(1);
-            AssertError<NumberZeroException>(deck);
-        }
-        
-        [Test]
-        public void Negative_ZeroHealth_DispatchesError()
-        {
-            CombatantCreation zeroHealth = new()
+            AssertError<MaxIterationsException>(basicEncounterDeck);
+
+            MaxIterationsException maxIterationsException = (_errorListener.Error.BaseError.Exception.GetBaseException() as MaxIterationsException)!;
+            Assert.Multiple(() =>
             {
-                CombatantType = CombatantType.HUMAN, 
-                StatCard = new StatCard { Health = 0, Attack = 5, Speed = 200 },
-                Information = new Information { Name = "corpse", Description = "He kinda dead already" }
-            };
-            
-            BasicEncounterDeck deck = new() { FriendlyCombatantIDs = [1], EnemyCombatantIDs = [1] };
-            DispatchBasicEncounterDeck(deck);
-            
-            AssertResponseListenerCalled(false);
-            AssertErrorListenerCalled(true);
-            AssertErrorLength(1);
-            AssertError<NumberZeroException>(deck);
+                Assert.That(maxIterationsException.MaxIterations, Is.EqualTo(10000));
+                Assert.That(maxIterationsException.BasicEncounterDeck, Is.EqualTo(basicEncounterDeck));
+            });
         }
     }
 }

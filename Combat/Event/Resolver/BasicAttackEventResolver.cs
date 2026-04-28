@@ -23,7 +23,7 @@ namespace IdelPog.Combat.Event.Resolver
             _foundAssertion = foundAssertion;
         }
 
-        public void ResolveEvent(double tick, byte attackerID)
+        public void ResolveEvent(double tick, byte attackerID, AbilityType abilityType)
         { 
             _foundAssertion.AssertFound(attackerID, _combatantRepository.Contains(attackerID));
             
@@ -33,7 +33,7 @@ namespace IdelPog.Combat.Event.Resolver
             }           
             
             _entityDamageMediator.ApplyDamage(attackerID, AbilityType.BASIC_ATTACK);
-            _basicAttackScheduler.EnqueueAttack(tick, attackerID);
+            _basicAttackScheduler.EnqueueAttack(tick, attackerID, abilityType);
         }
     }
 }

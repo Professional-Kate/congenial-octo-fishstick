@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {
@@ -37,15 +38,16 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         
         internal CombatantTracker GetCombatantTracker(CombatantCreation combatantCreation)
         {
-            foreach (CombatantTracker combatantCardsValue in _combatantCards.Values)
+            // TODO: if a Combatant is not attacked they will not be added to the _combatantCards. 
+            foreach (CombatantTracker combatantTracker in _combatantCards.Values)
             {
-                if (combatantCardsValue.CombatantCreation.Information == combatantCreation.Information)
+                if (combatantTracker.CombatantCreation.Information == combatantCreation.Information)
                 {
-                    return combatantCardsValue;
+                    return combatantTracker;
                 }
             }
-
-            throw new ArgumentException("No tracker found!!!!!!!");
+            
+            return new CombatantTracker(combatantCreation);
         }
         
         internal static void PrintStateChanges(CombatantStateChange[] combatantStateChanges)
@@ -58,6 +60,34 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             }
             
             System.Console.WriteLine("\n--0--\n");
+        }
+        
+        internal static void AssertFirstDeadCombatant(CombatantCreation firstDeadCombatant, CombatantCreation expectedFirstDead)
+        { 
+            Assert.That(firstDeadCombatant.Information, Is.EqualTo(expectedFirstDead.Information));
+        }
+        
+        internal void AssertZeroAttacks(params CombatantCreation[] combatantCards)
+        {
+            foreach (CombatantCreation combatantCard in combatantCards)
+            {
+                CombatantTracker tracker = GetCombatantTracker(combatantCard);
+                Assert.That(tracker.TotalAttacks, Is.EqualTo(0));
+            }
+        }
+
+        internal void AssertOneOrMoreAttacks(params CombatantCreation[] combatantCards)
+        {
+            foreach (CombatantCreation combatantCard in combatantCards)
+            {
+                CombatantTracker tracker = GetCombatantTracker(combatantCard);
+                Assert.That(tracker.TotalAttacks, Is.GreaterThanOrEqualTo(1));
+            }
+        }
+
+        internal static void AssertVictory(BasicEncounterDeckResponse basicEncounterDeckResponse, bool friendlyVictory)
+        { 
+            Assert.That(basicEncounterDeckResponse.FriendlyVictory, Is.EqualTo(friendlyVictory));
         }
 
         private void AddCombatantCard(CombatantStateChange combatantStateChange)

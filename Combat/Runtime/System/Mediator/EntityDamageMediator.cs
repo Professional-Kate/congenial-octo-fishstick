@@ -15,21 +15,23 @@ namespace IdelPog.Combat.Runtime.System.Mediator
     {
         private readonly ICombatantRepository _combatantRepository;
         private readonly ITargetFinder _targetFinder;
+        private readonly ICombatantAbilityEntityRepository _combatantAbilityEntityRepository;
         private readonly IDamageSystem _damageSystem;
         private readonly IDeathSystem _deathSystem;
-        private readonly ICombatantLogger _combatantLogger;
         private readonly ICombatantStoreService _combatantStoreService;
+        private readonly ICombatantLogger _combatantLogger;
         private readonly IFoundAssertion _foundAssertion;
         private readonly ICombatantAssertion _combatantAssertion;
         private readonly INumberAssertion _numberAssertion;
 
         public EntityDamageMediator(ICombatantRepository combatantRepository, ITargetFinder targetFinder, IDamageSystem damageSystem,
-            IDeathSystem deathSystem, ICombatantStoreService combatantStoreService, IFoundAssertion foundAssertion,
-            ICombatantAssertion combatantAssertion, INumberAssertion numberAssertion, ICombatantLogger combatantLogger)
+            ICombatantAbilityEntityRepository abilityEntityRepository, IDeathSystem deathSystem, ICombatantStoreService combatantStoreService, ICombatantLogger combatantLogger, 
+            IFoundAssertion foundAssertion, ICombatantAssertion combatantAssertion, INumberAssertion numberAssertion)
         {
             _combatantRepository = combatantRepository;
             _targetFinder = targetFinder;
             _damageSystem = damageSystem;
+            _combatantAbilityEntityRepository = abilityEntityRepository;
             _deathSystem = deathSystem;
             _combatantStoreService = combatantStoreService;
             _foundAssertion = foundAssertion;
@@ -51,7 +53,7 @@ namespace IdelPog.Combat.Runtime.System.Mediator
             CombatantEntity targetCombatant = _targetFinder.FindBestTarget(attackingCombatant, abilityType);
             _combatantAssertion.AssertCombatantAlive(targetCombatant);
 
-            uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats.Attack);
+            uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats.Attack, _combatantAbilityEntityRepository.Get(attackingCombatantID, abilityType));
             if (newHealth == 0)
             { 
                 _deathSystem.KillEntity(targetCombatant);

@@ -36,7 +36,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             RepositoryAdd(_combatantAbilityEntity.CombatantID, _combatantAbilityEntity);
             
-            CombatantAbilityEntity combatantAbilityEntity = _combatantAbilityEntityRepository.GetAbilityEntity(_combatantAbilityEntity.CombatantID, _combatantAbilityEntity.AbilityType);
+            CombatantAbilityEntity combatantAbilityEntity = _combatantAbilityEntityRepository.Get(_combatantAbilityEntity.CombatantID, _combatantAbilityEntity.AbilityType);
             
             Assert.Multiple(() =>
             {
@@ -55,7 +55,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_GetAbilityEntity_EntityNotFound_Throws()
         {
-            Assert.Throws<NotFoundException<byte>>(() => _combatantAbilityEntityRepository.GetAbilityEntity(_combatantAbilityEntity.CombatantID, _combatantAbilityEntity.AbilityType));
+            Assert.Throws<NotFoundException<byte>>(() => _combatantAbilityEntityRepository.Get(_combatantAbilityEntity.CombatantID, _combatantAbilityEntity.AbilityType));
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             RepositoryAdd(_combatantAbilityEntity.CombatantID, _combatantAbilityEntity);
             
-            Assert.Throws<KeyNotFoundException>(() => _combatantAbilityEntityRepository.GetAbilityEntity(_combatantAbilityEntity.CombatantID, (AbilityType) 1));
+            Assert.Throws<KeyNotFoundException>(() => _combatantAbilityEntityRepository.Get(_combatantAbilityEntity.CombatantID, (AbilityType) 1));
         }
     }
 }

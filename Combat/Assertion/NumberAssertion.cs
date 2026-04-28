@@ -12,5 +12,13 @@ namespace IdelPog.Combat.Assertion
                 throw new NumberZeroException(source);
             }
         }
+
+        public void AssertNumberNotZero(double number, string source)
+        {
+            if (number == 0)
+            {
+                throw new NumberZeroException(source);
+            }
+        }
     }
 }

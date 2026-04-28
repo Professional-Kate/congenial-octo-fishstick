@@ -12,7 +12,7 @@ namespace IdelPog.HarvestNode.Factory
             for (var i = 0; i < nodeCreations.Length; i++)
             {
                 HarvestNodeCreation creation = nodeCreations[i];
-                HarvestNodeCreationResponse response = new HarvestNodeCreationResponse { LinkedSkill = creation.LinkedSkill, ReadOnlyHarvestNodes = creation.ReadOnlyHarvestNodes};
+                HarvestNodeCreationResponse response = new() { LinkedSkill = creation.LinkedSkill, ReadOnlyHarvestNodes = creation.ReadOnlyHarvestNodes};
                 responses[i] = response;
             }
             

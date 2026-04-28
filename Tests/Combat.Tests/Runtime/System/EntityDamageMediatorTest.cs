@@ -22,6 +22,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private Mock<ICombatantRepository> _repositoryMock;
         private Mock<ITargetFinder> _targetFinderMock;
         private Mock<IDamageSystem> _damageSystemMock;
+        private Mock<ICombatantAbilityEntityRepository> _abilityEntityRepositoryMock;
         private Mock<ICombatantStoreService> _combatantStoreServiceMock;
         private Mock<IDeathSystem> _deathSystemMock;
         private Mock<ICombatantLogger> _combatantLoggerMock;
@@ -29,6 +30,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private CombatantEntity _targetCombatant;
         private CombatantEntity _attackingCombatant;
         private CombatantStatsComponent _attackerStatsComponent;
+        private CombatantAbilityEntity _attackingCombatantAbility;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -36,18 +38,20 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _repositoryMock = new Mock<ICombatantRepository>();
             _targetFinderMock = new Mock<ITargetFinder>();
             _damageSystemMock = new Mock<IDamageSystem>();
+            _abilityEntityRepositoryMock = new Mock<ICombatantAbilityEntityRepository>();
             _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
             _deathSystemMock = new Mock<IDeathSystem>();
             _combatantLoggerMock = new Mock<ICombatantLogger>();
             
-            _entityDamageMediator = new EntityDamageMediator(_repositoryMock.Object, _targetFinderMock.Object, _damageSystemMock.Object, _deathSystemMock.Object, _combatantStoreServiceMock.Object, new FoundAssertion(), new CombatantAssertion(), new NumberAssertion(), _combatantLoggerMock.Object);
+            _entityDamageMediator = new EntityDamageMediator(_repositoryMock.Object, _targetFinderMock.Object, _damageSystemMock.Object, _abilityEntityRepositoryMock.Object, _deathSystemMock.Object, _combatantStoreServiceMock.Object, _combatantLoggerMock.Object, new FoundAssertion(), new CombatantAssertion(), new NumberAssertion());
+            _attackingCombatantAbility = TestCombatantAbilityEntityFactory.Create(2, AbilityType.BASIC_ATTACK);
         }
 
         [SetUp]
         public void Setup()
         { 
             _targetCombatant = TestCombatantEntityFactory.CreateCombatantEntity(1);
-
+            
             _attackingCombatant = TestCombatantEntityFactory.CreateCombatantEntity(2);
             _attackerStatsComponent = _attackingCombatant.GetComponent<CombatantStatsComponent>();
             
@@ -56,6 +60,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantStoreServiceMock.Reset();
             _damageSystemMock.Reset();
             _deathSystemMock.Reset();
+            _abilityEntityRepositoryMock.Reset();
         }
 
         private void SetupTargetFinder(CombatantEntity attacker, CombatantEntity target)
@@ -69,16 +74,21 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _repositoryMock.Setup(library => library.Get(combatantEntity.CombatantID)).Returns(combatantEntity).Verifiable();
         }
 
-        private void SetupDamageSystem(CombatantEntity targetCombatant, CombatantStatsComponent attackerStats, uint newHealth)
+        private void SetupDamageSystem(CombatantEntity targetCombatant, CombatantStatsComponent attackerStats, uint newHealth, CombatantAbilityEntity combatantAbilityEntity)
         {
-            _damageSystemMock.Setup(library => library.DealDamage(targetCombatant, attackerStats.Attack)).Returns(newHealth).Verifiable();
+            _damageSystemMock.Setup(library => library.DealDamage(targetCombatant, attackerStats.Attack, combatantAbilityEntity)).Returns(newHealth).Verifiable();
+        }
+
+        private void SetupAbilityEntityRepositoryGet(CombatantAbilityEntity combatantAbilityEntity)
+        {
+            _abilityEntityRepositoryMock.Setup(library => library.Get(combatantAbilityEntity.CombatantID, combatantAbilityEntity.AbilityType)).Returns(combatantAbilityEntity).Verifiable();
         }
 
         private void VerifyStoreRegisterCombatantChange(CombatantEntity combatantEntity, Times times)
         {
             _combatantStoreServiceMock.Verify(library => library.RegisterCombatantChange(combatantEntity), times);
         }
-
+        
         private void VerifyMocks()
         {
             _repositoryMock.Verify();
@@ -95,17 +105,21 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _deathSystemMock.Verify();
             _deathSystemMock.VerifyNoOtherCalls();
+            
+            _abilityEntityRepositoryMock.Verify();
+            _abilityEntityRepositoryMock.VerifyNoOtherCalls();
         }
 
         [Test]
         public void Positive_ApplyDamage_RemovesHealthFromTarget()
         {
-            SetupDamageSystem(_targetCombatant, _attackerStatsComponent, 1);
+            SetupDamageSystem(_targetCombatant, _attackerStatsComponent, 1, _attackingCombatantAbility);
             SetupTargetFinder(_attackingCombatant, _targetCombatant);
             SetupRepository(_attackingCombatant);
+            SetupAbilityEntityRepositoryGet(_attackingCombatantAbility);
             
             _entityDamageMediator.ApplyDamage(_attackingCombatant.CombatantID, AbilityType.BASIC_ATTACK);
-            
+
             VerifyStoreRegisterCombatantChange(_targetCombatant, Times.Once());
             VerifyMocks();
         }
@@ -113,9 +127,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_ApplyDamage_CausesDeath()
         {
-            SetupDamageSystem(_targetCombatant, _attackerStatsComponent, 0);
+            SetupDamageSystem(_targetCombatant, _attackerStatsComponent, 0, _attackingCombatantAbility);
             SetupTargetFinder(_attackingCombatant, _targetCombatant);
             SetupRepository(_attackingCombatant);
+            SetupAbilityEntityRepositoryGet(_attackingCombatantAbility);
             
             _entityDamageMediator.ApplyDamage(_attackingCombatant.CombatantID, AbilityType.BASIC_ATTACK);
             

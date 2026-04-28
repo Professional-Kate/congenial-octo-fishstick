@@ -31,7 +31,7 @@ namespace IdelPog.Combat.Tests.Event
             
             _basicAttackEventResolver = new BasicAttackEventResolver(_damageSystemMock.Object, _attackSchedulerMock.Object, _combatantRepositoryMock.Object, new FoundAssertion());
 
-            _basicAttackEvent = new BasicAttackEvent { AttackerID = 0, Tick = 0 };
+            _basicAttackEvent = new BasicAttackEvent { AttackerID = 0, Tick = 0, AbilityType = AbilityType.BASIC_ATTACK };
 
             _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(0);
         }
@@ -51,7 +51,7 @@ namespace IdelPog.Combat.Tests.Event
 
         private void VerifyEventEnqueued()
         {
-            _attackSchedulerMock.Verify(library => library.EnqueueAttack(_basicAttackEvent.Tick, _basicAttackEvent.AttackerID), Times.Once);
+            _attackSchedulerMock.Verify(library => library.EnqueueAttack(_basicAttackEvent.Tick, _basicAttackEvent.AttackerID, AbilityType.BASIC_ATTACK), Times.Once);
         }
 
         private void SetupRepositoryContains(byte combatantID)
@@ -82,7 +82,7 @@ namespace IdelPog.Combat.Tests.Event
             SetupRepositoryContains(_basicAttackEvent.AttackerID);
             SetupRepositoryGet(_combatantEntity);
             
-            Assert.DoesNotThrow(() => _basicAttackEventResolver.ResolveEvent(_basicAttackEvent.Tick, _basicAttackEvent.AttackerID));
+            Assert.DoesNotThrow(() => _basicAttackEventResolver.ResolveEvent(_basicAttackEvent.Tick, _basicAttackEvent.AttackerID, AbilityType.BASIC_ATTACK));
 
             VerifyDamageApplied();
             VerifyEventEnqueued();
@@ -98,7 +98,7 @@ namespace IdelPog.Combat.Tests.Event
             SetupRepositoryContains(deadEntity.CombatantID);
             SetupRepositoryGet(deadEntity);
             
-            Assert.DoesNotThrow(() => _basicAttackEventResolver.ResolveEvent(_basicAttackEvent.Tick, deadEntity.CombatantID));
+            Assert.DoesNotThrow(() => _basicAttackEventResolver.ResolveEvent(_basicAttackEvent.Tick, deadEntity.CombatantID, AbilityType.BASIC_ATTACK));
             
             VerifyMocks();
         }
@@ -106,7 +106,7 @@ namespace IdelPog.Combat.Tests.Event
         [Test]
         public void Negative_ResolveEvent_CombatantNotFound_Throws()
         {
-            Assert.Throws<NotFoundException<byte>>(() => _basicAttackEventResolver.ResolveEvent(_basicAttackEvent.Tick, _basicAttackEvent.AttackerID));
+            Assert.Throws<NotFoundException<byte>>(() => _basicAttackEventResolver.ResolveEvent(_basicAttackEvent.Tick, _basicAttackEvent.AttackerID, AbilityType.BASIC_ATTACK));
             
             _combatantRepositoryMock.Verify(library => library.Contains(_basicAttackEvent.AttackerID), Times.Once);
             VerifyMocks();

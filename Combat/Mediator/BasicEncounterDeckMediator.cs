@@ -3,6 +3,7 @@ using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Interface;
 using IdelPog.Combat.Event.Resolver.Interface;
+using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service.Interface;
@@ -59,14 +60,14 @@ namespace IdelPog.Combat.Mediator
                 {
                     if (++iterations > MAX_ITERATIONS)
                     {
-                        return;
+                        throw new MaxIterationsException(basicEncounterDeck, MAX_ITERATIONS);
                     }
                     
                     ICombatEvent combatEvent = _combatQueue.Dequeue();
                     double currentTick = combatEvent.Tick;
 
                     IEventResolver resolver = _resolverRepository.Get(combatEvent.EventType);
-                    resolver.ResolveEvent(currentTick, combatEvent.AttackerID);
+                    resolver.ResolveEvent(currentTick, combatEvent.AttackerID, combatEvent.AbilityType);
                 }
 
                 responses[i] = ConstructResponse(basicEncounterDeck);
