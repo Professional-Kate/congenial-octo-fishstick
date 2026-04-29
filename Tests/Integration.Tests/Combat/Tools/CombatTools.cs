@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Contracts;
+using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Response;
 
@@ -82,6 +83,20 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         { 
             Assert.That(basicEncounterDeckResponse.FriendlyVictory, Is.EqualTo(friendlyVictory));
         }
+
+        internal void AssertAbilityUse(CombatantCreation combatantCreation, AbilityType abilityType, int expectedUses)
+        {
+            AbilityTracker[] abilityTrackers = GetCombatantTracker(combatantCreation).AbilityTrackers.ToArray();
+            foreach (AbilityTracker abilityTracker in abilityTrackers)
+            {
+                if (abilityTracker.AbilityType != abilityType)
+                {
+                    continue;
+                }
+                
+                Assert.That(abilityTracker.Attacks, Is.EqualTo(expectedUses));
+            }
+        }
         
         private CombatantTracker GetCombatantTracker(CombatantCreation combatantCreation)
         {
@@ -95,7 +110,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             
             return new CombatantTracker(combatantCreation);
         }
-
+        
         private void AddCombatantCard(CombatantStateChange combatantStateChange)
         { 
             CombatantTracker combatantTracker = new(combatantStateChange.CombatantCreation);
@@ -117,6 +132,8 @@ namespace IdelPog.Integration.Tests.Combat.Tools
                 card.TotalAttacks++;
             }
             
+            RegisterAbilityUse(combatantStateChange.AttackingCombatant);
+            
             if (combatantStateChange.IsAlive)
             {
                 return;
@@ -126,6 +143,11 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             {
                 FirstDeadCombatant = combatantStateChange;
             }
+        }
+        
+        private void RegisterAbilityUse(AttackingCombatant attackingCombatant)
+        {
+            _combatantTrackers[attackingCombatant.CombatantID].RegisterAbilityUse(attackingCombatant.AbilityType, attackingCombatant.DamageDealt);
         }
     }
 }

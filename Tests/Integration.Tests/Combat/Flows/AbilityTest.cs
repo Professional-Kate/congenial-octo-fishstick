@@ -107,6 +107,8 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             _combatTools.AssertZeroAttacks(slightlySlowerBear);
             _combatTools.AssertOneOrMoreAttacks(slightlyFasterHuman);
+            _combatTools.AssertAbilityUse(slightlyFasterHuman, abilityCard.AbilityType, 1);
+            _combatTools.AssertAbilityUse(slightlyFasterHuman, AbilityType.STRONG_ATTACK, 1);
         }
     }
 }
