@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Contracts;
+using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Runtime.Component;
@@ -18,7 +19,7 @@ namespace IdelPog.Combat.Service.Logging
             _objectNullAssertion = objectNullAssertion;
         }
 
-        public void LogCombatantChange(CombatantEntity changedEntity, byte attackerID)
+        public void LogCombatantChange(CombatantEntity changedEntity, byte attackerID, AbilityType abilityType, uint damageDealt)
         {
             _objectNullAssertion.AssertNotNull(changedEntity, nameof(changedEntity));
             
@@ -26,9 +27,9 @@ namespace IdelPog.Combat.Service.Logging
             {
                 CombatantCreation = CreateCombatantCard(changedEntity),
                 CombatantID = changedEntity.CombatantID,
-                AttackerID =  attackerID,
                 IsFriendly = changedEntity.GetComponent<FriendlyStatusComponent>().IsFriendly,
-                IsAlive = changedEntity.GetComponent<LifeStatusComponent>().IsAlive
+                IsAlive = changedEntity.GetComponent<LifeStatusComponent>().IsAlive,
+                AttackingCombatant =  CreateAttackingCombatant(attackerID, abilityType, damageDealt)
             };
             
             _combatantStateChanges.Add(combatantStateChange);
@@ -55,6 +56,16 @@ namespace IdelPog.Combat.Service.Logging
                 Attack = combatantStatsComponent.Attack,
                 Health = combatantStatsComponent.Health,
                 Speed = combatantStatsComponent.Speed
+            };
+        }
+
+        private static AttackingCombatant CreateAttackingCombatant(byte attackerID, AbilityType abilityType, uint damageDealt)
+        {
+            return new AttackingCombatant
+            {
+                CombatantID = attackerID,
+                AbilityType = abilityType,
+                DamageDealt = damageDealt
             };
         }
      }

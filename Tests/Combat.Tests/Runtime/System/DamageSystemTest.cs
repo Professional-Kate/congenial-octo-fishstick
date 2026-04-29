@@ -62,5 +62,13 @@ namespace IdelPog.Combat.Tests.Runtime.System
             AssertNewHealth(newHealth, 0);
             AssertEntityHealth(_targetEntity, newHealth);
         }
+
+        [Test]
+        public void Positive_GetCalculatedDamage_ReturnsCalculatedDamage()
+        {
+            uint calculatedDamage = _damageSystem.GetCalculatedDamage(_attackerStats.Attack, _combatantAbilityEntity);
+            
+            Assert.That(calculatedDamage, Is.EqualTo(_damageComponent.Damage + _attackerStats.Attack));
+        }
     }
 }

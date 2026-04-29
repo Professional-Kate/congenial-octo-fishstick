@@ -98,7 +98,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             CombatantAbilityEquip dualAbilityEquip = new() { CombatantID = 0, AbilityCards = [ abilityCard, abilityCard with { AbilityType = AbilityType.STRONG_ATTACK } ] };
             
             DispatchMessage(slightlyFasterHuman, slightlySlowerBear);
-            DispatchMessage(_basicAttackCreation with { Damage = 5 }, _strongAttackCreation with { Damage = 5, Cooldown = 1 });
+            DispatchMessage(_basicAttackCreation with { Damage = 5 }, _strongAttackCreation with { Damage = 5, Cooldown = _basicAttackCreation.Cooldown });
             DispatchMessage(dualAbilityEquip, _equipBasicAttack with { CombatantID = 1 });
 
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);

@@ -53,7 +53,8 @@ namespace IdelPog.Combat.Runtime.System.Mediator
             CombatantEntity targetCombatant = _targetFinder.FindBestTarget(attackingCombatant, abilityType);
             _combatantAssertion.AssertCombatantAlive(targetCombatant);
 
-            uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats.Attack, _combatantAbilityEntityRepository.Get(attackingCombatantID, abilityType));
+            CombatantAbilityEntity attackingAbility = _combatantAbilityEntityRepository.Get(attackingCombatantID, abilityType);
+            uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats.Attack, attackingAbility);
             if (newHealth == 0)
             { 
                 _deathSystem.KillEntity(targetCombatant);
@@ -63,7 +64,7 @@ namespace IdelPog.Combat.Runtime.System.Mediator
                 _combatantStoreService.RegisterCombatantChange(targetCombatant);
             }
             
-            _combatantLogger.LogCombatantChange(targetCombatant, attackingCombatant.CombatantID);
+            _combatantLogger.LogCombatantChange(targetCombatant, attackingCombatant.CombatantID, abilityType, _damageSystem.GetCalculatedDamage(attackerStats.Attack, attackingAbility));
         }
     }
 }

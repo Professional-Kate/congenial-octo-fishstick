@@ -88,6 +88,11 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             _combatantStoreServiceMock.Verify(library => library.RegisterCombatantChange(combatantEntity), times);
         }
+
+        private void VerifyGetCalculatedDamage(uint attackingCombatantAttack, CombatantAbilityEntity attackingAbility)
+        {
+            _damageSystemMock.Verify(library => library.GetCalculatedDamage(attackingCombatantAttack, attackingAbility), Times.Once);
+        }
         
         private void VerifyMocks()
         {
@@ -121,6 +126,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _entityDamageMediator.ApplyDamage(_attackingCombatant.CombatantID, AbilityType.BASIC_ATTACK);
 
             VerifyStoreRegisterCombatantChange(_targetCombatant, Times.Once());
+            VerifyGetCalculatedDamage(_attackerStatsComponent.Attack, _attackingCombatantAbility);
             VerifyMocks();
         }
 
@@ -135,6 +141,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _entityDamageMediator.ApplyDamage(_attackingCombatant.CombatantID, AbilityType.BASIC_ATTACK);
             
             _deathSystemMock.Verify(library => library.KillEntity(_targetCombatant), Times.Once);
+            VerifyGetCalculatedDamage(_attackerStatsComponent.Attack, _attackingCombatantAbility);
             VerifyMocks();
         }
 

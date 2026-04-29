@@ -108,9 +108,9 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         {
             _combatantTrackers[combatantStateChange.CombatantID].CombatantCreation = combatantStateChange.CombatantCreation;
 
-            if (_combatantTrackers.TryGetValue(combatantStateChange.AttackerID, out CombatantTracker? card) == false)
+            if (_combatantTrackers.TryGetValue(combatantStateChange.AttackingCombatant.CombatantID, out CombatantTracker? card) == false)
             {
-                _combatantTrackers.Add(combatantStateChange.AttackerID, new CombatantTracker(1));
+                _combatantTrackers.Add(combatantStateChange.AttackingCombatant.CombatantID, new CombatantTracker(1));
             }
             else
             {
