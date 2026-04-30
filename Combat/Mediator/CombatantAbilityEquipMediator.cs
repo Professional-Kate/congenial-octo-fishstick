@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Contracts;
+﻿using IdelPog.Combat.Assertion.Interface;
+using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Factory.Interface;
@@ -17,14 +18,16 @@ namespace IdelPog.Combat.Mediator
         private readonly ICombatantAbilityFactory _combatantAbilityFactory;
         private readonly IDispatchMany<CombatantAbilityEquipResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
+        private readonly ICombatantAbilityAssertion _combatantAbilityAssertion;
 
-        public CombatantAbilityEquipMediator(ICombatantAbilityEntityRepository combatantAbilityEntityRepository, ICombatantAbilityEntityFactory combatantAbilityEntityFactory, ICombatantAbilityFactory combatantAbilityFactory, IDispatchMany<CombatantAbilityEquipResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
+        public CombatantAbilityEquipMediator(ICombatantAbilityEntityRepository combatantAbilityEntityRepository, ICombatantAbilityEntityFactory combatantAbilityEntityFactory, ICombatantAbilityFactory combatantAbilityFactory, IDispatchMany<CombatantAbilityEquipResponse> responseDispatcher, ICollectionAssertion collectionAssertion, ICombatantAbilityAssertion combatantAbilityAssertion)
         {
             _combatantAbilityEntityRepository = combatantAbilityEntityRepository;
             _combatantAbilityEntityFactory = combatantAbilityEntityFactory;
             _combatantAbilityFactory = combatantAbilityFactory;
             _responseDispatcher = responseDispatcher;
             _collectionAssertion = collectionAssertion;
+            _combatantAbilityAssertion = combatantAbilityAssertion;
         }
 
         public void HandleMessages(IReadOnlyList<CombatantAbilityEquip> messages)
@@ -36,6 +39,7 @@ namespace IdelPog.Combat.Mediator
             {
                 CombatantAbilityEquip combatantAbilityEquip = messages[i];
                 _collectionAssertion.AssertHasElements(combatantAbilityEquip.AbilityCards);
+                _combatantAbilityAssertion.AssertAbilityCount(combatantAbilityEquip);
 
                 _combatantAbilityEntityRepository.Add(combatantAbilityEquip.CombatantID, _combatantAbilityEntityFactory.Create(combatantAbilityEquip));
                 

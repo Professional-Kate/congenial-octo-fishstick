@@ -189,7 +189,9 @@ namespace IdelPog.Integration.Tests.Combat
         public void Negative_LowDamage_HighHealth_ReachesMaxIterations_DispatchesError()
         {
             const uint maxIterations = 1;
-            RegisterWithOptions(new CombatOptions { MaxIterations = maxIterations });
+            const byte maxCombatantAbilities = 3;
+            
+            RegisterWithOptions(new CombatOptions { MaxIterations = maxIterations, MaxCombatantAbilities = maxCombatantAbilities });
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
             

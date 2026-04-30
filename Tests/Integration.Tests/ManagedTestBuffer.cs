@@ -36,7 +36,7 @@ namespace IdelPog.Integration.Tests
         protected void BaseSetUp()
         {
             Setup();
-            Register(new CombatOptions { MaxIterations = 10000 });
+            Register(new CombatOptions { MaxIterations = 10000, MaxCombatantAbilities = 3 });
         }
         
         private void Setup()

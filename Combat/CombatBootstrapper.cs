@@ -61,7 +61,7 @@ namespace IdelPog.Combat
             RegisterBasicEncounterDeck(bufferManager, flowRegister, bufferLogger, repositoryAsserter, combatantRepository, combatantAbilityEntityRepository, combatOptions.MaxIterations);
             RegisterCombatantCreation(bufferManager, flowRegister, bufferLogger, combatantRepository);
             RegisterAbilityCreation(bufferManager, flowRegister, bufferLogger, repositoryAsserter, abilityEntityRepository);
-            RegisterCombatantAbilityEquip(bufferManager, flowRegister, bufferLogger, combatantAbilityEntityRepository, abilityEntityRepository);
+            RegisterCombatantAbilityEquip(bufferManager, flowRegister, bufferLogger, combatantAbilityEntityRepository, abilityEntityRepository, combatOptions);
         }
 
         private static void RegisterBasicEncounterDeck(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, CombatantRepository combatantRepository, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, uint maxIterations)
@@ -150,19 +150,20 @@ namespace IdelPog.Combat
             flowRegister.RegisterBatch(controller, errorFactory);
         }
 
-        private static void RegisterCombatantAbilityEquip(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, IAssetRepository<AbilityType,AbilityEntity> skillEntityRepository)
+        private static void RegisterCombatantAbilityEquip(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, IAssetRepository<AbilityType,AbilityEntity> skillEntityRepository, CombatOptions combatOptions)
         {
             IFoundAssertion foundAssertion = new FoundAssertion();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             IUniqueAssertion uniqueAssertion = new UniqueAssertion();
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            ICombatantAbilityAssertion combatantAbilityAssertion = new CombatantAbilityAssertion() { MaxAbilities = combatOptions.MaxCombatantAbilities };
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
             
             ICombatantAbilityEntityFactory combatantAbilityEntityFactory = new CombatantAbilityEntityFactory(skillEntityRepository, repositoryAsserter, foundAssertion);
             ICombatantAbilityFactory combatantAbilityFactory = new CombatantAbilityFactory();
             IDispatchMany<CombatantAbilityEquipResponse> responseDispatcher = new ManagedDispatcher<CombatantAbilityEquipResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
-            CombatantAbilityEquipMediator mediator = new(combatantAbilityEntityRepository, combatantAbilityEntityFactory, combatantAbilityFactory, responseDispatcher, collectionAssertion);
+            CombatantAbilityEquipMediator mediator = new(combatantAbilityEntityRepository, combatantAbilityEntityFactory, combatantAbilityFactory, responseDispatcher, collectionAssertion, combatantAbilityAssertion);
             IBatchController<CombatantAbilityEquip> controller = new ManagedBatchController<CombatantAbilityEquip>(mediator);
             CombatantAbilityEquipErrorFactory errorFactory = new(new BaseErrorFactory());
             

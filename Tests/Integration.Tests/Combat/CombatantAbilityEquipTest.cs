@@ -1,9 +1,11 @@
-﻿using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat;
+using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
 using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Exceptions;
 using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Exceptions;
 
@@ -169,6 +171,30 @@ namespace IdelPog.Integration.Tests.Combat
             AssertErrorLength(1);
             AssertErrorCollection(_combatantAbilityEquip);
             AssertBaseError<NotFoundException<AbilityType>>(_errorListener.Error.BaseError);
+        }
+
+        [Test]
+        public void Negative_DispatchMessage_MoreAbilitiesThanMaximum_DispatchesError()
+        {
+            RegisterWithOptions(new CombatOptions { MaxCombatantAbilities = 1, MaxIterations = 100 });
+            ManagedSubscribe(_responseListener);
+            ManagedSubscribe(_errorListener);
+            
+            CombatantAbilityEquip tooManyAbilities = new()
+            {
+                CombatantID = 0, 
+                AbilityCards = [_abilityCard, _abilityCard with { AbilityType = AbilityType.STRONG_ATTACK }]
+            };
+            
+            DispatchMessage(_basicAttackCreation, _basicAttackCreation with { AbilityType = AbilityType.STRONG_ATTACK });
+            DispatchMessage(_combatantCreation);
+            DispatchMessage(tooManyAbilities);
+            
+            _responseListener.AssertWasCalled(false);
+            _errorListener.AssertWasCalled(true);
+            AssertErrorLength(1);
+            AssertErrorCollection(tooManyAbilities);
+            AssertBaseError<TooManyAbilitiesException>(_errorListener.Error.BaseError);
         }
     }
 }

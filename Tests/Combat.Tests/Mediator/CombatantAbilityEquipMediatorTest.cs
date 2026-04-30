@@ -1,8 +1,10 @@
-﻿using IdelPog.Combat.Contracts;
+﻿using IdelPog.Combat.Assertion;
+using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Factory.Interface;
 using IdelPog.Combat.Mediator;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -35,8 +37,9 @@ namespace IdelPog.Combat.Tests.Mediator
             _combatantAbilityEntityFactoryMock = new Mock<ICombatantAbilityEntityFactory>();
             _combatantAbilityFactoryMock = new Mock<ICombatantAbilityFactory>();
             _responseDispatcherMock = new Mock<IDispatchMany<CombatantAbilityEquipResponse>>();
+            CombatantAbilityAssertion combatantAbilityAssertion = new() { MaxAbilities = 1 };
             
-            _combatantAbilityEquipMediator = new CombatantAbilityEquipMediator(_combatantAbilityRepositoryMock.Object, _combatantAbilityEntityFactoryMock.Object, _combatantAbilityFactoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion());
+            _combatantAbilityEquipMediator = new CombatantAbilityEquipMediator(_combatantAbilityRepositoryMock.Object, _combatantAbilityEntityFactoryMock.Object, _combatantAbilityFactoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), combatantAbilityAssertion);
             
             _abilityCard = new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }};
             _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_abilityCard] };
@@ -141,6 +144,19 @@ namespace IdelPog.Combat.Tests.Mediator
         public void Negative_HandleMessages_EmptyAbilities_Throws()
         {
             Assert.Throws<EmptyCollectionException>(() => _combatantAbilityEquipMediator.HandleMessages([_combatantAbilityEquip with { AbilityCards = [] }]));
+            
+            VerifyMocks();
+        }
+
+        [Test]
+        public void Negative_HandleMessages_TooManyAbilities_Throws()
+        {
+            CombatantAbilityEquip doubleEquip = _combatantAbilityEquip with
+            {
+                AbilityCards = [_abilityCard, _abilityCard with { AbilityType = AbilityType.STRONG_ATTACK }]
+            };
+            
+            Assert.Throws<TooManyAbilitiesException>(() => _combatantAbilityEquipMediator.HandleMessages([doubleEquip]));
             
             VerifyMocks();
         }
