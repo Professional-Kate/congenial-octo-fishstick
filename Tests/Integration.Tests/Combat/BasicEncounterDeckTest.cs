@@ -191,7 +191,7 @@ namespace IdelPog.Integration.Tests.Combat
             const uint maxIterations = 1;
             const byte maxCombatantAbilities = 3;
             
-            RegisterWithOptions(new CombatOptions { MaxIterations = maxIterations, MaxCombatantAbilities = maxCombatantAbilities });
+            RegisterWithOptions(new CombatOptions { MaxIterations = maxIterations, MaxCombatantAbilitySlots = maxCombatantAbilities });
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
             

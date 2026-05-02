@@ -10,6 +10,7 @@ using IdelPog.Combat.Mediator;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
+using IdelPog.Combat.Service.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -21,6 +22,7 @@ namespace IdelPog.Combat.Tests.Mediator
     public sealed class CombatantAbilityEquipMediatorTest
     {
         private CombatantAbilityEquipMediator _combatantAbilityEquipMediator;
+        private Mock<IAbilitySlotCalculator> _abilitySlotCalculatorMock;
         private Mock<ICombatantAbilityEntityRepository> _combatantAbilityRepositoryMock;
         private Mock<ICombatantAbilityEntityFactory> _combatantAbilityEntityFactoryMock;
         private Mock<ICombatantAbilityFactory> _combatantAbilityFactoryMock;
@@ -33,13 +35,14 @@ namespace IdelPog.Combat.Tests.Mediator
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
+            _abilitySlotCalculatorMock = new Mock<IAbilitySlotCalculator>();
             _combatantAbilityRepositoryMock = new Mock<ICombatantAbilityEntityRepository>();
             _combatantAbilityEntityFactoryMock = new Mock<ICombatantAbilityEntityFactory>();
             _combatantAbilityFactoryMock = new Mock<ICombatantAbilityFactory>();
             _responseDispatcherMock = new Mock<IDispatchMany<CombatantAbilityEquipResponse>>();
-            CombatantAbilityAssertion combatantAbilityAssertion = new() { MaxAbilities = 1 };
+            CombatantAbilityAssertion combatantAbilityAssertion = new() { MaxAbilitiesSlots = 1 };
             
-            _combatantAbilityEquipMediator = new CombatantAbilityEquipMediator(_combatantAbilityRepositoryMock.Object, _combatantAbilityEntityFactoryMock.Object, _combatantAbilityFactoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), combatantAbilityAssertion);
+            _combatantAbilityEquipMediator = new CombatantAbilityEquipMediator(_abilitySlotCalculatorMock.Object, _combatantAbilityRepositoryMock.Object, _combatantAbilityEntityFactoryMock.Object, _combatantAbilityFactoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), combatantAbilityAssertion);
             
             _abilityCard = new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }};
             _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_abilityCard] };
@@ -65,6 +68,13 @@ namespace IdelPog.Combat.Tests.Mediator
             _responseDispatcherMock.VerifyNoOtherCalls();
             _combatantAbilityFactoryMock.Verify();
             _combatantAbilityFactoryMock.VerifyNoOtherCalls();
+            _abilitySlotCalculatorMock.Verify();
+            _abilitySlotCalculatorMock.VerifyNoOtherCalls();
+        }
+
+        private void SetupCalculator(params AbilityCard[] abilityCards)
+        {
+            _abilitySlotCalculatorMock.Setup(library => library.GetAbilitySlots(abilityCards)).Returns((byte) abilityCards.Length).Verifiable();
         }
 
         private void VerifyRepositoryAdd(byte combatantID)
@@ -96,6 +106,7 @@ namespace IdelPog.Combat.Tests.Mediator
         public void Positive_HandleMessages_CreatesCombatantAbility_DispatchesResponse()
         {
             SetupCombatantAbilityFactory(_combatantAbility);
+            SetupCalculator(_combatantAbilityEquip.AbilityCards);
             
             Assert.DoesNotThrow(() => _combatantAbilityEquipMediator.HandleMessages([_combatantAbilityEquip]));
 
@@ -111,6 +122,7 @@ namespace IdelPog.Combat.Tests.Mediator
         {
             CombatantAbilityEquip secondEquip = _combatantAbilityEquip with { CombatantID = 2 };
             SetupCombatantAbilityFactory(_combatantAbility, _combatantAbility);
+            SetupCalculator(secondEquip.AbilityCards);
             
             Assert.DoesNotThrow(() => _combatantAbilityEquipMediator.HandleMessages([_combatantAbilityEquip, secondEquip]));
 
@@ -155,6 +167,7 @@ namespace IdelPog.Combat.Tests.Mediator
             {
                 AbilityCards = [_abilityCard, _abilityCard with { AbilityType = AbilityType.STRONG_ATTACK }]
             };
+            SetupCalculator(doubleEquip.AbilityCards);
             
             Assert.Throws<TooManyAbilitiesException>(() => _combatantAbilityEquipMediator.HandleMessages([doubleEquip]));
             

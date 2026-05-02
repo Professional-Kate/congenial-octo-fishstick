@@ -30,11 +30,16 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             _repositoryMock = new Mock<IAssetRepository<AbilityType, AbilityEntity>>();
             IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             
-            _combatantAbilityEntityFactory = new CombatantAbilityEntityFactory(_repositoryMock.Object, repositoryAsserter, new FoundAssertion());
+            _combatantAbilityEntityFactory = new CombatantAbilityEntityFactory(_repositoryMock.Object, repositoryAsserter);
 
             _abilityCard = new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }};
             _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_abilityCard] };
-            _abilityEntity = new AbilityEntity(repositoryAsserter, new CooldownComponent { Cooldown = 10 }, new DamageComponent { Damage = 20 }) { AbilityType = AbilityType.BASIC_ATTACK, Information = new Information { Name = "", Description = "" }};
+            _abilityEntity = new AbilityEntity(repositoryAsserter, new CooldownComponent { Cooldown = 10 }, new DamageComponent { Damage = 20 })
+            {
+                AbilityType = AbilityType.BASIC_ATTACK, 
+                Information = new Information { Name = "", Description = "" },
+                AbilitySlots = 1
+            };
         }
 
         [SetUp]
@@ -47,11 +52,6 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         {
             _repositoryMock.Verify();
             _repositoryMock.VerifyNoOtherCalls();
-        }
-
-        private void SetupRepositoryContains(AbilityType abilityType)
-        {
-            _repositoryMock.Setup(library => library.Contains(abilityType)).Returns(true).Verifiable();
         }
 
         private void SetupRepositoryGet(AbilityEntity abilityEntity)
@@ -79,7 +79,6 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         [Test]
         public void Positive_Create_CreatesNewEntity_AddsExpectedComponents()
         {
-            SetupRepositoryContains(_abilityCard.AbilityType);
             SetupRepositoryGet(_abilityEntity);
             
             IReadOnlyList<CombatantAbilityEntity> combatantAbilityEntities = _combatantAbilityEntityFactory.Create(_combatantAbilityEquip);
@@ -94,7 +93,6 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         {
             CombatantAbilityEquip doubleEquip = _combatantAbilityEquip with { AbilityCards = [_abilityCard, _abilityCard] };
             
-            SetupRepositoryContains(_abilityCard.AbilityType);
             SetupRepositoryGet(_abilityEntity);
             
             IReadOnlyList<CombatantAbilityEntity> combatantAbilityEntities = _combatantAbilityEntityFactory.Create(doubleEquip);
@@ -119,9 +117,11 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         [Test]
         public void Negative_Create_AbilityNotFound_Throws()
         {
+            _repositoryMock.Setup(library => library.Get(_abilityCard.AbilityType))
+                .Throws(new NotFoundException<AbilityType>(_abilityEntity.AbilityType)).Verifiable();
+            
             Assert.Throws<NotFoundException<AbilityType>>(() => _combatantAbilityEntityFactory.Create(_combatantAbilityEquip));
             
-            _repositoryMock.Verify(library => library.Contains(_abilityCard.AbilityType), Times.Once);
             VerifyRepository();
         }
     }

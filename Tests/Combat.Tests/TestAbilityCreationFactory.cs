@@ -18,7 +18,8 @@ namespace IdelPog.Combat.Tests
                 Information = new Information { Name = "", Description = "" },
                 AbilityType = abilityType,
                 Cooldown = speed,
-                Damage = damage
+                Damage = damage,
+                AbilitySlots = 1
             };
         }
     }

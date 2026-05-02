@@ -54,6 +54,7 @@ namespace IdelPog.Combat.Mediator
             {
                 Information = abilityCreation.Information, 
                 AbilityType =  abilityCreation.AbilityType, 
+                AbilitySlots =  abilityCreation.AbilitySlots,
                 Cooldown =  abilityCreation.Cooldown,
                 Damage = abilityCreation.Damage
             };

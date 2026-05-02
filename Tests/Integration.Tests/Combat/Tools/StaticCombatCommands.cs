@@ -41,7 +41,8 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             AbilityType = AbilityType.BASIC_ATTACK, 
             Damage = 1, 
             Cooldown = 5,
-            Information = new Information { Name = "Basic Attack!", Description = "Kinda weak.." }
+            Information = new Information { Name = "Basic Attack!", Description = "Kinda weak.." },
+            AbilitySlots = 1
         };
         
         internal static readonly AbilityCreation StrongAttackCreation = new()
@@ -49,7 +50,8 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             AbilityType = AbilityType.STRONG_ATTACK, 
             Damage = 5, 
             Cooldown = 15,
-            Information = new Information { Name = "Strong attack!", Description = "Wack them!!!" }
+            Information = new Information { Name = "Strong attack!", Description = "Wack them!!!" },
+            AbilitySlots = 1
         };
 
         internal static CombatantAbilityEquip EquipBasicAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.BASIC_ATTACK);

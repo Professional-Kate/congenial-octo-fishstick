@@ -33,7 +33,8 @@ namespace IdelPog.Integration.Tests.Combat
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
                 AbilityType = AbilityType.BASIC_ATTACK,
                 Cooldown = 9,
-                Damage = 3
+                Damage = 3,
+                AbilitySlots = 1
             };
             
             _combatantCreation = new CombatantCreation
@@ -176,7 +177,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_DispatchMessage_MoreAbilitiesThanMaximum_DispatchesError()
         {
-            RegisterWithOptions(new CombatOptions { MaxCombatantAbilities = 1, MaxIterations = 100 });
+            RegisterWithOptions(new CombatOptions { MaxCombatantAbilitySlots = 1, MaxIterations = 100 });
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
             

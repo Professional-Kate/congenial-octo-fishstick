@@ -26,7 +26,8 @@ namespace IdelPog.Integration.Tests.Combat
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
                 AbilityType = AbilityType.BASIC_ATTACK,
                 Cooldown = 9,
-                Damage = 3
+                Damage = 3,
+                AbilitySlots = 1
             };
         }
 

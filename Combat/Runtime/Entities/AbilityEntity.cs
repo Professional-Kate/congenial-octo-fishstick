@@ -9,6 +9,7 @@ namespace IdelPog.Combat.Runtime.Entities
     public sealed record AbilityEntity : Entity
     {
         public required AbilityType AbilityType { get; init; }
+        public required byte AbilitySlots { get; init; }
         public required Information Information { get; init; }
         
         public AbilityEntity(IRepositoryAsserter repositoryAsserter, CooldownComponent cooldownComponent, DamageComponent damageComponent) 

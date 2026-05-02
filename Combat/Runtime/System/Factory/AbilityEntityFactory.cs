@@ -23,6 +23,7 @@ namespace IdelPog.Combat.Runtime.System.Factory
             return new AbilityEntity(_repositoryAsserter, cooldownComponent, damageComponent)
             {
                 AbilityType = abilityCreation.AbilityType,
+                AbilitySlots = abilityCreation.AbilitySlots,
                 Information = abilityCreation.Information
             };
         }
