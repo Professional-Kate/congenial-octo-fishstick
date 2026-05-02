@@ -26,7 +26,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         {
             _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(1, AbilityType.BASIC_ATTACK);
 
-            _damageComponent = new DamageComponent { Damage = 10 };
+            _damageComponent = new DamageComponent { PhysicalDamage = 10, ColdDamage = 1, LightningDamage = 1, FireDamage = 1 };
             _cooldownComponent = new CooldownComponent { Cooldown = 5 };
             _combatantAbilityEntity.AddComponent(_damageComponent);
             _combatantAbilityEntity.AddComponent(_cooldownComponent);
@@ -37,7 +37,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             Assert.Multiple(() =>
             {
                 Assert.That(combatantAbility.AbilityType, Is.EqualTo(sourceEntity.AbilityType));
-                Assert.That(combatantAbility.Damage, Is.EqualTo(_damageComponent.Damage));
+                Assert.That(combatantAbility.DamageCard.PhysicalDamage, Is.EqualTo(_damageComponent.PhysicalDamage));
                 Assert.That(combatantAbility.Cooldown, Is.EqualTo(_cooldownComponent.Cooldown));
             });
         }

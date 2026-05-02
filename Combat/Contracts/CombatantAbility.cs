@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
+using IdelPog.Combat.Contracts.Card;
 
 namespace IdelPog.Combat.Contracts
 {
@@ -6,6 +7,6 @@ namespace IdelPog.Combat.Contracts
     {
         public required AbilityType AbilityType { get; init; }
         public required double Cooldown { get; init; }
-        public required uint Damage { get; init; }
+        public required DamageCard DamageCard { get; init; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Core.Contracts;
 
@@ -18,7 +19,7 @@ namespace IdelPog.Combat.Tests
                 Information = new Information { Name = "", Description = "" },
                 AbilityType = abilityType,
                 Cooldown = speed,
-                Damage = damage,
+                DamageCard = new DamageCard { PhysicalDamage = damage,  LightningDamage = 0, FireDamage = 0, ColdDamage = 0 },
                 AbilitySlots = 1
             };
         }

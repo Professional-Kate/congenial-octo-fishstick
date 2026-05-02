@@ -1,6 +1,7 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Ability;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
@@ -46,7 +47,7 @@ namespace IdelPog.Combat.Tests.Mediator
             
             _abilityCard = new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }};
             _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_abilityCard] };
-            _combatantAbility = new CombatantAbility { AbilityType = _abilityCard.AbilityType, Damage = 10, Cooldown = 15 };
+            _combatantAbility = new CombatantAbility { AbilityType = _abilityCard.AbilityType, DamageCard = new DamageCard { PhysicalDamage = 10, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 }, Cooldown = 15 };
         }
 
         [SetUp]

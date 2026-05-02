@@ -1,8 +1,6 @@
-﻿using IdelPog.ECS.Component;
-
-namespace IdelPog.Combat.Runtime.Component
+﻿namespace IdelPog.Combat.Contracts.Card
 {
-    public readonly record struct DamageComponent : IComponent
+    public readonly record struct DamageCard
     {
         public required uint PhysicalDamage { get; init; }
         public required uint LightningDamage { get; init; }

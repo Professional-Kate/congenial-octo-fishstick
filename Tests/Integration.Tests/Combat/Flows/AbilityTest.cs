@@ -76,7 +76,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             CombatantCreation slightlySlowerBear = _bearCreation with { StatCard = new StatCard { Health = 10, Attack = 100, Speed = 9 } };
             
             DispatchMessage(slightlyFasterHuman, slightlySlowerBear);
-            DispatchMessage(_strongAttackCreation with { Damage = abilityDamage });
+            DispatchMessage(_strongAttackCreation with { DamageCard = _strongAttackCreation.DamageCard with { PhysicalDamage = abilityDamage } });
             DispatchMessage(_equipStrongAttack, _equipStrongAttack with { CombatantID = 1 });
 
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);
@@ -98,7 +98,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             CombatantAbilityEquip dualAbilityEquip = new() { CombatantID = 0, AbilityCards = [ abilityCard, abilityCard with { AbilityType = AbilityType.STRONG_ATTACK } ] };
             
             DispatchMessage(slightlyFasterHuman, slightlySlowerBear);
-            DispatchMessage(_basicAttackCreation with { Damage = 5 }, _strongAttackCreation with { Damage = 5, Cooldown = _basicAttackCreation.Cooldown });
+            DispatchMessage(_basicAttackCreation with { DamageCard = _strongAttackCreation.DamageCard with { PhysicalDamage = 5 }}, _strongAttackCreation with { DamageCard = _strongAttackCreation.DamageCard with { PhysicalDamage = 5 }, Cooldown = _basicAttackCreation.Cooldown });
             DispatchMessage(dualAbilityEquip, _equipBasicAttack with { CombatantID = 1 });
 
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);

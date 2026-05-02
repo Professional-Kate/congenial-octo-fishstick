@@ -20,7 +20,7 @@ namespace IdelPog.Combat.Runtime.System
         {
             DamageComponent damageComponent = attackerAbility.GetComponent<DamageComponent>();
             
-            return attackerAttack + damageComponent.Damage;
+            return attackerAttack + damageComponent.PhysicalDamage;
         }
 
         private static uint CalculateNewHealth(uint defenderHealth, uint calculatedDamage)

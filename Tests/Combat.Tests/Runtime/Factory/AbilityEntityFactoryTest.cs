@@ -3,8 +3,6 @@ using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Runtime.System.Factory;
-using IdelPog.Core.Repository.Asserter;
-using IdelPog.Core.Validation.Assertion;
 
 namespace IdelPog.Combat.Tests.Runtime.Factory
 {
@@ -18,7 +16,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         [OneTimeSetUp]
         public void OneTimeSetup()
         { 
-            _abilityEntityFactory = new AbilityEntityFactory(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
+            _abilityEntityFactory = new AbilityEntityFactory();
             _abilityCreation = TestAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
         }
 
@@ -30,7 +28,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
                 Assert.That(abilityEntity.AbilityType, Is.EqualTo(abilityCreation.AbilityType));
                 Assert.That(abilityEntity.Information, Is.EqualTo(abilityCreation.Information));
                 Assert.That(abilityEntity.GetComponent<CooldownComponent>().Cooldown, Is.EqualTo(abilityCreation.Cooldown));
-                Assert.That(abilityEntity.GetComponent<DamageComponent>().Damage, Is.EqualTo(abilityCreation.Damage));
+                Assert.That(abilityEntity.GetComponent<DamageComponent>().PhysicalDamage, Is.EqualTo(abilityCreation.DamageCard.PhysicalDamage));
             });
         }
 

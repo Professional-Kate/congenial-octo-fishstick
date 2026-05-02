@@ -2,18 +2,22 @@
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Core.Contracts;
-using IdelPog.Core.Repository.Asserter;
-using IdelPog.Core.Validation.Assertion;
 
 namespace IdelPog.Combat.Tests
 {
     internal static class TestAbilityEntityFactory
     {
-        private static readonly RepositoryAsserter _repositoryAsserter = new(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
-        
         internal static AbilityEntity Create(AbilityType abilityType, byte abilitySlots)
         {
-            return new AbilityEntity(_repositoryAsserter, new CooldownComponent { Cooldown = 1 }, new DamageComponent { Damage = 1 })
+            DamageComponent damageComponent = new()
+            {
+                PhysicalDamage = 1,
+                LightningDamage = 0,
+                ColdDamage = 0,
+                FireDamage = 0
+            };
+            
+            return new AbilityEntity(new CooldownComponent { Cooldown = 1 }, damageComponent)
             {
                 AbilityType = abilityType,
                 AbilitySlots = abilitySlots,

@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Contracts;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Factory.Interface;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -12,7 +13,7 @@ namespace IdelPog.Combat.Factory
             return new CombatantAbility
             {
                 AbilityType = combatantAbilityEntity.AbilityType,
-                Damage = combatantAbilityEntity.GetComponent<DamageComponent>().Damage,
+                DamageCard = CreateDamageCard(combatantAbilityEntity),
                 Cooldown = combatantAbilityEntity.GetComponent<CooldownComponent>().Cooldown
             };
         }
@@ -26,6 +27,19 @@ namespace IdelPog.Combat.Factory
             }
 
             return combatantAbilities;
+        }
+
+        private static DamageCard CreateDamageCard(CombatantAbilityEntity combatantAbilityEntity)
+        {
+            DamageComponent damageComponent = combatantAbilityEntity.GetComponent<DamageComponent>();
+
+            return new DamageCard
+            {
+                PhysicalDamage = damageComponent.PhysicalDamage,
+                LightningDamage = 0,
+                FireDamage = 0,
+                ColdDamage = 0
+            };
         }
     }
 }

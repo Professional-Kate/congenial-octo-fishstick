@@ -6,9 +6,7 @@ using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory;
 using IdelPog.Core.Contracts;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.Asset;
-using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
 
@@ -28,13 +26,12 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         public void OneTimeSetup()
         {
             _repositoryMock = new Mock<IAssetRepository<AbilityType, AbilityEntity>>();
-            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             
-            _combatantAbilityEntityFactory = new CombatantAbilityEntityFactory(_repositoryMock.Object, repositoryAsserter);
+            _combatantAbilityEntityFactory = new CombatantAbilityEntityFactory(_repositoryMock.Object);
 
             _abilityCard = new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }};
             _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_abilityCard] };
-            _abilityEntity = new AbilityEntity(repositoryAsserter, new CooldownComponent { Cooldown = 10 }, new DamageComponent { Damage = 20 })
+            _abilityEntity = new AbilityEntity(new CooldownComponent { Cooldown = 10 }, new DamageComponent { PhysicalDamage = 20, LightningDamage = 0, ColdDamage = 0, FireDamage = 0 })
             {
                 AbilityType = AbilityType.BASIC_ATTACK, 
                 Information = new Information { Name = "", Description = "" },

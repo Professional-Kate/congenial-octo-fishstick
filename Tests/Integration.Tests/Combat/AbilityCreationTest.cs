@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Error;
 using IdelPog.Combat.Contracts.Response;
@@ -26,7 +27,7 @@ namespace IdelPog.Integration.Tests.Combat
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
                 AbilityType = AbilityType.BASIC_ATTACK,
                 Cooldown = 9,
-                Damage = 3,
+                DamageCard = new DamageCard { PhysicalDamage = 3, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
                 AbilitySlots = 1
             };
         }
@@ -65,7 +66,7 @@ namespace IdelPog.Integration.Tests.Combat
                 Assert.That(basicEncounterDeck.Information, Is.EqualTo(expected.Information));
                 Assert.That(basicEncounterDeck.AbilityType, Is.EqualTo(expected.AbilityType));
                 Assert.That(basicEncounterDeck.Cooldown, Is.EqualTo(expected.Cooldown));
-                Assert.That(basicEncounterDeck.Damage, Is.EqualTo(expected.Damage));
+                Assert.That(basicEncounterDeck.DamageCard, Is.EqualTo(expected.DamageCard));
             });
         }
         
@@ -105,7 +106,8 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_DispatchCommands_CreatesMultipleSkills()
         {
-            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityType = (AbilityType) 2, Damage = 1, Cooldown = 4 };
+            DamageCard oneDamageCard = _basicAttackCreation.DamageCard with { PhysicalDamage = 1 };
+            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityType = (AbilityType) 2, DamageCard = oneDamageCard, Cooldown = 4 };
             Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(_basicAttackCreation, abilityCreation));
             
             AssertResponseListenerCalled(true);

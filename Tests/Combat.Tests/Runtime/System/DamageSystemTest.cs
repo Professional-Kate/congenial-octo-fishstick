@@ -23,7 +23,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _damageSystem = new DamageSystem();
 
             _attackerStats = new StatCard { Attack = 1, Health = 10, Speed = 5 };
-            _damageComponent = new DamageComponent { Damage = 1 };
+            _damageComponent = new DamageComponent { PhysicalDamage = 1, LightningDamage = 1, ColdDamage = 1, FireDamage = 1 };
         }
 
         [SetUp]
@@ -50,7 +50,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             uint newHealth = _damageSystem.DealDamage(_targetEntity, _attackerStats.Attack, _combatantAbilityEntity);
             
-            AssertNewHealth(newHealth,_combatantStatsComponent.Health - _attackerStats.Attack - _damageComponent.Damage);
+            AssertNewHealth(newHealth,_combatantStatsComponent.Health - _attackerStats.Attack - _damageComponent.PhysicalDamage);
             AssertEntityHealth(_targetEntity, newHealth);
         }
         
@@ -68,7 +68,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             uint calculatedDamage = _damageSystem.GetCalculatedDamage(_attackerStats.Attack, _combatantAbilityEntity);
             
-            Assert.That(calculatedDamage, Is.EqualTo(_damageComponent.Damage + _attackerStats.Attack));
+            Assert.That(calculatedDamage, Is.EqualTo(_damageComponent.PhysicalDamage + _attackerStats.Attack));
         }
     }
 }

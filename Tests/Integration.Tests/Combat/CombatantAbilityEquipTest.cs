@@ -33,7 +33,7 @@ namespace IdelPog.Integration.Tests.Combat
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
                 AbilityType = AbilityType.BASIC_ATTACK,
                 Cooldown = 9,
-                Damage = 3,
+                DamageCard = new DamageCard { PhysicalDamage = 3, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
                 AbilitySlots = 1
             };
             
@@ -71,7 +71,7 @@ namespace IdelPog.Integration.Tests.Combat
                 Assert.Multiple(() =>
                 {
                     Assert.That(response.CombatantAbilities[i].AbilityType, Is.EqualTo(sourceAbilityCard.AbilityType));
-                    Assert.That(response.CombatantAbilities[i].Damage, Is.EqualTo(abilityCreation.Damage));
+                    Assert.That(response.CombatantAbilities[i].DamageCard, Is.EqualTo(abilityCreation.DamageCard));
                     Assert.That(response.CombatantAbilities[i].Cooldown, Is.EqualTo(abilityCreation.Cooldown));
                 });
             }

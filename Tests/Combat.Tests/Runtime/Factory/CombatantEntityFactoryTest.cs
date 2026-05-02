@@ -3,8 +3,6 @@ using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory;
-using IdelPog.Core.Repository.Asserter;
-using IdelPog.Core.Validation.Assertion;
 
 namespace IdelPog.Combat.Tests.Runtime.Factory
 {
@@ -18,7 +16,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _combatService = new CombatantEntityFactory(new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion()));
+            _combatService = new CombatantEntityFactory();
 
             _wolfCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, new StatCard { Health = 3, Attack = 5, Speed = 5 });
         }

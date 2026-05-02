@@ -30,6 +30,8 @@ namespace IdelPog.ECS.Entity
 
         public void AddComponent(IComponent component)
         {
+            _componentAssertion.AssertUnique<IComponent>(_componentMap.ContainsKey(component.GetType()));
+            
             _componentMap.Add(component.GetType(), component);
         }
 
@@ -47,6 +49,8 @@ namespace IdelPog.ECS.Entity
 
         public TComponent GetComponent<TComponent>() where TComponent : IComponent
         {
+            _componentAssertion.AssertFound<TComponent>(_componentMap.ContainsKey(typeof(TComponent)));
+            
             return (TComponent) _componentMap[typeof(TComponent)];
         }
 

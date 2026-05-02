@@ -39,7 +39,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         internal static readonly AbilityCreation BasicAttackCreation = new()
         {
             AbilityType = AbilityType.BASIC_ATTACK, 
-            Damage = 1, 
+            DamageCard = new DamageCard { PhysicalDamage = 1, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
             Cooldown = 5,
             Information = new Information { Name = "Basic Attack!", Description = "Kinda weak.." },
             AbilitySlots = 1
@@ -48,7 +48,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         internal static readonly AbilityCreation StrongAttackCreation = new()
         {
             AbilityType = AbilityType.STRONG_ATTACK, 
-            Damage = 5, 
+            DamageCard = new DamageCard { PhysicalDamage = 5, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
             Cooldown = 15,
             Information = new Information { Name = "Strong attack!", Description = "Wack them!!!" },
             AbilitySlots = 1
