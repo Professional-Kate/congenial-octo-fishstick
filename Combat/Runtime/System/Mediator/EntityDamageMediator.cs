@@ -7,7 +7,6 @@ using IdelPog.Combat.Runtime.System.Mediator.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service.Logging.Interface;
-using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Runtime.System.Mediator
 {
@@ -20,13 +19,10 @@ namespace IdelPog.Combat.Runtime.System.Mediator
         private readonly IDeathSystem _deathSystem;
         private readonly ICombatantStoreService _combatantStoreService;
         private readonly ICombatantLogger _combatantLogger;
-        private readonly IFoundAssertion _foundAssertion;
         private readonly ICombatantAssertion _combatantAssertion;
-        private readonly INumberAssertion _numberAssertion;
 
         public EntityDamageMediator(ICombatantRepository combatantRepository, ITargetFinder targetFinder, IDamageSystem damageSystem,
-            ICombatantAbilityEntityRepository abilityEntityRepository, IDeathSystem deathSystem, ICombatantStoreService combatantStoreService, ICombatantLogger combatantLogger, 
-            IFoundAssertion foundAssertion, ICombatantAssertion combatantAssertion, INumberAssertion numberAssertion)
+            ICombatantAbilityEntityRepository abilityEntityRepository, IDeathSystem deathSystem, ICombatantStoreService combatantStoreService, ICombatantLogger combatantLogger, ICombatantAssertion combatantAssertion)
         {
             _combatantRepository = combatantRepository;
             _targetFinder = targetFinder;
@@ -34,26 +30,17 @@ namespace IdelPog.Combat.Runtime.System.Mediator
             _combatantAbilityEntityRepository = abilityEntityRepository;
             _deathSystem = deathSystem;
             _combatantStoreService = combatantStoreService;
-            _foundAssertion = foundAssertion;
             _combatantAssertion = combatantAssertion;
-            _numberAssertion = numberAssertion;
             _combatantLogger = combatantLogger;
         }
 
         public void ApplyDamage(byte attackingCombatantID, AbilityType abilityType)
         {
-            _foundAssertion.AssertFound(attackingCombatantID, _combatantRepository.Contains(attackingCombatantID));
-            
-            CombatantEntity attackingCombatant = _combatantRepository.Get(attackingCombatantID);
-            _combatantAssertion.AssertCombatantAlive(attackingCombatant);
-            
-            CombatantStatsComponent attackerStats = attackingCombatant.GetComponent<CombatantStatsComponent>();
-            _numberAssertion.AssertNumberNotZero(attackerStats.Attack, attackerStats.ToString());
-            
-            CombatantEntity targetCombatant = _targetFinder.FindBestTarget(attackingCombatant, abilityType);
-            _combatantAssertion.AssertCombatantAlive(targetCombatant);
+            (CombatantEntity attackingCombatant, CombatantEntity targetCombatant) = GetCombatantEntities(attackingCombatantID, abilityType);
 
+            CombatantStatsComponent attackerStats = attackingCombatant.GetComponent<CombatantStatsComponent>();
             CombatantAbilityEntity attackingAbility = _combatantAbilityEntityRepository.Get(attackingCombatantID, abilityType);
+            
             uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats.Attack, attackingAbility);
             if (newHealth == 0)
             { 
@@ -65,6 +52,23 @@ namespace IdelPog.Combat.Runtime.System.Mediator
             }
             
             _combatantLogger.LogCombatantChange(targetCombatant, attackingCombatant.CombatantID, abilityType, _damageSystem.GetCalculatedDamage(attackerStats.Attack, attackingAbility));
+        }
+
+        /// <summary>
+        /// Gets and validates both <see cref="CombatantEntity"/> needed for a damage event
+        /// </summary>
+        /// <param name="attackingCombatantID">The ID of the attacking combatant</param>
+        /// <param name="abilityType">What Ability the attacking Combatant is using</param>
+        /// <returns>a tuple of (CombatantEntity, CombatantEntity), the first is the attacker, the second is the target</returns>
+        private (CombatantEntity attackingCombatant, CombatantEntity targetCombatant) GetCombatantEntities(byte attackingCombatantID, AbilityType abilityType)
+        {
+            CombatantEntity attackingCombatant = _combatantRepository.Get(attackingCombatantID);
+            _combatantAssertion.AssertCombatantAlive(attackingCombatant);
+            
+            CombatantEntity targetCombatant = _targetFinder.FindBestTarget(attackingCombatant, abilityType);
+            _combatantAssertion.AssertCombatantAlive(targetCombatant);
+            
+            return (attackingCombatant, targetCombatant);
         }
     }
 }

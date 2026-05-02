@@ -110,7 +110,7 @@ namespace IdelPog.Combat
             IDamageSystem damageSystem = new DamageSystem();
             IDeathSystem deathSystem = new DeathSystem(combatStateService, combatantStoreService, combatantAssertion);
             
-            return new EntityDamageMediator(combatantRepository, targetFinder, damageSystem, combatantAbilityEntityRepository, deathSystem, combatantStoreService, combatantLogger, foundAssertion, combatantAssertion, numberAssertion);
+            return new EntityDamageMediator(combatantRepository, targetFinder, damageSystem, combatantAbilityEntityRepository, deathSystem, combatantStoreService, combatantLogger, combatantAssertion);
         }
 
         private static void RegisterCombatantCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, ICombatantRepository combatantRepository)
