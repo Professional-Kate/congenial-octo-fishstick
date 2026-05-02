@@ -47,7 +47,7 @@ namespace IdelPog.Console
             INumberAssertion numberAssertion = new NumberAssertion();
 
             DomainComponent permissionDomain = new() { AllowedDomain = Domain.PERMISSION };
-            IEntity allowedDomainEntity = new AllowedDomainsEntity(repositoryAsserter, [permissionDomain]);
+            IEntity allowedDomainEntity = new AllowedDomainsEntity([permissionDomain]);
 
             IAssetRepository<Domain, ICommandDomainResolver> commandRepository = new AssetRepository<Domain, ICommandDomainResolver>(repositoryAsserter);
 

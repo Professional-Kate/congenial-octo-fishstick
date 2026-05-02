@@ -60,7 +60,7 @@ namespace IdelPog.Combat
             
             RegisterBasicEncounterDeck(bufferManager, flowRegister, bufferLogger, repositoryAsserter, combatantRepository, combatantAbilityEntityRepository, combatOptions.MaxIterations);
             RegisterCombatantCreation(bufferManager, flowRegister, bufferLogger, combatantRepository);
-            RegisterAbilityCreation(bufferManager, flowRegister, bufferLogger, repositoryAsserter, abilityEntityRepository);
+            RegisterAbilityCreation(bufferManager, flowRegister, bufferLogger, abilityEntityRepository);
             RegisterCombatantAbilityEquip(bufferManager, flowRegister, bufferLogger, combatantAbilityEntityRepository, abilityEntityRepository, combatOptions);
         }
 
@@ -104,7 +104,6 @@ namespace IdelPog.Combat
             IFoundAssertion foundAssertion = new FoundAssertion();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             ICombatantAssertion combatantAssertion = new CombatantAssertion();
-            INumberAssertion numberAssertion = new NumberAssertion();
             
             ITargetFinder targetFinder = new EnemyTargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantAbilityEntityRepository, combatantRepository, objectNullAssertion, foundAssertion);
             IDamageSystem damageSystem = new DamageSystem();
@@ -115,15 +114,12 @@ namespace IdelPog.Combat
 
         private static void RegisterCombatantCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, ICombatantRepository combatantRepository)
         {
-            IFoundAssertion foundAssertion = new FoundAssertion();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
             INumberAssertion numberAssertion = new NumberAssertion();
-            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
             IStatCardAsserter statCardAsserter = new StatCardAsserter(numberAssertion);
             
-            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory(repositoryAsserter);
+            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory();
             IDispatchMany<CombatantCreationResponse> responseDispatcher =  new ManagedDispatcher<CombatantCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             CombatantCreationMediator mediator = new(combatantRepository, combatantEntityFactory, responseDispatcher, collectionAssertion, statCardAsserter);
@@ -133,14 +129,14 @@ namespace IdelPog.Combat
             flowRegister.RegisterBatch(controller, errorFactory);
         }
         
-        private static void RegisterAbilityCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository)
+        private static void RegisterAbilityCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository)
         {
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             IUniqueAssertion uniqueAssertion = new UniqueAssertion();
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
             INumberAssertion numberAssertion = new NumberAssertion();
             
-            IAbilityEntityFactory abilityEntityFactory = new AbilityEntityFactory(repositoryAsserter);
+            IAbilityEntityFactory abilityEntityFactory = new AbilityEntityFactory();
             IDispatchMany<AbilityCreationResponse> responseDispatcher = new ManagedDispatcher<AbilityCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             AbilityCreationMediator mediator = new(skillEntityRepository, abilityEntityFactory, responseDispatcher, collectionAssertion, uniqueAssertion, numberAssertion);
@@ -152,15 +148,12 @@ namespace IdelPog.Combat
 
         private static void RegisterCombatantAbilityEquip(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, IAssetRepository<AbilityType,AbilityEntity> abilityEntityRepository, CombatOptions combatOptions)
         {
-            IFoundAssertion foundAssertion = new FoundAssertion();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
-            IUniqueAssertion uniqueAssertion = new UniqueAssertion();
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
             ICombatantAbilityAssertion combatantAbilityAssertion = new CombatantAbilityAssertion() { MaxAbilitiesSlots = combatOptions.MaxCombatantAbilitySlots };
-            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(foundAssertion, objectNullAssertion, uniqueAssertion);
 
             IAbilitySlotCalculator abilitySlotCalculator = new AbilitySlotCalculator(abilityEntityRepository);
-            ICombatantAbilityEntityFactory combatantAbilityEntityFactory = new CombatantAbilityEntityFactory(abilityEntityRepository, repositoryAsserter);
+            ICombatantAbilityEntityFactory combatantAbilityEntityFactory = new CombatantAbilityEntityFactory(abilityEntityRepository);
             ICombatantAbilityFactory combatantAbilityFactory = new CombatantAbilityFactory();
             IDispatchMany<CombatantAbilityEquipResponse> responseDispatcher = new ManagedDispatcher<CombatantAbilityEquipResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             

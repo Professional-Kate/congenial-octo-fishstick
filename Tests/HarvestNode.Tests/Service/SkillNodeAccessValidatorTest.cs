@@ -1,5 +1,4 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -21,8 +20,7 @@ namespace IdelPog.HarvestNode.Tests.Service
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
-            _skillNodeEntity = new SkillNodeEntity(repositoryAsserter,[new HarvestTargetComponent { HarvestTarget = ResourceID.COPPER_CLUSTER}]) { SkillID = SkillID.FORAGING };
+            _skillNodeEntity = new SkillNodeEntity([new HarvestTargetComponent { HarvestTarget = ResourceID.COPPER_CLUSTER}]) { SkillID = SkillID.FORAGING };
             _repositoryMock = new Mock<IAssetRepository<SkillID, SkillNodeEntity>>();
             
             _skillNodeAccessValidator = new SkillNodeAccessValidator(_repositoryMock.Object, new FoundAssertion());

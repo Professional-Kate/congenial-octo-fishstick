@@ -1,5 +1,4 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.ECS.Component;
 using IdelPog.ECS.Entity;
 
@@ -11,8 +10,8 @@ namespace IdelPog.HarvestNode.Runtime.ECS
         
         private readonly ComponentStore<HarvestTargetComponent> _harvestTargetStore;
         
-        public SkillNodeEntity(IRepositoryAsserter repositoryAsserter, HarvestTargetComponent[] allowedNodes)
-            : base(repositoryAsserter, new ComponentStore<HarvestTargetComponent>(allowedNodes))
+        public SkillNodeEntity(HarvestTargetComponent[] allowedNodes)
+            : base(new ComponentStore<HarvestTargetComponent>(allowedNodes))
         {
             _harvestTargetStore = GetComponent<ComponentStore<HarvestTargetComponent>>();
         }

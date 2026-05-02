@@ -1,7 +1,5 @@
 ﻿using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.Asset;
-using IdelPog.Core.Validation.Assertion;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Progression.Runtime;
 using IdelPog.Progression.Runtime.Component;
@@ -23,13 +21,12 @@ namespace IdelPog.Progression.Tests.System
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            IRepositoryAsserter repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             _repositoryMock = new Mock<IAssetRepository<SkillID, UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>>>();
             
             _unlockChecker = new EntityUnlockChecker<SkillID, HarvestNodeUnlockResponse>(_repositoryMock.Object);
 
             _foragingResponse = new HarvestNodeUnlockResponse { SkillID = SkillID.FORAGING, ResourceID = ResourceID.RIVER };
-            _unlockRequirementsEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>(repositoryAsserter, [new LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> { ID = SkillID.FORAGING, Level = 1, OnUnlockCommand = _foragingResponse }
+            _unlockRequirementsEntity = new UnlockRequirementsEntity<SkillID, HarvestNodeUnlockResponse>([new LevelRequirementComponent<SkillID, HarvestNodeUnlockResponse> { ID = SkillID.FORAGING, Level = 1, OnUnlockCommand = _foragingResponse }
             ]);
         }
 

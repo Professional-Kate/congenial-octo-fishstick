@@ -5,7 +5,6 @@ using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Repository.Asset;
 
 namespace IdelPog.Combat.Runtime.System.Factory
@@ -13,12 +12,10 @@ namespace IdelPog.Combat.Runtime.System.Factory
     public sealed class CombatantAbilityEntityFactory : ICombatantAbilityEntityFactory
     {
         private readonly IAssetRepository<AbilityType, AbilityEntity> _skillEntityRepository;
-        private readonly IRepositoryAsserter _repositoryAsserter;
 
-        public CombatantAbilityEntityFactory(IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository, IRepositoryAsserter repositoryAsserter)
+        public CombatantAbilityEntityFactory(IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository)
         {
             _skillEntityRepository = skillEntityRepository;
-            _repositoryAsserter = repositoryAsserter;
         }
 
         public IReadOnlyList<CombatantAbilityEntity> Create(CombatantAbilityEquip combatantAbilityEquip)
@@ -29,7 +26,7 @@ namespace IdelPog.Combat.Runtime.System.Factory
                 AbilityCard abilityCard = combatantAbilityEquip.AbilityCards[i];
 
                 AbilityEntity abilityEntity = _skillEntityRepository.Get(abilityCard.AbilityType);
-                CombatantAbilityEntity combatantAbilityEntity = new(_repositoryAsserter) { CombatantID = combatantAbilityEquip.CombatantID, AbilityType = abilityCard.AbilityType };
+                CombatantAbilityEntity combatantAbilityEntity = new() { CombatantID = combatantAbilityEquip.CombatantID, AbilityType = abilityCard.AbilityType };
                 AddBaseComponents(combatantAbilityEntity, abilityEntity, abilityCard.StrategyCard.TargetingType);
                 
                 combatantAbilityEntities[i] = combatantAbilityEntity;

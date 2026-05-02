@@ -5,7 +5,6 @@ using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Core.Contracts;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.ECS.Exceptions;
@@ -18,7 +17,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
     {
         private FriendlyStatusAssigner _friendlyStatusAssigner;
         private Mock<ICombatantRepository> _repositoryMock;
-        private RepositoryAsserter _repositoryAsserter;
 
         private CombatantEntity _friendlyEntity;
         private CombatantEntity _enemyEntity;
@@ -26,7 +24,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _repositoryAsserter = new RepositoryAsserter(new FoundAssertion(), new ObjectNullAssertion(), new UniqueAssertion());
             _repositoryMock = new Mock<ICombatantRepository>();
             
             _friendlyStatusAssigner = new FriendlyStatusAssigner(_repositoryMock.Object, new CollectionAssertion(), new FoundAssertion());
@@ -35,14 +32,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         {
-            _friendlyEntity = new CombatantEntity(_repositoryAsserter, new StatCard { Health = 10, Attack = 12, Speed = 5 })
+            _friendlyEntity = new CombatantEntity(new StatCard { Health = 10, Attack = 12, Speed = 5 })
             {
                 CombatantID = 1,
                 CombatantType = CombatantType.HUMAN,
                 CombatantInformation = new Information { Name = "", Description = "" }
             };
             
-            _enemyEntity = new CombatantEntity(_repositoryAsserter, new StatCard { Health = 5, Attack = 2, Speed = 8 })
+            _enemyEntity = new CombatantEntity(new StatCard { Health = 5, Attack = 2, Speed = 8 })
             {
                 CombatantID = 2,
                 CombatantType = CombatantType.GOBLIN,

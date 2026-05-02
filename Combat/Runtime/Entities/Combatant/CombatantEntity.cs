@@ -2,7 +2,6 @@
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Core.Contracts;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.ECS.Entity;
 
 namespace IdelPog.Combat.Runtime.Entities.Combatant
@@ -13,8 +12,8 @@ namespace IdelPog.Combat.Runtime.Entities.Combatant
         public required CombatantType CombatantType { get; init; }
         public required Information CombatantInformation { get; init; }
 
-        public CombatantEntity(IRepositoryAsserter repositoryAsserter, StatCard statCard) 
-            : base(repositoryAsserter, BuildCombatantStatsComponent(statCard))
+        public CombatantEntity(StatCard statCard) 
+            : base(BuildCombatantStatsComponent(statCard))
         { 
             AddComponent(new LifeStatusComponent { IsAlive = true });
         }

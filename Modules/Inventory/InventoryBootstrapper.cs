@@ -108,8 +108,9 @@ namespace IdelPog.Inventory
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             IUniqueAssertion uniqueAssertion = new UniqueAssertion();
+            IAmountAssertion amountAssertion = new AmountAssertion();
             
-            ICraftingRecipeEntityFactory entityFactory = new CraftingRecipeEntityFactory(collectionAssertion, repositoryAsserter);
+            ICraftingRecipeEntityFactory entityFactory = new CraftingRecipeEntityFactory(collectionAssertion, amountAssertion);
             IDispatchMany<RecipeCreationResponse> responseDispatcher = new ManagedDispatcher<RecipeCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<RecipeCreation> creationMediator = new RecipeCreationMediator(recipeEntityRepository, entityFactory, responseDispatcher, collectionAssertion, uniqueAssertion);

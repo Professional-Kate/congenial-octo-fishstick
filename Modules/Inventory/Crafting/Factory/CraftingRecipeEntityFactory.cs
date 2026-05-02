@@ -1,6 +1,4 @@
-﻿using IdelPog.Core.Repository.Asserter;
-using IdelPog.Core.Validation.Assertion;
-using IdelPog.Core.Validation.Assertion.Interface;
+﻿using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Crafting.ECS;
 using IdelPog.Inventory.Crafting.ECS.Component;
@@ -12,13 +10,11 @@ namespace IdelPog.Inventory.Crafting.Factory
     {
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IAmountAssertion _amountAssertion;
-        private readonly IRepositoryAsserter _repositoryAsserter;
 
-        public CraftingRecipeEntityFactory(ICollectionAssertion collectionAssertion, IRepositoryAsserter repositoryAsserter)
+        public CraftingRecipeEntityFactory(ICollectionAssertion collectionAssertion, IAmountAssertion amountAssertion)
         {
             _collectionAssertion = collectionAssertion;
-            _repositoryAsserter = repositoryAsserter;
-            _amountAssertion = new AmountAssertion();
+            _amountAssertion = amountAssertion;
         }
 
         public CraftingRecipeEntity Create(RecipeInput[] recipeInputs, RecipeOutput[] recipeOutputs)
@@ -26,7 +22,7 @@ namespace IdelPog.Inventory.Crafting.Factory
             _collectionAssertion.AssertHasElements(recipeInputs);
             _collectionAssertion.AssertHasElements(recipeOutputs);
             
-            return new CraftingRecipeEntity(_repositoryAsserter, CreateInputComponents(recipeInputs), CreateOutputComponents(recipeOutputs));
+            return new CraftingRecipeEntity(CreateInputComponents(recipeInputs), CreateOutputComponents(recipeOutputs));
         }
 
         private RecipeInputComponent[] CreateInputComponents(RecipeInput[] recipeInputs)

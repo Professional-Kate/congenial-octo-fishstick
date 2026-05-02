@@ -1,7 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Core.Contracts;
-using IdelPog.Core.Repository.Asserter;
 using IdelPog.ECS.Entity;
 
 namespace IdelPog.Combat.Runtime.Entities
@@ -12,8 +11,8 @@ namespace IdelPog.Combat.Runtime.Entities
         public required byte AbilitySlots { get; init; }
         public required Information Information { get; init; }
         
-        public AbilityEntity(IRepositoryAsserter repositoryAsserter, CooldownComponent cooldownComponent, DamageComponent damageComponent) 
-            : base(repositoryAsserter, cooldownComponent, damageComponent)
+        public AbilityEntity(CooldownComponent cooldownComponent, DamageComponent damageComponent) 
+            : base(cooldownComponent, damageComponent)
         {
         }
     }
