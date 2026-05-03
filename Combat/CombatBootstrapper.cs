@@ -70,6 +70,7 @@ namespace IdelPog.Combat
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
             INumberAssertion numberAssertion = new NumberAssertion();
+            ICombatantAssertion combatantAssertion = new CombatantAssertion();
             
             ICombatantSelector lowHealthSelector = new LowestHealthSelector(collectionAssertion);
             ICombatantSelector highestAttackSelector = new HighestAttackSelector(collectionAssertion);
@@ -77,7 +78,7 @@ namespace IdelPog.Combat
             
             ICombatantStore friendlyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
             ICombatantStore enemyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
-
+            
             IFriendlyStatusAssigner friendlyStatusAssigner = new FriendlyStatusAssigner(combatantRepository, collectionAssertion, foundAssertion);
             ICombatantStoreService combatantStoreService = new CombatantStoreService(friendlyCombatantStore, enemyCombatantStore, combatantRepository, collectionAssertion);
             IBasicAttackScheduler basicAttackScheduler = new AbilityScheduler(combatantRepository, combatantAbilityEntityRepository, combatQueue, numberAssertion, foundAssertion);
@@ -86,30 +87,20 @@ namespace IdelPog.Combat
             IDispatchMany<BasicEncounterDeckResponse> responseDispatcher = new ManagedDispatcher<BasicEncounterDeckResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             ICombatantLogger combatantLogger = new CombatantLogger(objectNullAssertion);
             ICombatQueueRunner combatQueueRunner = new CombatQueueRunner(combatStateService, combatQueue, resolverRepository) { MaxIterations = maxIterations };
-            EntityDamageMediator entityDamageMediator = CreateEntityDamageMediator(combatantRepository, friendlyCombatantStore, enemyCombatantStore, combatantStoreService, combatStateService, combatantLogger, combatantAbilityEntityRepository);
+            IDamageSystem damageSystem = new DamageSystem();
+            IDeathSystem deathSystem = new DeathSystem(combatStateService, combatantStoreService, combatantAssertion);
+            EntityDamageMediator entityDamageMediator = new(damageSystem, deathSystem, combatantStoreService, combatantLogger);
+            ITargetFinder targetFinder = new EnemyTargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantAbilityEntityRepository, combatantRepository, objectNullAssertion, foundAssertion);
             
             // TODO: move this out eventually 
-            DirectDamageEventResolver directDamageEventResolver = new(entityDamageMediator, basicAttackScheduler, combatantRepository, foundAssertion);
-            resolverRepository.Add(EventType.BASIC_ATTACK, directDamageEventResolver);
+            DirectDamageEventResolver directDamageEventResolver = new(targetFinder, combatantAbilityEntityRepository, entityDamageMediator, basicAttackScheduler, combatantRepository);
+            resolverRepository.Add(EventType.DIRECT_DAMAGE, directDamageEventResolver);
             
             BasicEncounterDeckMediator basicEncounterDeckMediator = new(friendlyStatusAssigner, combatantStoreService, basicAttackScheduler, combatQueueRunner, combatStateService, combatantLogger, responseDispatcher, collectionAssertion);
             IBatchController<BasicEncounterDeck> controller = new ManagedBatchController<BasicEncounterDeck>(basicEncounterDeckMediator);
             BasicEncounterDeckErrorFactory errorFactory = new(new BaseErrorFactory());
                         
             flowRegister.RegisterBatch(controller, errorFactory);
-        }
-
-        private static EntityDamageMediator CreateEntityDamageMediator(CombatantRepository combatantRepository, ICombatantStore friendlyCombatantStore, ICombatantStore enemyCombatantStore, ICombatantStoreService combatantStoreService, ICombatStateService combatStateService, ICombatantLogger combatantLogger, ICombatantAbilityEntityRepository combatantAbilityEntityRepository)
-        {
-            IFoundAssertion foundAssertion = new FoundAssertion();
-            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
-            ICombatantAssertion combatantAssertion = new CombatantAssertion();
-            
-            ITargetFinder targetFinder = new EnemyTargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantAbilityEntityRepository, combatantRepository, objectNullAssertion, foundAssertion);
-            IDamageSystem damageSystem = new DamageSystem();
-            IDeathSystem deathSystem = new DeathSystem(combatStateService, combatantStoreService, combatantAssertion);
-            
-            return new EntityDamageMediator(combatantRepository, targetFinder, damageSystem, combatantAbilityEntityRepository, deathSystem, combatantStoreService, combatantLogger, combatantAssertion);
         }
 
         private static void RegisterCombatantCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, ICombatantRepository combatantRepository)

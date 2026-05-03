@@ -2,6 +2,6 @@
 {
     public enum EventType : byte
     {
-        BASIC_ATTACK
+        DIRECT_DAMAGE
     }
 }

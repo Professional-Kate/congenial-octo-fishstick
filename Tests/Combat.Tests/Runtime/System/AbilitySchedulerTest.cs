@@ -99,7 +99,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
         private void VerifyQueueCalled(double tickTime, Times times)
         {
-            _combatQueueMock.Verify(library => library.Enqueue(It.IsAny<BasicAttackEvent>(), It.Is<double>(number => Math.Abs(number - tickTime) < 0.0001)), times);
+            _combatQueueMock.Verify(library => library.Enqueue(It.IsAny<DirectDamageEvent>(), It.Is<double>(number => Math.Abs(number - tickTime) < 0.0001)), times);
         }
 
         [Test]
@@ -163,7 +163,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
             
-            _combatQueueMock.Verify(library => library.Enqueue(It.IsAny<BasicAttackEvent>(), It.IsAny<double>()), Times.Never());
+            _combatQueueMock.Verify(library => library.Enqueue(It.IsAny<DirectDamageEvent>(), It.IsAny<double>()), Times.Never());
             VerifyMocks();
         }
         

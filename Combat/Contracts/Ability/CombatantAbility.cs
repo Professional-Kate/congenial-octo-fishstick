@@ -1,7 +1,6 @@
-﻿using IdelPog.Combat.Contracts.Ability;
-using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Contracts.Card;
 
-namespace IdelPog.Combat.Contracts
+namespace IdelPog.Combat.Contracts.Ability
 {
     public readonly record struct CombatantAbility
     {

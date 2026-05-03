@@ -68,8 +68,8 @@ namespace IdelPog.Combat.Runtime.System
             double nextTick = tick + abilityCooldown / combatantSpeed;
             
             // TODO: CastingEvent -> on dequeue just enqueues the BasicAttackEvent for Tick + CastingEvent.CastTime
-            BasicAttackEvent basicAttackEvent = new() { AttackerID = combatantAbilityEntity.CombatantID, Tick = nextTick, AbilityType = combatantAbilityEntity.AbilityType };
-            _combatQueue.Enqueue(basicAttackEvent, nextTick);
+            DirectDamageEvent directDamageEvent = new() { AttackerID = combatantAbilityEntity.CombatantID, Tick = nextTick, AbilityType = combatantAbilityEntity.AbilityType };
+            _combatQueue.Enqueue(directDamageEvent, nextTick);
         }
     }
 }

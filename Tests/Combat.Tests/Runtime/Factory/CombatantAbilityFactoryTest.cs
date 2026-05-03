@@ -1,5 +1,4 @@
-﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Factory;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;

@@ -1,5 +1,4 @@
 ﻿using IdelPog.Combat.Assertion;
-using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;

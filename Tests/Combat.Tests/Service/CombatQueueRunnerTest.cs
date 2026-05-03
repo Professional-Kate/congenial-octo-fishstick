@@ -101,7 +101,7 @@ namespace IdelPog.Combat.Tests.Service
         {
             SetupIsCombatOverSequence();
             SetupQueueDequeue(_combatEventMock.Object);
-            SetupRepositoryGet(_eventResolverMock.Object, EventType.BASIC_ATTACK);
+            SetupRepositoryGet(_eventResolverMock.Object, EventType.DIRECT_DAMAGE);
             
             Assert.DoesNotThrow(() => _combatQueueRunner.RunDeck(_basicEncounterDeck));
 
@@ -115,7 +115,7 @@ namespace IdelPog.Combat.Tests.Service
         public void Negative_RunDeck_GoesOverMaxIterations_Throws()
         {
             SetupQueueDequeue(_combatEventMock.Object);
-            SetupRepositoryGet(_eventResolverMock.Object, EventType.BASIC_ATTACK);
+            SetupRepositoryGet(_eventResolverMock.Object, EventType.DIRECT_DAMAGE);
             
             MaxIterationsException exception = Assert.Throws<MaxIterationsException>(() => _combatQueueRunner.RunDeck(_basicEncounterDeck));
             Assert.Multiple(() =>
