@@ -58,7 +58,7 @@ namespace IdelPog.ECS.Entity
         {
             bool contains = _componentMap.ContainsKey(typeof(T));
 
-            if (!contains)
+            if (contains == false)
             {
                 component = default;
                 return false;
