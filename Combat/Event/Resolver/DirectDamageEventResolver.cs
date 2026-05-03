@@ -30,6 +30,7 @@ namespace IdelPog.Combat.Event.Resolver
             CombatantEntity attackingCombatant = _combatantRepository.Get(attackerID);
             if (attackingCombatant.GetComponent<LifeStatusComponent>().IsAlive == false)
             {
+                // the Combatant could die before this Event can resolve
                 return;
             }           
             

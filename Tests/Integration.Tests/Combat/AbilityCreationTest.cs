@@ -107,7 +107,7 @@ namespace IdelPog.Integration.Tests.Combat
         public void Positive_DispatchCommands_CreatesMultipleSkills()
         {
             DamageCard oneDamageCard = _basicAttackCreation.DamageCard with { PhysicalDamage = 1 };
-            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityType = (AbilityType) 2, DamageCard = oneDamageCard, Cooldown = 4 };
+            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityType = AbilityType.STRONG_ATTACK, DamageCard = oneDamageCard, Cooldown = 4 };
             Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(_basicAttackCreation, abilityCreation));
             
             AssertResponseListenerCalled(true);
@@ -115,6 +115,24 @@ namespace IdelPog.Integration.Tests.Combat
             AssertResponseLength(2);
             AssertResponse(_responseListener.Responses[0], _basicAttackCreation);
             AssertResponse(_responseListener.Responses[1], abilityCreation);
+        }
+
+        [Test]
+        public void Positive_CanCreateAbility_AtMax_AndMin_Damage()
+        {
+            DamageCard minDamageCard = new() { PhysicalDamage = uint.MinValue, LightningDamage = uint.MinValue, ColdDamage = uint.MinValue, FireDamage = uint.MinValue };
+            AbilityCreation strongAttackCreation = _basicAttackCreation with { AbilityType = AbilityType.STRONG_ATTACK, DamageCard = minDamageCard };
+            
+            DamageCard maxDamageCard = new() { PhysicalDamage = uint.MaxValue, LightningDamage = uint.MaxValue, ColdDamage = uint.MaxValue, FireDamage = uint.MaxValue };
+            AbilityCreation basicAttackCreation = _basicAttackCreation with { DamageCard = maxDamageCard };
+            
+            Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(basicAttackCreation, strongAttackCreation));
+            
+            AssertResponseListenerCalled(true);
+            AssertErrorListenerCalled(false);
+            AssertResponseLength(2);
+            AssertResponse(_responseListener.Responses[0], basicAttackCreation);
+            AssertResponse(_responseListener.Responses[1], strongAttackCreation);
         }
 
         [Test]

@@ -110,5 +110,24 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             _combatTools.AssertAbilityUse(slightlyFasterHuman, abilityCard.AbilityType, 1);
             _combatTools.AssertAbilityUse(slightlyFasterHuman, AbilityType.STRONG_ATTACK, 1);
         }
+
+        [Test]
+        public void AbilityDamageCard_AddsToTotalDamage()
+        {
+            AbilityCreation abilityDamageCreation = _basicAttackCreation with { DamageCard = new DamageCard { PhysicalDamage = 1, ColdDamage = 1, FireDamage = 1, LightningDamage = 1 }};
+            
+            CombatantCreation elementalMan = _humanCreation with { StatCard = new StatCard { Health = 1, Attack = 1, Speed = 10 } };
+            CombatantCreation unsuspectingGoblin = _goblinCreation with { StatCard = new StatCard { Health = 5, Attack = 100, Speed = 9 } };
+            
+            DispatchMessage(abilityDamageCreation);
+            DispatchMessage(elementalMan, unsuspectingGoblin);
+            DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 });
+            
+            RunCombat([0], [1], _combatantCreationResponseListener.Responses);
+            
+            CombatTools.AssertVictory(_responseListener.Responses[0], true);
+            _combatTools.AssertZeroAttacks(unsuspectingGoblin);
+            _combatTools.AssertOneOrMoreAttacks(elementalMan);
+        }
     }
 }
