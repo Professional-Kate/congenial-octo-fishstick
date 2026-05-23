@@ -20,7 +20,6 @@ namespace IdelPog.Combat.Runtime.System.Factory
                 Information = abilityCreation.Information
             };
 
-            // TODO: test
             if (abilityCreation.CastTime != 0)
             { 
                 abilityEntity.AddComponent(new CastTimeComponent { CastTime = abilityCreation.CastTime });

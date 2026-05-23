@@ -35,6 +35,7 @@ namespace IdelPog.Combat.Runtime.System
                 IReadOnlyList<CombatantAbilityEntity> combatantAbilityEntities = _combatantAbilityEntityRepository.GetAll(combatantEntity.CombatantID);
                 foreach (CombatantAbilityEntity combatantAbilityEntity in combatantAbilityEntities)
                 { 
+                    // TODO: update with Initiative
                     _abilityEventScheduler.ScheduleEvent(tick - GetCombatantSpeed(combatantEntity), combatantAbilityEntity.CombatantID, combatantAbilityEntity.AbilityType);
                 }
             }

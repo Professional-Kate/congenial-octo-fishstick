@@ -11,33 +11,51 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
     {
         private AbilityEntityFactory _abilityEntityFactory;
         
-        private AbilityCreation _abilityCreation;
+        private AbilityCreation _basicAttackCreation;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         { 
             _abilityEntityFactory = new AbilityEntityFactory();
-            _abilityCreation = TestAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
+            _basicAttackCreation = TestAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
         }
 
         private static void AssertSkillEntity(AbilityEntity abilityEntity, AbilityCreation abilityCreation)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(abilityEntity, Is.Not.Null);
                 Assert.That(abilityEntity.AbilityType, Is.EqualTo(abilityCreation.AbilityType));
                 Assert.That(abilityEntity.Information, Is.EqualTo(abilityCreation.Information));
                 Assert.That(abilityEntity.GetComponent<CooldownComponent>().Cooldown, Is.EqualTo(abilityCreation.Cooldown));
                 Assert.That(abilityEntity.GetComponent<DamageComponent>().PhysicalDamage, Is.EqualTo(abilityCreation.DamageCard.PhysicalDamage));
-            });
+            }
         }
 
-        [Test]
-        public void Positive_CreateSkillEntity_CreatesSkillEntity()
+        private static void AssertCastTimeComponent(AbilityEntity abilityEntity, uint castTime)
         {
-            AbilityEntity abilityEntity = _abilityEntityFactory.CreateAbilityEntity(_abilityCreation);
-
-            AssertSkillEntity(abilityEntity, _abilityCreation);
+            if (castTime == 0)
+            { 
+                Assert.That(abilityEntity.ContainsComponent<CastTimeComponent>(), Is.False);
+                return;
+            }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(abilityEntity.ContainsComponent<CastTimeComponent>(), Is.True);
+                Assert.That(abilityEntity.GetComponent<CastTimeComponent>().CastTime, Is.EqualTo(castTime));
+            }
+        }
+        
+        [TestCase(0u)]
+        [TestCase(100u)]
+        public void Positive_CreateAbilityEntity_CreatesEntity_OptionalCastTimeComponent(uint castTime)
+        {
+            AbilityCreation castTimeCreation = _basicAttackCreation with { CastTime = castTime };
+            AbilityEntity abilityEntity = _abilityEntityFactory.CreateAbilityEntity(castTimeCreation);
+            
+            AssertSkillEntity(abilityEntity, castTimeCreation);
+            AssertCastTimeComponent(abilityEntity, castTime);
         }
     }
 }

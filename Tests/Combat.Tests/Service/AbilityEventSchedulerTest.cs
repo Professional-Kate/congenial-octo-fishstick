@@ -94,7 +94,7 @@ namespace IdelPog.Combat.Tests.Service
 
         private void VerifyQueueEnqueue(CombatEvent combatEvent)
         { 
-            _combatQueueMock.Verify(library => library.Enqueue(combatEvent, It.IsAny<double>()), Times.Once);
+            _combatQueueMock.Verify(library => library.Enqueue(combatEvent), Times.Once);
         }
  
         [Test]
@@ -110,8 +110,7 @@ namespace IdelPog.Combat.Tests.Service
             CombatEvent expectedEvent = CreateExpectedCombatEvent(_combatantAbilityEntity, castTime, EventType.CASTING);
             _combatQueueMock.Verify(
                 library => library.Enqueue(
-                    It.Is<CombatEvent>(combatEvent => combatEvent.AbilityType == expectedEvent.AbilityType && combatEvent.AttackerID == expectedEvent.AttackerID),
-                    It.IsAny<double>()), Times.Once);
+                    It.Is<CombatEvent>(combatEvent => combatEvent.AbilityType == expectedEvent.AbilityType && combatEvent.AttackerID == expectedEvent.AttackerID)), Times.Once);
             
             VerifyMocks();
         }

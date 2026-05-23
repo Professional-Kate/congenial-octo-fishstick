@@ -41,7 +41,6 @@ namespace IdelPog.Combat.Runtime.System.Factory
             combatantAbilityEntity.AddComponent(abilityEntity.GetComponent<CooldownComponent>());
             combatantAbilityEntity.AddComponent(abilityEntity.GetComponent<DamageComponent>());
 
-            // TODO: test
             if (abilityEntity.TryGetComponent(out CastTimeComponent castTimeComponent))
             { 
                 combatantAbilityEntity.AddComponent(castTimeComponent);

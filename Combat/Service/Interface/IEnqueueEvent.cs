@@ -4,6 +4,6 @@ namespace IdelPog.Combat.Service.Interface
 {
     public interface IEnqueueEvent
     { 
-        public void Enqueue(CombatEvent combatEvent, double tick);
+        public void Enqueue(CombatEvent combatEvent);
     }
 }

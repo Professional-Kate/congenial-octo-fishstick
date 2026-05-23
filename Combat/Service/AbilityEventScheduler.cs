@@ -47,7 +47,7 @@ namespace IdelPog.Combat.Service
         {
             CombatEvent combatEvent = CreateCombatEvent(currentTick, initiatingCombatantID, abilityType, _eventRepository.Get(abilityType));
             
-            _combatQueue.Enqueue(combatEvent, currentTick);
+            _combatQueue.Enqueue(combatEvent);
         }
 
         private void EnqueueCastingEvent(double currentTick, byte attackerID, AbilityType abilityType, double castTime, uint combatantSpeed)
@@ -55,9 +55,7 @@ namespace IdelPog.Combat.Service
             const double speedScalingFactor = 0.01;
             double nextTick = currentTick + castTime * speedScalingFactor / combatantSpeed;
 
-            CombatEvent castingEvent = CreateCombatEvent(nextTick, attackerID, abilityType, EventType.CASTING);
-            
-            _combatQueue.Enqueue(castingEvent, currentTick);
+            _combatQueue.Enqueue(CreateCombatEvent(nextTick, attackerID, abilityType, EventType.CASTING));
         }
         
         private static CombatEvent CreateCombatEvent(double forTick, byte initiatingCombatantID, AbilityType abilityType, EventType eventType) 

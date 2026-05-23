@@ -138,11 +138,13 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [Test]
         public void AbilityWithCastTime_IsSlowerToCast()
         {
-            DispatchMessage(_humanCreation, _humanCreation);
-            DispatchMessage(_strongAttackCreation with { CastTime = 100u }, _basicAttackCreation with { CastTime = 0u });
+            DispatchMessage(_humanCreation, _wolfCreation);
+            DispatchMessage(_strongAttackCreation with { CastTime = 1u }, _basicAttackCreation with { CastTime = 0u });
             DispatchMessage(_equipBasicAttack, _equipStrongAttack with { CombatantID = 1 });
 
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);
+            
+            CombatTools.PrintStateChanges(_responseListener.Responses[0].CombatantStateChanges);
             AbilityValidator.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
             AbilityValidator.AssertAttackerAbility(0, AbilityType.BASIC_ATTACK);
             AbilityValidator.Reset();
