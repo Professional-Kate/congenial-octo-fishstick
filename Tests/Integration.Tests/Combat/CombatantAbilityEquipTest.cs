@@ -5,6 +5,7 @@ using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
 using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Event;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Exceptions;
@@ -32,9 +33,11 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
                 AbilityType = AbilityType.BASIC_ATTACK,
+                EventType = EventType.DIRECT_DAMAGE,
                 Cooldown = 9,
                 DamageCard = new DamageCard { PhysicalDamage = 3, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
-                AbilitySlots = 1
+                AbilitySlots = 1,
+                CastTime = 0
             };
             
             _combatantCreation = new CombatantCreation

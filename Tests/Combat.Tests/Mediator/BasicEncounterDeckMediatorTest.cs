@@ -22,7 +22,7 @@ namespace IdelPog.Combat.Tests.Mediator
     {
         private BasicEncounterDeckMediator _basicEncounterDeckMediator;
         private Mock<IFriendlyStatusAssigner> _friendlyStatusAssignerMock;
-        private Mock<IBasicAttackScheduler> _attackSchedulerMock;
+        private Mock<IInitialAbilityScheduler> _attackSchedulerMock;
         private Mock<ICombatantStoreService> _combatantStoreServiceMock;
         private Mock<ICombatQueueRunner> _combatQueueRunnerMock;
         private Mock<ICombatStateService> _combatStateServiceMock;
@@ -36,7 +36,7 @@ namespace IdelPog.Combat.Tests.Mediator
         public void OneTimeSetup()
         {
             _friendlyStatusAssignerMock = new Mock<IFriendlyStatusAssigner>();
-            _attackSchedulerMock = new Mock<IBasicAttackScheduler>();
+            _attackSchedulerMock = new Mock<IInitialAbilityScheduler>();
             _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
             _combatQueueRunnerMock = new Mock<ICombatQueueRunner>();
             _combatStateServiceMock = new Mock<ICombatStateService>();
@@ -57,7 +57,7 @@ namespace IdelPog.Combat.Tests.Mediator
             };
 
             AttackingCombatant attackingCombatant = new() { AbilityType = AbilityType.BASIC_ATTACK, CombatantID = 1, DamageDealt = 100 };
-            _combatantStateChange = new CombatantStateChange { AttackingCombatant = attackingCombatant, CombatantID = 2, IsAlive = true, IsFriendly = true, CombatantCreation = combatantCreation };
+            _combatantStateChange = new CombatantStateChange { AttackingCombatant = attackingCombatant, CombatantID = 2, IsAlive = true, IsFriendly = true, CombatantCreation = combatantCreation, Tick = 1 };
         }
 
         [SetUp]

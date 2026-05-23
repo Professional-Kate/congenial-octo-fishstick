@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat;
 using IdelPog.Combat.Contracts.Ability;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
@@ -111,8 +112,8 @@ namespace IdelPog.Integration.Tests.Combat
             AssertResponse(_responseListener.Responses[0], returnedDeck);
             CombatTools.AssertVictory(_responseListener.Responses[0], false);
             
-            _combatTools.AssertZeroAttacks(_humanCreation);
-            _combatTools.AssertOneOrMoreAttacks(_goblinCreation, _wolfCreation, _bearCreation);
+            _combatTools.AssertZeroAttacks(_humanCreation, _goblinCreation);
+            _combatTools.AssertOneOrMoreAttacks(_wolfCreation, _bearCreation);
         }
 
         [Test]
@@ -156,6 +157,25 @@ namespace IdelPog.Integration.Tests.Combat
             
             _combatTools.AssertZeroAttacks(_bearCreation, _wolfCreation);
             _combatTools.AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
+        }
+
+        [Test]
+        public void Positive_SimulateCombat_CombatantsAttackInOrder()
+        { 
+            CombatantCreation humanCreation = _humanCreation with { StatCard = new StatCard { Attack = 1, Health = 100, Speed = 10 }};
+            CombatantCreation bearCreation = _bearCreation with { StatCard = new StatCard { Attack = 1, Health = 100, Speed = 11 }};
+            CombatantCreation goblinCreation = _goblinCreation with { StatCard = new StatCard { Attack = 1, Health = 100, Speed = 12 }};
+            CombatantCreation wolfCreation =_wolfCreation with { StatCard = new StatCard { Attack = 1, Health = 100, Speed = 13 }};
+
+            DispatchMessage(humanCreation, bearCreation, goblinCreation, wolfCreation);
+            DispatchMessage(_basicAttackCreation);
+            DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 }, _equipBasicAttack with { CombatantID = 2 }, _equipBasicAttack with { CombatantID = 3 });
+            
+            RunCombat([0], [1, 2, 3], _combatantCreationResponseListener.Responses);
+            
+            AbilityValidator.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
+            AbilityValidator.AssertAttackers(3, 2, 1, 0);
+            AbilityValidator.Reset();
         }
         
         // Exception Tests

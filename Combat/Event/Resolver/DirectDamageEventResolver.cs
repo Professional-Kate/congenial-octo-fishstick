@@ -5,24 +5,26 @@ using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Mediator.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
+using IdelPog.Combat.Service.Interface;
 
 namespace IdelPog.Combat.Event.Resolver
 {
+    // TODO: abstract EventResolver. Contains a method for registering itself into the ResolverRepository. Contains event hooks for BeforeEvent/AfterEvent
     public sealed class DirectDamageEventResolver : IEventResolver
     {
         private readonly ITargetFinder _targetFinder;
         private readonly ICombatantAbilityEntityRepository _combatantAbilityEntityRepository;
         private readonly IEntityDamageMediator _entityDamageMediator;
-        private readonly IBasicAttackScheduler _basicAttackScheduler;
         private readonly ICombatantRepository _combatantRepository;
+        private readonly IAbilityEventScheduler _abilityEventScheduler;
 
-        public DirectDamageEventResolver(ITargetFinder targetFinder, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, IEntityDamageMediator entityDamageMediator, IBasicAttackScheduler basicAttackScheduler, ICombatantRepository combatantRepository)
+        public DirectDamageEventResolver(ITargetFinder targetFinder, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, IEntityDamageMediator entityDamageMediator, ICombatantRepository combatantRepository, IAbilityEventScheduler abilityEventScheduler)
         {
             _targetFinder = targetFinder;
             _combatantAbilityEntityRepository = combatantAbilityEntityRepository;
             _entityDamageMediator = entityDamageMediator;
-            _basicAttackScheduler = basicAttackScheduler;
             _combatantRepository = combatantRepository;
+            _abilityEventScheduler = abilityEventScheduler;
         }
 
         public void ResolveEvent(double tick, byte attackerID, AbilityType abilityType)
@@ -37,8 +39,10 @@ namespace IdelPog.Combat.Event.Resolver
             CombatantAbilityEntity combatantAbilityEntity = _combatantAbilityEntityRepository.Get(attackerID, abilityType);
             CombatantEntity targetCombatant = _targetFinder.FindBestTarget(attackingCombatant, abilityType);
             
-            _entityDamageMediator.ApplyDamage(targetCombatant, attackingCombatant, combatantAbilityEntity);
-            _basicAttackScheduler.EnqueueAttack(tick, attackerID, abilityType);
+            _entityDamageMediator.ApplyDamage(targetCombatant, attackingCombatant, combatantAbilityEntity, tick);
+            
+            CooldownComponent cooldownComponent = combatantAbilityEntity.GetComponent<CooldownComponent>();
+            _abilityEventScheduler.ScheduleEvent(tick + cooldownComponent.Cooldown, attackerID, abilityType);
         }
     }
 }

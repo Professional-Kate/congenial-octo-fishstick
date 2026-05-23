@@ -1,7 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Event;
-using IdelPog.Combat.Event.Interface;
 using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Service;
@@ -19,8 +18,8 @@ namespace IdelPog.Combat.Tests.Service
         private Mock<ICombatQueue> _combatQueueMock;
         private Mock<IAssetRepository<EventType, IEventResolver>> _resolverRepositoryMock;
         private Mock<IEventResolver> _eventResolverMock;
-        private Mock<ICombatEvent> _combatEventMock;
-        
+
+        private CombatEvent _combatEvent;
         private BasicEncounterDeck _basicEncounterDeck;
         private const uint MAX_ITERATIONS = 3;
 
@@ -31,7 +30,14 @@ namespace IdelPog.Combat.Tests.Service
             _combatQueueMock = new Mock<ICombatQueue>();
             _resolverRepositoryMock = new Mock<IAssetRepository<EventType, IEventResolver>>();
             _eventResolverMock = new Mock<IEventResolver>();
-            _combatEventMock = new Mock<ICombatEvent>();
+
+            _combatEvent = new CombatEvent
+            {
+                AbilityType = AbilityType.BASIC_ATTACK,
+                Tick = 0, 
+                AttackerID = 0,
+                EventType = EventType.DIRECT_DAMAGE
+            };
             
             _combatQueueRunner = new CombatQueueRunner(_combatStateServiceMock.Object, _combatQueueMock.Object, _resolverRepositoryMock.Object)
             {
@@ -48,7 +54,6 @@ namespace IdelPog.Combat.Tests.Service
             _resolverRepositoryMock.Reset();
             _combatQueueMock.Reset();
             _eventResolverMock.Reset();
-            _combatEventMock.Reset();
         }
 
         private void VerifyMocks()
@@ -66,7 +71,7 @@ namespace IdelPog.Combat.Tests.Service
             _combatStateServiceMock.SetupSequence(library => library.IsCombatOver).Returns(false).Returns(true);
         }
 
-        private void SetupQueueDequeue(ICombatEvent combatEvent)
+        private void SetupQueueDequeue(CombatEvent combatEvent)
         {
             _combatQueueMock.Setup(library => library.Dequeue()).Returns(combatEvent).Verifiable();
         }
@@ -87,34 +92,24 @@ namespace IdelPog.Combat.Tests.Service
             eventResolver.VerifyNoOtherCalls();
         }
 
-        private static void VerifyCombatEventMock(Mock<ICombatEvent> combatEvent)
-        {
-            combatEvent.Verify(library => library.Tick, Times.Once);
-            combatEvent.Verify(library => library.EventType, Times.Once);
-            combatEvent.Verify(library => library.AttackerID, Times.Once);
-            combatEvent.Verify(library => library.AbilityType, Times.Once);
-            combatEvent.VerifyNoOtherCalls();
-        }
-
         [Test]
         public void Positive_RunDeck_InvokesEvents_UntilCombatIsOver()
         {
             SetupIsCombatOverSequence();
-            SetupQueueDequeue(_combatEventMock.Object);
+            SetupQueueDequeue(_combatEvent);
             SetupRepositoryGet(_eventResolverMock.Object, EventType.DIRECT_DAMAGE);
             
             Assert.DoesNotThrow(() => _combatQueueRunner.RunDeck(_basicEncounterDeck));
 
             VerifyIsCombatOverCalled(Times.Exactly(2));
             VerifyEventResolver(_eventResolverMock);
-            VerifyCombatEventMock(_combatEventMock);
             VerifyMocks();
         }
 
         [Test]
         public void Negative_RunDeck_GoesOverMaxIterations_Throws()
         {
-            SetupQueueDequeue(_combatEventMock.Object);
+            SetupQueueDequeue(_combatEvent);
             SetupRepositoryGet(_eventResolverMock.Object, EventType.DIRECT_DAMAGE);
             
             MaxIterationsException exception = Assert.Throws<MaxIterationsException>(() => _combatQueueRunner.RunDeck(_basicEncounterDeck));

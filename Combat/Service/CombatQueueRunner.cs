@@ -1,6 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Event;
-using IdelPog.Combat.Event.Interface;
 using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Service.Interface;
@@ -33,7 +32,7 @@ namespace IdelPog.Combat.Service
                     throw new MaxIterationsException(basicEncounterDeck, MaxIterations);
                 }
                     
-                ICombatEvent combatEvent = _combatQueue.Dequeue();
+                CombatEvent combatEvent = _combatQueue.Dequeue();
                 double currentTick = combatEvent.Tick;
 
                 IEventResolver resolver = _resolverRepository.Get(combatEvent.EventType);

@@ -76,9 +76,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantStoreServiceMock.Verify(library => library.RegisterCombatantChange(combatantEntity), Times.Once);
         }
         
-        private void VerifyLogCombatantChange(CombatantEntity changedEntity, byte attackerID, AbilityType attackerAbility, uint calculatedDamage)
+        private void VerifyLogCombatantChange(CombatantEntity changedEntity, byte attackerID, AbilityType attackerAbility, uint calculatedDamage, double tick)
         {
-            _combatantLoggerMock.Verify(library => library.LogCombatantChange(changedEntity, attackerID, attackerAbility, calculatedDamage), Times.Once);
+            _combatantLoggerMock.Verify(library => library.LogCombatantChange(changedEntity, attackerID, attackerAbility, calculatedDamage, tick), Times.Once);
         }
 
         [Test]
@@ -87,9 +87,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupDamageSystem(_targetCombatant, _attackerStatsComponent, 1, _attackingCombatantAbility);
             SetupGetCalculatedDamage(_attackerStatsComponent.Attack, _attackingCombatantAbility, 10);
             
-            _entityDamageMediator.ApplyDamage(_targetCombatant, _attackingCombatant, _attackingCombatantAbility);
+            _entityDamageMediator.ApplyDamage(_targetCombatant, _attackingCombatant, _attackingCombatantAbility, 1d);
 
-            VerifyLogCombatantChange(_targetCombatant, _attackingCombatant.CombatantID, _attackingCombatantAbility.AbilityType, 10);
+            VerifyLogCombatantChange(_targetCombatant, _attackingCombatant.CombatantID, _attackingCombatantAbility.AbilityType, 10, 1d);
             VerifyStoreRegisterCombatantChange(_targetCombatant);
             VerifyMocks();
         }
@@ -100,10 +100,10 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupDamageSystem(_targetCombatant, _attackerStatsComponent, 0, _attackingCombatantAbility);
             SetupGetCalculatedDamage(_attackerStatsComponent.Attack, _attackingCombatantAbility, 10);
             
-            _entityDamageMediator.ApplyDamage(_targetCombatant, _attackingCombatant, _attackingCombatantAbility);
+            _entityDamageMediator.ApplyDamage(_targetCombatant, _attackingCombatant, _attackingCombatantAbility, 1d);
             
             _deathSystemMock.Verify(library => library.KillEntity(_targetCombatant), Times.Once);
-            VerifyLogCombatantChange(_targetCombatant, _attackingCombatant.CombatantID, _attackingCombatantAbility.AbilityType, 10);
+            VerifyLogCombatantChange(_targetCombatant, _attackingCombatant.CombatantID, _attackingCombatantAbility.AbilityType, 10, 1d);
             VerifyMocks();
         }
     }

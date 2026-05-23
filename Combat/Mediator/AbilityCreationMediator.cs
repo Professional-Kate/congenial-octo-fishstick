@@ -2,6 +2,7 @@
 using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Event;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
@@ -15,15 +16,17 @@ namespace IdelPog.Combat.Mediator
     {
         private readonly IAssetRepository<AbilityType, AbilityEntity> _skillEntityRepository;
         private readonly IAbilityEntityFactory _abilityEntityFactory;
+        private readonly IAssetRepository<AbilityType, EventType> _eventRepository;
         private readonly IDispatchMany<AbilityCreationResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IUniqueAssertion _uniqueAssertion;
         private readonly INumberAssertion _numberAssertion;
 
-        public AbilityCreationMediator(IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository, IAbilityEntityFactory abilityEntityFactory, IDispatchMany<AbilityCreationResponse> responseDispatcher, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion, INumberAssertion numberAssertion)
+        public AbilityCreationMediator(IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository, IAbilityEntityFactory abilityEntityFactory, IAssetRepository<AbilityType, EventType> eventRepository, IDispatchMany<AbilityCreationResponse> responseDispatcher, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion, INumberAssertion numberAssertion)
         {
             _skillEntityRepository = skillEntityRepository;
             _abilityEntityFactory = abilityEntityFactory;
+            _eventRepository = eventRepository;
             _responseDispatcher = responseDispatcher;
             _collectionAssertion = collectionAssertion;
             _uniqueAssertion = uniqueAssertion;
@@ -42,6 +45,7 @@ namespace IdelPog.Combat.Mediator
                 _uniqueAssertion.AssertUnique(abilityCreation.AbilityType, _skillEntityRepository.Contains(abilityCreation.AbilityType));
                 
                 _skillEntityRepository.Add(abilityCreation.AbilityType, _abilityEntityFactory.CreateAbilityEntity(abilityCreation));
+                _eventRepository.Add(abilityCreation.AbilityType, abilityCreation.EventType);
                 responses[i] = CreateResponse(abilityCreation);
             }
             
@@ -53,9 +57,8 @@ namespace IdelPog.Combat.Mediator
             return new AbilityCreationResponse
             {
                 Information = abilityCreation.Information, 
-                AbilityType =  abilityCreation.AbilityType, 
-                AbilitySlots =  abilityCreation.AbilitySlots,
-                Cooldown =  abilityCreation.Cooldown,
+                AbilityType =  abilityCreation.AbilityType,
+                EventType =  abilityCreation.EventType,
                 DamageCard = abilityCreation.DamageCard
             };
         }

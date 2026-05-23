@@ -109,6 +109,11 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             _combatTools.AssertOneOrMoreAttacks(slightlyFasterHuman);
             _combatTools.AssertAbilityUse(slightlyFasterHuman, abilityCard.AbilityType, 1);
             _combatTools.AssertAbilityUse(slightlyFasterHuman, AbilityType.STRONG_ATTACK, 1);
+            
+            AbilityValidator.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
+            AbilityValidator.AssertAttackerAbility(0, AbilityType.BASIC_ATTACK);
+            AbilityValidator.AssertAttackerAbility(0, AbilityType.STRONG_ATTACK);
+            AbilityValidator.Reset();
         }
 
         [Test]
@@ -128,6 +133,19 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             CombatTools.AssertVictory(_responseListener.Responses[0], true);
             _combatTools.AssertZeroAttacks(unsuspectingGoblin);
             _combatTools.AssertOneOrMoreAttacks(elementalMan);
+        }
+
+        [Test]
+        public void AbilityWithCastTime_IsSlowerToCast()
+        {
+            DispatchMessage(_humanCreation, _humanCreation);
+            DispatchMessage(_strongAttackCreation with { CastTime = 100u }, _basicAttackCreation with { CastTime = 0u });
+            DispatchMessage(_equipBasicAttack, _equipStrongAttack with { CombatantID = 1 });
+
+            RunCombat([0], [1], _combatantCreationResponseListener.Responses);
+            AbilityValidator.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
+            AbilityValidator.AssertAttackerAbility(0, AbilityType.BASIC_ATTACK);
+            AbilityValidator.Reset();
         }
     }
 }

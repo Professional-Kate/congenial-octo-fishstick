@@ -1,14 +1,14 @@
-﻿using IdelPog.Combat.Event.Interface;
+﻿using IdelPog.Combat.Event;
 using IdelPog.Combat.Service.Interface;
 
 namespace IdelPog.Combat.Service
 {
     public sealed class CombatQueue : ICombatQueue
     {
-        private readonly PriorityQueue<ICombatEvent, double> _combatQueue = new();
+        private readonly PriorityQueue<CombatEvent, double> _combatQueue = new();
         
-        public void Enqueue(ICombatEvent combatEvent, double tick) => _combatQueue.Enqueue(combatEvent, tick);
+        public void Enqueue(CombatEvent combatEvent, double tick) => _combatQueue.Enqueue(combatEvent, tick);
         
-        public ICombatEvent Dequeue() => _combatQueue.Dequeue();
+        public CombatEvent Dequeue() => _combatQueue.Dequeue();
     }
 }

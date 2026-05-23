@@ -2,6 +2,7 @@
 {
     public enum EventType : byte
     {
+        CASTING,
         DIRECT_DAMAGE
     }
 }

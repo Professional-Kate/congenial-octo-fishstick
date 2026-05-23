@@ -22,7 +22,7 @@ namespace IdelPog.Combat.Runtime.System.Mediator
             _combatantLogger = combatantLogger;
         }
 
-        public void ApplyDamage(CombatantEntity targetCombatant, CombatantEntity attackingCombatant, CombatantAbilityEntity attackingCombatantAbility)
+        public void ApplyDamage(CombatantEntity targetCombatant, CombatantEntity attackingCombatant, CombatantAbilityEntity attackingCombatantAbility, double tick)
         {
             CombatantStatsComponent attackerStats = attackingCombatant.GetComponent<CombatantStatsComponent>();
             
@@ -36,7 +36,7 @@ namespace IdelPog.Combat.Runtime.System.Mediator
                 _combatantStoreService.RegisterCombatantChange(targetCombatant);
             }
             
-            _combatantLogger.LogCombatantChange(targetCombatant, attackingCombatant.CombatantID, attackingCombatantAbility.AbilityType, _damageSystem.GetCalculatedDamage(attackerStats.Attack, attackingCombatantAbility));
+            _combatantLogger.LogCombatantChange(targetCombatant, attackingCombatant.CombatantID, attackingCombatantAbility.AbilityType, _damageSystem.GetCalculatedDamage(attackerStats.Attack, attackingCombatantAbility), tick);
         }
     }
 }

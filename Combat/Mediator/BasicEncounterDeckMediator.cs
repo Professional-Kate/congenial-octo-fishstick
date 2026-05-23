@@ -14,20 +14,20 @@ namespace IdelPog.Combat.Mediator
     {
         private readonly IFriendlyStatusAssigner _friendlyStatusAssigner;
         private readonly ICombatantStoreService _combatantStoreService;
-        private readonly IBasicAttackScheduler _basicAttackScheduler;
+        private readonly IInitialAbilityScheduler _initialAbilityScheduler;
         private readonly ICombatQueueRunner _combatQueueRunner;
         private readonly ICombatStateService _combatStateService;
         private readonly ICombatantLogger _combatantLogger;
         private readonly IDispatchMany<BasicEncounterDeckResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public BasicEncounterDeckMediator(IFriendlyStatusAssigner friendlyStatusAssigner, ICombatantStoreService combatantStoreService, IBasicAttackScheduler basicAttackScheduler, 
+        public BasicEncounterDeckMediator(IFriendlyStatusAssigner friendlyStatusAssigner, ICombatantStoreService combatantStoreService, IInitialAbilityScheduler initialAbilityScheduler, 
             ICombatQueueRunner combatQueueRunner, ICombatStateService combatStateService, ICombatantLogger combatantLogger,
             IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
         {
             _friendlyStatusAssigner = friendlyStatusAssigner;
             _combatantStoreService = combatantStoreService;
-            _basicAttackScheduler = basicAttackScheduler;
+            _initialAbilityScheduler = initialAbilityScheduler;
             _combatQueueRunner = combatQueueRunner;
             _combatStateService = combatStateService;
             _combatantLogger = combatantLogger;
@@ -62,7 +62,7 @@ namespace IdelPog.Combat.Mediator
             _friendlyStatusAssigner.AssignFriendlyStatus(basicEncounterDeck.FriendlyCombatantIDs, basicEncounterDeck.EnemyCombatantIDs);
             _combatantStoreService.RegisterInitialTargets();
             
-            _basicAttackScheduler.EnqueueInitial(0);
+            _initialAbilityScheduler.EnqueueInitial(0);
         }
 
         private BasicEncounterDeckResponse ConstructResponse(BasicEncounterDeck basicEncounterDeck)

@@ -2,6 +2,7 @@
 using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Event;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Mediator;
 using IdelPog.Combat.Runtime.Entities;
@@ -18,29 +19,32 @@ namespace IdelPog.Combat.Tests.Mediator
     public sealed class AbilityCreationMediatorTest
     {
         private AbilityCreationMediator _mediator;
-        private Mock<IAssetRepository<AbilityType, AbilityEntity>> _repositoryMock; 
+        private Mock<IAssetRepository<AbilityType, AbilityEntity>> _abilityEntityRepositoryMock; 
         private Mock<IAbilityEntityFactory> _factoryMock;
         private Mock<IDispatchMany<AbilityCreationResponse>> _responseDispatcherMock;
+        private Mock<IAssetRepository<AbilityType, EventType>> _eventRepositoryMock;
 
         private AbilityCreation _abilityCreation;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _repositoryMock = new Mock<IAssetRepository<AbilityType, AbilityEntity>>();
+            _abilityEntityRepositoryMock = new Mock<IAssetRepository<AbilityType, AbilityEntity>>();
             _factoryMock = new Mock<IAbilityEntityFactory>();
             _responseDispatcherMock = new Mock<IDispatchMany<AbilityCreationResponse>>();
+            _eventRepositoryMock = new Mock<IAssetRepository<AbilityType, EventType>>();
             
-            _mediator = new AbilityCreationMediator(_repositoryMock.Object, _factoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new UniqueAssertion(), new NumberAssertion());
+            _mediator = new AbilityCreationMediator(_abilityEntityRepositoryMock.Object, _factoryMock.Object, _eventRepositoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new UniqueAssertion(), new NumberAssertion());
             _abilityCreation = TestAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
         }
 
         [SetUp]
         public void Setup()
         {
-            _repositoryMock.Reset();
+            _abilityEntityRepositoryMock.Reset();
             _factoryMock.Reset();
             _responseDispatcherMock.Reset();
+            _eventRepositoryMock.Reset();
         }
 
         [TearDown]
@@ -51,27 +55,43 @@ namespace IdelPog.Combat.Tests.Mediator
 
         private void VerifyMocks()
         {
-            _repositoryMock.Verify();
-            _repositoryMock.VerifyNoOtherCalls();
+            _abilityEntityRepositoryMock.Verify();
+            _abilityEntityRepositoryMock.VerifyNoOtherCalls();
             _factoryMock.Verify();
             _factoryMock.VerifyNoOtherCalls();
             _responseDispatcherMock.Verify();
             _responseDispatcherMock.VerifyNoOtherCalls();
+            _eventRepositoryMock.Verify();
+            _eventRepositoryMock.VerifyNoOtherCalls();
         }
 
-        private void AssertRepositoryContains(AbilityCreation abilityCreation)
+        private void VerifyAbilityEntityContains(params AbilityCreation[] abilityCreations)
         {
-            _repositoryMock.Verify(library => library.Contains(abilityCreation.AbilityType), Times.Once);
+            foreach (AbilityCreation abilityCreation in abilityCreations)
+            {
+                _abilityEntityRepositoryMock.Verify(library => library.Contains(abilityCreation.AbilityType), Times.Once);
+            }
         }
         
-        private void AssertRepositoryAdd(AbilityCreation abilityCreation)
+        private void VerifyAbilityEntityAdd(params AbilityCreation[] abilityCreations)
         {
-            _repositoryMock.Verify(library => library.Add(abilityCreation.AbilityType, It.IsAny<AbilityEntity>()), Times.Once);
+            foreach (AbilityCreation abilityCreation in abilityCreations)
+            {
+                _abilityEntityRepositoryMock.Verify(library => library.Add(abilityCreation.AbilityType, It.IsAny<AbilityEntity>()), Times.Once);
+            }
         }
-
-        private void VerifyFactoryCalled(AbilityCreation abilityCreation)
+        
+        private void VerifyFactoryCalled(params AbilityCreation[] abilityCreations)
         {
-            _factoryMock.Verify(library => library.CreateAbilityEntity(abilityCreation), Times.Once);
+            foreach (AbilityCreation abilityCreation in abilityCreations)
+            {
+                _factoryMock.Verify(library => library.CreateAbilityEntity(abilityCreation), Times.Once);
+            }
+        }
+        
+        private void VerifyEventTypeAdd(AbilityType abilityType, EventType eventType)
+        {
+            _eventRepositoryMock.Verify(library => library.Add(abilityType, eventType), Times.Once);
         }
 
         private void VerifyDispatcherCalled(int length)
@@ -85,8 +105,9 @@ namespace IdelPog.Combat.Tests.Mediator
             Assert.DoesNotThrow(() => _mediator.HandleMessages([_abilityCreation]));
 
             VerifyFactoryCalled(_abilityCreation);
-            AssertRepositoryContains(_abilityCreation);
-            AssertRepositoryAdd(_abilityCreation);
+            VerifyAbilityEntityContains(_abilityCreation);
+            VerifyAbilityEntityAdd(_abilityCreation);
+            VerifyEventTypeAdd(_abilityCreation.AbilityType, _abilityCreation.EventType);
             VerifyDispatcherCalled(1);
         }
         
@@ -96,19 +117,18 @@ namespace IdelPog.Combat.Tests.Mediator
             AbilityCreation strongAttackCreation = _abilityCreation with { AbilityType = AbilityType.STRONG_ATTACK };
             Assert.DoesNotThrow(() => _mediator.HandleMessages([_abilityCreation, strongAttackCreation]));
 
-            VerifyFactoryCalled(_abilityCreation);
-            VerifyFactoryCalled(strongAttackCreation);
-            AssertRepositoryContains(_abilityCreation);
-            AssertRepositoryContains(strongAttackCreation);
-            AssertRepositoryAdd(_abilityCreation);
-            AssertRepositoryAdd(strongAttackCreation);
+            VerifyFactoryCalled(_abilityCreation, strongAttackCreation);
+            VerifyAbilityEntityContains(_abilityCreation, strongAttackCreation);
+            VerifyAbilityEntityAdd(_abilityCreation, strongAttackCreation);
+            VerifyEventTypeAdd(_abilityCreation.AbilityType, _abilityCreation.EventType);
+            VerifyEventTypeAdd(strongAttackCreation.AbilityType, strongAttackCreation.EventType);
             VerifyDispatcherCalled(2);
         }
 
         [Test]
         public void Negative_HandleMessages_DuplicateAbilityType_Throws()
         {
-            _repositoryMock.Setup(library => library.Contains(_abilityCreation.AbilityType)).Returns(true).Verifiable();
+            _abilityEntityRepositoryMock.Setup(library => library.Contains(_abilityCreation.AbilityType)).Returns(true).Verifiable();
             
             Assert.Throws<DuplicateEntityException>(() => _mediator.HandleMessages([_abilityCreation]));
         }

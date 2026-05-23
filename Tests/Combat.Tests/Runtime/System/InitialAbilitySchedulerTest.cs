@@ -3,26 +3,22 @@ using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Event;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Service.Interface;
-using IdelPog.Core.Validation.Assertion;
-using IdelPog.Core.Validation.Exceptions;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Runtime.System
 {
     [TestFixture]
-    public sealed class AbilitySchedulerTest
+    public sealed class InitialAbilitySchedulerTest
     {
-        private AbilityScheduler _basicAttackScheduler;
+        private InitialAbilityScheduler _basicAttackScheduler;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
         private Mock<ICombatantAbilityEntityRepository> _abilityRepositoryMock;
-        private Mock<ICombatQueue> _combatQueueMock;
+        private Mock<IAbilityEventScheduler> _abilityEventSchedulerMock;
         
         private CombatantEntity _combatantEntity;
         private CombatantAbilityEntity _combatantAbilityEntity;
@@ -34,9 +30,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
             _abilityRepositoryMock = new Mock<ICombatantAbilityEntityRepository>();
-            _combatQueueMock = new Mock<ICombatQueue>();
+            _abilityEventSchedulerMock = new Mock<IAbilityEventScheduler>();
             
-            _basicAttackScheduler = new AbilityScheduler(_combatantRepositoryMock.Object, _abilityRepositoryMock.Object, _combatQueueMock.Object, new NumberAssertion(), new FoundAssertion());
+            _basicAttackScheduler = new InitialAbilityScheduler(_combatantRepositoryMock.Object, _abilityRepositoryMock.Object, _abilityEventSchedulerMock.Object, new NumberAssertion());
 
             _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
             _attackerCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, _attackerStats);
@@ -49,7 +45,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             _combatantRepositoryMock.Reset();
             _abilityRepositoryMock.Reset();
-            _combatQueueMock.Reset();
+            _abilityEventSchedulerMock.Reset();
         }
         
         private void VerifyMocks()
@@ -58,33 +54,18 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantRepositoryMock.VerifyNoOtherCalls();
             _abilityRepositoryMock.Verify();
             _abilityRepositoryMock.VerifyNoOtherCalls();
-            _combatQueueMock.Verify();
-            _combatQueueMock.VerifyNoOtherCalls();
+            _abilityEventSchedulerMock.Verify();
+            _abilityEventSchedulerMock.VerifyNoOtherCalls();
         }
 
         private void SetupCombatantRepositoryGetAll(params CombatantEntity[] combatantEntities)
         { 
             _combatantRepositoryMock.Setup(library => library.GetAll()).Returns(combatantEntities).Verifiable();
         }
-        
-        private void SetupCombatantRepositoryGet(byte id)
-        { 
-            _combatantRepositoryMock.Setup(library => library.Get(id)).Returns(_combatantEntity).Verifiable();
-        }
-        
-        private void SetupCombatantRepositoryContains(byte id)
-        { 
-            _combatantRepositoryMock.Setup(library => library.Contains(id)).Returns(true).Verifiable();
-        }
 
         private void SetupAbilityRepositoryContains(byte combatantID)
         {
             _abilityRepositoryMock.Setup(library => library.Contains(combatantID)).Returns(true).Verifiable();
-        }
-        
-        private void SetupAbilityRepositoryGet(byte combatantID, CombatantAbilityEntity combatantAbilityEntity)
-        {
-            _abilityRepositoryMock.Setup(library => library.Get(combatantID, combatantAbilityEntity.AbilityType)).Returns(combatantAbilityEntity).Verifiable();
         }
 
         private void SetupAbilityRepositoryGetAll(byte combatantID, params CombatantAbilityEntity[] abilityEntities)
@@ -97,9 +78,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _abilityRepositoryMock.Verify(library => library.Contains(combatantID), times);
         }
 
-        private void VerifyQueueCalled(double tickTime, Times times)
+        private void VerifyScheduleEventCalled(double currentTick, CombatantAbilityEntity combatantAbilityEntity, Times times)
         {
-            _combatQueueMock.Verify(library => library.Enqueue(It.IsAny<DirectDamageEvent>(), It.Is<double>(number => Math.Abs(number - tickTime) < 0.0001)), times);
+            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(currentTick, combatantAbilityEntity.CombatantID, combatantAbilityEntity.AbilityType), times);
         }
 
         [Test]
@@ -118,13 +99,13 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_EnqueueInitial_EnqueuesSingleAttackEvent()
         {
+            SetupCombatantRepositoryGetAll(_combatantEntity);
             SetupAbilityRepositoryContains(_combatantEntity.CombatantID);
             SetupAbilityRepositoryGetAll(_combatantEntity.CombatantID, _combatantAbilityEntity);
-            SetupCombatantRepositoryGetAll(_combatantEntity);
             
             Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
 
-            VerifyQueueCalled(1.1d, Times.Once());
+            VerifyScheduleEventCalled(1d - _attackerStats.Speed, _combatantAbilityEntity, Times.Once());
             VerifyMocks();
         }
         
@@ -138,7 +119,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
 
             VerifyAbilityRepositoryContainsCalled(1, Times.Exactly(5));
-            VerifyQueueCalled(1.1d, Times.Exactly(5));
+            VerifyScheduleEventCalled(1d - _attackerStats.Speed, _combatantAbilityEntity, Times.Exactly(5));
             VerifyMocks();
         }
         
@@ -152,18 +133,16 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(0d));
             
             VerifyAbilityRepositoryContainsCalled(1, Times.Once());
-            VerifyQueueCalled(0.1d, Times.Once());
+            VerifyScheduleEventCalled(0d - _attackerStats.Speed, _combatantAbilityEntity, Times.Once());
             VerifyMocks();
         }
 
         [Test]
         public void Positive_EnqueueInitial_NoEntities_NoAction()
         {
-            SetupCombatantRepositoryGetAll();
-            
             Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
             
-            _combatQueueMock.Verify(library => library.Enqueue(It.IsAny<DirectDamageEvent>(), It.IsAny<double>()), Times.Never());
+            _combatantRepositoryMock.Verify(library => library.GetAll(), Times.Once());
             VerifyMocks();
         }
         
@@ -180,58 +159,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.Throws<NumberZeroException>(() => _basicAttackScheduler.EnqueueInitial(1d));
             
             VerifyAbilityRepositoryContainsCalled(zeroSpeedEntity.CombatantID, Times.Once());
-            VerifyMocks();
-        }
-        
-        [Test]
-        public void Negative_EnqueueInitial_ZeroCooldown_Throws()
-        {
-            CombatantAbilityEntity zeroCooldownEntity = TestCombatantAbilityEntityFactory.Create(1, AbilityType.BASIC_ATTACK);
-            zeroCooldownEntity.AddComponent(new CooldownComponent { Cooldown = 0 });
-            
-            SetupAbilityRepositoryContains(zeroCooldownEntity.CombatantID);
-            SetupAbilityRepositoryGetAll(zeroCooldownEntity.CombatantID, zeroCooldownEntity);
-            SetupCombatantRepositoryGetAll(_combatantEntity);
-            
-            Assert.Throws<NumberZeroException>(() => _basicAttackScheduler.EnqueueInitial(1d));
-            
-            VerifyAbilityRepositoryContainsCalled(1, Times.Once());
-            VerifyMocks();
-        }
-
-        
-        [Test]
-        public void Positive_EnqueueAttack_QueuesAttack()
-        {
-            SetupCombatantRepositoryContains(_combatantAbilityEntity.CombatantID);
-            SetupCombatantRepositoryGet(_combatantAbilityEntity.CombatantID);
-            SetupAbilityRepositoryContains(_combatantAbilityEntity.CombatantID);
-            SetupAbilityRepositoryGet(_combatantAbilityEntity.CombatantID, _combatantAbilityEntity);
-            
-            Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueAttack(1d, _combatantAbilityEntity.CombatantID, AbilityType.BASIC_ATTACK));
-            
-            VerifyQueueCalled(1.1d, Times.Once());
-            VerifyMocks();
-        }
-        
-        [Test]
-        public void Negative_EnqueueAttack_CombatantRepositoryNotFound_Throws()
-        {
-            Assert.Throws<NotFoundException<byte>>(() => _basicAttackScheduler.EnqueueAttack(1d, _combatantEntity.CombatantID, AbilityType.BASIC_ATTACK));
-            
-            _combatantRepositoryMock.Verify(library => library.Contains(_combatantEntity.CombatantID), Times.Once());
-            VerifyMocks();
-        }
-        
-        [Test]
-        public void Negative_EnqueueAttack_AbilityRepositoryNotFound_Throws()
-        {
-            SetupCombatantRepositoryContains(_combatantAbilityEntity.CombatantID);
-            
-            Assert.Throws<NotFoundException<byte>>(() => _basicAttackScheduler.EnqueueAttack(1d, _combatantEntity.CombatantID, AbilityType.BASIC_ATTACK));
-            
-            _combatantRepositoryMock.Verify(library => library.Contains(_combatantEntity.CombatantID), Times.Once());
-            _abilityRepositoryMock.Verify(library => library.Contains(_combatantEntity.CombatantID), Times.Once());
             VerifyMocks();
         }
     }

@@ -19,12 +19,13 @@ namespace IdelPog.Combat.Service.Logging
             _objectNullAssertion = objectNullAssertion;
         }
 
-        public void LogCombatantChange(CombatantEntity changedEntity, byte attackerID, AbilityType abilityType, uint damageDealt)
+        public void LogCombatantChange(CombatantEntity changedEntity, byte attackerID, AbilityType abilityType, uint damageDealt, double tick)
         {
             _objectNullAssertion.AssertNotNull(changedEntity, nameof(changedEntity));
             
             CombatantStateChange combatantStateChange = new()
             {
+                Tick = tick,
                 CombatantCreation = CreateCombatantCard(changedEntity),
                 CombatantID = changedEntity.CombatantID,
                 IsFriendly = changedEntity.GetComponent<FriendlyStatusComponent>().IsFriendly,

@@ -17,6 +17,7 @@ using IdelPog.Combat.Runtime.System.Factory;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Mediator;
+using IdelPog.Combat.Runtime.System.Mediator.Interface;
 using IdelPog.Combat.Runtime.System.Repository;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Runtime.System.Store;
@@ -56,15 +57,16 @@ namespace IdelPog.Combat
             
             CombatantRepository combatantRepository = new(foundAssertion);
             IAssetRepository<AbilityType, AbilityEntity> abilityEntityRepository = new AssetRepository<AbilityType, AbilityEntity>(repositoryAsserter);
+            IAssetRepository<AbilityType, EventType> eventRepository =  new AssetRepository<AbilityType, EventType>(repositoryAsserter);
             ICombatantAbilityEntityRepository combatantAbilityEntityRepository = new CombatantAbilityEntityRepository(collectionAssertion, foundAssertion);
             
-            RegisterBasicEncounterDeck(bufferManager, flowRegister, bufferLogger, repositoryAsserter, combatantRepository, combatantAbilityEntityRepository, combatOptions.MaxIterations);
+            RegisterBasicEncounterDeck(bufferManager, flowRegister, bufferLogger, repositoryAsserter, combatantRepository, combatantAbilityEntityRepository, eventRepository, combatOptions.MaxIterations);
             RegisterCombatantCreation(bufferManager, flowRegister, bufferLogger, combatantRepository);
-            RegisterAbilityCreation(bufferManager, flowRegister, bufferLogger, abilityEntityRepository);
+            RegisterAbilityCreation(bufferManager, flowRegister,  bufferLogger, abilityEntityRepository, eventRepository);
             RegisterCombatantAbilityEquip(bufferManager, flowRegister, bufferLogger, combatantAbilityEntityRepository, abilityEntityRepository, combatOptions);
         }
 
-        private static void RegisterBasicEncounterDeck(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, CombatantRepository combatantRepository, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, uint maxIterations)
+        private static void RegisterBasicEncounterDeck(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, CombatantRepository combatantRepository, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, IAssetRepository<AbilityType, EventType> eventRepository, uint maxIterations)
         {
             IFoundAssertion foundAssertion = new FoundAssertion();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
@@ -74,29 +76,33 @@ namespace IdelPog.Combat
             
             ICombatantSelector lowHealthSelector = new LowestHealthSelector(collectionAssertion);
             ICombatantSelector highestAttackSelector = new HighestAttackSelector(collectionAssertion);
-            CombatQueue combatQueue = new();
+            ICombatQueue combatQueue = new CombatQueue();
             
             ICombatantStore friendlyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
             ICombatantStore enemyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
             
             IFriendlyStatusAssigner friendlyStatusAssigner = new FriendlyStatusAssigner(combatantRepository, collectionAssertion, foundAssertion);
             ICombatantStoreService combatantStoreService = new CombatantStoreService(friendlyCombatantStore, enemyCombatantStore, combatantRepository, collectionAssertion);
-            IBasicAttackScheduler basicAttackScheduler = new AbilityScheduler(combatantRepository, combatantAbilityEntityRepository, combatQueue, numberAssertion, foundAssertion);
-            AssetRepository<EventType, IEventResolver> resolverRepository = new(repositoryAsserter);
+            IAbilityEventScheduler abilityEventScheduler = new AbilityEventScheduler(combatantAbilityEntityRepository, combatantRepository, eventRepository, combatQueue, numberAssertion);
+            IInitialAbilityScheduler initialAbilityScheduler = new InitialAbilityScheduler(combatantRepository, combatantAbilityEntityRepository, abilityEventScheduler, numberAssertion);
+            IAssetRepository<EventType, IEventResolver> resolverRepository = new AssetRepository<EventType, IEventResolver>(repositoryAsserter);
             ICombatStateService combatStateService = new CombatStateService(combatantRepository);
             IDispatchMany<BasicEncounterDeckResponse> responseDispatcher = new ManagedDispatcher<BasicEncounterDeckResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             ICombatantLogger combatantLogger = new CombatantLogger(objectNullAssertion);
             ICombatQueueRunner combatQueueRunner = new CombatQueueRunner(combatStateService, combatQueue, resolverRepository) { MaxIterations = maxIterations };
             IDamageSystem damageSystem = new DamageSystem();
             IDeathSystem deathSystem = new DeathSystem(combatStateService, combatantStoreService, combatantAssertion);
-            EntityDamageMediator entityDamageMediator = new(damageSystem, deathSystem, combatantStoreService, combatantLogger);
+            IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(damageSystem, deathSystem, combatantStoreService, combatantLogger);
             ITargetFinder targetFinder = new EnemyTargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantAbilityEntityRepository, combatantRepository, objectNullAssertion, foundAssertion);
             
             // TODO: move this out eventually 
-            DirectDamageEventResolver directDamageEventResolver = new(targetFinder, combatantAbilityEntityRepository, entityDamageMediator, basicAttackScheduler, combatantRepository);
+            DirectDamageEventResolver directDamageEventResolver = new(targetFinder, combatantAbilityEntityRepository, entityDamageMediator, combatantRepository, abilityEventScheduler);
             resolverRepository.Add(EventType.DIRECT_DAMAGE, directDamageEventResolver);
+
+            CastingEventResolver castingEventResolver = new(abilityEventScheduler);
+            resolverRepository.Add(EventType.CASTING, castingEventResolver);
             
-            BasicEncounterDeckMediator basicEncounterDeckMediator = new(friendlyStatusAssigner, combatantStoreService, basicAttackScheduler, combatQueueRunner, combatStateService, combatantLogger, responseDispatcher, collectionAssertion);
+            BasicEncounterDeckMediator basicEncounterDeckMediator = new(friendlyStatusAssigner, combatantStoreService, initialAbilityScheduler, combatQueueRunner, combatStateService, combatantLogger, responseDispatcher, collectionAssertion);
             IBatchController<BasicEncounterDeck> controller = new ManagedBatchController<BasicEncounterDeck>(basicEncounterDeckMediator);
             BasicEncounterDeckErrorFactory errorFactory = new(new BaseErrorFactory());
                         
@@ -120,7 +126,7 @@ namespace IdelPog.Combat
             flowRegister.RegisterBatch(controller, errorFactory);
         }
         
-        private static void RegisterAbilityCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository)
+        private static void RegisterAbilityCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository, IAssetRepository<AbilityType, EventType> eventRepository)
         {
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             IUniqueAssertion uniqueAssertion = new UniqueAssertion();
@@ -130,7 +136,7 @@ namespace IdelPog.Combat
             IAbilityEntityFactory abilityEntityFactory = new AbilityEntityFactory();
             IDispatchMany<AbilityCreationResponse> responseDispatcher = new ManagedDispatcher<AbilityCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
-            AbilityCreationMediator mediator = new(skillEntityRepository, abilityEntityFactory, responseDispatcher, collectionAssertion, uniqueAssertion, numberAssertion);
+            AbilityCreationMediator mediator = new(skillEntityRepository, abilityEntityFactory, eventRepository, responseDispatcher, collectionAssertion, uniqueAssertion, numberAssertion);
             IBatchController<AbilityCreation> controller = new ManagedBatchController<AbilityCreation>(mediator);
             AbilityCreationErrorFactory errorFactory = new(new BaseErrorFactory());
             

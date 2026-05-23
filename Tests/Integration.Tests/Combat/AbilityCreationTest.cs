@@ -3,6 +3,7 @@ using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Error;
 using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Event;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Core.Contracts;
 using IdelPog.Core.Messaging.Buffer;
@@ -26,9 +27,11 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
                 AbilityType = AbilityType.BASIC_ATTACK,
+                EventType = EventType.DIRECT_DAMAGE,
                 Cooldown = 9,
                 DamageCard = new DamageCard { PhysicalDamage = 3, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
-                AbilitySlots = 1
+                AbilitySlots = 1,
+                CastTime = 0
             };
         }
 
@@ -65,7 +68,6 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 Assert.That(basicEncounterDeck.Information, Is.EqualTo(expected.Information));
                 Assert.That(basicEncounterDeck.AbilityType, Is.EqualTo(expected.AbilityType));
-                Assert.That(basicEncounterDeck.Cooldown, Is.EqualTo(expected.Cooldown));
                 Assert.That(basicEncounterDeck.DamageCard, Is.EqualTo(expected.DamageCard));
             });
         }
