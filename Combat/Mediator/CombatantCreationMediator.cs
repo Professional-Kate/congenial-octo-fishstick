@@ -16,15 +16,15 @@ namespace IdelPog.Combat.Mediator
         private readonly ICombatantEntityFactory _combatantEntityFactory;
         private readonly IDispatchMany<CombatantCreationResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
-        private readonly IStatCardAsserter _statCardAsserter;
+        private readonly ICardAsserter _cardAsserter;
 
-        public CombatantCreationMediator(ICombatantRepository combatantRepository, ICombatantEntityFactory combatantEntityFactory, IDispatchMany<CombatantCreationResponse> responseDispatcher, ICollectionAssertion collectionAssertion, IStatCardAsserter statCardAsserter)
+        public CombatantCreationMediator(ICombatantRepository combatantRepository, ICombatantEntityFactory combatantEntityFactory, IDispatchMany<CombatantCreationResponse> responseDispatcher, ICollectionAssertion collectionAssertion, ICardAsserter cardAsserter)
         {
             _combatantRepository = combatantRepository;
             _combatantEntityFactory = combatantEntityFactory;
             _responseDispatcher = responseDispatcher;
             _collectionAssertion = collectionAssertion;
-            _statCardAsserter = statCardAsserter;
+            _cardAsserter = cardAsserter;
         }
 
         public void HandleMessages(IReadOnlyList<CombatantCreation> messages)
@@ -35,7 +35,7 @@ namespace IdelPog.Combat.Mediator
             for (int i = 0; i < messages.Count; i++)
             {
                 CombatantCreation combatantCreation = messages[i];
-                _statCardAsserter.AssertStatCard(combatantCreation.StatCard);
+                _cardAsserter.AssertCombatantCards(combatantCreation);
 
                 CombatantEntity newEntity = _combatantEntityFactory.CreateEntity(combatantCreation, _combatantRepository.NextCombatantID);
                 _combatantRepository.Add(newEntity);
@@ -53,6 +53,7 @@ namespace IdelPog.Combat.Mediator
                 CombatantType = combatantCreation.CombatantType,
                 Information = combatantCreation.Information,
                 StatCard = combatantCreation.StatCard,
+                AgilityCard = combatantCreation.AgilityCard,
                 CombatantID = combatantID
             };
         }

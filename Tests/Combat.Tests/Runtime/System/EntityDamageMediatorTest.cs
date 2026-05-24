@@ -20,7 +20,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         
         private CombatantEntity _targetCombatant;
         private CombatantEntity _attackingCombatant;
-        private CombatantStatsComponent _attackerStatsComponent;
+        private StatsComponent _attackerStatsComponent;
         private CombatantAbilityEntity _attackingCombatantAbility;
 
         [OneTimeSetUp]
@@ -41,7 +41,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _targetCombatant = TestCombatantEntityFactory.CreateCombatantEntity(1);
             
             _attackingCombatant = TestCombatantEntityFactory.CreateCombatantEntity(2);
-            _attackerStatsComponent = _attackingCombatant.GetComponent<CombatantStatsComponent>();
+            _attackerStatsComponent = _attackingCombatant.GetComponent<StatsComponent>();
             
             _damageSystemMock.Reset();
             _deathSystemMock.Reset();
@@ -61,7 +61,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantLoggerMock.VerifyNoOtherCalls();
         }
 
-        private void SetupDamageSystem(CombatantEntity targetCombatant, CombatantStatsComponent attackerStats, uint newHealth, CombatantAbilityEntity combatantAbilityEntity)
+        private void SetupDamageSystem(CombatantEntity targetCombatant, StatsComponent attackerStats, uint newHealth, CombatantAbilityEntity combatantAbilityEntity)
         {
             _damageSystemMock.Setup(library => library.DealDamage(targetCombatant, attackerStats.Attack, combatantAbilityEntity)).Returns(newHealth).Verifiable();
         }

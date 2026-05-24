@@ -11,19 +11,26 @@ namespace IdelPog.Combat.Tests
     {
         internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly = true)
         {
-            return CreateCombatantEntity(entityID, isFriendly, new StatCard { Attack = 4, Health = 50, Speed = 1 });
+            return CreateCombatantEntity(entityID, isFriendly, new StatCard { Attack = 4, Health = 50 }, new AgilityCard { Speed = 1u, Initiative = 1u });
         }
 
-        internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly, StatCard statCard)
+        internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly, StatCard statCard, AgilityCard agilityCard)
         {
-            CombatantCreation combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, statCard, new Information { Name = "Goblin", Description = "A guy!" });
+            CombatantCreation combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, statCard, agilityCard, new Information { Name = "Goblin", Description = "A guy!" });
+            
+            return CreateCombatantEntity(entityID, isFriendly, combatantCreation);
+        }
+        
+        internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly, AgilityCard agilityCard)
+        {
+            CombatantCreation combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, new StatCard { Attack = 4, Health = 50 }, agilityCard, new Information { Name = "Goblin", Description = "A guy!" });
             
             return CreateCombatantEntity(entityID, isFriendly, combatantCreation);
         }
 
         internal static CombatantEntity CreateCombatantEntity(byte entityID, bool isFriendly, CombatantCreation combatantCreation)
         {
-            CombatantEntity combatantEntity = new(combatantCreation.StatCard)
+            CombatantEntity combatantEntity = new(combatantCreation.StatCard, combatantCreation.AgilityCard)
             {
                 CombatantID = entityID,
                 CombatantType = combatantCreation.CombatantType,

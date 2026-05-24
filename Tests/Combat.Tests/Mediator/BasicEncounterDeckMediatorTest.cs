@@ -9,6 +9,7 @@ using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Logging.Interface;
+using IdelPog.Combat.Service.Queue.Interface;
 using IdelPog.Core.Contracts;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Validation.Assertion;
@@ -53,7 +54,8 @@ namespace IdelPog.Combat.Tests.Mediator
             CombatantCreation combatantCreation = new()
             {
                 CombatantType = CombatantType.WOLF, Information = new Information { Name = "A", Description = "B" },
-                StatCard = new StatCard { Health = 10, Attack = 5, Speed = 3 }
+                StatCard = new StatCard { Health = 10, Attack = 5 },
+                AgilityCard = new AgilityCard { Speed = 3, Initiative = 1 }
             };
 
             AttackingCombatant attackingCombatant = new() { AbilityType = AbilityType.BASIC_ATTACK, CombatantID = 1, DamageDealt = 100 };

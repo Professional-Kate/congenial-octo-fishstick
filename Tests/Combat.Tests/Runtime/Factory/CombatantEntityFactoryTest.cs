@@ -18,7 +18,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         {
             _combatService = new CombatantEntityFactory();
 
-            _wolfCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, new StatCard { Health = 3, Attack = 5, Speed = 5 });
+            _wolfCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, new StatCard { Health = 3, Attack = 5 });
         }
         
         [Test]

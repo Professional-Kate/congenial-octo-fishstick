@@ -45,13 +45,13 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _combatantStore = new CombatantStore(_lowestHealthFilterMock.Object, _highestAttackFilterMock.Object, new CollectionAssertion(), new NumberAssertion());
             
-            _highHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(17, true, TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, new StatCard { Attack = 6, Health = 10, Speed = 5 }));
-            _lowHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(15, true, TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, new StatCard { Attack = 7, Health = 5, Speed = 5 }));
-            _highAttackEntity = TestCombatantEntityFactory.CreateCombatantEntity(12, true, TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, new StatCard { Attack = 10, Health = 7, Speed = 5 }));
-            _lowAttackEntity = TestCombatantEntityFactory.CreateCombatantEntity(27, true, TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, new StatCard { Attack = 5, Health = 6, Speed = 5 }));
+            _highHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(17, true, TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, new StatCard { Attack = 6, Health = 10 }));
+            _lowHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(15, true, TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, new StatCard { Attack = 7, Health = 5 }));
+            _highAttackEntity = TestCombatantEntityFactory.CreateCombatantEntity(12, true, TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, new StatCard { Attack = 10, Health = 7 }));
+            _lowAttackEntity = TestCombatantEntityFactory.CreateCombatantEntity(27, true, TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.GOBLIN, new StatCard { Attack = 5, Health = 6 }));
         }
 
-        private static CombatantStatsComponent GetCombatantStatsComponent(CombatantEntity combatantEntity) => combatantEntity.GetComponent<CombatantStatsComponent>();
+        private static StatsComponent GetCombatantStatsComponent(CombatantEntity combatantEntity) => combatantEntity.GetComponent<StatsComponent>();
 
         private void SetupHighestAttackFilter(CombatantEntity expectedEntity, int expectedLength)
         {
@@ -126,7 +126,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Negative_RegisterInitial_ZeroHealthFromFilter_Throws()
         { 
             CombatantEntity zeroHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(52, true,
-                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Health = 0, Attack = 100, Speed = 20 }));
+                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Health = 0, Attack = 100 }));
             
             SetupHighestAttackFilter(zeroHealthEntity, 5);
             SetupLowestHealthFilter(zeroHealthEntity, 5);
@@ -159,7 +159,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_RegisterCombatantChange_ZeroHealth_Throws()
         { 
-            Assert.Throws<NumberZeroException>(() => _combatantStore.RegisterCombatantChange(0, new CombatantStatsComponent { Health = 0, Attack = 5, Speed = 5 }));
+            Assert.Throws<NumberZeroException>(() => _combatantStore.RegisterCombatantChange(0, new StatsComponent { Health = 0, Attack = 5 }));
         }
 
         [Test]
@@ -207,7 +207,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Negative_RegisterCombatantDeath_ZeroHealthFromFilter_Throws()
         {
             CombatantEntity zeroHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(52, true,
-                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Health = 0, Attack = 100, Speed = 20 }));
+                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Health = 0, Attack = 100 }));
             
             SetupHighestAttackFilter(_highAttackEntity,4);
             SetupLowestHealthFilter(_lowHealthEntity, 4);

@@ -24,7 +24,7 @@ namespace IdelPog.Combat.Runtime.System.Mediator
 
         public void ApplyDamage(CombatantEntity targetCombatant, CombatantEntity attackingCombatant, CombatantAbilityEntity attackingCombatantAbility, double tick)
         {
-            CombatantStatsComponent attackerStats = attackingCombatant.GetComponent<CombatantStatsComponent>();
+            StatsComponent attackerStats = attackingCombatant.GetComponent<StatsComponent>();
             
             uint newHealth = _damageSystem.DealDamage(targetCombatant, attackerStats.Attack, attackingCombatantAbility);
             if (newHealth == 0)

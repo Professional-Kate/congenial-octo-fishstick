@@ -44,7 +44,8 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 CombatantType = CombatantType.HUMAN,
                 Information = new Information { Name = "Human", Description = "Man" },
-                StatCard = new StatCard { Attack = 10, Speed = 5, Health = 20 }
+                StatCard = new StatCard { Attack = 10, Health = 20 },
+                AgilityCard = new AgilityCard { Speed = 5, Initiative = 1 }
             };
             
             _combatantAbilityEquip = new CombatantAbilityEquip

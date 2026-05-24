@@ -32,7 +32,7 @@ namespace IdelPog.Combat.Tests.Mediator
             _factoryMock = new Mock<ICombatantEntityFactory>();
             _responseDispatcherMock = new Mock<IDispatchMany<CombatantCreationResponse>>();
             
-            _mediator = new CombatantCreationMediator(_repositoryMock.Object, _factoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new StatCardAsserter(new NumberAssertion()));
+            _mediator = new CombatantCreationMediator(_repositoryMock.Object, _factoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new CardAsserter(new NumberAssertion()));
 
             _combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.BEAR);
         }
@@ -123,11 +123,11 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Negative_HandleMessages_CombatantHasZeroSpeed_Throws()
         {
-            StatCard zeroSpeedStatCard = _combatantCreation.StatCard with { Speed = 0 };
-            CombatantCreation zeroSpeedCombatant = _combatantCreation with { StatCard =  zeroSpeedStatCard };
+            AgilityCard zeroSpeedCard = _combatantCreation.AgilityCard with { Speed = 0 };
+            CombatantCreation zeroSpeedCombatant = _combatantCreation with { AgilityCard = zeroSpeedCard };
 
             NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _mediator.HandleMessages([zeroSpeedCombatant]));
-            Assert.That(exception.Source, Is.EqualTo(nameof(zeroSpeedStatCard.Speed)));
+            Assert.That(exception.Source, Is.EqualTo(nameof(zeroSpeedCard.Speed)));
             
             VerifyMocks();
         }

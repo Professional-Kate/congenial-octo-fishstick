@@ -21,10 +21,10 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
             _highestAttackSelector = new HighestAttackSelector(new CollectionAssertion());
 
             _highAttackEntity = TestCombatantEntityFactory.CreateCombatantEntity(12, true,
-                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 8, Health = 7, Speed = 5 }));
+                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 8, Health = 7 }));
             
             _lowAttackEntity = TestCombatantEntityFactory.CreateCombatantEntity(27, true,
-                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 2, Health = 6, Speed = 5 }));
+                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 2, Health = 6 }));
         }
         
         [Test]
@@ -39,7 +39,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         public void Positive_GetEntity_MaxAttack_ReturnsExpected()
         {
             CombatantEntity maxAttack = TestCombatantEntityFactory.CreateCombatantEntity(25, true,
-                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = uint.MaxValue, Health = 1, Speed = 5 }));
+                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = uint.MaxValue, Health = 1 }));
             
             CombatantEntity combatantID = _highestAttackSelector.GetEntity([_highAttackEntity, maxAttack, _highAttackEntity, _lowAttackEntity]);
             

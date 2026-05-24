@@ -5,6 +5,7 @@ using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Service.Queue.Interface;
 using IdelPog.Core.Repository.Asset;
 
 namespace IdelPog.Combat.Service
@@ -29,14 +30,14 @@ namespace IdelPog.Combat.Service
         public void ScheduleEvent(double currentTick, byte initiatingCombatantID, AbilityType abilityType)
         {
             CombatantAbilityEntity combatantAbilityEntity = _combatantAbilityEntityRepository.Get(initiatingCombatantID, abilityType);
-            CombatantStatsComponent combatantStatsComponent = _combatantRepository.Get(initiatingCombatantID).GetComponent<CombatantStatsComponent>();
-            _numberAssertion.AssertNumberNotZero(combatantStatsComponent.Speed, nameof(combatantStatsComponent.Speed));
+            AgilityComponent agilityComponent = _combatantRepository.Get(initiatingCombatantID).GetComponent<AgilityComponent>();
+            _numberAssertion.AssertNumberNotZero(agilityComponent.Speed, nameof(agilityComponent.Speed));
 
             if (combatantAbilityEntity.TryGetComponent(out CastTimeComponent castTimeComponent))
             {
                 _numberAssertion.AssertNumberNotZero(castTimeComponent.CastTime, nameof(castTimeComponent.CastTime));
                 
-                EnqueueCastingEvent(currentTick,initiatingCombatantID, abilityType, castTimeComponent.CastTime, combatantStatsComponent.Speed);
+                EnqueueCastingEvent(currentTick,initiatingCombatantID, abilityType, castTimeComponent.CastTime, agilityComponent.Speed);
                 return;
             }
 

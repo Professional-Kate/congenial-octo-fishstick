@@ -32,14 +32,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         {
-            _friendlyEntity = new CombatantEntity(new StatCard { Health = 10, Attack = 12, Speed = 5 })
+            _friendlyEntity = new CombatantEntity(new StatCard { Health = 10, Attack = 12 }, new AgilityCard { Speed = 5, Initiative = 1 })
             {
                 CombatantID = 1,
                 CombatantType = CombatantType.HUMAN,
                 CombatantInformation = new Information { Name = "", Description = "" }
             };
             
-            _enemyEntity = new CombatantEntity(new StatCard { Health = 5, Attack = 2, Speed = 8 })
+            _enemyEntity = new CombatantEntity(new StatCard { Health = 5, Attack = 2 }, new AgilityCard { Speed = 8, Initiative = 1 })
             {
                 CombatantID = 2,
                 CombatantType = CombatantType.GOBLIN,

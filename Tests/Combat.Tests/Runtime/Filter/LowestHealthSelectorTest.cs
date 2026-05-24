@@ -21,10 +21,10 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
             _lowestHealthSelector = new LowestHealthSelector(new CollectionAssertion());
             
             _highHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, 
-                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 5, Health = 10, Speed = 5 }));
+                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 5, Health = 10 }));
 
             _lowHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(15, true, 
-                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 4, Health = 5, Speed = 5 }));
+                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 4, Health = 5 }));
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         public void Positive_GetEntity_OneHP_EarlyReturn()
         {
             CombatantEntity oneHealth = TestCombatantEntityFactory.CreateCombatantEntity(12, true, 
-                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 4, Health = 1, Speed = 5 }));
+                TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 4, Health = 1 }));
             
             CombatantEntity combatant = _lowestHealthSelector.GetEntity([_lowHealthEntity, oneHealth, _lowHealthEntity, _highHealthEntity]);
             

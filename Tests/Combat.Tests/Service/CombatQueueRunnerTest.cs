@@ -3,8 +3,9 @@ using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Service;
 using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Service.Queue;
+using IdelPog.Combat.Service.Queue.Interface;
 using IdelPog.Core.Repository.Asset;
 using Moq;
 

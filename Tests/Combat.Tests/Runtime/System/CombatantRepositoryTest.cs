@@ -21,7 +21,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _wolfStatCard = new StatCard { Health = 3, Attack = 5, Speed = 5 };
+            _wolfStatCard = new StatCard { Health = 3, Attack = 5 };
             _wolfCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, _wolfStatCard);
         }
 

@@ -9,6 +9,7 @@ namespace IdelPog.Combat.Contracts.Response
         public required Information Information { get; init; }
         public required CombatantType CombatantType { get; init; }
         public required StatCard StatCard { get; init; }
+        public required AgilityCard AgilityCard { get; init; }
         public required byte CombatantID { get; init; }
     }
 }

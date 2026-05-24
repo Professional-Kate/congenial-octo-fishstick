@@ -4,6 +4,7 @@ using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Logging.Interface;
+using IdelPog.Combat.Service.Queue.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Validation.Assertion.Interface;

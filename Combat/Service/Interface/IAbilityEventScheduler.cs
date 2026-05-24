@@ -1,5 +1,4 @@
 ﻿using IdelPog.Combat.Contracts.Ability;
-using IdelPog.Combat.Event;
 
 namespace IdelPog.Combat.Service.Interface
 {

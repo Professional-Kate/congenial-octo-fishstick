@@ -3,9 +3,10 @@ using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Service.Queue.Interface;
 using IdelPog.Core.Repository.Asset;
 
-namespace IdelPog.Combat.Service
+namespace IdelPog.Combat.Service.Queue
 {
     public sealed class CombatQueueRunner : ICombatQueueRunner
     {

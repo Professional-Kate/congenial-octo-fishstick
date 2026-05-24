@@ -7,7 +7,7 @@ namespace IdelPog.Combat.Runtime.System.Store.Interface
     {
         public void RegisterInitial(IEnumerable<CombatantEntity> combatants);
         
-        public void RegisterCombatantChange(byte combatantID, CombatantStatsComponent combatantStatsComponent);
+        public void RegisterCombatantChange(byte combatantID, StatsComponent statsComponent);
 
         public void RegisterCombatantDeath(byte combatantID, IEnumerable<CombatantEntity> combatants);
     }

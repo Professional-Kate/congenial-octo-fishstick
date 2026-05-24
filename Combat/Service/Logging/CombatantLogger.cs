@@ -45,18 +45,27 @@ namespace IdelPog.Combat.Service.Logging
             return new CombatantCreation
             {
                 CombatantType = combatantEntity.CombatantType,
-                StatCard = CreateStatCard(combatantEntity.GetComponent<CombatantStatsComponent>()),
+                StatCard = CreateStatCard(combatantEntity.GetComponent<StatsComponent>()),
+                AgilityCard = CreateAgilityCard(combatantEntity.GetComponent<AgilityComponent>()),
                 Information = combatantEntity.CombatantInformation
             };
         }
 
-        private static StatCard CreateStatCard(CombatantStatsComponent combatantStatsComponent)
+        private static StatCard CreateStatCard(StatsComponent statsComponent)
         {
             return new StatCard
             {
-                Attack = combatantStatsComponent.Attack,
-                Health = combatantStatsComponent.Health,
-                Speed = combatantStatsComponent.Speed
+                Attack = statsComponent.Attack,
+                Health = statsComponent.Health
+            };
+        }
+
+        private static AgilityCard CreateAgilityCard(AgilityComponent agilityComponent)
+        {
+            return new AgilityCard
+            {
+                Speed = agilityComponent.Speed,
+                Initiative = agilityComponent.Initiative
             };
         }
 

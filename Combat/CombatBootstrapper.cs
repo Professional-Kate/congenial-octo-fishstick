@@ -26,6 +26,8 @@ using IdelPog.Combat.Service;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Logging;
 using IdelPog.Combat.Service.Logging.Interface;
+using IdelPog.Combat.Service.Queue;
+using IdelPog.Combat.Service.Queue.Interface;
 using IdelPog.Core.Factory;
 using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Logging;
@@ -114,12 +116,12 @@ namespace IdelPog.Combat
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
             INumberAssertion numberAssertion = new NumberAssertion();
-            IStatCardAsserter statCardAsserter = new StatCardAsserter(numberAssertion);
+            ICardAsserter cardAsserter = new CardAsserter(numberAssertion);
             
             ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory();
             IDispatchMany<CombatantCreationResponse> responseDispatcher =  new ManagedDispatcher<CombatantCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
-            CombatantCreationMediator mediator = new(combatantRepository, combatantEntityFactory, responseDispatcher, collectionAssertion, statCardAsserter);
+            CombatantCreationMediator mediator = new(combatantRepository, combatantEntityFactory, responseDispatcher, collectionAssertion, cardAsserter);
             IBatchController<CombatantCreation> controller = new ManagedBatchController<CombatantCreation>(mediator);
             CombatantCreationErrorFactory errorFactory = new(new BaseErrorFactory());
             

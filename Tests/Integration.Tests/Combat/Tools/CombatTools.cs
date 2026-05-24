@@ -28,7 +28,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         {
             foreach (CombatantCreationResponse response in combatantCreationResponses)
             {
-                CombatantCreation creation = new() { CombatantType = response.CombatantType, Information = response.Information, StatCard = response.StatCard };
+                CombatantCreation creation = new() { CombatantType = response.CombatantType, Information = response.Information, StatCard = response.StatCard, AgilityCard = response.AgilityCard };
                 _combatantTrackers.Add(response.CombatantID, new CombatantTracker(creation));
             }
 

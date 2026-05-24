@@ -12,28 +12,32 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         internal static readonly CombatantCreation HumanCreation = new()
         {
             CombatantType = CombatantType.HUMAN, 
-            StatCard = new StatCard { Health = 25, Attack = 5, Speed = 7 },
+            StatCard = new StatCard { Health = 25, Attack = 5 },
+            AgilityCard = new AgilityCard { Speed = 7, Initiative = 2 },
             Information = new Information { Name = "John Idle", Description = "He the man" }
         };
         
         internal static readonly CombatantCreation GoblinCreation = new()
         {
             CombatantType = CombatantType.GOBLIN, 
-            StatCard = new StatCard { Health = 9, Attack = 2, Speed = 11 },
+            StatCard = new StatCard { Health = 9, Attack = 2 },
+            AgilityCard = new AgilityCard { Speed = 11, Initiative = 3 },
             Information = new Information { Name = "Goblin", Description = "green guy" }
         };
         
         internal static readonly CombatantCreation BearCreation = new()
         {
             CombatantType = CombatantType.BEAR,
-            StatCard = new StatCard { Health = 20, Attack = 15, Speed = 15 },
+            StatCard = new StatCard { Health = 20, Attack = 15 },
+            AgilityCard = new AgilityCard { Speed = 15, Initiative = 4 },
             Information = new Information { Name = "Bear", Description = "rawr" }
         };
         
         internal static readonly CombatantCreation WolfCreation = new()
         {
             CombatantType = CombatantType.WOLF,
-            StatCard = new StatCard { Health = 3, Attack = 7, Speed = 17 },
+            StatCard = new StatCard { Health = 3, Attack = 7 },
+            AgilityCard = new AgilityCard { Speed = 17, Initiative = 1 },
             Information = new Information { Name = "Wolf", Description = "awoooo" }
         };
         

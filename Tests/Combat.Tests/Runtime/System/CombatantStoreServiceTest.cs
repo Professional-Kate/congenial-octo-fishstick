@@ -61,7 +61,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
         private static void VerifyCombatantChange(Mock<ICombatantStore> combatantStoreMock, CombatantEntity changedCombatant)
         {
-            combatantStoreMock.Verify(library => library.RegisterCombatantChange(changedCombatant.CombatantID, changedCombatant.GetComponent<CombatantStatsComponent>()), Times.Once);
+            combatantStoreMock.Verify(library => library.RegisterCombatantChange(changedCombatant.CombatantID, changedCombatant.GetComponent<StatsComponent>()), Times.Once);
         }
 
         private static void SetupHighestAttackCombatant(Mock<ICombatantStore> combatantStoreMock, HighestAttackCombatant highestAttackCombatant)
@@ -145,7 +145,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_RegisterCombatantChange_FriendlyCombatant_RegistersFriendlyChange()
         {
-            CombatantStatsComponent changedStats = new() { Attack = 10, Health = 20, Speed = 15 };
+            StatsComponent changedStats = new() { Attack = 10, Health = 20 };
             _friendlyCombatant.UpdateCombatantStats(changedStats);
             
             Assert.DoesNotThrow(() => _combatantStoreService.RegisterCombatantChange(_friendlyCombatant));
@@ -158,7 +158,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_RegisterCombatantChange_EnemyCombatant_RegistersFriendlyChange()
         {
-            CombatantStatsComponent changedStats = new() { Attack = 10, Health = 20, Speed = 15 };
+            StatsComponent changedStats = new() { Attack = 10, Health = 20 };
             _enemyCombatant.UpdateCombatantStats(changedStats);
             
             Assert.DoesNotThrow(() => _combatantStoreService.RegisterCombatantChange(_enemyCombatant));

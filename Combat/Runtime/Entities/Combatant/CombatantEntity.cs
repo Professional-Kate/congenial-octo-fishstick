@@ -12,16 +12,16 @@ namespace IdelPog.Combat.Runtime.Entities.Combatant
         public required CombatantType CombatantType { get; init; }
         public required Information CombatantInformation { get; init; }
 
-        public CombatantEntity(StatCard statCard) 
-            : base(BuildCombatantStatsComponent(statCard))
+        public CombatantEntity(StatCard statCard, AgilityCard agilityCard) 
+            : base(BuildStatsComponent(statCard), BuildAgilityComponent(agilityCard))
         { 
             AddComponent(new LifeStatusComponent { IsAlive = true });
         }
 
-        public void UpdateCombatantStats(CombatantStatsComponent combatantStatsComponent)
+        public void UpdateCombatantStats(StatsComponent statsComponent)
         { 
-            RemoveComponent<CombatantStatsComponent>();
-            AddComponent(combatantStatsComponent);
+            RemoveComponent<StatsComponent>();
+            AddComponent(statsComponent);
         }
 
         public void UpdateLifeStatus(bool isAlive)
@@ -30,13 +30,21 @@ namespace IdelPog.Combat.Runtime.Entities.Combatant
             AddComponent(new LifeStatusComponent { IsAlive = isAlive });
         }
 
-        private static CombatantStatsComponent BuildCombatantStatsComponent(StatCard statCardSource)
+        private static StatsComponent BuildStatsComponent(StatCard statCardSource)
         {
-            return new CombatantStatsComponent
+            return new StatsComponent
             {
                 Attack = statCardSource.Attack,
                 Health = statCardSource.Health,
-                Speed = statCardSource.Speed
+            };
+        }
+        
+        private static AgilityComponent BuildAgilityComponent(AgilityCard agilityCardSource)
+        {
+            return new AgilityComponent
+            {
+                Speed = agilityCardSource.Speed,
+                Initiative = agilityCardSource.Initiative
             };
         }
     }

@@ -8,7 +8,7 @@ namespace IdelPog.Combat.Runtime.System.Factory
     {
         public CombatantEntity CreateEntity(CombatantCreation combatantCreation, byte combatantID)
         {
-            return new CombatantEntity(combatantCreation.StatCard)
+            return new CombatantEntity(combatantCreation.StatCard, combatantCreation.AgilityCard)
             {
                 CombatantID = combatantID,
                 CombatantType =  combatantCreation.CombatantType,

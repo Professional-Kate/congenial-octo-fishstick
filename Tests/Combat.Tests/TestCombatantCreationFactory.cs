@@ -8,29 +8,30 @@ namespace IdelPog.Combat.Tests
 {
     public static class TestCombatantCreationFactory
     {
-        public static CombatantCreation CreateCombatantCreation(CombatantType combatantType, StatCard statCard, Information information, params AbilityCard[] skillCards)
+        public static CombatantCreation CreateCombatantCreation(CombatantType combatantType, StatCard statCard, Information information, AgilityCard agilityCard, params AbilityCard[] skillCards)
         {
             return new CombatantCreation
             {
                 CombatantType = combatantType,
                 Information = information,
-                StatCard = statCard
+                StatCard = statCard,
+                AgilityCard = agilityCard
             };
         }
         
-        public static CombatantCreation CreateCombatantCreation(CombatantType combatantType, StatCard statCard, Information information)
+        public static CombatantCreation CreateCombatantCreation(CombatantType combatantType, StatCard statCard, AgilityCard agilityCard, Information information)
         {
-            return CreateCombatantCreation(combatantType, statCard, information, new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }});
+            return CreateCombatantCreation(combatantType, statCard, information, agilityCard, new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }});
         }
 
         public static CombatantCreation CreateCombatantCreation(CombatantType combatantType, StatCard statCard)
         {
-            return CreateCombatantCreation(combatantType, statCard, new Information { Name = "", Description = "" });
+            return CreateCombatantCreation(combatantType, statCard, new AgilityCard { Speed = 1u, Initiative = 1u }, new Information { Name = "", Description = "" });
         }
         
         public static CombatantCreation CreateCombatantCreation(CombatantType combatantType)
         {
-            return CreateCombatantCreation(combatantType, new StatCard { Health = 10, Attack = 5, Speed = 5 });
+            return CreateCombatantCreation(combatantType, new StatCard { Health = 10, Attack = 5 });
         }
     }
 }

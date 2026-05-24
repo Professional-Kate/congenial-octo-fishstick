@@ -23,7 +23,8 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 CombatantType = CombatantType.HUMAN,
                 Information = new Information { Name = "Human", Description = "Man" },
-                StatCard = new StatCard { Attack = 10, Speed = 5, Health = 20 }
+                StatCard = new StatCard { Attack = 10, Health = 20 },
+                AgilityCard = new AgilityCard { Speed = 5, Initiative = 1 }
             };
         }
 
@@ -98,7 +99,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_DispatchMessage_CombatantHasZeroAttack()
         {
-            StatCard zeroAttackStatCard = new() { Speed = 52, Attack = 0, Health = 11 };
+            StatCard zeroAttackStatCard = new() { Attack = 0, Health = 11 };
             CombatantCreation zeroAttackCombatant = _humanCombatantCreation with { StatCard = zeroAttackStatCard };
             
             Assert.DoesNotThrow(() => DispatchMessage(zeroAttackCombatant));
@@ -112,8 +113,23 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_DispatchMessage_CombatantHasZeroSpeed_DispatchesError()
         {
-            StatCard zeroSpeedStatCard = new() { Speed = 0, Attack = 10, Health = 11 };
-            CombatantCreation zeroSpeedCombatant = _humanCombatantCreation with { StatCard = zeroSpeedStatCard };
+            AgilityCard zeroSpeedCard = new() { Speed = 0, Initiative = 1 };
+            CombatantCreation zeroSpeedCombatant = _humanCombatantCreation with { AgilityCard = zeroSpeedCard };
+            
+            Assert.DoesNotThrow(() => DispatchMessage(zeroSpeedCombatant));
+            
+            _responseListener.AssertWasCalled(false);
+            _errorListener.AssertWasCalled(true);
+            AssertErrorLength(1);
+            AssertBaseError<NumberZeroException>(_errorListener.Error.BaseError);
+            AssertErrorCollection(zeroSpeedCombatant);
+        }
+        
+        [Test]
+        public void Negative_DispatchMessage_CombatantHasZeroInitiative_DispatchesError()
+        {
+            AgilityCard zeroInitiativeCard = new() { Speed = 1, Initiative = 0 };
+            CombatantCreation zeroSpeedCombatant = _humanCombatantCreation with { AgilityCard = zeroInitiativeCard };
             
             Assert.DoesNotThrow(() => DispatchMessage(zeroSpeedCombatant));
             
@@ -127,7 +143,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_DispatchMessage_CombatantHasZeroHealth_DispatchesError()
         {
-            StatCard zeroHealthStatCard = new() { Speed = 20, Attack = 10, Health = 0 };
+            StatCard zeroHealthStatCard = new() { Attack = 10, Health = 0 };
             CombatantCreation zeroHealthCombatant = _humanCombatantCreation with { StatCard = zeroHealthStatCard };
             
             Assert.DoesNotThrow(() => DispatchMessage(zeroHealthCombatant));

@@ -22,7 +22,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         
         private CombatantEntity _combatantEntity;
         private CombatantAbilityEntity _combatantAbilityEntity;
-        private StatCard _attackerStats;
+        private AgilityCard _attackerAgility;
         private CombatantCreation _attackerCreation;
 
         [OneTimeSetUp]
@@ -34,8 +34,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _basicAttackScheduler = new InitialAbilityScheduler(_combatantRepositoryMock.Object, _abilityRepositoryMock.Object, _abilityEventSchedulerMock.Object, new NumberAssertion());
 
-            _attackerStats = new StatCard { Health = 100, Attack = 10, Speed = 10 };
-            _attackerCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, _attackerStats);
+            _attackerAgility = new AgilityCard { Speed = 10, Initiative = 1 };
+            _attackerCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN);
             _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, _attackerCreation);
             _combatantAbilityEntity = TestCombatantAbilityEntityFactory.CreateWithBaseComponents(1, AbilityType.BASIC_ATTACK);
         }
@@ -86,7 +86,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_EnqueueInitial_NoCreatedAbility_NoEnqueue()
         {
-            CombatantCreation combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, _attackerStats, _attackerCreation.Information, []);
+            CombatantCreation combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 1, Health = 1 }, _attackerCreation.Information, _attackerAgility);
             CombatantEntity combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, combatantCreation);
             SetupCombatantRepositoryGetAll(combatantEntity);
             
@@ -105,7 +105,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
 
-            VerifyScheduleEventCalled(1d - _attackerStats.Speed, _combatantAbilityEntity, Times.Once());
+            VerifyScheduleEventCalled(1d - _attackerAgility.Initiative, _combatantAbilityEntity, Times.Once());
             VerifyMocks();
         }
         
@@ -119,7 +119,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(1d));
 
             VerifyAbilityRepositoryContainsCalled(1, Times.Exactly(5));
-            VerifyScheduleEventCalled(1d - _attackerStats.Speed, _combatantAbilityEntity, Times.Exactly(5));
+            VerifyScheduleEventCalled(1d - _attackerAgility.Initiative, _combatantAbilityEntity, Times.Exactly(5));
             VerifyMocks();
         }
         
@@ -133,7 +133,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.DoesNotThrow(() => _basicAttackScheduler.EnqueueInitial(0d));
             
             VerifyAbilityRepositoryContainsCalled(1, Times.Once());
-            VerifyScheduleEventCalled(0d - _attackerStats.Speed, _combatantAbilityEntity, Times.Once());
+            VerifyScheduleEventCalled(0d - _attackerAgility.Initiative, _combatantAbilityEntity, Times.Once());
             VerifyMocks();
         }
 
@@ -149,16 +149,16 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Negative_EnqueueInitial_ZeroSpeed_Throws()
         {
-            CombatantEntity zeroSpeedEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, true, _attackerStats with { Speed = 0 });
-            SetupCombatantRepositoryGetAll(zeroSpeedEntity);
+            CombatantEntity zeroInitiativeEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, true, _attackerAgility with { Initiative = 0 });
+            SetupCombatantRepositoryGetAll(zeroInitiativeEntity);
             
-            SetupAbilityRepositoryContains(zeroSpeedEntity.CombatantID);
-            SetupAbilityRepositoryGetAll(zeroSpeedEntity.CombatantID, _combatantAbilityEntity);
-            SetupCombatantRepositoryGetAll(zeroSpeedEntity);
+            SetupAbilityRepositoryContains(zeroInitiativeEntity.CombatantID);
+            SetupAbilityRepositoryGetAll(zeroInitiativeEntity.CombatantID, _combatantAbilityEntity);
+            SetupCombatantRepositoryGetAll(zeroInitiativeEntity);
             
             Assert.Throws<NumberZeroException>(() => _basicAttackScheduler.EnqueueInitial(1d));
             
-            VerifyAbilityRepositoryContainsCalled(zeroSpeedEntity.CombatantID, Times.Once());
+            VerifyAbilityRepositoryContainsCalled(zeroInitiativeEntity.CombatantID, Times.Once());
             VerifyMocks();
         }
     }

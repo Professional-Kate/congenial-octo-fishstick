@@ -7,7 +7,7 @@ using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Service;
-using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Service.Queue.Interface;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -148,7 +148,7 @@ namespace IdelPog.Combat.Tests.Service
         [Test]
         public void Negative_ScheduleEvent_ZeroCombatantSpeed_Throws()
         {
-            StatCard zeroSpeedStatCard = new() { Attack = 100, Health = 100, Speed = 0 };
+            AgilityCard zeroSpeedStatCard = new() { Speed = 0, Initiative = 1 };
             CombatantEntity zeroSpeedEntity = TestCombatantEntityFactory.CreateCombatantEntity(_combatantEntity.CombatantID, true, zeroSpeedStatCard);
             
             const double castTime = 120d; 

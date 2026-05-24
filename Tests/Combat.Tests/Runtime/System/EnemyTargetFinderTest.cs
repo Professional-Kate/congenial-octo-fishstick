@@ -42,13 +42,13 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             _enemyTargetFinder = new EnemyTargetFinder(_friendlyCombatantStoreMock.Object, _enemyCombatantStoreMock.Object, _combatantAbilityEntityRepositoryMock.Object, _combatantRepositoryMock.Object, new ObjectNullAssertion(), new FoundAssertion());
 
-            _friendlyStats = new StatCard { Health = 25, Attack = 10, Speed = 10 };
+            _friendlyStats = new StatCard { Health = 25, Attack = 10 };
             _friendlyCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.BEAR, _friendlyStats);
             _friendlyEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, _friendlyCreation);
             _friendlyAbilityEntity = TestCombatantAbilityEntityFactory.Create(_friendlyEntity.CombatantID, AbilityType.BASIC_ATTACK);
             _friendlyAbilityEntity.AddComponent(new TargetingTypeComponent { TargetingType = TargetingType.LOW_HEALTH });
             
-            _enemyStats = new StatCard { Health = 15, Attack = 15, Speed = 10 };
+            _enemyStats = new StatCard { Health = 15, Attack = 15 };
             _enemyCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, _enemyStats);
             _enemyEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, false, _enemyCreation);
             _enemyAbilityEntity = TestCombatantAbilityEntityFactory.Create(_enemyEntity.CombatantID, AbilityType.BASIC_ATTACK);

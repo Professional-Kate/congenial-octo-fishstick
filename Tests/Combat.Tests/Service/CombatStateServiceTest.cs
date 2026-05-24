@@ -24,7 +24,7 @@ namespace IdelPog.Combat.Tests.Service
             
             _combatStateService = new CombatStateService(_combatantFiltersMock.Object);
             
-            StatCard entityStats = new() { Health = 10, Attack = 10,  Speed = 3 };
+            StatCard entityStats = new() { Health = 10, Attack = 10 };
             CombatantCreation entityCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.BEAR, entityStats);
             
             _friendlyEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, entityCreation);

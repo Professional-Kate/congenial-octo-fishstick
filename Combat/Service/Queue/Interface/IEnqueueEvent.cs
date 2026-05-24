@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Event;
 
-namespace IdelPog.Combat.Service.Interface
+namespace IdelPog.Combat.Service.Queue.Interface
 {
     public interface IEnqueueEvent
     { 

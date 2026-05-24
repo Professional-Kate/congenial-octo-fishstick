@@ -24,18 +24,18 @@ namespace IdelPog.Combat.Runtime.Filter
             
             foreach (CombatantEntity combatantEntity in combatantEntities)
             {
-                CombatantStatsComponent combatantStatsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
-                if (combatantStatsComponent.Health == 0)
+                StatsComponent statsComponent = combatantEntity.GetComponent<StatsComponent>();
+                if (statsComponent.Health == 0)
                 {
                     continue;
                 }
 
-                if (combatantStatsComponent.Attack <= highestAttack)
+                if (statsComponent.Attack <= highestAttack)
                 {
                     continue;
                 }
 
-                highestAttack = combatantStatsComponent.Attack;
+                highestAttack = statsComponent.Attack;
                 highestAttackEntity = combatantEntity;
             }
             

@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Command;
 
-namespace IdelPog.Combat.Service.Interface
+namespace IdelPog.Combat.Service.Queue.Interface
 {
     public interface ICombatQueueRunner
     {

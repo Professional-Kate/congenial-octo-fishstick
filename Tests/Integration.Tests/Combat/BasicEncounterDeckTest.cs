@@ -70,13 +70,13 @@ namespace IdelPog.Integration.Tests.Combat
         private void AssertError<TException>(params BasicEncounterDeck[] basicEncounterDecks) where TException : Exception
         {
             BasicEncounterDeckError basicEncounterDeckError = _errorListener.Error;
-            
-            Assert.Multiple(() =>
+
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(basicEncounterDeckError.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(basicEncounterDeckError.BaseError.Exception.GetBaseException(), Is.TypeOf<TException>());
                 Assert.That(basicEncounterDecks, Is.EquivalentTo(basicEncounterDeckError.BasicEncounterDecks));
-            });
+            }
         }
 
         [Test]
@@ -112,8 +112,7 @@ namespace IdelPog.Integration.Tests.Combat
             AssertResponse(_responseListener.Responses[0], returnedDeck);
             CombatTools.AssertVictory(_responseListener.Responses[0], false);
             
-            _combatTools.AssertZeroAttacks(_humanCreation, _goblinCreation);
-            _combatTools.AssertOneOrMoreAttacks(_wolfCreation, _bearCreation);
+            _combatTools.AssertOneOrMoreAttacks(_wolfCreation, _bearCreation, _humanCreation, _goblinCreation);
         }
 
         [Test]
@@ -160,22 +159,48 @@ namespace IdelPog.Integration.Tests.Combat
         }
 
         [Test]
-        public void Positive_SimulateCombat_CombatantsAttackInOrder()
-        { 
-            CombatantCreation humanCreation = _humanCreation with { StatCard = new StatCard { Attack = 1, Health = 100, Speed = 10 }};
-            CombatantCreation bearCreation = _bearCreation with { StatCard = new StatCard { Attack = 1, Health = 100, Speed = 11 }};
-            CombatantCreation goblinCreation = _goblinCreation with { StatCard = new StatCard { Attack = 1, Health = 100, Speed = 12 }};
-            CombatantCreation wolfCreation =_wolfCreation with { StatCard = new StatCard { Attack = 1, Health = 100, Speed = 13 }};
+        public void Positive_SimulateCombat_CombatantsAttackInOrder_OfInitiative()
+        {
+            StatCard sharedStatCard = new() { Attack = 1, Health = 100 };
+            AgilityCard sameSpeedCard = new() { Speed = 10, Initiative = 0 };
+            
+            CombatantCreation humanCreation = _humanCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 1 }};
+            CombatantCreation bearCreation = _bearCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 2 }};
+            CombatantCreation goblinCreation = _goblinCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 3 }};
+            CombatantCreation wolfCreation = _wolfCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 4 }};
 
             DispatchMessage(humanCreation, bearCreation, goblinCreation, wolfCreation);
             DispatchMessage(_basicAttackCreation);
             DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 }, _equipBasicAttack with { CombatantID = 2 }, _equipBasicAttack with { CombatantID = 3 });
             
-            RunCombat([0], [1, 2, 3], _combatantCreationResponseListener.Responses);
+            RunCombat([1], [0, 3, 2], _combatantCreationResponseListener.Responses);
             
             AbilityValidator.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
             AbilityValidator.AssertAttackers(3, 2, 1, 0);
             AbilityValidator.Reset();
+        }
+
+        [Test]
+        public void Positive_SimulateCombat_CombatClearsDown_BetweenCommands()
+        {
+            DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
+            DispatchMessage(_basicAttackCreation, StaticCombatCommands.StrongAttackCreation);
+            DispatchMessage(_equipBasicAttack, StaticCombatCommands.EquipBasicAttack(1), StaticCombatCommands.EquipStrongAttack(2), StaticCombatCommands.EquipStrongAttack(3));
+            
+            BasicEncounterDeck basicEncounterDeck = new()
+            {
+                FriendlyCombatantIDs = [1, 3],
+                EnemyCombatantIDs = [0, 2]
+            };
+            
+            // TODO: things are not cleared down between commands
+            // probably need a way of making temporary CombatantEntities just for Combat, so we can clear down easier but that's cringe
+            DispatchMessage(basicEncounterDeck, basicEncounterDeck);
+            
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(2);
+            Assert.That(_responseListener.Responses[0].CombatantStateChanges, Is.EqualTo(_responseListener.Responses[1].CombatantStateChanges));
         }
         
         // Exception Tests
@@ -233,11 +258,11 @@ namespace IdelPog.Integration.Tests.Combat
             AssertError<MaxIterationsException>(basicEncounterDeck);
 
             MaxIterationsException maxIterationsException = (_errorListener.Error.BaseError.Exception.GetBaseException() as MaxIterationsException)!;
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(maxIterationsException.MaxIterations, Is.EqualTo(maxIterations));
                 Assert.That(maxIterationsException.BasicEncounterDeck, Is.EqualTo(basicEncounterDeck));
-            });
+            }
         }
     }
 }

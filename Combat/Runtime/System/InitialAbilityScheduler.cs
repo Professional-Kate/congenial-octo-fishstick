@@ -35,18 +35,17 @@ namespace IdelPog.Combat.Runtime.System
                 IReadOnlyList<CombatantAbilityEntity> combatantAbilityEntities = _combatantAbilityEntityRepository.GetAll(combatantEntity.CombatantID);
                 foreach (CombatantAbilityEntity combatantAbilityEntity in combatantAbilityEntities)
                 { 
-                    // TODO: update with Initiative
-                    _abilityEventScheduler.ScheduleEvent(tick - GetCombatantSpeed(combatantEntity), combatantAbilityEntity.CombatantID, combatantAbilityEntity.AbilityType);
+                    _abilityEventScheduler.ScheduleEvent(tick - GetCombatantInitiative(combatantEntity), combatantAbilityEntity.CombatantID, combatantAbilityEntity.AbilityType);
                 }
             }
         }
 
-        private uint GetCombatantSpeed(CombatantEntity combatantEntity)
+        private uint GetCombatantInitiative(CombatantEntity combatantEntity)
         { 
-            CombatantStatsComponent combatantStatsComponent = combatantEntity.GetComponent<CombatantStatsComponent>();
-            _numberAssertion.AssertNumberNotZero(combatantStatsComponent.Speed, nameof(combatantStatsComponent.Speed));
+            AgilityComponent agilityComponent = combatantEntity.GetComponent<AgilityComponent>();
+            _numberAssertion.AssertNumberNotZero(agilityComponent.Initiative, nameof(agilityComponent.Initiative));
 
-            return combatantStatsComponent.Speed;
+            return agilityComponent.Initiative;
         }
     }   
 }
