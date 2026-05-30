@@ -1,12 +1,13 @@
 ﻿using IdelPog.Combat.Assertion;
-using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Mediator;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
+using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;

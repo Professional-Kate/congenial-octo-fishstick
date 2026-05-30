@@ -1,7 +1,8 @@
-﻿using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Service;
+using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Repository.Asset;
 using Moq;
 
@@ -24,7 +25,7 @@ namespace IdelPog.Combat.Tests.Service
             _abilitySlotCalculator = new AbilitySlotCalculator(_abilityRepositoryMock.Object);
 
             _abilityCard = new AbilityCard
-                { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK } };
+                { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
 
             _abilityEntity = TestAbilityEntityFactory.Create(AbilityType.BASIC_ATTACK, 1);
         }

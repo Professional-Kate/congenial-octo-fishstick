@@ -1,6 +1,7 @@
-﻿using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Repository;
+using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 

@@ -1,6 +1,6 @@
-﻿using IdelPog.Combat.Contracts.Ability;
-using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Event;
@@ -29,7 +29,8 @@ namespace IdelPog.Integration.Tests.Combat
                 AbilityType = AbilityType.BASIC_ATTACK,
                 EventType = EventType.DIRECT_DAMAGE,
                 Cooldown = 9,
-                DamageCard = new DamageCard { PhysicalDamage = 3, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
+                ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
+                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 3, StrikeDamage = 0, ThrustDamage = 0 },
                 AbilitySlots = 1,
                 CastTime = 0
             };
@@ -68,7 +69,7 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 Assert.That(basicEncounterDeck.Information, Is.EqualTo(expected.Information));
                 Assert.That(basicEncounterDeck.AbilityType, Is.EqualTo(expected.AbilityType));
-                Assert.That(basicEncounterDeck.DamageCard, Is.EqualTo(expected.DamageCard));
+                Assert.That(basicEncounterDeck.ElementalDamageCard, Is.EqualTo(expected.ElementalDamageCard));
             });
         }
         
@@ -108,8 +109,8 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_DispatchCommands_CreatesMultipleSkills()
         {
-            DamageCard oneDamageCard = _basicAttackCreation.DamageCard with { PhysicalDamage = 1 };
-            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityType = AbilityType.STRONG_ATTACK, DamageCard = oneDamageCard, Cooldown = 4 };
+            ElementalDamageCard oneElementalDamageCard = _basicAttackCreation.ElementalDamageCard with { FireDamage = 1 };
+            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityType = AbilityType.STRONG_ATTACK, ElementalDamageCard = oneElementalDamageCard, Cooldown = 4 };
             Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(_basicAttackCreation, abilityCreation));
             
             AssertResponseListenerCalled(true);
@@ -122,11 +123,13 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_CanCreateAbility_AtMax_AndMin_Damage()
         {
-            DamageCard minDamageCard = new() { PhysicalDamage = uint.MinValue, LightningDamage = uint.MinValue, ColdDamage = uint.MinValue, FireDamage = uint.MinValue };
-            AbilityCreation strongAttackCreation = _basicAttackCreation with { AbilityType = AbilityType.STRONG_ATTACK, DamageCard = minDamageCard };
+            ElementalDamageCard minElementalDamageCard = new() { LightningDamage = uint.MinValue, ColdDamage = uint.MinValue, FireDamage = uint.MinValue };
+            PhysicalDamageCard minPhysicalDamageCard = new() { SlashDamage = uint.MinValue, StrikeDamage = uint.MinValue, ThrustDamage = uint.MinValue };
+            AbilityCreation strongAttackCreation = _basicAttackCreation with { AbilityType = AbilityType.STRONG_ATTACK, ElementalDamageCard = minElementalDamageCard, PhysicalDamageCard = minPhysicalDamageCard };
             
-            DamageCard maxDamageCard = new() { PhysicalDamage = uint.MaxValue, LightningDamage = uint.MaxValue, ColdDamage = uint.MaxValue, FireDamage = uint.MaxValue };
-            AbilityCreation basicAttackCreation = _basicAttackCreation with { DamageCard = maxDamageCard };
+            ElementalDamageCard maxElementalDamageCard = new() { LightningDamage = uint.MaxValue, ColdDamage = uint.MaxValue, FireDamage = uint.MaxValue };
+            PhysicalDamageCard maxPhysicalDamageCard = new() { SlashDamage = uint.MaxValue, StrikeDamage = uint.MaxValue, ThrustDamage = uint.MaxValue };
+            AbilityCreation basicAttackCreation = _basicAttackCreation with { ElementalDamageCard = maxElementalDamageCard, PhysicalDamageCard = maxPhysicalDamageCard };
             
             Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(basicAttackCreation, strongAttackCreation));
             

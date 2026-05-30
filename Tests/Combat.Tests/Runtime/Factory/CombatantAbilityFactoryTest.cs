@@ -1,7 +1,9 @@
-﻿using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat.Contracts;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Factory;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
+using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Runtime.Factory
 {
@@ -11,7 +13,8 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         private CombatantAbilityFactory _combatantAbilityFactory;
 
         private CombatantAbilityEntity _combatantAbilityEntity;
-        private DamageComponent _damageComponent;
+        private ElementalDamageComponent _elementalDamageComponent;
+        private PhysicalDamageComponent _physicalDamageComponent;
         private CooldownComponent _cooldownComponent;
 
         [OneTimeSetUp]
@@ -25,22 +28,25 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         {
             _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(1, AbilityType.BASIC_ATTACK);
 
-            _damageComponent = new DamageComponent { PhysicalDamage = 10, ColdDamage = 1, LightningDamage = 1, FireDamage = 1 };
+            _elementalDamageComponent = new ElementalDamageComponent { ColdDamage = 1, LightningDamage = 1, FireDamage = 1 };
+            _physicalDamageComponent = new PhysicalDamageComponent { SlashDamage = 1, StrikeDamage = 1, ThrustDamage = 1 };
             _cooldownComponent = new CooldownComponent { Cooldown = 5 };
-            _combatantAbilityEntity.AddComponent(_damageComponent);
+            _combatantAbilityEntity.AddComponent(_elementalDamageComponent);
+            _combatantAbilityEntity.AddComponent(_physicalDamageComponent);
             _combatantAbilityEntity.AddComponent(_cooldownComponent);
         }
 
         private void AssertCombatantAbility(CombatantAbility combatantAbility, CombatantAbilityEntity sourceEntity)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(combatantAbility.AbilityType, Is.EqualTo(sourceEntity.AbilityType));
-                Assert.That(combatantAbility.DamageCard.PhysicalDamage, Is.EqualTo(_damageComponent.PhysicalDamage));
                 Assert.That(combatantAbility.Cooldown, Is.EqualTo(_cooldownComponent.Cooldown));
-            });
+                CardAssertions.AssertElementalDamageCard(sourceEntity, combatantAbility.ElementalDamageCard);
+                CardAssertions.AssertPhysicalDamageCard(sourceEntity, combatantAbility.PhysicalDamageCard);
+            }
         }
-
+        
         [Test]
         public void Positive_CreateCombatantAbility_ConvertsEntity()
         {

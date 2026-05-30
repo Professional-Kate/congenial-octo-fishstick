@@ -32,14 +32,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         {
-            _friendlyEntity = new CombatantEntity(new StatCard { Health = 10, Attack = 12 }, new AgilityCard { Speed = 5, Initiative = 1 })
+            _friendlyEntity = new CombatantEntity(new StatCard { Health = 10 }, new AgilityCard { Speed = 5, Initiative = 1 })
             {
                 CombatantID = 1,
                 CombatantType = CombatantType.HUMAN,
                 CombatantInformation = new Information { Name = "", Description = "" }
             };
             
-            _enemyEntity = new CombatantEntity(new StatCard { Health = 5, Attack = 2 }, new AgilityCard { Speed = 8, Initiative = 1 })
+            _enemyEntity = new CombatantEntity(new StatCard { Health = 5 }, new AgilityCard { Speed = 8, Initiative = 1 })
             {
                 CombatantID = 2,
                 CombatantType = CombatantType.GOBLIN,
@@ -70,11 +70,11 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
         private static void AssertEntityHasComponent(CombatantEntity combatantEntity, bool isFriendly)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(combatantEntity.ContainsComponent<FriendlyStatusComponent>(), Is.EqualTo(true));
+                Assert.That(combatantEntity.ContainsComponent<FriendlyStatusComponent>(), Is.True);
                 Assert.That(combatantEntity.GetComponent<FriendlyStatusComponent>().IsFriendly, Is.EqualTo(isFriendly));
-            });
+            }
         }
 
         [Test]

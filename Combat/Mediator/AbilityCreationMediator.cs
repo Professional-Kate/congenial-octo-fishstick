@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
-using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Runtime.Entities;
@@ -59,7 +59,7 @@ namespace IdelPog.Combat.Mediator
                 Information = abilityCreation.Information, 
                 AbilityType =  abilityCreation.AbilityType,
                 EventType =  abilityCreation.EventType,
-                DamageCard = abilityCreation.DamageCard
+                ElementalDamageCard = abilityCreation.ElementalDamageCard
             };
         }
     }

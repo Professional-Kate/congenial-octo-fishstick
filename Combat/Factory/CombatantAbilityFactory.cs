@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Factory.Interface;
 using IdelPog.Combat.Runtime.Component;
@@ -13,7 +13,8 @@ namespace IdelPog.Combat.Factory
             return new CombatantAbility
             {
                 AbilityType = combatantAbilityEntity.AbilityType,
-                DamageCard = CreateDamageCard(combatantAbilityEntity),
+                ElementalDamageCard = CreateElementalDamageCard(combatantAbilityEntity),
+                PhysicalDamageCard = CreatePhysicalDamageCard(combatantAbilityEntity),
                 Cooldown = combatantAbilityEntity.GetComponent<CooldownComponent>().Cooldown
             };
         }
@@ -29,16 +30,27 @@ namespace IdelPog.Combat.Factory
             return combatantAbilities;
         }
 
-        private static DamageCard CreateDamageCard(CombatantAbilityEntity combatantAbilityEntity)
+        private static ElementalDamageCard CreateElementalDamageCard(CombatantAbilityEntity combatantAbilityEntity)
         {
-            DamageComponent damageComponent = combatantAbilityEntity.GetComponent<DamageComponent>();
+            ElementalDamageComponent elementalDamageComponent = combatantAbilityEntity.GetComponent<ElementalDamageComponent>();
 
-            return new DamageCard
+            return new ElementalDamageCard
             {
-                PhysicalDamage = damageComponent.PhysicalDamage,
-                LightningDamage = 0,
-                FireDamage = 0,
-                ColdDamage = 0
+                LightningDamage = elementalDamageComponent.LightningDamage,
+                FireDamage = elementalDamageComponent.FireDamage,
+                ColdDamage = elementalDamageComponent.ColdDamage
+            };
+        }
+        
+        private static PhysicalDamageCard CreatePhysicalDamageCard(CombatantAbilityEntity combatantAbilityEntity)
+        {
+            PhysicalDamageComponent elementalDamageComponent = combatantAbilityEntity.GetComponent<PhysicalDamageComponent>();
+
+            return new PhysicalDamageCard
+            {
+                StrikeDamage = elementalDamageComponent.StrikeDamage,
+                SlashDamage = elementalDamageComponent.SlashDamage,
+                ThrustDamage = elementalDamageComponent.ThrustDamage
             };
         }
     }

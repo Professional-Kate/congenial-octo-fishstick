@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
-using IdelPog.Combat.Contracts.Ability;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;

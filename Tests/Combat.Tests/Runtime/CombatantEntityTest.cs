@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
+using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Runtime
 {
@@ -19,7 +20,7 @@ namespace IdelPog.Combat.Tests.Runtime
 
         private void UpdateCombatantStats(StatsComponent statsComponent)
         { 
-            _combatantEntity.UpdateCombatantStats(statsComponent);
+            _combatantEntity.ReplaceComponent(statsComponent);
         }
 
         private StatsComponent GetComponent()
@@ -45,11 +46,11 @@ namespace IdelPog.Combat.Tests.Runtime
         [Test]
         public void Positive_UpdateCombatantStats_MultipleTimes_UpdatesStats()
         {
-            UpdateCombatantStats(_statsComponent with { Health = 5 });
-            VerifyComponent(_statsComponent with { Health = 5 }, GetComponent());
+            UpdateCombatantStats(new StatsComponent { Health = 5 });
+            VerifyComponent(new StatsComponent { Health = 5 }, GetComponent());
             
-            UpdateCombatantStats(_statsComponent with { Health = 22, Attack = 15 });
-            VerifyComponent(_statsComponent with { Health = 22, Attack = 15 }, GetComponent());
+            UpdateCombatantStats(new StatsComponent { Health = 22 });
+            VerifyComponent(new StatsComponent { Health = 22 }, GetComponent());
         }
     }
 }

@@ -6,21 +6,22 @@ namespace IdelPog.Combat.Runtime.System
 {
     public sealed class DamageSystem : IDamageSystem
     {
-        public uint DealDamage(CombatantEntity targetCombatant, uint attackerAttack, CombatantAbilityEntity attackerAbility)
+        public uint DealDamage(CombatantEntity targetCombatant, CombatantAbilityEntity attackerAbility)
         {
             StatsComponent targetStats = targetCombatant.GetComponent<StatsComponent>();
             
-            uint newHealth = CalculateNewHealth(targetStats.Health, GetCalculatedDamage(attackerAttack, attackerAbility));
-            targetCombatant.UpdateCombatantStats(targetStats with { Health = newHealth });
+            uint newHealth = CalculateNewHealth(targetStats.Health, GetCalculatedDamage(attackerAbility));
+            targetCombatant.ReplaceComponent(new StatsComponent { Health = newHealth });
             
             return newHealth;
         }
 
-        public uint GetCalculatedDamage(uint attackerAttack, CombatantAbilityEntity attackerAbility)
+        public uint GetCalculatedDamage(CombatantAbilityEntity attackerAbility)
         {
-            DamageComponent damageComponent = attackerAbility.GetComponent<DamageComponent>();
+            ElementalDamageComponent elementalDamageComponent = attackerAbility.GetComponent<ElementalDamageComponent>();
+            PhysicalDamageComponent physicalDamageComponent = attackerAbility.GetComponent<PhysicalDamageComponent>();
             
-            return attackerAttack + damageComponent.TotalDamage;
+            return elementalDamageComponent.TotalDamage + physicalDamageComponent.TotalDamage;
         }
 
         private static uint CalculateNewHealth(uint defenderHealth, uint calculatedDamage)

@@ -1,5 +1,4 @@
 ﻿using IdelPog.Combat.Assertion;
-using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
@@ -8,6 +7,7 @@ using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Tests.TestFactory;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Runtime.System
@@ -86,7 +86,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_EnqueueInitial_NoCreatedAbility_NoEnqueue()
         {
-            CombatantCreation combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Attack = 1, Health = 1 }, _attackerCreation.Information, _attackerAgility);
+            CombatantCreation combatantCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN, new StatCard { Health = 1 }, _attackerCreation.Information, _attackerAgility);
             CombatantEntity combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, combatantCreation);
             SetupCombatantRepositoryGetAll(combatantEntity);
             

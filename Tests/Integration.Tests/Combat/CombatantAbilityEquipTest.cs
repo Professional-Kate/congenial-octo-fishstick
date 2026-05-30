@@ -1,5 +1,4 @@
 ﻿using IdelPog.Combat;
-using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
@@ -27,7 +26,7 @@ namespace IdelPog.Integration.Tests.Combat
         public void OneTimeSetup()
         {
             _abilityCard = new AbilityCard
-                { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK } };
+                { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
             
             _basicAttackCreation = new AbilityCreation
             {
@@ -35,7 +34,8 @@ namespace IdelPog.Integration.Tests.Combat
                 AbilityType = AbilityType.BASIC_ATTACK,
                 EventType = EventType.DIRECT_DAMAGE,
                 Cooldown = 9,
-                DamageCard = new DamageCard { PhysicalDamage = 3, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
+                ElementalDamageCard = new ElementalDamageCard { ColdDamage = 2, LightningDamage = 5, FireDamage = 125 },
+                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 3, StrikeDamage = 123, ThrustDamage = 1 },
                 AbilitySlots = 1,
                 CastTime = 0
             };
@@ -44,7 +44,7 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 CombatantType = CombatantType.HUMAN,
                 Information = new Information { Name = "Human", Description = "Man" },
-                StatCard = new StatCard { Attack = 10, Health = 20 },
+                StatCard = new StatCard { Health = 20 },
                 AgilityCard = new AgilityCard { Speed = 5, Initiative = 1 }
             };
             
@@ -75,7 +75,7 @@ namespace IdelPog.Integration.Tests.Combat
                 Assert.Multiple(() =>
                 {
                     Assert.That(response.CombatantAbilities[i].AbilityType, Is.EqualTo(sourceAbilityCard.AbilityType));
-                    Assert.That(response.CombatantAbilities[i].DamageCard, Is.EqualTo(abilityCreation.DamageCard));
+                    Assert.That(response.CombatantAbilities[i].ElementalDamageCard, Is.EqualTo(abilityCreation.ElementalDamageCard));
                     Assert.That(response.CombatantAbilities[i].Cooldown, Is.EqualTo(abilityCreation.Cooldown));
                 });
             }

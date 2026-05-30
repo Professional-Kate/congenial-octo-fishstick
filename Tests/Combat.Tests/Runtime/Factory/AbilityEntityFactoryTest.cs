@@ -1,8 +1,9 @@
-﻿using IdelPog.Combat.Contracts.Ability;
-using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Runtime.System.Factory;
+using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Runtime.Factory
 {
@@ -28,7 +29,8 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
                 Assert.That(abilityEntity.AbilityType, Is.EqualTo(abilityCreation.AbilityType));
                 Assert.That(abilityEntity.Information, Is.EqualTo(abilityCreation.Information));
                 Assert.That(abilityEntity.GetComponent<CooldownComponent>().Cooldown, Is.EqualTo(abilityCreation.Cooldown));
-                Assert.That(abilityEntity.GetComponent<DamageComponent>().PhysicalDamage, Is.EqualTo(abilityCreation.DamageCard.PhysicalDamage));
+                CardAssertions.AssertElementalDamageCard(abilityEntity, abilityCreation.ElementalDamageCard);
+                CardAssertions.AssertPhysicalDamageCard(abilityEntity, abilityCreation.PhysicalDamageCard);
             }
         }
 

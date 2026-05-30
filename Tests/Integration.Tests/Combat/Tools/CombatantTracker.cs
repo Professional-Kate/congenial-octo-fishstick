@@ -1,5 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Ability;
-using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Enum;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {

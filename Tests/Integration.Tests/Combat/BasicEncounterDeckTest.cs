@@ -1,5 +1,4 @@
 ﻿using IdelPog.Combat;
-using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
@@ -116,9 +115,9 @@ namespace IdelPog.Integration.Tests.Combat
         }
 
         [Test]
-        public void Positive_SimulateCombat_HighAttack_TargetsHighAttack()
+        public void Positive_SimulateCombat_TargetsHighSpeed()
         {
-            AbilityCard highAttackCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK } };
+            AbilityCard highAttackCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.SPEED }};
             
             DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
             DispatchMessage(_basicAttackCreation);
@@ -130,7 +129,7 @@ namespace IdelPog.Integration.Tests.Combat
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
-            CombatTools.AssertFirstDeadCombatant(_combatTools.FirstDeadCombatant.CombatantCreation,_bearCreation);
+            CombatTools.AssertFirstDeadCombatant(_combatTools.FirstDeadCombatant.CombatantCreation,_wolfCreation);
             
             _combatTools.AssertZeroAttacks(_bearCreation, _wolfCreation);
             _combatTools.AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
@@ -140,7 +139,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_LowHealth_TargetsLowHealth()
         {
-            AbilityCard lowHealthCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.LOW_HEALTH } };
+            AbilityCard lowHealthCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH } };
             
             DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
             DispatchMessage(_basicAttackCreation);
@@ -161,7 +160,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_CombatantsAttackInOrder_OfInitiative()
         {
-            StatCard sharedStatCard = new() { Attack = 1, Health = 100 };
+            StatCard sharedStatCard = new() { Health = 100 };
             AgilityCard sameSpeedCard = new() { Speed = 10, Initiative = 0 };
             
             CombatantCreation humanCreation = _humanCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 1 }};
@@ -193,14 +192,17 @@ namespace IdelPog.Integration.Tests.Combat
                 EnemyCombatantIDs = [0, 2]
             };
             
-            // TODO: things are not cleared down between commands
-            // probably need a way of making temporary CombatantEntities just for Combat, so we can clear down easier but that's cringe
-            DispatchMessage(basicEncounterDeck, basicEncounterDeck);
+            DispatchMessage(basicEncounterDeck, basicEncounterDeck, basicEncounterDeck, basicEncounterDeck);
             
             _responseListener.AssertWasCalled(true);
             _errorListener.AssertWasCalled(false);
-            _responseListener.AssertResponseLength(2);
-            Assert.That(_responseListener.Responses[0].CombatantStateChanges, Is.EqualTo(_responseListener.Responses[1].CombatantStateChanges));
+            _responseListener.AssertResponseLength(4);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(_responseListener.Responses[1].CombatantStateChanges, Is.EqualTo(_responseListener.Responses[0].CombatantStateChanges));
+                Assert.That(_responseListener.Responses[2].CombatantStateChanges, Is.EqualTo(_responseListener.Responses[0].CombatantStateChanges));
+                Assert.That(_responseListener.Responses[3].CombatantStateChanges, Is.EqualTo(_responseListener.Responses[0].CombatantStateChanges));
+            }
         }
         
         // Exception Tests

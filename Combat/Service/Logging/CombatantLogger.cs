@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Service.Logging.Interface;
@@ -55,7 +55,6 @@ namespace IdelPog.Combat.Service.Logging
         {
             return new StatCard
             {
-                Attack = statsComponent.Attack,
                 Health = statsComponent.Health
             };
         }

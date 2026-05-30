@@ -11,9 +11,10 @@ namespace IdelPog.Combat.Runtime.System.Factory
         public AbilityEntity CreateAbilityEntity(AbilityCreation abilityCreation)
         {
             CooldownComponent cooldownComponent = new() { Cooldown = abilityCreation.Cooldown };
-            DamageComponent damageComponent = CreateDamageComponent(abilityCreation.DamageCard);
-
-            AbilityEntity abilityEntity = new(cooldownComponent, damageComponent)
+            ElementalDamageComponent elementalDamageComponent = CreateElementalDamageComponent(abilityCreation.ElementalDamageCard);
+            PhysicalDamageComponent physicalDamageComponent = CreatePhysicalDamageComponent(abilityCreation.PhysicalDamageCard); 
+            
+            AbilityEntity abilityEntity = new(cooldownComponent, elementalDamageComponent, physicalDamageComponent)
             {
                 AbilityType = abilityCreation.AbilityType,
                 AbilitySlots = abilityCreation.AbilitySlots,
@@ -28,14 +29,23 @@ namespace IdelPog.Combat.Runtime.System.Factory
             return abilityEntity;
         }
 
-        private static DamageComponent CreateDamageComponent(DamageCard damageCard)
+        private static ElementalDamageComponent CreateElementalDamageComponent(ElementalDamageCard elementalDamageCard)
         {
-            return new DamageComponent
+            return new ElementalDamageComponent
             {
-                PhysicalDamage = damageCard.PhysicalDamage,
-                LightningDamage = damageCard.LightningDamage,
-                ColdDamage = damageCard.ColdDamage,
-                FireDamage = damageCard.FireDamage
+                LightningDamage = elementalDamageCard.LightningDamage,
+                ColdDamage = elementalDamageCard.ColdDamage,
+                FireDamage = elementalDamageCard.FireDamage
+            };
+        }
+        
+        private static PhysicalDamageComponent CreatePhysicalDamageComponent(PhysicalDamageCard elementalDamageCard)
+        {
+            return new PhysicalDamageComponent
+            {
+                StrikeDamage = elementalDamageCard.StrikeDamage,
+                SlashDamage = elementalDamageCard.SlashDamage,
+                ThrustDamage = elementalDamageCard.ThrustDamage
             };
         }
     }

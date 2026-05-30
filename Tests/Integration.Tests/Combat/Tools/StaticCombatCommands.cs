@@ -1,5 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Ability;
-using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Event;
@@ -12,7 +11,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         internal static readonly CombatantCreation HumanCreation = new()
         {
             CombatantType = CombatantType.HUMAN, 
-            StatCard = new StatCard { Health = 25, Attack = 5 },
+            StatCard = new StatCard { Health = 25 },
             AgilityCard = new AgilityCard { Speed = 7, Initiative = 2 },
             Information = new Information { Name = "John Idle", Description = "He the man" }
         };
@@ -20,7 +19,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         internal static readonly CombatantCreation GoblinCreation = new()
         {
             CombatantType = CombatantType.GOBLIN, 
-            StatCard = new StatCard { Health = 9, Attack = 2 },
+            StatCard = new StatCard { Health = 9 },
             AgilityCard = new AgilityCard { Speed = 11, Initiative = 3 },
             Information = new Information { Name = "Goblin", Description = "green guy" }
         };
@@ -28,7 +27,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         internal static readonly CombatantCreation BearCreation = new()
         {
             CombatantType = CombatantType.BEAR,
-            StatCard = new StatCard { Health = 20, Attack = 15 },
+            StatCard = new StatCard { Health = 20 },
             AgilityCard = new AgilityCard { Speed = 15, Initiative = 4 },
             Information = new Information { Name = "Bear", Description = "rawr" }
         };
@@ -36,7 +35,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         internal static readonly CombatantCreation WolfCreation = new()
         {
             CombatantType = CombatantType.WOLF,
-            StatCard = new StatCard { Health = 3, Attack = 7 },
+            StatCard = new StatCard { Health = 3 },
             AgilityCard = new AgilityCard { Speed = 17, Initiative = 1 },
             Information = new Information { Name = "Wolf", Description = "awoooo" }
         };
@@ -45,7 +44,8 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         {
             AbilityType = AbilityType.BASIC_ATTACK, 
             EventType = EventType.DIRECT_DAMAGE,
-            DamageCard = new DamageCard { PhysicalDamage = 1, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
+            ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
+            PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 1, StrikeDamage = 0, ThrustDamage = 0 },
             Cooldown = 5,
             Information = new Information { Name = "Basic Attack!", Description = "Kinda weak.." },
             AbilitySlots = 1,
@@ -56,7 +56,8 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         {
             AbilityType = AbilityType.STRONG_ATTACK, 
             EventType = EventType.DIRECT_DAMAGE,
-            DamageCard = new DamageCard { PhysicalDamage = 5, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
+            ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
+            PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 5, StrikeDamage = 0, ThrustDamage = 0 },
             Cooldown = 15,
             Information = new Information { Name = "Strong attack!", Description = "Wack them!!!" },
             AbilitySlots = 1,
@@ -67,6 +68,12 @@ namespace IdelPog.Integration.Tests.Combat.Tools
 
         internal static CombatantAbilityEquip EquipStrongAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.STRONG_ATTACK);
         
+        internal static CombatantAbilityEquip EquipAbilityCards(byte combatantID, params AbilityCard[] abilityCards) => new()
+        {
+            CombatantID = combatantID, 
+            AbilityCards = abilityCards
+        };
+        
         private static CombatantAbilityEquip EquipAbility(byte combatantID, AbilityType abilityType) => new()
         {
             CombatantID = combatantID, 
@@ -75,7 +82,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
                 new AbilityCard
                 {
                     AbilityType = abilityType, 
-                    StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }
+                    StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }
                 }
             ]
         };

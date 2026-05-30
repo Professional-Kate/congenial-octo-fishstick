@@ -16,26 +16,14 @@ namespace IdelPog.Combat.Runtime.Entities.Combatant
             : base(BuildStatsComponent(statCard), BuildAgilityComponent(agilityCard))
         { 
             AddComponent(new LifeStatusComponent { IsAlive = true });
-        }
-
-        public void UpdateCombatantStats(StatsComponent statsComponent)
-        { 
-            RemoveComponent<StatsComponent>();
-            AddComponent(statsComponent);
-        }
-
-        public void UpdateLifeStatus(bool isAlive)
-        {
-            RemoveComponent<LifeStatusComponent>();
-            AddComponent(new LifeStatusComponent { IsAlive = isAlive });
+            AddComponent(new BaseStatsComponent { Health = statCard.Health });
         }
 
         private static StatsComponent BuildStatsComponent(StatCard statCardSource)
         {
             return new StatsComponent
             {
-                Attack = statCardSource.Attack,
-                Health = statCardSource.Health,
+                Health = statCardSource.Health
             };
         }
         

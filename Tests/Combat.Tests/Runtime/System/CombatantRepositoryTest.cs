@@ -1,8 +1,10 @@
 ﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Repository;
+using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 
@@ -21,7 +23,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _wolfStatCard = new StatCard { Health = 3, Attack = 5 };
+            _wolfStatCard = new StatCard { Health = 3 };
             _wolfCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, _wolfStatCard);
         }
 
@@ -174,7 +176,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_GetFriendlies_NoAliveEntities_ReturnsEmptyArray()
         {
-            _friendlyWolfEntity.UpdateLifeStatus(false);
+            _friendlyWolfEntity.ReplaceComponent(new LifeStatusComponent { IsAlive = false });
             _combatantRepository.Add(_friendlyWolfEntity);
             
             CombatantEntity[] combatantEntities = _combatantRepository.GetFriendlies().ToArray();
@@ -207,7 +209,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_GetEnemies_NoAliveEntities_ReturnsEmptyArray()
         {
-            _enemyWolfEntity.UpdateLifeStatus(false);
+            _enemyWolfEntity.ReplaceComponent(new LifeStatusComponent { IsAlive = false });
             _combatantRepository.Add(_enemyWolfEntity);
             
             CombatantEntity[] combatantEntities = _combatantRepository.GetEnemies().ToArray();

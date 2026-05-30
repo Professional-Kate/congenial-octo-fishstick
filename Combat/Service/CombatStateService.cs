@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Runtime.Entities.Combatant;
-using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Service.Interface;
 
 namespace IdelPog.Combat.Service
@@ -19,6 +19,11 @@ namespace IdelPog.Combat.Service
         public void Evaluate(CombatantEntity changedCombatant)
         { 
             IsCombatOver = IsCombatResolved();
+        }
+
+        public void Reset()
+        {
+            IsCombatOver = false;
         }
 
         private bool IsCombatResolved()

@@ -3,6 +3,5 @@
     public readonly record struct StatCard
     {
         public required uint Health { get; init; }
-        public required uint Attack { get; init; }
     }
 }

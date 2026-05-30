@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;

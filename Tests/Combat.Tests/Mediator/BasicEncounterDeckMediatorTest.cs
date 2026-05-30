@@ -1,12 +1,10 @@
 ﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Mediator;
 using IdelPog.Combat.Runtime.System.Interface;
-using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Combat.Service.Queue.Interface;
@@ -24,10 +22,10 @@ namespace IdelPog.Combat.Tests.Mediator
         private BasicEncounterDeckMediator _basicEncounterDeckMediator;
         private Mock<IFriendlyStatusAssigner> _friendlyStatusAssignerMock;
         private Mock<IInitialAbilityScheduler> _attackSchedulerMock;
-        private Mock<ICombatantStoreService> _combatantStoreServiceMock;
         private Mock<ICombatQueueRunner> _combatQueueRunnerMock;
         private Mock<ICombatStateService> _combatStateServiceMock;
         private Mock<ICombatantLogger> _combatantLoggerMock;
+        private Mock<ITearDownService> _tearDownServiceMock;
         private Mock<IDispatchMany<BasicEncounterDeckResponse>> _responseDispatcherMock;
         
         private BasicEncounterDeck _basicEncounterDeck;
@@ -38,13 +36,13 @@ namespace IdelPog.Combat.Tests.Mediator
         {
             _friendlyStatusAssignerMock = new Mock<IFriendlyStatusAssigner>();
             _attackSchedulerMock = new Mock<IInitialAbilityScheduler>();
-            _combatantStoreServiceMock = new Mock<ICombatantStoreService>();
             _combatQueueRunnerMock = new Mock<ICombatQueueRunner>();
             _combatStateServiceMock = new Mock<ICombatStateService>();
             _combatantLoggerMock = new Mock<ICombatantLogger>();
+            _tearDownServiceMock = new Mock<ITearDownService>();
             _responseDispatcherMock = new Mock<IDispatchMany<BasicEncounterDeckResponse>>();
             
-            _basicEncounterDeckMediator = new BasicEncounterDeckMediator(_friendlyStatusAssignerMock.Object, _combatantStoreServiceMock.Object, _attackSchedulerMock.Object, _combatQueueRunnerMock.Object, _combatStateServiceMock.Object, _combatantLoggerMock.Object, _responseDispatcherMock.Object, new CollectionAssertion());
+            _basicEncounterDeckMediator = new BasicEncounterDeckMediator(_friendlyStatusAssignerMock.Object, _attackSchedulerMock.Object, _combatQueueRunnerMock.Object, _combatStateServiceMock.Object, _combatantLoggerMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), _tearDownServiceMock.Object);
             _basicEncounterDeck = new BasicEncounterDeck 
             {
                 FriendlyCombatantIDs = [1],
@@ -54,7 +52,7 @@ namespace IdelPog.Combat.Tests.Mediator
             CombatantCreation combatantCreation = new()
             {
                 CombatantType = CombatantType.WOLF, Information = new Information { Name = "A", Description = "B" },
-                StatCard = new StatCard { Health = 10, Attack = 5 },
+                StatCard = new StatCard { Health = 10 },
                 AgilityCard = new AgilityCard { Speed = 3, Initiative = 1 }
             };
 
@@ -67,10 +65,10 @@ namespace IdelPog.Combat.Tests.Mediator
         {
             _friendlyStatusAssignerMock.Reset();
             _attackSchedulerMock.Reset();
-            _combatantStoreServiceMock.Reset();
             _combatQueueRunnerMock.Reset();
             _combatStateServiceMock.Reset();
             _combatantLoggerMock.Reset();
+            _tearDownServiceMock.Reset();
             _responseDispatcherMock.Reset();
         }
 
@@ -80,14 +78,14 @@ namespace IdelPog.Combat.Tests.Mediator
             _friendlyStatusAssignerMock.VerifyNoOtherCalls();
             _attackSchedulerMock.Verify();
             _attackSchedulerMock.VerifyNoOtherCalls();
-            _combatantStoreServiceMock.Verify();
-            _combatantStoreServiceMock.VerifyNoOtherCalls();
             _combatQueueRunnerMock.Verify();
             _combatQueueRunnerMock.VerifyNoOtherCalls();
             _combatStateServiceMock.Verify();
             _combatStateServiceMock.VerifyNoOtherCalls();
             _combatantLoggerMock.Verify();
             _combatantLoggerMock.VerifyNoOtherCalls();
+            _tearDownServiceMock.Verify();
+            _tearDownServiceMock.VerifyNoOtherCalls();
             _responseDispatcherMock.Verify();
             _responseDispatcherMock.VerifyNoOtherCalls();
         }
@@ -97,29 +95,26 @@ namespace IdelPog.Combat.Tests.Mediator
             _combatantLoggerMock.Setup(library => library.GetStateChanges()).Returns(combatantStateChanges).Verifiable();
         }
 
-        private void VerifyAssignFriendlyStatus(BasicEncounterDeck basicEncounterDeck, Times times)
-        {
-            _friendlyStatusAssignerMock.Verify(library => library.AssignFriendlyStatus(basicEncounterDeck.FriendlyCombatantIDs, basicEncounterDeck.EnemyCombatantIDs), times);
-        }
-
         private void VerifyRunDeck(BasicEncounterDeck basicEncounterDeck, Times times)
         {
             _combatQueueRunnerMock.Verify(library => library.RunDeck(basicEncounterDeck), times);
+            _friendlyStatusAssignerMock.Verify(library => library.AssignFriendlyStatus(basicEncounterDeck.FriendlyCombatantIDs, basicEncounterDeck.EnemyCombatantIDs), times);
         }
 
         private void VerifyMockCalls(Times times)
         {
             _combatStateServiceMock.Verify(library => library.FriendlyVictory, times);
+            _combatStateServiceMock.Verify(library => library.Reset(), times);
             _combatantLoggerMock.Verify(library => library.ClearStateChanges(), times);
-            _combatantStoreServiceMock.Verify(library => library.RegisterInitialTargets(), times);
             _attackSchedulerMock.Verify(library => library.EnqueueInitial(0), times);
+            _tearDownServiceMock.Verify(library => library.ResetCombatants(), times);
         }
 
         private void VerifyDispatchMessages(int count)
         {
             _responseDispatcherMock.Verify(library => library.Dispatch(It.Is<IReadOnlyList<BasicEncounterDeckResponse>>(collection => collection.Count == count)));
         }
-
+        
         [Test]
         public void Positive_HandleMessages_SimulatesCombat_InvokesServices()
         {
@@ -127,10 +122,22 @@ namespace IdelPog.Combat.Tests.Mediator
             
             Assert.DoesNotThrow(() => _basicEncounterDeckMediator.HandleMessages([_basicEncounterDeck]));
 
-            VerifyAssignFriendlyStatus(_basicEncounterDeck, Times.Once());
             VerifyRunDeck(_basicEncounterDeck, Times.Once());
             VerifyMockCalls(Times.Once());
             VerifyDispatchMessages(1);
+            VerifyMocks();
+        }
+        
+        [Test]
+        public void Positive_HandleMessages_MultipleMessages_SimulatesCombat()
+        {
+            SetupGetStateChanges(_combatantStateChange);
+            
+            Assert.DoesNotThrow(() => _basicEncounterDeckMediator.HandleMessages([_basicEncounterDeck, _basicEncounterDeck, _basicEncounterDeck]));
+
+            VerifyRunDeck(_basicEncounterDeck, Times.Exactly(3));
+            VerifyMockCalls(Times.Exactly(3));
+            VerifyDispatchMessages(3);
             VerifyMocks();
         }
 

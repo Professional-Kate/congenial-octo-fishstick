@@ -1,5 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Ability;
-using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
@@ -72,11 +71,11 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [TestCase(100u, true, TestName = "Friendlies win because the added AbilityDamage nukes the bear")]
         public void AbilityDamage_ShouldIncreaseDamage(uint abilityDamage, bool friendlyVictory)
         {
-            CombatantCreation slightlyFasterHuman = _humanCreation with { StatCard = new StatCard { Health = 1, Attack = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 4 }};
-            CombatantCreation slightlySlowerBear = _bearCreation with { StatCard = new StatCard { Health = 10, Attack = 100 }, AgilityCard = new AgilityCard { Speed = 9, Initiative = 4 }};
+            CombatantCreation slightlyFasterHuman = _humanCreation with { StatCard = new StatCard { Health = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 4 }};
+            CombatantCreation slightlySlowerBear = _bearCreation with { StatCard = new StatCard { Health = 10 }, AgilityCard = new AgilityCard { Speed = 9, Initiative = 4 }};
             
             DispatchMessage(slightlyFasterHuman, slightlySlowerBear);
-            DispatchMessage(_strongAttackCreation with { DamageCard = _strongAttackCreation.DamageCard with { PhysicalDamage = abilityDamage } });
+            DispatchMessage(_strongAttackCreation with { ElementalDamageCard = _strongAttackCreation.ElementalDamageCard with { FireDamage = abilityDamage } });
             DispatchMessage(_equipStrongAttack, StaticCombatCommands.EquipStrongAttack(1));
 
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);
@@ -90,15 +89,15 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             AbilityCard abilityCard = new()
             {
                 AbilityType = AbilityType.BASIC_ATTACK,
-                StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }
+                StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }
             };
             
-            CombatantCreation slightlyFasterHuman = _humanCreation with { StatCard = new StatCard { Health = 1, Attack = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 10 }};
-            CombatantCreation slightlySlowerBear = _bearCreation with { StatCard = new StatCard { Health = 10, Attack = 100 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 9 }};
+            CombatantCreation slightlyFasterHuman = _humanCreation with { StatCard = new StatCard { Health = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 10 }};
+            CombatantCreation slightlySlowerBear = _bearCreation with { StatCard = new StatCard { Health = 10 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 9 }};
             CombatantAbilityEquip dualAbilityEquip = new() { CombatantID = 0, AbilityCards = [ abilityCard, abilityCard with { AbilityType = AbilityType.STRONG_ATTACK } ] };
             
             DispatchMessage(slightlyFasterHuman, slightlySlowerBear);
-            DispatchMessage(_basicAttackCreation with { DamageCard = _strongAttackCreation.DamageCard with { PhysicalDamage = 5 }}, _strongAttackCreation with { DamageCard = _strongAttackCreation.DamageCard with { PhysicalDamage = 5 }, Cooldown = _basicAttackCreation.Cooldown });
+            DispatchMessage(_basicAttackCreation with { ElementalDamageCard = _strongAttackCreation.ElementalDamageCard with { FireDamage = 5 }}, _strongAttackCreation with { ElementalDamageCard = _strongAttackCreation.ElementalDamageCard with { FireDamage = 5 }, Cooldown = _basicAttackCreation.Cooldown });
             DispatchMessage(dualAbilityEquip, StaticCombatCommands.EquipBasicAttack(1));
 
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);
@@ -119,10 +118,14 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [Test]
         public void AbilityDamageCard_AddsToTotalDamage()
         {
-            AbilityCreation abilityDamageCreation = _basicAttackCreation with { DamageCard = new DamageCard { PhysicalDamage = 1, ColdDamage = 1, FireDamage = 1, LightningDamage = 1 }};
+            AbilityCreation abilityDamageCreation = _basicAttackCreation with
+            {
+                ElementalDamageCard = new ElementalDamageCard { ColdDamage = 1, FireDamage = 1, LightningDamage = 1 },
+                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 1, StrikeDamage = 1, ThrustDamage = 1 }
+            };
             
-            CombatantCreation elementalMan = _humanCreation with { StatCard = new StatCard { Health = 1, Attack = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 4 }};
-            CombatantCreation unsuspectingGoblin = _goblinCreation with { StatCard = new StatCard { Health = 5, Attack = 100 }, AgilityCard = new AgilityCard { Speed = 9, Initiative = 4 }};
+            CombatantCreation elementalMan = _humanCreation with { StatCard = new StatCard { Health = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 4 }};
+            CombatantCreation unsuspectingGoblin = _goblinCreation with { StatCard = new StatCard { Health = 6 }, AgilityCard = new AgilityCard { Speed = 9, Initiative = 4 }};
             
             DispatchMessage(abilityDamageCreation);
             DispatchMessage(elementalMan, unsuspectingGoblin);

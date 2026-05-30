@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 
 namespace IdelPog.Combat.Factory.Interface

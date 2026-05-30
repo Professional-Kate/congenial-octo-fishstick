@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Core.Contracts;
 using IdelPog.ECS.Entity;
@@ -11,8 +11,8 @@ namespace IdelPog.Combat.Runtime.Entities
         public required byte AbilitySlots { get; init; }
         public required Information Information { get; init; }
         
-        public AbilityEntity(CooldownComponent cooldownComponent, DamageComponent damageComponent) 
-            : base(cooldownComponent, damageComponent)
+        public AbilityEntity(CooldownComponent cooldownComponent, ElementalDamageComponent elementalDamageComponent, PhysicalDamageComponent physicalDamageComponent) 
+            : base(cooldownComponent, elementalDamageComponent, physicalDamageComponent)
         {
         }
     }

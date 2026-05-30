@@ -1,6 +1,8 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Exceptions;
+using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
+using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Assertion
 {
@@ -28,7 +30,7 @@ namespace IdelPog.Combat.Tests.Assertion
         [Test]
         public void Negative_AssertCombatantAlive_CombatantNotAlive_Throws()
         { 
-            _combatant.UpdateLifeStatus(false);
+            _combatant.ReplaceComponent(new LifeStatusComponent { IsAlive = false });
             
             CombatantDeadException exception = Assert.Throws<CombatantDeadException>(() => _combatantAssertion.AssertCombatantAlive(_combatant));
             

@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Ability;
+using IdelPog.Combat.Contracts.Enum;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {
@@ -27,6 +27,14 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             CombatantStateChange stateChange = _enumerator.Current;
 
             Assert.That(stateChange.AttackingCombatant.CombatantID, Is.EqualTo(attackingCombatantID));
+        }
+
+        internal static void AssertTarget(byte targetCombatantID)
+        {
+            MoveNext();
+            CombatantStateChange stateChange = _enumerator.Current;
+            
+            Assert.That(stateChange.CombatantID, Is.EqualTo(targetCombatantID));
         }
         
         internal static void AssertAttackers(params byte[] attackingCombatantIDs)

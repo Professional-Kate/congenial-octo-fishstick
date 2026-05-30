@@ -3,6 +3,7 @@ using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory;
+using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Runtime.Factory
 {
@@ -18,7 +19,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         {
             _combatService = new CombatantEntityFactory();
 
-            _wolfCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, new StatCard { Health = 3, Attack = 5 });
+            _wolfCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, new StatCard { Health = 3 });
         }
         
         [Test]

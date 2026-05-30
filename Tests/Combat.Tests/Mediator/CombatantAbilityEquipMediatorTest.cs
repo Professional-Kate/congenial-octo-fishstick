@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Assertion;
-using IdelPog.Combat.Contracts.Ability;
+using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
@@ -44,9 +44,9 @@ namespace IdelPog.Combat.Tests.Mediator
             
             _combatantAbilityEquipMediator = new CombatantAbilityEquipMediator(_abilitySlotCalculatorMock.Object, _combatantAbilityRepositoryMock.Object, _combatantAbilityEntityFactoryMock.Object, _combatantAbilityFactoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), combatantAbilityAssertion);
             
-            _abilityCard = new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingType = TargetingType.HIGH_ATTACK }};
+            _abilityCard = new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
             _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_abilityCard] };
-            _combatantAbility = new CombatantAbility { AbilityType = _abilityCard.AbilityType, DamageCard = new DamageCard { PhysicalDamage = 10, ColdDamage = 0, LightningDamage = 0, FireDamage = 0 }, Cooldown = 15 };
+            _combatantAbility = new CombatantAbility { AbilityType = _abilityCard.AbilityType, ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 }, Cooldown = 15, PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 10, StrikeDamage = 0, ThrustDamage = 0 }};
         }
 
         [SetUp]

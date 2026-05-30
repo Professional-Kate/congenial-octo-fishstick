@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
@@ -27,7 +27,7 @@ namespace IdelPog.Combat.Runtime.System.Factory
 
                 AbilityEntity abilityEntity = _skillEntityRepository.Get(abilityCard.AbilityType);
                 CombatantAbilityEntity combatantAbilityEntity = new() { CombatantID = combatantAbilityEquip.CombatantID, AbilityType = abilityCard.AbilityType };
-                AddBaseComponents(combatantAbilityEntity, abilityEntity, abilityCard.StrategyCard.TargetingType);
+                AddBaseComponents(combatantAbilityEntity, abilityEntity, abilityCard.StrategyCard.TargetingPreference, abilityCard.StrategyCard.CombatantStatType);
                 
                 combatantAbilityEntities[i] = combatantAbilityEntity;
             }
@@ -35,11 +35,12 @@ namespace IdelPog.Combat.Runtime.System.Factory
             return combatantAbilityEntities;
         }
 
-        private static void AddBaseComponents(CombatantAbilityEntity combatantAbilityEntity, AbilityEntity abilityEntity, TargetingType targetingType)
+        private static void AddBaseComponents(CombatantAbilityEntity combatantAbilityEntity, AbilityEntity abilityEntity, TargetingPreference targetingPreference, CombatantStatType combatantStatType)
         {
-            combatantAbilityEntity.AddComponent(new TargetingTypeComponent { TargetingType = targetingType });
+            combatantAbilityEntity.AddComponent(new TargetingPreferenceComponent { TargetingPreference = targetingPreference, CombatantStatType = combatantStatType});
             combatantAbilityEntity.AddComponent(abilityEntity.GetComponent<CooldownComponent>());
-            combatantAbilityEntity.AddComponent(abilityEntity.GetComponent<DamageComponent>());
+            combatantAbilityEntity.AddComponent(abilityEntity.GetComponent<ElementalDamageComponent>());
+            combatantAbilityEntity.AddComponent(abilityEntity.GetComponent<PhysicalDamageComponent>());
 
             if (abilityEntity.TryGetComponent(out CastTimeComponent castTimeComponent))
             { 

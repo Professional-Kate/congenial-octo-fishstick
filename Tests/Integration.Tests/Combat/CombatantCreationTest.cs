@@ -23,7 +23,7 @@ namespace IdelPog.Integration.Tests.Combat
             {
                 CombatantType = CombatantType.HUMAN,
                 Information = new Information { Name = "Human", Description = "Man" },
-                StatCard = new StatCard { Attack = 10, Health = 20 },
+                StatCard = new StatCard { Health = 20 },
                 AgilityCard = new AgilityCard { Speed = 5, Initiative = 1 }
             };
         }
@@ -97,20 +97,6 @@ namespace IdelPog.Integration.Tests.Combat
         }
 
         [Test]
-        public void Positive_DispatchMessage_CombatantHasZeroAttack()
-        {
-            StatCard zeroAttackStatCard = new() { Attack = 0, Health = 11 };
-            CombatantCreation zeroAttackCombatant = _humanCombatantCreation with { StatCard = zeroAttackStatCard };
-            
-            Assert.DoesNotThrow(() => DispatchMessage(zeroAttackCombatant));
-            
-            _responseListener.AssertWasCalled(true);
-            _errorListener.AssertWasCalled(false);
-            _responseListener.AssertResponseLength(1);
-            AssertResponse(_responseListener.Responses[0], zeroAttackCombatant);
-        }
-
-        [Test]
         public void Negative_DispatchMessage_CombatantHasZeroSpeed_DispatchesError()
         {
             AgilityCard zeroSpeedCard = new() { Speed = 0, Initiative = 1 };
@@ -143,7 +129,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_DispatchMessage_CombatantHasZeroHealth_DispatchesError()
         {
-            StatCard zeroHealthStatCard = new() { Attack = 10, Health = 0 };
+            StatCard zeroHealthStatCard = new() { Health = 0 };
             CombatantCreation zeroHealthCombatant = _humanCombatantCreation with { StatCard = zeroHealthStatCard };
             
             Assert.DoesNotThrow(() => DispatchMessage(zeroHealthCombatant));

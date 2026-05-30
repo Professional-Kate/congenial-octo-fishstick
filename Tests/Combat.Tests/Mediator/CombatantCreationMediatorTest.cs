@@ -8,6 +8,7 @@ using IdelPog.Combat.Mediator;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
+using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;

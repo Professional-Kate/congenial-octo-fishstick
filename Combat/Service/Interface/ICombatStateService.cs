@@ -8,5 +8,7 @@ namespace IdelPog.Combat.Service.Interface
         public bool FriendlyVictory { get; }
 
         public void Evaluate(CombatantEntity changedCombatant);
+
+        public void Reset();
     }
 }

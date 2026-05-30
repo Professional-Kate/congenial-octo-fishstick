@@ -4,6 +4,6 @@ namespace IdelPog.Combat.Runtime.System.Mediator.Interface
 {
     public interface IEntityDamageMediator
     {
-        public void ApplyDamage(CombatantEntity targetCombatant, CombatantEntity attackingCombatant, CombatantAbilityEntity attackingCombatantAbility, double tick);
+        public void ApplyDamage(IEnumerable<CombatantEntity> targetCombatants, CombatantEntity attackingCombatant, CombatantAbilityEntity attackingCombatantAbility, double tick);
     }
 }

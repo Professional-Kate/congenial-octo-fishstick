@@ -35,11 +35,11 @@ namespace IdelPog.ECS.Tests.Entity
                 .Returns(_testComponent);
 
             bool contains = _entity.TryGetComponent(out TestComponent component);
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(contains, Is.True);
                 Assert.That(component, Is.EqualTo(_testComponent));
-            });
+            }
         }
 
         [Test]
@@ -112,6 +112,34 @@ namespace IdelPog.ECS.Tests.Entity
 
             _dictionaryMock.Verify(library => library.ContainsKey(typeof(TestComponent)), Times.Once);
             _dictionaryMock.Verify(library => library.Remove(typeof(TestComponent)), Times.Never);
+        }
+
+        [Test]
+        public void Positive_ReplaceComponent_ReplacesComponent()
+        {
+            TestComponent newComponent = new() { TestNumber = 1 };   
+            
+            _dictionaryMock.Setup(library => library.ContainsKey(typeof(TestComponent)))
+                .Returns(true);
+            
+            _entity.ReplaceComponent(newComponent);
+            
+            _dictionaryMock.Verify(library => library.ContainsKey(typeof(TestComponent)), Times.Once);
+            _dictionaryMock.Verify(library => library.Remove(typeof(TestComponent)), Times.Once);
+            _dictionaryMock.Verify(library => library.Add(typeof(TestComponent), newComponent), Times.Once);
+        }
+
+        [Test]
+        public void Negative_ReplaceComponent_MissingComponent_Throws()
+        {
+            _dictionaryMock.Setup(library => library.ContainsKey(typeof(TestComponent)))
+                .Returns(false);
+            
+            Assert.Throws<ComponentNotFoundException>(() => _entity.ReplaceComponent(_testComponent));
+            
+            _dictionaryMock.Verify(library => library.ContainsKey(typeof(TestComponent)), Times.Once);
+            _dictionaryMock.Verify(library => library.Remove(typeof(TestComponent)), Times.Never);
+            _dictionaryMock.Verify(library => library.Add(typeof(TestComponent), _testComponent), Times.Never);
         }
 
         [Test]

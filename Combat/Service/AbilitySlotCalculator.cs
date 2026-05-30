@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Ability;
+﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Core.Repository.Asset;

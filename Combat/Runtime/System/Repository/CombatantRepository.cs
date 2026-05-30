@@ -1,6 +1,5 @@
 ﻿using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
-using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
 
@@ -49,15 +48,15 @@ namespace IdelPog.Combat.Runtime.System.Repository
 
         public IEnumerable<CombatantEntity> GetFriendlies()
         {
-            return GetCombatants(true);
+            return GetCombatants(true).ToArray();
         }
 
         public IEnumerable<CombatantEntity> GetEnemies()
         {
-            return GetCombatants(false);
+            return GetCombatants(false).ToArray();
         }
 
-        private List<CombatantEntity> GetCombatants(bool isFriendly)
+        public IReadOnlyList<CombatantEntity> GetCombatants(bool isFriendly)
         {
             List<CombatantEntity> combatantEntities = [];
             foreach (CombatantEntity combatantEntity in _combatantRepository.Values)
@@ -73,7 +72,7 @@ namespace IdelPog.Combat.Runtime.System.Repository
                 }
             }
             
-            return combatantEntities;
+            return combatantEntities.ToArray();
         }
     }
 }

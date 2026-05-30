@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Assertion.Interface;
-using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Event;
 using IdelPog.Combat.Event.Resolver;
@@ -12,6 +12,8 @@ using IdelPog.Combat.Mediator;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Runtime.Filter;
 using IdelPog.Combat.Runtime.Filter.Interface;
+using IdelPog.Combat.Runtime.Filter.Provider;
+using IdelPog.Combat.Runtime.Filter.Provider.Interface;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Factory;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
@@ -20,8 +22,6 @@ using IdelPog.Combat.Runtime.System.Mediator;
 using IdelPog.Combat.Runtime.System.Mediator.Interface;
 using IdelPog.Combat.Runtime.System.Repository;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
-using IdelPog.Combat.Runtime.System.Store;
-using IdelPog.Combat.Runtime.System.Store.Interface;
 using IdelPog.Combat.Service;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Logging;
@@ -61,14 +61,20 @@ namespace IdelPog.Combat
             IAssetRepository<AbilityType, AbilityEntity> abilityEntityRepository = new AssetRepository<AbilityType, AbilityEntity>(repositoryAsserter);
             IAssetRepository<AbilityType, EventType> eventRepository =  new AssetRepository<AbilityType, EventType>(repositoryAsserter);
             ICombatantAbilityEntityRepository combatantAbilityEntityRepository = new CombatantAbilityEntityRepository(collectionAssertion, foundAssertion);
+            IAssetRepository<CombatantStatType, IStatProvider> statProviderRepository = new AssetRepository<CombatantStatType, IStatProvider>(repositoryAsserter);
             
-            RegisterBasicEncounterDeck(bufferManager, flowRegister, bufferLogger, repositoryAsserter, combatantRepository, combatantAbilityEntityRepository, eventRepository, combatOptions.MaxIterations);
+            // TODO: move this out eventually 
+            statProviderRepository.Add(CombatantStatType.HEALTH, new HealthProvider());
+            statProviderRepository.Add(CombatantStatType.SPEED, new SpeedProvider());
+            statProviderRepository.Add(CombatantStatType.INITIATIVE, new InitiativeProvider());
+            
+            RegisterBasicEncounterDeck(bufferManager, flowRegister, bufferLogger, repositoryAsserter, combatantRepository, combatantAbilityEntityRepository, eventRepository, statProviderRepository, combatOptions.MaxIterations);
             RegisterCombatantCreation(bufferManager, flowRegister, bufferLogger, combatantRepository);
             RegisterAbilityCreation(bufferManager, flowRegister,  bufferLogger, abilityEntityRepository, eventRepository);
             RegisterCombatantAbilityEquip(bufferManager, flowRegister, bufferLogger, combatantAbilityEntityRepository, abilityEntityRepository, combatOptions);
         }
 
-        private static void RegisterBasicEncounterDeck(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, CombatantRepository combatantRepository, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, IAssetRepository<AbilityType, EventType> eventRepository, uint maxIterations)
+        private static void RegisterBasicEncounterDeck(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, CombatantRepository combatantRepository, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, IAssetRepository<AbilityType, EventType> eventRepository, IAssetRepository<CombatantStatType, IStatProvider> statProviderRepository, uint maxIterations)
         {
             IFoundAssertion foundAssertion = new FoundAssertion();
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
@@ -76,15 +82,8 @@ namespace IdelPog.Combat
             INumberAssertion numberAssertion = new NumberAssertion();
             ICombatantAssertion combatantAssertion = new CombatantAssertion();
             
-            ICombatantSelector lowHealthSelector = new LowestHealthSelector(collectionAssertion);
-            ICombatantSelector highestAttackSelector = new HighestAttackSelector(collectionAssertion);
-            ICombatQueue combatQueue = new CombatQueue();
-            
-            ICombatantStore friendlyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
-            ICombatantStore enemyCombatantStore = new CombatantStore(lowHealthSelector, highestAttackSelector, collectionAssertion, numberAssertion);
-            
+            CombatQueue combatQueue = new();
             IFriendlyStatusAssigner friendlyStatusAssigner = new FriendlyStatusAssigner(combatantRepository, collectionAssertion, foundAssertion);
-            ICombatantStoreService combatantStoreService = new CombatantStoreService(friendlyCombatantStore, enemyCombatantStore, combatantRepository, collectionAssertion);
             IAbilityEventScheduler abilityEventScheduler = new AbilityEventScheduler(combatantAbilityEntityRepository, combatantRepository, eventRepository, combatQueue, numberAssertion);
             IInitialAbilityScheduler initialAbilityScheduler = new InitialAbilityScheduler(combatantRepository, combatantAbilityEntityRepository, abilityEventScheduler, numberAssertion);
             IAssetRepository<EventType, IEventResolver> resolverRepository = new AssetRepository<EventType, IEventResolver>(repositoryAsserter);
@@ -93,9 +92,10 @@ namespace IdelPog.Combat
             ICombatantLogger combatantLogger = new CombatantLogger(objectNullAssertion);
             ICombatQueueRunner combatQueueRunner = new CombatQueueRunner(combatStateService, combatQueue, resolverRepository) { MaxIterations = maxIterations };
             IDamageSystem damageSystem = new DamageSystem();
-            IDeathSystem deathSystem = new DeathSystem(combatStateService, combatantStoreService, combatantAssertion);
-            IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(damageSystem, deathSystem, combatantStoreService, combatantLogger);
-            ITargetFinder targetFinder = new EnemyTargetFinder(friendlyCombatantStore, enemyCombatantStore, combatantAbilityEntityRepository, combatantRepository, objectNullAssertion, foundAssertion);
+            IDeathSystem deathSystem = new DeathSystem(combatStateService, combatantAssertion);
+            IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(damageSystem, deathSystem, combatantLogger);
+            ICombatantTargetFinder targetFinder = new CombatantTargetFinder(combatantRepository, statProviderRepository, numberAssertion, collectionAssertion);
+            ITearDownService tearDownService = new TearDownService(combatantRepository, combatQueue);
             
             // TODO: move this out eventually 
             DirectDamageEventResolver directDamageEventResolver = new(targetFinder, combatantAbilityEntityRepository, entityDamageMediator, combatantRepository, abilityEventScheduler);
@@ -104,7 +104,7 @@ namespace IdelPog.Combat
             CastingEventResolver castingEventResolver = new(abilityEventScheduler);
             resolverRepository.Add(EventType.CASTING, castingEventResolver);
             
-            BasicEncounterDeckMediator basicEncounterDeckMediator = new(friendlyStatusAssigner, combatantStoreService, initialAbilityScheduler, combatQueueRunner, combatStateService, combatantLogger, responseDispatcher, collectionAssertion);
+            BasicEncounterDeckMediator basicEncounterDeckMediator = new(friendlyStatusAssigner, initialAbilityScheduler, combatQueueRunner, combatStateService, combatantLogger, responseDispatcher, collectionAssertion, tearDownService);
             IBatchController<BasicEncounterDeck> controller = new ManagedBatchController<BasicEncounterDeck>(basicEncounterDeckMediator);
             BasicEncounterDeckErrorFactory errorFactory = new(new BaseErrorFactory());
                         

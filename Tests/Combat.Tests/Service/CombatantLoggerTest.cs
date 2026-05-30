@@ -1,11 +1,11 @@
 ﻿using IdelPog.Combat.Contracts;
-using IdelPog.Combat.Contracts.Ability;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Service.Logging;
+using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Validation.Assertion;
 
 namespace IdelPog.Combat.Tests.Service
@@ -48,7 +48,6 @@ namespace IdelPog.Combat.Tests.Service
                 StatsComponent statsComponent = combatantEntity.GetComponent<StatsComponent>();
                 StatCard stateChangeStats = combatantStateChange.CombatantCreation.StatCard;
                 
-                Assert.That(stateChangeStats.Attack, Is.EqualTo(statsComponent.Attack));
                 Assert.That(stateChangeStats.Health, Is.EqualTo(statsComponent.Health));
             });
         }
@@ -56,7 +55,7 @@ namespace IdelPog.Combat.Tests.Service
         [Test]
         public void Positive_LogCombatantChange_LogsEntity()
         {
-            _combatantEntity.UpdateLifeStatus(false);
+            _combatantEntity.ReplaceComponent(new LifeStatusComponent { IsAlive = false });
             
             Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity, 2, AbilityType.STRONG_ATTACK, 10, TICK));
 
@@ -68,7 +67,7 @@ namespace IdelPog.Combat.Tests.Service
         [Test]
         public void Positive_LogCombatantChange_LogEntityTwice_LogsEntity()
         {
-            _combatantEntity.UpdateCombatantStats(new StatsComponent { Attack = 4, Health = 5 });
+            _combatantEntity.ReplaceComponent(new StatsComponent { Health = 5 });
             
             Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity, 2, AbilityType.STRONG_ATTACK, 10, TICK));
             Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity, 2, AbilityType.STRONG_ATTACK, 10, TICK));
