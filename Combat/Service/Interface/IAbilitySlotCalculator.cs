@@ -4,6 +4,6 @@ namespace IdelPog.Combat.Service.Interface
 {
     public interface IAbilitySlotCalculator
     {
-        public byte GetAbilitySlots(AbilityCard[] abilityCards);
+        public byte GetAbilitySlots(CombatantAbilityCard[] abilityCards);
     }
 }

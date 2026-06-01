@@ -10,20 +10,20 @@ namespace IdelPog.Combat.Runtime.System.Factory
     {
         public AbilityEntity CreateAbilityEntity(AbilityCreation abilityCreation)
         {
-            CooldownComponent cooldownComponent = new() { Cooldown = abilityCreation.Cooldown };
+            CooldownComponent cooldownComponent = new() { Cooldown = abilityCreation.AbilityCard.Cooldown };
             ElementalDamageComponent elementalDamageComponent = CreateElementalDamageComponent(abilityCreation.ElementalDamageCard);
             PhysicalDamageComponent physicalDamageComponent = CreatePhysicalDamageComponent(abilityCreation.PhysicalDamageCard); 
             
             AbilityEntity abilityEntity = new(cooldownComponent, elementalDamageComponent, physicalDamageComponent)
             {
-                AbilityType = abilityCreation.AbilityType,
-                AbilitySlots = abilityCreation.AbilitySlots,
+                AbilityType = abilityCreation.AbilityCard.AbilityType,
+                AbilitySlots = abilityCreation.AbilityCard.AbilitySlots,
                 Information = abilityCreation.Information
             };
 
-            if (abilityCreation.CastTime != 0)
+            if (abilityCreation.AbilityCard.CastTime != 0)
             { 
-                abilityEntity.AddComponent(new CastTimeComponent { CastTime = abilityCreation.CastTime });
+                abilityEntity.AddComponent(new CastTimeComponent { CastTime = abilityCreation.AbilityCard.CastTime });
             }
             
             return abilityEntity;

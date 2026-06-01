@@ -45,10 +45,10 @@ namespace IdelPog.Combat.Tests.Service
                 Assert.That(combatantStateChange.IsAlive, Is.EqualTo(combatantEntity.GetComponent<LifeStatusComponent>().IsAlive));
                 Assert.That(combatantStateChange.IsFriendly, Is.EqualTo(combatantEntity.GetComponent<FriendlyStatusComponent>().IsFriendly));
                 
-                StatsComponent statsComponent = combatantEntity.GetComponent<StatsComponent>();
+                HealthComponent healthComponent = combatantEntity.GetComponent<HealthComponent>();
                 StatCard stateChangeStats = combatantStateChange.CombatantCreation.StatCard;
                 
-                Assert.That(stateChangeStats.Health, Is.EqualTo(statsComponent.Health));
+                Assert.That(stateChangeStats.Health, Is.EqualTo(healthComponent.Health));
             });
         }
 
@@ -67,7 +67,7 @@ namespace IdelPog.Combat.Tests.Service
         [Test]
         public void Positive_LogCombatantChange_LogEntityTwice_LogsEntity()
         {
-            _combatantEntity.ReplaceComponent(new StatsComponent { Health = 5 });
+            _combatantEntity.ReplaceComponent(new HealthComponent { Health = 5 });
             
             Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity, 2, AbilityType.STRONG_ATTACK, 10, TICK));
             Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(_combatantEntity, 2, AbilityType.STRONG_ATTACK, 10, TICK));

@@ -185,7 +185,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         {
             SetupStatProviderRepository(CombatantStatType.INITIATIVE, _statProviderMock.Object);
             SetupCombatantFilters(true, _lowInitiativeEntity);
-            SetupStatProvider(_statProviderMock, component => component.GetComponent<StatsComponent>().Health, _lowInitiativeEntity);
+            SetupStatProvider(_statProviderMock, component => component.GetComponent<HealthComponent>().Health, _lowInitiativeEntity);
                 
             Assert.Throws<ArgumentOutOfRangeException>(() => _combatantTargetFinder.SelectPreferredTargets((TargetingPreference) 10, CombatantStatType.INITIATIVE, true, 2));
         }

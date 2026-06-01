@@ -23,11 +23,11 @@ namespace IdelPog.Combat.Runtime.System.Factory
             CombatantAbilityEntity[] combatantAbilityEntities = new CombatantAbilityEntity[combatantAbilityEquip.AbilityCards.Length];
             for (int i = 0; i < combatantAbilityEquip.AbilityCards.Length; i++)
             {
-                AbilityCard abilityCard = combatantAbilityEquip.AbilityCards[i];
+                CombatantAbilityCard combatantAbilityCard = combatantAbilityEquip.AbilityCards[i];
 
-                AbilityEntity abilityEntity = _skillEntityRepository.Get(abilityCard.AbilityType);
-                CombatantAbilityEntity combatantAbilityEntity = new() { CombatantID = combatantAbilityEquip.CombatantID, AbilityType = abilityCard.AbilityType };
-                AddBaseComponents(combatantAbilityEntity, abilityEntity, abilityCard.StrategyCard.TargetingPreference, abilityCard.StrategyCard.CombatantStatType);
+                AbilityEntity abilityEntity = _skillEntityRepository.Get(combatantAbilityCard.AbilityType);
+                CombatantAbilityEntity combatantAbilityEntity = new() { CombatantID = combatantAbilityEquip.CombatantID, AbilityType = combatantAbilityCard.AbilityType };
+                AddBaseComponents(combatantAbilityEntity, abilityEntity, combatantAbilityCard.StrategyCard.TargetingPreference, combatantAbilityCard.StrategyCard.CombatantStatType);
                 
                 combatantAbilityEntities[i] = combatantAbilityEntity;
             }

@@ -15,10 +15,10 @@ namespace IdelPog.Combat.Service
             _skillEntityRepository = skillEntityRepository;
         }
         
-        public byte GetAbilitySlots(AbilityCard[] abilityCards)
+        public byte GetAbilitySlots(CombatantAbilityCard[] abilityCards)
         {
             byte reservedAbilitySlots = 0;
-            foreach (AbilityCard abilityCard in abilityCards)
+            foreach (CombatantAbilityCard abilityCard in abilityCards)
             {
                 AbilityEntity abilityEntity = _skillEntityRepository.Get(abilityCard.AbilityType);
                 reservedAbilitySlots += abilityEntity.AbilitySlots;

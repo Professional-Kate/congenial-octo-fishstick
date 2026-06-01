@@ -8,8 +8,8 @@ namespace IdelPog.Combat.Runtime.Filter.Provider
     {
         public uint GetStat(CombatantEntity combatantEntity)
         {
-            StatsComponent statsComponent = combatantEntity.GetComponent<StatsComponent>();
-            return statsComponent.Health;
+            HealthComponent healthComponent = combatantEntity.GetComponent<HealthComponent>();
+            return healthComponent.Health;
         }
     }
 } 

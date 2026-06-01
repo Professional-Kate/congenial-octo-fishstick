@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Assertion;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
@@ -70,7 +71,7 @@ namespace IdelPog.Combat.Tests.Mediator
         {
             foreach (AbilityCreation abilityCreation in abilityCreations)
             {
-                _abilityEntityRepositoryMock.Verify(library => library.Contains(abilityCreation.AbilityType), Times.Once);
+                _abilityEntityRepositoryMock.Verify(library => library.Contains(abilityCreation.AbilityCard.AbilityType), Times.Once);
             }
         }
         
@@ -78,7 +79,7 @@ namespace IdelPog.Combat.Tests.Mediator
         {
             foreach (AbilityCreation abilityCreation in abilityCreations)
             {
-                _abilityEntityRepositoryMock.Verify(library => library.Add(abilityCreation.AbilityType, It.IsAny<AbilityEntity>()), Times.Once);
+                _abilityEntityRepositoryMock.Verify(library => library.Add(abilityCreation.AbilityCard.AbilityType, It.IsAny<AbilityEntity>()), Times.Once);
             }
         }
         
@@ -108,28 +109,29 @@ namespace IdelPog.Combat.Tests.Mediator
             VerifyFactoryCalled(_abilityCreation);
             VerifyAbilityEntityContains(_abilityCreation);
             VerifyAbilityEntityAdd(_abilityCreation);
-            VerifyEventTypeAdd(_abilityCreation.AbilityType, _abilityCreation.EventType);
+            VerifyEventTypeAdd(_abilityCreation.AbilityCard.AbilityType, _abilityCreation.AbilityCard.EventType);
             VerifyDispatcherCalled(1);
         }
         
         [Test]
         public void Positive_HandleMessages_CreatesNewEntities()
         {
-            AbilityCreation strongAttackCreation = _abilityCreation with { AbilityType = AbilityType.STRONG_ATTACK };
+            AbilityCard abilityCard = _abilityCreation.AbilityCard with { AbilityType = AbilityType.STRONG_ATTACK };
+            AbilityCreation strongAttackCreation = _abilityCreation with { AbilityCard = abilityCard };
             Assert.DoesNotThrow(() => _mediator.HandleMessages([_abilityCreation, strongAttackCreation]));
 
             VerifyFactoryCalled(_abilityCreation, strongAttackCreation);
             VerifyAbilityEntityContains(_abilityCreation, strongAttackCreation);
             VerifyAbilityEntityAdd(_abilityCreation, strongAttackCreation);
-            VerifyEventTypeAdd(_abilityCreation.AbilityType, _abilityCreation.EventType);
-            VerifyEventTypeAdd(strongAttackCreation.AbilityType, strongAttackCreation.EventType);
+            VerifyEventTypeAdd(_abilityCreation.AbilityCard.AbilityType, _abilityCreation.AbilityCard.EventType);
+            VerifyEventTypeAdd(strongAttackCreation.AbilityCard.AbilityType, strongAttackCreation.AbilityCard.EventType);
             VerifyDispatcherCalled(2);
         }
 
         [Test]
         public void Negative_HandleMessages_DuplicateAbilityType_Throws()
         {
-            _abilityEntityRepositoryMock.Setup(library => library.Contains(_abilityCreation.AbilityType)).Returns(true).Verifiable();
+            _abilityEntityRepositoryMock.Setup(library => library.Contains(_abilityCreation.AbilityCard.AbilityType)).Returns(true).Verifiable();
             
             Assert.Throws<DuplicateEntityException>(() => _mediator.HandleMessages([_abilityCreation]));
         }
@@ -149,7 +151,8 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Negative_HandleMessages_ZeroSpeed_Throws()
         { 
-            Assert.Throws<NumberZeroException>(() => _mediator.HandleMessages([_abilityCreation with { Cooldown = 0 }]));
+            AbilityCard abilityCard = _abilityCreation.AbilityCard with { Cooldown = 0 };
+            Assert.Throws<NumberZeroException>(() => _mediator.HandleMessages([_abilityCreation with { AbilityCard = abilityCard }]));
         }
     }
 }

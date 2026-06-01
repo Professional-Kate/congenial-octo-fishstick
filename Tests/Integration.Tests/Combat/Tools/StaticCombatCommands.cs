@@ -42,33 +42,25 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         
         internal static readonly AbilityCreation BasicAttackCreation = new()
         {
-            AbilityType = AbilityType.BASIC_ATTACK, 
-            EventType = EventType.DIRECT_DAMAGE,
+            AbilityCard = new AbilityCard {  AbilityType = AbilityType.BASIC_ATTACK, EventType = EventType.DIRECT_DAMAGE, Cooldown = 5, AbilitySlots = 1, CastTime = 0},
             ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
             PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 1, StrikeDamage = 0, ThrustDamage = 0 },
-            Cooldown = 5,
             Information = new Information { Name = "Basic Attack!", Description = "Kinda weak.." },
-            AbilitySlots = 1,
-            CastTime = 0
         };
         
         internal static readonly AbilityCreation StrongAttackCreation = new()
         {
-            AbilityType = AbilityType.STRONG_ATTACK, 
-            EventType = EventType.DIRECT_DAMAGE,
+            AbilityCard = new AbilityCard {  AbilityType = AbilityType.STRONG_ATTACK, EventType = EventType.DIRECT_DAMAGE, Cooldown = 15, AbilitySlots = 1, CastTime = 0},
             ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
             PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 5, StrikeDamage = 0, ThrustDamage = 0 },
-            Cooldown = 15,
             Information = new Information { Name = "Strong attack!", Description = "Wack them!!!" },
-            AbilitySlots = 1,
-            CastTime = 0
         };
 
         internal static CombatantAbilityEquip EquipBasicAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.BASIC_ATTACK);
 
         internal static CombatantAbilityEquip EquipStrongAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.STRONG_ATTACK);
         
-        internal static CombatantAbilityEquip EquipAbilityCards(byte combatantID, params AbilityCard[] abilityCards) => new()
+        internal static CombatantAbilityEquip EquipAbilityCards(byte combatantID, params CombatantAbilityCard[] abilityCards) => new()
         {
             CombatantID = combatantID, 
             AbilityCards = abilityCards
@@ -79,7 +71,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             CombatantID = combatantID, 
             AbilityCards = 
             [
-                new AbilityCard
+                new CombatantAbilityCard
                 {
                     AbilityType = abilityType, 
                     StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }

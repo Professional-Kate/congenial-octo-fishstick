@@ -17,7 +17,7 @@ namespace IdelPog.Integration.Tests.Combat
         private ManagedResponseListener<CombatantAbilityEquipResponse> _responseListener;
         private ManagedErrorListener<CombatantAbilityEquipError> _errorListener;
 
-        private AbilityCard _abilityCard;
+        private CombatantAbilityCard _combatantAbilityCard;
         private CombatantCreation _combatantCreation;
         private AbilityCreation _basicAttackCreation; 
         private CombatantAbilityEquip _combatantAbilityEquip;
@@ -25,19 +25,15 @@ namespace IdelPog.Integration.Tests.Combat
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _abilityCard = new AbilityCard
+            _combatantAbilityCard = new CombatantAbilityCard
                 { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
             
             _basicAttackCreation = new AbilityCreation
             {
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
-                AbilityType = AbilityType.BASIC_ATTACK,
-                EventType = EventType.DIRECT_DAMAGE,
-                Cooldown = 9,
+                AbilityCard = new AbilityCard {  AbilityType = AbilityType.BASIC_ATTACK, EventType = EventType.DIRECT_DAMAGE, Cooldown = 9, AbilitySlots = 1, CastTime = 0},
                 ElementalDamageCard = new ElementalDamageCard { ColdDamage = 2, LightningDamage = 5, FireDamage = 125 },
-                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 3, StrikeDamage = 123, ThrustDamage = 1 },
-                AbilitySlots = 1,
-                CastTime = 0
+                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 3, StrikeDamage = 123, ThrustDamage = 1 }
             };
             
             _combatantCreation = new CombatantCreation
@@ -51,7 +47,7 @@ namespace IdelPog.Integration.Tests.Combat
             _combatantAbilityEquip = new CombatantAbilityEquip
             {
                 CombatantID = 0, 
-                AbilityCards = [_abilityCard]
+                AbilityCards = [_combatantAbilityCard]
             };
         }
 
@@ -71,12 +67,12 @@ namespace IdelPog.Integration.Tests.Combat
 
             for (int i = 0; i < source.AbilityCards.Length; i++)
             {
-                AbilityCard sourceAbilityCard = source.AbilityCards[i];
+                CombatantAbilityCard sourceCombatantAbilityCard = source.AbilityCards[i];
                 Assert.Multiple(() =>
                 {
-                    Assert.That(response.CombatantAbilities[i].AbilityType, Is.EqualTo(sourceAbilityCard.AbilityType));
+                    Assert.That(response.CombatantAbilities[i].AbilityType, Is.EqualTo(sourceCombatantAbilityCard.AbilityType));
                     Assert.That(response.CombatantAbilities[i].ElementalDamageCard, Is.EqualTo(abilityCreation.ElementalDamageCard));
-                    Assert.That(response.CombatantAbilities[i].Cooldown, Is.EqualTo(abilityCreation.Cooldown));
+                    Assert.That(response.CombatantAbilities[i].Cooldown, Is.EqualTo(abilityCreation.AbilityCard.Cooldown));
                 });
             }
         }
@@ -110,7 +106,7 @@ namespace IdelPog.Integration.Tests.Combat
             CombatantAbilityEquip duplicateEquip = new()
             {
                 CombatantID = 0, 
-                AbilityCards = [_abilityCard, _abilityCard]
+                AbilityCards = [_combatantAbilityCard, _combatantAbilityCard]
             };
             
             DispatchMessage(_basicAttackCreation);
@@ -188,10 +184,11 @@ namespace IdelPog.Integration.Tests.Combat
             CombatantAbilityEquip tooManyAbilities = new()
             {
                 CombatantID = 0, 
-                AbilityCards = [_abilityCard, _abilityCard with { AbilityType = AbilityType.STRONG_ATTACK }]
+                AbilityCards = [_combatantAbilityCard, _combatantAbilityCard with { AbilityType = AbilityType.STRONG_ATTACK }]
             };
-            
-            DispatchMessage(_basicAttackCreation, _basicAttackCreation with { AbilityType = AbilityType.STRONG_ATTACK });
+
+            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { AbilityType = AbilityType.STRONG_ATTACK };
+            DispatchMessage(_basicAttackCreation, _basicAttackCreation with { AbilityCard = abilityCard });
             DispatchMessage(_combatantCreation);
             DispatchMessage(tooManyAbilities);
             

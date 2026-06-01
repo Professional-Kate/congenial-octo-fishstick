@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities;
@@ -26,9 +27,9 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(abilityEntity, Is.Not.Null);
-                Assert.That(abilityEntity.AbilityType, Is.EqualTo(abilityCreation.AbilityType));
+                Assert.That(abilityEntity.AbilityType, Is.EqualTo(abilityCreation.AbilityCard.AbilityType));
                 Assert.That(abilityEntity.Information, Is.EqualTo(abilityCreation.Information));
-                Assert.That(abilityEntity.GetComponent<CooldownComponent>().Cooldown, Is.EqualTo(abilityCreation.Cooldown));
+                Assert.That(abilityEntity.GetComponent<CooldownComponent>().Cooldown, Is.EqualTo(abilityCreation.AbilityCard.Cooldown));
                 CardAssertions.AssertElementalDamageCard(abilityEntity, abilityCreation.ElementalDamageCard);
                 CardAssertions.AssertPhysicalDamageCard(abilityEntity, abilityCreation.PhysicalDamageCard);
             }
@@ -53,7 +54,8 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         [TestCase(100u)]
         public void Positive_CreateAbilityEntity_CreatesEntity_OptionalCastTimeComponent(uint castTime)
         {
-            AbilityCreation castTimeCreation = _basicAttackCreation with { CastTime = castTime };
+            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { CastTime = castTime };
+            AbilityCreation castTimeCreation = _basicAttackCreation with { AbilityCard = abilityCard };
             AbilityEntity abilityEntity = _abilityEntityFactory.CreateAbilityEntity(castTimeCreation);
             
             AssertSkillEntity(abilityEntity, castTimeCreation);

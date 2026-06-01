@@ -9,48 +9,48 @@ namespace IdelPog.Combat.Tests.Runtime
     {
         private CombatantEntity _combatantEntity;
 
-        private StatsComponent _statsComponent;
+        private HealthComponent _healthComponent;
 
         [SetUp]
         public void Setup()
         { 
             _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(0);
-            _statsComponent = _combatantEntity.GetComponent<StatsComponent>();
+            _healthComponent = _combatantEntity.GetComponent<HealthComponent>();
         }
 
-        private void UpdateCombatantStats(StatsComponent statsComponent)
+        private void UpdateCombatantStats(HealthComponent healthComponent)
         { 
-            _combatantEntity.ReplaceComponent(statsComponent);
+            _combatantEntity.ReplaceComponent(healthComponent);
         }
 
-        private StatsComponent GetComponent()
+        private HealthComponent GetComponent()
         { 
-            return _combatantEntity.GetComponent<StatsComponent>();
+            return _combatantEntity.GetComponent<HealthComponent>();
         }
 
-        private static void VerifyComponent(StatsComponent expectedStats, StatsComponent component)
+        private static void VerifyComponent(HealthComponent expectedHealth, HealthComponent component)
         {
-            Assert.That(component, Is.EqualTo(expectedStats));
+            Assert.That(component, Is.EqualTo(expectedHealth));
         }
 
         [Test]
         public void Positive_UpdateCombatantStats_UpdatesStats()
         { 
-            UpdateCombatantStats(_statsComponent with { Health = 5 });
+            UpdateCombatantStats(_healthComponent with { Health = 5 });
             
-            StatsComponent component = GetComponent();
+            HealthComponent component = GetComponent();
 
-            VerifyComponent(_statsComponent with { Health = 5 }, component);
+            VerifyComponent(_healthComponent with { Health = 5 }, component);
         }
 
         [Test]
         public void Positive_UpdateCombatantStats_MultipleTimes_UpdatesStats()
         {
-            UpdateCombatantStats(new StatsComponent { Health = 5 });
-            VerifyComponent(new StatsComponent { Health = 5 }, GetComponent());
+            UpdateCombatantStats(new HealthComponent { Health = 5 });
+            VerifyComponent(new HealthComponent { Health = 5 }, GetComponent());
             
-            UpdateCombatantStats(new StatsComponent { Health = 22 });
-            VerifyComponent(new StatsComponent { Health = 22 }, GetComponent());
+            UpdateCombatantStats(new HealthComponent { Health = 22 });
+            VerifyComponent(new HealthComponent { Health = 22 }, GetComponent());
         }
     }
 }

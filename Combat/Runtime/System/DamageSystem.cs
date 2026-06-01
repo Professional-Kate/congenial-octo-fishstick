@@ -8,10 +8,10 @@ namespace IdelPog.Combat.Runtime.System
     {
         public uint DealDamage(CombatantEntity targetCombatant, CombatantAbilityEntity attackerAbility)
         {
-            StatsComponent targetStats = targetCombatant.GetComponent<StatsComponent>();
+            HealthComponent targetHealth = targetCombatant.GetComponent<HealthComponent>();
             
-            uint newHealth = CalculateNewHealth(targetStats.Health, GetCalculatedDamage(attackerAbility));
-            targetCombatant.ReplaceComponent(new StatsComponent { Health = newHealth });
+            uint newHealth = CalculateNewHealth(targetHealth.Health, GetCalculatedDamage(attackerAbility));
+            targetCombatant.ReplaceComponent(new HealthComponent { Health = newHealth });
             
             return newHealth;
         }

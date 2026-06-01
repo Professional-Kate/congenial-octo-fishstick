@@ -26,13 +26,9 @@ namespace IdelPog.Integration.Tests.Combat
             _basicAttackCreation = new AbilityCreation
             {
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
-                AbilityType = AbilityType.BASIC_ATTACK,
-                EventType = EventType.DIRECT_DAMAGE,
-                Cooldown = 9,
+                AbilityCard = new AbilityCard {  AbilityType = AbilityType.BASIC_ATTACK, EventType = EventType.DIRECT_DAMAGE, Cooldown = 9, AbilitySlots = 1, CastTime = 0},
                 ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
                 PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 3, StrikeDamage = 0, ThrustDamage = 0 },
-                AbilitySlots = 1,
-                CastTime = 0
             };
         }
 
@@ -68,7 +64,7 @@ namespace IdelPog.Integration.Tests.Combat
             Assert.Multiple(() =>
             {
                 Assert.That(basicEncounterDeck.Information, Is.EqualTo(expected.Information));
-                Assert.That(basicEncounterDeck.AbilityType, Is.EqualTo(expected.AbilityType));
+                Assert.That(basicEncounterDeck.AbilityType, Is.EqualTo(expected.AbilityCard.AbilityType));
                 Assert.That(basicEncounterDeck.ElementalDamageCard, Is.EqualTo(expected.ElementalDamageCard));
             });
         }
@@ -110,7 +106,9 @@ namespace IdelPog.Integration.Tests.Combat
         public void Positive_DispatchCommands_CreatesMultipleSkills()
         {
             ElementalDamageCard oneElementalDamageCard = _basicAttackCreation.ElementalDamageCard with { FireDamage = 1 };
-            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityType = AbilityType.STRONG_ATTACK, ElementalDamageCard = oneElementalDamageCard, Cooldown = 4 };
+            
+            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { Cooldown = 4, AbilityType = AbilityType.STRONG_ATTACK };
+            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityCard = abilityCard, ElementalDamageCard = oneElementalDamageCard };
             Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(_basicAttackCreation, abilityCreation));
             
             AssertResponseListenerCalled(true);
@@ -125,7 +123,9 @@ namespace IdelPog.Integration.Tests.Combat
         {
             ElementalDamageCard minElementalDamageCard = new() { LightningDamage = uint.MinValue, ColdDamage = uint.MinValue, FireDamage = uint.MinValue };
             PhysicalDamageCard minPhysicalDamageCard = new() { SlashDamage = uint.MinValue, StrikeDamage = uint.MinValue, ThrustDamage = uint.MinValue };
-            AbilityCreation strongAttackCreation = _basicAttackCreation with { AbilityType = AbilityType.STRONG_ATTACK, ElementalDamageCard = minElementalDamageCard, PhysicalDamageCard = minPhysicalDamageCard };
+
+            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { AbilityType = AbilityType.STRONG_ATTACK };
+            AbilityCreation strongAttackCreation = _basicAttackCreation with { AbilityCard = abilityCard, ElementalDamageCard = minElementalDamageCard, PhysicalDamageCard = minPhysicalDamageCard };
             
             ElementalDamageCard maxElementalDamageCard = new() { LightningDamage = uint.MaxValue, ColdDamage = uint.MaxValue, FireDamage = uint.MaxValue };
             PhysicalDamageCard maxPhysicalDamageCard = new() { SlashDamage = uint.MaxValue, StrikeDamage = uint.MaxValue, ThrustDamage = uint.MaxValue };
@@ -143,7 +143,8 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_DispatchCommands_ZeroSpeed_DispatchesError()
         {
-            AbilityCreation zeroSpeedAbility = _basicAttackCreation with { Cooldown = 0 };
+            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { Cooldown = 0 };
+            AbilityCreation zeroSpeedAbility = _basicAttackCreation with { AbilityCard = abilityCard };
             Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(zeroSpeedAbility));
             
             AssertResponseListenerCalled(false);

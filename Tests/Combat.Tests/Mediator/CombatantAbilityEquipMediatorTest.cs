@@ -28,7 +28,7 @@ namespace IdelPog.Combat.Tests.Mediator
         private Mock<ICombatantAbilityFactory> _combatantAbilityFactoryMock;
         private Mock<IDispatchMany<CombatantAbilityEquipResponse>> _responseDispatcherMock;
         
-        private AbilityCard _abilityCard;
+        private CombatantAbilityCard _combatantAbilityCard;
         private CombatantAbilityEquip _combatantAbilityEquip;
         private CombatantAbility _combatantAbility;
 
@@ -44,9 +44,9 @@ namespace IdelPog.Combat.Tests.Mediator
             
             _combatantAbilityEquipMediator = new CombatantAbilityEquipMediator(_abilitySlotCalculatorMock.Object, _combatantAbilityRepositoryMock.Object, _combatantAbilityEntityFactoryMock.Object, _combatantAbilityFactoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), combatantAbilityAssertion);
             
-            _abilityCard = new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
-            _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_abilityCard] };
-            _combatantAbility = new CombatantAbility { AbilityType = _abilityCard.AbilityType, ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 }, Cooldown = 15, PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 10, StrikeDamage = 0, ThrustDamage = 0 }};
+            _combatantAbilityCard = new CombatantAbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
+            _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_combatantAbilityCard] };
+            _combatantAbility = new CombatantAbility { AbilityType = _combatantAbilityCard.AbilityType, ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 }, Cooldown = 15, PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 10, StrikeDamage = 0, ThrustDamage = 0 }};
         }
 
         [SetUp]
@@ -72,7 +72,7 @@ namespace IdelPog.Combat.Tests.Mediator
             _abilitySlotCalculatorMock.VerifyNoOtherCalls();
         }
 
-        private void SetupCalculator(params AbilityCard[] abilityCards)
+        private void SetupCalculator(params CombatantAbilityCard[] abilityCards)
         {
             _abilitySlotCalculatorMock.Setup(library => library.GetAbilitySlots(abilityCards)).Returns((byte) abilityCards.Length).Verifiable();
         }
@@ -165,7 +165,7 @@ namespace IdelPog.Combat.Tests.Mediator
         {
             CombatantAbilityEquip doubleEquip = _combatantAbilityEquip with
             {
-                AbilityCards = [_abilityCard, _abilityCard with { AbilityType = AbilityType.STRONG_ATTACK }]
+                AbilityCards = [_combatantAbilityCard, _combatantAbilityCard with { AbilityType = AbilityType.STRONG_ATTACK }]
             };
             SetupCalculator(doubleEquip.AbilityCards);
             

@@ -12,7 +12,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private DamageSystem _damageSystem;
         
         private CombatantEntity _targetEntity;
-        private StatsComponent _statsComponent;
+        private HealthComponent _healthComponent;
         private CombatantAbilityEntity _combatantAbilityEntity;
         private ElementalDamageComponent _elementalDamageComponent;
         private PhysicalDamageComponent _physicalDamageComponent;
@@ -30,7 +30,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Setup()
         {
             _targetEntity = TestCombatantEntityFactory.CreateCombatantEntity(0);
-            _statsComponent = _targetEntity.GetComponent<StatsComponent>();
+            _healthComponent = _targetEntity.GetComponent<HealthComponent>();
             _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(0, AbilityType.BASIC_ATTACK);
             _combatantAbilityEntity.AddComponent(_elementalDamageComponent);
             _combatantAbilityEntity.AddComponent(_physicalDamageComponent);
@@ -43,7 +43,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
         private static void AssertEntityHealth(CombatantEntity combatantEntity, uint expectedHealth)
         {
-            Assert.That(combatantEntity.GetComponent<StatsComponent>().Health, Is.EqualTo(expectedHealth));
+            Assert.That(combatantEntity.GetComponent<HealthComponent>().Health, Is.EqualTo(expectedHealth));
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             uint newHealth = _damageSystem.DealDamage(_targetEntity, _combatantAbilityEntity);
             
-            AssertNewHealth(newHealth,_statsComponent.Health - _elementalDamageComponent.TotalDamage - _physicalDamageComponent.TotalDamage);
+            AssertNewHealth(newHealth,_healthComponent.Health - _elementalDamageComponent.TotalDamage - _physicalDamageComponent.TotalDamage);
             AssertEntityHealth(_targetEntity, newHealth);
         }
         
@@ -88,7 +88,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.That(calculatedDamage, Is.Zero);
 
             uint newHealth = _damageSystem.DealDamage(_targetEntity, weakAbility);
-            Assert.That(newHealth, Is.EqualTo(_statsComponent.Health));
+            Assert.That(newHealth, Is.EqualTo(_healthComponent.Health));
         }
     }
 }

@@ -14,7 +14,7 @@ namespace IdelPog.Combat.Tests.Service
         private AbilitySlotCalculator _abilitySlotCalculator;
         private Mock<IAssetRepository<AbilityType, AbilityEntity>> _abilityRepositoryMock;
 
-        private AbilityCard _abilityCard;
+        private CombatantAbilityCard _combatantAbilityCard;
         private AbilityEntity _abilityEntity;
 
         [OneTimeSetUp]
@@ -24,7 +24,7 @@ namespace IdelPog.Combat.Tests.Service
             
             _abilitySlotCalculator = new AbilitySlotCalculator(_abilityRepositoryMock.Object);
 
-            _abilityCard = new AbilityCard
+            _combatantAbilityCard = new CombatantAbilityCard
                 { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
 
             _abilityEntity = TestAbilityEntityFactory.Create(AbilityType.BASIC_ATTACK, 1);
@@ -44,7 +44,7 @@ namespace IdelPog.Combat.Tests.Service
 
         private void SetupRepositoryGet(AbilityEntity abilityEntity)
         {
-            _abilityRepositoryMock.Setup(library => library.Get(_abilityCard.AbilityType)).Returns(abilityEntity).Verifiable();
+            _abilityRepositoryMock.Setup(library => library.Get(_combatantAbilityCard.AbilityType)).Returns(abilityEntity).Verifiable();
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace IdelPog.Combat.Tests.Service
         {
             SetupRepositoryGet(_abilityEntity);
             
-            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_abilityCard]);
+            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_combatantAbilityCard]);
             
             Assert.That(abilitySlots, Is.EqualTo(1));
             VerifyRepository();
@@ -63,7 +63,7 @@ namespace IdelPog.Combat.Tests.Service
         {
             SetupRepositoryGet(_abilityEntity);
             
-            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_abilityCard, _abilityCard]);
+            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_combatantAbilityCard, _combatantAbilityCard]);
             
             Assert.That(abilitySlots, Is.EqualTo(2));
             VerifyRepository();

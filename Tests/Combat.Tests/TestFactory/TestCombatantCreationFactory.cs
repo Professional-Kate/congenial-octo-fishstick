@@ -7,7 +7,7 @@ namespace IdelPog.Combat.Tests.TestFactory
 {
     public static class TestCombatantCreationFactory
     {
-        public static CombatantCreation CreateCombatantCreation(CombatantType combatantType, StatCard statCard, Information information, AgilityCard agilityCard, params AbilityCard[] skillCards)
+        public static CombatantCreation CreateCombatantCreation(CombatantType combatantType, StatCard statCard, Information information, AgilityCard agilityCard, params CombatantAbilityCard[] skillCards)
         {
             return new CombatantCreation
             {
@@ -20,7 +20,7 @@ namespace IdelPog.Combat.Tests.TestFactory
         
         public static CombatantCreation CreateCombatantCreation(CombatantType combatantType, StatCard statCard, AgilityCard agilityCard, Information information)
         {
-            return CreateCombatantCreation(combatantType, statCard, information, agilityCard, new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }});
+            return CreateCombatantCreation(combatantType, statCard, information, agilityCard, new CombatantAbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }});
         }
 
         public static CombatantCreation CreateCombatantCreation(CombatantType combatantType, StatCard statCard)

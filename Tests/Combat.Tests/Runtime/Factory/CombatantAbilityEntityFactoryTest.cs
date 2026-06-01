@@ -20,7 +20,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
 
         private CombatantAbilityEquip _combatantAbilityEquip;
         private AbilityEntity _abilityEntity;
-        private AbilityCard _abilityCard;
+        private CombatantAbilityCard _combatantAbilityCard;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -29,8 +29,8 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             
             _combatantAbilityEntityFactory = new CombatantAbilityEntityFactory(_repositoryMock.Object);
 
-            _abilityCard = new AbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
-            _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_abilityCard] };
+            _combatantAbilityCard = new CombatantAbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
+            _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_combatantAbilityCard] };
         }
 
         [SetUp]
@@ -97,7 +97,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             IReadOnlyList<CombatantAbilityEntity> combatantAbilityEntities = _combatantAbilityEntityFactory.Create(_combatantAbilityEquip);
             
             AssertCollectionCount(1,  combatantAbilityEntities);
-            AssertCombatantAbility(combatantAbilityEntities[0], _abilityEntity, _combatantAbilityEquip.CombatantID, _abilityCard.StrategyCard.TargetingPreference);
+            AssertCombatantAbility(combatantAbilityEntities[0], _abilityEntity, _combatantAbilityEquip.CombatantID, _combatantAbilityCard.StrategyCard.TargetingPreference);
             AssertCastTimeComponent(combatantAbilityEntities[0], _abilityEntity);
             VerifyRepository();
         }
@@ -105,15 +105,15 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         [Test]
         public void Positive_Create_DuplicateEquip_ReturnsTwoEntities()
         {
-            CombatantAbilityEquip doubleEquip = _combatantAbilityEquip with { AbilityCards = [_abilityCard, _abilityCard] };
+            CombatantAbilityEquip doubleEquip = _combatantAbilityEquip with { AbilityCards = [_combatantAbilityCard, _combatantAbilityCard] };
             
             SetupRepositoryGet(_abilityEntity);
             
             IReadOnlyList<CombatantAbilityEntity> combatantAbilityEntities = _combatantAbilityEntityFactory.Create(doubleEquip);
             
             AssertCollectionCount(2,  combatantAbilityEntities);
-            AssertCombatantAbility(combatantAbilityEntities[0], _abilityEntity, doubleEquip.CombatantID, _abilityCard.StrategyCard.TargetingPreference);
-            AssertCombatantAbility(combatantAbilityEntities[1], _abilityEntity, doubleEquip.CombatantID, _abilityCard.StrategyCard.TargetingPreference);
+            AssertCombatantAbility(combatantAbilityEntities[0], _abilityEntity, doubleEquip.CombatantID, _combatantAbilityCard.StrategyCard.TargetingPreference);
+            AssertCombatantAbility(combatantAbilityEntities[1], _abilityEntity, doubleEquip.CombatantID, _combatantAbilityCard.StrategyCard.TargetingPreference);
             VerifyRepository();
         }
         
@@ -137,7 +137,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             IReadOnlyList<CombatantAbilityEntity> combatantAbilityEntities = _combatantAbilityEntityFactory.Create(_combatantAbilityEquip);
             
             AssertCollectionCount(1,  combatantAbilityEntities);
-            AssertCombatantAbility(combatantAbilityEntities[0], _abilityEntity, _combatantAbilityEquip.CombatantID, _abilityCard.StrategyCard.TargetingPreference);
+            AssertCombatantAbility(combatantAbilityEntities[0], _abilityEntity, _combatantAbilityEquip.CombatantID, _combatantAbilityCard.StrategyCard.TargetingPreference);
             AssertCastTimeComponent(combatantAbilityEntities[0], _abilityEntity);
             VerifyRepository();
         }
@@ -145,7 +145,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         [Test]
         public void Negative_Create_AbilityNotFound_Throws()
         {
-            _repositoryMock.Setup(library => library.Get(_abilityCard.AbilityType))
+            _repositoryMock.Setup(library => library.Get(_combatantAbilityCard.AbilityType))
                 .Throws(new NotFoundException<AbilityType>(_abilityEntity.AbilityType)).Verifiable();
             
             Assert.Throws<NotFoundException<AbilityType>>(() => _combatantAbilityEntityFactory.Create(_combatantAbilityEquip));

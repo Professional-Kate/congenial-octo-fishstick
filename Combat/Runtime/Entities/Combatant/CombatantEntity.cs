@@ -19,9 +19,9 @@ namespace IdelPog.Combat.Runtime.Entities.Combatant
             AddComponent(new BaseStatsComponent { Health = statCard.Health });
         }
 
-        private static StatsComponent BuildStatsComponent(StatCard statCardSource)
+        private static HealthComponent BuildStatsComponent(StatCard statCardSource)
         {
-            return new StatsComponent
+            return new HealthComponent
             {
                 Health = statCardSource.Health
             };

@@ -58,11 +58,11 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatQueueClearMock.Verify(library => library.Clear(), Times.Once);
         }
 
-        private static void ChangeCombatantStats(StatsComponent statsComponent, params CombatantEntity[] combatantEntities)
+        private static void ChangeCombatantStats(HealthComponent healthComponent, params CombatantEntity[] combatantEntities)
         {
             foreach (CombatantEntity combatantEntity in combatantEntities)
             {
-                combatantEntity.ReplaceComponent(statsComponent);
+                combatantEntity.ReplaceComponent(healthComponent);
             }
         }
 
@@ -87,7 +87,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             foreach (CombatantEntity combatantEntity in combatantEntities)
             { 
                 BaseStatsComponent baseStatsComponent = combatantEntity.GetComponent<BaseStatsComponent>();
-                Assert.That(combatantEntity.GetComponent<StatsComponent>(), Is.EqualTo(baseStatsComponent.GetStats));
+                Assert.That(combatantEntity.GetComponent<HealthComponent>(), Is.EqualTo(baseStatsComponent.Stats));
             }
         }
 
@@ -96,7 +96,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             SetupCombatantRepositoryGetAll(_friendlyCombatant, _enemyCombatant);
             VerifyContainsFriendlyStatusComponent(true, _friendlyCombatant, _enemyCombatant);
-            ChangeCombatantStats(new StatsComponent { Health = uint.MaxValue }, _friendlyCombatant, _enemyCombatant);
+            ChangeCombatantStats(new HealthComponent { Health = uint.MaxValue }, _friendlyCombatant, _enemyCombatant);
             
             Assert.DoesNotThrow(() => _tearDownService.ResetCombatants());
 

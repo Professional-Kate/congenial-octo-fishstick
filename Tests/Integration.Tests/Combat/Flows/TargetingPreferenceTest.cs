@@ -26,11 +26,11 @@ namespace IdelPog.Integration.Tests.Combat.Flows
 
         private void SetupCombat(TargetingPreference targetingPreference, CombatantStatType combatantStatType, CombatantCreation targetCreation)
         {
-            AbilityCard mainAbilityCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { CombatantStatType = combatantStatType, TargetingPreference = targetingPreference }};
+            CombatantAbilityCard mainCombatantAbilityCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { CombatantStatType = combatantStatType, TargetingPreference = targetingPreference }};
             
             DispatchMessage(targetCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.WolfCreation);
             DispatchMessage(StaticCombatCommands.BasicAttackCreation);
-            DispatchMessage(StaticCombatCommands.EquipAbilityCards(1, mainAbilityCard));
+            DispatchMessage(StaticCombatCommands.EquipAbilityCards(1, mainCombatantAbilityCard));
             
             RunCombat([1], [2, 0, 3]);
             AbilityValidator.AssertTarget(0);

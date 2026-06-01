@@ -24,7 +24,7 @@ namespace IdelPog.Combat.Runtime.System
                 combatantEntity.RemoveComponent<FriendlyStatusComponent>();
                 
                 BaseStatsComponent baseStatsComponent = combatantEntity.GetComponent<BaseStatsComponent>();
-                combatantEntity.ReplaceComponent(baseStatsComponent.GetStats);
+                combatantEntity.ReplaceComponent(baseStatsComponent.Stats);
                 
                 combatantEntity.ReplaceComponent(new LifeStatusComponent { IsAlive = true });
             }

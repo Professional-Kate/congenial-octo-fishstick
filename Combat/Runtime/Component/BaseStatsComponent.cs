@@ -6,6 +6,6 @@ namespace IdelPog.Combat.Runtime.Component
     {
         public required uint Health { get; init; }
         
-        public StatsComponent GetStats => new() { Health = Health };
+        public HealthComponent Stats => new() { Health = Health };
     }
 }

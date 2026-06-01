@@ -41,11 +41,11 @@ namespace IdelPog.Combat.Mediator
             for (int i = 0; i < messages.Count; i++)
             {
                 AbilityCreation abilityCreation = messages[i];
-                _numberAssertion.AssertNumberNotZero(abilityCreation.Cooldown, abilityCreation.ToString());
-                _uniqueAssertion.AssertUnique(abilityCreation.AbilityType, _skillEntityRepository.Contains(abilityCreation.AbilityType));
+                _numberAssertion.AssertNumberNotZero(abilityCreation.AbilityCard.Cooldown, abilityCreation.ToString());
+                _uniqueAssertion.AssertUnique(abilityCreation.AbilityCard.AbilityType, _skillEntityRepository.Contains(abilityCreation.AbilityCard.AbilityType));
                 
-                _skillEntityRepository.Add(abilityCreation.AbilityType, _abilityEntityFactory.CreateAbilityEntity(abilityCreation));
-                _eventRepository.Add(abilityCreation.AbilityType, abilityCreation.EventType);
+                _skillEntityRepository.Add(abilityCreation.AbilityCard.AbilityType, _abilityEntityFactory.CreateAbilityEntity(abilityCreation));
+                _eventRepository.Add(abilityCreation.AbilityCard.AbilityType, abilityCreation.AbilityCard.EventType);
                 responses[i] = CreateResponse(abilityCreation);
             }
             
@@ -57,8 +57,8 @@ namespace IdelPog.Combat.Mediator
             return new AbilityCreationResponse
             {
                 Information = abilityCreation.Information, 
-                AbilityType =  abilityCreation.AbilityType,
-                EventType =  abilityCreation.EventType,
+                AbilityType =  abilityCreation.AbilityCard.AbilityType,
+                EventType =  abilityCreation.AbilityCard.EventType,
                 ElementalDamageCard = abilityCreation.ElementalDamageCard
             };
         }

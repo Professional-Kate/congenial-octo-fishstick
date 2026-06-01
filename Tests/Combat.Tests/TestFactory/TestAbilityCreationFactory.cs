@@ -13,18 +13,14 @@ namespace IdelPog.Combat.Tests.TestFactory
             return Create(abilityType, 25, 50);
         }
 
-        private static AbilityCreation Create(AbilityType abilityType, uint speed, uint damage)
+        private static AbilityCreation Create(AbilityType abilityType, uint cooldown, uint damage)
         {
             return new AbilityCreation
             {
                 Information = new Information { Name = "", Description = "" },
-                AbilityType = abilityType,
-                EventType = EventType.DIRECT_DAMAGE,
-                Cooldown = speed,
+                AbilityCard = new AbilityCard {  AbilityType = abilityType, EventType = EventType.DIRECT_DAMAGE, Cooldown = cooldown, AbilitySlots = 1, CastTime = 0},
                 ElementalDamageCard = new ElementalDamageCard { LightningDamage = 0, FireDamage = 0, ColdDamage = 0 },
                 PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = damage, StrikeDamage = 0, ThrustDamage = 0 },
-                AbilitySlots = 1,
-                CastTime = 0
             };
         }
     }
