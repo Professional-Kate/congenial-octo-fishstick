@@ -37,7 +37,7 @@ namespace IdelPog.Combat.Tests.Mediator
             _eventRepositoryMock = new Mock<IAssetRepository<AbilityType, EventType>>();
             
             _mediator = new AbilityCreationMediator(_abilityEntityRepositoryMock.Object, _factoryMock.Object, _eventRepositoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new UniqueAssertion(), new NumberAssertion());
-            _abilityCreation = TestAbilityCreationFactory.Create(AbilityType.BASIC_ATTACK);
+            _abilityCreation = TestAbilityCreationFactory.Create(AbilityType.SLASH);
         }
 
         [SetUp]
@@ -116,7 +116,7 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Positive_HandleMessages_CreatesNewEntities()
         {
-            AbilityCard abilityCard = _abilityCreation.AbilityCard with { AbilityType = AbilityType.STRONG_ATTACK };
+            AbilityCard abilityCard = _abilityCreation.AbilityCard with { AbilityType = AbilityType.STAB };
             AbilityCreation strongAttackCreation = _abilityCreation with { AbilityCard = abilityCard };
             Assert.DoesNotThrow(() => _mediator.HandleMessages([_abilityCreation, strongAttackCreation]));
 

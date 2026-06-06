@@ -26,7 +26,7 @@ namespace IdelPog.Integration.Tests.Combat
             _basicAttackCreation = new AbilityCreation
             {
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
-                AbilityCard = new AbilityCard {  AbilityType = AbilityType.BASIC_ATTACK, EventType = EventType.DIRECT_DAMAGE, Cooldown = 9, AbilitySlots = 1, CastTime = 0},
+                AbilityCard = new AbilityCard {  AbilityType = AbilityType.SLASH, EventType = EventType.DIRECT_DAMAGE, Cooldown = 9, AbilitySlots = 1, CastTime = 0},
                 ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
                 PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 3, StrikeDamage = 0, ThrustDamage = 0 },
             };
@@ -107,7 +107,7 @@ namespace IdelPog.Integration.Tests.Combat
         {
             ElementalDamageCard oneElementalDamageCard = _basicAttackCreation.ElementalDamageCard with { FireDamage = 1 };
             
-            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { Cooldown = 4, AbilityType = AbilityType.STRONG_ATTACK };
+            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { Cooldown = 4, AbilityType = AbilityType.STAB };
             AbilityCreation abilityCreation = _basicAttackCreation with { AbilityCard = abilityCard, ElementalDamageCard = oneElementalDamageCard };
             Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(_basicAttackCreation, abilityCreation));
             
@@ -124,7 +124,7 @@ namespace IdelPog.Integration.Tests.Combat
             ElementalDamageCard minElementalDamageCard = new() { LightningDamage = uint.MinValue, ColdDamage = uint.MinValue, FireDamage = uint.MinValue };
             PhysicalDamageCard minPhysicalDamageCard = new() { SlashDamage = uint.MinValue, StrikeDamage = uint.MinValue, ThrustDamage = uint.MinValue };
 
-            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { AbilityType = AbilityType.STRONG_ATTACK };
+            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { AbilityType = AbilityType.STAB };
             AbilityCreation strongAttackCreation = _basicAttackCreation with { AbilityCard = abilityCard, ElementalDamageCard = minElementalDamageCard, PhysicalDamageCard = minPhysicalDamageCard };
             
             ElementalDamageCard maxElementalDamageCard = new() { LightningDamage = uint.MaxValue, ColdDamage = uint.MaxValue, FireDamage = uint.MaxValue };

@@ -37,7 +37,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _attackerAgility = new AgilityCard { Speed = 10, Initiative = 1 };
             _attackerCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.HUMAN);
             _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, _attackerCreation);
-            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.CreateWithBaseComponents(1, AbilityType.BASIC_ATTACK);
+            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.CreateWithBaseComponents(1, AbilityType.SLASH);
         }
 
         [SetUp]

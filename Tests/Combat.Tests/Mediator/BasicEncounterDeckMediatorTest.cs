@@ -56,7 +56,7 @@ namespace IdelPog.Combat.Tests.Mediator
                 AgilityCard = new AgilityCard { Speed = 3, Initiative = 1 }
             };
 
-            AttackingCombatant attackingCombatant = new() { AbilityType = AbilityType.BASIC_ATTACK, CombatantID = 1, DamageDealt = 100 };
+            AttackingCombatant attackingCombatant = new() { AbilityType = AbilityType.SLASH, CombatantID = 1, DamageDealt = 100 };
             _combatantStateChange = new CombatantStateChange { AttackingCombatant = attackingCombatant, CombatantID = 2, IsAlive = true, IsFriendly = true, CombatantCreation = combatantCreation, Tick = 1 };
         }
 

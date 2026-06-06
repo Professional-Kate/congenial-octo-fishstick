@@ -29,7 +29,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             
             _combatantAbilityEntityFactory = new CombatantAbilityEntityFactory(_repositoryMock.Object);
 
-            _combatantAbilityCard = new CombatantAbilityCard { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
+            _combatantAbilityCard = new CombatantAbilityCard { AbilityType = AbilityType.SLASH, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
             _combatantAbilityEquip = new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [_combatantAbilityCard] };
         }
 
@@ -39,7 +39,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             _repositoryMock.Reset();
             _abilityEntity = new AbilityEntity(new CooldownComponent { Cooldown = 10 }, new ElementalDamageComponent { LightningDamage = 0, ColdDamage = 0, FireDamage = 0 }, new PhysicalDamageComponent { SlashDamage = 20, StrikeDamage = 0, ThrustDamage = 0 })
             {
-                AbilityType = AbilityType.BASIC_ATTACK, 
+                AbilityType = AbilityType.SLASH, 
                 Information = new Information { Name = "", Description = "" },
                 AbilitySlots = 1
             };

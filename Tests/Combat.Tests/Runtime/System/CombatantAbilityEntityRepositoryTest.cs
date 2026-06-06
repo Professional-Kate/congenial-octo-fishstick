@@ -18,7 +18,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Setup()
         { 
             _combatantAbilityEntityRepository = new CombatantAbilityEntityRepository(new CollectionAssertion(), new FoundAssertion());
-            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(1, AbilityType.BASIC_ATTACK);
+            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(1, AbilityType.SLASH);
         }
 
         private void RepositoryAdd(byte combatantID, params CombatantAbilityEntity[] combatantAbilities)

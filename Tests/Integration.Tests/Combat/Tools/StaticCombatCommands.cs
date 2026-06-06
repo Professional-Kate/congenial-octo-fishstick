@@ -40,25 +40,35 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             Information = new Information { Name = "Wolf", Description = "awoooo" }
         };
         
-        internal static readonly AbilityCreation BasicAttackCreation = new()
+        internal static readonly AbilityCreation SlashAttackCreation = new()
         {
-            AbilityCard = new AbilityCard {  AbilityType = AbilityType.BASIC_ATTACK, EventType = EventType.DIRECT_DAMAGE, Cooldown = 5, AbilitySlots = 1, CastTime = 0},
+            AbilityCard = new AbilityCard {  AbilityType = AbilityType.SLASH, EventType = EventType.DIRECT_DAMAGE, Cooldown = 5, AbilitySlots = 1, CastTime = 0},
             ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
             PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 1, StrikeDamage = 0, ThrustDamage = 0 },
-            Information = new Information { Name = "Basic Attack!", Description = "Kinda weak.." },
+            Information = new Information { Name = "Slash!", Description = "Slashing!" }
         };
         
-        internal static readonly AbilityCreation StrongAttackCreation = new()
+        internal static readonly AbilityCreation StabAttackCreation = new()
         {
-            AbilityCard = new AbilityCard {  AbilityType = AbilityType.STRONG_ATTACK, EventType = EventType.DIRECT_DAMAGE, Cooldown = 15, AbilitySlots = 1, CastTime = 0},
+            AbilityCard = new AbilityCard {  AbilityType = AbilityType.STAB, EventType = EventType.DIRECT_DAMAGE, Cooldown = 15, AbilitySlots = 1, CastTime = 0},
             ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
-            PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 5, StrikeDamage = 0, ThrustDamage = 0 },
-            Information = new Information { Name = "Strong attack!", Description = "Wack them!!!" },
+            PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 0, StrikeDamage = 0, ThrustDamage = 5 },
+            Information = new Information { Name = "Stab!", Description = "Thrust moment" }
+        };
+        
+        internal static readonly AbilityCreation StrikeAttackCreation = new()
+        {
+            AbilityCard = new AbilityCard {  AbilityType = AbilityType.STRIKE, EventType = EventType.DIRECT_DAMAGE, Cooldown = 10, AbilitySlots = 1, CastTime = 0},
+            ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
+            PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 0, StrikeDamage = 3, ThrustDamage = 0 },
+            Information = new Information { Name = "Strike!", Description = "owie that hurt" }
         };
 
-        internal static CombatantAbilityEquip EquipBasicAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.BASIC_ATTACK);
+        internal static CombatantAbilityEquip EquipSlashAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.SLASH);
 
-        internal static CombatantAbilityEquip EquipStrongAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.STRONG_ATTACK);
+        internal static CombatantAbilityEquip EquipStabAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.STAB);
+        
+        internal static CombatantAbilityEquip EquipStrikeAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.STRIKE);
         
         internal static CombatantAbilityEquip EquipAbilityCards(byte combatantID, params CombatantAbilityCard[] abilityCards) => new()
         {
@@ -66,7 +76,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             AbilityCards = abilityCards
         };
         
-        private static CombatantAbilityEquip EquipAbility(byte combatantID, AbilityType abilityType) => new()
+        internal static CombatantAbilityEquip EquipAbility(byte combatantID, AbilityType abilityType) => new()
         {
             CombatantID = combatantID, 
             AbilityCards = 

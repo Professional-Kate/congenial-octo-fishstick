@@ -34,7 +34,7 @@ namespace IdelPog.Combat.Tests.Service
 
             _combatEvent = new CombatEvent
             {
-                AbilityType = AbilityType.BASIC_ATTACK,
+                AbilityType = AbilityType.SLASH,
                 Tick = 0, 
                 AttackerID = 0,
                 EventType = EventType.DIRECT_DAMAGE
@@ -89,7 +89,7 @@ namespace IdelPog.Combat.Tests.Service
 
         private static void VerifyEventResolver(Mock<IEventResolver> eventResolver)
         {
-            eventResolver.Verify(library => library.ResolveEvent(It.IsAny<double>(), It.IsAny<byte>(), AbilityType.BASIC_ATTACK), Times.Once);
+            eventResolver.Verify(library => library.ResolveEvent(It.IsAny<double>(), It.IsAny<byte>(), AbilityType.SLASH), Times.Once);
             eventResolver.VerifyNoOtherCalls();
         }
 

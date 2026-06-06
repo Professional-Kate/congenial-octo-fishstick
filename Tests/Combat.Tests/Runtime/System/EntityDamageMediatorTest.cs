@@ -28,7 +28,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantLoggerMock = new Mock<ICombatantLogger>();
             
             _entityDamageMediator = new EntityDamageMediator(_damageSystemMock.Object, _deathSystemMock.Object, _combatantLoggerMock.Object);
-            _attackingCombatantAbility = TestCombatantAbilityEntityFactory.Create(2, AbilityType.BASIC_ATTACK);
+            _attackingCombatantAbility = TestCombatantAbilityEntityFactory.Create(2, AbilityType.SLASH);
         }
 
         [SetUp]

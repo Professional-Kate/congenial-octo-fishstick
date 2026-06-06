@@ -42,7 +42,7 @@ namespace IdelPog.Combat.Tests.Service
         public void Setup()
         {
             _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(15);
-            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.CreateWithBaseComponents(_combatantEntity.CombatantID, AbilityType.STRONG_ATTACK);
+            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.CreateWithBaseComponents(_combatantEntity.CombatantID, AbilityType.STAB);
             
             _combatantAbilityEntityRepositoryMock.Reset();
             _combatantRepositoryMock.Reset();

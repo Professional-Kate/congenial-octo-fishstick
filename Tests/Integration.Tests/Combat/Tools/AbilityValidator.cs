@@ -57,6 +57,14 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             }
         }
 
+        internal static CombatantStateChange GetStateChange()
+        {
+            MoveNext();
+            CombatantStateChange stateChange = _enumerator.Current;
+
+            return stateChange;
+        }
+
         private static void MoveNext()
         {
             Assert.That(_enumerator, Is.Not.Default, "Someone hasn't called AbilityValidator.RegisterChanges............. It's you. Do that.");

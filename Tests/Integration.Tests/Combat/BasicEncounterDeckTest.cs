@@ -24,8 +24,8 @@ namespace IdelPog.Integration.Tests.Combat
         private readonly CombatantCreation _bearCreation = StaticCombatCommands.BearCreation;
         private readonly CombatantCreation _wolfCreation = StaticCombatCommands.WolfCreation;
         
-        private readonly AbilityCreation _basicAttackCreation = StaticCombatCommands.BasicAttackCreation; 
-        private readonly CombatantAbilityEquip _equipBasicAttack = StaticCombatCommands.EquipBasicAttack(0);
+        private readonly AbilityCreation _basicAttackCreation = StaticCombatCommands.SlashAttackCreation; 
+        private readonly CombatantAbilityEquip _equipBasicAttack = StaticCombatCommands.EquipSlashAttack(0);
         
         [SetUp]
         public void Setup()
@@ -117,7 +117,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_TargetsHighSpeed()
         {
-            CombatantAbilityCard highAttackCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.SPEED }};
+            CombatantAbilityCard highAttackCard = new() { AbilityType = AbilityType.SLASH, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.SPEED }};
             
             DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
             DispatchMessage(_basicAttackCreation);
@@ -139,7 +139,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_LowHealth_TargetsLowHealth()
         {
-            CombatantAbilityCard lowHealthCard = new() { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH } };
+            CombatantAbilityCard lowHealthCard = new() { AbilityType = AbilityType.SLASH, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH } };
             
             DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
             DispatchMessage(_basicAttackCreation);
@@ -183,8 +183,8 @@ namespace IdelPog.Integration.Tests.Combat
         public void Positive_SimulateCombat_CombatClearsDown_BetweenCommands()
         {
             DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
-            DispatchMessage(_basicAttackCreation, StaticCombatCommands.StrongAttackCreation);
-            DispatchMessage(_equipBasicAttack, StaticCombatCommands.EquipBasicAttack(1), StaticCombatCommands.EquipStrongAttack(2), StaticCombatCommands.EquipStrongAttack(3));
+            DispatchMessage(_basicAttackCreation, StaticCombatCommands.StabAttackCreation);
+            DispatchMessage(_equipBasicAttack, StaticCombatCommands.EquipSlashAttack(1), StaticCombatCommands.EquipStabAttack(2), StaticCombatCommands.EquipStabAttack(3));
             
             BasicEncounterDeck basicEncounterDeck = new()
             {

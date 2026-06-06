@@ -43,7 +43,7 @@ namespace IdelPog.Combat.Tests.Event
 
             _targetCombatant = TestCombatantEntityFactory.CreateCombatantEntity(1);
             _attackingCombatant = TestCombatantEntityFactory.CreateCombatantEntity(2);
-            _attackingCombatantAbility = TestCombatantAbilityEntityFactory.Create(_attackingCombatant.CombatantID, AbilityType.STRONG_ATTACK);
+            _attackingCombatantAbility = TestCombatantAbilityEntityFactory.Create(_attackingCombatant.CombatantID, AbilityType.STAB);
             _attackingCombatantAbility.AddComponent(new CooldownComponent { Cooldown = COOLDOWN });
             _attackingCombatantAbility.AddComponent(new TargetingPreferenceComponent { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH });
             

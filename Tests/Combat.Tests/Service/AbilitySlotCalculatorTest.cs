@@ -25,9 +25,9 @@ namespace IdelPog.Combat.Tests.Service
             _abilitySlotCalculator = new AbilitySlotCalculator(_abilityRepositoryMock.Object);
 
             _combatantAbilityCard = new CombatantAbilityCard
-                { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
+                { AbilityType = AbilityType.SLASH, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
 
-            _abilityEntity = TestAbilityEntityFactory.Create(AbilityType.BASIC_ATTACK, 1);
+            _abilityEntity = TestAbilityEntityFactory.Create(AbilityType.SLASH, 1);
         }
 
         [SetUp]

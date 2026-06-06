@@ -26,12 +26,12 @@ namespace IdelPog.Integration.Tests.Combat
         public void OneTimeSetup()
         {
             _combatantAbilityCard = new CombatantAbilityCard
-                { AbilityType = AbilityType.BASIC_ATTACK, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
+                { AbilityType = AbilityType.SLASH, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
             
             _basicAttackCreation = new AbilityCreation
             {
                 Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
-                AbilityCard = new AbilityCard {  AbilityType = AbilityType.BASIC_ATTACK, EventType = EventType.DIRECT_DAMAGE, Cooldown = 9, AbilitySlots = 1, CastTime = 0},
+                AbilityCard = new AbilityCard {  AbilityType = AbilityType.SLASH, EventType = EventType.DIRECT_DAMAGE, Cooldown = 9, AbilitySlots = 1, CastTime = 0},
                 ElementalDamageCard = new ElementalDamageCard { ColdDamage = 2, LightningDamage = 5, FireDamage = 125 },
                 PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 3, StrikeDamage = 123, ThrustDamage = 1 }
             };
@@ -184,10 +184,10 @@ namespace IdelPog.Integration.Tests.Combat
             CombatantAbilityEquip tooManyAbilities = new()
             {
                 CombatantID = 0, 
-                AbilityCards = [_combatantAbilityCard, _combatantAbilityCard with { AbilityType = AbilityType.STRONG_ATTACK }]
+                AbilityCards = [_combatantAbilityCard, _combatantAbilityCard with { AbilityType = AbilityType.STAB }]
             };
 
-            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { AbilityType = AbilityType.STRONG_ATTACK };
+            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { AbilityType = AbilityType.STAB };
             DispatchMessage(_basicAttackCreation, _basicAttackCreation with { AbilityCard = abilityCard });
             DispatchMessage(_combatantCreation);
             DispatchMessage(tooManyAbilities);

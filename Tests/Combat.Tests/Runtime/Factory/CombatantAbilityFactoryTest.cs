@@ -26,7 +26,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         [SetUp]
         public void Setup()
         {
-            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(1, AbilityType.BASIC_ATTACK);
+            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(1, AbilityType.SLASH);
 
             _elementalDamageComponent = new ElementalDamageComponent { ColdDamage = 1, LightningDamage = 1, FireDamage = 1 };
             _physicalDamageComponent = new PhysicalDamageComponent { SlashDamage = 1, StrikeDamage = 1, ThrustDamage = 1 };

@@ -80,11 +80,11 @@ namespace IdelPog.Integration.Tests
 
         protected static void AssertBaseError<TException>(BaseError baseError)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(baseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(baseError.Exception.GetBaseException(), Is.TypeOf<TException>());
-            });
+            }
         }
     }
 }

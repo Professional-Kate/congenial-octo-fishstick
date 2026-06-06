@@ -31,7 +31,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             _targetEntity = TestCombatantEntityFactory.CreateCombatantEntity(0);
             _healthComponent = _targetEntity.GetComponent<HealthComponent>();
-            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(0, AbilityType.BASIC_ATTACK);
+            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(0, AbilityType.SLASH);
             _combatantAbilityEntity.AddComponent(_elementalDamageComponent);
             _combatantAbilityEntity.AddComponent(_physicalDamageComponent);
         }
@@ -80,7 +80,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             ElementalDamageComponent weakElementalDamage = new() { LightningDamage = 0, ColdDamage = 0, FireDamage = 0 };
             PhysicalDamageComponent weakPhysicalDamage = new() { SlashDamage = 0, StrikeDamage = 0, ThrustDamage = 0 };
             
-            CombatantAbilityEntity weakAbility = TestCombatantAbilityEntityFactory.Create(0, AbilityType.BASIC_ATTACK);
+            CombatantAbilityEntity weakAbility = TestCombatantAbilityEntityFactory.Create(0, AbilityType.SLASH);
             weakAbility.AddComponent(weakElementalDamage);
             weakAbility.AddComponent(weakPhysicalDamage);
             

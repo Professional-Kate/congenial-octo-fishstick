@@ -18,13 +18,12 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         private readonly CombatantCreation _humanCreation = StaticCombatCommands.HumanCreation;
         private readonly CombatantCreation _goblinCreation = StaticCombatCommands.GoblinCreation;
         private readonly CombatantCreation _bearCreation = StaticCombatCommands.BearCreation;
-        private readonly CombatantCreation _wolfCreation = StaticCombatCommands.WolfCreation;
         
-        private readonly AbilityCreation _basicAttackCreation = StaticCombatCommands.BasicAttackCreation; 
-        private readonly CombatantAbilityEquip _equipBasicAttack = StaticCombatCommands.EquipBasicAttack(0);
+        private readonly AbilityCreation _basicAttackCreation = StaticCombatCommands.SlashAttackCreation; 
+        private readonly CombatantAbilityEquip _equipBasicAttack = StaticCombatCommands.EquipSlashAttack(0);
         
-        private readonly AbilityCreation _strongAttackCreation = StaticCombatCommands.StrongAttackCreation; 
-        private readonly CombatantAbilityEquip _equipStrongAttack = StaticCombatCommands.EquipStrongAttack(0);
+        private readonly AbilityCreation _strongAttackCreation = StaticCombatCommands.StabAttackCreation; 
+        private readonly CombatantAbilityEquip _equipStrongAttack = StaticCombatCommands.EquipStabAttack(0);
         
         [SetUp]
         public void Setup()
@@ -76,7 +75,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             DispatchMessage(slightlyFasterHuman, slightlySlowerBear);
             DispatchMessage(_strongAttackCreation with { ElementalDamageCard = _strongAttackCreation.ElementalDamageCard with { FireDamage = abilityDamage } });
-            DispatchMessage(_equipStrongAttack, StaticCombatCommands.EquipStrongAttack(1));
+            DispatchMessage(_equipStrongAttack, StaticCombatCommands.EquipStabAttack(1));
 
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);
             
@@ -88,18 +87,18 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         {
             CombatantAbilityCard combatantAbilityCard = new()
             {
-                AbilityType = AbilityType.BASIC_ATTACK,
+                AbilityType = AbilityType.SLASH,
                 StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }
             };
             
             CombatantCreation slightlyFasterHuman = _humanCreation with { StatCard = new StatCard { Health = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 10 }};
             CombatantCreation slightlySlowerBear = _bearCreation with { StatCard = new StatCard { Health = 10 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 9 }};
-            CombatantAbilityEquip dualAbilityEquip = new() { CombatantID = 0, AbilityCards = [ combatantAbilityCard, combatantAbilityCard with { AbilityType = AbilityType.STRONG_ATTACK } ] };
+            CombatantAbilityEquip dualAbilityEquip = new() { CombatantID = 0, AbilityCards = [ combatantAbilityCard, combatantAbilityCard with { AbilityType = AbilityType.STAB } ] };
             AbilityCard abilityCard = _strongAttackCreation.AbilityCard with { Cooldown = _basicAttackCreation.AbilityCard.Cooldown }; 
             
             DispatchMessage(slightlyFasterHuman, slightlySlowerBear);
             DispatchMessage(_basicAttackCreation with { ElementalDamageCard = _strongAttackCreation.ElementalDamageCard with { FireDamage = 5 }}, _strongAttackCreation with { ElementalDamageCard = _strongAttackCreation.ElementalDamageCard with { FireDamage = 5 }, AbilityCard  = abilityCard });
-            DispatchMessage(dualAbilityEquip, StaticCombatCommands.EquipBasicAttack(1));
+            DispatchMessage(dualAbilityEquip, StaticCombatCommands.EquipSlashAttack(1));
 
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);
             
@@ -108,11 +107,11 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             _combatTools.AssertZeroAttacks(slightlySlowerBear);
             _combatTools.AssertOneOrMoreAttacks(slightlyFasterHuman);
             _combatTools.AssertAbilityUse(slightlyFasterHuman, combatantAbilityCard.AbilityType, 1);
-            _combatTools.AssertAbilityUse(slightlyFasterHuman, AbilityType.STRONG_ATTACK, 1);
+            _combatTools.AssertAbilityUse(slightlyFasterHuman, AbilityType.STAB, 1);
             
             AbilityValidator.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
-            AbilityValidator.AssertAttackerAbility(0, AbilityType.BASIC_ATTACK);
-            AbilityValidator.AssertAttackerAbility(0, AbilityType.STRONG_ATTACK);
+            AbilityValidator.AssertAttackerAbility(0, AbilityType.SLASH);
+            AbilityValidator.AssertAttackerAbility(0, AbilityType.STAB);
             AbilityValidator.Reset();
         }
 
@@ -130,7 +129,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             DispatchMessage(abilityDamageCreation);
             DispatchMessage(elementalMan, unsuspectingGoblin);
-            DispatchMessage(_equipBasicAttack, StaticCombatCommands.EquipBasicAttack(1));
+            DispatchMessage(_equipBasicAttack, StaticCombatCommands.EquipSlashAttack(1));
             
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);
             
@@ -143,15 +142,15 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         public void AbilityWithCastTime_IsSlowerToCast()
         {
             DispatchMessage(_humanCreation, _humanCreation);
-            DispatchMessage(_strongAttackCreation with { AbilityCard = _strongAttackCreation.AbilityCard with { CastTime = 10u }}, _strongAttackCreation with { AbilityCard = _strongAttackCreation.AbilityCard with { CastTime = 9u, AbilityType = AbilityType.BASIC_ATTACK }});
-            DispatchMessage(_equipBasicAttack, StaticCombatCommands.EquipStrongAttack(1));
+            DispatchMessage(_strongAttackCreation with { AbilityCard = _strongAttackCreation.AbilityCard with { CastTime = 10u }}, _strongAttackCreation with { AbilityCard = _strongAttackCreation.AbilityCard with { CastTime = 9u, AbilityType = AbilityType.SLASH }});
+            DispatchMessage(_equipBasicAttack, StaticCombatCommands.EquipStabAttack(1));
 
             RunCombat([0], [1], _combatantCreationResponseListener.Responses);
             
             CombatTools.PrintStateChanges(_responseListener.Responses[0].CombatantStateChanges);
             AbilityValidator.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
-            AbilityValidator.AssertAttackerAbility(0, AbilityType.BASIC_ATTACK);
-            AbilityValidator.AssertAttackerAbility(1, AbilityType.STRONG_ATTACK);
+            AbilityValidator.AssertAttackerAbility(0, AbilityType.SLASH);
+            AbilityValidator.AssertAttackerAbility(1, AbilityType.STAB);
             AbilityValidator.Reset();
         }
     }
