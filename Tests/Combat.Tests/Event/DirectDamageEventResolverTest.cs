@@ -4,7 +4,6 @@ using IdelPog.Combat.Event.Resolver;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.Filter.Interface;
-using IdelPog.Combat.Runtime.System.Mediator.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Tests.TestFactory;
@@ -19,7 +18,7 @@ namespace IdelPog.Combat.Tests.Event
         private DirectDamageEventResolver _directDamageEventResolver;
         private Mock<ICombatantTargetFinder> _targetFinderMock;
         private Mock<ICombatantAbilityEntityRepository> _combatantEntityRepositoryMock;
-        private Mock<IEntityDamageMediator> _damageMediatorMock;
+        private Mock<IEntityDamageService> _damageMediatorMock;
         private Mock<IAbilityEventScheduler> _abilityEventSchedulerMock;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
 
@@ -35,11 +34,11 @@ namespace IdelPog.Combat.Tests.Event
         {
             _targetFinderMock = new Mock<ICombatantTargetFinder>();
             _combatantEntityRepositoryMock = new Mock<ICombatantAbilityEntityRepository>();
-            _damageMediatorMock = new Mock<IEntityDamageMediator>();
+            _damageMediatorMock = new Mock<IEntityDamageService>();
             _abilityEventSchedulerMock = new Mock<IAbilityEventScheduler>();
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
             
-            _directDamageEventResolver = new DirectDamageEventResolver(_targetFinderMock.Object, _combatantEntityRepositoryMock.Object, _damageMediatorMock.Object, _combatantRepositoryMock.Object, _abilityEventSchedulerMock.Object);
+            _directDamageEventResolver = new DirectDamageEventResolver(_combatantRepositoryMock.Object, _combatantEntityRepositoryMock.Object, _targetFinderMock.Object, _abilityEventSchedulerMock.Object, _damageMediatorMock.Object);
 
             _targetCombatant = TestCombatantEntityFactory.CreateCombatantEntity(1);
             _attackingCombatant = TestCombatantEntityFactory.CreateCombatantEntity(2);
@@ -47,7 +46,7 @@ namespace IdelPog.Combat.Tests.Event
             _attackingCombatantAbility.AddComponent(new CooldownComponent { Cooldown = COOLDOWN });
             _attackingCombatantAbility.AddComponent(new TargetingPreferenceComponent { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH });
             
-            _directDamageEvent = new CombatEvent { AttackerID = _attackingCombatant.CombatantID, Tick = 0, AbilityType = _attackingCombatantAbility.AbilityType, EventType = EventType.DIRECT_DAMAGE };
+            _directDamageEvent = new CombatEvent { CombatantID = _attackingCombatant.CombatantID, Tick = 0, AbilityType = _attackingCombatantAbility.AbilityType, EventType = EventType.DIRECT_DAMAGE };
         }
 
         [SetUp]
@@ -77,7 +76,7 @@ namespace IdelPog.Combat.Tests.Event
 
         private void VerifyEventEnqueued(double tick, AbilityType abilityType)
         {
-            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(tick, _directDamageEvent.AttackerID, abilityType), Times.Once);
+            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(tick, _directDamageEvent.CombatantID, abilityType), Times.Once);
         }
 
         private void SetupRepositoryGet(CombatantEntity combatantEntity)
@@ -106,7 +105,7 @@ namespace IdelPog.Combat.Tests.Event
             SetupAbilityEntityRepositoryGet(_attackingCombatantAbility);
             SetupRepositoryGet(_attackingCombatant);
             
-            Assert.DoesNotThrow(() => _directDamageEventResolver.ResolveEvent(_directDamageEvent.Tick, _directDamageEvent.AttackerID, _directDamageEvent.AbilityType));
+            Assert.DoesNotThrow(() => _directDamageEventResolver.ResolveEvent(_directDamageEvent.Tick, _directDamageEvent.CombatantID, _directDamageEvent.AbilityType));
 
             VerifyDamageApplied([_targetCombatant], _attackingCombatant, _attackingCombatantAbility, _directDamageEvent.Tick);
             VerifyEventEnqueued(COOLDOWN, _directDamageEvent.AbilityType);
@@ -132,7 +131,7 @@ namespace IdelPog.Combat.Tests.Event
             _combatantRepositoryMock.Setup(library => library.Get(_attackingCombatant.CombatantID))
                 .Throws(new NotFoundException<byte>(_attackingCombatant.CombatantID));
             
-            Assert.Throws<NotFoundException<byte>>(() => _directDamageEventResolver.ResolveEvent(_directDamageEvent.Tick, _directDamageEvent.AttackerID, _directDamageEvent.AbilityType));
+            Assert.Throws<NotFoundException<byte>>(() => _directDamageEventResolver.ResolveEvent(_directDamageEvent.Tick, _directDamageEvent.CombatantID, _directDamageEvent.AbilityType));
             
             _combatantRepositoryMock.Verify(library => library.Get(_attackingCombatant.CombatantID), Times.Once);
             VerifyMocks();

@@ -7,6 +7,7 @@
         STRIKE,
         FIRE_LANCE,
         COLD_LANCE,
-        LIGHTNING_LANCE
+        LIGHTNING_LANCE,
+        MINOR_HEAL
     }
 }

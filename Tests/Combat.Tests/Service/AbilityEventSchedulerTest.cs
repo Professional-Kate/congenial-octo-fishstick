@@ -87,7 +87,7 @@ namespace IdelPog.Combat.Tests.Service
             return new CombatEvent
             {
                 AbilityType = combatantAbilityEntity.AbilityType, 
-                AttackerID = combatantAbilityEntity.CombatantID, 
+                CombatantID = combatantAbilityEntity.CombatantID, 
                 Tick = tick, 
                 EventType = eventType
             };
@@ -111,7 +111,7 @@ namespace IdelPog.Combat.Tests.Service
             CombatEvent expectedEvent = CreateExpectedCombatEvent(_combatantAbilityEntity, castTime, EventType.CASTING);
             _combatQueueMock.Verify(
                 library => library.Enqueue(
-                    It.Is<CombatEvent>(combatEvent => combatEvent.AbilityType == expectedEvent.AbilityType && combatEvent.AttackerID == expectedEvent.AttackerID)), Times.Once);
+                    It.Is<CombatEvent>(combatEvent => combatEvent.AbilityType == expectedEvent.AbilityType && combatEvent.CombatantID == expectedEvent.CombatantID)), Times.Once);
             
             VerifyMocks();
         }

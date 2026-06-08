@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
-using IdelPog.Combat.Runtime.System.Mediator;
+using IdelPog.Combat.Service;
 using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Combat.Tests.TestFactory;
 using Moq;
@@ -9,9 +9,9 @@ using Moq;
 namespace IdelPog.Combat.Tests.Runtime.System
 {
     [TestFixture]
-    public sealed class EntityDamageMediatorTest
+    public sealed class EntityDamageServiceTest
     {
-        private EntityDamageMediator _entityDamageMediator;
+        private EntityDamageService _entityDamageService;
         private Mock<IDamageSystem> _damageSystemMock;
         private Mock<IDeathSystem> _deathSystemMock;
         private Mock<ICombatantLogger> _combatantLoggerMock;
@@ -27,7 +27,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _deathSystemMock = new Mock<IDeathSystem>();
             _combatantLoggerMock = new Mock<ICombatantLogger>();
             
-            _entityDamageMediator = new EntityDamageMediator(_damageSystemMock.Object, _deathSystemMock.Object, _combatantLoggerMock.Object);
+            _entityDamageService = new EntityDamageService(_damageSystemMock.Object, _deathSystemMock.Object, _combatantLoggerMock.Object);
             _attackingCombatantAbility = TestCombatantAbilityEntityFactory.Create(2, AbilityType.SLASH);
         }
 
@@ -73,7 +73,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupDamageSystem(_targetCombatant, 1, _attackingCombatantAbility);
             SetupGetCalculatedDamage(_attackingCombatantAbility, 10);
             
-            _entityDamageMediator.ApplyDamage([_targetCombatant], _attackingCombatant, _attackingCombatantAbility, 1d);
+            _entityDamageService.ApplyDamage([_targetCombatant], _attackingCombatant, _attackingCombatantAbility, 1d);
 
             VerifyLogCombatantChange(_targetCombatant, _attackingCombatant.CombatantID, _attackingCombatantAbility.AbilityType, 10, 1d);
             VerifyMocks();
@@ -85,7 +85,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupDamageSystem(_targetCombatant, 0, _attackingCombatantAbility);
             SetupGetCalculatedDamage(_attackingCombatantAbility, 10);
             
-            _entityDamageMediator.ApplyDamage([_targetCombatant], _attackingCombatant, _attackingCombatantAbility, 1d);
+            _entityDamageService.ApplyDamage([_targetCombatant], _attackingCombatant, _attackingCombatantAbility, 1d);
             
             _deathSystemMock.Verify(library => library.KillEntity(_targetCombatant), Times.Once);
             VerifyLogCombatantChange(_targetCombatant, _attackingCombatant.CombatantID, _attackingCombatantAbility.AbilityType, 10, 1d);
@@ -102,7 +102,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             SetupDamageSystem(secondTarget, 0, _attackingCombatantAbility);
             SetupGetCalculatedDamage(_attackingCombatantAbility, 10);
             
-            _entityDamageMediator.ApplyDamage([_targetCombatant, secondTarget], _attackingCombatant, _attackingCombatantAbility, 1d);
+            _entityDamageService.ApplyDamage([_targetCombatant, secondTarget], _attackingCombatant, _attackingCombatantAbility, 1d);
             
             _deathSystemMock.Verify(library => library.KillEntity(secondTarget), Times.Once);
             VerifyLogCombatantChange(_targetCombatant, _attackingCombatant.CombatantID, _attackingCombatantAbility.AbilityType, 10, 1d);
@@ -113,7 +113,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_ApplyDamage_NoTargets_DoesNothing()
         {
-            _entityDamageMediator.ApplyDamage([], _attackingCombatant, _attackingCombatantAbility, 1d);
+            _entityDamageService.ApplyDamage([], _attackingCombatant, _attackingCombatantAbility, 1d);
 
             VerifyMocks();
         }

@@ -3,6 +3,7 @@
     public enum EventType : byte
     {
         CASTING,
-        DIRECT_DAMAGE
+        DIRECT_DAMAGE,
+        HEALING
     }
 }

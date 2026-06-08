@@ -157,5 +157,25 @@ namespace IdelPog.Integration.Tests.Combat.Flows
 
             AssertDamageDealt(lightningLanceCreation);
         }
+
+        [Test]
+        public void MinorHeal_HealsFriendlyTarget()
+        {
+            AbilityCreation minorHealCreation = new()
+            {
+                AbilityCard = new AbilityCard {  AbilityType = AbilityType.MINOR_HEAL, EventType = EventType.HEALING, Cooldown = 30, AbilitySlots = 1, CastTime = 10 },
+                ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
+                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 0, StrikeDamage = 0, ThrustDamage = 0 },
+                Information = new Information { Name = "Minor Heal!", Description = "Heals only minor wounds!" }
+            };
+            
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
+            DispatchMessage(minorHealCreation);
+            DispatchMessage(StaticCombatCommands.EquipAbility(0, AbilityType.MINOR_HEAL));
+            
+            RunCombat([0], [1]);
+
+            AssertDamageDealt(minorHealCreation);
+        }
     }
 }

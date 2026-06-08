@@ -6,7 +6,7 @@ namespace IdelPog.Combat.Event
     {
         public required EventType EventType { get; init; }
         public required AbilityType AbilityType { get; init; }
-        public required byte AttackerID { get; init; }
+        public required byte CombatantID { get; init; }
         public required double Tick { get; init; }
     }
 }

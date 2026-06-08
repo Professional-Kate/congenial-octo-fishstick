@@ -36,7 +36,7 @@ namespace IdelPog.Combat.Tests.Service
             {
                 AbilityType = AbilityType.SLASH,
                 Tick = 0, 
-                AttackerID = 0,
+                CombatantID = 0,
                 EventType = EventType.DIRECT_DAMAGE
             };
             

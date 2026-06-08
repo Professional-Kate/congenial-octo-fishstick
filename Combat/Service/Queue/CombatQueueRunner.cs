@@ -37,7 +37,7 @@ namespace IdelPog.Combat.Service.Queue
                 double currentTick = combatEvent.Tick;
 
                 IEventResolver resolver = _resolverRepository.Get(combatEvent.EventType);
-                resolver.ResolveEvent(currentTick, combatEvent.AttackerID, combatEvent.AbilityType);
+                resolver.ResolveEvent(currentTick, combatEvent.CombatantID, combatEvent.AbilityType);
             }
         }
     }

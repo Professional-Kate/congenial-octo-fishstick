@@ -1,17 +1,17 @@
 ﻿using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
-using IdelPog.Combat.Runtime.System.Mediator.Interface;
+using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Logging.Interface;
 
-namespace IdelPog.Combat.Runtime.System.Mediator
+namespace IdelPog.Combat.Service
 {
-    public sealed class EntityDamageMediator : IEntityDamageMediator
+    public sealed class EntityDamageService : IEntityDamageService
     {
         private readonly IDamageSystem _damageSystem;
         private readonly IDeathSystem _deathSystem;
         private readonly ICombatantLogger _combatantLogger;
 
-        public EntityDamageMediator(IDamageSystem damageSystem, IDeathSystem deathSystem, ICombatantLogger combatantLogger)
+        public EntityDamageService(IDamageSystem damageSystem, IDeathSystem deathSystem, ICombatantLogger combatantLogger)
         {
             _damageSystem = damageSystem;
             _deathSystem = deathSystem;

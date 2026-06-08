@@ -18,8 +18,6 @@ using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Factory;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
-using IdelPog.Combat.Runtime.System.Mediator;
-using IdelPog.Combat.Runtime.System.Mediator.Interface;
 using IdelPog.Combat.Runtime.System.Repository;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Service;
@@ -93,12 +91,12 @@ namespace IdelPog.Combat
             ICombatQueueRunner combatQueueRunner = new CombatQueueRunner(combatStateService, combatQueue, resolverRepository) { MaxIterations = maxIterations };
             IDamageSystem damageSystem = new DamageSystem();
             IDeathSystem deathSystem = new DeathSystem(combatStateService, combatantAssertion);
-            IEntityDamageMediator entityDamageMediator = new EntityDamageMediator(damageSystem, deathSystem, combatantLogger);
+            IEntityDamageService entityDamageService = new EntityDamageService(damageSystem, deathSystem, combatantLogger);
             ICombatantTargetFinder targetFinder = new CombatantTargetFinder(combatantRepository, statProviderRepository, numberAssertion, collectionAssertion);
             ITearDownService tearDownService = new TearDownService(combatantRepository, combatQueue);
             
             // TODO: move this out eventually 
-            DirectDamageEventResolver directDamageEventResolver = new(targetFinder, combatantAbilityEntityRepository, entityDamageMediator, combatantRepository, abilityEventScheduler);
+            DirectDamageEventResolver directDamageEventResolver = new(combatantRepository, combatantAbilityEntityRepository, targetFinder, abilityEventScheduler, entityDamageService);
             resolverRepository.Add(EventType.DIRECT_DAMAGE, directDamageEventResolver);
 
             CastingEventResolver castingEventResolver = new(abilityEventScheduler);

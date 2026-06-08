@@ -60,6 +60,6 @@ namespace IdelPog.Combat.Service
         }
         
         private static CombatEvent CreateCombatEvent(double forTick, byte initiatingCombatantID, AbilityType abilityType, EventType eventType) 
-            => new() { AbilityType = abilityType, EventType = eventType, Tick = forTick, AttackerID = initiatingCombatantID };
+            => new() { AbilityType = abilityType, EventType = eventType, Tick = forTick, CombatantID = initiatingCombatantID };
     } 
 }
