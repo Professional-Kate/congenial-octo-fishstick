@@ -43,9 +43,10 @@ namespace IdelPog.ECS.Entity
         }
 
         public void ReplaceComponent<TComponent>(TComponent component) where TComponent : IComponent
-        {
-            RemoveComponent<TComponent>();
-            _componentMap.Add(component.GetType(), component);
+        { 
+            _componentAssertion.AssertFound<TComponent>(_componentMap.ContainsKey(typeof(TComponent)));
+            
+            _componentMap[component.GetType()] = component;
         }
 
         public bool ContainsComponent<TComponent>() where TComponent : IComponent

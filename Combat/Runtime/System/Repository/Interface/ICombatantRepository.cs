@@ -14,6 +14,6 @@ namespace IdelPog.Combat.Runtime.System.Repository.Interface
         
         public CombatantEntity Get(byte id);
 
-        public IEnumerable<CombatantEntity> GetAll();
+        public IEnumerable<CombatantEntity> GetAllParticipating();
     }
 }

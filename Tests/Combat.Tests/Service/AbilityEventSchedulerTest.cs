@@ -1,16 +1,14 @@
-﻿using IdelPog.Combat.Assertion;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Event;
-using IdelPog.Combat.Exceptions;
+﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
+using IdelPog.Combat.Runtime.Event;
+using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Service;
+using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Queue.Interface;
 using IdelPog.Combat.Tests.TestFactory;
-using IdelPog.Core.Repository.Asset;
-using IdelPog.Core.Validation.Exceptions;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Service
@@ -21,8 +19,9 @@ namespace IdelPog.Combat.Tests.Service
         private AbilityEventScheduler _abilityEventScheduler;
         private Mock<ICombatantAbilityEntityRepository> _combatantAbilityEntityRepositoryMock;
         private Mock<ICombatantRepository> _combatantRepositoryMock;
-        private Mock<IAssetRepository<AbilityType, EventType>> _eventRepositoryMock;
         private Mock<ICombatQueue> _combatQueueMock;
+        private Mock<ICastingCalculator> _castingCalculatorMock;
+        private Mock<IReadyTickSystem> _readyTimeSystemMock;
         
         private CombatantEntity _combatantEntity;
         private CombatantAbilityEntity _combatantAbilityEntity;
@@ -32,22 +31,25 @@ namespace IdelPog.Combat.Tests.Service
         {
             _combatantAbilityEntityRepositoryMock = new Mock<ICombatantAbilityEntityRepository>();
             _combatantRepositoryMock = new Mock<ICombatantRepository>();
-            _eventRepositoryMock = new Mock<IAssetRepository<AbilityType, EventType>>();
             _combatQueueMock = new Mock<ICombatQueue>();
+            _castingCalculatorMock = new Mock<ICastingCalculator>();
+            _readyTimeSystemMock = new Mock<IReadyTickSystem>();
             
-            _abilityEventScheduler = new AbilityEventScheduler(_combatantAbilityEntityRepositoryMock.Object, _combatantRepositoryMock.Object, _eventRepositoryMock.Object, _combatQueueMock.Object, new NumberAssertion());
+            _abilityEventScheduler = new AbilityEventScheduler(_combatantAbilityEntityRepositoryMock.Object, _readyTimeSystemMock.Object, _combatantRepositoryMock.Object, _castingCalculatorMock.Object, _combatQueueMock.Object);
         }
 
         [SetUp]
         public void Setup()
         {
             _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(15);
-            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.CreateWithBaseComponents(_combatantEntity.CombatantID, AbilityType.STAB);
+            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(_combatantEntity.CombatantID, 1);
+            _combatantAbilityEntity.AddComponent(new ReadyTickComponent { ReadyTick = 0 });
             
             _combatantAbilityEntityRepositoryMock.Reset();
             _combatantRepositoryMock.Reset();
-            _eventRepositoryMock.Reset();
             _combatQueueMock.Reset();
+            _castingCalculatorMock.Reset();
+            _readyTimeSystemMock.Reset();
         }
 
         private void VerifyMocks()
@@ -56,20 +58,17 @@ namespace IdelPog.Combat.Tests.Service
             _combatantAbilityEntityRepositoryMock.VerifyNoOtherCalls();
             _combatantRepositoryMock.Verify();
             _combatantRepositoryMock.VerifyNoOtherCalls();
-            _eventRepositoryMock.Verify();
-            _eventRepositoryMock.VerifyNoOtherCalls();
             _combatQueueMock.Verify();
             _combatQueueMock.VerifyNoOtherCalls();
-        }
-
-        private static void AddCastTimeComponent(CombatantAbilityEntity combatantAbilityEntity, double castTime)
-        { 
-            combatantAbilityEntity.AddComponent(new CastTimeComponent { CastTime = castTime });
+            _castingCalculatorMock.Verify();
+            _castingCalculatorMock.VerifyNoOtherCalls();
+            _readyTimeSystemMock.Verify();
+            _readyTimeSystemMock.VerifyNoOtherCalls();
         }
 
         private void SetupCombatantAbilityEntityGet(CombatantAbilityEntity combatantAbilityEntity)
         { 
-            _combatantAbilityEntityRepositoryMock.Setup(library => library.Get(combatantAbilityEntity.CombatantID, combatantAbilityEntity.AbilityType)).Returns(combatantAbilityEntity).Verifiable();
+            _combatantAbilityEntityRepositoryMock.Setup(library => library.Get(combatantAbilityEntity.CombatantID, combatantAbilityEntity.AbilityID)).Returns(combatantAbilityEntity).Verifiable();
         }
 
         private void SetupCombatantEntityGet(CombatantEntity combatantEntity)
@@ -77,42 +76,55 @@ namespace IdelPog.Combat.Tests.Service
             _combatantRepositoryMock.Setup(library => library.Get(combatantEntity.CombatantID)).Returns(combatantEntity).Verifiable();
         }
 
-        private void SetupEventRepositoryGet(AbilityType abilityType, EventType eventType)
+        private static ScheduledCombatEvent CreateExpectedCombatEvent(CombatantAbilityEntity combatantAbilityEntity, double tick, CombatEventType combatEventType, byte abilityStageIndex)
         {
-            _eventRepositoryMock.Setup(library => library.Get(abilityType)).Returns(eventType).Verifiable();
-        }
-
-        private static CombatEvent CreateExpectedCombatEvent(CombatantAbilityEntity combatantAbilityEntity, double tick, EventType eventType)
-        {
-            return new CombatEvent
+            return new ScheduledCombatEvent
             {
-                AbilityType = combatantAbilityEntity.AbilityType, 
+                AbilityID = combatantAbilityEntity.AbilityID, 
                 CombatantID = combatantAbilityEntity.CombatantID, 
                 Tick = tick, 
-                EventType = eventType
+                CombatEventType = combatEventType,
+                AbilityStageIndex = abilityStageIndex,
+                TargetingType = TargetingType.FRIENDLY
             };
         }
 
-        private void VerifyQueueEnqueue(CombatEvent combatEvent)
+        private void VerifyQueueEnqueue(ScheduledCombatEvent scheduledCombatEvent)
         { 
-            _combatQueueMock.Verify(library => library.Enqueue(combatEvent), Times.Once);
+            _combatQueueMock.Verify(library => library.Enqueue(scheduledCombatEvent), Times.Once);
         }
+
+        private void VerifyGetNextTick(uint combatantSpeed, uint castSpeed)
+        {
+            _castingCalculatorMock.Verify(library => library.GetCastDuration(combatantSpeed, castSpeed), Times.Once);
+        }
+
+        private void VerifySetNewReadyTime(double currentTick, CombatantAbilityEntity combatantAbilityEntity, uint combatantSpeed)
+        {
+            _readyTimeSystemMock.Verify(library => library.SetNextReadyTick(currentTick, combatantAbilityEntity, combatantSpeed), Times.Once);
+        }
+
+        private static uint GetCombatantSpeed(CombatantEntity combatantEntity) => combatantEntity.GetComponent<AgilityComponent>().Speed;
  
         [Test]
         public void Positive_ScheduleEvent_HasCastTime_EnqueuesCastingEvent()
         {
-            const double castTime = 120d; 
-            AddCastTimeComponent(_combatantAbilityEntity, castTime);
-            SetupCombatantAbilityEntityGet(_combatantAbilityEntity);
+            const uint castTime = 120u;
+
+            CombatantAbilityEntity castTimeEntity = TestCombatantAbilityEntityFactory.CreateWithCastTime(15, 1, castTime);
+            
+            SetupCombatantAbilityEntityGet(castTimeEntity);
             SetupCombatantEntityGet(_combatantEntity);
             
-            Assert.DoesNotThrow(() => _abilityEventScheduler.ScheduleEvent(0, _combatantEntity.CombatantID, _combatantAbilityEntity.AbilityType));
+            Assert.DoesNotThrow(() => _abilityEventScheduler.ScheduleEvent(0, castTimeEntity.AbilityID, 0, _combatantEntity.CombatantID));
             
-            CombatEvent expectedEvent = CreateExpectedCombatEvent(_combatantAbilityEntity, castTime, EventType.CASTING);
+            ScheduledCombatEvent expectedEvent = CreateExpectedCombatEvent(castTimeEntity, castTime, CombatEventType.ABILITY_CAST_COMPLETE, 0);
             _combatQueueMock.Verify(
                 library => library.Enqueue(
-                    It.Is<CombatEvent>(combatEvent => combatEvent.AbilityType == expectedEvent.AbilityType && combatEvent.CombatantID == expectedEvent.CombatantID)), Times.Once);
-            
+                    It.Is<ScheduledCombatEvent>(combatEvent => combatEvent.AbilityID == expectedEvent.AbilityID && combatEvent.CombatantID == expectedEvent.CombatantID)), Times.Once);
+
+            VerifyGetNextTick(_combatantEntity.GetComponent<AgilityComponent>().Speed, castTime);
+            VerifySetNewReadyTime(0, castTimeEntity, GetCombatantSpeed(_combatantEntity));
             VerifyMocks();
         }
 
@@ -122,84 +134,53 @@ namespace IdelPog.Combat.Tests.Service
             const double forTick = 400d;
             SetupCombatantAbilityEntityGet(_combatantAbilityEntity);
             SetupCombatantEntityGet(_combatantEntity);
-            SetupEventRepositoryGet(_combatantAbilityEntity.AbilityType, EventType.DIRECT_DAMAGE);
             
-            Assert.DoesNotThrow(() => _abilityEventScheduler.ScheduleEvent(forTick, _combatantEntity.CombatantID, _combatantAbilityEntity.AbilityType));
+            Assert.DoesNotThrow(() => _abilityEventScheduler.ScheduleEvent(forTick, _combatantAbilityEntity.AbilityID, 0, _combatantEntity.CombatantID));
             
-            VerifyQueueEnqueue(CreateExpectedCombatEvent(_combatantAbilityEntity, forTick, EventType.DIRECT_DAMAGE));
+            VerifyQueueEnqueue(CreateExpectedCombatEvent(_combatantAbilityEntity, forTick, CombatEventType.ABILITY_EXECUTE, 0));
+            VerifySetNewReadyTime(forTick, _combatantAbilityEntity, GetCombatantSpeed(_combatantEntity));
             VerifyMocks();
         }
         
         [Test]
-        public void Negative_ScheduleEvent_NoCastTime_EnqueuesAbilityEvent_ButAbilityNotFound_Throws()
+        public void Positive_ScheduleEvent_SecondStage_NormalProcessing()
         {
+            CombatantAbilityStage[] combatantStages = 
+            [
+                new()
+                {
+                    AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.HOLY, MaxTargets = 1, Priority = 0, CastTime = 10, Value = 0 },
+                    TargetingPreferenceComponent = new TargetingPreferenceComponent { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY }
+                },
+                new()
+                {
+                    AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, MaxTargets = 1, Priority = 0, CastTime = 0, Value = 0 },
+                    TargetingPreferenceComponent = new TargetingPreferenceComponent { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY }
+                }
+            ];
+            
+            CombatantAbilityEntity multipleStagesEntity = TestCombatantAbilityEntityFactory.Create(_combatantEntity.CombatantID, 12, combatantStages);
+            
             const double forTick = 400d;
-            SetupCombatantAbilityEntityGet(_combatantAbilityEntity);
+            SetupCombatantAbilityEntityGet(multipleStagesEntity);
             SetupCombatantEntityGet(_combatantEntity);
             
-            _eventRepositoryMock.Setup(library 
-                => library.Get(_combatantAbilityEntity.AbilityType)).Throws(new NotFoundException<AbilityType>(_combatantAbilityEntity.AbilityType)).Verifiable();
+            Assert.DoesNotThrow(() => _abilityEventScheduler.ScheduleEvent(forTick, multipleStagesEntity.AbilityID, 1, multipleStagesEntity.CombatantID));
             
-            NotFoundException<AbilityType> exception = Assert.Throws<NotFoundException<AbilityType>>(() => _abilityEventScheduler.ScheduleEvent(forTick, _combatantEntity.CombatantID, _combatantAbilityEntity.AbilityType));
-            
-            Assert.That(exception.Key, Is.EqualTo(_combatantAbilityEntity.AbilityType));
+            VerifyQueueEnqueue(CreateExpectedCombatEvent(multipleStagesEntity, forTick, CombatEventType.ABILITY_EXECUTE, 1));
+            _readyTimeSystemMock.Verify(library => library.SetNextReadyTick(It.IsAny<double>(), It.IsAny<CombatantAbilityEntity>(), It.IsAny<uint>()), Times.Never);
             VerifyMocks();
         }
         
-        [Test]
-        public void Negative_ScheduleEvent_ZeroCombatantSpeed_Throws()
-        {
-            AgilityCard zeroSpeedStatCard = new() { Speed = 0, Initiative = 1 };
-            CombatantEntity zeroSpeedEntity = TestCombatantEntityFactory.CreateCombatantEntity(_combatantEntity.CombatantID, true, zeroSpeedStatCard);
-            
-            const double castTime = 120d; 
-            AddCastTimeComponent(_combatantAbilityEntity, castTime);
-            SetupCombatantAbilityEntityGet(_combatantAbilityEntity);
-            SetupCombatantEntityGet(zeroSpeedEntity);
-            
-            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _abilityEventScheduler.ScheduleEvent(0, zeroSpeedEntity.CombatantID, _combatantAbilityEntity.AbilityType));
-
-            Assert.That(exception.Source, Is.EqualTo("Speed"));
-            VerifyMocks();
-        }
-
-        [Test]
-        public void Negative_ScheduleEvent_HasCastTime_ZeroCastTime_Throws()
-        {
-            const double castTime = 0d; 
-            AddCastTimeComponent(_combatantAbilityEntity, castTime);
-            SetupCombatantAbilityEntityGet(_combatantAbilityEntity);
-            SetupCombatantEntityGet(_combatantEntity);
-            
-            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _abilityEventScheduler.ScheduleEvent(0, _combatantEntity.CombatantID, _combatantAbilityEntity.AbilityType));
-            
-            Assert.That(exception.Source, Is.EqualTo("CastTime"));
-            VerifyMocks();
-        }
-
         [Test]
         public void Positive_EnqueueAbilityEvent_EnqueuesAbilityEvent()
         {
-            const double currentTick = 2345.2242d;
-            SetupEventRepositoryGet(_combatantAbilityEntity.AbilityType, EventType.DIRECT_DAMAGE);
-            
-            Assert.DoesNotThrow(() => _abilityEventScheduler.EnqueueAbilityEvent(currentTick, _combatantEntity.CombatantID, _combatantAbilityEntity.AbilityType));
-            
-            VerifyQueueEnqueue(CreateExpectedCombatEvent(_combatantAbilityEntity, currentTick, EventType.DIRECT_DAMAGE));
-            VerifyMocks();
-        }
-        
-        [Test]
-        public void Positive_EnqueueAbilityEvent_CannotFindAbility_Throws()
-        {
+            SetupCombatantEntityGet(_combatantEntity);
             const double currentTick = 2345.2242d;
             
-            _eventRepositoryMock.Setup(library 
-                => library.Get(_combatantAbilityEntity.AbilityType)).Throws(new NotFoundException<AbilityType>(_combatantAbilityEntity.AbilityType)).Verifiable();
+            Assert.DoesNotThrow(() => _abilityEventScheduler.EnqueueAbilityExecuteEvent(currentTick, _combatantAbilityEntity.AbilityID, 0, _combatantEntity.CombatantID));
             
-            NotFoundException<AbilityType> exception = Assert.Throws<NotFoundException<AbilityType>>(() => _abilityEventScheduler.EnqueueAbilityEvent(currentTick, _combatantEntity.CombatantID, _combatantAbilityEntity.AbilityType));
-            
-            Assert.That(exception.Key, Is.EqualTo(_combatantAbilityEntity.AbilityType));
+            VerifyQueueEnqueue(CreateExpectedCombatEvent(_combatantAbilityEntity, currentTick, CombatEventType.ABILITY_EXECUTE, 0));
             VerifyMocks();
         }
     }

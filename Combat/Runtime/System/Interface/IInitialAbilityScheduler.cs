@@ -2,6 +2,6 @@
 {
     public interface IInitialAbilityScheduler
     { 
-        public void EnqueueInitial(double tick);
+        public void ScheduleRegisteredAbilities(double initialTick);
     }
 }

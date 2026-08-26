@@ -1,5 +1,4 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
-using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Factory.Interface;
@@ -42,17 +41,18 @@ namespace IdelPog.Combat.Mediator
             {
                 CombatantAbilityEquip combatantAbilityEquip = messages[i];
                 _collectionAssertion.AssertHasElements(combatantAbilityEquip.AbilityCards);
-                _combatantAbilityAssertion.AssertAbilityCount(_abilitySlotCalculator.GetAbilitySlots(combatantAbilityEquip.AbilityCards));
-
-                _combatantAbilityEntityRepository.Add(combatantAbilityEquip.CombatantID, _combatantAbilityEntityFactory.Create(combatantAbilityEquip));
                 
-                responses[i] = CreateResponse(combatantAbilityEquip, _combatantAbilityFactory.CreateCombatantAbilities(_combatantAbilityEntityRepository.GetAll(combatantAbilityEquip.CombatantID)));
+                _combatantAbilityAssertion.AssertAbilityCount(_abilitySlotCalculator.GetAbilitySlots(combatantAbilityEquip.AbilityCards, _combatantAbilityEntityRepository.GetAll(combatantAbilityEquip.CombatantID)));
+
+                _combatantAbilityEntityRepository.AddAbilities(combatantAbilityEquip.CombatantID, _combatantAbilityEntityFactory.Create(combatantAbilityEquip));
+                
+                responses[i] = CreateResponse(combatantAbilityEquip, _combatantAbilityFactory.GetCombatantAbilityIDs(_combatantAbilityEntityRepository.GetAll(combatantAbilityEquip.CombatantID)));
             }
             
             _responseDispatcher.Dispatch(responses);
         }
         
-        private static CombatantAbilityEquipResponse CreateResponse(CombatantAbilityEquip combatantAbilityEquip, CombatantAbility[] combatantAbilities) => 
-            new() { CombatantAbilities = combatantAbilities, CombatantID = combatantAbilityEquip.CombatantID };
+        private static CombatantAbilityEquipResponse CreateResponse(CombatantAbilityEquip combatantAbilityEquip, byte[] combatantAbilities) => 
+            new() { CombatantAbilityIDs = combatantAbilities, CombatantID = combatantAbilityEquip.CombatantID };
     }
 }

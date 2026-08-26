@@ -30,9 +30,9 @@ namespace IdelPog.Combat.Mediator
             _combatQueueRunner = combatQueueRunner;
             _combatStateService = combatStateService;
             _combatantLogger = combatantLogger;
+            _tearDownService = tearDownService;
             _responseDispatcher = responseDispatcher;
             _collectionAssertion = collectionAssertion;
-            _tearDownService = tearDownService;
         }
 
         public void HandleMessages(IReadOnlyList<BasicEncounterDeck> messages)
@@ -50,7 +50,7 @@ namespace IdelPog.Combat.Mediator
                 responses[i] = ConstructResponse(basicEncounterDeck);
                 
                 _combatantLogger.ClearStateChanges();
-                _tearDownService.ResetCombatants();
+                _tearDownService.TearDownState();
                 _combatStateService.Reset();
             }
 
@@ -64,7 +64,7 @@ namespace IdelPog.Combat.Mediator
             
             _friendlyStatusAssigner.AssignFriendlyStatus(basicEncounterDeck.FriendlyCombatantIDs, basicEncounterDeck.EnemyCombatantIDs);
             
-            _initialAbilityScheduler.EnqueueInitial(0);
+            _initialAbilityScheduler.ScheduleRegisteredAbilities(initialTick: 0);
         }
 
         private BasicEncounterDeckResponse ConstructResponse(BasicEncounterDeck basicEncounterDeck)
@@ -72,7 +72,7 @@ namespace IdelPog.Combat.Mediator
             return new BasicEncounterDeckResponse
             {
                 BasicEncounterDeck = basicEncounterDeck,
-                CombatantStateChanges = _combatantLogger.GetStateChanges().ToArray(),
+                CombatStages = _combatantLogger.GetStateChanges().ToArray(),
                 FriendlyVictory = _combatStateService.FriendlyVictory
             };
         }

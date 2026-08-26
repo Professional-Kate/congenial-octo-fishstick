@@ -1,32 +1,26 @@
-﻿using IdelPog.Combat.Runtime.Component;
+﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 
 namespace IdelPog.Combat.Runtime.System.Repository.Interface
 {
     /// <summary>
-    /// Filters for returning <see cref="CombatantEntity"/> based on their <see cref="FriendlyStatusComponent"/>.
+    /// Filters for returning <see cref="CombatantEntity"/> based on their <see cref="TargetingType"/>.
     /// </summary>
     public interface ICombatantFilters
     {
         /// <summary>
-        /// Get all <see cref="CombatantEntity"/> whos <see cref="FriendlyStatusComponent"/> is true 
+        /// Returns whether a team of combatants has any valid entities that can continue fighting.
         /// </summary>
-        /// <remarks>Will only return entities who's <see cref="LifeStatusComponent"/> is true</remarks>
-        /// <returns>A collection of friendly entities</returns>
-        public IEnumerable<CombatantEntity> GetFriendlies();
+        /// <param name="targetingType">The team to query.</param>
+        /// <returns>True if the team has any valid combatants</returns>
+        public bool HasValidCombatants(TargetingType targetingType);
         
-        /// <summary>
-        /// Get all <see cref="CombatantEntity"/> whos <see cref="FriendlyStatusComponent"/> is false
-        /// </summary>
-        /// <remarks>Will only return entities who's <see cref="LifeStatusComponent"/> is true</remarks>
-        /// <returns>A collection of enemy entities</returns>
-        public IEnumerable<CombatantEntity> GetEnemies();
-
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="isFriendly"></param>
+        /// <param name="targetingType"></param>
+        /// <param name="casterTargetingType"></param>
         /// <returns></returns>
-        public IReadOnlyList<CombatantEntity> GetCombatants(bool isFriendly);
+        public IReadOnlyList<CombatantEntity> GetCombatants(TargetingType targetingType, TargetingType casterTargetingType);
     }
 }

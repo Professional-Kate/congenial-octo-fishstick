@@ -14,18 +14,9 @@ namespace IdelPog.Integration.Tests.Combat
     [TestFixture]
     public sealed class BasicEncounterDeckTest : ManagedTestBuffer
     {
-        private readonly CombatTools _combatTools = new();
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
         private ManagedErrorListener<BasicEncounterDeckError> _errorListener;
         private ManagedResponseListener<CombatantCreationResponse> _combatantCreationResponseListener;
-
-        private readonly CombatantCreation _humanCreation = StaticCombatCommands.HumanCreation;
-        private readonly CombatantCreation _goblinCreation = StaticCombatCommands.GoblinCreation;
-        private readonly CombatantCreation _bearCreation = StaticCombatCommands.BearCreation;
-        private readonly CombatantCreation _wolfCreation = StaticCombatCommands.WolfCreation;
-        
-        private readonly AbilityCreation _basicAttackCreation = StaticCombatCommands.SlashAttackCreation; 
-        private readonly CombatantAbilityEquip _equipBasicAttack = StaticCombatCommands.EquipSlashAttack(0);
         
         [SetUp]
         public void Setup()
@@ -37,10 +28,15 @@ namespace IdelPog.Integration.Tests.Combat
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
             ManagedSubscribe(_combatantCreationResponseListener);
-            _combatTools.Reset();
+        }
+        
+        [TearDown]
+        public void TearDown()
+        {
+            CombatValidator.Reset();
         }
 
-        private BasicEncounterDeck RunCombat(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs, CombatantCreationResponse[] responses)
+        private BasicEncounterDeck RunCombat(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs)
         {
             BasicEncounterDeck basicEncounterDeck = new()
             {
@@ -52,10 +48,11 @@ namespace IdelPog.Integration.Tests.Combat
             
             _responseListener.AssertWasCalled(true);
             _responseListener.AssertResponseLength(1);
-            _combatTools.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges, responses);
+            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatStages);
             
             return basicEncounterDeck;
         }
+        
         private static void AssertResponse(BasicEncounterDeckResponse basicEncounterDeckResponse, BasicEncounterDeck source)
         { 
             Assert.That(basicEncounterDeckResponse.BasicEncounterDeck, Is.EqualTo(source));
@@ -81,80 +78,83 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_FriendlyVictory()
         { 
-            DispatchMessage(_humanCreation, _goblinCreation);
-            DispatchMessage(_basicAttackCreation);
-            DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 });
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0), StaticCombatCommands.EquipSlashAttack(1));
             
-            BasicEncounterDeck returnedDeck = RunCombat([0], [1], _combatantCreationResponseListener.Responses);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1]);
             
             _responseListener.AssertWasCalled(true);
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
-            CombatTools.AssertVictory(_responseListener.Responses[0], true);
             
-            _combatTools.AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
+            CombatValidator.AssertVictory(_responseListener.Responses[0], true);
+            CombatValidator.AssertNextInitiatingCombatant(1, 0);
+            CombatValidator.AssertCombatantDidAttack(0, 1);
         }
         
         [Test]
         public void Positive_SimulateCombat_EnemyVictory()
         { 
-            DispatchMessage(_humanCreation, _goblinCreation, _wolfCreation, _bearCreation);
-            DispatchMessage(_basicAttackCreation);
-            DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 }, _equipBasicAttack with { CombatantID = 2 }, _equipBasicAttack with { CombatantID = 3 });
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.BearCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0), StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 1 }, StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 2 }, StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 3 });
             
-            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3], _combatantCreationResponseListener.Responses);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
             
             _responseListener.AssertWasCalled(true);
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
-            CombatTools.AssertVictory(_responseListener.Responses[0], false);
             
-            _combatTools.AssertOneOrMoreAttacks(_wolfCreation, _bearCreation, _humanCreation, _goblinCreation);
+            CombatValidator.AssertVictory(_responseListener.Responses[0], false);
+            CombatValidator.AssertCombatantDidAttack(0, 1, 2, 3);
         }
 
         [Test]
         public void Positive_SimulateCombat_TargetsHighSpeed()
         {
-            CombatantAbilityCard highAttackCard = new() { AbilityType = AbilityType.SLASH, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.SPEED }};
+            CombatantAbilityCard highAttackCard = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.SPEED, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
             
-            DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
-            DispatchMessage(_basicAttackCreation);
-            DispatchMessage(_equipBasicAttack with { AbilityCards = [highAttackCard] }, _equipBasicAttack with { CombatantID = 1 });
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.WolfCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0) with { AbilityCards = [highAttackCard] }, StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 1 });
             
-            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3], _combatantCreationResponseListener.Responses);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
             
             _responseListener.AssertWasCalled(true);
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
-            CombatTools.AssertFirstDeadCombatant(_combatTools.FirstDeadCombatant.CombatantCreation,_wolfCreation);
             
-            _combatTools.AssertZeroAttacks(_bearCreation, _wolfCreation);
-            _combatTools.AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
+            CombatValidator.AssertFirstDeadCombatant(3);
+            CombatValidator.AssertNextInitiatingCombatant(1, 0);
+            CombatValidator.AssertCombatantDidAttack(0, 1);
+            CombatValidator.AssertCombatantDidNotAttack(2, 3);
 
         }
         
         [Test]
         public void Positive_SimulateCombat_LowHealth_TargetsLowHealth()
         {
-            CombatantAbilityCard lowHealthCard = new() { AbilityType = AbilityType.SLASH, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH } };
+            CombatantAbilityCard lowHealthCard = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
             
-            DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
-            DispatchMessage(_basicAttackCreation);
-            DispatchMessage(_equipBasicAttack with { AbilityCards = [lowHealthCard] }, _equipBasicAttack with { CombatantID = 1 });
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.WolfCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0) with { AbilityCards = [lowHealthCard] }, StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 1 });
             
-            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3], _combatantCreationResponseListener.Responses);
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
             
             _responseListener.AssertWasCalled(true);
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
-            CombatTools.AssertFirstDeadCombatant(_combatTools.FirstDeadCombatant.CombatantCreation,_wolfCreation);
             
-            _combatTools.AssertZeroAttacks(_bearCreation, _wolfCreation);
-            _combatTools.AssertOneOrMoreAttacks(_humanCreation, _goblinCreation);
+            CombatValidator.AssertFirstDeadCombatant(1);
+            CombatValidator.AssertNextInitiatingCombatant(1, 0);
+            CombatValidator.AssertCombatantDidAttack(0, 1);
+            CombatValidator.AssertCombatantDidNotAttack(2, 3);
         }
 
         [Test]
@@ -163,28 +163,26 @@ namespace IdelPog.Integration.Tests.Combat
             StatCard sharedStatCard = new() { Health = 100 };
             AgilityCard sameSpeedCard = new() { Speed = 10, Initiative = 0 };
             
-            CombatantCreation humanCreation = _humanCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 1 }};
-            CombatantCreation bearCreation = _bearCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 2 }};
-            CombatantCreation goblinCreation = _goblinCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 3 }};
-            CombatantCreation wolfCreation = _wolfCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 4 }};
+            CombatantCreation humanCreation = StaticCombatCommands.HumanCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 1 }};
+            CombatantCreation bearCreation = StaticCombatCommands.BearCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 2 }};
+            CombatantCreation goblinCreation = StaticCombatCommands.GoblinCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 3 }};
+            CombatantCreation wolfCreation = StaticCombatCommands.WolfCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 4 }};
 
             DispatchMessage(humanCreation, bearCreation, goblinCreation, wolfCreation);
-            DispatchMessage(_basicAttackCreation);
-            DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 }, _equipBasicAttack with { CombatantID = 2 }, _equipBasicAttack with { CombatantID = 3 });
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0), StaticCombatCommands.EquipSlashAttack(1), StaticCombatCommands.EquipSlashAttack(2), StaticCombatCommands.EquipSlashAttack(3));
             
-            RunCombat([1], [0, 3, 2], _combatantCreationResponseListener.Responses);
+            RunCombat([1], [0, 3, 2]);
             
-            AbilityValidator.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
-            AbilityValidator.AssertAttackers(3, 2, 1, 0);
-            AbilityValidator.Reset();
+            CombatValidator.AssertNextInitiatingCombatant(3, 2, 1, 0);
         }
 
         [Test]
         public void Positive_SimulateCombat_CombatClearsDown_BetweenCommands()
         {
-            DispatchMessage(_humanCreation, _goblinCreation, _bearCreation, _wolfCreation);
-            DispatchMessage(_basicAttackCreation, StaticCombatCommands.StabAttackCreation);
-            DispatchMessage(_equipBasicAttack, StaticCombatCommands.EquipSlashAttack(1), StaticCombatCommands.EquipStabAttack(2), StaticCombatCommands.EquipStabAttack(3));
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.WolfCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation, StaticCombatCommands.StabAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0), StaticCombatCommands.EquipSlashAttack(1), StaticCombatCommands.EquipStabAttack(2), StaticCombatCommands.EquipStabAttack(3));
             
             BasicEncounterDeck basicEncounterDeck = new()
             {
@@ -197,12 +195,39 @@ namespace IdelPog.Integration.Tests.Combat
             _responseListener.AssertWasCalled(true);
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(4);
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(_responseListener.Responses[1].CombatantStateChanges, Is.EqualTo(_responseListener.Responses[0].CombatantStateChanges));
-                Assert.That(_responseListener.Responses[2].CombatantStateChanges, Is.EqualTo(_responseListener.Responses[0].CombatantStateChanges));
-                Assert.That(_responseListener.Responses[3].CombatantStateChanges, Is.EqualTo(_responseListener.Responses[0].CombatantStateChanges));
+            
+            foreach (BasicEncounterDeckResponse basicEncounterDeckResponse in _responseListener.Responses)
+            { 
+                CombatValidator.RegisterCombatStages(basicEncounterDeckResponse.CombatStages);
+                CombatValidator.AssertFirstDeadCombatant(3);
+                CombatValidator.AssertNextInitiatingCombatant(2, 1, 0, 3);
             }
+        }
+
+        [Test]
+        public void Positive_SimulateCombat_OnlyTheSpecifiedCombatantsFight()
+        {
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation, StaticCombatCommands.StabAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0), StaticCombatCommands.EquipSlashAttack(1));
+            
+            BasicEncounterDeck basicEncounterDeck = new()
+            {
+                FriendlyCombatantIDs = [0], EnemyCombatantIDs = [1]
+            };
+            
+            DispatchMessage(StaticCombatCommands.BearCreation);
+            DispatchMessage(StaticCombatCommands.StrikeAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipStrikeAttack(2));
+            
+            DispatchMessage(basicEncounterDeck);
+            
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
+             
+            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatStages);
+            CombatValidator.AssertCombatantDidNotAttack(2);
         }
         
         // Exception Tests
@@ -248,9 +273,9 @@ namespace IdelPog.Integration.Tests.Combat
                 EnemyCombatantIDs = [1]
             };
             
-            DispatchMessage(_humanCreation, _goblinCreation);
-            DispatchMessage(_basicAttackCreation);
-            DispatchMessage(_equipBasicAttack, _equipBasicAttack with { CombatantID = 1 });
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0), StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 1 });
 
             DispatchMessage(basicEncounterDeck);
             

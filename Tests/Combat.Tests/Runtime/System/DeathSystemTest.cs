@@ -29,6 +29,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Setup()
         {
             _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(1);
+            _combatStateServiceMock.Reset();
         }
 
         private void VerifyMocks()
@@ -37,9 +38,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatStateServiceMock.VerifyNoOtherCalls();
         }
 
-        private void VerifyEvaluateCalled(CombatantEntity combatantEntity)
+        private void VerifyEvaluateCalled()
         {
-            _combatStateServiceMock.Verify(library => library.Evaluate(combatantEntity), Times.Once);
+            _combatStateServiceMock.Verify(library => library.Evaluate(), Times.Once);
         }
 
         private static void AssertEntityDead(CombatantEntity combatantEntity)
@@ -53,7 +54,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.DoesNotThrow(() => _deathSystem.KillEntity(_combatantEntity));
 
             AssertEntityDead(_combatantEntity);
-            VerifyEvaluateCalled(_combatantEntity);
+            VerifyEvaluateCalled();
             VerifyMocks();
         }
         
@@ -63,7 +64,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.DoesNotThrow(() => _deathSystem.KillEntity(_combatantEntity));
 
             AssertEntityDead(_combatantEntity);
-            VerifyEvaluateCalled(_combatantEntity);
+            VerifyEvaluateCalled();
             VerifyMocks();
         }
 

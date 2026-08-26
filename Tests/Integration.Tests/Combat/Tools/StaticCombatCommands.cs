@@ -1,8 +1,7 @@
 ﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Event;
-using IdelPog.Core.Contracts;
+using IdelPog.Combat.Runtime.Event;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {
@@ -12,63 +11,68 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         {
             CombatantType = CombatantType.HUMAN, 
             StatCard = new StatCard { Health = 25 },
-            AgilityCard = new AgilityCard { Speed = 7, Initiative = 2 },
-            Information = new Information { Name = "John Idle", Description = "He the man" }
+            AgilityCard = new AgilityCard { Speed = 7, Initiative = 2 }
         };
         
         internal static readonly CombatantCreation GoblinCreation = new()
         {
             CombatantType = CombatantType.GOBLIN, 
             StatCard = new StatCard { Health = 9 },
-            AgilityCard = new AgilityCard { Speed = 11, Initiative = 3 },
-            Information = new Information { Name = "Goblin", Description = "green guy" }
+            AgilityCard = new AgilityCard { Speed = 11, Initiative = 3 }
         };
         
         internal static readonly CombatantCreation BearCreation = new()
         {
             CombatantType = CombatantType.BEAR,
             StatCard = new StatCard { Health = 20 },
-            AgilityCard = new AgilityCard { Speed = 15, Initiative = 4 },
-            Information = new Information { Name = "Bear", Description = "rawr" }
+            AgilityCard = new AgilityCard { Speed = 15, Initiative = 4 }
         };
         
         internal static readonly CombatantCreation WolfCreation = new()
         {
             CombatantType = CombatantType.WOLF,
-            StatCard = new StatCard { Health = 3 },
-            AgilityCard = new AgilityCard { Speed = 17, Initiative = 1 },
-            Information = new Information { Name = "Wolf", Description = "awoooo" }
+            StatCard = new StatCard { Health = 11 },
+            AgilityCard = new AgilityCard { Speed = 17, Initiative = 1 }
         };
+
+        internal static readonly TriggerCard AbilityReadyTrigger = new()
+            { TriggerEventType = TriggerEventType.ABILITY_READY, TargetingType = TargetingType.SELF, MinTriggerValue = 0, MaxTriggerValue = 0 };
         
         internal static readonly AbilityCreation SlashAttackCreation = new()
         {
-            AbilityCard = new AbilityCard {  AbilityType = AbilityType.SLASH, EventType = EventType.DIRECT_DAMAGE, Cooldown = 5, AbilitySlots = 1, CastTime = 0},
-            ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
-            PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 1, StrikeDamage = 0, ThrustDamage = 0 },
-            Information = new Information { Name = "Slash!", Description = "Slashing!" }
+            AbilityCard = new AbilityCard { Cooldown = 5, AbilitySlots = 1 },
+            TriggerCard = AbilityReadyTrigger,
+            AbilityStageCards = [ new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, CastTime = 0,  MaxTargets = 1, Value = 1, Priority = 0 } ]
         };
         
         internal static readonly AbilityCreation StabAttackCreation = new()
         {
-            AbilityCard = new AbilityCard {  AbilityType = AbilityType.STAB, EventType = EventType.DIRECT_DAMAGE, Cooldown = 15, AbilitySlots = 1, CastTime = 0},
-            ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
-            PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 0, StrikeDamage = 0, ThrustDamage = 5 },
-            Information = new Information { Name = "Stab!", Description = "Thrust moment" }
+            AbilityCard = new AbilityCard { Cooldown = 15, AbilitySlots = 1 },
+            TriggerCard = AbilityReadyTrigger,
+            AbilityStageCards = [ new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.STAB, CastTime = 0,  MaxTargets = 1, Value = 5, Priority = 0 } ]
         };
         
         internal static readonly AbilityCreation StrikeAttackCreation = new()
         {
-            AbilityCard = new AbilityCard {  AbilityType = AbilityType.STRIKE, EventType = EventType.DIRECT_DAMAGE, Cooldown = 10, AbilitySlots = 1, CastTime = 0},
-            ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
-            PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 0, StrikeDamage = 3, ThrustDamage = 0 },
-            Information = new Information { Name = "Strike!", Description = "owie that hurt" }
+            AbilityCard = new AbilityCard { Cooldown = 10, AbilitySlots = 1 },
+            TriggerCard = AbilityReadyTrigger,
+            AbilityStageCards = [ new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.STRIKE, CastTime = 0,  MaxTargets = 1, Value = 3, Priority = 0 } ]
         };
 
-        internal static CombatantAbilityEquip EquipSlashAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.SLASH);
+        /// <summary>
+        /// This command assumes <see cref="SlashAttackCreation"/> was dispatched first
+        /// </summary>
+        internal static CombatantAbilityEquip EquipSlashAttack(byte combatantID, byte abilityID = 0) => EquipAbility(combatantID, abilityID);
 
-        internal static CombatantAbilityEquip EquipStabAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.STAB);
+        /// <summary>
+        /// This command assumes <see cref="StabAttackCreation"/> was dispatched second
+        /// </summary>
+        internal static CombatantAbilityEquip EquipStabAttack(byte combatantID, byte abilityID = 1) => EquipAbility(combatantID, abilityID);
         
-        internal static CombatantAbilityEquip EquipStrikeAttack(byte combatantID) => EquipAbility(combatantID, AbilityType.STRIKE);
+        /// <summary>
+        /// This command assumes <see cref="StrikeAttackCreation"/> was dispatched third
+        /// </summary>
+        internal static CombatantAbilityEquip EquipStrikeAttack(byte combatantID, byte abilityID = 2) => EquipAbility(combatantID, abilityID);
         
         internal static CombatantAbilityEquip EquipAbilityCards(byte combatantID, params CombatantAbilityCard[] abilityCards) => new()
         {
@@ -76,15 +80,15 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             AbilityCards = abilityCards
         };
         
-        internal static CombatantAbilityEquip EquipAbility(byte combatantID, AbilityType abilityType) => new()
+        internal static CombatantAbilityEquip EquipAbility(byte combatantID, byte abilityID) => new()
         {
             CombatantID = combatantID, 
             AbilityCards = 
             [
                 new CombatantAbilityCard
                 {
-                    AbilityType = abilityType, 
-                    StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }
+                    AbilityID = abilityID, 
+                    StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]
                 }
             ]
         };

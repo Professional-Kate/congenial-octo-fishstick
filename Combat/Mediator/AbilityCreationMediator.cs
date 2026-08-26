@@ -1,65 +1,76 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
-using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
-using IdelPog.Combat.Event;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
-using IdelPog.Core.Repository.Asset;
+using IdelPog.Core.Repository.Incremental;
 using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Mediator
 {
     public sealed class AbilityCreationMediator : IBatchMediator<AbilityCreation>
     {
-        private readonly IAssetRepository<AbilityType, AbilityEntity> _skillEntityRepository;
+        private readonly IIncrementalRepository<AbilityEntity> _skillEntityRepository;
         private readonly IAbilityEntityFactory _abilityEntityFactory;
-        private readonly IAssetRepository<AbilityType, EventType> _eventRepository;
         private readonly IDispatchMany<AbilityCreationResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
-        private readonly IUniqueAssertion _uniqueAssertion;
         private readonly INumberAssertion _numberAssertion;
+        private readonly ITriggerAssertion _triggerAssertion;
 
-        public AbilityCreationMediator(IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository, IAbilityEntityFactory abilityEntityFactory, IAssetRepository<AbilityType, EventType> eventRepository, IDispatchMany<AbilityCreationResponse> responseDispatcher, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion, INumberAssertion numberAssertion)
+        public AbilityCreationMediator(IIncrementalRepository<AbilityEntity> skillEntityRepository, IAbilityEntityFactory abilityEntityFactory, IDispatchMany<AbilityCreationResponse> responseDispatcher, ICollectionAssertion collectionAssertion, INumberAssertion numberAssertion, ITriggerAssertion triggerAssertion)
         {
             _skillEntityRepository = skillEntityRepository;
             _abilityEntityFactory = abilityEntityFactory;
-            _eventRepository = eventRepository;
             _responseDispatcher = responseDispatcher;
             _collectionAssertion = collectionAssertion;
-            _uniqueAssertion = uniqueAssertion;
             _numberAssertion = numberAssertion;
+            _triggerAssertion = triggerAssertion;
         }
 
         public void HandleMessages(IReadOnlyList<AbilityCreation> messages)
         {
             _collectionAssertion.AssertHasElements(messages);
+            ValidateCreations(messages);
             
             AbilityCreationResponse[] responses = new AbilityCreationResponse[messages.Count];
             for (int i = 0; i < messages.Count; i++)
             {
                 AbilityCreation abilityCreation = messages[i];
-                _numberAssertion.AssertNumberNotZero(abilityCreation.AbilityCard.Cooldown, abilityCreation.ToString());
-                _uniqueAssertion.AssertUnique(abilityCreation.AbilityCard.AbilityType, _skillEntityRepository.Contains(abilityCreation.AbilityCard.AbilityType));
                 
-                _skillEntityRepository.Add(abilityCreation.AbilityCard.AbilityType, _abilityEntityFactory.CreateAbilityEntity(abilityCreation));
-                _eventRepository.Add(abilityCreation.AbilityCard.AbilityType, abilityCreation.AbilityCard.EventType);
-                responses[i] = CreateResponse(abilityCreation);
+                byte abilityID = _skillEntityRepository.Add(_abilityEntityFactory.CreateAbilityEntity(abilityCreation));
+                responses[i] = CreateResponse(abilityCreation, abilityID);
             }
             
             _responseDispatcher.Dispatch(responses);
         }
 
-        private static AbilityCreationResponse CreateResponse(AbilityCreation abilityCreation)
+        private void ValidateCreations(IReadOnlyList<AbilityCreation> messages)
+        {
+            // TODO: instead of validating here we should validate once before this class.
+            //  could be something to add to the FlowRegister, CommandValidator
+            foreach (AbilityCreation abilityCreation in messages)
+            {
+                _numberAssertion.AssertNumberNotZero(abilityCreation.AbilityCard.Cooldown, abilityCreation.ToString());
+                _collectionAssertion.AssertHasElements(abilityCreation.AbilityStageCards);
+                _triggerAssertion.AssertTrigger(abilityCreation.TriggerCard);
+                
+                foreach (AbilityStageCard abilityStageCard in abilityCreation.AbilityStageCards)
+                { 
+                    _numberAssertion.AssertNumberNotZero(abilityStageCard.MaxTargets, abilityStageCard.ToString());
+                }
+            }
+        }
+
+        private static AbilityCreationResponse CreateResponse(AbilityCreation abilityCreation, byte abilityID)
         {
             return new AbilityCreationResponse
             {
-                Information = abilityCreation.Information, 
-                AbilityType =  abilityCreation.AbilityCard.AbilityType,
-                EventType =  abilityCreation.AbilityCard.EventType,
-                ElementalDamageCard = abilityCreation.ElementalDamageCard
+                AbilityID = abilityID,
+                AbilityCard = abilityCreation.AbilityCard,
+                TriggerCard = abilityCreation.TriggerCard
             };
         }
     }

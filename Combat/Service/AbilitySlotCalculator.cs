@@ -1,27 +1,32 @@
 ﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Service.Interface;
-using IdelPog.Core.Repository.Asset;
+using IdelPog.Core.Repository.Incremental;
 
 namespace IdelPog.Combat.Service
 {
     public sealed class AbilitySlotCalculator : IAbilitySlotCalculator
     {
-        private readonly IAssetRepository<AbilityType, AbilityEntity> _skillEntityRepository;
+        private readonly IIncrementalRepository<AbilityEntity> _abilityEntityRepository;
 
-        public AbilitySlotCalculator(IAssetRepository<AbilityType, AbilityEntity> skillEntityRepository)
+        public AbilitySlotCalculator(IIncrementalRepository<AbilityEntity> abilityEntityRepository)
         {
-            _skillEntityRepository = skillEntityRepository;
+            _abilityEntityRepository = abilityEntityRepository;
         }
-        
-        public byte GetAbilitySlots(CombatantAbilityCard[] abilityCards)
+
+        public byte GetAbilitySlots(CombatantAbilityCard[] abilityCards, IReadOnlyList<CombatantAbilityEntity> existingEntities)
         {
             byte reservedAbilitySlots = 0;
             foreach (CombatantAbilityCard abilityCard in abilityCards)
             {
-                AbilityEntity abilityEntity = _skillEntityRepository.Get(abilityCard.AbilityType);
+                AbilityEntity abilityEntity = _abilityEntityRepository.Get(abilityCard.AbilityID);
                 reservedAbilitySlots += abilityEntity.AbilitySlots;
+            }
+            
+            foreach (CombatantAbilityEntity combatantAbilityEntity in existingEntities)
+            {
+                reservedAbilitySlots += combatantAbilityEntity.AbilitySlots;
             }
 
             return reservedAbilitySlots;

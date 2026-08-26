@@ -11,7 +11,7 @@ using IdelPog.Skill.Factory.Interface;
 
 namespace IdelPog.Skill.Mediator
 {
-    public class SkillUpdateMediator : IBatchMediator<SkillUpdate>
+    public sealed class SkillUpdateMediator : IBatchMediator<SkillUpdate>
     {
         private readonly IExperienceService _experienceService;
         private readonly ILevelService _levelService;
@@ -47,8 +47,6 @@ namespace IdelPog.Skill.Mediator
                 {
                     _levelService.LevelUp(levelable);
                 }
-
-                // _lootService.GenerateItemID(skillID);
 
                 _skillRepository.Update(skillID, skill);
                 responses[i] = _skillUpdateResponseFactory.Create(skill, canSkillLevel);

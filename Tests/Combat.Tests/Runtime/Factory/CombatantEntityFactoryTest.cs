@@ -29,11 +29,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             
             CombatantEntity combatantEntity = _combatService.CreateEntity(_wolfCreation, combatantID);
             
-            Assert.Multiple(() =>
-            {
-                Assert.That(combatantEntity.CombatantID, Is.EqualTo(combatantID));
-                Assert.That(combatantEntity.CombatantInformation, Is.EqualTo(_wolfCreation.Information));
-            });
+            Assert.That(combatantEntity.CombatantID, Is.EqualTo(combatantID));
         }
     }
 }

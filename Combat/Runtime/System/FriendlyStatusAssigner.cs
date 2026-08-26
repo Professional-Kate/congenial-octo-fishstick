@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Runtime.Component;
+﻿using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
@@ -21,11 +22,11 @@ namespace IdelPog.Combat.Runtime.System
 
         public void AssignFriendlyStatus(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs)
         {
-            AssignComponent(friendlyCombatantIDs, true);
-            AssignComponent(enemyCombatantIDs, false);
+            AssignComponent(friendlyCombatantIDs, TargetingType.FRIENDLY);
+            AssignComponent(enemyCombatantIDs, TargetingType.ENEMY);
         }
 
-        private void AssignComponent(byte[] combatantIDs, bool isFriendly)
+        private void AssignComponent(byte[] combatantIDs, TargetingType targetingType)
         {
             _collectionAssertion.AssertHasElements(combatantIDs);
             foreach (byte combatantID in combatantIDs)
@@ -34,10 +35,11 @@ namespace IdelPog.Combat.Runtime.System
                 
                 CombatantEntity combatantEntity = _combatantRepository.Get(combatantID);
                 
-                combatantEntity.AddComponent(CreateComponent(isFriendly));
+                combatantEntity.AddComponent(CreateComponent(targetingType));
+                combatantEntity.AddComponent(new CombatParticipantComponent());
             }
         }
         
-        private static FriendlyStatusComponent CreateComponent(bool isFriendly) => new() { IsFriendly = isFriendly };
+        private static TargetingTypeComponent CreateComponent(TargetingType targetingType) => new() { TargetingType = targetingType };
     } 
 }

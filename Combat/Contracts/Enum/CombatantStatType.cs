@@ -4,6 +4,8 @@
     {
         HEALTH, 
         SPEED,
-        INITIATIVE
+        INITIATIVE,
+        ABILITY_DAMAGE,
+        ABILITY_HEALING
     }
 }

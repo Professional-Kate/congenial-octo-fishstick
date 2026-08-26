@@ -1,0 +1,43 @@
+﻿using System.Collections.Immutable;
+using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Runtime.Component.Ability;
+using IdelPog.Combat.Runtime.Entities.Combatant;
+using IdelPog.Combat.Runtime.Event.Trigger.Contracts;
+using IdelPog.Combat.Runtime.Event.Trigger.Interface;
+using IdelPog.Combat.Runtime.System.Repository.Interface;
+using IdelPog.Combat.Service.Interface;
+
+namespace IdelPog.Combat.Runtime.Event.Trigger.Handler
+{
+    public sealed class CombatantCastingHandler : TriggerAbilityHandler<CombatantCastCompleteData>
+    {
+        public CombatantCastingHandler(ITriggerReader triggerReader, IAbilityEventScheduler abilityEventScheduler, ICombatantRepository combatantRepository) 
+            : base(triggerReader, abilityEventScheduler, combatantRepository)
+        {
+        }
+
+        protected override TriggerEventType TriggerEventType => TriggerEventType.COMBATANT_CASTING_COMPLETE;
+        
+        protected override IEnumerable<AbilityTrigger> Filter(ImmutableArray<CombatantAbilityEntity> combatantAbilityEntities, CombatantCastCompleteData triggerData, double tick)
+        {
+            List<AbilityTrigger> abilityTriggers = [];
+            foreach (CombatantAbilityEntity combatantAbilityEntity in combatantAbilityEntities)
+            {
+                TriggerComponent triggerComponent = combatantAbilityEntity.GetComponent<TriggerComponent>();
+                if (triggerComponent.TargetingType == TargetingType.SELF)
+                {
+                    continue;
+                }
+              
+                if (IsEligible(combatantAbilityEntity, triggerData.CombatantTargetingType, triggerData.CastingCombatantID, triggerComponent, tick) == false)
+                {
+                    continue;
+                }
+                
+                abilityTriggers.Add(new AbilityTrigger { Tick = tick, CombatantID = combatantAbilityEntity.CombatantID, AbilityID = combatantAbilityEntity.AbilityID });
+            }
+
+            return abilityTriggers;
+        }
+    }
+}

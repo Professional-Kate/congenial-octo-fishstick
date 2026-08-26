@@ -1,5 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Entities.Combatant;
+﻿using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
 
@@ -7,7 +6,7 @@ namespace IdelPog.Combat.Runtime.System.Repository
 {
     public sealed class CombatantAbilityEntityRepository : ICombatantAbilityEntityRepository
     {
-        private readonly Dictionary<byte, IReadOnlyList<CombatantAbilityEntity>> _combatantAbilities = [];
+        private readonly Dictionary<byte, List<CombatantAbilityEntity>> _combatantAbilities = [];
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IFoundAssertion _foundAssertion;
 
@@ -17,10 +16,15 @@ namespace IdelPog.Combat.Runtime.System.Repository
             _foundAssertion = foundAssertion;
         }
 
-        public void Add(byte combatantID, IReadOnlyList<CombatantAbilityEntity> combatantAbilities)
+        public void AddAbilities(byte combatantID, IReadOnlyList<CombatantAbilityEntity> combatantAbilities)
         {
             _collectionAssertion.AssertHasElements(combatantAbilities);
-            _combatantAbilities.Add(combatantID, combatantAbilities);
+            if (_combatantAbilities.TryAdd(combatantID, [..combatantAbilities]))
+            {
+                return;
+            }
+
+            _combatantAbilities[combatantID].AddRange(combatantAbilities);
         }
 
         public bool Contains(byte combatantID)
@@ -28,13 +32,13 @@ namespace IdelPog.Combat.Runtime.System.Repository
             return _combatantAbilities.ContainsKey(combatantID);
         }
 
-        public CombatantAbilityEntity Get(byte combatantID, AbilityType abilityType)
+        public CombatantAbilityEntity Get(byte combatantID, byte abilityID)
         { 
-            _foundAssertion.AssertFound(combatantID, _combatantAbilities.ContainsKey(combatantID));
+            _foundAssertion.AssertFound(combatantID, Contains(combatantID));
 
             foreach (CombatantAbilityEntity abilityEntity in _combatantAbilities[combatantID])
             {
-                if (abilityEntity.AbilityType == abilityType)
+                if (abilityEntity.AbilityID == abilityID)
                 {
                     return abilityEntity;
                 }
@@ -45,8 +49,12 @@ namespace IdelPog.Combat.Runtime.System.Repository
 
         public IReadOnlyList<CombatantAbilityEntity> GetAll(byte combatantID)
         {
-            _foundAssertion.AssertFound(combatantID, _combatantAbilities.ContainsKey(combatantID));
-            return _combatantAbilities[combatantID];
+            if (Contains(combatantID) == false)
+            {
+                return [];
+            }
+            
+            return _combatantAbilities[combatantID].AsReadOnly();
         }
     }
 }

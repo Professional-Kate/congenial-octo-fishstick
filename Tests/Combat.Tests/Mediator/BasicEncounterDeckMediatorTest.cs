@@ -4,11 +4,11 @@ using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Mediator;
+using IdelPog.Combat.Runtime.Event;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Combat.Service.Queue.Interface;
-using IdelPog.Core.Contracts;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -29,7 +29,7 @@ namespace IdelPog.Combat.Tests.Mediator
         private Mock<IDispatchMany<BasicEncounterDeckResponse>> _responseDispatcherMock;
         
         private BasicEncounterDeck _basicEncounterDeck;
-        private CombatantStateChange _combatantStateChange;
+        private CombatStage _combatStage;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -49,15 +49,28 @@ namespace IdelPog.Combat.Tests.Mediator
                 EnemyCombatantIDs = [2]
             };
 
-            CombatantCreation combatantCreation = new()
+            ReadOnlyCombatant readOnlyCombatant = new()
             {
-                CombatantType = CombatantType.WOLF, Information = new Information { Name = "A", Description = "B" },
+                CombatantID = 1,
                 StatCard = new StatCard { Health = 10 },
-                AgilityCard = new AgilityCard { Speed = 3, Initiative = 1 }
+                AgilityCard = new AgilityCard { Speed = 3, Initiative = 1 },
+                TargetingType = TargetingType.FRIENDLY,
+                IsAlive = true
+            };
+            
+            CombatantStateChange combatantStateChange = new()
+            {
+                Tick = 10, 
+                ReadOnlyAbilityStage = new ReadOnlyAbilityStage { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, Value = 10 },
+                TargetCombatants = [ readOnlyCombatant with { CombatantID = 2 }]
             };
 
-            AttackingCombatant attackingCombatant = new() { AbilityType = AbilityType.SLASH, CombatantID = 1, DamageDealt = 100 };
-            _combatantStateChange = new CombatantStateChange { AttackingCombatant = attackingCombatant, CombatantID = 2, IsAlive = true, IsFriendly = true, CombatantCreation = combatantCreation, Tick = 1 };
+            _combatStage = new CombatStage
+            {
+                AbilityID = 1,
+                InitiatingCombatant = readOnlyCombatant,
+                CombatantStateChanges = [combatantStateChange]
+            };
         }
 
         [SetUp]
@@ -90,9 +103,9 @@ namespace IdelPog.Combat.Tests.Mediator
             _responseDispatcherMock.VerifyNoOtherCalls();
         }
 
-        private void SetupGetStateChanges(params CombatantStateChange[] combatantStateChanges)
+        private void SetupGetStateChanges(params CombatStage[] combatStages)
         {
-            _combatantLoggerMock.Setup(library => library.GetStateChanges()).Returns(combatantStateChanges).Verifiable();
+            _combatantLoggerMock.Setup(library => library.GetStateChanges()).Returns(combatStages).Verifiable();
         }
 
         private void VerifyRunDeck(BasicEncounterDeck basicEncounterDeck, Times times)
@@ -106,8 +119,8 @@ namespace IdelPog.Combat.Tests.Mediator
             _combatStateServiceMock.Verify(library => library.FriendlyVictory, times);
             _combatStateServiceMock.Verify(library => library.Reset(), times);
             _combatantLoggerMock.Verify(library => library.ClearStateChanges(), times);
-            _attackSchedulerMock.Verify(library => library.EnqueueInitial(0), times);
-            _tearDownServiceMock.Verify(library => library.ResetCombatants(), times);
+            _attackSchedulerMock.Verify(library => library.ScheduleRegisteredAbilities(0), times);
+            _tearDownServiceMock.Verify(library => library.TearDownState(), times);
         }
 
         private void VerifyDispatchMessages(int count)
@@ -118,7 +131,7 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Positive_HandleMessages_SimulatesCombat_InvokesServices()
         {
-            SetupGetStateChanges(_combatantStateChange);
+            SetupGetStateChanges(_combatStage);
             
             Assert.DoesNotThrow(() => _basicEncounterDeckMediator.HandleMessages([_basicEncounterDeck]));
 
@@ -131,7 +144,7 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Positive_HandleMessages_MultipleMessages_SimulatesCombat()
         {
-            SetupGetStateChanges(_combatantStateChange);
+            SetupGetStateChanges(_combatStage);
             
             Assert.DoesNotThrow(() => _basicEncounterDeckMediator.HandleMessages([_basicEncounterDeck, _basicEncounterDeck, _basicEncounterDeck]));
 

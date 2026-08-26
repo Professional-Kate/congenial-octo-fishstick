@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Runtime.Component;
+﻿using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
@@ -41,32 +42,72 @@ namespace IdelPog.Combat.Runtime.System.Repository
             return _combatantRepository[id];
         }
 
-        public IEnumerable<CombatantEntity> GetAll()
-        {
-            return _combatantRepository.Values;
-        }
-
-        public IEnumerable<CombatantEntity> GetFriendlies()
-        {
-            return GetCombatants(true).ToArray();
-        }
-
-        public IEnumerable<CombatantEntity> GetEnemies()
-        {
-            return GetCombatants(false).ToArray();
-        }
-
-        public IReadOnlyList<CombatantEntity> GetCombatants(bool isFriendly)
+        public IEnumerable<CombatantEntity> GetAllParticipating()
         {
             List<CombatantEntity> combatantEntities = [];
             foreach (CombatantEntity combatantEntity in _combatantRepository.Values)
             {
-                if (combatantEntity.GetComponent<LifeStatusComponent>().IsAlive == false)
+                if (IsCombatantParticipating(combatantEntity) == false)
                 {
                     continue;
                 }
                 
-                if (combatantEntity.GetComponent<FriendlyStatusComponent>().IsFriendly == isFriendly)
+                combatantEntities.Add(combatantEntity);
+            }
+
+            return combatantEntities;
+        }
+
+        public bool HasValidCombatants(TargetingType targetingType)
+        {
+            foreach (CombatantEntity combatantEntity in _combatantRepository.Values)
+            {
+                if (IsCombatantParticipating(combatantEntity) == false)
+                {
+                    continue;
+                }
+                
+                if (IsCombatantAlive(combatantEntity) == false)
+                {
+                    continue;
+                }
+                
+                TargetingType combatantTargetingType = combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType;
+                if (combatantTargetingType != targetingType)
+                {
+                    continue;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public IReadOnlyList<CombatantEntity> GetCombatants(TargetingType targetingType, TargetingType casterTargetingType)
+        {
+            List<CombatantEntity> combatantEntities = [];
+            foreach (CombatantEntity combatantEntity in _combatantRepository.Values)
+            {
+                if (IsCombatantParticipating(combatantEntity) == false)
+                {
+                    continue;
+                }
+                
+                if (IsCombatantAlive(combatantEntity) == false)
+                {
+                    continue;
+                }
+                
+                TargetingType combatantTargetingType = combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType;
+                bool shouldTarget = targetingType switch
+                {
+                    TargetingType.FRIENDLY => combatantTargetingType == casterTargetingType,
+                    TargetingType.ENEMY => combatantTargetingType != casterTargetingType,
+                    _ => false
+                };
+                
+                if (shouldTarget)
                 {
                     combatantEntities.Add(combatantEntity);
                 }
@@ -74,5 +115,9 @@ namespace IdelPog.Combat.Runtime.System.Repository
             
             return combatantEntities.ToArray();
         }
+        
+        private static bool IsCombatantAlive(CombatantEntity combatantEntity) => combatantEntity.GetComponent<LifeStatusComponent>().IsAlive;
+        
+        private static bool IsCombatantParticipating(CombatantEntity combatantEntity) => combatantEntity.ContainsComponent<CombatParticipantComponent>();
     }
 }

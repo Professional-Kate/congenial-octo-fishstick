@@ -1,0 +1,143 @@
+﻿using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.Component.Ability;
+using IdelPog.Combat.Runtime.Entities.Combatant;
+using IdelPog.Combat.Runtime.Event;
+using IdelPog.Combat.Runtime.System;
+using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Tests.TestFactory;
+using Moq;
+
+namespace IdelPog.Combat.Tests.Runtime.System
+{
+    [TestFixture]
+    public sealed class ReadyTickSystemTest
+    {
+        private ReadyTickSystem _readyTickSystem;
+        private Mock<ICastingCalculator> _castingCalculatorMock;
+
+        private CombatantAbilityEntity _singleStageEntity;
+
+        private const uint COMBATANT_SPEED = 10u;
+        private const double CURRENT_TICK = 100d;
+        private readonly ReadyTickComponent _existingReadyTickComponent = new()
+        {
+            ReadyTick = CURRENT_TICK
+        };
+        
+        [OneTimeSetUp]
+        public void OneTimeSetup()
+        {
+            _castingCalculatorMock = new Mock<ICastingCalculator>();
+            
+            _readyTickSystem = new ReadyTickSystem(_castingCalculatorMock.Object);
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            _singleStageEntity = TestCombatantAbilityEntityFactory.Create(1, 1);
+            _singleStageEntity.AddComponent(_existingReadyTickComponent);
+            
+            _castingCalculatorMock.Reset();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _castingCalculatorMock.Verify();
+            _castingCalculatorMock.VerifyNoOtherCalls();
+        }
+
+        private void SetupGetCastDuration(CombatantAbilityStage[] combatantAbilityStages)
+        {
+            // just returns the cast time, we don't need to mock the specific calculation
+            foreach (CombatantAbilityStage combatantAbilityStage in combatantAbilityStages)
+            {
+                uint castTime = combatantAbilityStage.AbilityStage.CastTime;
+                _castingCalculatorMock.Setup(library => library.GetCastDuration(COMBATANT_SPEED, castTime)).Returns(castTime).Verifiable();
+            }
+        }
+
+        private static void AssertReadyTimeChanged(double expectedReadyTime, CombatantAbilityEntity changedEntity)
+        {
+            ReadyTickComponent readyTickComponent = changedEntity.GetComponent<ReadyTickComponent>();
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(readyTickComponent.ReadyTick, Is.Not.EqualTo(CURRENT_TICK));
+                Assert.That(readyTickComponent.ReadyTick, Is.EqualTo(expectedReadyTime));
+            }
+        }
+        
+        private static CooldownComponent GetCooldownComponent(CombatantAbilityEntity combatantAbilityEntity) => combatantAbilityEntity.GetComponent<CooldownComponent>();
+
+        [Test]
+        public void Positive_SetNewReadyTime_ChangesReadyTime()
+        {
+            Assert.DoesNotThrow(() => _readyTickSystem.SetNextReadyTick(CURRENT_TICK, _singleStageEntity, COMBATANT_SPEED));
+
+            AssertReadyTimeChanged(CURRENT_TICK + GetCooldownComponent(_singleStageEntity).Cooldown, _singleStageEntity);
+        }
+
+        [Test]
+        public void Positive_SetNewReadyTime_CurrentTickZero_ChangesReadyTime()
+        {
+            Assert.DoesNotThrow(() => _readyTickSystem.SetNextReadyTick(currentTick: 0, _singleStageEntity, COMBATANT_SPEED));
+            
+            AssertReadyTimeChanged(GetCooldownComponent(_singleStageEntity).Cooldown, _singleStageEntity);
+        }
+
+        [Test]
+        public void Positive_SetNewReadyTime_AbilityHasCastTime_DelaysReadyTime()
+        {
+            CombatantAbilityStage[] combatantAbilities =
+            [
+                new()
+                {
+                    AbilityStage = new AbilityStage
+                    {
+                        AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 10, MaxTargets = 1, Value = 3,
+                        Priority = 0
+                    },
+                    TargetingPreferenceComponent = new TargetingPreferenceComponent
+                    {
+                        CombatantStatType = CombatantStatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY
+                    }
+                },
+                new()
+                {
+                    AbilityStage = new AbilityStage
+                    {
+                        AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 20, MaxTargets = 1, Value = 3,
+                        Priority = 1
+                    },
+                    TargetingPreferenceComponent = new TargetingPreferenceComponent
+                    {
+                        CombatantStatType = CombatantStatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY
+                    }
+                },
+                new()
+                {
+                    AbilityStage = new AbilityStage
+                    {
+                        AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 30, MaxTargets = 1, Value = 3,
+                        Priority = 2
+                    },
+                    TargetingPreferenceComponent = new TargetingPreferenceComponent
+                    {
+                        CombatantStatType = CombatantStatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY
+                    }
+                }
+            ];
+
+            SetupGetCastDuration(combatantAbilities);
+            
+            CombatantAbilityEntity combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(12, 12, combatantAbilities);
+            combatantAbilityEntity.AddComponent(_existingReadyTickComponent);
+            
+            Assert.DoesNotThrow(() => _readyTickSystem.SetNextReadyTick(currentTick: 0, combatantAbilityEntity, COMBATANT_SPEED));
+            
+            AssertReadyTimeChanged(GetCooldownComponent(combatantAbilityEntity).Cooldown + 60, combatantAbilityEntity);
+        }
+    }
+}

@@ -1,8 +1,8 @@
-﻿using IdelPog.Combat.Contracts;
+﻿using System.Collections.Immutable;
+using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Command;
-using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
@@ -11,46 +11,134 @@ namespace IdelPog.Combat.Service.Logging
 {
     public sealed class CombatantLogger : ICombatantLogger
     {
-        private readonly List<CombatantStateChange> _combatantStateChanges = [];
         private readonly IObjectNullAssertion _objectNullAssertion;
+        private readonly ICollectionAssertion _collectionAssertion;
+        private readonly List<CombatantStateChange> _combatantStateChanges = [];
+        private readonly List<AbilityStageLog> _combatantLog = [];
 
-        public CombatantLogger(IObjectNullAssertion objectNullAssertion)
+        public CombatantLogger(IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion)
         {
             _objectNullAssertion = objectNullAssertion;
+            _collectionAssertion = collectionAssertion;
         }
 
-        public void LogCombatantChange(CombatantEntity changedEntity, byte attackerID, AbilityType abilityType, uint damageDealt, double tick)
+        private AbilityStageLog _currentLog;
+
+        public void LogCombatantChange(double tick, CombatantEntity initiatingCombatant, IReadOnlyList<CombatantEntity> targetCombatants, AbilityStage abilityStage, byte abilityID)
         {
-            _objectNullAssertion.AssertNotNull(changedEntity, nameof(changedEntity));
+            _objectNullAssertion.AssertNotNull(initiatingCombatant, nameof(initiatingCombatant));
+            _collectionAssertion.AssertHasElements(targetCombatants);
+
+            if (_combatantStateChanges.Count == 0)
+            {
+                _currentLog = CreateAbilityStageLog(initiatingCombatant, abilityID, tick);
+            }
+
+            ReadOnlyAbilityStage readOnlyAbilityStage = new()
+            {
+                AbilityEffectType = abilityStage.AbilityEffectType,
+                AffinityType = abilityStage.AffinityType,
+                Value = abilityStage.Value
+            };
             
             CombatantStateChange combatantStateChange = new()
             {
                 Tick = tick,
-                CombatantCreation = CreateCombatantCard(changedEntity),
-                CombatantID = changedEntity.CombatantID,
-                IsFriendly = changedEntity.GetComponent<FriendlyStatusComponent>().IsFriendly,
-                IsAlive = changedEntity.GetComponent<LifeStatusComponent>().IsAlive,
-                AttackingCombatant =  CreateAttackingCombatant(attackerID, abilityType, damageDealt)
+                TargetCombatants = CreateReadOnlyCombatants(targetCombatants),
+                ReadOnlyAbilityStage = readOnlyAbilityStage
             };
-            
+
+            if (ShouldCreateNewLog(abilityID, initiatingCombatant.CombatantID, tick))
+            {
+                FinalizeCurrentLog();
+                
+                _currentLog = CreateAbilityStageLog(initiatingCombatant, abilityID, tick); 
+            }
+
             _combatantStateChanges.Add(combatantStateChange);
         }
-        
-        public IReadOnlyList<CombatantStateChange> GetStateChanges() => _combatantStateChanges;
-        
-        public void ClearStateChanges() => _combatantStateChanges.Clear();
 
-        private static CombatantCreation CreateCombatantCard(CombatantEntity combatantEntity)
+        public IReadOnlyList<CombatStage> GetStateChanges()
         {
-            return new CombatantCreation
+            FinalizeCurrentLog();
+            
+            CombatStage[] finalCombatStages = new CombatStage[_combatantLog.Count];
+            for (int i = 0; i < _combatantLog.Count; i++)
             {
-                CombatantType = combatantEntity.CombatantType,
-                StatCard = CreateStatCard(combatantEntity.GetComponent<HealthComponent>()),
-                AgilityCard = CreateAgilityCard(combatantEntity.GetComponent<AgilityComponent>()),
-                Information = combatantEntity.CombatantInformation
-            };
+                AbilityStageLog abilityStageLog = _combatantLog[i];
+                finalCombatStages[i] = new CombatStage
+                {
+                    AbilityID = abilityStageLog.AbilityID,
+                    InitiatingCombatant = abilityStageLog.InitiatingCombatant,
+                    CombatantStateChanges = [..abilityStageLog.CombatantStateChanges]
+                };
+            }
+
+            ClearStateChanges();
+            return finalCombatStages;
         }
 
+        public void ClearStateChanges()
+        {
+            _combatantStateChanges.Clear();
+            _combatantLog.Clear();
+        }
+
+        private bool ShouldCreateNewLog(byte abilityID, byte combatantID, double tick)
+        {
+            bool isDifferentAbility = _currentLog.AbilityID != abilityID;
+            bool isDifferentCombatant = _currentLog.InitiatingCombatant.CombatantID != combatantID;
+            bool isDifferentExecutionTick = Math.Abs(_currentLog.Tick - tick) > 0.1;
+            
+            return isDifferentAbility || isDifferentCombatant || isDifferentExecutionTick;
+        }
+
+        private void FinalizeCurrentLog()
+        {
+            if (_combatantStateChanges.Count == 0)
+            {
+                return;
+            }
+
+            _currentLog.CombatantStateChanges = _combatantStateChanges.ToArray();
+            _combatantLog.Add(_currentLog);
+            _combatantStateChanges.Clear();
+        }
+
+        private static AbilityStageLog CreateAbilityStageLog(CombatantEntity combatantEntity, byte abilityID, double tick)
+        {
+            return new AbilityStageLog
+            {
+                Tick = tick,
+                AbilityID = abilityID,
+                InitiatingCombatant = CreateReadOnlyCombatant(combatantEntity),
+                CombatantStateChanges = []
+            };
+        }
+        
+        private static ReadOnlyCombatant CreateReadOnlyCombatant(CombatantEntity combatantEntity)
+        {
+            return new ReadOnlyCombatant
+            {
+                CombatantID = combatantEntity.CombatantID,
+                StatCard = CreateStatCard(combatantEntity.GetComponent<HealthComponent>()),
+                AgilityCard = CreateAgilityCard(combatantEntity.GetComponent<AgilityComponent>()),
+                TargetingType = combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType,
+                IsAlive = combatantEntity.GetComponent<LifeStatusComponent>().IsAlive
+            };
+        }
+        
+        private static ImmutableArray<ReadOnlyCombatant> CreateReadOnlyCombatants(IReadOnlyList<CombatantEntity> combatantEntities)
+        {
+            ReadOnlyCombatant[] combatants = new ReadOnlyCombatant[combatantEntities.Count];
+            for (int i = 0; i < combatantEntities.Count; i++)
+            { 
+                combatants[i] = CreateReadOnlyCombatant(combatantEntities[i]);
+            }
+
+            return [..combatants];
+        }
+        
         private static StatCard CreateStatCard(HealthComponent healthComponent)
         {
             return new StatCard
@@ -67,15 +155,13 @@ namespace IdelPog.Combat.Service.Logging
                 Initiative = agilityComponent.Initiative
             };
         }
-
-        private static AttackingCombatant CreateAttackingCombatant(byte attackerID, AbilityType abilityType, uint damageDealt)
-        {
-            return new AttackingCombatant
-            {
-                CombatantID = attackerID,
-                AbilityType = abilityType,
-                DamageDealt = damageDealt
-            };
-        }
      }
+    
+    public record struct AbilityStageLog
+    {
+        public required double Tick { get; init; }
+        public required byte AbilityID { get; init; }
+        public required ReadOnlyCombatant InitiatingCombatant { get; init; }
+        public required CombatantStateChange[] CombatantStateChanges { get; set; }
+    }
 }

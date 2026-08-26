@@ -51,7 +51,6 @@ namespace IdelPog.Combat.Mediator
             return new CombatantCreationResponse
             {
                 CombatantType = combatantCreation.CombatantType,
-                Information = combatantCreation.Information,
                 StatCard = combatantCreation.StatCard,
                 AgilityCard = combatantCreation.AgilityCard,
                 CombatantID = combatantID

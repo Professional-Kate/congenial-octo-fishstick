@@ -5,6 +5,6 @@ namespace IdelPog.Combat.Runtime.Filter.Interface
 {
     public interface ICombatantTargetFinder
     {
-        public IEnumerable<CombatantEntity> SelectPreferredTargets(TargetingPreference targetingPreference, CombatantStatType combatantStatType, bool isFriendly, byte targetCount);
+        public IEnumerable<CombatantEntity> SelectPreferredTargets(TargetingPreference targetingPreference, CombatantStatType combatantStatType, TargetingType targetingType, TargetingType casterTargetingType, byte targetCount);
     }
 }

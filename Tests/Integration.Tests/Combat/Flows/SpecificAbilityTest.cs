@@ -3,8 +3,7 @@ using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
-using IdelPog.Combat.Event;
-using IdelPog.Core.Contracts;
+using IdelPog.Combat.Runtime.Event;
 using IdelPog.Integration.Tests.Combat.Tools;
 
 namespace IdelPog.Integration.Tests.Combat.Flows
@@ -20,7 +19,12 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             _responseListener = new ManagedResponseListener<BasicEncounterDeckResponse>();
             
             ManagedSubscribe(_responseListener);
-            AbilityValidator.Reset();
+        }
+        
+        [TearDown]
+        public void TearDown()
+        {
+            CombatValidator.Reset();
         }
         
         private void RunCombat(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs)
@@ -35,51 +39,56 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             _responseListener.AssertWasCalled(true);
             _responseListener.AssertResponseLength(1);
-            AbilityValidator.RegisterChanges(_responseListener.Responses[0].CombatantStateChanges);
+            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatStages);
         }
 
         private static uint GetExpectedDamage(AbilityCreation abilityCreation)
         {
-            ElementalDamageCard elementalDamageCard = abilityCreation.ElementalDamageCard;
-            PhysicalDamageCard physicalDamageCard = abilityCreation.PhysicalDamageCard;
-            
-            uint elementalDamage = elementalDamageCard.ColdDamage + elementalDamageCard.FireDamage + elementalDamageCard.LightningDamage; 
-            uint physicalDamage = physicalDamageCard.SlashDamage + physicalDamageCard.StrikeDamage + physicalDamageCard.ThrustDamage;
+            uint totalDamage = 0;
+            foreach (AbilityStageCard abilityStage in abilityCreation.AbilityStageCards)
+            {
+                totalDamage += abilityStage.Value;
+            }
 
-            return physicalDamage + elementalDamage;
+            return totalDamage;
         }
 
-        private static void AssertDamageDealt(AbilityCreation abilityCreation, byte targetID = 1)
+        private static void AssertDamageDealt(AbilityCreation abilityCreation, byte abilityID, byte targetID = 1)
         {
-            CombatantStateChange combatantStateChange = AbilityValidator.GetStateChange();
-            AttackingCombatant attackingCombatant = combatantStateChange.AttackingCombatant;
+            CombatStage combatantStateChange = CombatValidator.GetCombatStage();
+
+            uint damageDealt = 0;
+            foreach (CombatantStateChange stateChange in combatantStateChange.CombatantStateChanges)
+            {
+                damageDealt += stateChange.ReadOnlyAbilityStage.Value;
+            }
             
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(attackingCombatant.AbilityType, Is.EqualTo(abilityCreation.AbilityCard.AbilityType));
-                Assert.That(attackingCombatant.DamageDealt, Is.EqualTo(GetExpectedDamage(abilityCreation)));
-                Assert.That(combatantStateChange.CombatantID, Is.EqualTo(targetID));
+                Assert.That(combatantStateChange.AbilityID, Is.EqualTo(abilityID));
+                Assert.That(combatantStateChange.CombatantStateChanges[0].TargetCombatants[0].CombatantID, Is.EqualTo(targetID));
+                Assert.That(damageDealt, Is.EqualTo(GetExpectedDamage(abilityCreation)));
             }
         }
         
         [Test]
         public void SlashAttack_DamagesEnemy()
         {
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { StatCard = new StatCard { Health = 1 }});
             DispatchMessage(StaticCombatCommands.SlashAttackCreation);
             DispatchMessage(StaticCombatCommands.EquipSlashAttack(0));
             
             RunCombat([0], [1]);
 
-            AssertDamageDealt(StaticCombatCommands.SlashAttackCreation);
+            AssertDamageDealt(StaticCombatCommands.SlashAttackCreation, 0);
         }
 
         [Test]
         public void StabAttack_DamagesEnemy()
         {
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { StatCard = new StatCard { Health = 1 }});
             DispatchMessage(StaticCombatCommands.StabAttackCreation);
-            DispatchMessage(StaticCombatCommands.EquipStabAttack(1));
+            DispatchMessage(StaticCombatCommands.EquipStabAttack(0, 0));
             
             RunCombat([0], [1]);
 
@@ -89,93 +98,235 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [Test]
         public void StrikeAttack_DamagesEnemy()
         {
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { StatCard = new StatCard { Health = 1 }});
             DispatchMessage(StaticCombatCommands.StrikeAttackCreation);
-            DispatchMessage(StaticCombatCommands.EquipStrikeAttack(0));
+            DispatchMessage(StaticCombatCommands.EquipStrikeAttack(0, 0));
             
             RunCombat([0], [1]);
 
-            AssertDamageDealt(StaticCombatCommands.StrikeAttackCreation);
+            AssertDamageDealt(StaticCombatCommands.StrikeAttackCreation, 0);
         }
 
         [Test]
-        public void FireLance_DamagesEnemy()
+        public void CombatantDamagedTrigger_ActivatesAbilityOnDamage()
         {
-            AbilityCreation fireLanceCreation = new()
+            AbilityCreation triggerAbilityCreation = new()
             {
-                AbilityCard = new AbilityCard {  AbilityType = AbilityType.FIRE_LANCE, EventType = EventType.DIRECT_DAMAGE, Cooldown = 15, AbilitySlots = 2, CastTime = 5 },
-                ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 10 },
-                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 0, StrikeDamage = 0, ThrustDamage = 3 },
-                Information = new Information { Name = "Fire Lance!", Description = "BURNS AA" }
+                AbilityCard = new AbilityCard { AbilitySlots = 2, Cooldown = 5 },
+                TriggerCard = new TriggerCard { TriggerEventType = TriggerEventType.COMBATANT_DAMAGED, TargetingType = TargetingType.FRIENDLY, MinTriggerValue = 0, MaxTriggerValue = 10 },
+                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.FIRE, CastTime = 0, MaxTargets = 1, Value = 100, Priority = 0 }]
+            };
+
+            CombatantAbilityEquip combatantAbilityEquip = new()
+            {
+                CombatantID = 0,
+                AbilityCards = [ new CombatantAbilityCard { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0 }]}]
             };
             
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
-            DispatchMessage(fireLanceCreation);
-            DispatchMessage(StaticCombatCommands.EquipAbility(0, AbilityType.FIRE_LANCE));
+            DispatchMessage(triggerAbilityCreation, StaticCombatCommands.StabAttackCreation);
+            DispatchMessage(combatantAbilityEquip, StaticCombatCommands.EquipStabAttack(1));
             
             RunCombat([0], [1]);
-
-            AssertDamageDealt(fireLanceCreation);
-        }
-        
-        [Test]
-        public void ColdLance_DamagesEnemy()
-        {
-            AbilityCreation coldLanceCreation = new()
-            {
-                AbilityCard = new AbilityCard {  AbilityType = AbilityType.COLD_LANCE, EventType = EventType.DIRECT_DAMAGE, Cooldown = 15, AbilitySlots = 2, CastTime = 5 },
-                ElementalDamageCard = new ElementalDamageCard { ColdDamage = 10, LightningDamage = 0, FireDamage = 0 },
-                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 0, StrikeDamage = 0, ThrustDamage = 3 },
-                Information = new Information { Name = "Cold Lance!", Description = "It is FREEZING cold" }
-            };
             
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
-            DispatchMessage(coldLanceCreation);
-            DispatchMessage(StaticCombatCommands.EquipAbility(0, AbilityType.COLD_LANCE));
-            
-            RunCombat([0], [1]);
-
-            AssertDamageDealt(coldLanceCreation);
+            CombatValidator.AssertVictory(_responseListener.Responses[0], friendlyVictory: true);
+            CombatValidator.AssertNextInitiatingCombatant(1, 0);
         }
         
         [Test]
-        public void LightningLance_DamagesEnemy()
+        public void CombatantDeathTrigger_ActivatesAbilityOnDamage()
         {
-            AbilityCreation lightningLanceCreation = new()
+            AbilityCreation triggerAbilityCreation = new()
             {
-                AbilityCard = new AbilityCard {  AbilityType = AbilityType.LIGHTNING_LANCE, EventType = EventType.DIRECT_DAMAGE, Cooldown = 15, AbilitySlots = 2, CastTime = 5 },
-                ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 10, FireDamage = 0 },
-                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 0, StrikeDamage = 0, ThrustDamage = 3 },
-                Information = new Information { Name = "Lightning Lance!", Description = "Why is it not a bolt?" }
+                AbilityCard = new AbilityCard { AbilitySlots = 2, Cooldown = 5 },
+                TriggerCard = new TriggerCard { TriggerEventType = TriggerEventType.COMBATANT_DEATH, TargetingType = TargetingType.FRIENDLY, MinTriggerValue = 0, MaxTriggerValue = 10 },
+                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.FIRE, CastTime = 0, MaxTargets = 1, Value = 100, Priority = 0 }]
+            };
+
+            StrategyCard lowHealthStrategyCard = new()
+            {
+                TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0
             };
             
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
-            DispatchMessage(lightningLanceCreation);
-            DispatchMessage(StaticCombatCommands.EquipAbility(0, AbilityType.LIGHTNING_LANCE));
-            
-            RunCombat([0], [1]);
+            CombatantAbilityEquip equipDeathTrigger = new()
+            {
+                CombatantID = 0,
+                AbilityCards = [ new CombatantAbilityCard { AbilityID = 0, StrategyCards = [lowHealthStrategyCard]}]
+            };
 
-            AssertDamageDealt(lightningLanceCreation);
+            CombatantAbilityEquip equipStabAttack = new()
+            {
+                CombatantID = 1,
+                AbilityCards = [new CombatantAbilityCard { AbilityID = 1, StrategyCards = [lowHealthStrategyCard] }]
+            };
+            
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.GoblinCreation with { StatCard = new StatCard { Health = 1 }});
+            DispatchMessage(triggerAbilityCreation, StaticCombatCommands.StabAttackCreation);
+            DispatchMessage(equipDeathTrigger, equipStabAttack);
+            
+            RunCombat([0, 2], [1]);
+            
+            CombatValidator.AssertVictory(_responseListener.Responses[0], friendlyVictory: true);
+            CombatValidator.AssertNextInitiatingCombatant(1, 0);
         }
 
         [Test]
-        public void MinorHeal_HealsFriendlyTarget()
+        public void CombatantCastingTrigger_TriggersAbility_BeforeOriginalActivates()
         {
-            AbilityCreation minorHealCreation = new()
+            AbilityCreation triggerAbilityCreation = new()
             {
-                AbilityCard = new AbilityCard {  AbilityType = AbilityType.MINOR_HEAL, EventType = EventType.HEALING, Cooldown = 30, AbilitySlots = 1, CastTime = 10 },
-                ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
-                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 0, StrikeDamage = 0, ThrustDamage = 0 },
-                Information = new Information { Name = "Minor Heal!", Description = "Heals only minor wounds!" }
+                AbilityCard = new AbilityCard { AbilitySlots = 2, Cooldown = 5 },
+                TriggerCard = new TriggerCard { TriggerEventType = TriggerEventType.COMBATANT_CASTING_COMPLETE, TargetingType = TargetingType.ENEMY, MinTriggerValue = 0, MaxTriggerValue = 10 },
+                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.FIRE, CastTime = 0, MaxTargets = 1, Value = 100, Priority = 0 }]
             };
             
+            AbilityCreation castingAbilityCreation = new()
+            {
+                AbilityCard = new AbilityCard { AbilitySlots = 2, Cooldown = 5 },
+                TriggerCard = StaticCombatCommands.AbilityReadyTrigger,
+                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.FIRE, CastTime = 1, MaxTargets = 1, Value = 100, Priority = 0 }]
+            };
+
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
-            DispatchMessage(minorHealCreation);
-            DispatchMessage(StaticCombatCommands.EquipAbility(0, AbilityType.MINOR_HEAL));
+            DispatchMessage(triggerAbilityCreation, castingAbilityCreation);
+            DispatchMessage(StaticCombatCommands.EquipAbility(0, 0), StaticCombatCommands.EquipAbility(1, 1));
             
             RunCombat([0], [1]);
+            
+            CombatValidator.AssertVictory(_responseListener.Responses[0], friendlyVictory: true);
+            CombatValidator.AssertNextInitiatingCombatant(0);
+        }
 
-            AssertDamageDealt(minorHealCreation);
+        [Test]
+        public void TriggerAbility_CanTriggerFromTrigger()
+        {
+            AbilityCreation combatantDamagedCreation = new()
+            {
+                AbilityCard = new AbilityCard { AbilitySlots = 1, Cooldown = 5 },
+                TriggerCard = new TriggerCard { TriggerEventType = TriggerEventType.COMBATANT_DAMAGED, TargetingType = TargetingType.ENEMY, MinTriggerValue = 0, MaxTriggerValue = 10 },
+                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 200, Priority = 0 }]
+            };
+            
+            AbilityCreation combatantDiedCreation = new()
+            {
+                AbilityCard = new AbilityCard { AbilitySlots = 2, Cooldown = 5 },
+                TriggerCard = new TriggerCard { TriggerEventType = TriggerEventType.COMBATANT_DEATH, TargetingType = TargetingType.ENEMY, MinTriggerValue = 0, MaxTriggerValue = 0 },
+                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.FIRE, CastTime = 0, MaxTargets = 1, Value = 100, Priority = 0 }]
+            };
+            
+            StrategyCard lowHealthCard = new()
+            {
+                TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0
+            };
+
+            CombatantAbilityEquip equipTriggers = new()
+            {
+                CombatantID = 0,
+                AbilityCards = [ new CombatantAbilityCard { AbilityID = 0, StrategyCards = [lowHealthCard]}, new CombatantAbilityCard { AbilityID = 1, StrategyCards = [lowHealthCard]}]
+            };
+            
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.GoblinCreation with { StatCard = new StatCard { Health = 100 }}, StaticCombatCommands.BearCreation with { StatCard = new StatCard { Health = 100 }});
+            DispatchMessage(combatantDamagedCreation, combatantDiedCreation, StaticCombatCommands.StabAttackCreation);
+            DispatchMessage(equipTriggers, StaticCombatCommands.EquipAbility(1, 2));
+            
+            RunCombat([0, 1], [2, 3]);
+            CombatValidator.AssertNextInitiatingCombatant(1, 0, 0);
+        }
+
+        [Test]
+        public void ReadyTimeComponent_PreventsMultipleActivationsDuringCooldown()
+        {
+            AbilityCreation combatantDamagedCreation = new()
+            {
+                AbilityCard = new AbilityCard { AbilitySlots = 1, Cooldown = 5 },
+                TriggerCard = new TriggerCard { TriggerEventType = TriggerEventType.COMBATANT_DAMAGED, TargetingType = TargetingType.FRIENDLY, MinTriggerValue = 0, MaxTriggerValue = 10 },
+                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 50, Priority = 0 }]
+            };
+            
+            CombatantAbilityEquip triggerEquip = new()
+            {
+                CombatantID = 0,
+                AbilityCards = [ new CombatantAbilityCard { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0 }]}]
+            };
+            
+            AbilityCreation multiStageAbility = new()
+            {
+                AbilityCard = new AbilityCard { AbilitySlots = 3, Cooldown = 5 },
+                TriggerCard = StaticCombatCommands.AbilityReadyTrigger,
+                AbilityStageCards = 
+                [
+                    new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.STAB, CastTime = 0, MaxTargets = 1, Value = 5, Priority = 0 },
+                    new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 5, Priority = 1 }
+                ]
+            };
+            
+            CombatantAbilityEquip multiStageAbilityEquip = new()
+            {
+                CombatantID = 1,
+                AbilityCards =
+                [
+                    new CombatantAbilityCard { AbilityID = 1, StrategyCards = 
+                        [
+                            new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 },
+                            new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 1 }
+                        ]}
+                ]
+            };
+            
+            // Human will take 3 hits to kill, wolf will take 2. Wolf will attack twice in one ability, this should only let the human attack once back before he dies. 
+            DispatchMessage(StaticCombatCommands.HumanCreation with { StatCard = new StatCard { Health = 11 }}, StaticCombatCommands.WolfCreation with { StatCard = new StatCard { Health = 51 }});
+            DispatchMessage(combatantDamagedCreation, multiStageAbility);
+            DispatchMessage(triggerEquip, multiStageAbilityEquip);
+            
+            RunCombat([0], [1]);
+            
+            // 1 - Wolf Attack (AbilityStage 1/2)
+            // 0 - Human Combatant Damaged Trigger
+            // 1 - Wolf finishes attack (AbilityStage 2/2)
+            // 1 - Wolf attacks again (AbilityStage 1/2)
+            CombatValidator.AssertNextInitiatingCombatant(1, 0, 1, 1);
+        }
+
+        [Test]
+        public void MultipleStages_AllStagesComplete()
+        {
+            AbilityCreation multiStageAbility = new()
+            {
+                AbilityCard = new AbilityCard { AbilitySlots = 3, Cooldown = 30 },
+                TriggerCard = StaticCombatCommands.AbilityReadyTrigger,
+                AbilityStageCards = 
+                    [
+                        new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.STAB, CastTime = 0, MaxTargets = 3, Value = 2, Priority = 2 },
+                        new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 3, Value = 4, Priority = 0 },
+                        new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.HOLY, CastTime = 0, MaxTargets = 4, Value = 1, Priority = 3 },
+                        new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.HOLY, CastTime = 0, MaxTargets = 1, Value = 4, Priority = 1 }
+                    ]
+            };
+
+            StrategyCard[] strategyCards =
+            [
+                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.FRIENDLY, Priority = 2 },
+                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.INITIATIVE, TargetingType = TargetingType.ENEMY, Priority = 1 },
+                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 },
+                new() { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.SPEED, TargetingType = TargetingType.FRIENDLY, Priority = 3 }
+            ];
+            
+            CombatantAbilityEquip combatantAbilityEquip = new()
+            {
+                CombatantID = 0,
+                AbilityCards =
+                [
+                    new CombatantAbilityCard { AbilityID = 0, StrategyCards = strategyCards }
+                ]
+            };
+            
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation);
+            DispatchMessage(multiStageAbility);
+            DispatchMessage(combatantAbilityEquip, combatantAbilityEquip with { CombatantID = 1 }, combatantAbilityEquip with { CombatantID = 2 }, combatantAbilityEquip with { CombatantID = 3 }, combatantAbilityEquip with { CombatantID = 4 }, combatantAbilityEquip with { CombatantID = 5 }, combatantAbilityEquip with { CombatantID = 6 }, combatantAbilityEquip with { CombatantID = 7 });
+            
+            RunCombat(friendlyCombatantIDs: [0, 1, 4, 5], enemyCombatantIDs: [2, 3, 6, 7]);
+            
+            CombatValidator.AssertCombatantDidAttack(0, 1, 2, 3, 4, 5, 6, 7);
         }
     }
 }

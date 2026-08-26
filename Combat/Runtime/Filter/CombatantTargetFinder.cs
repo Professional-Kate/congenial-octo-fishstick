@@ -24,14 +24,14 @@ namespace IdelPog.Combat.Runtime.Filter
             _collectionAssertion = collectionAssertion;
         }
 
-        public IEnumerable<CombatantEntity> SelectPreferredTargets(TargetingPreference targetingPreference, CombatantStatType combatantStatType, bool isFriendly, byte targetCount)
+        public IEnumerable<CombatantEntity> SelectPreferredTargets(TargetingPreference targetingPreference, CombatantStatType combatantStatType, TargetingType targetingType, TargetingType casterTargetingType, byte targetCount)
         {
             _numberAssertion.AssertNumberNotZero(targetCount, nameof(targetCount));
             
             IStatProvider statProvider = _statProviderRepository.Get(combatantStatType);
-            IReadOnlyList<CombatantEntity> entities = _combatantFilters.GetCombatants(isFriendly);
+            IReadOnlyList<CombatantEntity> entities = _combatantFilters.GetCombatants(targetingType, casterTargetingType);
             _collectionAssertion.AssertHasElements(entities);
-
+            
             return GetTopEntities(targetingPreference, targetCount, entities, statProvider);
         }
 

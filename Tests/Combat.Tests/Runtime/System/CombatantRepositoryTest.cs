@@ -31,8 +31,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void SetUp()
         {
             _combatantRepository = new CombatantRepository(new FoundAssertion());
-            _enemyWolfEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, false, _wolfCreation);
-            _friendlyWolfEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, true, _wolfCreation);
+            _enemyWolfEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, TargetingType.ENEMY, _wolfCreation);
+            _friendlyWolfEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, TargetingType.FRIENDLY, _wolfCreation);
         }
 
         private void VerifyContains(byte id, bool contains)
@@ -52,7 +52,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Positive_Add_AddMultiple_IncrementsID()
         {
             _combatantRepository.Add(_enemyWolfEntity);
-            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_friendlyWolfEntity);
             _combatantRepository.Add(_enemyWolfEntity);
             
             VerifyContains(0, true);
@@ -63,7 +63,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_Clear_RemovesOne()
         {
-            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_friendlyWolfEntity);
             _combatantRepository.Clear();
             
             VerifyContains(0, false);
@@ -72,7 +72,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_Clear_RemovesAll()
         {
-            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_friendlyWolfEntity);
             _combatantRepository.Add(_enemyWolfEntity);
             _combatantRepository.Add(_enemyWolfEntity);
 
@@ -119,19 +119,33 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantRepository.Add(_enemyWolfEntity);
             _combatantRepository.Add(_enemyWolfEntity);
             _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_friendlyWolfEntity);
             
-            CombatantEntity[] entities = _combatantRepository.GetAll().ToArray();
+            CombatantEntity[] entities = _combatantRepository.GetAllParticipating().ToArray();
             
-            Assert.That(entities, Has.Length.EqualTo(3));
+            Assert.That(entities, Has.Length.EqualTo(4));
         }
 
         [Test]
         public void Positive_GetAll_EmptyRepository_ReturnsEmptyArray()
         {
-            CombatantEntity[] entities = _combatantRepository.GetAll().ToArray();
+            CombatantEntity[] entities = _combatantRepository.GetAllParticipating().ToArray();
             
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities, Has.Length.EqualTo(0));
+        }
+
+        [Test]
+        public void Positive_GetAll_SomeCombatantsNotParticipating()
+        {
+            _enemyWolfEntity.RemoveComponent<CombatParticipantComponent>();
+            
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_friendlyWolfEntity);
+            
+            CombatantEntity[] entities = _combatantRepository.GetAllParticipating().ToArray();
+            
+            Assert.That(entities, Has.Length.EqualTo(1));
         }
 
         [Test]
@@ -152,69 +166,147 @@ namespace IdelPog.Combat.Tests.Runtime.System
         }
 
         [Test]
-        public void Positive_GetFriendlies_ReturnsAllFriendlies()
+        public void Positive_HasValidCombatants_ContainsFriendlies()
         {
             _combatantRepository.Add(_friendlyWolfEntity);
-            _combatantRepository.Add(_enemyWolfEntity);
-            _combatantRepository.Add(_enemyWolfEntity);
             
-            CombatantEntity[] combatantEntities = _combatantRepository.GetFriendlies().ToArray();
+            bool hasValid = _combatantRepository.HasValidCombatants(TargetingType.FRIENDLY);
             
-            Assert.That(combatantEntities, Has.Length.EqualTo(1));
+            Assert.That(hasValid, Is.True);
         }
 
         [Test]
-        public void Positive_GetFriendlies_EmptyRepository_ReturnsEmptyArray()
-        {
-            _combatantRepository.Add(_enemyWolfEntity);
-            
-            CombatantEntity[] combatantEntities = _combatantRepository.GetFriendlies().ToArray();
-            
-            Assert.That(combatantEntities, Has.Length.EqualTo(0));
-        }
-
-        [Test]
-        public void Positive_GetFriendlies_NoAliveEntities_ReturnsEmptyArray()
+        public void Positive_HasValidCombatants_ContainsFriendly_ButIsInvalid()
         {
             _friendlyWolfEntity.ReplaceComponent(new LifeStatusComponent { IsAlive = false });
             _combatantRepository.Add(_friendlyWolfEntity);
             
-            CombatantEntity[] combatantEntities = _combatantRepository.GetFriendlies().ToArray();
-         
-            Assert.That(combatantEntities, Has.Length.EqualTo(0));
+            bool hasValid = _combatantRepository.HasValidCombatants(TargetingType.FRIENDLY);
+            
+            Assert.That(hasValid, Is.False);
+        }
+
+        [Test]
+        public void Positive_HasValidCombatants_ContainsEnemy_FriendlyReturnsFalse()
+        {
+            _combatantRepository.Add(_enemyWolfEntity);
+            
+            bool hasValid = _combatantRepository.HasValidCombatants(TargetingType.FRIENDLY);
+            
+            Assert.That(hasValid, Is.False);
+        }
+
+        [Test]
+        public void Positive_HasValidCombatants_SelfRequest_ReturnsEntityMarkedWithSelf()
+        {
+            _friendlyWolfEntity.ReplaceComponent(new TargetingTypeComponent { TargetingType = TargetingType.SELF });
+            _combatantRepository.Add(_friendlyWolfEntity);
+            
+            bool hasValid = _combatantRepository.HasValidCombatants(TargetingType.SELF);
+            
+            Assert.That(hasValid, Is.True);
+        }
+
+        [Test]
+        public void Positive_HasValidCombatants_CombatantsNotParticipating_ReturnsFalse()
+        {
+            _friendlyWolfEntity.RemoveComponent<CombatParticipantComponent>();
+            
+            _combatantRepository.Add(_friendlyWolfEntity);
+            
+            bool hasValid = _combatantRepository.HasValidCombatants(TargetingType.FRIENDLY);
+            
+            Assert.That(hasValid, Is.False);
         }
         
         [Test]
-        public void Positive_GetEnemies_ReturnsAllFriendlies()
+        public void Positive_HasValidCombatants_SomeCombatantsNotParticipating_ReturnsFalse()
+        {
+            _enemyWolfEntity.ReplaceComponent(new TargetingTypeComponent { TargetingType = TargetingType.FRIENDLY });
+            _enemyWolfEntity.RemoveComponent<CombatParticipantComponent>();
+            
+            _combatantRepository.Add(_friendlyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            
+            bool hasValid = _combatantRepository.HasValidCombatants(TargetingType.FRIENDLY);
+            
+            Assert.That(hasValid, Is.True);
+        }
+
+        [Test]
+        public void Positive_GetCombatants_FriendlyLookingForFriendlies()
+        {
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_friendlyWolfEntity);
+            
+            IReadOnlyList<CombatantEntity> entities = _combatantRepository.GetCombatants(TargetingType.FRIENDLY, TargetingType.FRIENDLY);
+            
+            Assert.That(entities, Has.Count.EqualTo(1));
+            Assert.That(entities, Has.Member(_friendlyWolfEntity));
+        }
+
+        [Test]
+        public void Positive_GetCombatants_FriendlyLookingForEnemies()
         {
             _combatantRepository.Add(_friendlyWolfEntity);
             _combatantRepository.Add(_enemyWolfEntity);
-            _combatantRepository.Add(_enemyWolfEntity);
             
-            CombatantEntity[] combatantEntities = _combatantRepository.GetEnemies().ToArray();
+            IReadOnlyList<CombatantEntity> entities = _combatantRepository.GetCombatants(TargetingType.ENEMY, TargetingType.FRIENDLY);
             
-            Assert.That(combatantEntities, Has.Length.EqualTo(2));
+            Assert.That(entities, Has.Count.EqualTo(1));
+            Assert.That(entities, Has.Member(_enemyWolfEntity));
         }
-        
+
         [Test]
-        public void Positive_GetEnemies_EmptyRepository_ReturnsEmptyArray()
+        public void Positive_GetCombatants_EnemyLookingForFriendlies()
         {
             _combatantRepository.Add(_friendlyWolfEntity);
             
-            CombatantEntity[] combatantEntities = _combatantRepository.GetEnemies().ToArray();
+            IReadOnlyList<CombatantEntity> entities = _combatantRepository.GetCombatants(TargetingType.FRIENDLY, TargetingType.ENEMY);
             
-            Assert.That(combatantEntities, Has.Length.EqualTo(0));
+            Assert.That(entities, Has.Count.EqualTo(0));
+        }
+
+        [Test]
+        public void Positive_GetCombatants_EnemyLookingForEnemies()
+        {
+            _combatantRepository.Add(_friendlyWolfEntity);
+            _combatantRepository.Add(_friendlyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            
+            IReadOnlyList<CombatantEntity> entities = _combatantRepository.GetCombatants(TargetingType.ENEMY, TargetingType.ENEMY);
+            
+            Assert.That(entities, Has.Count.EqualTo(2));
+            Assert.That(entities, Has.Member(_friendlyWolfEntity));
+            Assert.That(entities, Has.Member(_friendlyWolfEntity));
         }
         
         [Test]
-        public void Positive_GetEnemies_NoAliveEntities_ReturnsEmptyArray()
+        public void Positive_GetCombatants_SomeCombatantsNotParticipating()
         {
-            _enemyWolfEntity.ReplaceComponent(new LifeStatusComponent { IsAlive = false });
+            _enemyWolfEntity.RemoveComponent<CombatParticipantComponent>();
+            
+            _combatantRepository.Add(_friendlyWolfEntity);
             _combatantRepository.Add(_enemyWolfEntity);
             
-            CombatantEntity[] combatantEntities = _combatantRepository.GetEnemies().ToArray();
-         
-            Assert.That(combatantEntities, Has.Length.EqualTo(0));
+            IReadOnlyList<CombatantEntity> entities = _combatantRepository.GetCombatants(TargetingType.ENEMY, TargetingType.FRIENDLY);
+            
+            Assert.That(entities, Has.Count.EqualTo(0));
+        }
+
+        [Test]
+        public void Positive_GetCombatants_SelfTargeting_ReturnsNothing()
+        {
+            _combatantRepository.Add(_friendlyWolfEntity);
+            _combatantRepository.Add(_enemyWolfEntity);
+            
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(_combatantRepository.GetCombatants(TargetingType.SELF, TargetingType.ENEMY), Has.Count.EqualTo(0));
+                Assert.That(_combatantRepository.GetCombatants(TargetingType.SELF, TargetingType.FRIENDLY), Has.Count.EqualTo(0));
+            }
         }
     }
 }

@@ -1,33 +1,28 @@
 ﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities;
-using IdelPog.Core.Contracts;
+using IdelPog.Combat.Runtime.Event;
 
 namespace IdelPog.Combat.Tests.TestFactory
 {
     internal static class TestAbilityEntityFactory
     {
-        internal static AbilityEntity Create(AbilityType abilityType, byte abilitySlots)
+        internal static AbilityEntity Create(AbilityStage[] abilityStages)
         {
-            ElementalDamageComponent elementalDamageComponent = new()
+            return new AbilityEntity(new CooldownComponent { Cooldown = 1 }, new TriggerComponent { TargetingType = TargetingType.SELF, TriggerEventType = TriggerEventType.ABILITY_READY, MinTriggerValue = 0, MaxTriggerValue = 0 })
             {
-                LightningDamage = 0,
-                ColdDamage = 0,
-                FireDamage = 0
+                AbilitySlots = 1,
+                AbilityStages = [..abilityStages]
             };
-
-            PhysicalDamageComponent physicalDamageComponent = new()
+        }
+        
+        internal static AbilityEntity Create(byte abilitySlots = 1)
+        {
+            return new AbilityEntity(new CooldownComponent { Cooldown = 1 }, new TriggerComponent { TargetingType = TargetingType.SELF, TriggerEventType = TriggerEventType.ABILITY_READY, MinTriggerValue = 0, MaxTriggerValue = 0 })
             {
-                SlashDamage = 1,
-                StrikeDamage = 0,
-                ThrustDamage = 0
-            };
-            
-            return new AbilityEntity(new CooldownComponent { Cooldown = 1 }, elementalDamageComponent, physicalDamageComponent)
-            {
-                AbilityType = abilityType,
                 AbilitySlots = abilitySlots,
-                Information = new Information { Name = abilityType.ToString(), Description = "" }
+                AbilityStages = [ new AbilityStage { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, CastTime = 0, MaxTargets = 1, Value = 3, Priority = 0 }]
             };
         }
     }

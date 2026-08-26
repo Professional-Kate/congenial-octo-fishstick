@@ -19,7 +19,7 @@ using IdelPog.Skill;
 
 namespace IdelPog.Integration.Tests
 {
-    public class ManagedTestBuffer
+    public abstract class ManagedTestBuffer
     {
         protected IBufferManager BufferManager { get; private set; }
         private BufferMessenger _bufferMessenger;

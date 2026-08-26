@@ -2,6 +2,6 @@
 {
     public interface ITearDownService
     {
-        public void ResetCombatants();
+        public void TearDownState();
     }
 }

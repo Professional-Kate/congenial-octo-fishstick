@@ -27,9 +27,9 @@ namespace IdelPog.ECS.Entity
         public void RemoveComponent<T>() where T : IComponent;
 
         /// <summary>
-        /// Replaces a component. This will call <see cref="RemoveComponent"/> then <see cref="AddComponent"/>
+        /// Replaces the specified component
         /// </summary>
-        /// <param name="component">The component you want to replace</param>
+        /// <param name="component">The component to replace</param>
         public void ReplaceComponent<TComponent>(TComponent component) where TComponent : IComponent;
 
         /// <summary>

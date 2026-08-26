@@ -1,9 +1,10 @@
 ﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Service;
 using IdelPog.Combat.Tests.TestFactory;
-using IdelPog.Core.Repository.Asset;
+using IdelPog.Core.Repository.Incremental;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Service
@@ -12,39 +13,43 @@ namespace IdelPog.Combat.Tests.Service
     public sealed class AbilitySlotCalculatorTest
     {
         private AbilitySlotCalculator _abilitySlotCalculator;
-        private Mock<IAssetRepository<AbilityType, AbilityEntity>> _abilityRepositoryMock;
+        private Mock<IIncrementalRepository<AbilityEntity>> _abilityEntityRepositoryMock;
 
         private CombatantAbilityCard _combatantAbilityCard;
         private AbilityEntity _abilityEntity;
 
+        private CombatantAbilityEntity _existingEntity;
+
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _abilityRepositoryMock = new Mock<IAssetRepository<AbilityType, AbilityEntity>>();
+            _abilityEntityRepositoryMock = new Mock<IIncrementalRepository<AbilityEntity>>();
             
-            _abilitySlotCalculator = new AbilitySlotCalculator(_abilityRepositoryMock.Object);
+            _abilitySlotCalculator = new AbilitySlotCalculator(_abilityEntityRepositoryMock.Object);
 
             _combatantAbilityCard = new CombatantAbilityCard
-                { AbilityType = AbilityType.SLASH, StrategyCard = new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH }};
+                { AbilityID = 1, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.SELF, Priority = 1 }]};
 
-            _abilityEntity = TestAbilityEntityFactory.Create(AbilityType.SLASH, 1);
         }
 
         [SetUp]
         public void Setup()
         { 
-            _abilityRepositoryMock.Reset();
+            _abilityEntity = TestAbilityEntityFactory.Create();
+            _existingEntity = TestCombatantAbilityEntityFactory.Create(1, 1);
+            
+            _abilityEntityRepositoryMock.Reset();
         }
 
         private void VerifyRepository()
         {
-            _abilityRepositoryMock.Verify();
-            _abilityRepositoryMock.VerifyNoOtherCalls();
+            _abilityEntityRepositoryMock.Verify();
+            _abilityEntityRepositoryMock.VerifyNoOtherCalls();
         }
 
         private void SetupRepositoryGet(AbilityEntity abilityEntity)
         {
-            _abilityRepositoryMock.Setup(library => library.Get(_combatantAbilityCard.AbilityType)).Returns(abilityEntity).Verifiable();
+            _abilityEntityRepositoryMock.Setup(library => library.Get(_combatantAbilityCard.AbilityID)).Returns(abilityEntity).Verifiable();
         }
 
         [Test]
@@ -52,7 +57,7 @@ namespace IdelPog.Combat.Tests.Service
         {
             SetupRepositoryGet(_abilityEntity);
             
-            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_combatantAbilityCard]);
+            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_combatantAbilityCard], []);
             
             Assert.That(abilitySlots, Is.EqualTo(1));
             VerifyRepository();
@@ -63,18 +68,18 @@ namespace IdelPog.Combat.Tests.Service
         {
             SetupRepositoryGet(_abilityEntity);
             
-            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_combatantAbilityCard, _combatantAbilityCard]);
+            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_combatantAbilityCard, _combatantAbilityCard], [_existingEntity]);
             
-            Assert.That(abilitySlots, Is.EqualTo(2));
+            Assert.That(abilitySlots, Is.EqualTo(3));
             VerifyRepository();
         }
 
         [Test]
-        public void Positive_GetAbilitySlots_EmptyAbilityCards_ReturnsZero()
+        public void Positive_GetAbilitySlots_EmptyAbilityCards_ReturnsOnlyExisting()
         {
-            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([]);
+            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([], [_existingEntity, _existingEntity]);
             
-            Assert.That(abilitySlots, Is.EqualTo(0));
+            Assert.That(abilitySlots, Is.EqualTo(2));
             VerifyRepository();
         }
     }

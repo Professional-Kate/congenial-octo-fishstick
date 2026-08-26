@@ -1,7 +1,6 @@
 ﻿using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
-using IdelPog.Core.Contracts;
 using IdelPog.ECS.Entity;
 
 namespace IdelPog.Combat.Runtime.Entities.Combatant
@@ -10,13 +9,12 @@ namespace IdelPog.Combat.Runtime.Entities.Combatant
     {
         public required byte CombatantID { get; init; }
         public required CombatantType CombatantType { get; init; }
-        public required Information CombatantInformation { get; init; }
 
         public CombatantEntity(StatCard statCard, AgilityCard agilityCard) 
             : base(BuildStatsComponent(statCard), BuildAgilityComponent(agilityCard))
         { 
             AddComponent(new LifeStatusComponent { IsAlive = true });
-            AddComponent(new BaseStatsComponent { Health = statCard.Health });
+            AddComponent(new BaseHealthComponent { Health = statCard.Health });
         }
 
         private static HealthComponent BuildStatsComponent(StatCard statCardSource)

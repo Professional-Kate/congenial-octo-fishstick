@@ -58,7 +58,7 @@ namespace IdelPog.Combat.Tests.Mediator
 
         private void SetupFactory(CombatantCreation combatantCreation, byte combatantID)
         {
-            _factoryMock.Setup(library => library.CreateEntity(combatantCreation, combatantID)).Returns(TestCombatantEntityFactory.CreateCombatantEntity(combatantID, true, combatantCreation));
+            _factoryMock.Setup(library => library.CreateEntity(combatantCreation, combatantID)).Returns(TestCombatantEntityFactory.CreateCombatantEntity(combatantID, TargetingType.FRIENDLY, combatantCreation));
         }
 
         private void VerifyRepository(CombatantType combatantType)

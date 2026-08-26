@@ -4,7 +4,6 @@ using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
-using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.ECS.Exceptions;
@@ -35,15 +34,13 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _friendlyEntity = new CombatantEntity(new StatCard { Health = 10 }, new AgilityCard { Speed = 5, Initiative = 1 })
             {
                 CombatantID = 1,
-                CombatantType = CombatantType.HUMAN,
-                CombatantInformation = new Information { Name = "", Description = "" }
+                CombatantType = CombatantType.HUMAN
             };
             
             _enemyEntity = new CombatantEntity(new StatCard { Health = 5 }, new AgilityCard { Speed = 8, Initiative = 1 })
             {
                 CombatantID = 2,
-                CombatantType = CombatantType.GOBLIN,
-                CombatantInformation = new Information { Name = "", Description = "" }
+                CombatantType = CombatantType.GOBLIN
             };
         }
 
@@ -65,20 +62,21 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
         private static void AssertEntityDoesNotHaveComponent(CombatantEntity combatantEntity)
         { 
-            Assert.That(combatantEntity.ContainsComponent<FriendlyStatusComponent>(), Is.False);
+            Assert.That(combatantEntity.ContainsComponent<TargetingTypeComponent>(), Is.False);
         }
 
-        private static void AssertEntityHasComponent(CombatantEntity combatantEntity, bool isFriendly)
+        private static void AssertEntityHasComponent(CombatantEntity combatantEntity, TargetingType targetingType)
         {
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(combatantEntity.ContainsComponent<FriendlyStatusComponent>(), Is.True);
-                Assert.That(combatantEntity.GetComponent<FriendlyStatusComponent>().IsFriendly, Is.EqualTo(isFriendly));
+                Assert.That(combatantEntity.ContainsComponent<TargetingTypeComponent>(), Is.True);
+                Assert.That(combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType, Is.EqualTo(targetingType));
+                Assert.That(combatantEntity.ContainsComponent<CombatParticipantComponent>(), Is.True);
             }
         }
 
         [Test]
-        public void Positive_AssignFriendlyStatus_AddsNewComponent()
+        public void Positive_AssignFriendlyStatus_AddsNewComponents()
         {
             SetupRepositoryContains(_friendlyEntity.CombatantID);
             SetupRepositoryContains(_enemyEntity.CombatantID);
@@ -89,8 +87,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             Assert.DoesNotThrow(() => _friendlyStatusAssigner.AssignFriendlyStatus([_friendlyEntity.CombatantID], [_enemyEntity.CombatantID]));
 
-            AssertEntityHasComponent(_friendlyEntity, true);
-            AssertEntityHasComponent(_enemyEntity, false);
+            AssertEntityHasComponent(_friendlyEntity, TargetingType.FRIENDLY);
+            AssertEntityHasComponent(_enemyEntity, TargetingType.ENEMY);
             VerifyMocks();
         }
 

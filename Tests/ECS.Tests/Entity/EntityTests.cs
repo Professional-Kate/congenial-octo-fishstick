@@ -125,8 +125,6 @@ namespace IdelPog.ECS.Tests.Entity
             _entity.ReplaceComponent(newComponent);
             
             _dictionaryMock.Verify(library => library.ContainsKey(typeof(TestComponent)), Times.Once);
-            _dictionaryMock.Verify(library => library.Remove(typeof(TestComponent)), Times.Once);
-            _dictionaryMock.Verify(library => library.Add(typeof(TestComponent), newComponent), Times.Once);
         }
 
         [Test]
@@ -138,8 +136,6 @@ namespace IdelPog.ECS.Tests.Entity
             Assert.Throws<ComponentNotFoundException>(() => _entity.ReplaceComponent(_testComponent));
             
             _dictionaryMock.Verify(library => library.ContainsKey(typeof(TestComponent)), Times.Once);
-            _dictionaryMock.Verify(library => library.Remove(typeof(TestComponent)), Times.Never);
-            _dictionaryMock.Verify(library => library.Add(typeof(TestComponent), _testComponent), Times.Never);
         }
 
         [Test]

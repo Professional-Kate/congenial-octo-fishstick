@@ -3,12 +3,10 @@ using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
 using IdelPog.Combat.Contracts.Response;
-using IdelPog.Combat.Event;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Core.Contracts;
-using IdelPog.Core.Messaging.Buffer;
+using IdelPog.Combat.Runtime.Event;
 using IdelPog.Core.Messaging.Exceptions;
-using IdelPog.Core.Validation.Exceptions;
+using IdelPog.Integration.Tests.Combat.Tools;
 
 namespace IdelPog.Integration.Tests.Combat
 {
@@ -18,20 +16,6 @@ namespace IdelPog.Integration.Tests.Combat
         private ManagedResponseListener<AbilityCreationResponse> _responseListener;
         private ManagedErrorListener<AbilityCreationError> _errorListener;
 
-        private AbilityCreation _basicAttackCreation;
-
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            _basicAttackCreation = new AbilityCreation
-            {
-                Information = new Information { Name = "Basic attack", Description = "Attack an enemy but kinda basically" },
-                AbilityCard = new AbilityCard {  AbilityType = AbilityType.SLASH, EventType = EventType.DIRECT_DAMAGE, Cooldown = 9, AbilitySlots = 1, CastTime = 0},
-                ElementalDamageCard = new ElementalDamageCard { ColdDamage = 0, LightningDamage = 0, FireDamage = 0 },
-                PhysicalDamageCard = new PhysicalDamageCard { SlashDamage = 3, StrikeDamage = 0, ThrustDamage = 0 },
-            };
-        }
-
         [SetUp]
         public void Setup()
         {
@@ -40,13 +24,6 @@ namespace IdelPog.Integration.Tests.Combat
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
-        }
-        
-        private void DispatchCombatantSkillCreation(params AbilityCreation[] combatantSkillCreations)
-        {
-            IBuffer<AbilityCreation> buffer = BufferManager.RequestBuffer<AbilityCreation>(new BufferRequest(combatantSkillCreations.Length));
-            buffer.Assign(combatantSkillCreations);
-            buffer.MarkReady();
         }
         
         private void AssertResponseListenerCalled(bool wasCalled)
@@ -59,14 +36,14 @@ namespace IdelPog.Integration.Tests.Combat
             Assert.That(_responseListener.Responses, Has.Length.EqualTo(length));
         }
 
-        private static void AssertResponse(AbilityCreationResponse basicEncounterDeck, AbilityCreation expected)
-        { 
-            Assert.Multiple(() =>
+        private static void AssertResponse(AbilityCreationResponse abilityCreationResponse, AbilityCreation abilityCreationSource, byte id = 0)
+        {
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(basicEncounterDeck.Information, Is.EqualTo(expected.Information));
-                Assert.That(basicEncounterDeck.AbilityType, Is.EqualTo(expected.AbilityCard.AbilityType));
-                Assert.That(basicEncounterDeck.ElementalDamageCard, Is.EqualTo(expected.ElementalDamageCard));
-            });
+                Assert.That(abilityCreationResponse.AbilityID, Is.EqualTo(id));
+                Assert.That(abilityCreationResponse.AbilityCard, Is.EqualTo(abilityCreationSource.AbilityCard));
+                Assert.That(abilityCreationResponse.TriggerCard, Is.EqualTo(abilityCreationSource.TriggerCard));
+            }
         }
         
         private void AssertErrorListenerCalled(bool wasCalled)
@@ -82,86 +59,113 @@ namespace IdelPog.Integration.Tests.Combat
         private void AssertError<TException>(params AbilityCreation[] combatantSkillCreations) where TException : Exception
         {
             AbilityCreationError abilityCreationError = _errorListener.Error;
-            
-            Assert.Multiple(() =>
+
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(abilityCreationError.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(abilityCreationError.BaseError.Exception.GetBaseException(), Is.TypeOf<TException>());
                 Assert.That(abilityCreationError.AbilityCreations, Is.EqualTo(combatantSkillCreations));
-            });
+            }
         }
 
         [Test]
-        public void Positive_DispatchCommands_CreatesNewSkill()
+        public void Positive_SingleCommand_CreatesNewAbility()
         { 
-            Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(_basicAttackCreation));
+            Assert.DoesNotThrow(() => DispatchMessage(StaticCombatCommands.SlashAttackCreation));
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(1);
-            AssertResponse(_responseListener.Responses[0], _basicAttackCreation);
+            AssertResponse(_responseListener.Responses[0], StaticCombatCommands.SlashAttackCreation);
         }
 
         [Test]
-        public void Positive_DispatchCommands_CreatesMultipleSkills()
+        public void Positive_MultipleCommands_CreatesMultipleAbilities()
         {
-            ElementalDamageCard oneElementalDamageCard = _basicAttackCreation.ElementalDamageCard with { FireDamage = 1 };
-            
-            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { Cooldown = 4, AbilityType = AbilityType.STAB };
-            AbilityCreation abilityCreation = _basicAttackCreation with { AbilityCard = abilityCard, ElementalDamageCard = oneElementalDamageCard };
-            Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(_basicAttackCreation, abilityCreation));
+            Assert.DoesNotThrow(() => DispatchMessage(StaticCombatCommands.SlashAttackCreation, StaticCombatCommands.StabAttackCreation));
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponse(_responseListener.Responses[0], _basicAttackCreation);
-            AssertResponse(_responseListener.Responses[1], abilityCreation);
+            AssertResponse(_responseListener.Responses[0], StaticCombatCommands.SlashAttackCreation);
+            AssertResponse(_responseListener.Responses[1], StaticCombatCommands.StabAttackCreation, 1);
         }
 
         [Test]
-        public void Positive_CanCreateAbility_AtMax_AndMin_Damage()
+        public void Positive_CanCreateAbility_AtMaxAndMin_Damage()
         {
-            ElementalDamageCard minElementalDamageCard = new() { LightningDamage = uint.MinValue, ColdDamage = uint.MinValue, FireDamage = uint.MinValue };
-            PhysicalDamageCard minPhysicalDamageCard = new() { SlashDamage = uint.MinValue, StrikeDamage = uint.MinValue, ThrustDamage = uint.MinValue };
-
-            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { AbilityType = AbilityType.STAB };
-            AbilityCreation strongAttackCreation = _basicAttackCreation with { AbilityCard = abilityCard, ElementalDamageCard = minElementalDamageCard, PhysicalDamageCard = minPhysicalDamageCard };
+            AbilityCreation maxAttackDamage = new()
+            {
+                AbilityCard = new AbilityCard { Cooldown = 10, AbilitySlots = 1 },
+                TriggerCard = StaticCombatCommands.AbilityReadyTrigger,
+                AbilityStageCards = [ new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.HOLY, CastTime = 0, MaxTargets = 1, Value = uint.MaxValue, Priority = 0 } ]
+            };
             
-            ElementalDamageCard maxElementalDamageCard = new() { LightningDamage = uint.MaxValue, ColdDamage = uint.MaxValue, FireDamage = uint.MaxValue };
-            PhysicalDamageCard maxPhysicalDamageCard = new() { SlashDamage = uint.MaxValue, StrikeDamage = uint.MaxValue, ThrustDamage = uint.MaxValue };
-            AbilityCreation basicAttackCreation = _basicAttackCreation with { ElementalDamageCard = maxElementalDamageCard, PhysicalDamageCard = maxPhysicalDamageCard };
+            AbilityCreation minAttackDamage = new()
+            {
+                AbilityCard = new AbilityCard { Cooldown = 10, AbilitySlots = 1 },
+                TriggerCard = StaticCombatCommands.AbilityReadyTrigger,
+                AbilityStageCards = [ new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.FIRE, CastTime = 0,  MaxTargets = 1, Value = uint.MinValue, Priority = 0 } ]
+            };
             
-            Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(basicAttackCreation, strongAttackCreation));
+            Assert.DoesNotThrow(() => DispatchMessage(maxAttackDamage, minAttackDamage));
             
             AssertResponseListenerCalled(true);
             AssertErrorListenerCalled(false);
             AssertResponseLength(2);
-            AssertResponse(_responseListener.Responses[0], basicAttackCreation);
-            AssertResponse(_responseListener.Responses[1], strongAttackCreation);
+            AssertResponse(_responseListener.Responses[0], maxAttackDamage);
+            AssertResponse(_responseListener.Responses[1], minAttackDamage, 1);
         }
 
         [Test]
-        public void Negative_DispatchCommands_ZeroSpeed_DispatchesError()
+        public void Negative_ZeroCooldown_DispatchesError()
         {
-            AbilityCard abilityCard = _basicAttackCreation.AbilityCard with { Cooldown = 0 };
-            AbilityCreation zeroSpeedAbility = _basicAttackCreation with { AbilityCard = abilityCard };
-            Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(zeroSpeedAbility));
+            AbilityCreation zeroCooldownAbility = StaticCombatCommands.SlashAttackCreation with { AbilityCard = new AbilityCard { Cooldown = 0, AbilitySlots = 1 }};
+            
+            Assert.DoesNotThrow(() => DispatchMessage(zeroCooldownAbility));
             
             AssertResponseListenerCalled(false);
             AssertErrorListenerCalled(true);
             AssertErrorLength(1);
-            AssertError<NumberZeroException>(zeroSpeedAbility);
+            AssertError<NumberZeroException>(zeroCooldownAbility);
         }
 
-        [Test]
-        public void Negative_DispatchCommands_DuplicateSkillType_DispatchesError()
+        private static IEnumerable<TriggerCard> BadAbilityReadyTriggers()
         {
-            Assert.DoesNotThrow(() => DispatchCombatantSkillCreation(_basicAttackCreation, _basicAttackCreation));
+            yield return new TriggerCard
+            {
+                TriggerEventType = TriggerEventType.ABILITY_READY,
+                TargetingType = TargetingType.ENEMY,
+                MinTriggerValue = 0,
+                MaxTriggerValue = 0
+            };
+            yield return new TriggerCard
+            {
+                TriggerEventType = TriggerEventType.ABILITY_READY,
+                TargetingType = TargetingType.SELF,
+                MinTriggerValue = 1,
+                MaxTriggerValue = 0
+            };
+            yield return new TriggerCard
+            {
+                TriggerEventType = TriggerEventType.ABILITY_READY,
+                TargetingType = TargetingType.SELF,
+                MinTriggerValue = 0,
+                MaxTriggerValue = 1
+            };
+        }
+        
+        [TestCaseSource(nameof(BadAbilityReadyTriggers))]
+        public void Negative_BadAbilityReadyTriggerCard_DispatchesError(TriggerCard triggerCard)
+        {
+            AbilityCreation badTriggerCreation = StaticCombatCommands.SlashAttackCreation with { TriggerCard = triggerCard };
+            
+            DispatchMessage(badTriggerCreation);
             
             AssertResponseListenerCalled(false);
             AssertErrorListenerCalled(true);
-            AssertErrorLength(2);
-            AssertError<DuplicateEntityException>(_basicAttackCreation, _basicAttackCreation);
+            AssertErrorLength(1);
+            AssertError<AbilityReadyException>(badTriggerCreation);
         }
     }
 }

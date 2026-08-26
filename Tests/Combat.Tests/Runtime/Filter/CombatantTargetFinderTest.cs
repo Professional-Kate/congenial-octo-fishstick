@@ -23,10 +23,10 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         private Mock<IAssetRepository<CombatantStatType, IStatProvider>> _statProviderRepositoryMock;
         private Mock<IStatProvider> _statProviderMock;
 
-        private readonly CombatantEntity _highInitiativeEntity = TestCombatantEntityFactory.CreateCombatantEntity(0, true, new AgilityCard { Speed = 10, Initiative = 100 });
-        private readonly CombatantEntity _lowInitiativeEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, true, new AgilityCard { Speed = 7, Initiative = 3 });
-        private readonly CombatantEntity _highSpeedEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, true, new AgilityCard { Speed = 1000, Initiative = 53 });
-        private readonly CombatantEntity _lowSpeedEntity = TestCombatantEntityFactory.CreateCombatantEntity(3, true, new AgilityCard { Speed = 5, Initiative = 32 });
+        private readonly CombatantEntity _highInitiativeEntity = TestCombatantEntityFactory.CreateCombatantEntity(0, TargetingType.FRIENDLY, new AgilityCard { Speed = 10, Initiative = 100 });
+        private readonly CombatantEntity _lowInitiativeEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, TargetingType.FRIENDLY, new AgilityCard { Speed = 7, Initiative = 3 });
+        private readonly CombatantEntity _highSpeedEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, TargetingType.FRIENDLY, new AgilityCard { Speed = 1000, Initiative = 53 });
+        private readonly CombatantEntity _lowSpeedEntity = TestCombatantEntityFactory.CreateCombatantEntity(3, TargetingType.FRIENDLY, new AgilityCard { Speed = 5, Initiative = 32 });
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -67,9 +67,9 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
             _statProviderRepositoryMock.Setup(library => library.Get(statType)).Returns(statProvider).Verifiable();
         }
 
-        private void SetupCombatantFilters(bool isFriendly, params CombatantEntity[] combatantEntities)
+        private void SetupCombatantFilters(TargetingType targetingType, params CombatantEntity[] combatantEntities)
         {
-            _combatantFiltersMock.Setup(library => library.GetCombatants(isFriendly)).Returns(combatantEntities).Verifiable();
+            _combatantFiltersMock.Setup(library => library.GetCombatants(targetingType, targetingType)).Returns(combatantEntities).Verifiable();
         }
 
         private static void SetupStatProvider(Mock<IStatProvider> statProviderMock, Func<CombatantEntity, uint> getComponentStat, params CombatantEntity[] combatantEntities)
@@ -94,10 +94,10 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         public void Positive_SelectPreferredTargets_SingleTarget_Highest_FindsBestTarget()
         {
             SetupStatProviderRepository(CombatantStatType.INITIATIVE, _statProviderMock.Object);
-            SetupCombatantFilters(true, _lowSpeedEntity, _highInitiativeEntity, _lowInitiativeEntity, _highSpeedEntity);
+            SetupCombatantFilters(TargetingType.FRIENDLY, _lowSpeedEntity, _highInitiativeEntity, _lowInitiativeEntity, _highSpeedEntity);
             SetupStatProvider(_statProviderMock, component => component.GetComponent<AgilityComponent>().Initiative,_lowSpeedEntity, _highInitiativeEntity, _lowInitiativeEntity, _highSpeedEntity);
                 
-            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.HIGHEST, CombatantStatType.INITIATIVE, true, 1).ToArray();
+            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.HIGHEST, CombatantStatType.INITIATIVE, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 1).ToArray();
 
             AssertCombatantEntities(combatantEntities, _highInitiativeEntity);
         }
@@ -106,10 +106,10 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         public void Positive_SelectPreferredTargets_MultipleTargets_Highest_FindsBestTarget()
         {
             SetupStatProviderRepository(CombatantStatType.SPEED, _statProviderMock.Object);
-            SetupCombatantFilters(true, _highSpeedEntity, _lowSpeedEntity, _lowInitiativeEntity, _highInitiativeEntity);
+            SetupCombatantFilters(TargetingType.FRIENDLY, _highSpeedEntity, _lowSpeedEntity, _lowInitiativeEntity, _highInitiativeEntity);
             SetupStatProvider(_statProviderMock, component => component.GetComponent<AgilityComponent>().Speed,_lowSpeedEntity, _highInitiativeEntity, _lowInitiativeEntity, _highSpeedEntity);
                 
-            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.HIGHEST, CombatantStatType.SPEED, true, 4).ToArray();
+            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.HIGHEST, CombatantStatType.SPEED, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 4).ToArray();
 
             AssertCombatantEntities(combatantEntities, _highSpeedEntity, _highInitiativeEntity, _lowInitiativeEntity, _lowSpeedEntity);
         }
@@ -118,10 +118,10 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         public void Positive_SelectPreferredTargets_SingleTarget_Lowest_FindsBestTarget()
         {
             SetupStatProviderRepository(CombatantStatType.INITIATIVE, _statProviderMock.Object);
-            SetupCombatantFilters(true, _highSpeedEntity, _lowSpeedEntity, _lowInitiativeEntity, _highInitiativeEntity);
+            SetupCombatantFilters(TargetingType.FRIENDLY, _highSpeedEntity, _lowSpeedEntity, _lowInitiativeEntity, _highInitiativeEntity);
             SetupStatProvider(_statProviderMock, component => component.GetComponent<AgilityComponent>().Initiative,_lowSpeedEntity, _highInitiativeEntity, _lowInitiativeEntity, _highSpeedEntity);
                 
-            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, CombatantStatType.INITIATIVE, true, 1).ToArray();
+            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, CombatantStatType.INITIATIVE, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 1).ToArray();
 
             AssertCombatantEntities(combatantEntities, _lowInitiativeEntity);
         }
@@ -130,10 +130,10 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         public void Positive_SelectPreferredTargets_MultipleTargets_Lowest_FindsBestTarget()
         {
             SetupStatProviderRepository(CombatantStatType.INITIATIVE, _statProviderMock.Object);
-            SetupCombatantFilters(true, _highSpeedEntity, _lowSpeedEntity, _lowInitiativeEntity, _highInitiativeEntity);
+            SetupCombatantFilters(TargetingType.FRIENDLY, _highSpeedEntity, _lowSpeedEntity, _lowInitiativeEntity, _highInitiativeEntity);
             SetupStatProvider(_statProviderMock, component => component.GetComponent<AgilityComponent>().Initiative,_lowSpeedEntity, _highInitiativeEntity, _lowInitiativeEntity, _highSpeedEntity);
                 
-            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, CombatantStatType.INITIATIVE, true, 4).ToArray();
+            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, CombatantStatType.INITIATIVE, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 4).ToArray();
 
             AssertCombatantEntities(combatantEntities, _lowInitiativeEntity, _lowSpeedEntity, _highSpeedEntity, _highInitiativeEntity);
         }
@@ -142,10 +142,10 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         public void Positive_SelectPreferredTargets_MultipleTargets_NotEnoughCombatants_ReturnsLightArray()
         {
             SetupStatProviderRepository(CombatantStatType.INITIATIVE, _statProviderMock.Object);
-            SetupCombatantFilters(true, _lowInitiativeEntity, _highInitiativeEntity);
+            SetupCombatantFilters(TargetingType.FRIENDLY, _lowInitiativeEntity, _highInitiativeEntity);
             SetupStatProvider(_statProviderMock, component => component.GetComponent<AgilityComponent>().Initiative, _lowInitiativeEntity, _highInitiativeEntity);
                 
-            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.HIGHEST, CombatantStatType.INITIATIVE, true, 5).ToArray();
+            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.HIGHEST, CombatantStatType.INITIATIVE, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 5).ToArray();
 
             AssertCombatantEntities(combatantEntities, _highInitiativeEntity, _lowInitiativeEntity);
         }
@@ -153,13 +153,13 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         [Test]
         public void Positive_SelectPreferredTargets_SingleTarget_Lowest_ExtremeValue()
         {
-            CombatantEntity maxHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(5, true, new AgilityCard { Speed = 100, Initiative = uint.MaxValue });
+            CombatantEntity maxHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(5, TargetingType.FRIENDLY, new AgilityCard { Speed = 100, Initiative = uint.MaxValue });
             
             SetupStatProviderRepository(CombatantStatType.INITIATIVE, _statProviderMock.Object);
-            SetupCombatantFilters(true, _lowInitiativeEntity, maxHealthEntity, _highInitiativeEntity);
+            SetupCombatantFilters(TargetingType.FRIENDLY, _lowInitiativeEntity, maxHealthEntity, _highInitiativeEntity);
             SetupStatProvider(_statProviderMock, component => component.GetComponent<AgilityComponent>().Initiative, _lowInitiativeEntity, maxHealthEntity, _highInitiativeEntity);
                 
-            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, CombatantStatType.INITIATIVE, true, 2).ToArray();
+            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, CombatantStatType.INITIATIVE, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 2).ToArray();
 
             AssertCombatantEntities(combatantEntities, _lowInitiativeEntity, _highInitiativeEntity);
         }
@@ -167,7 +167,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         [Test]
         public void Negative_SelectPreferredTargets_ZeroTargetCount_Throws()
         {
-            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, CombatantStatType.SPEED, true, 0));
+            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, CombatantStatType.SPEED, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 0));
             Assert.That(exception.Source, Is.EqualTo("targetCount"));
         }
 
@@ -175,19 +175,19 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         public void Negative_SelectPreferredTargets_FilterReturnsNothing_Throws()
         {
             SetupStatProviderRepository(CombatantStatType.INITIATIVE, _statProviderMock.Object);
-            SetupCombatantFilters(false);
+            SetupCombatantFilters(TargetingType.FRIENDLY);
             
-            Assert.Throws<EmptyCollectionException>(() => _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, CombatantStatType.INITIATIVE, false, 1));
+            Assert.Throws<EmptyCollectionException>(() => _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, CombatantStatType.INITIATIVE, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 1));
         }
 
         [Test]
         public void Negative_SelectPreferredTargets_UnknownTargetingPreference_Throws()
         {
             SetupStatProviderRepository(CombatantStatType.INITIATIVE, _statProviderMock.Object);
-            SetupCombatantFilters(true, _lowInitiativeEntity);
+            SetupCombatantFilters(TargetingType.FRIENDLY, _lowInitiativeEntity);
             SetupStatProvider(_statProviderMock, component => component.GetComponent<HealthComponent>().Health, _lowInitiativeEntity);
                 
-            Assert.Throws<ArgumentOutOfRangeException>(() => _combatantTargetFinder.SelectPreferredTargets((TargetingPreference) 10, CombatantStatType.INITIATIVE, true, 2));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _combatantTargetFinder.SelectPreferredTargets((TargetingPreference) 10, CombatantStatType.INITIATIVE, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 2));
         }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using IdelPog.Combat.Contracts.Command;
-using IdelPog.Combat.Event;
-using IdelPog.Combat.Event.Resolver.Interface;
 using IdelPog.Combat.Exceptions;
+using IdelPog.Combat.Runtime.Event;
+using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Queue.Interface;
-using IdelPog.Core.Repository.Asset;
 
 namespace IdelPog.Combat.Service.Queue
 {
@@ -14,13 +13,13 @@ namespace IdelPog.Combat.Service.Queue
         
         private readonly ICombatStateService _combatStateService;
         private readonly ICombatQueue _combatQueue;
-        private readonly IAssetRepository<EventType, IEventResolver> _resolverRepository;
+        private readonly IAbilityEventHandler _abilityEventHandler;
 
-        public CombatQueueRunner(ICombatStateService combatStateService, ICombatQueue combatQueue, IAssetRepository<EventType, IEventResolver> resolverRepository)
+        public CombatQueueRunner(ICombatStateService combatStateService, ICombatQueue combatQueue, IAbilityEventHandler abilityEventHandler)
         {
             _combatStateService = combatStateService;
             _combatQueue = combatQueue;
-            _resolverRepository = resolverRepository;
+            _abilityEventHandler = abilityEventHandler;
         }
 
         public void RunDeck(BasicEncounterDeck basicEncounterDeck)
@@ -33,11 +32,8 @@ namespace IdelPog.Combat.Service.Queue
                     throw new MaxIterationsException(basicEncounterDeck, MaxIterations);
                 }
                     
-                CombatEvent combatEvent = _combatQueue.Dequeue();
-                double currentTick = combatEvent.Tick;
-
-                IEventResolver resolver = _resolverRepository.Get(combatEvent.EventType);
-                resolver.ResolveEvent(currentTick, combatEvent.CombatantID, combatEvent.AbilityType);
+                ScheduledCombatEvent scheduledCombatEvent = _combatQueue.Dequeue();
+                _abilityEventHandler.Handle(scheduledCombatEvent);
             }
         }
     }

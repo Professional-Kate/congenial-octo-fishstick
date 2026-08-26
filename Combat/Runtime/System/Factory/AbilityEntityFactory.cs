@@ -1,52 +1,65 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using System.Collections.Immutable;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
+using IdelPog.Combat.Service.Interface;
 
 namespace IdelPog.Combat.Runtime.System.Factory
 {
     public sealed class AbilityEntityFactory : IAbilityEntityFactory
     {
+        private readonly IPrioritySorter _prioritySorter;
+
+        public AbilityEntityFactory(IPrioritySorter prioritySorter)
+        {
+            _prioritySorter = prioritySorter;
+        }
+
         public AbilityEntity CreateAbilityEntity(AbilityCreation abilityCreation)
         {
             CooldownComponent cooldownComponent = new() { Cooldown = abilityCreation.AbilityCard.Cooldown };
-            ElementalDamageComponent elementalDamageComponent = CreateElementalDamageComponent(abilityCreation.ElementalDamageCard);
-            PhysicalDamageComponent physicalDamageComponent = CreatePhysicalDamageComponent(abilityCreation.PhysicalDamageCard); 
             
-            AbilityEntity abilityEntity = new(cooldownComponent, elementalDamageComponent, physicalDamageComponent)
+            AbilityEntity abilityEntity = new(cooldownComponent, ConvertTriggerCard(abilityCreation.TriggerCard))
             {
-                AbilityType = abilityCreation.AbilityCard.AbilityType,
                 AbilitySlots = abilityCreation.AbilityCard.AbilitySlots,
-                Information = abilityCreation.Information
+                AbilityStages = ConvertAbilityStageCards(_prioritySorter.Sort(abilityCreation.AbilityStageCards, card => card.Priority))
             };
 
-            if (abilityCreation.AbilityCard.CastTime != 0)
-            { 
-                abilityEntity.AddComponent(new CastTimeComponent { CastTime = abilityCreation.AbilityCard.CastTime });
-            }
-            
             return abilityEntity;
         }
 
-        private static ElementalDamageComponent CreateElementalDamageComponent(ElementalDamageCard elementalDamageCard)
+        private static TriggerComponent ConvertTriggerCard(TriggerCard triggerCard)
         {
-            return new ElementalDamageComponent
+            return new TriggerComponent
             {
-                LightningDamage = elementalDamageCard.LightningDamage,
-                ColdDamage = elementalDamageCard.ColdDamage,
-                FireDamage = elementalDamageCard.FireDamage
+                TargetingType = triggerCard.TargetingType,
+                TriggerEventType = triggerCard.TriggerEventType,
+                MinTriggerValue = triggerCard.MinTriggerValue,
+                MaxTriggerValue = triggerCard.MaxTriggerValue
             };
         }
-        
-        private static PhysicalDamageComponent CreatePhysicalDamageComponent(PhysicalDamageCard elementalDamageCard)
+
+        private static ImmutableArray<AbilityStage> ConvertAbilityStageCards(IReadOnlyList<AbilityStageCard> sortedAbilityStageCards)
         {
-            return new PhysicalDamageComponent
+            AbilityStage[] abilityStages = new AbilityStage[sortedAbilityStageCards.Count];
+            for (int i = 0; i < sortedAbilityStageCards.Count; i++)
             {
-                StrikeDamage = elementalDamageCard.StrikeDamage,
-                SlashDamage = elementalDamageCard.SlashDamage,
-                ThrustDamage = elementalDamageCard.ThrustDamage
-            };
+                AbilityStageCard abilityStageCard = sortedAbilityStageCards[i];
+                abilityStages[i] = new AbilityStage
+                {
+                    AbilityEffectType = abilityStageCard.AbilityEffectType, 
+                    AffinityType = abilityStageCard.AffinityType, 
+                    CastTime = abilityStageCard.CastTime,
+                    Value = abilityStageCard.Value, 
+                    MaxTargets = abilityStageCard.MaxTargets,
+                    Priority =  abilityStageCard.Priority
+                };
+            }
+
+            return [..abilityStages];
         }
     }
 }

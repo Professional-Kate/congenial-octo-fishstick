@@ -22,7 +22,7 @@ namespace IdelPog.Combat.Runtime.System
             _combatantAssertion.AssertCombatantAlive(combatantEntity);
             combatantEntity.ReplaceComponent(new LifeStatusComponent { IsAlive = false });   
                 
-            _combatStateService.Evaluate(combatantEntity);
+            _combatStateService.Evaluate();
         }
     }
 }

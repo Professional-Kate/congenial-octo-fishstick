@@ -1,6 +1,8 @@
 ﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
+using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
+using IdelPog.Combat.Runtime.Event;
 using IdelPog.Combat.Runtime.System;
 using IdelPog.Combat.Tests.TestFactory;
 
@@ -13,17 +15,17 @@ namespace IdelPog.Combat.Tests.Runtime.System
         
         private CombatantEntity _targetEntity;
         private HealthComponent _healthComponent;
-        private CombatantAbilityEntity _combatantAbilityEntity;
-        private ElementalDamageComponent _elementalDamageComponent;
-        private PhysicalDamageComponent _physicalDamageComponent;
+        private CombatantAbilityStage _combatantAbilityStage;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _damageSystem = new DamageSystem();
-
-            _elementalDamageComponent = new ElementalDamageComponent { LightningDamage = 1, ColdDamage = 1, FireDamage = 1 };
-            _physicalDamageComponent = new PhysicalDamageComponent { SlashDamage = 1, StrikeDamage = 1, ThrustDamage = 1 };
+            _combatantAbilityStage = new CombatantAbilityStage
+            {
+                AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, MaxTargets = 1, Value = 10, Priority = 0, CastTime = 0 },
+                TargetingPreferenceComponent = new TargetingPreferenceComponent { CombatantStatType = CombatantStatType.INITIATIVE, TargetingPreference = TargetingPreference.HIGHEST , TargetingType = TargetingType.ENEMY }
+            };
         }
 
         [SetUp]
@@ -31,9 +33,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             _targetEntity = TestCombatantEntityFactory.CreateCombatantEntity(0);
             _healthComponent = _targetEntity.GetComponent<HealthComponent>();
-            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(0, AbilityType.SLASH);
-            _combatantAbilityEntity.AddComponent(_elementalDamageComponent);
-            _combatantAbilityEntity.AddComponent(_physicalDamageComponent);
         }
 
         private static void AssertNewHealth(uint newHealth, uint expectedHealth)
@@ -49,18 +48,18 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_DealDamage_DamagesEntity()
         {
-            uint newHealth = _damageSystem.DealDamage(_targetEntity, _combatantAbilityEntity);
+            uint newHealth = _damageSystem.DealDamage(_targetEntity, _combatantAbilityStage);
             
-            AssertNewHealth(newHealth,_healthComponent.Health - _elementalDamageComponent.TotalDamage - _physicalDamageComponent.TotalDamage);
+            AssertNewHealth(newHealth,_healthComponent.Health - _combatantAbilityStage.AbilityStage.Value);
             AssertEntityHealth(_targetEntity, newHealth);
         }
         
         [Test]
         public void Positive_DealDamage_DamagesEntity_MoreAttackThanHealth_ReturnsZero()
         {
-            _combatantAbilityEntity.RemoveComponent<ElementalDamageComponent>();
-            _combatantAbilityEntity.AddComponent(new ElementalDamageComponent { LightningDamage = 14, ColdDamage = 255, FireDamage = 153 });
-            uint newHealth = _damageSystem.DealDamage(_targetEntity, _combatantAbilityEntity);
+            AbilityStage strongStage = _combatantAbilityStage.AbilityStage with { Value = uint.MaxValue };
+            
+            uint newHealth = _damageSystem.DealDamage(_targetEntity, _combatantAbilityStage with { AbilityStage = strongStage });
             
             AssertNewHealth(newHealth, 0);
             AssertEntityHealth(_targetEntity, newHealth);
@@ -69,25 +68,37 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_GetCalculatedDamage_ReturnsCalculatedDamage()
         {
-            uint calculatedDamage = _damageSystem.GetCalculatedDamage(_combatantAbilityEntity);
+            uint calculatedDamage = _damageSystem.GetCalculatedDamage(_combatantAbilityStage);
             
-            Assert.That(calculatedDamage, Is.EqualTo(_elementalDamageComponent.TotalDamage + _physicalDamageComponent.TotalDamage));
+            Assert.That(calculatedDamage, Is.EqualTo(_combatantAbilityStage.AbilityStage.Value));
         }
 
         [Test]
-        public void Positive_ZeroDamageFromEverything_ReturnsZero()
+        public void Positive_ZeroDamageFromStage_ReturnsZero()
         {
-            ElementalDamageComponent weakElementalDamage = new() { LightningDamage = 0, ColdDamage = 0, FireDamage = 0 };
-            PhysicalDamageComponent weakPhysicalDamage = new() { SlashDamage = 0, StrikeDamage = 0, ThrustDamage = 0 };
+            CombatantAbilityStage weakAbilityStage = new()
+            {
+                AbilityStage = new AbilityStage
+                {
+                    AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, 
+                    AffinityType = AffinityType.SLASH, 
+                    MaxTargets = 1, 
+                    Value = 0,
+                    Priority = 0,
+                    CastTime = 0
+                },
+                TargetingPreferenceComponent = new TargetingPreferenceComponent
+                {
+                    CombatantStatType = CombatantStatType.HEALTH,
+                    TargetingPreference = TargetingPreference.HIGHEST,
+                    TargetingType = TargetingType.ENEMY
+                }
+            };
             
-            CombatantAbilityEntity weakAbility = TestCombatantAbilityEntityFactory.Create(0, AbilityType.SLASH);
-            weakAbility.AddComponent(weakElementalDamage);
-            weakAbility.AddComponent(weakPhysicalDamage);
-            
-            uint calculatedDamage = _damageSystem.GetCalculatedDamage(weakAbility);
+            uint calculatedDamage = _damageSystem.GetCalculatedDamage(weakAbilityStage);
             Assert.That(calculatedDamage, Is.Zero);
 
-            uint newHealth = _damageSystem.DealDamage(_targetEntity, weakAbility);
+            uint newHealth = _damageSystem.DealDamage(_targetEntity, weakAbilityStage);
             Assert.That(newHealth, Is.EqualTo(_healthComponent.Health));
         }
     }

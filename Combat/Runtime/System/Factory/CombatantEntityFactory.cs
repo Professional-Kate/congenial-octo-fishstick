@@ -11,8 +11,7 @@ namespace IdelPog.Combat.Runtime.System.Factory
             return new CombatantEntity(combatantCreation.StatCard, combatantCreation.AgilityCard)
             {
                 CombatantID = combatantID,
-                CombatantType =  combatantCreation.CombatantType,
-                CombatantInformation = combatantCreation.Information
+                CombatantType =  combatantCreation.CombatantType
             };
         }
     }

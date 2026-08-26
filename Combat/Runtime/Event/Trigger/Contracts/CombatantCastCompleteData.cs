@@ -1,0 +1,10 @@
+﻿using IdelPog.Combat.Contracts.Enum;
+
+namespace IdelPog.Combat.Runtime.Event.Trigger.Contracts
+{
+    public readonly record struct CombatantCastCompleteData
+    {
+        public required byte CastingCombatantID { get; init; }
+        public required TargetingType CombatantTargetingType { get; init; }
+    }
+}

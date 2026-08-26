@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Runtime.Entities.Combatant;
+﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Service.Interface;
 
@@ -16,7 +16,7 @@ namespace IdelPog.Combat.Service
         public bool IsCombatOver { get; private set; }
         public bool FriendlyVictory { get; private set; }
 
-        public void Evaluate(CombatantEntity changedCombatant)
+        public void Evaluate()
         { 
             IsCombatOver = IsCombatResolved();
         }
@@ -24,26 +24,25 @@ namespace IdelPog.Combat.Service
         public void Reset()
         {
             IsCombatOver = false;
+            FriendlyVictory = false;
         }
 
         private bool IsCombatResolved()
         {
-            if (DoesFilterContainEntities(_combatantFilters.GetEnemies()) == false)
+            if (_combatantFilters.HasValidCombatants(TargetingType.ENEMY) == false)
             {
                 FriendlyVictory = true;
                 return true;
             }
 
-            if (DoesFilterContainEntities(_combatantFilters.GetFriendlies()))
+            if (_combatantFilters.HasValidCombatants(TargetingType.FRIENDLY) == false)
             {
-                return false;
+                FriendlyVictory = false;
+                return true;
             }
-
+            
             FriendlyVictory = false;
-            return true;
-
+            return false;
         }
-        
-        private static bool DoesFilterContainEntities(IEnumerable<CombatantEntity> combatantEntities) => combatantEntities.Any(); 
     }
 }

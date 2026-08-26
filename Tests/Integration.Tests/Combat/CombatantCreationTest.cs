@@ -4,7 +4,6 @@ using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Error;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Core.Contracts;
 
 namespace IdelPog.Integration.Tests.Combat
 {
@@ -22,7 +21,6 @@ namespace IdelPog.Integration.Tests.Combat
             _humanCombatantCreation = new CombatantCreation
             {
                 CombatantType = CombatantType.HUMAN,
-                Information = new Information { Name = "Human", Description = "Man" },
                 StatCard = new StatCard { Health = 20 },
                 AgilityCard = new AgilityCard { Speed = 5, Initiative = 1 }
             };
@@ -43,7 +41,6 @@ namespace IdelPog.Integration.Tests.Combat
             Assert.Multiple(() =>
             {
                 Assert.That(response.CombatantType, Is.EqualTo(source.CombatantType));
-                Assert.That(response.Information, Is.EqualTo(source.Information));
                 Assert.That(response.StatCard, Is.EqualTo(source.StatCard));
             });
         }
