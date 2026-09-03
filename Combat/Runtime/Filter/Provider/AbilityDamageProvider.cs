@@ -7,17 +7,17 @@ namespace IdelPog.Combat.Runtime.Filter.Provider
 {
     public sealed class AbilityDamageProvider : IStatProvider
     {
-        private readonly ICombatantAbilityEntityRepository _combatantAbilityEntityRepository;
+        private readonly IAbilityEntityRepository _abilityEntityRepository;
 
-        public AbilityDamageProvider(ICombatantAbilityEntityRepository combatantAbilityEntityRepository)
+        public AbilityDamageProvider(IAbilityEntityRepository abilityEntityRepository)
         {
-            _combatantAbilityEntityRepository = combatantAbilityEntityRepository;
+            _abilityEntityRepository = abilityEntityRepository;
         }
 
         public uint GetStat(CombatantEntity combatantEntity)
         {
             uint damage = 0;
-            foreach (CombatantAbilityEntity combatantAbilityEntity in _combatantAbilityEntityRepository.GetAll(combatantEntity.CombatantID))
+            foreach (AbilityEntity combatantAbilityEntity in _abilityEntityRepository.EnumerateAbilities(combatantEntity.InstanceID))
             {
                 AbilityDamageComponent abilityDamageComponent = combatantAbilityEntity.GetComponent<AbilityDamageComponent>();
                 damage += abilityDamageComponent.TotalDamage;

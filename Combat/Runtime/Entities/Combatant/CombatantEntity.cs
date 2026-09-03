@@ -8,7 +8,9 @@ namespace IdelPog.Combat.Runtime.Entities.Combatant
     public sealed record CombatantEntity : Entity
     {
         public required byte CombatantID { get; init; }
+        public required byte InstanceID { get; init; }
         public required CombatantType CombatantType { get; init; }
+        public required TargetingType TargetingType { get; init; }
 
         public CombatantEntity(StatCard statCard, AgilityCard agilityCard) 
             : base(BuildStatsComponent(statCard), BuildAgilityComponent(agilityCard))

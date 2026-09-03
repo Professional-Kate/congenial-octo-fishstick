@@ -4,6 +4,6 @@ namespace IdelPog.Combat.Runtime.Event.Trigger.Interface
 {
     public interface ITriggerSubscriber
     { 
-        public void SubscribeAbility(CombatantAbilityEntity combatantAbilityEntity);
+        public void SubscribeAbility(AbilityEntity abilityEntity);
     }
 }

@@ -37,9 +37,9 @@ namespace IdelPog.Combat.Tests.Event
             _entityHealingServiceMock.VerifyNoOtherCalls();
         }
         
-        private void VerifyHealingApplied(CombatantEntity[] targetCombatants, CombatantEntity attackingCombatant, CombatantAbilityStage combatantAbilityStage, double tick)
+        private void VerifyHealingApplied(CombatantEntity[] targetCombatants, CombatantEntity attackingCombatant, AbilityStage abilityStage, double tick)
         {
-            _entityHealingServiceMock.Verify(library => library.ApplyHealing(targetCombatants, attackingCombatant, combatantAbilityStage, tick), Times.Once);
+            _entityHealingServiceMock.Verify(library => library.ApplyHealing(targetCombatants, attackingCombatant, abilityStage, tick), Times.Once);
         }
 
         [Test]
@@ -48,32 +48,32 @@ namespace IdelPog.Combat.Tests.Event
             SetupTargetFinder(TargetCombatant, TargetingPreference.HIGHEST, CombatantStatType.HEALTH, 1, TargetingType.ENEMY);
             SetupRepositoryGet(InitiatingCombatant);
             
-            Assert.DoesNotThrow(() => _healingAbilityEffectResolver.ResolveEffect(TICK, InitiatingCombatantAbility, FirstAbilityStage));
+            Assert.DoesNotThrow(() => _healingAbilityEffectResolver.ResolveEffect(TICK, InitiatingAbility, FirstAbilityStage));
             
             VerifyHealingApplied([TargetCombatant], InitiatingCombatant, FirstAbilityStage, TICK);
-            VerifyCombatantLog(InitiatingCombatantAbility.AbilityID, TICK, InitiatingCombatant, [TargetCombatant], FirstAbilityStage);
+            VerifyCombatantLog(InitiatingAbility.AbilityID, TICK, InitiatingCombatant, [TargetCombatant], FirstAbilityStage);
         }
         
         [Test]
         public void Positive_HandleEvent_CombatantNotAlive_Returns()
         {
-            CombatantEntity deadEntity = TestCombatantEntityFactory.CreateCombatantEntity(25);
+            CombatantEntity deadEntity = TestCombatantEntityFactory.Create(25, TargetingType.FRIENDLY);
             deadEntity.ReplaceComponent(new LifeStatusComponent { IsAlive = false });
             
             SetupRepositoryGet(deadEntity);
             
-            Assert.DoesNotThrow(() => _healingAbilityEffectResolver.ResolveEffect(TICK, InitiatingCombatantAbility with { CombatantID = 25 }, FirstAbilityStage));
+            Assert.DoesNotThrow(() => _healingAbilityEffectResolver.ResolveEffect(TICK, InitiatingAbility with { InstanceID = deadEntity.InstanceID }, FirstAbilityStage));
         }
         
         [Test]
         public void Negative_ResolveEvent_CombatantNotFound_Throws()
         {
-            CombatantRepositoryMock.Setup(library => library.Get(InitiatingCombatant.CombatantID))
-                .Throws(new NotFoundException<byte>(InitiatingCombatant.CombatantID));
+            CombatantRepositoryMock.Setup(library => library.Get(InitiatingCombatant.InstanceID))
+                .Throws(new NotFoundException<byte>(InitiatingCombatant.InstanceID));
             
-            Assert.Throws<NotFoundException<byte>>(() => _healingAbilityEffectResolver.ResolveEffect(TICK, InitiatingCombatantAbility, FirstAbilityStage));
+            Assert.Throws<NotFoundException<byte>>(() => _healingAbilityEffectResolver.ResolveEffect(TICK, InitiatingAbility, FirstAbilityStage));
             
-            CombatantRepositoryMock.Verify(library => library.Get(InitiatingCombatant.CombatantID), Times.Once);
+            CombatantRepositoryMock.Verify(library => library.Get(InitiatingCombatant.InstanceID), Times.Once);
         }
     }
 }

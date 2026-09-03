@@ -7,17 +7,17 @@ namespace IdelPog.Combat.Runtime.Filter.Provider
 {
     public sealed class AbilityHealingProvider : IStatProvider
     {
-        private readonly ICombatantAbilityEntityRepository _combatantAbilityEntityRepository;
+        private readonly IAbilityEntityRepository _abilityEntityRepository;
 
-        public AbilityHealingProvider(ICombatantAbilityEntityRepository combatantAbilityEntityRepository)
+        public AbilityHealingProvider(IAbilityEntityRepository abilityEntityRepository)
         {
-            _combatantAbilityEntityRepository = combatantAbilityEntityRepository;
+            _abilityEntityRepository = abilityEntityRepository;
         }
 
         public uint GetStat(CombatantEntity combatantEntity)
         {
             uint healing = 0;
-            foreach (CombatantAbilityEntity combatantAbilityEntity in _combatantAbilityEntityRepository.GetAll(combatantEntity.CombatantID))
+            foreach (AbilityEntity combatantAbilityEntity in _abilityEntityRepository.EnumerateAbilities(combatantEntity.InstanceID))
             {
                 AbilityHealingComponent abilityHealingComponent = combatantAbilityEntity.GetComponent<AbilityHealingComponent>();
                 healing += abilityHealingComponent.TotalHealing;

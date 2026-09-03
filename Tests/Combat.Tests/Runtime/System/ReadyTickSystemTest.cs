@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -16,7 +17,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private ReadyTickSystem _readyTickSystem;
         private Mock<ICastingCalculator> _castingCalculatorMock;
 
-        private CombatantAbilityEntity _singleStageEntity;
+        private AbilityEntity _singleStageEntity;
 
         private const uint COMBATANT_SPEED = 10u;
         private const double CURRENT_TICK = 100d;
@@ -36,7 +37,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         {
-            _singleStageEntity = TestCombatantAbilityEntityFactory.Create(1, 1);
+            _singleStageEntity = TestAbilityEntityFactory.Create(1, 1);
             _singleStageEntity.AddComponent(_existingReadyTickComponent);
             
             _castingCalculatorMock.Reset();
@@ -49,17 +50,17 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _castingCalculatorMock.VerifyNoOtherCalls();
         }
 
-        private void SetupGetCastDuration(CombatantAbilityStage[] combatantAbilityStages)
+        private void SetupGetCastDuration(AbilityStage[] combatantAbilityStages)
         {
             // just returns the cast time, we don't need to mock the specific calculation
-            foreach (CombatantAbilityStage combatantAbilityStage in combatantAbilityStages)
+            foreach (AbilityStage combatantAbilityStage in combatantAbilityStages)
             {
-                uint castTime = combatantAbilityStage.AbilityStage.CastTime;
+                uint castTime = combatantAbilityStage.AbilityStageCards.CastTime;
                 _castingCalculatorMock.Setup(library => library.GetCastDuration(COMBATANT_SPEED, castTime)).Returns(castTime).Verifiable();
             }
         }
 
-        private static void AssertReadyTimeChanged(double expectedReadyTime, CombatantAbilityEntity changedEntity)
+        private static void AssertReadyTimeChanged(double expectedReadyTime, AbilityEntity changedEntity)
         {
             ReadyTickComponent readyTickComponent = changedEntity.GetComponent<ReadyTickComponent>();
             using (Assert.EnterMultipleScope())
@@ -69,7 +70,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             }
         }
         
-        private static CooldownComponent GetCooldownComponent(CombatantAbilityEntity combatantAbilityEntity) => combatantAbilityEntity.GetComponent<CooldownComponent>();
+        private static CooldownComponent GetCooldownComponent(AbilityEntity abilityEntity) => abilityEntity.GetComponent<CooldownComponent>();
 
         [Test]
         public void Positive_SetNewReadyTime_ChangesReadyTime()
@@ -90,11 +91,11 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_SetNewReadyTime_AbilityHasCastTime_DelaysReadyTime()
         {
-            CombatantAbilityStage[] combatantAbilities =
+            AbilityStage[] combatantAbilities =
             [
                 new()
                 {
-                    AbilityStage = new AbilityStage
+                    AbilityStageCards = new AbilityStageCard
                     {
                         AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 10, MaxTargets = 1, Value = 3,
                         Priority = 0
@@ -106,7 +107,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 },
                 new()
                 {
-                    AbilityStage = new AbilityStage
+                    AbilityStageCards = new AbilityStageCard
                     {
                         AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 20, MaxTargets = 1, Value = 3,
                         Priority = 1
@@ -118,7 +119,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 },
                 new()
                 {
-                    AbilityStage = new AbilityStage
+                    AbilityStageCards = new AbilityStageCard
                     {
                         AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 30, MaxTargets = 1, Value = 3,
                         Priority = 2
@@ -132,12 +133,12 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
             SetupGetCastDuration(combatantAbilities);
             
-            CombatantAbilityEntity combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(12, 12, combatantAbilities);
-            combatantAbilityEntity.AddComponent(_existingReadyTickComponent);
+            AbilityEntity abilityEntity = TestAbilityEntityFactory.Create(12, 12, combatantAbilities);
+            abilityEntity.AddComponent(_existingReadyTickComponent);
             
-            Assert.DoesNotThrow(() => _readyTickSystem.SetNextReadyTick(currentTick: 0, combatantAbilityEntity, COMBATANT_SPEED));
+            Assert.DoesNotThrow(() => _readyTickSystem.SetNextReadyTick(currentTick: 0, abilityEntity, COMBATANT_SPEED));
             
-            AssertReadyTimeChanged(GetCooldownComponent(combatantAbilityEntity).Cooldown + 60, combatantAbilityEntity);
+            AssertReadyTimeChanged(GetCooldownComponent(abilityEntity).Cooldown + 60, abilityEntity);
         }
     }
 }

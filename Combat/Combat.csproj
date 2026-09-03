@@ -13,4 +13,8 @@
       <ProjectReference Include="..\ECS\ECS.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Factory\Interface\" />
+    </ItemGroup>
+
 </Project>

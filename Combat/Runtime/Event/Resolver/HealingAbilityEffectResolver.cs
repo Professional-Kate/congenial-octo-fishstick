@@ -1,5 +1,4 @@
-﻿using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Component.Ability;
+﻿using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.Filter.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
@@ -18,10 +17,10 @@ namespace IdelPog.Combat.Runtime.Event.Resolver
             _entityHealingService = entityHealingService;
         }
 
-        protected private override IReadOnlyList<CombatantEntity> HandleEvent(double tick, CombatantEntity combatantEntity, CombatantAbilityEntity combatantAbilityEntity, CombatantAbilityStage combatantAbilityStage)
+        protected private override IReadOnlyList<CombatantEntity> HandleEvent(double tick, CombatantEntity combatantEntity, AbilityEntity abilityEntity, AbilityStage abilityStage)
         {
-            IReadOnlyList<CombatantEntity> targetCombatants = GetTargetCombatants(combatantAbilityStage, combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType);
-            _entityHealingService.ApplyHealing(targetCombatants, combatantEntity, combatantAbilityStage, tick);
+            IReadOnlyList<CombatantEntity> targetCombatants = GetTargetCombatants(abilityStage, combatantEntity.TargetingType);
+            _entityHealingService.ApplyHealing(targetCombatants, combatantEntity, abilityStage, tick);
 
             return targetCombatants;
         }

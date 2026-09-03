@@ -1,13 +1,13 @@
-﻿using IdelPog.Combat.Assertion;
+﻿using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Ability.Contracts.Response;
+using IdelPog.Combat.Ability.Mediator;
+using IdelPog.Combat.Ability.Model;
+using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Mediator;
-using IdelPog.Combat.Runtime.Entities;
 using IdelPog.Combat.Runtime.Event;
-using IdelPog.Combat.Runtime.System.Factory.Interface;
+using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Repository.Incremental;
@@ -21,55 +21,63 @@ namespace IdelPog.Combat.Tests.Mediator
     public sealed class AbilityCreationMediatorTest
     {
         private AbilityCreationMediator _abilityCreationMediator;
-        private Mock<IIncrementalRepository<AbilityEntity>> _abilityEntityRepositoryMock; 
-        private Mock<IAbilityEntityFactory> _abilityEntityFactoryMock;
+        private Mock<IIncrementalRepository<AbilityDefinition>> _abilityDefinitionRepositoryMock;
+        private Mock<IPrioritySorter> _prioritySorterMock;
         private Mock<IDispatchMany<AbilityCreationResponse>> _responseDispatcherMock;
 
-        private readonly AbilityCreation _abilityCreation = TestAbilityCreationFactory.Create();
-        private readonly AbilityEntity _abilityEntity = TestAbilityEntityFactory.Create();
+        private AbilityCreation _abilityCreation;
+        private readonly AbilityDefinition _abilityDefinition = new()
+        {
+            AbilityCard = new AbilityCard { AbilitySlots = 1, Cooldown = 5 },
+            TriggerCard = new TriggerCard { TriggerEventType = TriggerEventType.ABILITY_READY, TargetingType = TargetingType.SELF, MinTriggerValue = 0, MaxTriggerValue = 0 },
+            AbilityStages =
+            [
+                new AbilityStageCard
+                {
+                    AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.HOLY, CastTime = 10, MaxTargets = 5, Priority = 0, Value = 2
+                }
+            ]
+        };
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _abilityEntityRepositoryMock = new Mock<IIncrementalRepository<AbilityEntity>>();
-            _abilityEntityFactoryMock = new Mock<IAbilityEntityFactory>();
+            _abilityDefinitionRepositoryMock = new Mock<IIncrementalRepository<AbilityDefinition>>();
+            _prioritySorterMock = new Mock<IPrioritySorter>();
             _responseDispatcherMock = new Mock<IDispatchMany<AbilityCreationResponse>>();
             
-            _abilityCreationMediator = new AbilityCreationMediator(_abilityEntityRepositoryMock.Object, _abilityEntityFactoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new NumberAssertion(), new TriggerAssertion());
+            _abilityCreationMediator = new AbilityCreationMediator(_abilityDefinitionRepositoryMock.Object, _prioritySorterMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), new NumberAssertion(), new TriggerAssertion());
+
+            _abilityCreation = TestAbilityCreationFactory.Create(_abilityDefinition);
         }
 
         [SetUp]
         public void Setup()
         {
-            _abilityEntityRepositoryMock.Reset();
-            _abilityEntityFactoryMock.Reset();
+            _abilityDefinitionRepositoryMock.Reset();
+            _prioritySorterMock.Reset();
             _responseDispatcherMock.Reset();
         }
 
         [TearDown]
         public void TearDown()
-        { 
-            VerifyMocks();
-        }
-
-        private void VerifyMocks()
         {
-            _abilityEntityRepositoryMock.Verify();
-            _abilityEntityRepositoryMock.VerifyNoOtherCalls();
-            _abilityEntityFactoryMock.Verify();
-            _abilityEntityFactoryMock.VerifyNoOtherCalls();
+            _abilityDefinitionRepositoryMock.Verify();
+            _abilityDefinitionRepositoryMock.VerifyNoOtherCalls();
+            _prioritySorterMock.Verify();
+            _prioritySorterMock.VerifyNoOtherCalls();
             _responseDispatcherMock.Verify();
             _responseDispatcherMock.VerifyNoOtherCalls();
         }
         
-        private void SetupAbilityEntityFactory(AbilityCreation abilityCreation, AbilityEntity abilityEntity)
+        private void VerifyAbilityDefinitionAdd(AbilityDefinition abilityDefinition)
         {
-            _abilityEntityFactoryMock.Setup(library => library.CreateAbilityEntity(abilityCreation)).Returns(abilityEntity).Verifiable();
+            _abilityDefinitionRepositoryMock.Verify(library => library.Add(It.Is<AbilityDefinition>(definition => definition.AbilityCard == abilityDefinition.AbilityCard && definition.TriggerCard == abilityDefinition.TriggerCard)), Times.Once);
         }
-        
-        private void VerifyAbilityEntityAdd(AbilityEntity abilityEntity)
+
+        private void SetupSort(AbilityStageCard[] abilityStageCards)
         {
-            _abilityEntityRepositoryMock.Verify(library => library.Add(abilityEntity), Times.Once);
+            _prioritySorterMock.Setup(library => library.Sort(abilityStageCards, It.IsAny<Func<AbilityStageCard, byte>>())).Returns([..abilityStageCards]).Verifiable();
         }
         
         private void VerifyDispatcherCalled(int length)
@@ -80,27 +88,26 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Positive_HandleMessages_CreatesNewEntity()
         {
-            SetupAbilityEntityFactory(_abilityCreation, _abilityEntity);
+            SetupSort(_abilityCreation.AbilityStageCards);
             
             Assert.DoesNotThrow(() => _abilityCreationMediator.HandleMessages([_abilityCreation]));
 
-            VerifyAbilityEntityAdd(_abilityEntity);
+            VerifyAbilityDefinitionAdd(_abilityDefinition);
             VerifyDispatcherCalled(1);
         }
         
         [Test]
         public void Positive_HandleMessages_CreatesNewEntities()
         {
+            SetupSort(_abilityCreation.AbilityStageCards);
+            
             AbilityCard abilityCard = _abilityCreation.AbilityCard with { AbilitySlots = 2 };
             AbilityCreation strongAttackCreation = _abilityCreation with { AbilityCard = abilityCard };
             
-            SetupAbilityEntityFactory(_abilityCreation, _abilityEntity);
-            SetupAbilityEntityFactory(strongAttackCreation, _abilityEntity with { AbilitySlots = 2 });
-            
             Assert.DoesNotThrow(() => _abilityCreationMediator.HandleMessages([_abilityCreation, strongAttackCreation]));
 
-            VerifyAbilityEntityAdd(_abilityEntity);
-            VerifyAbilityEntityAdd(_abilityEntity with { AbilitySlots = 2 });
+            VerifyAbilityDefinitionAdd(_abilityDefinition);
+            VerifyAbilityDefinitionAdd(_abilityDefinition with { AbilityCard = abilityCard });
             VerifyDispatcherCalled(2);
         }
 
@@ -147,7 +154,7 @@ namespace IdelPog.Combat.Tests.Mediator
         }
 
         [Test]
-        public void Negative_HandleMessage_AbilityReadyTrigger_NotConfigured_Throws()
+        public void Negative_HandleMessage_AbilityReadyTrigger_NotConfiguredCorrectly_Throws()
         {
             TriggerCard goodTriggerCard = new() { TriggerEventType = TriggerEventType.ABILITY_READY, TargetingType = TargetingType.SELF, MinTriggerValue = 0, MaxTriggerValue = 0 };
             TriggerCard notSelfCard = goodTriggerCard with { TargetingType = TargetingType.ENEMY };

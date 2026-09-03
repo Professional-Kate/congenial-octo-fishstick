@@ -2,7 +2,6 @@
 using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
@@ -24,7 +23,8 @@ namespace IdelPog.Combat.Service.Logging
 
         private AbilityStageLog _currentLog;
 
-        public void LogCombatantChange(double tick, CombatantEntity initiatingCombatant, IReadOnlyList<CombatantEntity> targetCombatants, AbilityStage abilityStage, byte abilityID)
+        public void LogCombatantChange(double tick, CombatantEntity initiatingCombatant, IReadOnlyList<CombatantEntity> targetCombatants,
+            AbilityStageCard abilityStage, byte abilityID)
         {
             _objectNullAssertion.AssertNotNull(initiatingCombatant, nameof(initiatingCombatant));
             _collectionAssertion.AssertHasElements(targetCombatants);
@@ -48,7 +48,7 @@ namespace IdelPog.Combat.Service.Logging
                 ReadOnlyAbilityStage = readOnlyAbilityStage
             };
 
-            if (ShouldCreateNewLog(abilityID, initiatingCombatant.CombatantID, tick))
+            if (ShouldCreateNewLog(abilityID, initiatingCombatant.InstanceID, tick))
             {
                 FinalizeCurrentLog();
                 
@@ -87,7 +87,7 @@ namespace IdelPog.Combat.Service.Logging
         private bool ShouldCreateNewLog(byte abilityID, byte combatantID, double tick)
         {
             bool isDifferentAbility = _currentLog.AbilityID != abilityID;
-            bool isDifferentCombatant = _currentLog.InitiatingCombatant.CombatantID != combatantID;
+            bool isDifferentCombatant = _currentLog.InitiatingCombatant.InstanceID != combatantID;
             bool isDifferentExecutionTick = Math.Abs(_currentLog.Tick - tick) > 0.1;
             
             return isDifferentAbility || isDifferentCombatant || isDifferentExecutionTick;
@@ -120,10 +120,11 @@ namespace IdelPog.Combat.Service.Logging
         {
             return new ReadOnlyCombatant
             {
+                InstanceID = combatantEntity.InstanceID,
                 CombatantID = combatantEntity.CombatantID,
                 StatCard = CreateStatCard(combatantEntity.GetComponent<HealthComponent>()),
                 AgilityCard = CreateAgilityCard(combatantEntity.GetComponent<AgilityComponent>()),
-                TargetingType = combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType,
+                TargetingType = combatantEntity.TargetingType,
                 IsAlive = combatantEntity.GetComponent<LifeStatusComponent>().IsAlive
             };
         }

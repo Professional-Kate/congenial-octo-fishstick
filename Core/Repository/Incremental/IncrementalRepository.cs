@@ -8,10 +8,10 @@ namespace IdelPog.Core.Repository.Incremental
         private readonly IRepositoryAsserter _repositoryAsserter;
         private byte _id;
 
-        public IncrementalRepository(IDictionary<byte, T> dictionary, IRepositoryAsserter repositoryAsserter)
+        public IncrementalRepository(IRepositoryAsserter repositoryAsserter)
         {
-            _dictionary = dictionary;
             _repositoryAsserter = repositoryAsserter;
+            _dictionary = new Dictionary<byte, T>();
         }
 
         public byte Add(T value)
@@ -38,6 +38,13 @@ namespace IdelPog.Core.Repository.Incremental
         {
             _repositoryAsserter.AssertFound(id, _dictionary.ContainsKey(id));
             return _dictionary[id];
+        }
+
+        public IEnumerable<T> Enumerate() => _dictionary.Values;
+
+        public byte GetID()
+        {
+            return _id;
         }
     }
 }

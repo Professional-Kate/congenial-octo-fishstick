@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -13,7 +14,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
     {
         private AbilityEffectValueCalculator _abilityEffectValueCalculator;
 
-        private CombatantAbilityEntity _singleStageEntity;
+        private AbilityEntity _singleStageEntity;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -24,22 +25,22 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         { 
-            _singleStageEntity = TestCombatantAbilityEntityFactory.Create(1, 1);
+            _singleStageEntity = TestAbilityEntityFactory.Create(1, 1);
         }
 
-        private static void VerifyComponentsAdded(CombatantAbilityEntity combatantAbilityEntity)
+        private static void VerifyComponentsAdded(AbilityEntity abilityEntity)
         {
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(combatantAbilityEntity.ContainsComponent<AbilityDamageComponent>(), Is.True);
-                Assert.That(combatantAbilityEntity.ContainsComponent<AbilityHealingComponent>(), Is.True);
+                Assert.That(abilityEntity.ContainsComponent<AbilityDamageComponent>(), Is.True);
+                Assert.That(abilityEntity.ContainsComponent<AbilityHealingComponent>(), Is.True);
             }
         }
 
-        private static void VerifyComponentValue(CombatantAbilityEntity combatantAbilityEntity, uint damageValue, uint healingValue)
+        private static void VerifyComponentValue(AbilityEntity abilityEntity, uint damageValue, uint healingValue)
         {
-            AbilityDamageComponent damageComponent = combatantAbilityEntity.GetComponent<AbilityDamageComponent>();
-            AbilityHealingComponent healingComponent = combatantAbilityEntity.GetComponent<AbilityHealingComponent>();
+            AbilityDamageComponent damageComponent = abilityEntity.GetComponent<AbilityDamageComponent>();
+            AbilityHealingComponent healingComponent = abilityEntity.GetComponent<AbilityHealingComponent>();
             
             using (Assert.EnterMultipleScope())
             {
@@ -65,51 +66,51 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 CombatantStatType = CombatantStatType.ABILITY_DAMAGE, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.ENEMY
             };
 
-            AbilityStage abilityStage = new()
+            AbilityStageCard abilityStage = new()
             {
                 AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.STRIKE, CastTime = 10, MaxTargets = 10, Value = 10, Priority = 0
             };
             
-            CombatantAbilityStage[] combatantStages =
+            AbilityStage[] combatantStages =
             [
                 new()
                 {
-                    AbilityStage = abilityStage with { AbilityEffectType = AbilityEffectType.HEALING },
+                    AbilityStageCards = abilityStage with { AbilityEffectType = AbilityEffectType.HEALING },
                     TargetingPreferenceComponent = targetingPreferenceComponent
                 },
                 new()
                 {
-                    AbilityStage = abilityStage,
+                    AbilityStageCards = abilityStage,
                     TargetingPreferenceComponent = targetingPreferenceComponent
                 },
                 new()
                 {
-                    AbilityStage = abilityStage,
+                    AbilityStageCards = abilityStage,
                     TargetingPreferenceComponent = targetingPreferenceComponent
                 },
                 new()
                 {
-                    AbilityStage = abilityStage with { AbilityEffectType = AbilityEffectType.HEALING },
+                    AbilityStageCards = abilityStage with { AbilityEffectType = AbilityEffectType.HEALING },
                     TargetingPreferenceComponent = targetingPreferenceComponent
                 }
             ];
             
-            CombatantAbilityEntity combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(1, 1, combatantStages);
+            AbilityEntity abilityEntity = TestAbilityEntityFactory.Create(1, 1, combatantStages);
             
-            Assert.DoesNotThrow(() => _abilityEffectValueCalculator.Calculate(combatantAbilityEntity));
+            Assert.DoesNotThrow(() => _abilityEffectValueCalculator.Calculate(abilityEntity));
 
-            VerifyComponentsAdded(combatantAbilityEntity);
-            VerifyComponentValue(combatantAbilityEntity, 20, 20);
+            VerifyComponentsAdded(abilityEntity);
+            VerifyComponentValue(abilityEntity, 20, 20);
         }
 
         [Test]
         public void Negative_Calculate_UnknownAbilityEffectType_Throws()
         {
-            CombatantAbilityStage[] combatantStages =
+            AbilityStage[] combatantStages =
             [
                 new()
                 {
-                    AbilityStage = new AbilityStage
+                    AbilityStageCards = new AbilityStageCard
                     {
                         AbilityEffectType = (AbilityEffectType) byte.MaxValue, AffinityType = AffinityType.STRIKE, CastTime = 10, MaxTargets = 10, Value = 10, Priority = 0
                     },
@@ -120,14 +121,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 }
             ];
             
-            CombatantAbilityEntity combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(1, 1, combatantStages);
+            AbilityEntity abilityEntity = TestAbilityEntityFactory.Create(1, 1, combatantStages);
             
-            Assert.Throws<ArgumentOutOfRangeException>(() => _abilityEffectValueCalculator.Calculate(combatantAbilityEntity));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _abilityEffectValueCalculator.Calculate(abilityEntity));
             
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(combatantAbilityEntity.ContainsComponent<AbilityDamageComponent>(), Is.False);
-                Assert.That(combatantAbilityEntity.ContainsComponent<AbilityHealingComponent>(), Is.False);
+                Assert.That(abilityEntity.ContainsComponent<AbilityDamageComponent>(), Is.False);
+                Assert.That(abilityEntity.ContainsComponent<AbilityHealingComponent>(), Is.False);
             }
         }
     }

@@ -1,65 +1,88 @@
-﻿using System.Collections.Immutable;
+﻿using IdelPog.Combat.Ability.Model;
+using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Component.Ability;
-using IdelPog.Combat.Runtime.Entities;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
-using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Core.Repository.Incremental;
 
 namespace IdelPog.Combat.Runtime.System.Factory
 {
     public sealed class AbilityEntityFactory : IAbilityEntityFactory
     {
-        private readonly IPrioritySorter _prioritySorter;
+        private readonly IIncrementalRepository<AbilityDefinition> _abilityDefinitionRepository;
+        private readonly IAbilityEffectValueCalculator _abilityEffectValueCalculator;
 
-        public AbilityEntityFactory(IPrioritySorter prioritySorter)
+        public AbilityEntityFactory(IIncrementalRepository<AbilityDefinition> abilityDefinitionRepository, IAbilityEffectValueCalculator abilityEffectValueCalculator)
         {
-            _prioritySorter = prioritySorter;
+            _abilityDefinitionRepository = abilityDefinitionRepository;
+            _abilityEffectValueCalculator = abilityEffectValueCalculator;
         }
 
-        public AbilityEntity CreateAbilityEntity(AbilityCreation abilityCreation)
+        public AbilityEntity[] Create(EquippedAbilityDefinition equippedAbilityDefinition, byte instanceID)
         {
-            CooldownComponent cooldownComponent = new() { Cooldown = abilityCreation.AbilityCard.Cooldown };
-            
-            AbilityEntity abilityEntity = new(cooldownComponent, ConvertTriggerCard(abilityCreation.TriggerCard))
+            List<AbilityEntity> combatantAbilityEntities = [];
+            foreach (EquippedAbility equippedAbility in equippedAbilityDefinition.EquippedAbilities)
             {
-                AbilitySlots = abilityCreation.AbilityCard.AbilitySlots,
-                AbilityStages = ConvertAbilityStageCards(_prioritySorter.Sort(abilityCreation.AbilityStageCards, card => card.Priority))
+                AbilityDefinition abilityDefinition = _abilityDefinitionRepository.Get(equippedAbility.AbilityID);
+
+                AbilityStagesComponent abilityStagesComponent = new() { AbilityStages = [..ConvertAbilityStages(equippedAbility.StrategyCards, abilityDefinition)] };
+                AbilityEntity abilityEntity = AddBaseComponents(abilityDefinition, instanceID, equippedAbility.AbilityID, abilityStagesComponent);
+                _abilityEffectValueCalculator.Calculate(abilityEntity);
+                
+                combatantAbilityEntities.Add(abilityEntity);
+            }
+            
+            return combatantAbilityEntities.ToArray();
+        }
+
+        private static AbilityStage[] ConvertAbilityStages(StrategyCard[] strategyCards, AbilityDefinition abilityDefinition)
+        {
+            AbilityStage[] combatantAbilityStages = new AbilityStage[abilityDefinition.AbilityStages.Length];
+            for (int index = 0; index < abilityDefinition.AbilityStages.Length; index++)
+            {
+                combatantAbilityStages[index] = CreateCombatantAbilityStage(abilityDefinition.AbilityStages[index], strategyCards[index]);
+            }
+            
+            return combatantAbilityStages;
+        }
+
+        private static AbilityStage CreateCombatantAbilityStage(AbilityStageCard abilityStage, StrategyCard strategyCard)
+        {
+            TargetingPreferenceComponent targetingPreferenceComponent = new()
+            {
+                CombatantStatType = strategyCard.CombatantStatType, 
+                TargetingPreference = strategyCard.TargetingPreference, 
+                TargetingType = strategyCard.TargetingType
+            };
+                
+            return new AbilityStage { AbilityStageCards = abilityStage, TargetingPreferenceComponent = targetingPreferenceComponent};
+        }
+        
+        private static AbilityEntity AddBaseComponents(AbilityDefinition abilityDefinition, byte instanceID, byte abilityID, AbilityStagesComponent abilityStagesComponent)
+        {
+            CooldownComponent cooldownComponent = new() { Cooldown = abilityDefinition.AbilityCard.Cooldown };
+            
+            TriggerCard triggerCard = abilityDefinition.TriggerCard;
+            TriggerComponent triggerComponent = new()
+            {
+                TargetingType = triggerCard.TargetingType, 
+                TriggerEventType = triggerCard.TriggerEventType, 
+                MinTriggerValue =  triggerCard.MinTriggerValue, 
+                MaxTriggerValue = triggerCard.MaxTriggerValue
+            };
+            
+            AbilityEntity abilityEntity = new(cooldownComponent, triggerComponent, abilityStagesComponent)
+            {
+                InstanceID = instanceID,
+                AbilityID = abilityID,
+                AbilitySlots = abilityDefinition.AbilityCard.AbilitySlots
             };
 
             return abilityEntity;
-        }
-
-        private static TriggerComponent ConvertTriggerCard(TriggerCard triggerCard)
-        {
-            return new TriggerComponent
-            {
-                TargetingType = triggerCard.TargetingType,
-                TriggerEventType = triggerCard.TriggerEventType,
-                MinTriggerValue = triggerCard.MinTriggerValue,
-                MaxTriggerValue = triggerCard.MaxTriggerValue
-            };
-        }
-
-        private static ImmutableArray<AbilityStage> ConvertAbilityStageCards(IReadOnlyList<AbilityStageCard> sortedAbilityStageCards)
-        {
-            AbilityStage[] abilityStages = new AbilityStage[sortedAbilityStageCards.Count];
-            for (int i = 0; i < sortedAbilityStageCards.Count; i++)
-            {
-                AbilityStageCard abilityStageCard = sortedAbilityStageCards[i];
-                abilityStages[i] = new AbilityStage
-                {
-                    AbilityEffectType = abilityStageCard.AbilityEffectType, 
-                    AffinityType = abilityStageCard.AffinityType, 
-                    CastTime = abilityStageCard.CastTime,
-                    Value = abilityStageCard.Value, 
-                    MaxTargets = abilityStageCard.MaxTargets,
-                    Priority =  abilityStageCard.Priority
-                };
-            }
-
-            return [..abilityStages];
         }
     }
 }

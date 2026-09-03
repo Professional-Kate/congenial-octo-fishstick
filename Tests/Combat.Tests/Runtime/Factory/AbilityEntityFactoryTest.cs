@@ -1,13 +1,16 @@
-﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Ability.Model;
+using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Model;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Component.Ability;
-using IdelPog.Combat.Runtime.Entities;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.Event;
 using IdelPog.Combat.Runtime.System.Factory;
-using IdelPog.Combat.Service.Interface;
-using IdelPog.Combat.Tests.TestFactory;
+using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Core.Repository.Incremental;
+using IdelPog.Core.Validation.Exceptions;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Runtime.Factory
@@ -16,96 +19,172 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
     public sealed class AbilityEntityFactoryTest
     {
         private AbilityEntityFactory _abilityEntityFactory;
-        private Mock<IPrioritySorter> _prioritySorterMock;
-        
-        private AbilityCreation _basicAttackCreation;
+        private Mock<IIncrementalRepository<AbilityDefinition>> _repositoryMock;
+        private Mock<IAbilityEffectValueCalculator> _abilityEffectValueCalculatorMock;
 
+        private AbilityEquip _abilityEquip;
+        private AbilityDefinition _abilityDefinition;
+        private EquippedAbility _equippedAbility;
+        private EquippedAbilityDefinition _equippedAbilityDefinition;
+        
         [OneTimeSetUp]
         public void OneTimeSetup()
-        { 
-            _prioritySorterMock = new Mock<IPrioritySorter>();
+        {
+            _repositoryMock = new Mock<IIncrementalRepository<AbilityDefinition>>();
+            _abilityEffectValueCalculatorMock = new Mock<IAbilityEffectValueCalculator>();
             
-            _abilityEntityFactory = new AbilityEntityFactory(_prioritySorterMock.Object);
-            _basicAttackCreation = TestAbilityCreationFactory.Create();
+            _abilityEntityFactory = new AbilityEntityFactory(_repositoryMock.Object, _abilityEffectValueCalculatorMock.Object);
+
+            _equippedAbility = new EquippedAbility { AbilityID = 0, StrategyCards = [new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            _abilityEquip = new AbilityEquip { CombatantID = 1, EquippedAbilities = [_equippedAbility] };
+            _abilityDefinition = new AbilityDefinition
+            {
+                AbilityCard = new AbilityCard { Cooldown = 4, AbilitySlots = 2 },
+                TriggerCard = new TriggerCard { TargetingType = TargetingType.ENEMY, TriggerEventType = TriggerEventType.ABILITY_READY, MinTriggerValue = 0, MaxTriggerValue = 0 },
+                AbilityStages = [ new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.FIRE, CastTime = 1, MaxTargets = 1, Priority = 0, Value = 1 }]
+            };
+
+            _equippedAbilityDefinition = new EquippedAbilityDefinition
+            {
+                CombatantID = 1,
+                EquippedAbilities = [_equippedAbility]
+            };
         }
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
-            _prioritySorterMock.Reset();
+            _repositoryMock.Reset();
+            _abilityEffectValueCalculatorMock.Reset();
         }
 
         [TearDown]
         public void TearDown()
         {
-            _prioritySorterMock.Verify();
-            _prioritySorterMock.VerifyNoOtherCalls();
+            _repositoryMock.Verify();
+            _repositoryMock.VerifyNoOtherCalls();
+            _abilityEffectValueCalculatorMock.Verify();
+            _abilityEffectValueCalculatorMock.VerifyNoOtherCalls();
         }
 
-        private void SetupPrioritySorter(IReadOnlyList<AbilityStageCard> abilityStageCards, params AbilityStageCard[] sortedCards)
+        private void SetupRepositoryGet(AbilityDefinition abilityDefinition, byte abilityID)
         {
-            _prioritySorterMock.Setup(library => library.Sort(abilityStageCards, It.IsAny<Func<AbilityStageCard, byte>>())).Returns(sortedCards).Verifiable();
+            _repositoryMock.Setup(library => library.Get(abilityID)).Returns(abilityDefinition).Verifiable();
         }
 
-        private static void AssertAbilityEntity(AbilityEntity abilityEntity, AbilityCreation abilityCreation)
+        private void VerifyCalculate(params AbilityDefinition[] abilityEntities)
+        {
+            foreach (AbilityDefinition abilityEntity in abilityEntities)
+            { 
+                _abilityEffectValueCalculatorMock.Verify(library => library.Calculate(It.Is<AbilityEntity>(entity => entity.AbilitySlots == abilityEntity.AbilityCard.AbilitySlots)), Times.Once);
+            }
+        }
+        
+        private static void AssertCollectionCount(int count, AbilityEntity[] combatantAbilityEntities)
+        {
+            Assert.That(combatantAbilityEntities, Has.Length.EqualTo(count));
+        }
+
+        private static void AssertCombatantAbility(AbilityEntity abilityEntity, AbilityDefinition abilityDefinition, byte combatantID, byte abilityID)
         {
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(abilityEntity, Is.Not.Null);
-                Assert.That(abilityEntity.GetComponent<CooldownComponent>().Cooldown, Is.EqualTo(abilityCreation.AbilityCard.Cooldown));
-                Assert.That(abilityEntity.AbilitySlots, Is.EqualTo(abilityCreation.AbilityCard.AbilitySlots));
-            }
-        }
-
-        private static void AssertAbilityStages(AbilityEntity abilityEntity, AbilityStageCard[] abilityStageCards)
-        {
-            for (int i = 0; i < abilityEntity.AbilityStages.Length; i++)
-            {
-                AbilityStage abilityStage = abilityEntity.AbilityStages[i];
-                AbilityStageCard card = abilityStageCards[i];
-                
-                using (Assert.EnterMultipleScope())
-                {
-                    Assert.That(abilityStage.CastTime, Is.EqualTo(card.CastTime));
-                    Assert.That(abilityStage.Priority, Is.EqualTo(card.Priority));
-                    Assert.That(abilityStage.AbilityEffectType, Is.EqualTo(card.AbilityEffectType));
-                    Assert.That(abilityStage.AffinityType, Is.EqualTo(card.AffinityType));
-                    Assert.That(abilityStage.MaxTargets, Is.EqualTo(card.MaxTargets));
-                    Assert.That(abilityStage.Value, Is.EqualTo(card.Value));
-                }
+                Assert.That(abilityEntity.AbilityID, Is.EqualTo(abilityID));
+                Assert.That(abilityEntity.InstanceID, Is.EqualTo(combatantID));
+                Assert.That(abilityEntity.GetComponent<CooldownComponent>().Cooldown, Is.EqualTo(abilityDefinition.AbilityCard.Cooldown));
             }
         }
 
         [Test]
-        public void Positive_CreateAbilityEntity_SingleStage_ConvertsAbilityCreation()
-        { 
-            SetupPrioritySorter(_basicAttackCreation.AbilityStageCards, _basicAttackCreation.AbilityStageCards);
+        public void Positive_Create_CreatesNewEntity_AddsExpectedComponents()
+        {
+            SetupRepositoryGet(_abilityDefinition, 0);
             
-            AbilityEntity abilityEntity = _abilityEntityFactory.CreateAbilityEntity(_basicAttackCreation);
+            AbilityEntity[] combatantAbilityEntities = _abilityEntityFactory.Create(_equippedAbilityDefinition, _equippedAbilityDefinition.CombatantID);
             
-            AssertAbilityEntity(abilityEntity, _basicAttackCreation);
-            AssertAbilityStages(abilityEntity, _basicAttackCreation.AbilityStageCards);
+            AssertCollectionCount(1,  combatantAbilityEntities);
+            AssertCombatantAbility(combatantAbilityEntities[0], _abilityDefinition, _abilityEquip.CombatantID, 0);
+            VerifyCalculate(_abilityDefinition);
         }
         
         [Test]
-        public void Positive_CreateAbilityEntity_MultipleStages_ConvertsAbilityCreation()
-        { 
-            AbilityCreation multipleStageCreation = _basicAttackCreation with 
+        public void Positive_Create_DuplicateEquip_ReturnsTwoEntities()
+        {
+            SetupRepositoryGet(_abilityDefinition, 0);
+
+            EquippedAbilityDefinition doubleEquipDefinition = _equippedAbilityDefinition with
             {
-                AbilityStageCards = 
+                EquippedAbilities = [_equippedAbility, _equippedAbility]
+            };
+            
+            AbilityEntity[] combatantAbilityEntities = _abilityEntityFactory.Create(doubleEquipDefinition, _equippedAbilityDefinition.CombatantID);
+            
+            AssertCollectionCount(2,  combatantAbilityEntities);
+            AssertCombatantAbility(combatantAbilityEntities[0], _abilityDefinition, doubleEquipDefinition.CombatantID, 0);
+            AssertCombatantAbility(combatantAbilityEntities[1], _abilityDefinition, doubleEquipDefinition.CombatantID, 0);
+            _abilityEffectValueCalculatorMock.Verify(library => library.Calculate(It.Is<AbilityEntity>(entity => entity.AbilitySlots == _abilityDefinition.AbilityCard.AbilitySlots)), Times.Exactly(2));
+        }
+        
+        [Test]
+        public void Positive_Create_NoAbilityCards_ReturnsEmptyCollection()
+        {
+            EquippedAbilityDefinition noCards = _equippedAbilityDefinition with
+            {
+                EquippedAbilities = []
+            };
+            
+            AbilityEntity[] combatantAbilityEntities = _abilityEntityFactory.Create(noCards, _equippedAbilityDefinition.CombatantID);
+            
+            AssertCollectionCount(0,  combatantAbilityEntities);
+        }
+
+        [Test]
+        public void Positive_Create_CreatesEntity_WithCastTime()
+        {
+            SetupRepositoryGet(_abilityDefinition, 0);
+            
+            AbilityEntity[] combatantAbilityEntities = _abilityEntityFactory.Create(_equippedAbilityDefinition, _equippedAbilityDefinition.CombatantID);
+            
+            AssertCollectionCount(1,  combatantAbilityEntities);
+            AssertCombatantAbility(combatantAbilityEntities[0], _abilityDefinition, _abilityEquip.CombatantID, 0);
+            VerifyCalculate(_abilityDefinition);
+        }
+
+        [Test]
+        public void Positive_Create_MultipleAbilityStages()
+        {
+            StrategyCard highHealthCard = new()
+            {
+                CombatantStatType = CombatantStatType.HEALTH,
+                TargetingType = TargetingType.ENEMY,
+                TargetingPreference = TargetingPreference.HIGHEST,
+                Priority = 0
+            };
+
+            SetupRepositoryGet(_abilityDefinition, 0);
+            
+            EquippedAbilityDefinition equippedAbilityDefinition = _equippedAbilityDefinition with
+            {
+                EquippedAbilities = 
                 [
-                    new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.HOLY, CastTime = 0, MaxTargets = 1, Value = 3, Priority = 0 },
-                    new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.STRIKE, CastTime = 10, MaxTargets = 1, Value = 7, Priority = 1 },
-                    new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.STAB, CastTime = 5, MaxTargets = 2, Value = 10, Priority = 2 }
+                    new EquippedAbility { AbilityID = 0, StrategyCards = [highHealthCard, highHealthCard with { Priority = 1 }] }
                 ]
             };
             
-            SetupPrioritySorter(multipleStageCreation.AbilityStageCards, multipleStageCreation.AbilityStageCards);
+            AbilityEntity[] combatantAbilityEntities = _abilityEntityFactory.Create(equippedAbilityDefinition, _equippedAbilityDefinition.CombatantID);
             
-            AbilityEntity abilityEntity = _abilityEntityFactory.CreateAbilityEntity(multipleStageCreation);
+            AssertCollectionCount(1,  combatantAbilityEntities);
+            AssertCombatantAbility(combatantAbilityEntities[0], _abilityDefinition, equippedAbilityDefinition.CombatantID, 0);
+            VerifyCalculate(_abilityDefinition);
+        }
+
+        [Test]
+        public void Negative_Create_AbilityNotFound_Throws()
+        {
+            _repositoryMock.Setup(library => library.Get(_equippedAbility.AbilityID))
+                .Throws(new NotFoundException<byte>(0)).Verifiable();
             
-            AssertAbilityEntity(abilityEntity, multipleStageCreation);
-            AssertAbilityStages(abilityEntity, multipleStageCreation.AbilityStageCards);
+            Assert.Throws<NotFoundException<byte>>(() => _abilityEntityFactory.Create(_equippedAbilityDefinition, _equippedAbilityDefinition.CombatantID));
         }
     }
 }

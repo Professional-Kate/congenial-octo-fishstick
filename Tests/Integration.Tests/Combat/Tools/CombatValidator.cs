@@ -135,6 +135,17 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             }
         }
 
+        internal static void AssertNextInitiatingInstanceID(params byte[] initiatingCombatantIDs)
+        {
+            foreach (byte initiatingCombatantID in initiatingCombatantIDs)
+            {
+                MoveNext();
+                CombatStage combatStage = _enumerator.Current;
+            
+                Assert.That(combatStage.InitiatingCombatant.InstanceID, Is.EqualTo(initiatingCombatantID));
+            }
+        }
+
         internal static void AssertNextAbilityID(params byte[] expectedAbilityIDs)
         {
             foreach (byte expectedAbilityID in expectedAbilityIDs)

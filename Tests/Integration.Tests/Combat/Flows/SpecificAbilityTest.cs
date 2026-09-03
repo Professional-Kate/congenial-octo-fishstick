@@ -1,4 +1,7 @@
-﻿using IdelPog.Combat.Contracts;
+﻿using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
@@ -66,7 +69,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(combatantStateChange.AbilityID, Is.EqualTo(abilityID));
-                Assert.That(combatantStateChange.CombatantStateChanges[0].TargetCombatants[0].CombatantID, Is.EqualTo(targetID));
+                Assert.That(combatantStateChange.CombatantStateChanges[0].TargetCombatants[0].InstanceID, Is.EqualTo(targetID));
                 Assert.That(damageDealt, Is.EqualTo(GetExpectedDamage(abilityCreation)));
             }
         }
@@ -117,15 +120,15 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.FIRE, CastTime = 0, MaxTargets = 1, Value = 100, Priority = 0 }]
             };
 
-            CombatantAbilityEquip combatantAbilityEquip = new()
+            AbilityEquip abilityEquip = new()
             {
                 CombatantID = 0,
-                AbilityCards = [ new CombatantAbilityCard { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0 }]}]
+                EquippedAbilities = [ new EquippedAbility { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0 }]}]
             };
             
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
             DispatchMessage(triggerAbilityCreation, StaticCombatCommands.StabAttackCreation);
-            DispatchMessage(combatantAbilityEquip, StaticCombatCommands.EquipStabAttack(1));
+            DispatchMessage(abilityEquip, StaticCombatCommands.EquipStabAttack(1));
             
             RunCombat([0], [1]);
             
@@ -148,16 +151,16 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0
             };
             
-            CombatantAbilityEquip equipDeathTrigger = new()
+            AbilityEquip equipDeathTrigger = new()
             {
                 CombatantID = 0,
-                AbilityCards = [ new CombatantAbilityCard { AbilityID = 0, StrategyCards = [lowHealthStrategyCard]}]
+                EquippedAbilities = [ new EquippedAbility { AbilityID = 0, StrategyCards = [lowHealthStrategyCard]}]
             };
 
-            CombatantAbilityEquip equipStabAttack = new()
+            AbilityEquip equipStabAttack = new()
             {
                 CombatantID = 1,
-                AbilityCards = [new CombatantAbilityCard { AbilityID = 1, StrategyCards = [lowHealthStrategyCard] }]
+                EquippedAbilities = [new EquippedAbility { AbilityID = 1, StrategyCards = [lowHealthStrategyCard] }]
             };
             
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.GoblinCreation with { StatCard = new StatCard { Health = 1 }});
@@ -200,14 +203,14 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [Test]
         public void TriggerAbility_CanTriggerFromTrigger()
         {
-            AbilityCreation combatantDamagedCreation = new()
+            AbilityCreation combatantDamagedTriggerCreation = new()
             {
                 AbilityCard = new AbilityCard { AbilitySlots = 1, Cooldown = 5 },
                 TriggerCard = new TriggerCard { TriggerEventType = TriggerEventType.COMBATANT_DAMAGED, TargetingType = TargetingType.ENEMY, MinTriggerValue = 0, MaxTriggerValue = 10 },
                 AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 200, Priority = 0 }]
             };
             
-            AbilityCreation combatantDiedCreation = new()
+            AbilityCreation combatantDiedTriggerCreation = new()
             {
                 AbilityCard = new AbilityCard { AbilitySlots = 2, Cooldown = 5 },
                 TriggerCard = new TriggerCard { TriggerEventType = TriggerEventType.COMBATANT_DEATH, TargetingType = TargetingType.ENEMY, MinTriggerValue = 0, MaxTriggerValue = 0 },
@@ -219,14 +222,14 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0
             };
 
-            CombatantAbilityEquip equipTriggers = new()
+            AbilityEquip equipTriggers = new()
             {
                 CombatantID = 0,
-                AbilityCards = [ new CombatantAbilityCard { AbilityID = 0, StrategyCards = [lowHealthCard]}, new CombatantAbilityCard { AbilityID = 1, StrategyCards = [lowHealthCard]}]
+                EquippedAbilities = [ new EquippedAbility { AbilityID = 0, StrategyCards = [lowHealthCard]}, new EquippedAbility { AbilityID = 1, StrategyCards = [lowHealthCard]}]
             };
             
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.GoblinCreation with { StatCard = new StatCard { Health = 100 }}, StaticCombatCommands.BearCreation with { StatCard = new StatCard { Health = 100 }});
-            DispatchMessage(combatantDamagedCreation, combatantDiedCreation, StaticCombatCommands.StabAttackCreation);
+            DispatchMessage(combatantDamagedTriggerCreation, combatantDiedTriggerCreation, StaticCombatCommands.StabAttackCreation);
             DispatchMessage(equipTriggers, StaticCombatCommands.EquipAbility(1, 2));
             
             RunCombat([0, 1], [2, 3]);
@@ -243,10 +246,10 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 50, Priority = 0 }]
             };
             
-            CombatantAbilityEquip triggerEquip = new()
+            AbilityEquip triggerEquip = new()
             {
                 CombatantID = 0,
-                AbilityCards = [ new CombatantAbilityCard { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0 }]}]
+                EquippedAbilities = [ new EquippedAbility { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0 }]}]
             };
             
             AbilityCreation multiStageAbility = new()
@@ -260,12 +263,12 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 ]
             };
             
-            CombatantAbilityEquip multiStageAbilityEquip = new()
+            AbilityEquip multiStageAbilityEquip = new()
             {
                 CombatantID = 1,
-                AbilityCards =
+                EquippedAbilities =
                 [
-                    new CombatantAbilityCard { AbilityID = 1, StrategyCards = 
+                    new EquippedAbility { AbilityID = 1, StrategyCards = 
                         [
                             new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 },
                             new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 1 }
@@ -311,18 +314,18 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 new() { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.SPEED, TargetingType = TargetingType.FRIENDLY, Priority = 3 }
             ];
             
-            CombatantAbilityEquip combatantAbilityEquip = new()
+            AbilityEquip abilityEquip = new()
             {
                 CombatantID = 0,
-                AbilityCards =
+                EquippedAbilities =
                 [
-                    new CombatantAbilityCard { AbilityID = 0, StrategyCards = strategyCards }
+                    new EquippedAbility { AbilityID = 0, StrategyCards = strategyCards }
                 ]
             };
             
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation);
             DispatchMessage(multiStageAbility);
-            DispatchMessage(combatantAbilityEquip, combatantAbilityEquip with { CombatantID = 1 }, combatantAbilityEquip with { CombatantID = 2 }, combatantAbilityEquip with { CombatantID = 3 }, combatantAbilityEquip with { CombatantID = 4 }, combatantAbilityEquip with { CombatantID = 5 }, combatantAbilityEquip with { CombatantID = 6 }, combatantAbilityEquip with { CombatantID = 7 });
+            DispatchMessage(abilityEquip, abilityEquip with { CombatantID = 1 }, abilityEquip with { CombatantID = 2 }, abilityEquip with { CombatantID = 3 }, abilityEquip with { CombatantID = 4 }, abilityEquip with { CombatantID = 5 }, abilityEquip with { CombatantID = 6 }, abilityEquip with { CombatantID = 7 });
             
             RunCombat(friendlyCombatantIDs: [0, 1, 4, 5], enemyCombatantIDs: [2, 3, 6, 7]);
             

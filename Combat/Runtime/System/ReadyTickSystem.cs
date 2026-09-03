@@ -15,22 +15,22 @@ namespace IdelPog.Combat.Runtime.System
             _castingCalculator = castingCalculator;
         }
 
-        public void SetNextReadyTick(double currentTick, CombatantAbilityEntity combatantAbilityEntity, uint combatantSpeed)
+        public void SetNextReadyTick(double currentTick, AbilityEntity abilityEntity, uint combatantSpeed)
         {
             double readyTick = currentTick;
             
-            foreach (CombatantAbilityStage combatantAbilityStage in combatantAbilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages)
+            foreach (AbilityStage combatantAbilityStage in abilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages)
             {
-                if (combatantAbilityStage.AbilityStage.CastTime != 0)
+                if (combatantAbilityStage.AbilityStageCards.CastTime != 0)
                 {
-                    readyTick += _castingCalculator.GetCastDuration(combatantSpeed, combatantAbilityStage.AbilityStage.CastTime);
+                    readyTick += _castingCalculator.GetCastDuration(combatantSpeed, combatantAbilityStage.AbilityStageCards.CastTime);
                 }
             }
             
-            CooldownComponent cooldownComponent = combatantAbilityEntity.GetComponent<CooldownComponent>();
+            CooldownComponent cooldownComponent = abilityEntity.GetComponent<CooldownComponent>();
             readyTick += cooldownComponent.Cooldown;
             
-            combatantAbilityEntity.ReplaceComponent(new ReadyTickComponent { ReadyTick = readyTick });
+            abilityEntity.ReplaceComponent(new ReadyTickComponent { ReadyTick = readyTick });
         }
     }
 }

@@ -12,47 +12,47 @@ namespace IdelPog.Combat.Runtime.System
     public sealed class InitialAbilityScheduler : IInitialAbilityScheduler
     {
         private readonly ICombatantRepository _combatantRepository;
-        private readonly ICombatantAbilityEntityRepository _combatantAbilityEntityRepository;
-        private readonly ICombatantAbilityInitializer _combatantAbilityInitializer;
+        private readonly IAbilityEntityRepository _abilityEntityRepository;
+        private readonly IAbilityInitializer _abilityInitializer;
         private readonly IAbilityEventScheduler _abilityEventScheduler;
         private readonly ITriggerSubscriber _triggerSubscriber;
 
-        public InitialAbilityScheduler(ICombatantRepository combatantRepository, ICombatantAbilityEntityRepository combatantAbilityEntityRepository, ICombatantAbilityInitializer combatantAbilityInitializer, IAbilityEventScheduler abilityEventScheduler, ITriggerSubscriber triggerSubscriber)
+        public InitialAbilityScheduler(ICombatantRepository combatantRepository, IAbilityEntityRepository abilityEntityRepository, IAbilityInitializer abilityInitializer, IAbilityEventScheduler abilityEventScheduler, ITriggerSubscriber triggerSubscriber)
         {
             _combatantRepository = combatantRepository;
-            _combatantAbilityEntityRepository = combatantAbilityEntityRepository;
-            _combatantAbilityInitializer = combatantAbilityInitializer;
+            _abilityEntityRepository = abilityEntityRepository;
+            _abilityInitializer = abilityInitializer;
             _abilityEventScheduler = abilityEventScheduler;
             _triggerSubscriber = triggerSubscriber;
         }
 
         public void ScheduleRegisteredAbilities(double initialTick)
         {
-            foreach (CombatantEntity combatantEntity in _combatantRepository.GetAllParticipating())
+            foreach (CombatantEntity combatantEntity in _combatantRepository.Enumerate())
             {
                 // if no Abilities have been created for CombatantID, then we have nothing to enqueue
-                if (_combatantAbilityEntityRepository.Contains(combatantEntity.CombatantID) == false)
+                if (_abilityEntityRepository.Contains(combatantEntity.InstanceID) == false)
                 {
                     continue;
                 } 
                 
-                double readyTime = initialTick - GetCombatantInitiative(combatantEntity);
+                double readyTime = initialTick - GetCombatantInitiative(combatantEntity) * 0.05;
                 
-                IReadOnlyList<CombatantAbilityEntity> combatantAbilityEntities = _combatantAbilityEntityRepository.GetAll(combatantEntity.CombatantID);
-                _combatantAbilityInitializer.InitializeAbilities(combatantEntity, combatantAbilityEntities);
+                IReadOnlyList<AbilityEntity> abilityEntities = _abilityEntityRepository.EnumerateAbilities(combatantEntity.InstanceID).ToArray();
+                _abilityInitializer.InitializeAbilities(combatantEntity, abilityEntities);
                 
-                foreach (CombatantAbilityEntity combatantAbilityEntity in combatantAbilityEntities)
-                { 
-                    combatantAbilityEntity.AddComponent(new ReadyTickComponent { ReadyTick = readyTime });
+                foreach (AbilityEntity abilityEntity in abilityEntities)
+                {
+                    abilityEntity.AddComponent(new ReadyTickComponent { ReadyTick = readyTime });
                     
-                    TriggerComponent triggerComponent = combatantAbilityEntity.GetComponent<TriggerComponent>();
+                    TriggerComponent triggerComponent = abilityEntity.GetComponent<TriggerComponent>();
                     if (triggerComponent.TriggerEventType == TriggerEventType.ABILITY_READY)
                     {
-                        _abilityEventScheduler.ScheduleEvent(readyTime, combatantAbilityEntity.AbilityID, abilityStageIndex: 0, combatantAbilityEntity.CombatantID);
+                        _abilityEventScheduler.ScheduleEvent(readyTime, abilityEntity.AbilityID, abilityStageIndex: 0, abilityEntity.InstanceID);
                     }
                     else
                     { 
-                        _triggerSubscriber.SubscribeAbility(combatantAbilityEntity);
+                        _triggerSubscriber.SubscribeAbility(abilityEntity);
                     }
                 }
             }

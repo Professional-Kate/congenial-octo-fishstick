@@ -8,24 +8,19 @@ namespace IdelPog.Combat.Runtime.Event.Trigger
 {
     public sealed class TriggerSubscriber : ITriggerSubscriber, ITriggerReader
     {
-        private readonly IDictionary<TriggerEventType, IList<CombatantAbilityEntity>> _subscribedAbilities;
+        private readonly Dictionary<TriggerEventType, List<AbilityEntity>> _subscribedAbilities = new();
 
-        public TriggerSubscriber(IDictionary<TriggerEventType, IList<CombatantAbilityEntity>> subscribedAbilities)
-        {
-            _subscribedAbilities = subscribedAbilities;
-        }
-
-        public void SubscribeAbility(CombatantAbilityEntity combatantAbilityEntity)
+        public void SubscribeAbility(AbilityEntity abilityEntity)
         { 
-            TriggerComponent triggerComponent = combatantAbilityEntity.GetComponent<TriggerComponent>();
+            TriggerComponent triggerComponent = abilityEntity.GetComponent<TriggerComponent>();
             
             _subscribedAbilities.TryAdd(triggerComponent.TriggerEventType, []);
-            _subscribedAbilities[triggerComponent.TriggerEventType].Add(combatantAbilityEntity);
+            _subscribedAbilities[triggerComponent.TriggerEventType].Add(abilityEntity);
         }
 
-        public ImmutableArray<CombatantAbilityEntity> GetAbilities(TriggerEventType triggerEventType)
+        public ImmutableArray<AbilityEntity> GetAbilities(TriggerEventType triggerEventType)
         {
-            if (_subscribedAbilities.TryGetValue(triggerEventType, out IList<CombatantAbilityEntity>? abilities) == false)
+            if (_subscribedAbilities.TryGetValue(triggerEventType, out List<AbilityEntity>? abilities) == false)
             {
                 return [];
             }

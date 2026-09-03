@@ -22,43 +22,43 @@ namespace IdelPog.Combat.Runtime.Event.Resolver
             _combatantLogger = combatantLogger;
         }
 
-        public void ResolveEffect(double tick, CombatantAbilityEntity combatantAbilityEntity, CombatantAbilityStage combatantAbilityStage)
+        public void ResolveEffect(double tick, AbilityEntity abilityEntity, AbilityStage abilityStage)
         {
-            CombatantEntity combatantEntity = _combatantRepository.Get(combatantAbilityEntity.CombatantID);
+            CombatantEntity combatantEntity = _combatantRepository.Get(abilityEntity.InstanceID);
             if (combatantEntity.GetComponent<LifeStatusComponent>().IsAlive == false)
             {
                 // the Combatant could die before this ability stage can resolve
                 return;
             }
 
-            if (CanResolve(combatantEntity, combatantAbilityEntity) == false)
+            if (CanResolve(combatantEntity, abilityEntity) == false)
             {
                 return;
             }
             
-            BeforeEvent(tick, combatantEntity, combatantAbilityStage);
+            BeforeEvent(tick, combatantEntity, abilityStage);
 
-            IReadOnlyList<CombatantEntity> changedTargets = HandleEvent(tick, combatantEntity, combatantAbilityEntity, combatantAbilityStage);
-            _combatantLogger.LogCombatantChange(tick, combatantEntity, changedTargets, combatantAbilityStage.AbilityStage, combatantAbilityEntity.AbilityID);
+            IReadOnlyList<CombatantEntity> changedTargets = HandleEvent(tick, combatantEntity, abilityEntity, abilityStage);
+            _combatantLogger.LogCombatantChange(tick, combatantEntity, changedTargets, abilityStage.AbilityStageCards, abilityEntity.AbilityID);
             
-            AfterEvent(tick, changedTargets, combatantAbilityStage);
+            AfterEvent(tick, changedTargets, abilityStage);
         }
 
-        protected private IReadOnlyList<CombatantEntity> GetTargetCombatants(CombatantAbilityStage combatantAbilityStage, TargetingType castersTargetingType)
+        protected private IReadOnlyList<CombatantEntity> GetTargetCombatants(AbilityStage abilityStage, TargetingType targetingType)
         {
-            TargetingPreferenceComponent targetingPreferenceComponent = combatantAbilityStage.TargetingPreferenceComponent;
+            TargetingPreferenceComponent targetingPreferenceComponent = abilityStage.TargetingPreferenceComponent;
             
-            return _targetFinder.SelectPreferredTargets(targetingPreferenceComponent.TargetingPreference, targetingPreferenceComponent.CombatantStatType, targetingPreferenceComponent.TargetingType, castersTargetingType, combatantAbilityStage.AbilityStage.MaxTargets).ToArray();
+            return _targetFinder.SelectPreferredTargets(targetingPreferenceComponent.TargetingPreference, targetingPreferenceComponent.CombatantStatType, targetingPreferenceComponent.TargetingType, targetingType, abilityStage.AbilityStageCards.MaxTargets).ToArray();
         }
         
         protected private CombatantEntity GetCombatant(byte combatantID) => _combatantRepository.Get(combatantID);
 
-        protected private virtual bool CanResolve(CombatantEntity combatantEntity, CombatantAbilityEntity combatantAbilityEntity) => true;
+        protected private virtual bool CanResolve(CombatantEntity combatantEntity, AbilityEntity abilityEntity) => true;
 
-        protected private virtual void BeforeEvent(double tick, CombatantEntity combatantEntity, CombatantAbilityStage combatantAbilityStage) { }
+        protected private virtual void BeforeEvent(double tick, CombatantEntity combatantEntity, AbilityStage abilityStage) { }
         
-        protected private abstract IReadOnlyList<CombatantEntity> HandleEvent(double tick, CombatantEntity combatantEntity, CombatantAbilityEntity combatantAbilityEntity, CombatantAbilityStage combatantAbilityStage);
+        protected private abstract IReadOnlyList<CombatantEntity> HandleEvent(double tick, CombatantEntity combatantEntity, AbilityEntity abilityEntity, AbilityStage abilityStage);
 
-        protected private virtual void AfterEvent(double tick, IEnumerable<CombatantEntity> combatantEntities, CombatantAbilityStage combatantAbilityStage) { }
+        protected private virtual void AfterEvent(double tick, IEnumerable<CombatantEntity> combatantEntities, AbilityStage abilityStage) { }
     }
 }

@@ -1,10 +1,9 @@
-﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Runtime.Entities.Combatant;
+﻿using IdelPog.Combat.Combatant.Contracts;
 
 namespace IdelPog.Combat.Service.Interface
 {
     public interface IAbilitySlotCalculator
     {
-        public byte GetAbilitySlots(CombatantAbilityCard[] abilityCards, IReadOnlyList<CombatantAbilityEntity> existingEntities);
+        public byte GetAbilitySlots(EquippedAbility[] abilityStages);
     }
 }

@@ -1,29 +1,81 @@
-﻿using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Component.Ability;
-using IdelPog.Combat.Runtime.Entities;
+using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.Event;
 
 namespace IdelPog.Combat.Tests.TestFactory
 {
     internal static class TestAbilityEntityFactory
     {
-        internal static AbilityEntity Create(AbilityStage[] abilityStages)
+        internal static AbilityEntity Create(byte instanceID, byte abilityID)
         {
-            return new AbilityEntity(new CooldownComponent { Cooldown = 1 }, new TriggerComponent { TargetingType = TargetingType.SELF, TriggerEventType = TriggerEventType.ABILITY_READY, MinTriggerValue = 0, MaxTriggerValue = 0 })
+            AbilityStage abilityStage = new()
             {
-                AbilitySlots = 1,
-                AbilityStages = [..abilityStages]
+                AbilityStageCards = new AbilityStageCard
+                {
+                    AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, 
+                    AffinityType = AffinityType.SLASH, 
+                    MaxTargets = 1, 
+                    Value = 3,
+                    Priority = 0,
+                    CastTime = 0
+                },
+                TargetingPreferenceComponent = new TargetingPreferenceComponent
+                {
+                    CombatantStatType = CombatantStatType.HEALTH,
+                    TargetingPreference = TargetingPreference.HIGHEST,
+                    TargetingType = TargetingType.ENEMY
+                }
             };
+
+            return Create(instanceID, abilityID, abilityStage);
         }
         
-        internal static AbilityEntity Create(byte abilitySlots = 1)
+        internal static AbilityEntity CreateWithCastTime(byte instanceID, byte abilityID, uint castTime)
         {
-            return new AbilityEntity(new CooldownComponent { Cooldown = 1 }, new TriggerComponent { TargetingType = TargetingType.SELF, TriggerEventType = TriggerEventType.ABILITY_READY, MinTriggerValue = 0, MaxTriggerValue = 0 })
+            AbilityStage abilityStage = new()
             {
-                AbilitySlots = abilitySlots,
-                AbilityStages = [ new AbilityStage { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, CastTime = 0, MaxTargets = 1, Value = 3, Priority = 0 }]
+                AbilityStageCards = new AbilityStageCard
+                {
+                    AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, 
+                    AffinityType = AffinityType.SLASH, 
+                    MaxTargets = 1, 
+                    Value = 3,
+                    Priority = 0,
+                    CastTime = castTime
+                },
+                TargetingPreferenceComponent = new TargetingPreferenceComponent
+                {
+                    CombatantStatType = CombatantStatType.HEALTH,
+                    TargetingPreference = TargetingPreference.HIGHEST,
+                    TargetingType = TargetingType.ENEMY
+                }
+            };
+            
+            AbilityEntity abilityEntity = Create(instanceID, abilityID, abilityStage);
+            
+            return abilityEntity;
+        }
+        
+        internal static AbilityEntity Create(byte instanceID, byte abilityID, params AbilityStage[] combatantAbilityStages)
+        {
+            TriggerComponent triggerComponent = new()
+            {
+                TargetingType = TargetingType.SELF,
+                TriggerEventType = TriggerEventType.ABILITY_READY,
+                MinTriggerValue = 0,
+                MaxTriggerValue = 0
+            };
+            
+            return new AbilityEntity(new CooldownComponent { Cooldown = 3 }, triggerComponent, new AbilityStagesComponent { AbilityStages = [..combatantAbilityStages] })
+            {
+                InstanceID = instanceID, 
+                AbilityID = abilityID,
+                AbilitySlots = 1
             };
         }
+
     }
 }

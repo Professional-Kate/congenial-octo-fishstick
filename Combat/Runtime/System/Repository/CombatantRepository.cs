@@ -2,78 +2,55 @@
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
-using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Runtime.System.Repository
 {
     public sealed class CombatantRepository : ICombatantRepository, ICombatantFilters
     {
-        private readonly Dictionary<byte, CombatantEntity> _combatantRepository = [];
-        private readonly IFoundAssertion _foundAssertion;
+        private CombatantEntity[] _friendlyEntities = [];
+        private CombatantEntity[] _enemyEntities = [];
 
-        public byte NextCombatantID { get; private set; }
+        public void SeedFriendlyCombatants(CombatantEntity[] friendlyCombatants) => _friendlyEntities = friendlyCombatants;
 
-        public CombatantRepository(IFoundAssertion foundAssertion)
-        {
-            _foundAssertion = foundAssertion;
+        public void SeedEnemyCombatants(CombatantEntity[] enemyCombatants) => _enemyEntities = enemyCombatants;
+        
+        public CombatantEntity Get(byte id)
+        { 
+            foreach (CombatantEntity combatantEntity in Enumerate())
+            {
+                if (combatantEntity.InstanceID == id)
+                {
+                    return combatantEntity;
+                }
+            }
+            
+            throw new KeyNotFoundException();
         }
 
-        public void Add(CombatantEntity combatantEntity)
-        {
-            _combatantRepository.Add(NextCombatantID, combatantEntity);
-            NextCombatantID++;
-        }
+        public IEnumerable<CombatantEntity> Enumerate()
+        { 
+            foreach (CombatantEntity combatantEntity in _friendlyEntities)
+            {
+                yield return combatantEntity;
+            }
 
-        public bool Contains(byte id)
-        {
-            return _combatantRepository.ContainsKey(id);
+            foreach (CombatantEntity combatantEntity in _enemyEntities)
+            {
+                yield return combatantEntity;
+            }
         }
 
         public void Clear()
         {
-            _combatantRepository.Clear();
-            
-            NextCombatantID = 0;
-        }
-
-        public CombatantEntity Get(byte id)
-        { 
-            _foundAssertion.AssertFound(id, _combatantRepository.ContainsKey(id));
-            return _combatantRepository[id];
-        }
-
-        public IEnumerable<CombatantEntity> GetAllParticipating()
-        {
-            List<CombatantEntity> combatantEntities = [];
-            foreach (CombatantEntity combatantEntity in _combatantRepository.Values)
-            {
-                if (IsCombatantParticipating(combatantEntity) == false)
-                {
-                    continue;
-                }
-                
-                combatantEntities.Add(combatantEntity);
-            }
-
-            return combatantEntities;
+            _friendlyEntities = [];
+            _enemyEntities = [];
         }
 
         public bool HasValidCombatants(TargetingType targetingType)
         {
-            foreach (CombatantEntity combatantEntity in _combatantRepository.Values)
+            foreach (CombatantEntity combatantEntity in EnumerateCombatants(targetingType))
             {
-                if (IsCombatantParticipating(combatantEntity) == false)
-                {
-                    continue;
-                }
-                
                 if (IsCombatantAlive(combatantEntity) == false)
-                {
-                    continue;
-                }
-                
-                TargetingType combatantTargetingType = combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType;
-                if (combatantTargetingType != targetingType)
                 {
                     continue;
                 }
@@ -86,10 +63,22 @@ namespace IdelPog.Combat.Runtime.System.Repository
 
         public IReadOnlyList<CombatantEntity> GetCombatants(TargetingType targetingType, TargetingType casterTargetingType)
         {
-            List<CombatantEntity> combatantEntities = [];
-            foreach (CombatantEntity combatantEntity in _combatantRepository.Values)
+
+            TargetingType wantedTargetingType;
+            if (casterTargetingType == TargetingType.FRIENDLY)
             {
-                if (IsCombatantParticipating(combatantEntity) == false)
+                wantedTargetingType = targetingType == TargetingType.FRIENDLY ? TargetingType.FRIENDLY : TargetingType.ENEMY;
+            }
+            else
+            {
+                wantedTargetingType = targetingType == TargetingType.ENEMY ? TargetingType.FRIENDLY : TargetingType.ENEMY;
+            }
+            
+            
+            List<CombatantEntity> combatantEntities = [];
+            foreach (CombatantEntity combatantEntity in EnumerateCombatants(wantedTargetingType))
+            {
+                if (targetingType == TargetingType.SELF)
                 {
                     continue;
                 }
@@ -99,25 +88,37 @@ namespace IdelPog.Combat.Runtime.System.Repository
                     continue;
                 }
                 
-                TargetingType combatantTargetingType = combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType;
-                bool shouldTarget = targetingType switch
-                {
-                    TargetingType.FRIENDLY => combatantTargetingType == casterTargetingType,
-                    TargetingType.ENEMY => combatantTargetingType != casterTargetingType,
-                    _ => false
-                };
-                
-                if (shouldTarget)
-                {
-                    combatantEntities.Add(combatantEntity);
-                }
+                combatantEntities.Add(combatantEntity);
             }
             
             return combatantEntities.ToArray();
         }
         
-        private static bool IsCombatantAlive(CombatantEntity combatantEntity) => combatantEntity.GetComponent<LifeStatusComponent>().IsAlive;
+        private IEnumerable<CombatantEntity> EnumerateCombatants(TargetingType targetingType)
+        {
+            switch (targetingType)
+            {
+                case TargetingType.FRIENDLY:
+                {
+                    foreach (CombatantEntity combatantEntity in _friendlyEntities)
+                    {
+                        yield return combatantEntity;
+                    }
+
+                    break;
+                }
+                case TargetingType.ENEMY:
+                {
+                    foreach (CombatantEntity combatantEntity in _enemyEntities)
+                    {
+                        yield return combatantEntity;
+                    }
+
+                    break;
+                }
+            }
+        }
         
-        private static bool IsCombatantParticipating(CombatantEntity combatantEntity) => combatantEntity.ContainsComponent<CombatParticipantComponent>();
+        private static bool IsCombatantAlive(CombatantEntity combatantEntity) => combatantEntity.GetComponent<LifeStatusComponent>().IsAlive;
     }
 }

@@ -22,19 +22,19 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
         protected CombatantEntity FriendlyCombatantEntity;
         protected CombatantEntity EnemyCombatantEntity;
         
-        protected CombatantAbilityEntity NotReadyEntity;
-        protected CombatantAbilityEntity SelfTargetingEntity;
+        protected AbilityEntity NotReadyEntity;
+        protected AbilityEntity SelfTargetingEntity;
             
         [SetUp]
         public void BaseSetup()
         {
-            FriendlyCombatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(12);
-            EnemyCombatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(21);
+            FriendlyCombatantEntity = TestCombatantEntityFactory.Create(12, TargetingType.FRIENDLY);
+            EnemyCombatantEntity = TestCombatantEntityFactory.Create(21, TargetingType.FRIENDLY);
             
-            NotReadyEntity = TestCombatantAbilityEntityFactory.Create(54, 26);
+            NotReadyEntity = TestAbilityEntityFactory.Create(54, 26);
             NotReadyEntity.AddComponent(new ReadyTickComponent { ReadyTick = TICK + TICK });
             
-            SelfTargetingEntity = TestCombatantAbilityEntityFactory.Create(29, 10);
+            SelfTargetingEntity = TestAbilityEntityFactory.Create(29, 10);
             SelfTargetingEntity.ReplaceComponent(new TriggerComponent { TriggerEventType = TriggerEventType.COMBATANT_DAMAGED, TargetingType = TargetingType.SELF, MinTriggerValue = 0, MaxTriggerValue = 10 });
             SelfTargetingEntity.AddComponent(new ReadyTickComponent { ReadyTick = TICK - 1 });
             
@@ -54,7 +54,7 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
             CombatantRepositoryMock.VerifyNoOtherCalls();
         }
 
-        protected void SetupTriggerReader(TriggerEventType triggerEventType, ImmutableArray<CombatantAbilityEntity> abilityEntities)
+        protected void SetupTriggerReader(TriggerEventType triggerEventType, ImmutableArray<AbilityEntity> abilityEntities)
         {
             TriggerReaderMock.Setup(library => library.GetAbilities(triggerEventType)).Returns(abilityEntities).Verifiable();
         }
@@ -63,7 +63,7 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
         {
             foreach (CombatantEntity combatantEntity in combatantEntities)
             {
-                CombatantRepositoryMock.Setup(library => library.Get(combatantEntity.CombatantID)).Returns(combatantEntity).Verifiable();
+                CombatantRepositoryMock.Setup(library => library.Get(combatantEntity.InstanceID)).Returns(combatantEntity).Verifiable();
             }
         }
 

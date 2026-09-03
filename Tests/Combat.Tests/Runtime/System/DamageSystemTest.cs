@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -15,15 +16,15 @@ namespace IdelPog.Combat.Tests.Runtime.System
         
         private CombatantEntity _targetEntity;
         private HealthComponent _healthComponent;
-        private CombatantAbilityStage _combatantAbilityStage;
+        private AbilityStage _abilityStage;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _damageSystem = new DamageSystem();
-            _combatantAbilityStage = new CombatantAbilityStage
+            _abilityStage = new AbilityStage
             {
-                AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, MaxTargets = 1, Value = 10, Priority = 0, CastTime = 0 },
+                AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, MaxTargets = 1, Value = 10, Priority = 0, CastTime = 0 },
                 TargetingPreferenceComponent = new TargetingPreferenceComponent { CombatantStatType = CombatantStatType.INITIATIVE, TargetingPreference = TargetingPreference.HIGHEST , TargetingType = TargetingType.ENEMY }
             };
         }
@@ -31,7 +32,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         {
-            _targetEntity = TestCombatantEntityFactory.CreateCombatantEntity(0);
+            _targetEntity = TestCombatantEntityFactory.Create(0, TargetingType.FRIENDLY);
             _healthComponent = _targetEntity.GetComponent<HealthComponent>();
         }
 
@@ -48,18 +49,18 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_DealDamage_DamagesEntity()
         {
-            uint newHealth = _damageSystem.DealDamage(_targetEntity, _combatantAbilityStage);
+            uint newHealth = _damageSystem.DealDamage(_targetEntity, _abilityStage);
             
-            AssertNewHealth(newHealth,_healthComponent.Health - _combatantAbilityStage.AbilityStage.Value);
+            AssertNewHealth(newHealth,_healthComponent.Health - _abilityStage.AbilityStageCards.Value);
             AssertEntityHealth(_targetEntity, newHealth);
         }
         
         [Test]
         public void Positive_DealDamage_DamagesEntity_MoreAttackThanHealth_ReturnsZero()
         {
-            AbilityStage strongStage = _combatantAbilityStage.AbilityStage with { Value = uint.MaxValue };
+            AbilityStageCard strongStage = _abilityStage.AbilityStageCards with { Value = uint.MaxValue };
             
-            uint newHealth = _damageSystem.DealDamage(_targetEntity, _combatantAbilityStage with { AbilityStage = strongStage });
+            uint newHealth = _damageSystem.DealDamage(_targetEntity, _abilityStage with { AbilityStageCards = strongStage });
             
             AssertNewHealth(newHealth, 0);
             AssertEntityHealth(_targetEntity, newHealth);
@@ -68,17 +69,17 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_GetCalculatedDamage_ReturnsCalculatedDamage()
         {
-            uint calculatedDamage = _damageSystem.GetCalculatedDamage(_combatantAbilityStage);
+            uint calculatedDamage = _damageSystem.GetCalculatedDamage(_abilityStage);
             
-            Assert.That(calculatedDamage, Is.EqualTo(_combatantAbilityStage.AbilityStage.Value));
+            Assert.That(calculatedDamage, Is.EqualTo(_abilityStage.AbilityStageCards.Value));
         }
 
         [Test]
         public void Positive_ZeroDamageFromStage_ReturnsZero()
         {
-            CombatantAbilityStage weakAbilityStage = new()
+            AbilityStage weakAbilityStage = new()
             {
-                AbilityStage = new AbilityStage
+                AbilityStageCards = new AbilityStageCard
                 {
                     AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, 
                     AffinityType = AffinityType.SLASH, 

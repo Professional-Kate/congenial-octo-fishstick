@@ -1,5 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Command;
-using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime.Event;
 using IdelPog.Combat.Runtime.System.Interface;
@@ -19,7 +18,6 @@ namespace IdelPog.Combat.Tests.Service
         private Mock<IAbilityEventHandler> _abilityTriggerHandlerMock;
         
         private ScheduledCombatEvent _abilityExecuteEvent;
-        private BasicEncounterDeck _basicEncounterDeck;
         private const uint MAX_ITERATIONS = 3;
 
         [OneTimeSetUp]
@@ -33,7 +31,7 @@ namespace IdelPog.Combat.Tests.Service
             {
                 AbilityID = 1,
                 Tick = 0, 
-                CombatantID = 1,
+                InstanceID = 1,
                 CombatEventType = CombatEventType.ABILITY_EXECUTE,
                 AbilityStageIndex = 0,
                 TargetingType = TargetingType.FRIENDLY
@@ -43,8 +41,6 @@ namespace IdelPog.Combat.Tests.Service
             {
                 MaxIterations = MAX_ITERATIONS
             };
-
-            _basicEncounterDeck = new BasicEncounterDeck { FriendlyCombatantIDs = [0], EnemyCombatantIDs = [1] };
         }
 
         [SetUp]
@@ -91,7 +87,7 @@ namespace IdelPog.Combat.Tests.Service
             SetupIsCombatOverSequence();
             SetupQueueDequeue(_abilityExecuteEvent);
             
-            Assert.DoesNotThrow(() => _combatQueueRunner.RunDeck(_basicEncounterDeck));
+            Assert.DoesNotThrow(() => _combatQueueRunner.RunCombat());
 
             VerifyIsCombatOverCalled(Times.Exactly(2));
             VerifyTriggerHandler(_abilityExecuteEvent, Times.Once());
@@ -103,12 +99,8 @@ namespace IdelPog.Combat.Tests.Service
         {
             SetupQueueDequeue(_abilityExecuteEvent);
             
-            MaxIterationsException exception = Assert.Throws<MaxIterationsException>(() => _combatQueueRunner.RunDeck(_basicEncounterDeck));
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(exception.MaxIterations, Is.EqualTo(MAX_ITERATIONS));
-                Assert.That(exception.BasicEncounterDeck, Is.EqualTo(_basicEncounterDeck));
-            }
+            MaxIterationsException exception = Assert.Throws<MaxIterationsException>(() => _combatQueueRunner.RunCombat());
+            Assert.That(exception.MaxIterations, Is.EqualTo(MAX_ITERATIONS));
             
             VerifyIsCombatOverCalled(Times.Exactly(4));
             VerifyTriggerHandler(_abilityExecuteEvent, Times.Exactly((int) MAX_ITERATIONS));

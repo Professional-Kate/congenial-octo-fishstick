@@ -35,27 +35,25 @@ namespace IdelPog.Combat.Runtime.Event.Trigger.Handler
             }
         }
         
-        protected abstract IEnumerable<AbilityTrigger> Filter(ImmutableArray<CombatantAbilityEntity> combatantAbilityEntities, T triggerData, double tick);
+        protected abstract IEnumerable<AbilityTrigger> Filter(ImmutableArray<AbilityEntity> combatantAbilityEntities, T triggerData, double tick);
         
-        protected bool IsEligible(CombatantAbilityEntity combatantAbilityEntity, TargetingType combatantTargetingType, byte combatantID, TriggerComponent triggerComponent, double tick)
+        protected bool IsEligible(AbilityEntity abilityEntity, TargetingType combatantTargetingType, byte combatantID, TriggerComponent triggerComponent, double tick)
         {
-            ReadyTickComponent readyTickComponent = combatantAbilityEntity.GetComponent<ReadyTickComponent>();
+            ReadyTickComponent readyTickComponent = abilityEntity.GetComponent<ReadyTickComponent>();
             if (readyTickComponent.ReadyTick > tick)
             {
                 return false;
             }
 
-            CombatantEntity combatantEntity = GetCombatantEntity(combatantAbilityEntity.CombatantID);
+            CombatantEntity combatantEntity = GetCombatantEntity(abilityEntity.InstanceID);
             LifeStatusComponent lifeStatusComponent = combatantEntity.GetComponent<LifeStatusComponent>();
             if (lifeStatusComponent.IsAlive == false)
             {
                 return false;
             }
 
-            TargetingTypeComponent targetingTypeComponent = combatantEntity.GetComponent<TargetingTypeComponent>();
-            bool isFriendly = targetingTypeComponent.TargetingType == combatantTargetingType;
-
-            if (DoesTargetingTypeMatch(triggerComponent.TargetingType, isFriendly, combatantAbilityEntity.CombatantID, combatantID) == false)
+            bool isFriendly = combatantEntity.TargetingType == combatantTargetingType;
+            if (DoesTargetingTypeMatch(triggerComponent.TargetingType, isFriendly, abilityEntity.InstanceID, combatantID) == false)
             {
                 return false;
             }

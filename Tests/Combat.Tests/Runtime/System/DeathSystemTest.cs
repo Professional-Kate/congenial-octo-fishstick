@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Assertion;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -28,7 +29,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         {
-            _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(1);
+            _combatantEntity = TestCombatantEntityFactory.Create(1, TargetingType.FRIENDLY);
             _combatStateServiceMock.Reset();
         }
 

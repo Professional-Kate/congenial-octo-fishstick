@@ -4,6 +4,6 @@ namespace IdelPog.Combat.Runtime.System.Interface
 {
     public interface IAbilityEffectValueCalculator
     {
-        public void Calculate(CombatantAbilityEntity combatantAbilityEntity);
+        public void Calculate(AbilityEntity abilityEntity);
     }
 }

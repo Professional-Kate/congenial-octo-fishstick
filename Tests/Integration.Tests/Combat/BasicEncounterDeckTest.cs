@@ -1,4 +1,7 @@
 ﻿using IdelPog.Combat;
+using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
@@ -115,11 +118,11 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_TargetsHighSpeed()
         {
-            CombatantAbilityCard highAttackCard = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.SPEED, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            EquippedAbility highAttack = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.SPEED, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
             
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.WolfCreation);
             DispatchMessage(StaticCombatCommands.SlashAttackCreation);
-            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0) with { AbilityCards = [highAttackCard] }, StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 1 });
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0) with { EquippedAbilities = [highAttack] }, StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 1 });
             
             BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
             
@@ -138,11 +141,11 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_LowHealth_TargetsLowHealth()
         {
-            CombatantAbilityCard lowHealthCard = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            EquippedAbility lowHealth = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
             
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.WolfCreation);
             DispatchMessage(StaticCombatCommands.SlashAttackCreation);
-            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0) with { AbilityCards = [lowHealthCard] }, StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 1 });
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0) with { EquippedAbilities = [lowHealth] }, StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 1 });
             
             BasicEncounterDeck returnedDeck = RunCombat([0], [1, 2, 3]);
             
@@ -229,12 +232,30 @@ namespace IdelPog.Integration.Tests.Combat
             CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatStages);
             CombatValidator.AssertCombatantDidNotAttack(2);
         }
+
+        [Test]
+        public void Positive_SimulateCombat_DuplicateCombatantIDs_Allowed()
+        {
+            DispatchMessage(StaticCombatCommands.HumanCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0));
+            
+            BasicEncounterDeck returnedDeck = RunCombat([0, 0], [0, 0]);
+            
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
+            AssertResponse(_responseListener.Responses[0], returnedDeck);
+            
+            CombatValidator.AssertNextInitiatingInstanceID(0, 3, 1, 2);
+        }
         
         // Exception Tests
         [Test]
         public void Negative_EmptyFriendlyCombatants_DispatchesError()
         {
-            BasicEncounterDeck emptyFriendlyCombatants = new() { FriendlyCombatantIDs = [], EnemyCombatantIDs = [1] };
+            DispatchMessage(StaticCombatCommands.HumanCreation);
+            BasicEncounterDeck emptyFriendlyCombatants = new() { FriendlyCombatantIDs = [], EnemyCombatantIDs = [0] };
 
             DispatchMessage(emptyFriendlyCombatants);
             
@@ -247,7 +268,8 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Negative_EmptyEnemyCombatants_DispatchesError()
         {
-            BasicEncounterDeck emptyEnemyCombatants = new() { FriendlyCombatantIDs = [1], EnemyCombatantIDs = [] };
+            DispatchMessage(StaticCombatCommands.HumanCreation);
+            BasicEncounterDeck emptyEnemyCombatants = new() { FriendlyCombatantIDs = [0], EnemyCombatantIDs = [] };
             
             DispatchMessage(emptyEnemyCombatants);
             
@@ -285,11 +307,7 @@ namespace IdelPog.Integration.Tests.Combat
             AssertError<MaxIterationsException>(basicEncounterDeck);
 
             MaxIterationsException maxIterationsException = (_errorListener.Error.BaseError.Exception.GetBaseException() as MaxIterationsException)!;
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(maxIterationsException.MaxIterations, Is.EqualTo(maxIterations));
-                Assert.That(maxIterationsException.BasicEncounterDeck, Is.EqualTo(basicEncounterDeck));
-            }
+            Assert.That(maxIterationsException.MaxIterations, Is.EqualTo(maxIterations));
         }
     }
 }

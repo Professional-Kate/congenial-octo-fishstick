@@ -1,36 +1,31 @@
-﻿using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Combatant.Model;
+using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Response;
-using IdelPog.Combat.Runtime.System.Interface;
+using IdelPog.Combat.Core.Arena;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Service.Logging.Interface;
-using IdelPog.Combat.Service.Queue.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
+using IdelPog.Core.Repository.Incremental;
 using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Mediator
 {
     public sealed class BasicEncounterDeckMediator : IBatchMediator<BasicEncounterDeck>
     {
-        private readonly IFriendlyStatusAssigner _friendlyStatusAssigner;
-        private readonly IInitialAbilityScheduler _initialAbilityScheduler;
-        private readonly ICombatQueueRunner _combatQueueRunner;
+        private readonly IIncrementalRepository<CombatantDefinition> _combatantDefinitionRepository;
+        private readonly ICombatArena _combatArena;
         private readonly ICombatStateService _combatStateService;
         private readonly ICombatantLogger _combatantLogger;
-        private readonly ITearDownService _tearDownService;
         private readonly IDispatchMany<BasicEncounterDeckResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public BasicEncounterDeckMediator(IFriendlyStatusAssigner friendlyStatusAssigner, IInitialAbilityScheduler initialAbilityScheduler, 
-            ICombatQueueRunner combatQueueRunner, ICombatStateService combatStateService, ICombatantLogger combatantLogger,
-            IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICollectionAssertion collectionAssertion, ITearDownService tearDownService)
+        public BasicEncounterDeckMediator(IIncrementalRepository<CombatantDefinition> combatantDefinitionRepository, ICombatArena combatArena, ICombatStateService combatStateService, ICombatantLogger combatantLogger, IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
         {
-            _friendlyStatusAssigner = friendlyStatusAssigner;
-            _initialAbilityScheduler = initialAbilityScheduler;
-            _combatQueueRunner = combatQueueRunner;
+            _combatantDefinitionRepository = combatantDefinitionRepository;
+            _combatArena = combatArena;
             _combatStateService = combatStateService;
             _combatantLogger = combatantLogger;
-            _tearDownService = tearDownService;
             _responseDispatcher = responseDispatcher;
             _collectionAssertion = collectionAssertion;
         }
@@ -43,28 +38,30 @@ namespace IdelPog.Combat.Mediator
             for (int i = 0; i < messages.Count; i++)
             {
                 BasicEncounterDeck basicEncounterDeck = messages[i];
-                RegisterCombatants(basicEncounterDeck);
-
-                _combatQueueRunner.RunDeck(basicEncounterDeck);
+                _collectionAssertion.AssertHasElements(basicEncounterDeck.FriendlyCombatantIDs);
+                _collectionAssertion.AssertHasElements(basicEncounterDeck.EnemyCombatantIDs);
+                
+                _combatArena.RunCombatSimulation(GetCombatantDefinitions(basicEncounterDeck.FriendlyCombatantIDs), GetCombatantDefinitions(basicEncounterDeck.EnemyCombatantIDs));
                 
                 responses[i] = ConstructResponse(basicEncounterDeck);
                 
                 _combatantLogger.ClearStateChanges();
-                _tearDownService.TearDownState();
                 _combatStateService.Reset();
             }
 
             _responseDispatcher.Dispatch(responses);
         }
         
-        private void RegisterCombatants(BasicEncounterDeck basicEncounterDeck)
+        private CombatantDefinition[] GetCombatantDefinitions(byte[] combatantIDs)
         {
-            _collectionAssertion.AssertHasElements(basicEncounterDeck.FriendlyCombatantIDs);
-            _collectionAssertion.AssertHasElements(basicEncounterDeck.EnemyCombatantIDs);
+            CombatantDefinition[] combatantDefinitions = new CombatantDefinition[combatantIDs.Length];
+            for (int i = 0; i < combatantIDs.Length; i++)
+            {
+                byte combatantID = combatantIDs[i];
+                combatantDefinitions[i] = _combatantDefinitionRepository.Get(combatantID);
+            }
             
-            _friendlyStatusAssigner.AssignFriendlyStatus(basicEncounterDeck.FriendlyCombatantIDs, basicEncounterDeck.EnemyCombatantIDs);
-            
-            _initialAbilityScheduler.ScheduleRegisteredAbilities(initialTick: 0);
+            return combatantDefinitions;
         }
 
         private BasicEncounterDeckResponse ConstructResponse(BasicEncounterDeck basicEncounterDeck)

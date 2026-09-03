@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -15,9 +16,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
         private CombatantEntity _healingCombatant;
         private CombatantEntity _friendlyTargetCombatant;
-        private readonly CombatantAbilityStage _combatantAbilityStage = new()
+        private readonly AbilityStage _abilityStage = new()
         {
-            AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = 3, Priority = 0, CastTime = 0 },
+            AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = 3, Priority = 0, CastTime = 0 },
             TargetingPreferenceComponent = new TargetingPreferenceComponent { CombatantStatType = CombatantStatType.HEALTH, TargetingPreference = TargetingPreference.LOWEST, TargetingType = TargetingType.FRIENDLY }
         };
 
@@ -30,8 +31,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         { 
-            _healingCombatant = TestCombatantEntityFactory.CreateCombatantEntity(combatantID: 2);
-            _friendlyTargetCombatant = TestCombatantEntityFactory.CreateCombatantEntity(combatantID: 5);
+            _healingCombatant = TestCombatantEntityFactory.Create(combatantID: 2, TargetingType.FRIENDLY);
+            _friendlyTargetCombatant = TestCombatantEntityFactory.Create(combatantID: 5, TargetingType.FRIENDLY);
         }
 
         private static void ChangeCombatantHealth(CombatantEntity combatantEntity, uint newHealth) => combatantEntity.ReplaceComponent(new HealthComponent { Health = newHealth });
@@ -47,7 +48,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             ChangeCombatantHealth(_friendlyTargetCombatant, 10);
             
-            Assert.DoesNotThrow(() => _entityHealingService.ApplyHealing([_friendlyTargetCombatant], _healingCombatant, _combatantAbilityStage, 0));
+            Assert.DoesNotThrow(() => _entityHealingService.ApplyHealing([_friendlyTargetCombatant], _healingCombatant, _abilityStage, 0));
             
             AssertCombatantHealth(_friendlyTargetCombatant, 13);
         }
@@ -58,7 +59,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             ChangeCombatantHealth(_friendlyTargetCombatant, 10);
             ChangeCombatantHealth(_healingCombatant, 10);
             
-            Assert.DoesNotThrow(() => _entityHealingService.ApplyHealing([_friendlyTargetCombatant, _friendlyTargetCombatant, _healingCombatant], _healingCombatant, _combatantAbilityStage, 0));
+            Assert.DoesNotThrow(() => _entityHealingService.ApplyHealing([_friendlyTargetCombatant, _friendlyTargetCombatant, _healingCombatant], _healingCombatant, _abilityStage, 0));
             
             AssertCombatantHealth(_friendlyTargetCombatant, 16);
             AssertCombatantHealth(_healingCombatant, 13);
@@ -67,7 +68,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_ApplyHealing_HealsMoreThanMax_HealsToValue()
         {
-            CombatantAbilityStage beegHeal = _combatantAbilityStage with { AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = uint.MaxValue, Priority = 0, CastTime = 0}};
+            AbilityStage beegHeal = _abilityStage with { AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = uint.MaxValue, Priority = 0, CastTime = 0}};
             
             ChangeCombatantHealth(_friendlyTargetCombatant, 10);
             
@@ -82,7 +83,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             uint overMaxHealth = _friendlyTargetCombatant.GetComponent<BaseHealthComponent>().Health + 1;
             ChangeCombatantHealth(_friendlyTargetCombatant, overMaxHealth);
             
-            Assert.DoesNotThrow(() => _entityHealingService.ApplyHealing([_friendlyTargetCombatant], _healingCombatant, _combatantAbilityStage, 0));
+            Assert.DoesNotThrow(() => _entityHealingService.ApplyHealing([_friendlyTargetCombatant], _healingCombatant, _abilityStage, 0));
             
             AssertCombatantHealth(_friendlyTargetCombatant, overMaxHealth);
         }
@@ -90,7 +91,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_ApplyHealing_HealthComponentIsReplaced()
         {
-            CombatantAbilityStage zeroHeal = _combatantAbilityStage with { AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = 0, Priority = 0, CastTime = 0 }};
+            AbilityStage zeroHeal = _abilityStage with { AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = 0, Priority = 0, CastTime = 0 }};
             
             HealthComponent healthComponent = _friendlyTargetCombatant.GetComponent<HealthComponent>();
             ChangeCombatantHealth(_friendlyTargetCombatant, 18);

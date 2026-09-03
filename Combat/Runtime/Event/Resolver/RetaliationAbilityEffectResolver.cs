@@ -18,8 +18,9 @@ namespace IdelPog.Combat.Runtime.Event.Resolver
             _entityDamageService = entityDamageService;
         }
 
-        protected private override bool CanResolve(CombatantEntity combatantEntity, CombatantAbilityEntity combatantAbilityEntity)
+        protected private override bool CanResolve(CombatantEntity combatantEntity, AbilityEntity abilityEntity)
         {
+                Console.WriteLine(combatantEntity.InstanceID);
             if (combatantEntity.TryGetComponent(out RetaliationComponent retaliationComponent) == false)
             {
                 return false;
@@ -28,18 +29,19 @@ namespace IdelPog.Combat.Runtime.Event.Resolver
             return retaliationComponent.Count != 0;
         }
 
-        protected private override IReadOnlyList<CombatantEntity> HandleEvent(double tick, CombatantEntity combatantEntity, CombatantAbilityEntity combatantAbilityEntity, CombatantAbilityStage combatantAbilityStage)
+        protected private override IReadOnlyList<CombatantEntity> HandleEvent(double tick, CombatantEntity combatantEntity, AbilityEntity abilityEntity, AbilityStage abilityStage)
         {
             RetaliationComponent retaliationComponent = combatantEntity.GetComponent<RetaliationComponent>();
 
             HashSet<byte> targetCombatantIDs = [];
             List<CombatantEntity> targetCombatants = [];
-            for (int i = 0; i < combatantAbilityStage.AbilityStage.MaxTargets; i++)
+            for (int i = 0; i < abilityStage.AbilityStageCards.MaxTargets; i++)
             {
                 if (retaliationComponent.TryDequeue(out CombatantDamageComponent combatantDamageComponent) == false)
                 {
                     break;
                 }
+                
 
                 if (targetCombatantIDs.Add(combatantDamageComponent.CombatantID) == false)
                 {
@@ -49,7 +51,7 @@ namespace IdelPog.Combat.Runtime.Event.Resolver
                 targetCombatants.Add(GetCombatant(combatantDamageComponent.CombatantID));
             }
             
-            _entityDamageService.ApplyDamage(targetCombatants, combatantEntity.CombatantID, combatantAbilityStage, tick);
+            _entityDamageService.ApplyDamage(targetCombatants, combatantEntity.InstanceID, abilityStage, tick);
 
             return targetCombatants;
         }

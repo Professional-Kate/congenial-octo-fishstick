@@ -14,8 +14,8 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
 
         private readonly CombatantDeathData _friendlyDeathData = new() { CombatantTargetingType = TargetingType.FRIENDLY, DeadCombatantID = 12 };
 
-        private CombatantAbilityEntity _validAbilityEntity;
-        private CombatantAbilityEntity _enemyTriggerEntity;
+        private AbilityEntity _validAbilityEntity;
+        private AbilityEntity _enemyTriggerEntity;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -26,11 +26,11 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
         [SetUp]
         public void Setup()
         {
-            _validAbilityEntity = TestCombatantAbilityEntityFactory.Create(FriendlyCombatantEntity.CombatantID, 12);
+            _validAbilityEntity = TestAbilityEntityFactory.Create(FriendlyCombatantEntity.InstanceID, 12);
             _validAbilityEntity.ReplaceComponent(new TriggerComponent { TriggerEventType = TriggerEventType.COMBATANT_DEATH, TargetingType = TargetingType.FRIENDLY, MinTriggerValue = 0, MaxTriggerValue = 0 });
             _validAbilityEntity.AddComponent(new ReadyTickComponent { ReadyTick = TICK - 1 });
             
-            _enemyTriggerEntity = TestCombatantAbilityEntityFactory.Create(EnemyCombatantEntity.CombatantID, 94);
+            _enemyTriggerEntity = TestAbilityEntityFactory.Create(EnemyCombatantEntity.InstanceID, 94);
             _enemyTriggerEntity.ReplaceComponent(new TriggerComponent { TriggerEventType = TriggerEventType.COMBATANT_DEATH, TargetingType = TargetingType.ENEMY, MinTriggerValue = 1, MaxTriggerValue = 5 });
             _enemyTriggerEntity.AddComponent(new ReadyTickComponent { ReadyTick = TICK });
         }
@@ -46,7 +46,7 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
         [Test]
         public void Positive_Handle_MultipleCorrectEntity_FiltersEverythingElse()
         {
-            CombatantAbilityEntity validAbility = TestCombatantAbilityEntityFactory.Create(EnemyCombatantEntity.CombatantID, 92);
+            AbilityEntity validAbility = TestAbilityEntityFactory.Create(EnemyCombatantEntity.InstanceID, 92);
             validAbility.ReplaceComponent(_validAbilityEntity.GetComponent<TriggerComponent>());
             validAbility.AddComponent(_validAbilityEntity.GetComponent<ReadyTickComponent>());
             
@@ -55,8 +55,8 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
             
             _combatantDeathHandler.Handle(TICK, _friendlyDeathData);
             
-            VerifyScheduleEvent(_validAbilityEntity.CombatantID, _validAbilityEntity.AbilityID);
-            VerifyScheduleEvent(validAbility.CombatantID, validAbility.AbilityID);
+            VerifyScheduleEvent(_validAbilityEntity.InstanceID, _validAbilityEntity.AbilityID);
+            VerifyScheduleEvent(validAbility.InstanceID, validAbility.AbilityID);
         }
 
         [Test]

@@ -5,6 +5,6 @@ namespace IdelPog.Combat.Runtime.Event.Resolver.Interface
 {
     public interface IAbilityEffectResolver
     {
-        public void ResolveEffect(double tick, CombatantAbilityEntity combatantAbilityEntity, CombatantAbilityStage combatantAbilityStage);
+        public void ResolveEffect(double tick, AbilityEntity abilityEntity, AbilityStage abilityStage);
     }
 }

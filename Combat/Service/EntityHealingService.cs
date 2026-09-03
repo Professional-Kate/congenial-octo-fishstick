@@ -7,11 +7,11 @@ namespace IdelPog.Combat.Service
 {
     public sealed class EntityHealingService : IEntityHealingService
     {
-        public void ApplyHealing(IEnumerable<CombatantEntity> targetCombatants, CombatantEntity healingCombatant, CombatantAbilityStage combatantAbilityStage, double tick)
+        public void ApplyHealing(IEnumerable<CombatantEntity> targetCombatants, CombatantEntity healingCombatant, AbilityStage abilityStage, double tick)
         {
             foreach (CombatantEntity targetCombatant in targetCombatants)
             {
-                UpdateHealth(targetCombatant, combatantAbilityStage.AbilityStage.Value);
+                UpdateHealth(targetCombatant, abilityStage.AbilityStageCards.Value);
             }
         }
 

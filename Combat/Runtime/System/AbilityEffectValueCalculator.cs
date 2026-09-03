@@ -7,28 +7,28 @@ namespace IdelPog.Combat.Runtime.System
 {
     public sealed class AbilityEffectValueCalculator : IAbilityEffectValueCalculator
     {
-        public void Calculate(CombatantAbilityEntity combatantAbilityEntity)
+        public void Calculate(AbilityEntity abilityEntity)
         {
             uint damageValue = 0;
             uint healingValue = 0;
-            foreach (CombatantAbilityStage combatantAbilityStage in combatantAbilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages)
+            foreach (AbilityStage combatantAbilityStage in abilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages)
             {
-                switch (combatantAbilityStage.AbilityStage.AbilityEffectType)
+                switch (combatantAbilityStage.AbilityStageCards.AbilityEffectType)
                 {
                     case AbilityEffectType.DIRECT_DAMAGE:
                     case AbilityEffectType.RETALIATION:
-                        damageValue += combatantAbilityStage.AbilityStage.Value;
+                        damageValue += combatantAbilityStage.AbilityStageCards.Value;
                         break;
                     case AbilityEffectType.HEALING:
-                        healingValue += combatantAbilityStage.AbilityStage.Value;
+                        healingValue += combatantAbilityStage.AbilityStageCards.Value;
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(combatantAbilityStage.AbilityStage.AbilityEffectType));
+                        throw new ArgumentOutOfRangeException(nameof(combatantAbilityStage.AbilityStageCards.AbilityEffectType));
                 }
             }
             
-            combatantAbilityEntity.AddComponent(new AbilityDamageComponent { TotalDamage = damageValue });
-            combatantAbilityEntity.AddComponent(new AbilityHealingComponent { TotalHealing = healingValue });
+            abilityEntity.AddComponent(new AbilityDamageComponent { TotalDamage = damageValue });
+            abilityEntity.AddComponent(new AbilityHealingComponent { TotalHealing = healingValue });
         }
     }
 }

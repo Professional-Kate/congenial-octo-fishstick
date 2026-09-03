@@ -11,7 +11,7 @@ namespace IdelPog.Combat.Assertion
         {
             if (combatantEntity.GetComponent<LifeStatusComponent>().IsAlive == false)
             {
-                throw new CombatantDeadException(combatantEntity.CombatantID);
+                throw new CombatantDeadException(combatantEntity.InstanceID);
             }
         }
     }

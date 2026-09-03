@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Assertion;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -18,7 +19,7 @@ namespace IdelPog.Combat.Tests.Assertion
         {
             _combatantAssertion = new CombatantAssertion();
 
-            _combatant = TestCombatantEntityFactory.CreateCombatantEntity(0);
+            _combatant = TestCombatantEntityFactory.Create(0, TargetingType.FRIENDLY);
         }
 
         [Test]
@@ -34,7 +35,7 @@ namespace IdelPog.Combat.Tests.Assertion
             
             CombatantDeadException exception = Assert.Throws<CombatantDeadException>(() => _combatantAssertion.AssertCombatantAlive(_combatant));
             
-            Assert.That(exception.CombatantID, Is.EqualTo(_combatant.CombatantID));
+            Assert.That(exception.CombatantID, Is.EqualTo(_combatant.InstanceID));
         }
     }
 }

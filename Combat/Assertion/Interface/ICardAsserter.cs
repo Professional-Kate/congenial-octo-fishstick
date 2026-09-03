@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Combatant.Contracts.Command;
 
 namespace IdelPog.Combat.Assertion.Interface
 {

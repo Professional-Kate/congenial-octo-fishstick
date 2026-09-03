@@ -1,5 +1,7 @@
-﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Event;
 
@@ -62,30 +64,30 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         /// <summary>
         /// This command assumes <see cref="SlashAttackCreation"/> was dispatched first
         /// </summary>
-        internal static CombatantAbilityEquip EquipSlashAttack(byte combatantID, byte abilityID = 0) => EquipAbility(combatantID, abilityID);
+        internal static AbilityEquip EquipSlashAttack(byte combatantID, byte abilityID = 0) => EquipAbility(combatantID, abilityID);
 
         /// <summary>
         /// This command assumes <see cref="StabAttackCreation"/> was dispatched second
         /// </summary>
-        internal static CombatantAbilityEquip EquipStabAttack(byte combatantID, byte abilityID = 1) => EquipAbility(combatantID, abilityID);
+        internal static AbilityEquip EquipStabAttack(byte combatantID, byte abilityID = 1) => EquipAbility(combatantID, abilityID);
         
         /// <summary>
         /// This command assumes <see cref="StrikeAttackCreation"/> was dispatched third
         /// </summary>
-        internal static CombatantAbilityEquip EquipStrikeAttack(byte combatantID, byte abilityID = 2) => EquipAbility(combatantID, abilityID);
+        internal static AbilityEquip EquipStrikeAttack(byte combatantID, byte abilityID = 2) => EquipAbility(combatantID, abilityID);
         
-        internal static CombatantAbilityEquip EquipAbilityCards(byte combatantID, params CombatantAbilityCard[] abilityCards) => new()
+        internal static AbilityEquip EquipAbilityCards(byte combatantID, params EquippedAbility[] abilityCards) => new()
         {
             CombatantID = combatantID, 
-            AbilityCards = abilityCards
+            EquippedAbilities = abilityCards
         };
         
-        internal static CombatantAbilityEquip EquipAbility(byte combatantID, byte abilityID) => new()
+        internal static AbilityEquip EquipAbility(byte combatantID, byte abilityID) => new()
         {
             CombatantID = combatantID, 
-            AbilityCards = 
+            EquippedAbilities = 
             [
-                new CombatantAbilityCard
+                new EquippedAbility
                 {
                     AbilityID = abilityID, 
                     StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]

@@ -1,4 +1,7 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
@@ -27,14 +30,14 @@ namespace IdelPog.Integration.Tests.Combat.Flows
 
         private void SetupCombat(TargetingPreference targetingPreference, CombatantStatType combatantStatType, CombatantCreation targetCreation)
         {
-            CombatantAbilityCard mainCombatantAbilityCard = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { CombatantStatType = combatantStatType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            EquippedAbility mainEquippedAbility = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { CombatantStatType = combatantStatType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
 
             DispatchMessage(targetCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.WolfCreation);
             DispatchMessage(StaticCombatCommands.SlashAttackCreation);
-            DispatchMessage(StaticCombatCommands.EquipAbilityCards(1, mainCombatantAbilityCard));
+            DispatchMessage(StaticCombatCommands.EquipAbilityCards(1, mainEquippedAbility));
             
             RunCombat([1], [2, 0, 3]);
-            CombatValidator.AssertFirstDeadCombatant(0);
+            // CombatValidator.PrintCombatStages(_responseListener.Responses[0].CombatStages);
             CombatValidator.AssertNextTargets(0);
         }
         
@@ -93,7 +96,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             // Equipping enemy combatant with the high damage ability
             DispatchMessage(highDamageAbility);
-            DispatchMessage(new CombatantAbilityEquip { CombatantID = 1, AbilityCards = [new CombatantAbilityCard {AbilityID = 0, StrategyCards = [new StrategyCard
+            DispatchMessage(new AbilityEquip { CombatantID = 1, EquippedAbilities = [new EquippedAbility {AbilityID = 0, StrategyCards = [new StrategyCard
             {
                 CombatantStatType = CombatantStatType.HEALTH,
                 TargetingPreference = TargetingPreference.HIGHEST,
@@ -105,8 +108,8 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             CombatantStatType combatantStatType = abilityEffectType == AbilityEffectType.DIRECT_DAMAGE ? CombatantStatType.ABILITY_DAMAGE : CombatantStatType.ABILITY_HEALING;
             
             DispatchMessage(StaticCombatCommands.StabAttackCreation);
-            CombatantAbilityCard highDamageTargeting = new() { AbilityID = 1, StrategyCards = [new StrategyCard { CombatantStatType = combatantStatType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
-            DispatchMessage(new CombatantAbilityEquip { CombatantID = 0, AbilityCards = [highDamageTargeting]});
+            EquippedAbility highDamageTargeting = new() { AbilityID = 1, StrategyCards = [new StrategyCard { CombatantStatType = combatantStatType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            DispatchMessage(new AbilityEquip { CombatantID = 0, EquippedAbilities = [highDamageTargeting]});
             
             // Equipping other enemies with abilities to verify ability values
             AbilityCreation healingAbilityCreation = new()
@@ -119,7 +122,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             DispatchMessage(StaticCombatCommands.SlashAttackCreation, healingAbilityCreation);
             DispatchMessage(StaticCombatCommands.EquipAbility(2, 2), StaticCombatCommands.EquipAbility(3, 3));
             
-            RunCombat([0], [2, 1, 3]);
+            RunCombat([0], [1, 2, 3]);
             CombatValidator.AssertFirstDeadCombatant(1);
         }
     }

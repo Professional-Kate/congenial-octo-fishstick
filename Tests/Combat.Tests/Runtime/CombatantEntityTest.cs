@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Runtime.Component;
+﻿using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Tests.TestFactory;
 
@@ -14,7 +15,7 @@ namespace IdelPog.Combat.Tests.Runtime
         [SetUp]
         public void Setup()
         { 
-            _combatantEntity = TestCombatantEntityFactory.CreateCombatantEntity(0);
+            _combatantEntity = TestCombatantEntityFactory.Create(0, TargetingType.FRIENDLY);
             _healthComponent = _combatantEntity.GetComponent<HealthComponent>();
         }
 

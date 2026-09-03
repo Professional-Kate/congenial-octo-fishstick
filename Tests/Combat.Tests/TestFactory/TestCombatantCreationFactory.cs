@@ -1,5 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 
 namespace IdelPog.Combat.Tests.TestFactory

@@ -1,6 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Runtime.Entities;
-using IdelPog.Combat.Runtime.Entities.Combatant;
+﻿using IdelPog.Combat.Ability.Model;
+using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Service.Interface;
 using IdelPog.Core.Repository.Incremental;
 
@@ -8,27 +7,22 @@ namespace IdelPog.Combat.Service
 {
     public sealed class AbilitySlotCalculator : IAbilitySlotCalculator
     {
-        private readonly IIncrementalRepository<AbilityEntity> _abilityEntityRepository;
+        private readonly IIncrementalRepository<AbilityDefinition> _abilityDefinitionRepository;
 
-        public AbilitySlotCalculator(IIncrementalRepository<AbilityEntity> abilityEntityRepository)
+        public AbilitySlotCalculator(IIncrementalRepository<AbilityDefinition> abilityDefinitionRepository)
         {
-            _abilityEntityRepository = abilityEntityRepository;
+            _abilityDefinitionRepository = abilityDefinitionRepository;
         }
 
-        public byte GetAbilitySlots(CombatantAbilityCard[] abilityCards, IReadOnlyList<CombatantAbilityEntity> existingEntities)
+        public byte GetAbilitySlots(EquippedAbility[] abilityStages)
         {
             byte reservedAbilitySlots = 0;
-            foreach (CombatantAbilityCard abilityCard in abilityCards)
+            foreach (EquippedAbility abilityCard in abilityStages)
             {
-                AbilityEntity abilityEntity = _abilityEntityRepository.Get(abilityCard.AbilityID);
-                reservedAbilitySlots += abilityEntity.AbilitySlots;
+                AbilityDefinition abilityEntity = _abilityDefinitionRepository.Get(abilityCard.AbilityID);
+                reservedAbilitySlots += abilityEntity.AbilityCard.AbilitySlots;
             }
             
-            foreach (CombatantAbilityEntity combatantAbilityEntity in existingEntities)
-            {
-                reservedAbilitySlots += combatantAbilityEntity.AbilitySlots;
-            }
-
             return reservedAbilitySlots;
         }
     }

@@ -18,10 +18,10 @@ namespace IdelPog.Combat.Runtime.Event.Trigger.Handler
 
         protected override TriggerEventType TriggerEventType => TriggerEventType.COMBATANT_CASTING_COMPLETE;
         
-        protected override IEnumerable<AbilityTrigger> Filter(ImmutableArray<CombatantAbilityEntity> combatantAbilityEntities, CombatantCastCompleteData triggerData, double tick)
+        protected override IEnumerable<AbilityTrigger> Filter(ImmutableArray<AbilityEntity> combatantAbilityEntities, CombatantCastCompleteData triggerData, double tick)
         {
             List<AbilityTrigger> abilityTriggers = [];
-            foreach (CombatantAbilityEntity combatantAbilityEntity in combatantAbilityEntities)
+            foreach (AbilityEntity combatantAbilityEntity in combatantAbilityEntities)
             {
                 TriggerComponent triggerComponent = combatantAbilityEntity.GetComponent<TriggerComponent>();
                 if (triggerComponent.TargetingType == TargetingType.SELF)
@@ -34,7 +34,7 @@ namespace IdelPog.Combat.Runtime.Event.Trigger.Handler
                     continue;
                 }
                 
-                abilityTriggers.Add(new AbilityTrigger { Tick = tick, CombatantID = combatantAbilityEntity.CombatantID, AbilityID = combatantAbilityEntity.AbilityID });
+                abilityTriggers.Add(new AbilityTrigger { Tick = tick, CombatantID = combatantAbilityEntity.InstanceID, AbilityID = combatantAbilityEntity.AbilityID });
             }
 
             return abilityTriggers;

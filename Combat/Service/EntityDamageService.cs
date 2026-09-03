@@ -1,5 +1,4 @@
 ﻿using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.Event.Trigger.Contracts;
@@ -25,12 +24,12 @@ namespace IdelPog.Combat.Service
             _combatantDeathTrigger = combatantDeathTrigger;
         }
 
-        public void ApplyDamage(IEnumerable<CombatantEntity> targetCombatants, byte initiatingCombatantID, CombatantAbilityStage combatantAbilityStage, double tick)
+        public void ApplyDamage(IEnumerable<CombatantEntity> targetCombatants, byte initiatingCombatantID, AbilityStage abilityStage, double tick)
         {
             foreach (CombatantEntity targetCombatant in targetCombatants)
             {
-                uint newHealth = _damageSystem.DealDamage(targetCombatant, combatantAbilityStage);
-                _combatantDamagedTrigger.Handle(tick, CreateData(targetCombatant, _damageSystem.GetCalculatedDamage(combatantAbilityStage), initiatingCombatantID));
+                uint newHealth = _damageSystem.DealDamage(targetCombatant, abilityStage);
+                _combatantDamagedTrigger.Handle(tick, CreateData(targetCombatant, _damageSystem.GetCalculatedDamage(abilityStage), initiatingCombatantID));
 
                 if (newHealth != 0)
                 {
@@ -38,7 +37,7 @@ namespace IdelPog.Combat.Service
                 }
 
                 _deathSystem.KillEntity(targetCombatant);
-                _combatantDeathTrigger.Handle(tick, new CombatantDeathData { CombatantTargetingType = GetCombatantTargetingType(targetCombatant), DeadCombatantID = targetCombatant.CombatantID });
+                _combatantDeathTrigger.Handle(tick, new CombatantDeathData { CombatantTargetingType = GetCombatantTargetingType(targetCombatant), DeadCombatantID = targetCombatant.InstanceID });
             }
         }
 
@@ -47,12 +46,12 @@ namespace IdelPog.Combat.Service
             return new CombatantDamagedData
             {
                 InitiatingCombatantID = initiatingCombatantID,
-                DamagedCombatantID = targetCombatant.CombatantID,
+                DamagedCombatantID = targetCombatant.InstanceID,
                 DamagedCombatantTargetingType = GetCombatantTargetingType(targetCombatant),
                 DamageValue = calculatedDamage
             };
         }
         
-        private static TargetingType GetCombatantTargetingType(CombatantEntity combatantEntity) => combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType;
+        private static TargetingType GetCombatantTargetingType(CombatantEntity combatantEntity) => combatantEntity.TargetingType;
     }
 }

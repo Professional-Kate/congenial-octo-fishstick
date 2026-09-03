@@ -1,5 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Command;
-using IdelPog.Combat.Exceptions;
+﻿using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Runtime.Event;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Service.Interface;
@@ -22,14 +21,14 @@ namespace IdelPog.Combat.Service.Queue
             _abilityEventHandler = abilityEventHandler;
         }
 
-        public void RunDeck(BasicEncounterDeck basicEncounterDeck)
+        public void RunCombat()
         {
             uint iterations = 0;
             while (_combatStateService.IsCombatOver == false)
             {
                 if (++iterations > MaxIterations)
                 {
-                    throw new MaxIterationsException(basicEncounterDeck, MaxIterations);
+                    throw new MaxIterationsException(MaxIterations);
                 }
                     
                 ScheduledCombatEvent scheduledCombatEvent = _combatQueue.Dequeue();

@@ -5,6 +5,6 @@ namespace IdelPog.Combat.Service.Interface
 {
     public interface IEntityDamageService
     {
-        public void ApplyDamage(IEnumerable<CombatantEntity> targetCombatants, byte initiatingCombatantID, CombatantAbilityStage combatantAbilityStage, double tick);
+        public void ApplyDamage(IEnumerable<CombatantEntity> targetCombatants, byte initiatingCombatantID, AbilityStage abilityStage, double tick);
     }
 }

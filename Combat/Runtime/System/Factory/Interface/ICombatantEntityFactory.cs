@@ -1,10 +1,11 @@
-﻿using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Combatant.Model;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 
 namespace IdelPog.Combat.Runtime.System.Factory.Interface
 {
     public interface ICombatantEntityFactory
     {
-        public CombatantEntity CreateEntity(CombatantCreation combatantCreation, byte combatantID);
+        public CombatantEntity[] Create(IReadOnlyList<CombatantDefinition> combatantDefinitions, TargetingType targetingType);
     }
 }

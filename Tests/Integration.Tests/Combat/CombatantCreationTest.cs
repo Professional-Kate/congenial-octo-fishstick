@@ -1,8 +1,8 @@
-﻿using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Error;
+using IdelPog.Combat.Combatant.Contracts.Response;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Contracts.Error;
-using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Exceptions;
 
 namespace IdelPog.Integration.Tests.Combat

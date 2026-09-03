@@ -7,7 +7,7 @@ namespace IdelPog.Combat.Runtime.Event
         public required CombatEventType CombatEventType { get; init; }
         public required byte AbilityID { get; init; }
         public required byte AbilityStageIndex { get; init; }
-        public required byte CombatantID { get; init; }
+        public required byte InstanceID { get; init; }
         public required TargetingType TargetingType { get; init; }
         public required double Tick { get; init; }
     }

@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
@@ -20,7 +21,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
     public sealed class AbilityEventHandlerTest
     {
         private AbilityEventHandler _abilityEventHandler;
-        private Mock<ICombatantAbilityEntityRepository> _combatantAbilityEntityRepositoryMock;
+        private Mock<IAbilityEntityRepository> _combatantAbilityEntityRepositoryMock;
         private Mock<IAbilityEventScheduler> _abilityEventSchedulerMock;
         private Mock<IAssetRepository<AbilityEffectType, IAbilityEffectResolver>> _resolverRepositoryMock;
         private Mock<ICombatStateService> _combatStateServiceMock;
@@ -33,7 +34,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private readonly ScheduledCombatEvent _executeEvent = new()
         {
             AbilityID = 1,
-            CombatantID = 1,
+            InstanceID = 1,
             CombatEventType = CombatEventType.ABILITY_EXECUTE,
             Tick = 2,
             AbilityStageIndex = 0,
@@ -43,7 +44,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private readonly ScheduledCombatEvent _castCompleteEvent = new()
         {
             AbilityID = 1,
-            CombatantID = 1,
+            InstanceID = 1,
             CombatEventType = CombatEventType.ABILITY_CAST_COMPLETE,
             Tick = 1,
             AbilityStageIndex = 0,
@@ -56,12 +57,12 @@ namespace IdelPog.Combat.Tests.Runtime.System
             CombatantTargetingType = TargetingType.FRIENDLY
         };
         
-        private CombatantAbilityEntity _combatantAbilityEntity;
+        private AbilityEntity _abilityEntity;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _combatantAbilityEntityRepositoryMock = new Mock<ICombatantAbilityEntityRepository>();
+            _combatantAbilityEntityRepositoryMock = new Mock<IAbilityEntityRepository>();
             _abilityEventSchedulerMock = new Mock<IAbilityEventScheduler>();
             _resolverRepositoryMock = new Mock<IAssetRepository<AbilityEffectType, IAbilityEffectResolver>>();
             _combatStateServiceMock = new Mock<ICombatStateService>();
@@ -75,8 +76,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         {
-            _combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(_executeEvent.CombatantID, _executeEvent.AbilityID);
-            _combatantAbilityEntity.AddComponent(new ReadyTickComponent { ReadyTick = READY_TIME });
+            _abilityEntity = TestAbilityEntityFactory.Create(_executeEvent.InstanceID, _executeEvent.AbilityID);
+            _abilityEntity.AddComponent(new ReadyTickComponent { ReadyTick = READY_TIME });
 
             _combatantAbilityEntityRepositoryMock.Reset();
             _abilityEventSchedulerMock.Reset();
@@ -106,9 +107,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _readyTickSystemMock.VerifyNoOtherCalls();
         }
 
-        private void SetupCombatantAbilityEntityGet(CombatantAbilityEntity combatantAbilityEntity)
+        private void SetupCombatantAbilityEntityGet(AbilityEntity abilityEntity)
         {
-            _combatantAbilityEntityRepositoryMock.Setup(library => library.Get(combatantAbilityEntity.CombatantID, combatantAbilityEntity.AbilityID)).Returns(combatantAbilityEntity).Verifiable();
+            _combatantAbilityEntityRepositoryMock.Setup(library => library.Get(abilityEntity.InstanceID, abilityEntity.AbilityID)).Returns(abilityEntity).Verifiable();
         }
 
         private void SetupResolverRepositoryGet(Mock<IAbilityEffectResolver> abilityEffectResolverMock, AbilityEffectType abilityEffectType)
@@ -121,16 +122,16 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatStateServiceMock.Setup(library => library.IsCombatOver).Returns(isCombatOver).Verifiable();
         }
         
-        private void VerifyEnqueueAbilityEvent(double currentTick, CombatantAbilityEntity combatantAbilityEntity, byte abilityStageIndex = 0)
+        private void VerifyEnqueueAbilityEvent(double currentTick, AbilityEntity abilityEntity, byte abilityStageIndex = 0)
         {
-            _abilityEventSchedulerMock.Verify(library => library.EnqueueAbilityExecuteEvent(currentTick, combatantAbilityEntity.AbilityID, abilityStageIndex, combatantAbilityEntity.CombatantID), Times.Once);
+            _abilityEventSchedulerMock.Verify(library => library.EnqueueAbilityExecuteEvent(currentTick, abilityEntity.AbilityID, abilityStageIndex, abilityEntity.InstanceID), Times.Once);
         }
         
-        private void VerifyScheduleEvent(double currentTick, CombatantAbilityEntity combatantAbilityEntity, byte abilityStageIndex = 0)
+        private void VerifyScheduleEvent(double currentTick, AbilityEntity abilityEntity, byte abilityStageIndex = 0)
         {
-            CooldownComponent cooldownComponent = combatantAbilityEntity.GetComponent<CooldownComponent>();
+            CooldownComponent cooldownComponent = abilityEntity.GetComponent<CooldownComponent>();
             
-            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(currentTick + cooldownComponent.Cooldown, combatantAbilityEntity.AbilityID, abilityStageIndex, combatantAbilityEntity.CombatantID), Times.Once);
+            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(currentTick + cooldownComponent.Cooldown, abilityEntity.AbilityID, abilityStageIndex, abilityEntity.InstanceID), Times.Once);
         }
 
         private void VerifyCombatantCastingHandler(double currentTick, CombatantCastCompleteData combatantCastCompleteData)
@@ -138,97 +139,97 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantCastingTriggerMock.Verify(library => library.Handle(currentTick, combatantCastCompleteData), Times.Once);
         }
         
-        private static void VerifyResolveEffect(Mock<IAbilityEffectResolver> abilityEffectResolverMock, double tick, CombatantAbilityEntity combatantAbilityEntity, CombatantAbilityStage combatantAbilityStage)
+        private static void VerifyResolveEffect(Mock<IAbilityEffectResolver> abilityEffectResolverMock, double tick, AbilityEntity abilityEntity, AbilityStage abilityStage)
         {
-            abilityEffectResolverMock.Verify(library => library.ResolveEffect(tick, combatantAbilityEntity, combatantAbilityStage), Times.Once);
+            abilityEffectResolverMock.Verify(library => library.ResolveEffect(tick, abilityEntity, abilityStage), Times.Once);
         }
 
-        private static CombatantAbilityStage GetAbilityStage(CombatantAbilityEntity combatantAbilityEntity, int stage) => combatantAbilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages[stage];
+        private static AbilityStage GetAbilityStage(AbilityEntity abilityEntity, int stage) => abilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages[stage];
 
         [Test]
         public void Positive_Handle_CastComplete_EnqueuesNewEvent()
         {
-            SetupCombatantAbilityEntityGet(_combatantAbilityEntity);
+            SetupCombatantAbilityEntityGet(_abilityEntity);
             
             Assert.DoesNotThrow(() => _abilityEventHandler.Handle(_castCompleteEvent));
             
             VerifyCombatantCastingHandler(_castCompleteEvent.Tick, _friendlyCastCompleteData);
-            VerifyEnqueueAbilityEvent(_castCompleteEvent.Tick, _combatantAbilityEntity);
+            VerifyEnqueueAbilityEvent(_castCompleteEvent.Tick, _abilityEntity);
         }
 
         [Test]
         public void Positive_Handle_AbilityExecute_ResolvesAbility()
         {
-            SetupCombatantAbilityEntityGet(_combatantAbilityEntity);
+            SetupCombatantAbilityEntityGet(_abilityEntity);
             SetupResolverRepositoryGet(_abilityEffectResolverMock, AbilityEffectType.DIRECT_DAMAGE);
             SetupIsCombatOver(false);
             
             Assert.DoesNotThrow(() => _abilityEventHandler.Handle(_executeEvent));
 
-            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, _combatantAbilityEntity, GetAbilityStage(_combatantAbilityEntity, 0));
-            VerifyScheduleEvent(_executeEvent.Tick, _combatantAbilityEntity);
+            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, _abilityEntity, GetAbilityStage(_abilityEntity, 0));
+            VerifyScheduleEvent(_executeEvent.Tick, _abilityEntity);
         }
 
         [Test]
         public void Positive_Handle_MultipleStages_IsLastStage()
         {
-            CombatantAbilityStage[] combatantStages =
+            AbilityStage[] combatantStages =
                 [
                     new()
                     {
-                        AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, CastTime = 3, MaxTargets = 1, Value = 2, Priority = 0 },
+                        AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, CastTime = 3, MaxTargets = 1, Value = 2, Priority = 0 },
                         TargetingPreferenceComponent = new TargetingPreferenceComponent { CombatantStatType = CombatantStatType.ABILITY_DAMAGE, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY }
                     },
                     new()
                     {
-                        AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 2, Priority = 1 },
+                        AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 2, Priority = 1 },
                         TargetingPreferenceComponent = new TargetingPreferenceComponent { CombatantStatType = CombatantStatType.ABILITY_DAMAGE, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY }
                     }
                 ];
 
-            CombatantAbilityEntity combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(_executeEvent.CombatantID, _executeEvent.AbilityID, combatantStages);
+            AbilityEntity abilityEntity = TestAbilityEntityFactory.Create(_executeEvent.InstanceID, _executeEvent.AbilityID, combatantStages);
             
-            SetupCombatantAbilityEntityGet(combatantAbilityEntity);
+            SetupCombatantAbilityEntityGet(abilityEntity);
             SetupResolverRepositoryGet(_abilityEffectResolverMock, AbilityEffectType.HEALING);
             SetupIsCombatOver(false);
             
             Assert.DoesNotThrow(() => _abilityEventHandler.Handle(_executeEvent with { AbilityStageIndex = 1 }));
 
-            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, combatantAbilityEntity, GetAbilityStage(combatantAbilityEntity, 1));
-            VerifyScheduleEvent(_executeEvent.Tick, combatantAbilityEntity);
+            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, abilityEntity, GetAbilityStage(abilityEntity, 1));
+            VerifyScheduleEvent(_executeEvent.Tick, abilityEntity);
         }
         
         [Test]
         public void Positive_Handle_MultipleStages_IsNotLastStage()
         {
-            CombatantAbilityStage[] combatantStages =
+            AbilityStage[] combatantStages =
             [
                 new()
                 {
-                    AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, CastTime = 3, MaxTargets = 1, Value = 2, Priority = 0 },
+                    AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, CastTime = 3, MaxTargets = 1, Value = 2, Priority = 0 },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent { CombatantStatType = CombatantStatType.ABILITY_DAMAGE, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY }
                 },
                 new()
                 {
-                    AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 2, Priority = 1 },
+                    AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 2, Priority = 1 },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent { CombatantStatType = CombatantStatType.ABILITY_DAMAGE, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY }
                 },
                 new()
                 {
-                    AbilityStage = new AbilityStage { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.STAB, CastTime = 0, MaxTargets = 1, Value = 5, Priority = 1 },
+                    AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.STAB, CastTime = 0, MaxTargets = 1, Value = 5, Priority = 1 },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent { CombatantStatType = CombatantStatType.SPEED, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY }
                 }
             ];
 
-            CombatantAbilityEntity combatantAbilityEntity = TestCombatantAbilityEntityFactory.Create(_executeEvent.CombatantID, _executeEvent.AbilityID, combatantStages);
+            AbilityEntity abilityEntity = TestAbilityEntityFactory.Create(_executeEvent.InstanceID, _executeEvent.AbilityID, combatantStages);
             
-            SetupCombatantAbilityEntityGet(combatantAbilityEntity);
+            SetupCombatantAbilityEntityGet(abilityEntity);
             SetupResolverRepositoryGet(_abilityEffectResolverMock, AbilityEffectType.DIRECT_DAMAGE);
             
             Assert.DoesNotThrow(() => _abilityEventHandler.Handle(_executeEvent with { AbilityStageIndex = 1 }));
 
-            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, combatantAbilityEntity, GetAbilityStage(combatantAbilityEntity, 1));
-            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(_executeEvent.Tick, combatantAbilityEntity.AbilityID, 2, combatantAbilityEntity.CombatantID), Times.Once);
+            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, abilityEntity, GetAbilityStage(abilityEntity, 1));
+            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(_executeEvent.Tick, abilityEntity.AbilityID, 2, abilityEntity.InstanceID), Times.Once);
         }
 
         [Test]
@@ -242,15 +243,15 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 MaxTriggerValue = 10
             };
                 
-            _combatantAbilityEntity.ReplaceComponent(triggerComponent);
+            _abilityEntity.ReplaceComponent(triggerComponent);
             
-            SetupCombatantAbilityEntityGet(_combatantAbilityEntity);
+            SetupCombatantAbilityEntityGet(_abilityEntity);
             SetupResolverRepositoryGet(_abilityEffectResolverMock, AbilityEffectType.DIRECT_DAMAGE);
             SetupIsCombatOver(false);
             
             Assert.DoesNotThrow(() => _abilityEventHandler.Handle(_executeEvent));
 
-            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, _combatantAbilityEntity, GetAbilityStage(_combatantAbilityEntity, 0));
+            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, _abilityEntity, GetAbilityStage(_abilityEntity, 0));
         }
     }
 }

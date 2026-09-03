@@ -7,5 +7,9 @@
         public bool Contains(byte id);
 
         public T Get(byte id);
+        
+        public IEnumerable<T> Enumerate();
+
+        public byte GetID();
     }
 }

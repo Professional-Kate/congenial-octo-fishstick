@@ -6,6 +6,6 @@ namespace IdelPog.Combat.Runtime.Event.Trigger.Interface
 {
     public interface ITriggerReader
     {
-        public ImmutableArray<CombatantAbilityEntity> GetAbilities(TriggerEventType triggerEventType);
+        public ImmutableArray<AbilityEntity> GetAbilities(TriggerEventType triggerEventType);
     }
 }

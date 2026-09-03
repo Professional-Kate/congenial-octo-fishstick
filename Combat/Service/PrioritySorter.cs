@@ -1,10 +1,11 @@
-﻿using IdelPog.Combat.Service.Interface;
+﻿using System.Collections.Immutable;
+using IdelPog.Combat.Service.Interface;
 
 namespace IdelPog.Combat.Service
 {
     public sealed class PrioritySorter : IPrioritySorter
     {
-        public IReadOnlyList<T> Sort<T>(IReadOnlyList<T> values, Func<T, byte> prioritySelector)
+        public ImmutableArray<T> Sort<T>(IReadOnlyList<T> values, Func<T, byte> prioritySelector)
         {
             // Insertion sort
             T[] sortedValues = new T[values.Count];
@@ -28,7 +29,7 @@ namespace IdelPog.Combat.Service
                 sortedValues[comparisonIndex + 1] = value;
             }
             
-            return sortedValues;
+            return [..sortedValues];
         }
     }
 }

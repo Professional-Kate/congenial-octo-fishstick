@@ -1,4 +1,7 @@
-﻿using IdelPog.Combat.Contracts;
+﻿using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
@@ -81,7 +84,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [Test]
         public void MultipleAbilities_ShouldBothBeCast_BeforeBearAttack()
         {
-            CombatantAbilityCard combatantAbilityCard = new()
+            EquippedAbility equippedAbility = new()
             {
                 AbilityID = 0,
                 StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]
@@ -89,7 +92,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             CombatantCreation slightlyFasterHuman = StaticCombatCommands.HumanCreation with { StatCard = new StatCard { Health = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 10 }};
             CombatantCreation slightlySlowerBear = StaticCombatCommands.BearCreation with { StatCard = new StatCard { Health = 10 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 9 }};
-            CombatantAbilityEquip dualAbilityEquip = new() { CombatantID = 0, AbilityCards = [ combatantAbilityCard, combatantAbilityCard with { AbilityID = 1 } ] };
+            AbilityEquip dualAbilityEquip = new() { CombatantID = 0, EquippedAbilities = [ equippedAbility, equippedAbility with { AbilityID = 1 } ] };
             
             DispatchMessage(slightlyFasterHuman, slightlySlowerBear);
             DispatchMessage(StaticCombatCommands.SlashAttackCreation, StaticCombatCommands.StabAttackCreation);
@@ -114,10 +117,10 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                     ]
             };
 
-            CombatantAbilityEquip combatantAbilityEquip = new()
+            AbilityEquip abilityEquip = new()
             {
                 CombatantID = 0,
-                AbilityCards = [new CombatantAbilityCard { AbilityID = 0, StrategyCards = 
+                EquippedAbilities = [new EquippedAbility { AbilityID = 0, StrategyCards = 
                     [
                         new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 12 },
                         new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 123 }
@@ -129,7 +132,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             DispatchMessage(multipleStagesCreation);
             DispatchMessage(elementalMan, unsuspectingGoblin);
-            DispatchMessage(combatantAbilityEquip);
+            DispatchMessage(abilityEquip);
             
             RunCombat([0], [1]);
             
@@ -158,7 +161,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         }
 
         [Test]
-        public void SameInitiative_AbilityWithMultipleStages_OnlySomeStagesCast_BeforeDeath()
+        public void DifferentInitiative_AbilityWithMultipleStages_OnlySomeStagesCast_BeforeDeath()
         {
             AbilityCreation abilityWithCastTime = new()
             {
@@ -171,12 +174,12 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 ]
             };
 
-            CombatantAbilityEquip equipCastTimeAbility = new()
+            AbilityEquip equipCastTimeAbility = new()
             {
                 CombatantID = 0,
-                AbilityCards =
+                EquippedAbilities =
                 [
-                    new CombatantAbilityCard
+                    new EquippedAbility
                     {
                         AbilityID = 0, StrategyCards =
                         [
@@ -187,7 +190,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 ]
             };
 
-            DispatchMessage(StaticCombatCommands.HumanCreation with { StatCard = new  StatCard { Health = 1 }}, StaticCombatCommands.HumanCreation);
+            DispatchMessage(StaticCombatCommands.GoblinCreation with { StatCard = new  StatCard { Health = 1 }}, StaticCombatCommands.HumanCreation);
             DispatchMessage(abilityWithCastTime, StaticCombatCommands.StabAttackCreation);
             DispatchMessage(equipCastTimeAbility, StaticCombatCommands.EquipAbility(1, 1));
             
@@ -208,12 +211,12 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 AbilityStageCards = [healingCard]
             };
 
-            CombatantAbilityEquip healingAbilityEquip = new()
+            AbilityEquip healingAbilityEquip = new()
             {
                 CombatantID = 0,
-                AbilityCards =
+                EquippedAbilities =
                 [
-                    new CombatantAbilityCard
+                    new EquippedAbility
                     {
                         AbilityID = 1,
                         StrategyCards =
@@ -260,12 +263,12 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 AbilityStageCards = [healingCard, retaliationCard]
             };
 
-            CombatantAbilityEquip combatantAbilityEquip = new()
+            AbilityEquip abilityEquip = new()
             {
                 CombatantID = 0, 
-                AbilityCards = 
+                EquippedAbilities = 
                 [
-                    new CombatantAbilityCard
+                    new EquippedAbility
                     {
                         AbilityID = 0, 
                         StrategyCards = 
@@ -279,7 +282,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
 
             DispatchMessage(StaticCombatCommands.HumanCreation with { AgilityCard = new AgilityCard { Speed  = 20, Initiative = 5 }}, StaticCombatCommands.GoblinCreation);
             DispatchMessage(retaliationAbilityCreation, StaticCombatCommands.SlashAttackCreation);
-            DispatchMessage(combatantAbilityEquip, StaticCombatCommands.EquipAbility(1, 1));
+            DispatchMessage(abilityEquip, StaticCombatCommands.EquipAbility(1, 1));
             
             RunCombat([0], [1]);
             
@@ -331,12 +334,24 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 AbilityStageCards = [retaliationCard]
             };
 
-            CombatantAbilityEquip selfTargetAbilityEquip = new()
+            AbilityEquip selfTargetAbilityEquip = new()
             {
                 CombatantID = 0,
-                AbilityCards =
+                EquippedAbilities =
                 [
-                    new CombatantAbilityCard
+                    new EquippedAbility
+                    {
+                        AbilityID = 0,
+                        StrategyCards = 
+                            [
+                                new StrategyCard
+                                {
+                                    TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH,
+                                    TargetingType = TargetingType.ENEMY, Priority = 0
+                                }
+                            ]
+                    },
+                    new EquippedAbility
                     {
                         AbilityID = 1,
                         StrategyCards =
@@ -353,11 +368,12 @@ namespace IdelPog.Integration.Tests.Combat.Flows
 
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.BearCreation);
             DispatchMessage(retaliationAbilityCreation, StaticCombatCommands.SlashAttackCreation);
-            DispatchMessage(StaticCombatCommands.EquipAbility(0, 0), selfTargetAbilityEquip);
+            DispatchMessage(selfTargetAbilityEquip);
             
             RunCombat([0], [1]);
             
             CombatValidator.AssertAbilityNeverUsed(0);
+            CombatValidator.AssertFirstDeadCombatant(0);
         }
 
         [Test]
@@ -379,12 +395,12 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             };
             
             StrategyCard enemyTargeting = new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 };
-            CombatantAbilityEquip stabEquip = new()
+            AbilityEquip stabEquip = new()
             {
                 CombatantID = 1,
-                AbilityCards =
+                EquippedAbilities =
                 [
-                    new CombatantAbilityCard
+                    new EquippedAbility
                     {
                         AbilityID = 1,
                         StrategyCards = [enemyTargeting, enemyTargeting, enemyTargeting, enemyTargeting, enemyTargeting, enemyTargeting, enemyTargeting]
@@ -398,7 +414,6 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             RunCombat([0], [1]);
             
-            CombatValidator.PrintCombatStages(_responseListener.Responses[0].CombatStages);
             CombatValidator.AssertNextAbilityID(1, 0);
         }
     }

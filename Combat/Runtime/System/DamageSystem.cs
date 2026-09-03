@@ -7,19 +7,19 @@ namespace IdelPog.Combat.Runtime.System
 {
     public sealed class DamageSystem : IDamageSystem
     {
-        public uint DealDamage(CombatantEntity targetCombatant, CombatantAbilityStage combatantAbilityStage)
+        public uint DealDamage(CombatantEntity targetCombatant, AbilityStage abilityStage)
         {
             HealthComponent targetHealth = targetCombatant.GetComponent<HealthComponent>();
             
-            uint newHealth = CalculateNewHealth(targetHealth.Health, GetCalculatedDamage(combatantAbilityStage));
+            uint newHealth = CalculateNewHealth(targetHealth.Health, GetCalculatedDamage(abilityStage));
             targetCombatant.ReplaceComponent(new HealthComponent { Health = newHealth });
             
             return newHealth;
         }
 
-        public uint GetCalculatedDamage(CombatantAbilityStage combatantAbilityStage)
+        public uint GetCalculatedDamage(AbilityStage abilityStage)
         {
-            return combatantAbilityStage.AbilityStage.Value;
+            return abilityStage.AbilityStageCards.Value;
         }
 
         private static uint CalculateNewHealth(uint defenderHealth, uint calculatedDamage)

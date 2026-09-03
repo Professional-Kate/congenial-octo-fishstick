@@ -23,10 +23,10 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         private Mock<IAssetRepository<CombatantStatType, IStatProvider>> _statProviderRepositoryMock;
         private Mock<IStatProvider> _statProviderMock;
 
-        private readonly CombatantEntity _highInitiativeEntity = TestCombatantEntityFactory.CreateCombatantEntity(0, TargetingType.FRIENDLY, new AgilityCard { Speed = 10, Initiative = 100 });
-        private readonly CombatantEntity _lowInitiativeEntity = TestCombatantEntityFactory.CreateCombatantEntity(1, TargetingType.FRIENDLY, new AgilityCard { Speed = 7, Initiative = 3 });
-        private readonly CombatantEntity _highSpeedEntity = TestCombatantEntityFactory.CreateCombatantEntity(2, TargetingType.FRIENDLY, new AgilityCard { Speed = 1000, Initiative = 53 });
-        private readonly CombatantEntity _lowSpeedEntity = TestCombatantEntityFactory.CreateCombatantEntity(3, TargetingType.FRIENDLY, new AgilityCard { Speed = 5, Initiative = 32 });
+        private readonly CombatantEntity _highInitiativeEntity = TestCombatantEntityFactory.Create(0, TargetingType.FRIENDLY, new AgilityCard { Speed = 10, Initiative = 100 });
+        private readonly CombatantEntity _lowInitiativeEntity = TestCombatantEntityFactory.Create(1, TargetingType.FRIENDLY, new AgilityCard { Speed = 7, Initiative = 3 });
+        private readonly CombatantEntity _highSpeedEntity = TestCombatantEntityFactory.Create(2, TargetingType.FRIENDLY, new AgilityCard { Speed = 1000, Initiative = 53 });
+        private readonly CombatantEntity _lowSpeedEntity = TestCombatantEntityFactory.Create(3, TargetingType.FRIENDLY, new AgilityCard { Speed = 5, Initiative = 32 });
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -153,7 +153,7 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         [Test]
         public void Positive_SelectPreferredTargets_SingleTarget_Lowest_ExtremeValue()
         {
-            CombatantEntity maxHealthEntity = TestCombatantEntityFactory.CreateCombatantEntity(5, TargetingType.FRIENDLY, new AgilityCard { Speed = 100, Initiative = uint.MaxValue });
+            CombatantEntity maxHealthEntity = TestCombatantEntityFactory.Create(5, TargetingType.FRIENDLY, new AgilityCard { Speed = 100, Initiative = uint.MaxValue });
             
             SetupStatProviderRepository(CombatantStatType.INITIATIVE, _statProviderMock.Object);
             SetupCombatantFilters(TargetingType.FRIENDLY, _lowInitiativeEntity, maxHealthEntity, _highInitiativeEntity);

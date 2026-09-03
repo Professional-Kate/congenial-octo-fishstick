@@ -1,8 +1,7 @@
 ﻿using System.Collections.Immutable;
 using IdelPog.Combat.Contracts;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.Event;
 using IdelPog.Combat.Service.Logging;
@@ -21,14 +20,14 @@ namespace IdelPog.Combat.Tests.Service
         private const byte ABILITY_ID = 1;
         private CombatantEntity _initiatingCombatant;
         private CombatantEntity _targetCombatant;
-        private AbilityStage _directDamageStage;
+        private AbilityStageCard _directDamageStage;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _combatantLogger = new CombatantLogger(new ObjectNullAssertion(), new CollectionAssertion());
 
-            _directDamageStage = new AbilityStage
+            _directDamageStage = new AbilityStageCard
             {
                 AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE,
                 AffinityType = AffinityType.LIGHTNING,
@@ -42,8 +41,8 @@ namespace IdelPog.Combat.Tests.Service
         [SetUp]
         public void Setup()
         {
-            _initiatingCombatant = TestCombatantEntityFactory.CreateCombatantEntity(combatantID: 1);
-            _targetCombatant = TestCombatantEntityFactory.CreateCombatantEntity(combatantID: 2, TargetingType.ENEMY);
+            _initiatingCombatant = TestCombatantEntityFactory.Create(combatantID: 1, TargetingType.FRIENDLY);
+            _targetCombatant = TestCombatantEntityFactory.Create(combatantID: 2, TargetingType.ENEMY);
         }
         
         [TearDown]
@@ -62,13 +61,13 @@ namespace IdelPog.Combat.Tests.Service
             Assert.That(combatantStateChanges, Has.Length.EqualTo(expectedLength));
         }
 
-        private static void AssertStateChange(CombatStage combatStage, CombatantStateChange combatantStateChange, CombatantEntity initiatingCombatant, CombatantEntity[] targetCombatants, AbilityStage abilityStage)
+        private static void AssertStateChange(CombatStage combatStage, CombatantStateChange combatantStateChange, CombatantEntity initiatingCombatant, CombatantEntity[] targetCombatants, AbilityStageCard abilityStage)
         {
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(combatStage.AbilityID, Is.EqualTo(ABILITY_ID));
-                Assert.That(combatStage.InitiatingCombatant.CombatantID, Is.EqualTo(initiatingCombatant.CombatantID));
-                Assert.That(combatStage.InitiatingCombatant.TargetingType, Is.EqualTo(initiatingCombatant.GetComponent<TargetingTypeComponent>().TargetingType));
+                Assert.That(combatStage.InitiatingCombatant.InstanceID, Is.EqualTo(initiatingCombatant.InstanceID));
+                Assert.That(combatStage.InitiatingCombatant.TargetingType, Is.EqualTo(initiatingCombatant.TargetingType));
                 Assert.That(combatantStateChange.ReadOnlyAbilityStage.AbilityEffectType, Is.EqualTo(abilityStage.AbilityEffectType));
                 Assert.That(combatantStateChange.ReadOnlyAbilityStage.AffinityType, Is.EqualTo(abilityStage.AffinityType));
                 Assert.That(combatantStateChange.ReadOnlyAbilityStage.Value, Is.EqualTo(abilityStage.Value));
@@ -78,8 +77,8 @@ namespace IdelPog.Combat.Tests.Service
                     ReadOnlyCombatant readOnlyCombatant = combatantStateChange.TargetCombatants[i];
                     CombatantEntity combatantEntity = targetCombatants[i];
                     
-                    Assert.That(readOnlyCombatant.CombatantID, Is.EqualTo(combatantEntity.CombatantID));
-                    Assert.That(readOnlyCombatant.TargetingType,Is.EqualTo(combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType));
+                    Assert.That(readOnlyCombatant.InstanceID, Is.EqualTo(combatantEntity.InstanceID));
+                    Assert.That(readOnlyCombatant.TargetingType,Is.EqualTo(combatantEntity.TargetingType));
                 }
             }
         }

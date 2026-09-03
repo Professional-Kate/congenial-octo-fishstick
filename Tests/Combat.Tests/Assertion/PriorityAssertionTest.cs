@@ -2,8 +2,7 @@
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Runtime.Entities;
-using IdelPog.Combat.Tests.TestFactory;
+using IdelPog.Combat.Runtime.Event;
 
 namespace IdelPog.Combat.Tests.Assertion
 {
@@ -12,7 +11,15 @@ namespace IdelPog.Combat.Tests.Assertion
     {
         private PriorityAssertion _priorityAssertion;
 
-        private readonly AbilityEntity _abilityEntity = TestAbilityEntityFactory.Create();
+        private readonly AbilityStageCard _stageCard = new()
+        {
+            AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE,
+            AffinityType = AffinityType.HOLY,
+            CastTime = 10,
+            MaxTargets = 1, 
+            Priority = 0, 
+            Value = 4
+        };
         
         private readonly StrategyCard _strategyCard = new()
         {
@@ -31,13 +38,13 @@ namespace IdelPog.Combat.Tests.Assertion
         [Test]
         public void Positive_AssertPriority_SamePriority_NoThrow()
         { 
-            Assert.DoesNotThrow(() => _priorityAssertion.AssertPriority(_abilityEntity.AbilityStages, [_strategyCard]));
+            Assert.DoesNotThrow(() => _priorityAssertion.AssertPriority([_stageCard], [_strategyCard]));
         }
 
         [Test]
         public void Negative_AssertPriority_DifferentPriority_Throws()
         {
-            PriorityMismatchException exception = Assert.Throws<PriorityMismatchException>(() => _priorityAssertion.AssertPriority(_abilityEntity.AbilityStages, [_strategyCard with { Priority = 102 }]));
+            PriorityMismatchException exception = Assert.Throws<PriorityMismatchException>(() => _priorityAssertion.AssertPriority([_stageCard], [_strategyCard with { Priority = 102 }]));
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(exception.AbilityStagePriority, Is.Zero);
@@ -48,7 +55,7 @@ namespace IdelPog.Combat.Tests.Assertion
         [Test]
         public void Negative_AssertPriority_DifferentCollectionLength_Throws()
         { 
-            Assert.Throws<PriorityMissingException>(() => _priorityAssertion.AssertPriority(_abilityEntity.AbilityStages, [_strategyCard, _strategyCard]));
+            Assert.Throws<PriorityMissingException>(() => _priorityAssertion.AssertPriority([_stageCard], [_strategyCard, _strategyCard]));
         }
     }
 }

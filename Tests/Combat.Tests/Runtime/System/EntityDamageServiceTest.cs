@@ -1,5 +1,4 @@
 ﻿using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Component;
 using IdelPog.Combat.Runtime.Component.Ability;
 using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.Event.Trigger.Contracts;
@@ -24,7 +23,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         
         private CombatantEntity _targetCombatant;
         private CombatantEntity _attackingCombatant;
-        private CombatantAbilityEntity _attackingCombatantAbility;
+        private AbilityEntity _attackingAbility;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -40,9 +39,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [SetUp]
         public void Setup()
         { 
-            _targetCombatant = TestCombatantEntityFactory.CreateCombatantEntity(1, TargetingType.ENEMY);
-            _attackingCombatant = TestCombatantEntityFactory.CreateCombatantEntity(2);
-            _attackingCombatantAbility = TestCombatantAbilityEntityFactory.Create(2, 1);
+            _targetCombatant = TestCombatantEntityFactory.Create(1, TargetingType.ENEMY);
+            _attackingCombatant = TestCombatantEntityFactory.Create(2, TargetingType.FRIENDLY);
+            _attackingAbility = TestAbilityEntityFactory.Create(2, 1);
             
             _damageSystemMock.Reset();
             _deathSystemMock.Reset();
@@ -62,14 +61,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantDiedTriggerMock.VerifyNoOtherCalls();
         }
 
-        private void SetupDamageSystem(CombatantEntity targetCombatant, uint newHealth, CombatantAbilityStage combatantAbilityStage)
+        private void SetupDamageSystem(CombatantEntity targetCombatant, uint newHealth, AbilityStage abilityStage)
         {
-            _damageSystemMock.Setup(library => library.DealDamage(targetCombatant, combatantAbilityStage)).Returns(newHealth).Verifiable();
+            _damageSystemMock.Setup(library => library.DealDamage(targetCombatant, abilityStage)).Returns(newHealth).Verifiable();
         }
 
-        private void SetupGetCalculatedDamage(CombatantAbilityStage combatantAbilityStage)
+        private void SetupGetCalculatedDamage(AbilityStage abilityStage)
         {
-            _damageSystemMock.Setup(library => library.GetCalculatedDamage(combatantAbilityStage)).Returns(combatantAbilityStage.AbilityStage.Value).Verifiable();
+            _damageSystemMock.Setup(library => library.GetCalculatedDamage(abilityStage)).Returns(abilityStage.AbilityStageCards.Value).Verifiable();
         }
 
         private void VerifyKillEntity(CombatantEntity combatantEntity)
@@ -87,14 +86,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantDiedTriggerMock.Verify(library => library.Handle(TICK, new CombatantDeathData { CombatantTargetingType = combatantTargetingType, DeadCombatantID = deadCombatantID }), Times.Once);
         }
         
-        private static CombatantAbilityStage GetFirstAbilityStage(CombatantAbilityEntity combatantAbility) => combatantAbility.GetComponent<AbilityStagesComponent>().AbilityStages[0];
+        private static AbilityStage GetFirstAbilityStage(AbilityEntity ability) => ability.GetComponent<AbilityStagesComponent>().AbilityStages[0];
 
         private static CombatantDamagedData CreateCombatantDamagedData(CombatantEntity combatantEntity, uint damageValue, byte initiatingCombatantID)
         {
             return new CombatantDamagedData
             {
-                DamagedCombatantID = combatantEntity.CombatantID,
-                DamagedCombatantTargetingType = combatantEntity.GetComponent<TargetingTypeComponent>().TargetingType,
+                DamagedCombatantID = combatantEntity.InstanceID,
+                DamagedCombatantTargetingType = combatantEntity.TargetingType,
                 DamageValue = damageValue,
                 InitiatingCombatantID = initiatingCombatantID
             };
@@ -103,51 +102,51 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_ApplyDamage_RemovesHealthFromTarget()
         {
-            SetupDamageSystem(_targetCombatant, 1, GetFirstAbilityStage(_attackingCombatantAbility));
-            SetupGetCalculatedDamage(GetFirstAbilityStage(_attackingCombatantAbility));
+            SetupDamageSystem(_targetCombatant, 1, GetFirstAbilityStage(_attackingAbility));
+            SetupGetCalculatedDamage(GetFirstAbilityStage(_attackingAbility));
             
-            _entityDamageService.ApplyDamage([_targetCombatant], _attackingCombatant.CombatantID, GetFirstAbilityStage(_attackingCombatantAbility), TICK);
+            _entityDamageService.ApplyDamage([_targetCombatant], _attackingCombatant.InstanceID, GetFirstAbilityStage(_attackingAbility), TICK);
 
-            VerifyDamagedTriggerHandle(CreateCombatantDamagedData(_targetCombatant, GetFirstAbilityStage(_attackingCombatantAbility).AbilityStage.Value, _attackingCombatant.CombatantID));
+            VerifyDamagedTriggerHandle(CreateCombatantDamagedData(_targetCombatant, GetFirstAbilityStage(_attackingAbility).AbilityStageCards.Value, _attackingCombatant.InstanceID));
             VerifyMocks();
         }
 
         [Test]
         public void Positive_ApplyDamage_CausesDeath()
         {
-            SetupDamageSystem(_targetCombatant, 0, GetFirstAbilityStage(_attackingCombatantAbility));
-            SetupGetCalculatedDamage(GetFirstAbilityStage(_attackingCombatantAbility));
+            SetupDamageSystem(_targetCombatant, 0, GetFirstAbilityStage(_attackingAbility));
+            SetupGetCalculatedDamage(GetFirstAbilityStage(_attackingAbility));
             
-            _entityDamageService.ApplyDamage([_targetCombatant], _attackingCombatant.CombatantID, GetFirstAbilityStage(_attackingCombatantAbility), TICK);
+            _entityDamageService.ApplyDamage([_targetCombatant], _attackingCombatant.InstanceID, GetFirstAbilityStage(_attackingAbility), TICK);
 
-            VerifyDamagedTriggerHandle(CreateCombatantDamagedData(_targetCombatant, GetFirstAbilityStage(_attackingCombatantAbility).AbilityStage.Value, _attackingCombatant.CombatantID));
+            VerifyDamagedTriggerHandle(CreateCombatantDamagedData(_targetCombatant, GetFirstAbilityStage(_attackingAbility).AbilityStageCards.Value, _attackingCombatant.InstanceID));
             VerifyKillEntity(_targetCombatant);
-            VerifyDeathTriggerHandle(_targetCombatant.GetComponent<TargetingTypeComponent>().TargetingType, _targetCombatant.CombatantID);
+            VerifyDeathTriggerHandle(_targetCombatant.TargetingType, _targetCombatant.InstanceID);
             VerifyMocks();
         }
         
         [Test]
         public void Positive_ApplyDamage_MultipleTargets_SomeDie()
         {
-            SetupDamageSystem(_targetCombatant, 1, GetFirstAbilityStage(_attackingCombatantAbility));
+            SetupDamageSystem(_targetCombatant, 1, GetFirstAbilityStage(_attackingAbility));
             
-            CombatantEntity secondTarget = TestCombatantEntityFactory.CreateCombatantEntity(5);
-            SetupDamageSystem(secondTarget, 0, GetFirstAbilityStage(_attackingCombatantAbility));
-            SetupGetCalculatedDamage(GetFirstAbilityStage(_attackingCombatantAbility));
+            CombatantEntity secondTarget = TestCombatantEntityFactory.Create(5, TargetingType.FRIENDLY);
+            SetupDamageSystem(secondTarget, 0, GetFirstAbilityStage(_attackingAbility));
+            SetupGetCalculatedDamage(GetFirstAbilityStage(_attackingAbility));
             
-            _entityDamageService.ApplyDamage([_targetCombatant, secondTarget], _attackingCombatant.CombatantID, GetFirstAbilityStage(_attackingCombatantAbility), TICK);
+            _entityDamageService.ApplyDamage([_targetCombatant, secondTarget], _attackingCombatant.InstanceID, GetFirstAbilityStage(_attackingAbility), TICK);
 
-            VerifyDamagedTriggerHandle(CreateCombatantDamagedData(_targetCombatant, GetFirstAbilityStage(_attackingCombatantAbility).AbilityStage.Value, _attackingCombatant.CombatantID));
-            VerifyDamagedTriggerHandle(CreateCombatantDamagedData(secondTarget, GetFirstAbilityStage(_attackingCombatantAbility).AbilityStage.Value, _attackingCombatant.CombatantID));
+            VerifyDamagedTriggerHandle(CreateCombatantDamagedData(_targetCombatant, GetFirstAbilityStage(_attackingAbility).AbilityStageCards.Value, _attackingCombatant.InstanceID));
+            VerifyDamagedTriggerHandle(CreateCombatantDamagedData(secondTarget, GetFirstAbilityStage(_attackingAbility).AbilityStageCards.Value, _attackingCombatant.InstanceID));
             VerifyKillEntity(secondTarget);
-            VerifyDeathTriggerHandle(secondTarget.GetComponent<TargetingTypeComponent>().TargetingType, secondTarget.CombatantID);
+            VerifyDeathTriggerHandle(secondTarget.TargetingType, secondTarget.InstanceID);
             VerifyMocks();
         }
 
         [Test]
         public void Positive_ApplyDamage_NoTargets_DoesNothing()
         {
-            _entityDamageService.ApplyDamage([], _attackingCombatant.CombatantID, GetFirstAbilityStage(_attackingCombatantAbility), TICK);
+            _entityDamageService.ApplyDamage([], _attackingCombatant.InstanceID, GetFirstAbilityStage(_attackingAbility), TICK);
 
             VerifyMocks();
         }

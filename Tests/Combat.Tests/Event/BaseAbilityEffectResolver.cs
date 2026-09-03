@@ -18,8 +18,8 @@ namespace IdelPog.Combat.Tests.Event
         protected readonly Mock<ICombatantLogger> CombatantLoggerMock = new();
 
         protected CombatantEntity InitiatingCombatant { get; private set; }
-        protected CombatantAbilityEntity InitiatingCombatantAbility { get; private set; }
-        protected CombatantAbilityStage FirstAbilityStage { get; private set; }
+        protected AbilityEntity InitiatingAbility { get; private set; }
+        protected AbilityStage FirstAbilityStage { get; private set; }
         protected CombatantEntity TargetCombatant { get; private set; }
 
         [SetUp]
@@ -29,11 +29,11 @@ namespace IdelPog.Combat.Tests.Event
             CombatantRepositoryMock.Reset();
             CombatantLoggerMock.Reset();
 
-            InitiatingCombatant = TestCombatantEntityFactory.CreateCombatantEntity(combatantID: 1);
-            InitiatingCombatantAbility = TestCombatantAbilityEntityFactory.Create(InitiatingCombatant.CombatantID, abilityID: 1);
-            FirstAbilityStage = GetCombatantAbilityStage(InitiatingCombatantAbility, 0);
+            InitiatingCombatant = TestCombatantEntityFactory.Create(combatantID: 1, TargetingType.FRIENDLY);
+            InitiatingAbility = TestAbilityEntityFactory.Create(InitiatingCombatant.InstanceID, abilityID: 1);
+            FirstAbilityStage = GetCombatantAbilityStage(InitiatingAbility, 0);
                 
-            TargetCombatant = TestCombatantEntityFactory.CreateCombatantEntity(combatantID: 2, TargetingType.ENEMY);
+            TargetCombatant = TestCombatantEntityFactory.Create(combatantID: 2, TargetingType.ENEMY);
         }
 
         [TearDown]
@@ -47,7 +47,7 @@ namespace IdelPog.Combat.Tests.Event
             CombatantLoggerMock.VerifyNoOtherCalls();
         }
 
-        protected static CombatantAbilityStage GetCombatantAbilityStage(CombatantAbilityEntity combatantAbilityEntity, int index) => combatantAbilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages[index];
+        protected static AbilityStage GetCombatantAbilityStage(AbilityEntity abilityEntity, int index) => abilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages[index];
         
         protected void SetupTargetFinder(CombatantEntity target, TargetingPreference targetingPreference, CombatantStatType combatantStatType, byte targetCount, TargetingType targetingType)
         {
@@ -58,13 +58,13 @@ namespace IdelPog.Combat.Tests.Event
         {
             foreach (CombatantEntity combatantEntity in combatantEntities)
             {
-                CombatantRepositoryMock.Setup(library => library.Get(combatantEntity.CombatantID)).Returns(combatantEntity).Verifiable();
+                CombatantRepositoryMock.Setup(library => library.Get(combatantEntity.InstanceID)).Returns(combatantEntity).Verifiable();
             }
         }
 
-        protected void VerifyCombatantLog(byte abilityID, double tick, CombatantEntity initiatingEntity, CombatantEntity[] targetCombatants, CombatantAbilityStage combatantAbilityStage)
+        protected void VerifyCombatantLog(byte abilityID, double tick, CombatantEntity initiatingEntity, CombatantEntity[] targetCombatants, AbilityStage abilityStage)
         {
-            CombatantLoggerMock.Verify(library => library.LogCombatantChange(tick, initiatingEntity, targetCombatants, combatantAbilityStage.AbilityStage, abilityID));
+            CombatantLoggerMock.Verify(library => library.LogCombatantChange(tick, initiatingEntity, targetCombatants, abilityStage.AbilityStageCards, abilityID));
         }
     }
 }

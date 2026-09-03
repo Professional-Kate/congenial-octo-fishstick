@@ -19,19 +19,19 @@ namespace IdelPog.Combat.Runtime.Event.Trigger.Handler
 
         protected override TriggerEventType TriggerEventType => TriggerEventType.COMBATANT_DAMAGED;
         
-        protected override IEnumerable<AbilityTrigger> Filter(ImmutableArray<CombatantAbilityEntity> combatantAbilityEntities, CombatantDamagedData triggerData, double tick)
+        protected override IEnumerable<AbilityTrigger> Filter(ImmutableArray<AbilityEntity> combatantAbilityEntities, CombatantDamagedData triggerData, double tick)
         {
             CombatantEntity damagedCombatant = GetCombatantEntity(triggerData.DamagedCombatantID);
             if (damagedCombatant.TryGetComponent(out RetaliationComponent retaliationComponent))
             {
-                if (damagedCombatant.CombatantID == triggerData.InitiatingCombatantID == false)
+                if (damagedCombatant.InstanceID == triggerData.InitiatingCombatantID == false)
                 {
                     retaliationComponent.Enqueue(new CombatantDamageComponent { CombatantID = triggerData.InitiatingCombatantID, DamageValue = triggerData.DamageValue });
                 }
             }
             
             List<AbilityTrigger> abilityTriggers = [];
-            foreach (CombatantAbilityEntity combatantAbilityEntity in combatantAbilityEntities)
+            foreach (AbilityEntity combatantAbilityEntity in combatantAbilityEntities)
             {
                 TriggerComponent triggerComponent = combatantAbilityEntity.GetComponent<TriggerComponent>();
                 if (IsValueInRange(triggerComponent.MinTriggerValue, triggerComponent.MaxTriggerValue, triggerData.DamageValue) == false)
@@ -44,7 +44,7 @@ namespace IdelPog.Combat.Runtime.Event.Trigger.Handler
                     continue;
                 }
                 
-                abilityTriggers.Add(new AbilityTrigger { Tick = tick, CombatantID = combatantAbilityEntity.CombatantID, AbilityID = combatantAbilityEntity.AbilityID });
+                abilityTriggers.Add(new AbilityTrigger { Tick = tick, CombatantID = combatantAbilityEntity.InstanceID, AbilityID = combatantAbilityEntity.AbilityID });
             }
 
             return abilityTriggers;

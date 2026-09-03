@@ -4,16 +4,14 @@ namespace IdelPog.Combat.Runtime.System.Repository.Interface
 {
     public interface ICombatantRepository
     {
-        public byte NextCombatantID { get; }
-
-        public void Add(CombatantEntity combatantEntity);
-
-        public bool Contains(byte id);
+        public void SeedFriendlyCombatants(CombatantEntity[] friendlyCombatants);
         
-        public void Clear();
-        
+        public void SeedEnemyCombatants(CombatantEntity[] enemyCombatants);
+
         public CombatantEntity Get(byte id);
+        
+        public IEnumerable<CombatantEntity> Enumerate();
 
-        public IEnumerable<CombatantEntity> GetAllParticipating();
+        public void Clear();
     }
 }
