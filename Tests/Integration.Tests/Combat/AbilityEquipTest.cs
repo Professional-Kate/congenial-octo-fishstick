@@ -6,8 +6,8 @@ using IdelPog.Combat.Combatant.Contracts.Error;
 using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Runtime.Event;
 using IdelPog.Core.Validation.Exceptions;
 
 namespace IdelPog.Integration.Tests.Combat

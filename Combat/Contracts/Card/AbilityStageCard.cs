@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Event;
+using IdelPog.Combat.Core.Event;
 
 namespace IdelPog.Combat.Contracts.Card
 {

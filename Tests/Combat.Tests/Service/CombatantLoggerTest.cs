@@ -1,10 +1,9 @@
 ﻿using System.Collections.Immutable;
-using IdelPog.Combat.Combatant.Runtime.Entity;
-using IdelPog.Combat.Contracts;
+using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Event;
-using IdelPog.Combat.Service.Logging;
+using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Core.Logging;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;

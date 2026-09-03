@@ -1,9 +1,9 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Combatant.Runtime.Component;
-using IdelPog.Combat.Combatant.Runtime.Entity;
+using IdelPog.Combat.Combatant.Runtime.Entities;
+using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Event.Resolver;
-using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Core.Event.Resolver;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -14,12 +14,12 @@ namespace IdelPog.Combat.Tests.Event
     public sealed class DirectDamageAbilityEffectResolverTest : BaseAbilityEffectResolver
     {
         private DirectDamageAbilityEffectResolver _directDamageAbilityEffectResolver;
-        private Mock<IEntityDamageService> _damageServiceMock;
+        private Mock<IEntityDamageSystem> _damageServiceMock;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _damageServiceMock = new Mock<IEntityDamageService>();
+            _damageServiceMock = new Mock<IEntityDamageSystem>();
             
             _directDamageAbilityEffectResolver = new DirectDamageAbilityEffectResolver(CombatantRepositoryMock.Object, TargetFinderMock.Object, CombatantLoggerMock.Object, _damageServiceMock.Object);
         }

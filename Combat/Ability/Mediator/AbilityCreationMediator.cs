@@ -3,7 +3,7 @@ using IdelPog.Combat.Ability.Contracts.Response;
 using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Assertion.Interface;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Incremental;

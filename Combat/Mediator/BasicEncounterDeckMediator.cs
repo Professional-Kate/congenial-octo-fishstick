@@ -2,8 +2,8 @@
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Core.Arena;
-using IdelPog.Combat.Service.Interface;
-using IdelPog.Combat.Service.Logging.Interface;
+using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Incremental;

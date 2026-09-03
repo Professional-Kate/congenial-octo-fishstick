@@ -3,8 +3,8 @@ using IdelPog.Combat.Ability.Contracts.Error;
 using IdelPog.Combat.Ability.Contracts.Response;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Runtime.Event;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Integration.Tests.Combat.Tools;
 

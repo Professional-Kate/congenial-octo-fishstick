@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Ability.Model;
+using IdelPog.Combat.Ability.Service.Interface;
 using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
@@ -7,8 +8,8 @@ using IdelPog.Combat.Combatant.Mediator;
 using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Service.Interface;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Repository.Incremental;

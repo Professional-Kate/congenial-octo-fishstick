@@ -1,12 +1,13 @@
 ﻿using System.Collections.Immutable;
 using IdelPog.Combat.Ability.Model;
+using IdelPog.Combat.Ability.Service.Interface;
 using IdelPog.Combat.Assertion.Interface;
 using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Incremental;

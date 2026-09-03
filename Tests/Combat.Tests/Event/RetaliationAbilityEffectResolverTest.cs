@@ -1,13 +1,13 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Component;
-using IdelPog.Combat.Ability.Runtime.Entity;
+using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.Component;
-using IdelPog.Combat.Combatant.Runtime.Entity;
+using IdelPog.Combat.Combatant.Runtime.Entities;
+using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Event;
-using IdelPog.Combat.Runtime.Event.Resolver;
-using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Core.Event.Resolver;
 using IdelPog.Combat.Tests.TestFactory;
 using Moq;
 
@@ -17,7 +17,7 @@ namespace IdelPog.Combat.Tests.Event
     public sealed class RetaliationAbilityEffectResolverTest : BaseAbilityEffectResolver
     {
         private RetaliationAbilityEffectResolver _retaliationAbilityEffectResolver;
-        private Mock<IEntityDamageService> _damageServiceMock;
+        private Mock<IEntityDamageSystem> _damageServiceMock;
 
         private AbilityEntity _retaliationAbility;
         private readonly TargetingPreferenceComponent _targetingPreferenceComponent = new() { CombatantStatType = CombatantStatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.ENEMY };
@@ -25,7 +25,7 @@ namespace IdelPog.Combat.Tests.Event
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _damageServiceMock = new Mock<IEntityDamageService>();
+            _damageServiceMock = new Mock<IEntityDamageSystem>();
             
             _retaliationAbilityEffectResolver = new RetaliationAbilityEffectResolver(CombatantRepositoryMock.Object, TargetFinderMock.Object, CombatantLoggerMock.Object, _damageServiceMock.Object);
         }

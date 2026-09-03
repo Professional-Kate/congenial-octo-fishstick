@@ -1,12 +1,12 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Combatant.Runtime.Component;
-using IdelPog.Combat.Combatant.Runtime.Entity;
+using IdelPog.Combat.Combatant.Runtime.Entities;
+using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Filter;
+using IdelPog.Combat.Core.Filter.Provider.Interface;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Runtime.Filter;
-using IdelPog.Combat.Runtime.Filter.Provider.Interface;
-using IdelPog.Combat.Runtime.System.Repository.Interface;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion;

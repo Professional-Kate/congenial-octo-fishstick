@@ -1,8 +1,8 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Runtime.Event;
 
 namespace IdelPog.Combat.Tests.Assertion
 {

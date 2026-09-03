@@ -1,11 +1,11 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Component;
-using IdelPog.Combat.Ability.Runtime.Entity;
-using IdelPog.Combat.Combatant.Runtime.Entity;
+using IdelPog.Combat.Ability.Runtime.Entities;
+using IdelPog.Combat.Combatant.Runtime.Entities;
+using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Filter.Interface;
-using IdelPog.Combat.Runtime.System.Repository.Interface;
-using IdelPog.Combat.Service.Logging.Interface;
+using IdelPog.Combat.Core.Filter.Interface;
+using IdelPog.Combat.Core.Logging;
 using IdelPog.Combat.Tests.TestFactory;
 using Moq;
 

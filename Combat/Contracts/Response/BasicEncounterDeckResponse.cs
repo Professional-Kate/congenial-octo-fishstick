@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Contracts.Command;
+using IdelPog.Combat.Core.Logging;
 
 namespace IdelPog.Combat.Contracts.Response
 {

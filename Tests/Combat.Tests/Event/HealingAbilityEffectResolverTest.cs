@@ -1,9 +1,9 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Combatant.Runtime.Component;
-using IdelPog.Combat.Combatant.Runtime.Entity;
+using IdelPog.Combat.Combatant.Runtime.Entities;
+using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Event.Resolver;
-using IdelPog.Combat.Service.Interface;
+using IdelPog.Combat.Core.Event.Resolver;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -14,12 +14,12 @@ namespace IdelPog.Combat.Tests.Event
     public sealed class HealingAbilityEffectResolverTest : BaseAbilityEffectResolver
     {
         private HealingAbilityEffectResolver _healingAbilityEffectResolver;
-        private Mock<IEntityHealingService> _entityHealingServiceMock;
+        private Mock<IEntityHealingSystem> _entityHealingServiceMock;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _entityHealingServiceMock = new Mock<IEntityHealingService>();
+            _entityHealingServiceMock = new Mock<IEntityHealingSystem>();
             
             _healingAbilityEffectResolver = new HealingAbilityEffectResolver(CombatantRepositoryMock.Object, TargetFinderMock.Object, CombatantLoggerMock.Object, _entityHealingServiceMock.Object);
         }

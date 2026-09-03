@@ -3,7 +3,7 @@ using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Event;
+using IdelPog.Combat.Core.Event;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {

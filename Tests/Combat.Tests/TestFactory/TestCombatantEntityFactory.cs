@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Combatant.Runtime.Entity;
+using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 

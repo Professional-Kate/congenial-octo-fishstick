@@ -5,7 +5,7 @@ using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
-using IdelPog.Combat.Runtime.Event;
+using IdelPog.Combat.Core.Event;
 using IdelPog.Integration.Tests.Combat.Tools;
 
 namespace IdelPog.Integration.Tests.Combat.Flows

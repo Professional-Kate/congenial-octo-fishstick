@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
 using IdelPog.Combat.Ability.Runtime.Component;
-using IdelPog.Combat.Ability.Runtime.Entity;
+using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Event.Trigger;
+using IdelPog.Combat.Core.Event.Trigger;
 using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Runtime.System.Trigger

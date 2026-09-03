@@ -1,14 +1,13 @@
 ﻿using IdelPog.Combat.Combatant.Model;
-using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Command;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Core.Arena;
+using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Combat.Mediator;
-using IdelPog.Combat.Runtime.Event;
-using IdelPog.Combat.Service.Interface;
-using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Repository.Incremental;
 using IdelPog.Core.Validation.Assertion;

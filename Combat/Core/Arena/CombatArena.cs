@@ -1,11 +1,10 @@
-﻿using IdelPog.Combat.Ability.Runtime.Entity;
+﻿using IdelPog.Combat.Ability.Runtime.Entities;
+using IdelPog.Combat.Ability.Runtime.System.Interface;
 using IdelPog.Combat.Combatant.Model;
-using IdelPog.Combat.Combatant.Runtime.Entity;
+using IdelPog.Combat.Combatant.Runtime.Entities;
+using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.System.Factory.Interface;
-using IdelPog.Combat.Runtime.System.Interface;
-using IdelPog.Combat.Runtime.System.Repository.Interface;
-using IdelPog.Combat.Service.Queue.Interface;
+using IdelPog.Combat.Core.Service.Interface;
 
 namespace IdelPog.Combat.Core.Arena
 {

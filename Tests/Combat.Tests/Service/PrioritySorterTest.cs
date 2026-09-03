@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Service;
+﻿using IdelPog.Combat.Core.Service;
 
 namespace IdelPog.Combat.Tests.Service
 {

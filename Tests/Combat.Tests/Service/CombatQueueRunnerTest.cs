@@ -1,10 +1,9 @@
-﻿using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Ability.Runtime.System.Interface;
+using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Core.Service;
+using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Runtime.Event;
-using IdelPog.Combat.Runtime.System.Interface;
-using IdelPog.Combat.Service.Interface;
-using IdelPog.Combat.Service.Queue;
-using IdelPog.Combat.Service.Queue.Interface;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Service

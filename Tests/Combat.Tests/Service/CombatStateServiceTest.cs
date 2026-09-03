@@ -1,6 +1,6 @@
-﻿using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.System.Repository.Interface;
-using IdelPog.Combat.Service;
+﻿using IdelPog.Combat.Combatant.Runtime.System.Interface;
+using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Service;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Service

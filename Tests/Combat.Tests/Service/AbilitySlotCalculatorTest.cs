@@ -1,8 +1,8 @@
 ﻿using IdelPog.Combat.Ability.Model;
+using IdelPog.Combat.Ability.Service;
 using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Service;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Repository.Incremental;
 using Moq;
