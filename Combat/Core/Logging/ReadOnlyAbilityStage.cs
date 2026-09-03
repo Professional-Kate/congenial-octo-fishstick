@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 
 namespace IdelPog.Combat.Core.Logging

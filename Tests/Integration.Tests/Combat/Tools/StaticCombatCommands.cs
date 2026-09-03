@@ -1,8 +1,8 @@
 ﻿using IdelPog.Combat.Ability.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 
 namespace IdelPog.Integration.Tests.Combat.Tools

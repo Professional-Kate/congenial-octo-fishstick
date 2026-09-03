@@ -1,7 +1,7 @@
-﻿using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Logging;
 
-namespace IdelPog.Combat.Contracts.Response
+namespace IdelPog.Combat.Core.Contracts.Response
 {
     public readonly record struct BasicEncounterDeckResponse
     {

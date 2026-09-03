@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Ability.Runtime.Component;
-using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Card;
 
 namespace IdelPog.Combat.Ability.Model
 {

@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event.Trigger.Contracts;
 using IdelPog.Combat.Core.Event.Trigger.Interface;
 

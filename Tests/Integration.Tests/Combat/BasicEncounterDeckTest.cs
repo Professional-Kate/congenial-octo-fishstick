@@ -2,11 +2,11 @@
 using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts.Response;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Command;
-using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Contracts.Error;
-using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Command;
+using IdelPog.Combat.Core.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Error;
+using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;

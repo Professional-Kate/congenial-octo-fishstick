@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Combatant.Runtime.Component;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.ECS.Entity;
 
 namespace IdelPog.Combat.Combatant.Runtime.Entities

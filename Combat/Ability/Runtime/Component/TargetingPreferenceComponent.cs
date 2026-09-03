@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.ECS.Component;
 
 namespace IdelPog.Combat.Ability.Runtime.Component

@@ -1,8 +1,8 @@
-﻿using IdelPog.Combat.Contracts.Command;
-using IdelPog.Combat.Contracts.Error;
+﻿using IdelPog.Combat.Core.Contracts.Command;
+using IdelPog.Combat.Core.Contracts.Error;
 using IdelPog.Core.Factory.Interface;
 
-namespace IdelPog.Combat.Factory
+namespace IdelPog.Combat.Core.Factory
 {
     public sealed class BasicEncounterDeckErrorFactory : IErrorFactory<BasicEncounterDeckError, IReadOnlyList<BasicEncounterDeck>>
     {

@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Core.Contracts.Card;
 
 namespace IdelPog.Combat.Combatant.Contracts
 {

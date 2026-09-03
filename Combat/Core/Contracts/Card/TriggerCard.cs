@@ -1,6 +1,6 @@
-﻿using IdelPog.Combat.Contracts.Enum;
+﻿using IdelPog.Combat.Core.Contracts.Enum;
 
-namespace IdelPog.Combat.Contracts.Card
+namespace IdelPog.Combat.Core.Contracts.Card
 {
     public readonly record struct TriggerCard
     { 

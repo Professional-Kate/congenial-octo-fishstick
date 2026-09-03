@@ -1,10 +1,10 @@
 ﻿using IdelPog.Combat.Ability.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Command;
-using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Command;
+using IdelPog.Combat.Core.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Logging;
 using IdelPog.Integration.Tests.Combat.Tools;

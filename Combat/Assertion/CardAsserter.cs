@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
 using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Card;
 
 namespace IdelPog.Combat.Assertion
 {

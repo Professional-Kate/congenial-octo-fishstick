@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Ability.Runtime.System.Interface;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Service;
 using IdelPog.Combat.Core.Service.Interface;

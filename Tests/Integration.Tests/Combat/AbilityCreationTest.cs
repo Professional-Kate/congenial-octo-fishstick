@@ -1,8 +1,8 @@
 ﻿using IdelPog.Combat.Ability.Contracts.Command;
 using IdelPog.Combat.Ability.Contracts.Error;
 using IdelPog.Combat.Ability.Contracts.Response;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Core.Messaging.Exceptions;

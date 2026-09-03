@@ -2,7 +2,7 @@
 using IdelPog.Combat.Ability.Contracts.Error;
 using IdelPog.Core.Factory.Interface;
 
-namespace IdelPog.Combat.Factory
+namespace IdelPog.Combat.Core.Factory
 {
     public sealed class AbilityCreationErrorFactory : IErrorFactory<AbilityCreationError, IReadOnlyList<AbilityCreation>>
     {

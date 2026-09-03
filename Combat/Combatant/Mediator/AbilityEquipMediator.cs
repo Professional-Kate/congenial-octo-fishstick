@@ -6,7 +6,7 @@ using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Combatant.Model;
-using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;

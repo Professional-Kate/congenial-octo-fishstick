@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Combat.Contracts.Command
+﻿namespace IdelPog.Combat.Core.Contracts.Command
 {
     public readonly record struct BasicEncounterDeck
     {

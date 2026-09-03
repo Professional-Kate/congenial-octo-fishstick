@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using IdelPog.Combat.Contracts.Response;
+using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Core.Logging;
 
 namespace IdelPog.Integration.Tests.Combat.Tools

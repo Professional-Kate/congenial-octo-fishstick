@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Combat.Contracts.Enum
+﻿namespace IdelPog.Combat.Core.Contracts.Enum
 {
     public enum CombatantStatType
     {

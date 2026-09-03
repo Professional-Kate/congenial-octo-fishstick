@@ -2,7 +2,7 @@
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Tests.TestFactory;

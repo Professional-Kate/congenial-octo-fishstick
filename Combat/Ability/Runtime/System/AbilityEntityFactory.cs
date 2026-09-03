@@ -4,7 +4,7 @@ using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
 using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Model;
-using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Core.Repository.Incremental;
 
 namespace IdelPog.Combat.Ability.Runtime.System

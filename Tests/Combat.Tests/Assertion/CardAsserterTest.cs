@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Tests.TestFactory;
 

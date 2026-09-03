@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Combatant.Model;
-using IdelPog.Combat.Contracts.Command;
-using IdelPog.Combat.Contracts.Response;
 using IdelPog.Combat.Core.Arena;
+using IdelPog.Combat.Core.Contracts.Command;
+using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Core.Logging;
 using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
@@ -9,7 +9,7 @@ using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Incremental;
 using IdelPog.Core.Validation.Assertion.Interface;
 
-namespace IdelPog.Combat.Mediator
+namespace IdelPog.Combat.Core.Mediator
 {
     public sealed class BasicEncounterDeckMediator : IBatchMediator<BasicEncounterDeck>
     {

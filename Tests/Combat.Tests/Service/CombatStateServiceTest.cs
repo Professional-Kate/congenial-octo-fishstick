@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Combatant.Runtime.System.Interface;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Service;
 using Moq;
 

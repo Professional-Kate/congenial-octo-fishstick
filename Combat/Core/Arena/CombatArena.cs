@@ -3,7 +3,7 @@ using IdelPog.Combat.Ability.Runtime.System.Interface;
 using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Service.Interface;
 
 namespace IdelPog.Combat.Core.Arena

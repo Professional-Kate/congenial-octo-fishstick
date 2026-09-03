@@ -2,7 +2,7 @@
 using IdelPog.Combat.Combatant.Contracts.Error;
 using IdelPog.Core.Factory.Interface;
 
-namespace IdelPog.Combat.Factory
+namespace IdelPog.Combat.Core.Factory
 {
     public sealed class CombatantCreationErrorFactory : IErrorFactory<CombatantCreationError, IReadOnlyList<CombatantCreation>>
     {

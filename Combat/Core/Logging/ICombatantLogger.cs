@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Combatant.Runtime.Entities;
-using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Card;
 
 namespace IdelPog.Combat.Core.Logging
 {

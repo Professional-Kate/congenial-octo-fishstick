@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using IdelPog.Combat.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Card;
 
 namespace IdelPog.Combat.Ability.Model
 {

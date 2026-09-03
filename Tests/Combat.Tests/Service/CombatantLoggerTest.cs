@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using IdelPog.Combat.Combatant.Runtime.Entities;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Logging;
 using IdelPog.Combat.Tests.TestFactory;

@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Ability.Model;
-using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 
 namespace IdelPog.Combat.Tests.TestFactory

@@ -1,7 +1,7 @@
-﻿using IdelPog.Combat.Contracts.Command;
+﻿using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Core.Contracts;
 
-namespace IdelPog.Combat.Contracts.Error
+namespace IdelPog.Combat.Core.Contracts.Error
 {
     public readonly record struct BasicEncounterDeckError
     {

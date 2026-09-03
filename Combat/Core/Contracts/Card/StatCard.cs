@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Combat.Contracts.Card
+﻿namespace IdelPog.Combat.Core.Contracts.Card
 {
     public readonly record struct StatCard
     {

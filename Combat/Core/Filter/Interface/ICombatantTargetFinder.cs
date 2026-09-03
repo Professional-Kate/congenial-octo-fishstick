@@ -1,5 +1,5 @@
 ﻿using IdelPog.Combat.Combatant.Runtime.Entities;
-using IdelPog.Combat.Contracts.Enum;
+using IdelPog.Combat.Core.Contracts.Enum;
 
 namespace IdelPog.Combat.Core.Filter.Interface
 {
