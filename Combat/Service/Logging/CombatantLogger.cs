@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
+using IdelPog.Combat.Combatant.Runtime.Component;
+using IdelPog.Combat.Combatant.Runtime.Entity;
 using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Service.Logging.Interface;
 using IdelPog.Core.Validation.Assertion.Interface;
 

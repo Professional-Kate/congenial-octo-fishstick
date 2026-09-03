@@ -1,10 +1,9 @@
 ﻿using IdelPog.Combat.Ability.Model;
+using IdelPog.Combat.Ability.Runtime.Component;
+using IdelPog.Combat.Ability.Runtime.Entity;
 using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Component.Ability;
-using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Core.Repository.Incremental;

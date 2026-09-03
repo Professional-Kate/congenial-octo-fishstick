@@ -1,7 +1,8 @@
-﻿using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Component.Ability;
-using IdelPog.Combat.Runtime.Entities.Combatant;
+﻿using IdelPog.Combat.Ability.Runtime.Component;
+using IdelPog.Combat.Ability.Runtime.Entity;
+using IdelPog.Combat.Combatant.Runtime.Component;
+using IdelPog.Combat.Combatant.Runtime.Entity;
+using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Runtime.Event.Trigger.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;

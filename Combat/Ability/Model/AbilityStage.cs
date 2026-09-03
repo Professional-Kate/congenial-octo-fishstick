@@ -1,6 +1,7 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Ability.Runtime.Component;
+using IdelPog.Combat.Contracts.Card;
 
-namespace IdelPog.Combat.Runtime.Component.Ability
+namespace IdelPog.Combat.Ability.Model
 {
     public readonly record struct AbilityStage
     {

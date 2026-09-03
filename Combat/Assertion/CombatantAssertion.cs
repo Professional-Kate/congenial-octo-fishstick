@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
+using IdelPog.Combat.Combatant.Runtime.Component;
+using IdelPog.Combat.Combatant.Runtime.Entity;
 using IdelPog.Combat.Exceptions;
-using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Entities.Combatant;
 
 namespace IdelPog.Combat.Assertion
 {

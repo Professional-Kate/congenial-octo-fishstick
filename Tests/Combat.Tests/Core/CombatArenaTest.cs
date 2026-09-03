@@ -1,9 +1,10 @@
-﻿using IdelPog.Combat.Combatant.Contracts;
+﻿using IdelPog.Combat.Ability.Runtime.Entity;
+using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Model;
+using IdelPog.Combat.Combatant.Runtime.Entity;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
 using IdelPog.Combat.Core.Arena;
-using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 using IdelPog.Combat.Runtime.System.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;

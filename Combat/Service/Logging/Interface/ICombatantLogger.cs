@@ -1,6 +1,6 @@
-﻿using IdelPog.Combat.Contracts;
+﻿using IdelPog.Combat.Combatant.Runtime.Entity;
+using IdelPog.Combat.Contracts;
 using IdelPog.Combat.Contracts.Card;
-using IdelPog.Combat.Runtime.Entities.Combatant;
 
 namespace IdelPog.Combat.Service.Logging.Interface
 {

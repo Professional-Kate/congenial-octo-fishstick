@@ -1,8 +1,8 @@
 ﻿using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Runtime.Component;
+using IdelPog.Combat.Combatant.Runtime.Entity;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Repository;
 using IdelPog.Combat.Tests.TestFactory;
 

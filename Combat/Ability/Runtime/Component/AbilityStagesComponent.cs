@@ -1,7 +1,8 @@
 ﻿using System.Collections.Immutable;
+using IdelPog.Combat.Ability.Model;
 using IdelPog.ECS.Component;
 
-namespace IdelPog.Combat.Runtime.Component.Ability
+namespace IdelPog.Combat.Ability.Runtime.Component
 {
     public readonly record struct AbilityStagesComponent : IComponent
     { 

@@ -1,10 +1,8 @@
-﻿using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Component.Ability;
-using IdelPog.ECS.Entity;
+﻿using IdelPog.Combat.Ability.Runtime.Component;
 
-namespace IdelPog.Combat.Runtime.Entities.Combatant
+namespace IdelPog.Combat.Ability.Runtime.Entity
 {
-    public sealed record AbilityEntity : Entity
+    public sealed record AbilityEntity : ECS.Entity.Entity
     {
         public required byte InstanceID { get; init; }
         public required byte AbilityID { get; init; }

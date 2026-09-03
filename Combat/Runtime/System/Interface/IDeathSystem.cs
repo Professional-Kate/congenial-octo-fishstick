@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Runtime.Entities.Combatant;
+﻿using IdelPog.Combat.Combatant.Runtime.Entity;
 
 namespace IdelPog.Combat.Runtime.System.Interface
 {

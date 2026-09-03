@@ -1,11 +1,10 @@
-﻿using IdelPog.Combat.Contracts.Card;
+﻿using IdelPog.Combat.Combatant.Runtime.Component;
+using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Component;
-using IdelPog.ECS.Entity;
 
-namespace IdelPog.Combat.Runtime.Entities.Combatant
+namespace IdelPog.Combat.Combatant.Runtime.Entity
 {
-    public sealed record CombatantEntity : Entity
+    public sealed record CombatantEntity : ECS.Entity.Entity
     {
         public required byte CombatantID { get; init; }
         public required byte InstanceID { get; init; }

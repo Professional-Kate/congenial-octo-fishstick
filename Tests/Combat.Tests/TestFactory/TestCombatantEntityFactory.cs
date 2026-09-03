@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Runtime.Entity;
 using IdelPog.Combat.Contracts.Card;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Entities.Combatant;
 
 namespace IdelPog.Combat.Tests.TestFactory
 {

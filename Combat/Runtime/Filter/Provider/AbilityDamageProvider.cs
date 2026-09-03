@@ -1,5 +1,6 @@
-﻿using IdelPog.Combat.Runtime.Component.Ability;
-using IdelPog.Combat.Runtime.Entities.Combatant;
+﻿using IdelPog.Combat.Ability.Runtime.Component;
+using IdelPog.Combat.Ability.Runtime.Entity;
+using IdelPog.Combat.Combatant.Runtime.Entity;
 using IdelPog.Combat.Runtime.Filter.Provider.Interface;
 using IdelPog.Combat.Runtime.System.Repository.Interface;
 

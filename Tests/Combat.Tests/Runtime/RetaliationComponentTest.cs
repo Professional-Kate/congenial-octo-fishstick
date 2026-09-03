@@ -1,4 +1,4 @@
-﻿using IdelPog.Combat.Runtime.Component;
+﻿using IdelPog.Combat.Combatant.Runtime.Component;
 
 namespace IdelPog.Combat.Tests.Runtime
 {

@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Combatant.Model;
+using IdelPog.Combat.Combatant.Runtime.Component;
+using IdelPog.Combat.Combatant.Runtime.Entity;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Component;
-using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory;
 using IdelPog.Combat.Tests.TestFactory;
 

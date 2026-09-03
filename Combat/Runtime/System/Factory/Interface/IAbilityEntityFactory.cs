@@ -1,5 +1,5 @@
-﻿using IdelPog.Combat.Combatant.Model;
-using IdelPog.Combat.Runtime.Entities.Combatant;
+﻿using IdelPog.Combat.Ability.Runtime.Entity;
+using IdelPog.Combat.Combatant.Model;
 
 namespace IdelPog.Combat.Runtime.System.Factory.Interface
 {

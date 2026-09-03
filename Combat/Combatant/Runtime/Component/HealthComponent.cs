@@ -1,6 +1,6 @@
 ﻿using IdelPog.ECS.Component;
 
-namespace IdelPog.Combat.Runtime.Component
+namespace IdelPog.Combat.Combatant.Runtime.Component
 {
     public readonly record struct HealthComponent : IComponent
     { 

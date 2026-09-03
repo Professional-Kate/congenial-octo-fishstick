@@ -1,6 +1,6 @@
 ﻿using IdelPog.ECS.Component;
 
-namespace IdelPog.Combat.Runtime.Component
+namespace IdelPog.Combat.Ability.Runtime.Component
 {
     public readonly record struct CooldownComponent : IComponent
     {

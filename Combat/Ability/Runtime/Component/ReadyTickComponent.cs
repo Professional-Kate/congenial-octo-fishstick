@@ -1,6 +1,6 @@
 ﻿using IdelPog.ECS.Component;
 
-namespace IdelPog.Combat.Runtime.Component.Ability
+namespace IdelPog.Combat.Ability.Runtime.Component
 {
     public readonly record struct ReadyTickComponent : IComponent
     {

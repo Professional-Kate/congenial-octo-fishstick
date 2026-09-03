@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Combatant.Model;
+using IdelPog.Combat.Combatant.Runtime.Entity;
 using IdelPog.Combat.Contracts.Enum;
-using IdelPog.Combat.Runtime.Entities.Combatant;
 using IdelPog.Combat.Runtime.System.Factory.Interface;
 
 namespace IdelPog.Combat.Runtime.System.Factory
