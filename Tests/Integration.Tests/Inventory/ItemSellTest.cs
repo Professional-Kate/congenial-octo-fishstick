@@ -6,7 +6,6 @@ using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Currency.Contracts.Command;
 using IdelPog.Inventory.Contracts.Command;
-using IdelPog.Inventory.Contracts.Error;
 using IdelPog.Inventory.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.Inventory
@@ -15,7 +14,7 @@ namespace IdelPog.Integration.Tests.Inventory
     public sealed class ItemSellTest : ManagedTestBuffer
     {
         private ManagedResponseListener<ItemSellResponse> _itemSellResponseListener;
-        private ManagedErrorListener<ItemSellError> _itemSellErrorListener;
+        private ManagedErrorListener<BufferedError<ItemSell>> _itemSellErrorListener;
         private ManagedResponseListener<InventoryUpdateResponse> _inventoryUpdateResponseListener;
         private ManagedResponseListener<CurrencyUpdate> _currencyUpdateListener;
         
@@ -59,7 +58,7 @@ namespace IdelPog.Integration.Tests.Inventory
         public void Setup()
         {
             _itemSellResponseListener = new ManagedResponseListener<ItemSellResponse>();
-            _itemSellErrorListener = new ManagedErrorListener<ItemSellError>();
+            _itemSellErrorListener = new ManagedErrorListener<BufferedError<ItemSell>>();
             _inventoryUpdateResponseListener = new ManagedResponseListener<InventoryUpdateResponse>();
             _currencyUpdateListener = new ManagedResponseListener<CurrencyUpdate>();
             
@@ -109,12 +108,12 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private static void AssertItemSellResponse(ItemSellResponse response, ItemSell itemSell)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response.CurrencyType, Is.EqualTo(itemSell.CurrencyType));
                 Assert.That(response.Amount, Is.EqualTo(itemSell.Amount));
                 Assert.That(response.ItemID, Is.EqualTo(itemSell.ItemID));
-            });
+            }
         }
 
         private void AssertItemSellErrorCalled(bool wasCalled)
@@ -124,18 +123,18 @@ namespace IdelPog.Integration.Tests.Inventory
         
         private void AssertItemSellErrorLength(int length)
         {
-            Assert.That(_itemSellErrorListener.Error.ItemSells, Has.Length.EqualTo(length));
+            Assert.That(_itemSellErrorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void AssertItemSellError(Type exception, params ItemSell[] itemSells)
         {
             BaseError baseError = _itemSellErrorListener.Error.BaseError;
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(baseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(baseError.Exception.InnerException, Is.TypeOf(exception));
-                Assert.That(_itemSellErrorListener.Error.ItemSells, Is.EqualTo(itemSells));
-            });
+                Assert.That(_itemSellErrorListener.Error.Commands, Is.EqualTo(itemSells));
+            }
         }
 
         private void AssertInventoryUpdateResponseCalled(bool wasCalled)
@@ -150,13 +149,13 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private static void AssertInventoryUpdateResponse(InventoryUpdateResponse response, InventoryUpdate inventoryUpdate, MutateType mutateType)
         {
-            ItemInfo itemInfo = response.ItemInfo;            
-            Assert.Multiple(() =>
+            ItemInfo itemInfo = response.ItemInfo;
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response.MutateType, Is.EqualTo(mutateType));
                 Assert.That(itemInfo.ItemID, Is.EqualTo(inventoryUpdate.ItemID));
                 Assert.That(itemInfo.Amount, Is.EqualTo(inventoryUpdate.Amount));
-            });
+            }
         }
         
         private void AssertCurrencyUpdateCalled(bool wasCalled)
@@ -171,12 +170,12 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private static void AssertCurrencyUpdate(CurrencyUpdate currencyUpdate, CurrencyType currencyType, uint amount)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(currencyUpdate.Amount, Is.EqualTo(amount));
                 Assert.That(currencyUpdate.CurrencyType, Is.EqualTo(currencyType));
                 Assert.That(currencyUpdate.ActionType, Is.EqualTo(ActionType.ADD));
-            });
+            }
         }
         
         [Test]

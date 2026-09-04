@@ -1,10 +1,10 @@
 ﻿using IdelPog.Combat.Ability.Contracts.Command;
-using IdelPog.Combat.Ability.Contracts.Error;
 using IdelPog.Combat.Ability.Contracts.Response;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Exceptions;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Integration.Tests.Combat.Tools;
 
@@ -14,13 +14,13 @@ namespace IdelPog.Integration.Tests.Combat
     public sealed class AbilityCreationTest : ManagedTestBuffer
     {
         private ManagedResponseListener<AbilityCreationResponse> _responseListener;
-        private ManagedErrorListener<AbilityCreationError> _errorListener;
+        private ManagedErrorListener<BufferedError<AbilityCreation>> _errorListener;
 
         [SetUp]
         public void Setup()
         {
             _responseListener = new ManagedResponseListener<AbilityCreationResponse>();
-            _errorListener = new ManagedErrorListener<AbilityCreationError>();
+            _errorListener = new ManagedErrorListener<BufferedError<AbilityCreation>>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -53,18 +53,18 @@ namespace IdelPog.Integration.Tests.Combat
 
         private void AssertErrorLength(int length)
         {
-            Assert.That(_errorListener.Error.AbilityCreations, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void AssertError<TException>(params AbilityCreation[] combatantSkillCreations) where TException : Exception
         {
-            AbilityCreationError abilityCreationError = _errorListener.Error;
+            BufferedError<AbilityCreation> abilityCreationError = _errorListener.Error;
 
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(abilityCreationError.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(abilityCreationError.BaseError.Exception.GetBaseException(), Is.TypeOf<TException>());
-                Assert.That(abilityCreationError.AbilityCreations, Is.EqualTo(combatantSkillCreations));
+                Assert.That(abilityCreationError.Commands, Is.EqualTo(combatantSkillCreations));
             }
         }
 

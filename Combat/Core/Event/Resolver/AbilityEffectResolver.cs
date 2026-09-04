@@ -50,7 +50,7 @@ namespace IdelPog.Combat.Core.Event.Resolver
         {
             TargetingPreferenceComponent targetingPreferenceComponent = abilityStage.TargetingPreferenceComponent;
             
-            return _targetFinder.SelectPreferredTargets(targetingPreferenceComponent.TargetingPreference, targetingPreferenceComponent.CombatantStatType, targetingPreferenceComponent.TargetingType, targetingType, abilityStage.AbilityStageCards.MaxTargets).ToArray();
+            return _targetFinder.SelectPreferredTargets(targetingPreferenceComponent.TargetingPreference, targetingPreferenceComponent.StatType, targetingPreferenceComponent.TargetingType, targetingType, abilityStage.AbilityStageCards.MaxTargets).ToArray();
         }
         
         protected private CombatantEntity GetCombatant(byte combatantID) => _combatantRepository.Get(combatantID);

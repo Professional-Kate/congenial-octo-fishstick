@@ -5,7 +5,6 @@ using IdelPog.Core.Progression;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
-using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.HarvestNode
@@ -16,7 +15,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
         private HarvestNodeCreation _miningCreation;
         
         private ManagedResponseListener<HarvestNodeCreationResponse> _nodeCreationResponseListener;
-        private ManagedErrorListener<HarvestNodeCreationError> _nodeCreationErrorListener;
+        private ManagedErrorListener<BufferedError<HarvestNodeCreation>> _nodeCreationErrorListener;
 
         [SetUp]
         public void Setup()
@@ -34,7 +33,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             };
 
             _nodeCreationResponseListener = new ManagedResponseListener<HarvestNodeCreationResponse>();
-            _nodeCreationErrorListener = new ManagedErrorListener<HarvestNodeCreationError>();
+            _nodeCreationErrorListener = new ManagedErrorListener<BufferedError<HarvestNodeCreation>>();
             ManagedSubscribe(_nodeCreationResponseListener);
             ManagedSubscribe(_nodeCreationErrorListener);
         }
@@ -58,11 +57,11 @@ namespace IdelPog.Integration.Tests.HarvestNode
 
         private static void AssertResponseListener(HarvestNodeCreationResponse response, HarvestNodeCreation nodeCreation)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response.LinkedSkill, Is.EqualTo(nodeCreation.LinkedSkill));
                 Assert.That(response.ReadOnlyHarvestNodes, Is.EqualTo(nodeCreation.ReadOnlyHarvestNodes));
-            });
+            }
         }
         
         private void AssertErrorListenerCalled(bool wasCalled)
@@ -72,19 +71,18 @@ namespace IdelPog.Integration.Tests.HarvestNode
         
         private void AssertErrorLength(int length)
         {
-            Assert.That(_nodeCreationErrorListener.Error.NodeCreations, Has.Length.EqualTo(length));
+            Assert.That(_nodeCreationErrorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void AssertErrorListener<TException>(params HarvestNodeCreation[] harvestNodeCreations)
         {
-            
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
-                HarvestNodeCreationError error = _nodeCreationErrorListener.Error;
+                BufferedError<HarvestNodeCreation> error = _nodeCreationErrorListener.Error;
                 Assert.That(error.BaseError.Exception.InnerException, Is.Not.Null);
                 Assert.That(error.BaseError.Exception.InnerException!.GetType(), Is.EqualTo(typeof(TException)));
-                Assert.That(error.NodeCreations, Is.EqualTo(harvestNodeCreations));
-            });
+                Assert.That(error.Commands, Is.EqualTo(harvestNodeCreations));
+            }
         }
 
         [Test]

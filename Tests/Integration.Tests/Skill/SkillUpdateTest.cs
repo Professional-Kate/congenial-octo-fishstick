@@ -1,9 +1,9 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Skill.Contracts.Command;
-using IdelPog.Skill.Contracts.Error;
 using IdelPog.Skill.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.Skill
@@ -12,7 +12,7 @@ namespace IdelPog.Integration.Tests.Skill
     public sealed class SkillUpdateTest : ManagedTestBuffer
     {
         private ManagedResponseListener<SkillUpdateResponse> _responseListener;
-        private ManagedErrorListener<SkillUpdateError> _errorListener;
+        private ManagedErrorListener<BufferedError<SkillUpdate>> _errorListener;
         private SkillCreationDispatcher _dispatcher;
 
         private SkillCreation _miningCreation; 
@@ -34,7 +34,7 @@ namespace IdelPog.Integration.Tests.Skill
         public void Setup()
         {
             _responseListener = new ManagedResponseListener<SkillUpdateResponse>();
-            _errorListener = new ManagedErrorListener<SkillUpdateError>();
+            _errorListener = new ManagedErrorListener<BufferedError<SkillUpdate>>();
 
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -64,11 +64,11 @@ namespace IdelPog.Integration.Tests.Skill
 
         private static void AssertResponse(SkillCreation skillCreation, SkillUpdateResponse skillUpdateResponse)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(skillCreation.SkillID, Is.EqualTo(skillUpdateResponse.SkillID));
                 Assert.That(skillCreation.ReadOnlyLevelable, Is.Not.EqualTo(skillUpdateResponse.ReadOnlyLevelable));
-            });
+            }
         }
          
         private void AssertErrorListenerCalled(bool wasCalled)
@@ -78,17 +78,17 @@ namespace IdelPog.Integration.Tests.Skill
         
         private void AssertErrorLength(int length)
         {
-            Assert.That(_errorListener.Error.SkillUpdates, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
-        private void AssertError(Type exception, SkillUpdateError error, params SkillUpdate[] updates)
+        private static void AssertError(Type exception, BufferedError<SkillUpdate> error, params SkillUpdate[] updates)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(error.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(error.BaseError.Exception.InnerException, Is.TypeOf(exception));
-                Assert.That(error.SkillUpdates, Is.EqualTo(updates));
-            });
+                Assert.That(error.Commands, Is.EqualTo(updates));
+            }
         }
 
         [TestCase(1)]

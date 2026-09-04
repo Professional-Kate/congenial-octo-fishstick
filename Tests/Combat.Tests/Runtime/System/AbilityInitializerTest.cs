@@ -2,12 +2,12 @@
 using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Runtime.System
@@ -24,7 +24,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private readonly AbilityStage _retaliationAbilityStage = new()
         {
             AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.RETALIATION, AffinityType = AffinityType.STRIKE, CastTime = 10, MaxTargets = 1, Value = 3, Priority = 0 },
-            TargetingPreferenceComponent = new TargetingPreferenceComponent { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY }
+            TargetingPreferenceComponent = new TargetingPreferenceComponent { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY }
         };
 
         [OneTimeSetUp]

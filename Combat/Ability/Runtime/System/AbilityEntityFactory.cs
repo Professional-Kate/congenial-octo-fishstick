@@ -51,7 +51,7 @@ namespace IdelPog.Combat.Ability.Runtime.System
         {
             TargetingPreferenceComponent targetingPreferenceComponent = new()
             {
-                CombatantStatType = strategyCard.CombatantStatType, 
+                StatType = strategyCard.StatType, 
                 TargetingPreference = strategyCard.TargetingPreference, 
                 TargetingType = strategyCard.TargetingType
             };

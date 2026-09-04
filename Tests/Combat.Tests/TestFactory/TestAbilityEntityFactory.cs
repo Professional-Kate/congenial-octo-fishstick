@@ -1,10 +1,10 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Stat.Contracts.Enum;
 
 namespace IdelPog.Combat.Tests.TestFactory
 {
@@ -25,7 +25,7 @@ namespace IdelPog.Combat.Tests.TestFactory
                 },
                 TargetingPreferenceComponent = new TargetingPreferenceComponent
                 {
-                    CombatantStatType = CombatantStatType.HEALTH,
+                    StatType = StatType.HEALTH,
                     TargetingPreference = TargetingPreference.HIGHEST,
                     TargetingType = TargetingType.ENEMY
                 }
@@ -49,7 +49,7 @@ namespace IdelPog.Combat.Tests.TestFactory
                 },
                 TargetingPreferenceComponent = new TargetingPreferenceComponent
                 {
-                    CombatantStatType = CombatantStatType.HEALTH,
+                    StatType = StatType.HEALTH,
                     TargetingPreference = TargetingPreference.HIGHEST,
                     TargetingType = TargetingType.ENEMY
                 }

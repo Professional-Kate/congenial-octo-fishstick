@@ -1,6 +1,6 @@
-﻿namespace IdelPog.Combat.Combatant.Contracts.Enum
+﻿namespace IdelPog.Combat.Stat.Contracts.Enum
 {
-    public enum CombatantStatType
+    public enum StatType : byte
     {
         HEALTH,
         BASE_HEALTH,

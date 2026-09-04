@@ -2,7 +2,6 @@
 using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Combatant.Contracts;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
@@ -10,6 +9,7 @@ using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Event.Resolver;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;
 using Moq;
 
@@ -22,7 +22,7 @@ namespace IdelPog.Combat.Tests.Event
         private Mock<IEntityDamageSystem> _damageServiceMock;
 
         private AbilityEntity _retaliationAbility;
-        private readonly TargetingPreferenceComponent _targetingPreferenceComponent = new() { CombatantStatType = CombatantStatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.ENEMY };
+        private readonly TargetingPreferenceComponent _targetingPreferenceComponent = new() { StatType = StatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.ENEMY };
         
         [OneTimeSetUp]
         public void OneTimeSetup()

@@ -1,10 +1,10 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Command;
-using IdelPog.Inventory.Contracts.Error;
 using IdelPog.Inventory.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.Inventory
@@ -16,7 +16,7 @@ namespace IdelPog.Integration.Tests.Inventory
         private RecipeCreation _diamondRingCreation;
         
         private ManagedResponseListener<RecipeCreationResponse> _responseListener;
-        private ManagedErrorListener<RecipeCreationError> _errorListener;
+        private ManagedErrorListener<BufferedError<RecipeCreation>> _errorListener;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -40,7 +40,7 @@ namespace IdelPog.Integration.Tests.Inventory
         public void Setup()
         {
             _responseListener = new ManagedResponseListener<RecipeCreationResponse>();
-            _errorListener = new ManagedErrorListener<RecipeCreationError>();
+            _errorListener = new ManagedErrorListener<BufferedError<RecipeCreation>>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -65,12 +65,12 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private static void AssertResponse(RecipeCreationResponse response, RecipeCreation creation)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response.RecipeID,  Is.EqualTo(creation.RecipeID));
                 Assert.That(response.RecipeInputs, Is.EqualTo(creation.RecipeInputs));
                 Assert.That(response.RecipeOutputs, Is.EqualTo(creation.RecipeOutputs));
-            });
+            }
         }
         
         private void AssertErrorListenerCalled(bool called)
@@ -80,18 +80,18 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private void AssertErrorLength(int length)
         {
-            Assert.That(_errorListener.Error.RecipeCreations, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void AssertError(Type exception, params RecipeCreation[] recipeCreations)
         {
-            RecipeCreationError error = _errorListener.Error;
-            Assert.Multiple(() =>
+            BufferedError<RecipeCreation> error = _errorListener.Error;
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(error.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(error.BaseError.Exception.InnerException, Is.TypeOf(exception));
-                Assert.That(error.RecipeCreations, Is.EqualTo(recipeCreations));
-            });
+                Assert.That(error.Commands, Is.EqualTo(recipeCreations));
+            }
         }
 
         [Test]

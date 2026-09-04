@@ -1,9 +1,9 @@
 ﻿using IdelPog.Combat.Combatant.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts.Enum;
-using IdelPog.Combat.Combatant.Contracts.Error;
 using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Exceptions;
+using IdelPog.Core.Contracts;
 
 namespace IdelPog.Integration.Tests.Combat
 {
@@ -11,7 +11,7 @@ namespace IdelPog.Integration.Tests.Combat
     public sealed class CombatantCreationTest : ManagedTestBuffer
     {
         private ManagedResponseListener<CombatantCreationResponse> _responseListener;
-        private ManagedErrorListener<CombatantCreationError> _errorListener;
+        private ManagedErrorListener<BufferedError<CombatantCreation>> _errorListener;
         
         private CombatantCreation _humanCombatantCreation;
 
@@ -30,7 +30,7 @@ namespace IdelPog.Integration.Tests.Combat
         public void Setup()
         {
             _responseListener = new ManagedResponseListener<CombatantCreationResponse>();
-            _errorListener = new ManagedErrorListener<CombatantCreationError>();
+            _errorListener = new ManagedErrorListener<BufferedError<CombatantCreation>>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -47,12 +47,12 @@ namespace IdelPog.Integration.Tests.Combat
 
         private void AssertErrorLength(int length)
         { 
-            Assert.That(_errorListener.Error.CombatantCreations, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void AssertErrorCollection(params CombatantCreation[] combatantCreations)
         {
-            Assert.That(_errorListener.Error.CombatantCreations, Is.EqualTo(combatantCreations));
+            Assert.That(_errorListener.Error.Commands, Is.EqualTo(combatantCreations));
         }
 
         [Test]

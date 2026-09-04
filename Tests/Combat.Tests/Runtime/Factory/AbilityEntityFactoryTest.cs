@@ -5,10 +5,10 @@ using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Core.Repository.Incremental;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -35,7 +35,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             
             _abilityEntityFactory = new AbilityEntityFactory(_repositoryMock.Object, _abilityEffectValueCalculatorMock.Object);
 
-            _equippedAbility = new EquippedAbility { AbilityID = 0, StrategyCards = [new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            _equippedAbility = new EquippedAbility { AbilityID = 0, StrategyCards = [new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
             _abilityEquip = new AbilityEquip { CombatantID = 1, EquippedAbilities = [_equippedAbility] };
             _abilityDefinition = new AbilityDefinition
             {
@@ -155,7 +155,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         {
             StrategyCard highHealthCard = new()
             {
-                CombatantStatType = CombatantStatType.HEALTH,
+                StatType = StatType.HEALTH,
                 TargetingType = TargetingType.ENEMY,
                 TargetingPreference = TargetingPreference.HIGHEST,
                 Priority = 0

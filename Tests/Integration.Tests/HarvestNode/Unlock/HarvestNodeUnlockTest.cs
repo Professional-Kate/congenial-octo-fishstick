@@ -4,7 +4,6 @@ using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
-using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.HarvestNode.Unlock
@@ -14,7 +13,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock
     {
         private HarvestNodeUnlock _miningUnlock;
         private ManagedResponseListener<HarvestNodeUnlockResponse> _responseListener;
-        private ManagedErrorListener<HarvestNodeUnlockError> _errorListener;
+        private ManagedErrorListener<BufferedError<HarvestNodeUnlock>> _errorListener;
         private HarvestNodeUnlockDispatcher _harvestNodeUnlockDispatcher;
 
         [SetUp]
@@ -22,7 +21,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock
         {
             _harvestNodeUnlockDispatcher = new HarvestNodeUnlockDispatcher(BufferManager);
             _responseListener = new ManagedResponseListener<HarvestNodeUnlockResponse>();
-            _errorListener = new ManagedErrorListener<HarvestNodeUnlockError>();
+            _errorListener = new ManagedErrorListener<BufferedError<HarvestNodeUnlock>>();
 
             _miningUnlock = _harvestNodeUnlockDispatcher.MiningUnlock;
             
@@ -61,12 +60,12 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock
         
         private void AssertErrorLength(int expectedLength)
         {
-            Assert.That(_errorListener.Error.HarvestNodeUnlocks, Has.Length.EqualTo(expectedLength));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(expectedLength));
         }
 
         private void AssertError(Type exception, HarvestNodeUnlock[] unlocks)
         {
-            HarvestNodeUnlockError error = _errorListener.Error;
+            BufferedError<HarvestNodeUnlock> error = _errorListener.Error;
 
             BaseError baseError = error.BaseError;
             Assert.Multiple(() =>
@@ -75,7 +74,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock
                 Assert.That(baseError.Exception.InnerException, Is.TypeOf(exception));
             });
             
-            Assert.That(error.HarvestNodeUnlocks, Is.EqualTo(unlocks));
+            Assert.That(error.Commands, Is.EqualTo(unlocks));
         }
         
         [Test]

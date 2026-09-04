@@ -3,7 +3,6 @@ using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Currency.Contracts.Command;
-using IdelPog.Currency.Contracts.Error;
 using IdelPog.Currency.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.Currency
@@ -12,7 +11,7 @@ namespace IdelPog.Integration.Tests.Currency
     public sealed class CurrencyCreationTest : ManagedTestBuffer
     {
         private ManagedResponseListener<CurrencyCreationResponse> _currencyCreationResponseListener;
-        private ManagedErrorListener<CurrencyCreationError> _currencyCreationErrorListener;
+        private ManagedErrorListener<BufferedError<CurrencyCreation>> _currencyCreationErrorListener;
 
         private CurrencyCreation _createGold;
         private CurrencyCreation _createGems;
@@ -48,12 +47,12 @@ namespace IdelPog.Integration.Tests.Currency
                 return;
             }
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(_currencyCreationResponseListener.WasCalled, Is.True);
                 Assert.That(_currencyCreationResponseListener.Responses, Is.Not.Null);
                 Assert.That(_currencyCreationResponseListener.Responses, Has.Length.EqualTo(currencyCreations.Length));
-            });
+            }
         }
 
         private void AssertCurrencyCreationErrorListener(bool wasCalled)
@@ -67,21 +66,21 @@ namespace IdelPog.Integration.Tests.Currency
             Assert.That(_currencyCreationErrorListener.WasCalled, Is.True);
         }
 
-        private void AssertCreationError<TException>(CurrencyCreationError currencyCreationError, CurrencyCreation[] creations)
+        private void AssertCreationError<TException>(BufferedError<CurrencyCreation> currencyCreationError, CurrencyCreation[] creations)
         {
-            BaseError baseError = _currencyCreationErrorListener.Error.BaseErrorDetails;
-            Assert.Multiple(() =>
+            BaseError baseError = _currencyCreationErrorListener.Error.BaseError;
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(currencyCreationError.CurrencyCreations, Is.EquivalentTo(creations));
+                Assert.That(currencyCreationError.Commands, Is.EquivalentTo(creations));
                 Assert.That(baseError.Exception.GetType(), Is.EqualTo(typeof(TException)));
-            });
+            }
         }
 
         [SetUp]
         public void SetUp()
         {
             _currencyCreationResponseListener = new ManagedResponseListener<CurrencyCreationResponse>();
-            _currencyCreationErrorListener = new ManagedErrorListener<CurrencyCreationError>();
+            _currencyCreationErrorListener = new ManagedErrorListener<BufferedError<CurrencyCreation>>();
 
             ManagedSubscribe(_currencyCreationResponseListener);
             ManagedSubscribe(_currencyCreationErrorListener);
@@ -96,12 +95,12 @@ namespace IdelPog.Integration.Tests.Currency
             AssertCurrencyCreationErrorListener(false);
 
             CurrencyCreationResponse[] creationResponses = _currencyCreationResponseListener.Responses;
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(creationResponses, Has.Length.EqualTo(1));
                 Assert.That(creationResponses[0].Amount, Is.EqualTo(_createGold.StartingAmount));
                 Assert.That(creationResponses[0].CurrencyType, Is.EqualTo(_createGold.CurrencyType));
-            });
+            }
         }
 
         [Test]

@@ -1,11 +1,11 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Stat.Filter.Interface;
 using IdelPog.Combat.Tests.TestFactory;
 using Moq;
@@ -52,9 +52,9 @@ namespace IdelPog.Combat.Tests.Event
 
         protected static AbilityStage GetCombatantAbilityStage(AbilityEntity abilityEntity, int index) => abilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages[index];
         
-        protected void SetupTargetFinder(CombatantEntity target, TargetingPreference targetingPreference, CombatantStatType combatantStatType, byte targetCount, TargetingType targetingType)
+        protected void SetupTargetFinder(CombatantEntity target, TargetingPreference targetingPreference, StatType statType, byte targetCount, TargetingType targetingType)
         {
-            TargetFinderMock.Setup(library => library.SelectPreferredTargets(targetingPreference, combatantStatType, targetingType, It.IsAny<TargetingType>(), targetCount)).Returns([target]).Verifiable();
+            TargetFinderMock.Setup(library => library.SelectPreferredTargets(targetingPreference, statType, targetingType, It.IsAny<TargetingType>(), targetCount)).Returns([target]).Verifiable();
         }
 
         protected void SetupRepositoryGet(params CombatantEntity[] combatantEntities)

@@ -1,12 +1,9 @@
 ﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Factory;
-using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Logging;
 using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
-using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
@@ -19,7 +16,6 @@ using IdelPog.Inventory.Assertion;
 using IdelPog.Inventory.Assertion.Interface;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Command;
-using IdelPog.Inventory.Contracts.Error;
 using IdelPog.Inventory.Contracts.Response;
 using IdelPog.Inventory.Crafting.ECS;
 using IdelPog.Inventory.Crafting.Factory;
@@ -84,12 +80,7 @@ namespace IdelPog.Inventory
             IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<InventoryUpdate> inventoryMediator = new InventoryUpdateMediator(inventoryUpdateService, summarizer, inventoryUpdateDispatcher, collectionAssertion);
-
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<InventoryUpdateError, IReadOnlyList<InventoryUpdate>> inventoryUpdateErrorFactory = new InventoryUpdateErrorFactory(baseErrorFactory);
-            IBatchController<InventoryUpdate> inventoryController = new ManagedBatchController<InventoryUpdate>(inventoryMediator);
-            
-            flowRegister.RegisterBatch(inventoryController, inventoryUpdateErrorFactory);
+            flowRegister.RegisterBatch(inventoryMediator);
         }
 
         /// <summary>
@@ -114,12 +105,7 @@ namespace IdelPog.Inventory
             IDispatchMany<RecipeCreationResponse> responseDispatcher = new ManagedDispatcher<RecipeCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<RecipeCreation> creationMediator = new RecipeCreationMediator(recipeEntityRepository, entityFactory, responseDispatcher, collectionAssertion, uniqueAssertion);
-            
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            RecipeCreationErrorFactory errorFactory = new(baseErrorFactory);
-            IBatchController<RecipeCreation> creationController = new ManagedBatchController<RecipeCreation>(creationMediator);
-            
-            flowRegister.RegisterBatch(creationController, errorFactory);
+            flowRegister.RegisterBatch(creationMediator);
         }
 
         /// <summary>
@@ -147,12 +133,7 @@ namespace IdelPog.Inventory
             IDispatchMany<InventoryUpdateResponse> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<ItemCraft> craftMediator = new ItemCraftMediator(inventory, recipeEntityRepository, inventoryUpdateService, updateFactory, inventoryUpdateSummarizer, itemCraftDispatcher, inventoryUpdateDispatcher, foundAssertion, amountAssertion, collectionAssertion);
-            
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            ItemCraftErrorFactory errorFactory = new(baseErrorFactory);
-            IBatchController<ItemCraft> craftController = new ManagedBatchController<ItemCraft>(craftMediator);
-            
-            flowRegister.RegisterBatch(craftController, errorFactory);
+            flowRegister.RegisterBatch(craftMediator);
         }
 
         /// <summary>
@@ -175,12 +156,7 @@ namespace IdelPog.Inventory
             IDispatchMany<ItemDefinitionCreationResponse> responseDispatcher = new ManagedDispatcher<ItemDefinitionCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<ItemDefinitionCreation> creationMediator = new ItemDefinitionCreationMediator(definitionRepository, responseDispatcher, collectionAssertion, uniqueAssertion, amountAssertion);
-            
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            ItemDefinitionCreationErrorFactory errorFactory = new(baseErrorFactory);
-            IBatchController<ItemDefinitionCreation> creationController = new ManagedBatchController<ItemDefinitionCreation>(creationMediator);
-            
-            flowRegister.RegisterBatch(creationController, errorFactory);
+            flowRegister.RegisterBatch(creationMediator);
         }
 
         /// <summary>
@@ -209,12 +185,7 @@ namespace IdelPog.Inventory
             IDispatchMany<CurrencyUpdate> currencyUpdateDispatcher =  new ManagedDispatcher<CurrencyUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
                 
             IBatchMediator<ItemSell> sellMediator = new ItemSellMediator(definitionRepository, inventoryUpdateService, inventoryUpdateSummarizer, updateFactory, itemSellDispatcher, inventoryUpdateDispatcher, currencyUpdateDispatcher, collectionAssertion, amountAssertion, foundAssertion);
-            
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            ItemSellErrorFactory errorFactory = new(baseErrorFactory);
-            IBatchController<ItemSell> sellController = new ManagedBatchController<ItemSell>(sellMediator);
-            
-            flowRegister.RegisterBatch(sellController, errorFactory);
+            flowRegister.RegisterBatch(sellMediator);
         }
     }
 }

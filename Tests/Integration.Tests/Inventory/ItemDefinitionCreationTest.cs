@@ -4,7 +4,6 @@ using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Inventory.Contracts.Command;
-using IdelPog.Inventory.Contracts.Error;
 using IdelPog.Inventory.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.Inventory
@@ -15,7 +14,7 @@ namespace IdelPog.Integration.Tests.Inventory
         private ItemDefinitionCreation _smallInsectsDefinition;
 
         private ManagedResponseListener<ItemDefinitionCreationResponse> _responseListener;
-        private ManagedErrorListener<ItemDefinitionCreationError> _errorListener;
+        private ManagedErrorListener<BufferedError<ItemDefinitionCreation>> _errorListener;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -32,7 +31,7 @@ namespace IdelPog.Integration.Tests.Inventory
         public void Setup()
         {
             _responseListener = new ManagedResponseListener<ItemDefinitionCreationResponse>();
-            _errorListener = new ManagedErrorListener<ItemDefinitionCreationError>();
+            _errorListener = new ManagedErrorListener<BufferedError<ItemDefinitionCreation>>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -57,12 +56,12 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private void AssertResponse(ItemDefinitionCreationResponse response, ItemDefinitionCreation creation)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response.ItemID, Is.EqualTo(creation.ItemID));
                 Assert.That(response.BaseSellPrice, Is.EqualTo(creation.BaseSellPrice));
                 Assert.That(response.Information, Is.EqualTo(creation.Information));
-            });
+            }
         } 
         
         private void AssertErrorListenerCalled(bool wasCalled)
@@ -72,20 +71,20 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private void AssertErrorLength(int length)
         {
-            Assert.That(_errorListener.Error.ItemDefinitionCreations, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void AssertError(Type exception, params ItemDefinitionCreation[] creations)
         {
-            ItemDefinitionCreationError creationError = _errorListener.Error;
+            BufferedError<ItemDefinitionCreation> creationError = _errorListener.Error;
             BaseError baseError = creationError.BaseError;
-            
-            Assert.Multiple(() =>
+
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(baseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(baseError.Exception.InnerException, Is.TypeOf(exception));
-                Assert.That(creationError.ItemDefinitionCreations, Is.EqualTo(creations));
-            });
+                Assert.That(creationError.Commands, Is.EqualTo(creations));
+            }
         }
 
         [Test]

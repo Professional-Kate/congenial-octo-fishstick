@@ -10,6 +10,7 @@ using IdelPog.Combat.Core.Arena;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Service.Interface;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;
 using Moq;
 
@@ -33,7 +34,7 @@ namespace IdelPog.Combat.Tests.Core
             CombatantID = 1,
             EquippedAbilities = [new EquippedAbility { AbilityID = 1, StrategyCards = [ new StrategyCard
             {
-                CombatantStatType = CombatantStatType.ABILITY_DAMAGE,
+                StatType = StatType.ABILITY_DAMAGE,
                 TargetingPreference = TargetingPreference.HIGHEST, 
                 TargetingType = TargetingType.ENEMY,
                 Priority = 0

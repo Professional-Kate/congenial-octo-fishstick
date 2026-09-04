@@ -1,10 +1,10 @@
-﻿using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Currency.Contracts.Command;
-using IdelPog.Currency.Contracts.Error;
 using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Exceptions;
 
@@ -14,7 +14,7 @@ namespace IdelPog.Integration.Tests.Currency
     public sealed class CurrencyFlowTest : ManagedTestBuffer
     {
         private ManagedResponseListener<CurrencyUpdateResponse> _currencyUpdateResponseListener;
-        private ManagedErrorListener<CurrencyUpdateError> _currencyUpdateErrorListener;
+        private ManagedErrorListener<BufferedError<CurrencyUpdate>> _currencyUpdateErrorListener;
 
         private CurrencyUpdate _addGoldCommand;
         private CurrencyCreation _goldCreation;
@@ -40,7 +40,7 @@ namespace IdelPog.Integration.Tests.Currency
         public void SetUp()
         {
             _currencyUpdateResponseListener = new ManagedResponseListener<CurrencyUpdateResponse>();
-            _currencyUpdateErrorListener = new ManagedErrorListener<CurrencyUpdateError>();
+            _currencyUpdateErrorListener = new ManagedErrorListener<BufferedError<CurrencyUpdate>>();
 
             ManagedSubscribe(_currencyUpdateResponseListener);
             ManagedSubscribe(_currencyUpdateErrorListener);
@@ -86,17 +86,17 @@ namespace IdelPog.Integration.Tests.Currency
         
         private void AssertErrorLength(int length)
         {
-            Assert.That(_currencyUpdateErrorListener.Error.CurrencyUpdates, Has.Length.EqualTo(length));
+            Assert.That(_currencyUpdateErrorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
-        private static void AssertError(Type exception, CurrencyUpdate[] updates, CurrencyUpdateError error)
+        private static void AssertError(Type exception, CurrencyUpdate[] updates, BufferedError<CurrencyUpdate> error)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(error.BaseErrorDetails.Exception, Is.TypeOf<ControllerThrownException>());
-                Assert.That(error.BaseErrorDetails.Exception.InnerException, Is.TypeOf(exception));
-                Assert.That(error.CurrencyUpdates, Is.EqualTo(updates));
-            });
+                Assert.That(error.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
+                Assert.That(error.BaseError.Exception.InnerException, Is.TypeOf(exception));
+                Assert.That(error.Commands, Is.EqualTo(updates));
+            }
         }
 
         [Test]

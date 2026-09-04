@@ -1,10 +1,9 @@
-﻿using IdelPog.Core.Factory.Interface;
-using IdelPog.Core.Messaging.Listener.Buffer;
+﻿using IdelPog.Core.Messaging.Listener.Buffer;
 
 namespace IdelPog.Core.Flows.Registry
 {
     public interface IBatchRegister
     {
-        public void RegisterBatch<TCommand, TError>(IBatchController<TCommand> controller, IErrorFactory<TError, IReadOnlyList<TCommand>> factory) where TCommand : struct where TError : struct;
+        public void RegisterBatch<TCommand>(IBatchMediator<TCommand> mediator) where TCommand : struct;
     }
 }

@@ -1,12 +1,12 @@
 ﻿using IdelPog.Combat.Ability.Contracts;
 using IdelPog.Combat.Ability.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Integration.Tests.Combat.Tools;
 
 namespace IdelPog.Integration.Tests.Combat.Flows
@@ -29,9 +29,9 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             CombatValidator.Reset();
         }
 
-        private void SetupCombat(TargetingPreference targetingPreference, CombatantStatType combatantStatType, CombatantCreation targetCreation)
+        private void SetupCombat(TargetingPreference targetingPreference, StatType statType, CombatantCreation targetCreation)
         {
-            EquippedAbility mainEquippedAbility = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { CombatantStatType = combatantStatType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            EquippedAbility mainEquippedAbility = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { StatType = statType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
 
             DispatchMessage(targetCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.WolfCreation);
             DispatchMessage(StaticCombatCommands.SlashAttackCreation);
@@ -57,29 +57,29 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatStages);
         }
 
-        [TestCase(5000u, TargetingPreference.HIGHEST, CombatantStatType.HEALTH)]
-        [TestCase(1u, TargetingPreference.LOWEST, CombatantStatType.HEALTH)]
-        [TestCase(5000u, TargetingPreference.HIGHEST, CombatantStatType.BASE_HEALTH)]
-        [TestCase(1u, TargetingPreference.LOWEST, CombatantStatType.BASE_HEALTH)]
-        public void CanTarget_HealthCard_Stats(uint stat, TargetingPreference targetingPreference, CombatantStatType combatantStatType)
+        [TestCase(5000u, TargetingPreference.HIGHEST, StatType.HEALTH)]
+        [TestCase(1u, TargetingPreference.LOWEST, StatType.HEALTH)]
+        [TestCase(5000u, TargetingPreference.HIGHEST, StatType.BASE_HEALTH)]
+        [TestCase(1u, TargetingPreference.LOWEST, StatType.BASE_HEALTH)]
+        public void CanTarget_HealthCard_Stats(uint stat, TargetingPreference targetingPreference, StatType statType)
         {
             HealthCard healthCard = new() { Health = stat, BaseHealth = stat };
             
             CombatantCreation targetCreation = StaticCombatCommands.HumanCreation with { HealthCard = healthCard };
             
-            SetupCombat(targetingPreference, combatantStatType, targetCreation);
+            SetupCombat(targetingPreference, statType, targetCreation);
         }
 
-        [TestCase(5000u, TargetingPreference.HIGHEST, CombatantStatType.SPEED)]
-        [TestCase(1u, TargetingPreference.LOWEST, CombatantStatType.SPEED)]
-        [TestCase(5000u, TargetingPreference.HIGHEST, CombatantStatType.INITIATIVE)]
-        [TestCase(1u, TargetingPreference.LOWEST, CombatantStatType.INITIATIVE)]
-        public void CanTarget_AgilityCard_Stats(uint stat, TargetingPreference targetingPreference, CombatantStatType combatantStatType)
+        [TestCase(5000u, TargetingPreference.HIGHEST, StatType.SPEED)]
+        [TestCase(1u, TargetingPreference.LOWEST, StatType.SPEED)]
+        [TestCase(5000u, TargetingPreference.HIGHEST, StatType.INITIATIVE)]
+        [TestCase(1u, TargetingPreference.LOWEST, StatType.INITIATIVE)]
+        public void CanTarget_AgilityCard_Stats(uint stat, TargetingPreference targetingPreference, StatType statType)
         {
-            AgilityCard agilityCard = combatantStatType == CombatantStatType.INITIATIVE ? new AgilityCard { Speed = 5, Initiative = stat } : new AgilityCard { Speed = stat, Initiative = 5 };
+            AgilityCard agilityCard = statType == StatType.INITIATIVE ? new AgilityCard { Speed = 5, Initiative = stat } : new AgilityCard { Speed = stat, Initiative = 5 };
             CombatantCreation targetCreation = StaticCombatCommands.WolfCreation with { AgilityCard = agilityCard };
             
-            SetupCombat(targetingPreference, combatantStatType, targetCreation);
+            SetupCombat(targetingPreference, statType, targetCreation);
         }
 
         [TestCase(TargetingPreference.HIGHEST, AbilityEffectType.DIRECT_DAMAGE)]
@@ -102,17 +102,17 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             DispatchMessage(highDamageAbility);
             DispatchMessage(new AbilityEquip { CombatantID = 1, EquippedAbilities = [new EquippedAbility {AbilityID = 0, StrategyCards = [new StrategyCard
             {
-                CombatantStatType = CombatantStatType.HEALTH,
+                StatType = StatType.HEALTH,
                 TargetingPreference = TargetingPreference.HIGHEST,
                 TargetingType = TargetingType.ENEMY,
                 Priority = 0
             }]}]});
             
             // Equipping our friendly combatant with the expected Strategy
-            CombatantStatType combatantStatType = abilityEffectType == AbilityEffectType.DIRECT_DAMAGE ? CombatantStatType.ABILITY_DAMAGE : CombatantStatType.ABILITY_HEALING;
+            StatType statType = abilityEffectType == AbilityEffectType.DIRECT_DAMAGE ? StatType.ABILITY_DAMAGE : StatType.ABILITY_HEALING;
             
             DispatchMessage(StaticCombatCommands.StabAttackCreation);
-            EquippedAbility highDamageTargeting = new() { AbilityID = 1, StrategyCards = [new StrategyCard { CombatantStatType = combatantStatType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            EquippedAbility highDamageTargeting = new() { AbilityID = 1, StrategyCards = [new StrategyCard { StatType = statType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
             DispatchMessage(new AbilityEquip { CombatantID = 0, EquippedAbilities = [highDamageTargeting]});
             
             // Equipping other enemies with abilities to verify ability values

@@ -1,8 +1,11 @@
-﻿using IdelPog.Core.Factory.Interface;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Factory;
+using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Logging;
 using IdelPog.Core.Messaging.Assertion;
 using IdelPog.Core.Messaging.Assertion.Interface;
 using IdelPog.Core.Messaging.Buffer.Manager;
+using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Single;
 using IdelPog.Core.Messaging.Listener;
@@ -20,6 +23,7 @@ namespace IdelPog.Core.Flows.Registry
         private readonly IObjectNullAssertion _objectNullAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
         private readonly IUniqueAssertion _uniqueAssertion;
+        private readonly IBaseErrorFactory _errorFactory = new BaseErrorFactory();
 
         public FlowRegister(IBufferManager bufferManager, IBufferLogger bufferLogger, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IUniqueAssertion uniqueAssertion)
         {
@@ -30,13 +34,15 @@ namespace IdelPog.Core.Flows.Registry
             _uniqueAssertion = uniqueAssertion;
         }
 
-        public void RegisterBatch<TCommand, TError>(IBatchController<TCommand> controller, IErrorFactory<TError, IReadOnlyList<TCommand>> factory) 
+        public void RegisterBatch<TCommand>(IBatchMediator<TCommand> mediator) 
             where TCommand : struct 
-            where TError : struct
         {
             AssertCommandIsUnique<TCommand>();
-            IContextualHandler<IReadOnlyList<TCommand>> dispatchHandler = new DispatchingHandler<TError, IReadOnlyList<TCommand>>(CreateErrorDispatcher<TError>(), factory);
+            
+            IErrorFactory<BufferedError<TCommand>, IReadOnlyList<TCommand>> bufferedErrorFactory = new BufferedErrorFactory<TCommand>(_errorFactory);
+            IContextualHandler<IReadOnlyList<TCommand>> dispatchHandler = new DispatchingHandler<BufferedError<TCommand>, IReadOnlyList<TCommand>>(CreateErrorDispatcher<TCommand>(), bufferedErrorFactory);
             IBatchControllerExecutionAssertion<TCommand> executionAssertion = new BatchControllerExecutionAssertion<TCommand>(dispatchHandler, _bufferLogger);
+            IBatchController<TCommand> controller = new ManagedBatchController<TCommand>(mediator);
             IBufferListener<TCommand> commandListener = new ManagedBufferListener<TCommand>(controller, executionAssertion, _bufferLogger);
             
             _registeredListeners.Add(commandListener);
@@ -47,9 +53,9 @@ namespace IdelPog.Core.Flows.Registry
             return _registeredListeners.ToArray();
         }
 
-        private IDispatchOne<TError> CreateErrorDispatcher<TError>() where TError : struct
+        private IDispatchOne<BufferedError<TCommand>> CreateErrorDispatcher<TCommand>() where TCommand : struct
         {
-            IDispatchOne<TError> errorDispatcher = new ManagedDispatcher<TError>(_bufferManager, _bufferLogger, _objectNullAssertion, _collectionAssertion);
+            IDispatchOne<BufferedError<TCommand>> errorDispatcher = new ManagedDispatcher<BufferedError<TCommand>>(_bufferManager, _bufferLogger, _objectNullAssertion, _collectionAssertion);
             return errorDispatcher;
         }
 

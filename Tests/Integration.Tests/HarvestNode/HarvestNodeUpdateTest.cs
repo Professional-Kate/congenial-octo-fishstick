@@ -5,7 +5,6 @@ using IdelPog.Core.Progression;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
-using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.HarvestNode.Exceptions;
 using IdelPog.Integration.Tests.HarvestNode.Unlock;
@@ -18,7 +17,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
         private HarvestNodeUpdate _nodeUpdate;
         private HarvestNodeCreation _harvestNodeCreation;
         private ManagedResponseListener<HarvestNodeUpdateResponse> _updateNodeResponseListener;
-        private ManagedErrorListener<HarvestNodeUpdateError> _updateNodeErrorListener;
+        private ManagedErrorListener<BufferedError<HarvestNodeUpdate>> _updateNodeErrorListener;
 
         [SetUp]
         public void Setup()
@@ -39,7 +38,7 @@ namespace IdelPog.Integration.Tests.HarvestNode
             };
             
             _updateNodeResponseListener = new ManagedResponseListener<HarvestNodeUpdateResponse>();
-            _updateNodeErrorListener = new ManagedErrorListener<HarvestNodeUpdateError>();
+            _updateNodeErrorListener = new ManagedErrorListener<BufferedError<HarvestNodeUpdate>>();
             ManagedSubscribe(_updateNodeErrorListener);
             ManagedSubscribe(_updateNodeResponseListener);
         }
@@ -70,18 +69,18 @@ namespace IdelPog.Integration.Tests.HarvestNode
 
         private void AssertErrorLength(int length)
         {
-            Assert.That(_updateNodeErrorListener.Error.HarvestNodeUpdates, Has.Length.EqualTo(length));
+            Assert.That(_updateNodeErrorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
-        private static void AssertErrorListener<TException>(HarvestNodeUpdate[] nodeUpdates, HarvestNodeUpdateError error)
+        private static void AssertErrorListener<TException>(HarvestNodeUpdate[] nodeUpdates, BufferedError<HarvestNodeUpdate> error)
         {
             Assert.That(error.BaseError.Exception.InnerException, Is.Not.Null);
-            
-            Assert.Multiple(() =>
+
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(error.BaseError.Exception.InnerException.GetType(), Is.EqualTo(typeof(TException)));
-                Assert.That(nodeUpdates, Is.EqualTo(error.HarvestNodeUpdates));
-            });
+                Assert.That(nodeUpdates, Is.EqualTo(error.Commands));
+            }
         }
 
         [Test]
@@ -89,12 +88,12 @@ namespace IdelPog.Integration.Tests.HarvestNode
         {
             DispatchNodeCreation(_harvestNodeCreation);
             Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate));
-            
-            Assert.Multiple(() =>
+
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(false));
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(true));
-            });
+            }
 
             AssertResponseLength(1);
             AssertResponseListener(_nodeUpdate, _updateNodeResponseListener.Responses[0]);
@@ -116,12 +115,12 @@ namespace IdelPog.Integration.Tests.HarvestNode
             
             DispatchNodeCreation(_harvestNodeCreation, foragingCreation);
             Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate, foragingUpdate));
-            
-            Assert.Multiple(() =>
+
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(false));
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(true));
-            });
+            }
 
             AssertResponseLength(2);
             AssertResponseListener(_nodeUpdate, _updateNodeResponseListener.Responses[0]);
@@ -132,12 +131,12 @@ namespace IdelPog.Integration.Tests.HarvestNode
         public void Negative_SendCommand_SkillNotFound_NoUpdate_DispatchesError()
         {
             Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate with { SkillID = SkillID.FORAGING }));
-            
-            Assert.Multiple(() =>
+
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(true));
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
-            });
+            }
 
             AssertErrorLength(1);
             AssertErrorListener<NotFoundException<SkillID>>([_nodeUpdate with { SkillID = SkillID.FORAGING }], _updateNodeErrorListener.Error);
@@ -149,12 +148,12 @@ namespace IdelPog.Integration.Tests.HarvestNode
             DispatchNodeCreation(_harvestNodeCreation);
             
             Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate with { ResourceID = ResourceID.ANT_NEST }));
-            
-            Assert.Multiple(() =>
+
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(true));
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
-            });
+            }
             
             AssertErrorLength(1);
             AssertErrorListener<NotFoundException<ResourceID>>([_nodeUpdate with { ResourceID = ResourceID.ANT_NEST }],  _updateNodeErrorListener.Error);
@@ -169,12 +168,12 @@ namespace IdelPog.Integration.Tests.HarvestNode
             
             DispatchNodeCreation(_harvestNodeCreation);
             Assert.DoesNotThrow(() => DispatchNodeUpdate(_nodeUpdate));
-            
-            Assert.Multiple(() =>
+
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(_updateNodeErrorListener.WasCalled, Is.EqualTo(true));
                 Assert.That(_updateNodeResponseListener.WasCalled, Is.EqualTo(false));
-            });
+            }
             
             AssertErrorLength(1);
             AssertErrorListener<HarvestNodeLockedException>([_nodeUpdate],  _updateNodeErrorListener.Error);

@@ -4,7 +4,6 @@ using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Progression;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Skill.Contracts.Command;
-using IdelPog.Skill.Contracts.Error;
 using IdelPog.Skill.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.Skill
@@ -13,7 +12,7 @@ namespace IdelPog.Integration.Tests.Skill
     public sealed class SkillCreationTest : ManagedTestBuffer
     {
         private ManagedResponseListener<SkillCreationResponse> _skillCreationResponseListener;
-        private ManagedErrorListener<SkillCreationError> _skillCreationErrorListener;
+        private ManagedErrorListener<BufferedError<SkillCreation>> _skillCreationErrorListener;
         private SkillCreationDispatcher _dispatcher;
 
         private SkillCreation _miningCreation;
@@ -34,7 +33,7 @@ namespace IdelPog.Integration.Tests.Skill
         {
             _dispatcher = new SkillCreationDispatcher();
             _skillCreationResponseListener = new ManagedResponseListener<SkillCreationResponse>();
-            _skillCreationErrorListener = new ManagedErrorListener<SkillCreationError>();
+            _skillCreationErrorListener = new ManagedErrorListener<BufferedError<SkillCreation>>();
 
             _miningCreation = _dispatcher.MiningCreation;
             
@@ -64,27 +63,27 @@ namespace IdelPog.Integration.Tests.Skill
 
         private static void AssertResponse(SkillCreation skillCreation, SkillCreationResponse response)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response.SkillID, Is.EqualTo(skillCreation.SkillID));
                 Assert.That(response.Information, Is.EqualTo(skillCreation.Information));
                 Assert.That(response.ReadOnlyLevelable, Is.EqualTo(skillCreation.ReadOnlyLevelable));
-            });
+            }
         }
         
         private void AssertErrorLength(int length)
         {
-            Assert.That(_skillCreationErrorListener.Error.SkillCreations, Has.Length.EqualTo(length));
+            Assert.That(_skillCreationErrorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
-        private static void AssertError(Type exception, SkillCreation[] skillCreations, SkillCreationError error)
+        private static void AssertError(Type exception, SkillCreation[] skillCreations, BufferedError<SkillCreation> error)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(skillCreations, Is.EqualTo(error.SkillCreations));
+                Assert.That(skillCreations, Is.EqualTo(error.Commands));
                 Assert.That(error.BaseError.Exception, Is.TypeOf(typeof(ControllerThrownException)));
                 Assert.That(error.BaseError.Exception.InnerException, Is.TypeOf(exception));
-            });
+            }
         }
         
  

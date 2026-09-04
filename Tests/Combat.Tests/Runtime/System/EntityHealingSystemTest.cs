@@ -1,12 +1,12 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Component;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Runtime.System
@@ -21,7 +21,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private readonly AbilityStage _abilityStage = new()
         {
             AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = 3, Priority = 0, CastTime = 0 },
-            TargetingPreferenceComponent = new TargetingPreferenceComponent { CombatantStatType = CombatantStatType.HEALTH, TargetingPreference = TargetingPreference.LOWEST, TargetingType = TargetingType.FRIENDLY }
+            TargetingPreferenceComponent = new TargetingPreferenceComponent { StatType = StatType.HEALTH, TargetingPreference = TargetingPreference.LOWEST, TargetingType = TargetingType.FRIENDLY }
         };
 
         [OneTimeSetUp]

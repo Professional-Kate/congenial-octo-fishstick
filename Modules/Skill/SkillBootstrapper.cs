@@ -5,7 +5,6 @@ using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Logging;
 using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
-using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
@@ -17,7 +16,6 @@ using IdelPog.Core.Repository.State;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Assertion.Interface;
 using IdelPog.Skill.Contracts.Command;
-using IdelPog.Skill.Contracts.Error;
 using IdelPog.Skill.Contracts.Response;
 using IdelPog.Skill.Factory;
 using IdelPog.Skill.Factory.Interface;
@@ -63,13 +61,8 @@ namespace IdelPog.Skill
             ISkillCreationResponseFactory responseFactory = new SkillCreationResponseFactory();
             IDispatchMany<SkillCreationResponse> responseDispatcher = new ManagedDispatcher<SkillCreationResponse>(bufferManager, bufferLogger,  objectNullAssertion, collectionAssertion);
                 
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<SkillCreationError, IReadOnlyList<SkillCreation>> errorFactory = new SkillCreationErrorFactory(baseErrorFactory);
-            
             IBatchMediator<SkillCreation> mediator = new SkillCreationMediator(skillRepository, responseFactory, responseDispatcher, collectionAssertion, uniqueAssertion, levelAssertion);
-            IBatchController<SkillCreation> controller = new ManagedBatchController<SkillCreation>(mediator);
-            
-            flowRegistry.RegisterBatch(controller, errorFactory);
+            flowRegistry.RegisterBatch(mediator);
         }
 
         /// <summary>
@@ -95,12 +88,8 @@ namespace IdelPog.Skill
             IDispatchMany<SkillUpdateResponse> responseDispatcher = new ManagedDispatcher<SkillUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             ISkillUpdateResponseFactory updateResponseFactory = new SkillUpdateResponseFactory(levelProgressFactory);
 
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<SkillUpdateError, IReadOnlyList<SkillUpdate>> updateErrorFactory = new SkillUpdateErrorFactory(baseErrorFactory);
             IBatchMediator<SkillUpdate> skillActionMediator = new SkillUpdateMediator(experienceService, levelService, skillRepository, responseDispatcher, updateResponseFactory);
-            IBatchController<SkillUpdate> skillActionController = new ManagedBatchController<SkillUpdate>(skillActionMediator);
-            
-            flowRegistry.RegisterBatch(skillActionController, updateErrorFactory);
+            flowRegistry.RegisterBatch(skillActionMediator);
         }
     }
 }

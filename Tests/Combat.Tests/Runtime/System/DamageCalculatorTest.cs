@@ -1,12 +1,12 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Component;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Runtime.System
@@ -27,7 +27,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _abilityStage = new AbilityStage
             {
                 AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, MaxTargets = 1, Value = 10, Priority = 0, CastTime = 0 },
-                TargetingPreferenceComponent = new TargetingPreferenceComponent { CombatantStatType = CombatantStatType.INITIATIVE, TargetingPreference = TargetingPreference.HIGHEST , TargetingType = TargetingType.ENEMY }
+                TargetingPreferenceComponent = new TargetingPreferenceComponent { StatType = StatType.INITIATIVE, TargetingPreference = TargetingPreference.HIGHEST , TargetingType = TargetingType.ENEMY }
             };
         }
 
@@ -92,7 +92,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 },
                 TargetingPreferenceComponent = new TargetingPreferenceComponent
                 {
-                    CombatantStatType = CombatantStatType.HEALTH,
+                    StatType = StatType.HEALTH,
                     TargetingPreference = TargetingPreference.HIGHEST,
                     TargetingType = TargetingType.ENEMY
                 }

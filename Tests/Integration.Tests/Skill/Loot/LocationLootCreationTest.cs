@@ -1,10 +1,10 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
-using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Loot.Exceptions;
 
@@ -16,7 +16,7 @@ namespace IdelPog.Integration.Tests.Skill.Loot
         private LocationLootCreation _forestLootCreation;
         
         private ManagedResponseListener<LocationLootCreationResponse> _responseListener;
-        private ManagedErrorListener<LocationLootCreationError> _errorListener;
+        private ManagedErrorListener<BufferedError<LocationLootCreation>> _errorListener;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -33,7 +33,7 @@ namespace IdelPog.Integration.Tests.Skill.Loot
         public void Setup()
         {
             _responseListener = new ManagedResponseListener<LocationLootCreationResponse>();
-            _errorListener = new ManagedErrorListener<LocationLootCreationError>();
+            _errorListener = new ManagedErrorListener<BufferedError<LocationLootCreation>>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -58,11 +58,11 @@ namespace IdelPog.Integration.Tests.Skill.Loot
 
         private static void VerifyResponse(LocationLootCreationResponse response, LocationLootCreation creation)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response.LocationID, Is.EqualTo(creation.LocationID));
                 Assert.That(response.LootTableEntries, Is.EqualTo(creation.LootTableEntries));
-            });
+            }
         }
         
         private void VerifyErrorListenerCalled(bool wasCalled)
@@ -72,18 +72,18 @@ namespace IdelPog.Integration.Tests.Skill.Loot
         
         private void VerifyErrorLength(int length)
         {
-            Assert.That(_errorListener.Error.LocationLootCreations, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void VerifyError(Type exception, params LocationLootCreation[] creations)
         {
-            LocationLootCreationError error = _errorListener.Error;
-            Assert.Multiple(() =>
+            BufferedError<LocationLootCreation> error = _errorListener.Error;
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(error.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(error.BaseError.Exception.InnerException, Is.TypeOf(exception));
-                Assert.That(error.LocationLootCreations, Is.EqualTo(creations));
-            });
+                Assert.That(error.Commands, Is.EqualTo(creations));
+            }
         }
 
         [Test]

@@ -1,14 +1,14 @@
 ﻿using IdelPog.Combat;
 using IdelPog.Combat.Ability.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Enum;
-using IdelPog.Combat.Core.Contracts.Error;
 using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Exceptions;
+using IdelPog.Combat.Stat.Contracts.Enum;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Integration.Tests.Combat.Tools;
@@ -19,14 +19,14 @@ namespace IdelPog.Integration.Tests.Combat
     public sealed class BasicEncounterDeckTest : ManagedTestBuffer
     {
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
-        private ManagedErrorListener<BasicEncounterDeckError> _errorListener;
+        private ManagedErrorListener<BufferedError<BasicEncounterDeck>> _errorListener;
         private ManagedResponseListener<CombatantCreationResponse> _combatantCreationResponseListener;
         
         [SetUp]
         public void Setup()
         {
             _responseListener = new ManagedResponseListener<BasicEncounterDeckResponse>();
-            _errorListener = new ManagedErrorListener<BasicEncounterDeckError>();
+            _errorListener = new ManagedErrorListener<BufferedError<BasicEncounterDeck>>();
             _combatantCreationResponseListener = new ManagedResponseListener<CombatantCreationResponse>();
             
             ManagedSubscribe(_responseListener);
@@ -64,18 +64,18 @@ namespace IdelPog.Integration.Tests.Combat
 
         private void AssertErrorLength(int length)
         {
-            Assert.That(_errorListener.Error.BasicEncounterDecks, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void AssertError<TException>(params BasicEncounterDeck[] basicEncounterDecks) where TException : Exception
         {
-            BasicEncounterDeckError basicEncounterDeckError = _errorListener.Error;
+            BufferedError<BasicEncounterDeck> basicEncounterDeckError = _errorListener.Error;
 
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(basicEncounterDeckError.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(basicEncounterDeckError.BaseError.Exception.GetBaseException(), Is.TypeOf<TException>());
-                Assert.That(basicEncounterDecks, Is.EquivalentTo(basicEncounterDeckError.BasicEncounterDecks));
+                Assert.That(basicEncounterDecks, Is.EquivalentTo(basicEncounterDeckError.Commands));
             }
         }
 
@@ -119,7 +119,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_TargetsHighSpeed()
         {
-            EquippedAbility highAttack = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.SPEED, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            EquippedAbility highAttack = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.SPEED, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
             
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.WolfCreation);
             DispatchMessage(StaticCombatCommands.SlashAttackCreation);
@@ -142,7 +142,7 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_LowHealth_TargetsLowHealth()
         {
-            EquippedAbility lowHealth = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            EquippedAbility lowHealth = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.LOWEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
             
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.WolfCreation);
             DispatchMessage(StaticCombatCommands.SlashAttackCreation);

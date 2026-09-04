@@ -1,13 +1,9 @@
-﻿using IdelPog.Core.Contracts;
-using IdelPog.Core.Contracts.Command;
+﻿using IdelPog.Core.Contracts.Command;
 using IdelPog.Core.Contracts.Enum;
-using IdelPog.Core.Factory;
-using IdelPog.Core.Factory.Interface;
 using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Logging;
 using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
-using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
@@ -19,7 +15,6 @@ using IdelPog.Currency.Assertion;
 using IdelPog.Currency.Assertion.Interface;
 using IdelPog.Currency.Contracts;
 using IdelPog.Currency.Contracts.Command;
-using IdelPog.Currency.Contracts.Error;
 using IdelPog.Currency.Contracts.Response;
 using IdelPog.Currency.Factory;
 using IdelPog.Currency.Factory.Interface;
@@ -57,12 +52,10 @@ namespace IdelPog.Currency
             
             ILogWriter writer = new ConsoleWriter();
             IBufferLogger bufferLogger = new BufferLoggingService(writer);
-            
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
 
-            RegisterCurrencyCreation(bufferManager, currencyRepository, baseErrorFactory, objectNullAssertion, collectionAssertion, flowRegistry, bufferLogger);
-            RegisterCurrencyUpdate(bufferManager, baseErrorFactory, objectNullAssertion, collectionAssertion, flowRegistry, bufferLogger, currencyUpdateService);
-            RegisterItemBuy(bufferManager, baseErrorFactory, flowRegistry, bufferLogger, currencyUpdateService, objectNullAssertion, collectionAssertion);
+            RegisterCurrencyCreation(bufferManager, currencyRepository, objectNullAssertion, collectionAssertion, flowRegistry, bufferLogger);
+            RegisterCurrencyUpdate(bufferManager, objectNullAssertion, collectionAssertion, flowRegistry, bufferLogger, currencyUpdateService);
+            RegisterItemBuy(bufferManager, flowRegistry, bufferLogger, currencyUpdateService, objectNullAssertion, collectionAssertion);
         }
 
         /// <summary>
@@ -70,7 +63,6 @@ namespace IdelPog.Currency
         /// </summary>
         /// <param name="bufferManager">Used to dispatch <see cref="CurrencyCreationResponse"/></param>
         /// <param name="currencyRepository">Used to store all <see cref="Currency"/> models</param>
-        /// <param name="baseErrorFactory">Used to construct <see cref="BaseError"/></param>
         /// <param name="objectNullAssertion">Used to assert if objects are null</param>
         /// <param name="collectionAssertion">Used to assert if a collection is null or empty</param>
         /// <param name="flowRegistry">Used to register the CurrencyCreation flow</param>
@@ -79,27 +71,22 @@ namespace IdelPog.Currency
         /// Listens to -> <see cref="CurrencyCreation"/>. On Success -> <see cref="CurrencyCreationResponse"/>. On Error -> <see cref="CurrencyCreationError"/>
         /// </remarks>
         private static void RegisterCurrencyCreation(IBufferManager bufferManager,
-            IStateRepository<CurrencyType, Contracts.Currency> currencyRepository, IBaseErrorFactory baseErrorFactory, IObjectNullAssertion objectNullAssertion,
+            IStateRepository<CurrencyType, Contracts.Currency> currencyRepository, IObjectNullAssertion objectNullAssertion,
             ICollectionAssertion collectionAssertion, IBatchRegister flowRegistry, IBufferLogger bufferLogger)
         {
             IUniqueAssertion uniqueAssertion = new UniqueAssertion();
 
             ICurrencyCreationResponseFactory currencyCreationResponseFactory = new CurrencyCreationResponseFactory(objectNullAssertion, collectionAssertion);
-
             IDispatchMany<CurrencyCreationResponse> currencyCreationResponseDispatcher = new ManagedDispatcher<CurrencyCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
             IBatchMediator<CurrencyCreation> currencyCreationMediator = new CurrencyCreationMediator(currencyRepository, currencyCreationResponseDispatcher, currencyCreationResponseFactory, objectNullAssertion,  collectionAssertion, uniqueAssertion);
-            IBatchController<CurrencyCreation> currencyCreationController = new ManagedBatchController<CurrencyCreation>(currencyCreationMediator);
-            
-            IErrorFactory<CurrencyCreationError, IReadOnlyList<CurrencyCreation>> currencyCreationErrorFactory = new CurrencyCreationErrorFactory(baseErrorFactory);
-            
-            flowRegistry.RegisterBatch(currencyCreationController, currencyCreationErrorFactory);
+            flowRegistry.RegisterBatch(currencyCreationMediator);
         }
 
         /// <summary>
         /// Registers the <see cref="CurrencyUpdate"/> flow into the messaging system
         /// </summary>
         /// <param name="bufferManager">Used to dispatch <see cref="CurrencyUpdateError"/> if anything is thrown</param>
-        /// <param name="baseErrorFactory">Used to construct <see cref="BaseError"/></param>
         /// <param name="objectNullAssertion">Used to assert if objects are null</param>
         /// <param name="collectionAssertion">Used to assert if a collection is null or empty</param>
         /// <param name="flowRegistry">Used to register the CurrencyUpdate flow</param>
@@ -108,23 +95,18 @@ namespace IdelPog.Currency
         /// /// <remarks>
         /// Listens to -> <see cref="CurrencyUpdate"/>. On Success -> <see cref="CurrencyUpdateResponse"/>. On Error -> <see cref="CurrencyUpdateError"/>
         /// </remarks>
-        private static void RegisterCurrencyUpdate(IBufferManager bufferManager, IBaseErrorFactory baseErrorFactory, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IBatchRegister flowRegistry, IBufferLogger bufferLogger, ICurrencyUpdateService currencyUpdateService)
+        private static void RegisterCurrencyUpdate(IBufferManager bufferManager, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion, IBatchRegister flowRegistry, IBufferLogger bufferLogger, ICurrencyUpdateService currencyUpdateService)
         {
             IDispatchMany<CurrencyUpdateResponse> updateResponseDispatcher = new ManagedDispatcher<CurrencyUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
 
             IBatchMediator<CurrencyUpdate> updateMediator = new CurrencyUpdateMediator(currencyUpdateService, updateResponseDispatcher, collectionAssertion);
-            IBatchController<CurrencyUpdate> updateController = new ManagedBatchController<CurrencyUpdate>(updateMediator);
-            
-            IErrorFactory<CurrencyUpdateError, IReadOnlyList<CurrencyUpdate>> updateErrorFactory = new CurrencyUpdateErrorFactory(baseErrorFactory);
-            
-            flowRegistry.RegisterBatch(updateController, updateErrorFactory);
+            flowRegistry.RegisterBatch(updateMediator);
         }
 
         /// <summary>
         /// Registers the <see cref="ItemBuy"/> flow into the messaging system
         /// </summary>
         /// <param name="bufferManager">Used to dispatch <see cref="CurrencyUpdateError"/> if anything is thrown</param>
-        /// <param name="baseErrorFactory">Used to construct <see cref="BaseError"/></param>
         /// <param name="flowRegistry">Used to register the CurrencyUpdate flow</param>
         /// <param name="bufferLogger">Logs all messages in and out</param>
         /// <param name="currencyUpdateService">Used to update <see cref="Currency"/></param>
@@ -133,7 +115,7 @@ namespace IdelPog.Currency
         /// <remarks>
         /// Listens to -> <see cref="ItemBuy"/>. On Success -> <see cref="ItemBuyResponse"/>. On Error -> <see cref="ItemBuyError"/>
         /// </remarks>
-        private static void RegisterItemBuy(IBufferManager bufferManager, IBaseErrorFactory baseErrorFactory, IBatchRegister flowRegistry, IBufferLogger bufferLogger, ICurrencyUpdateService currencyUpdateService, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion)
+        private static void RegisterItemBuy(IBufferManager bufferManager, IBatchRegister flowRegistry, IBufferLogger bufferLogger, ICurrencyUpdateService currencyUpdateService, IObjectNullAssertion objectNullAssertion, ICollectionAssertion collectionAssertion)
         {
             IAmountAssertion amountAssertion = new AmountAssertion();
             
@@ -144,11 +126,7 @@ namespace IdelPog.Currency
             IDispatchMany<InventoryUpdate> inventoryUpdateDispatcher = new ManagedDispatcher<InventoryUpdate>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             ItemBuyMediator itemBuyMediator = new(currencyUpdateFactory, currencyUpdateService, itemBuyResponseFactory, itemBuyResponseDispatcher, currencyUpdateResponseDispatcher, inventoryUpdateDispatcher, collectionAssertion, amountAssertion);
-            IBatchController<ItemBuy> itemBuyController = new ManagedBatchController<ItemBuy>(itemBuyMediator);
-            
-            ItemBuyErrorFactory itemBuyErrorFactory = new(baseErrorFactory);
-            
-            flowRegistry.RegisterBatch(itemBuyController, itemBuyErrorFactory);
+            flowRegistry.RegisterBatch(itemBuyMediator);
         }
     }
 }

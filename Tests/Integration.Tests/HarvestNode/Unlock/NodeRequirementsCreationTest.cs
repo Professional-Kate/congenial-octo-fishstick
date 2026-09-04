@@ -3,7 +3,6 @@ using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.HarvestNode.Contracts.Command;
-using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.HarvestNode.Unlock
@@ -13,7 +12,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock
     {
         private HarvestNodeRequirementsCreation _miningCreation;
         private ManagedResponseListener<HarvestNodeRequirementsCreationResponse> _responseListener;
-        private ManagedErrorListener<HarvestNodeRequirementsCreationError> _errorListener;
+        private ManagedErrorListener<BufferedError<HarvestNodeRequirementsCreation>> _errorListener;
         private HarvestNodeUnlockDispatcher _harvestNodeUnlockDispatcher;
 
         [SetUp]
@@ -21,7 +20,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock
         {
             _harvestNodeUnlockDispatcher = new HarvestNodeUnlockDispatcher(BufferManager);
             _responseListener = new ManagedResponseListener<HarvestNodeRequirementsCreationResponse>();
-            _errorListener = new ManagedErrorListener<HarvestNodeRequirementsCreationError>();
+            _errorListener = new ManagedErrorListener<BufferedError<HarvestNodeRequirementsCreation>>();
             
             _miningCreation = _harvestNodeUnlockDispatcher.MiningCreation;
             
@@ -41,11 +40,11 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock
 
         private static void AssertResponse(HarvestNodeRequirementsCreation creation, HarvestNodeRequirementsCreationResponse response)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response.SkillID, Is.EqualTo(creation.SkillID));
                 Assert.That(response.HarvestNodeRequirements, Is.EqualTo(creation.HarvestNodeRequirements));
-            });
+            }
         }
 
         private void AssertErrorListenerCalled(bool wasCalled)
@@ -55,21 +54,21 @@ namespace IdelPog.Integration.Tests.HarvestNode.Unlock
         
         private void AssertErrorLength(int expectedLength)
         {
-            Assert.That(_errorListener.Error.HarvestNodeRequirementsCreations, Has.Length.EqualTo(expectedLength));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(expectedLength));
         }
 
         private void AssertError(Type exception, HarvestNodeRequirementsCreation[] creations)
         {
-            HarvestNodeRequirementsCreationError error = _errorListener.Error;
+            BufferedError<HarvestNodeRequirementsCreation> error = _errorListener.Error;
 
             BaseError baseError = error.BaseError;
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(baseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(baseError.Exception.InnerException, Is.TypeOf(exception));
-            });
+            }
             
-            Assert.That(error.HarvestNodeRequirementsCreations, Is.EqualTo(creations));
+            Assert.That(error.Commands, Is.EqualTo(creations));
         }
 
         [Test]

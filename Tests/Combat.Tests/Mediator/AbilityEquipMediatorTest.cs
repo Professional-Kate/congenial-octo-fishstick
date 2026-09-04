@@ -5,11 +5,11 @@ using IdelPog.Combat.Ability.Mediator;
 using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Service.Interface;
 using IdelPog.Combat.Assertion;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Combat.Exceptions;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Repository.Incremental;
@@ -46,7 +46,7 @@ namespace IdelPog.Combat.Tests.Mediator
             
             _abilityEquipMediator = new AbilityEquipMediator(_abilitySlotCalculatorMock.Object, _prioritySorterMock.Object, _abilityDefinitionRepositoryMock.Object, _equippedDefinitionRepositoryMock.Object, _responseDispatcherMock.Object, new CollectionAssertion(), abilityAssertion, new PriorityAssertion());
             
-            _equippedAbility = new EquippedAbility { AbilityID = 0, StrategyCards = [new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0}]};
+            _equippedAbility = new EquippedAbility { AbilityID = 0, StrategyCards = [new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0}]};
             _abilityDefinition = TestAbilityDefinitionFactory.Create();
             _abilityEquip = new AbilityEquip { CombatantID = 1, EquippedAbilities = [_equippedAbility] };
             _equippedAbilityDefinition = new EquippedAbilityDefinition { CombatantID = _abilityEquip.CombatantID, EquippedAbilities = [_equippedAbility] };

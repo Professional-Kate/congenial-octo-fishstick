@@ -1,10 +1,10 @@
 ﻿using IdelPog.Combat.Ability.Model;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event.Resolver;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -46,7 +46,7 @@ namespace IdelPog.Combat.Tests.Event
         [Test]
         public void Positive_HandleEvent_HealsEntity()
         {
-            SetupTargetFinder(TargetCombatant, TargetingPreference.HIGHEST, CombatantStatType.HEALTH, 1, TargetingType.ENEMY);
+            SetupTargetFinder(TargetCombatant, TargetingPreference.HIGHEST, StatType.HEALTH, 1, TargetingType.ENEMY);
             SetupRepositoryGet(InitiatingCombatant);
             
             Assert.DoesNotThrow(() => _healingAbilityEffectResolver.ResolveEffect(TICK, InitiatingAbility, FirstAbilityStage));

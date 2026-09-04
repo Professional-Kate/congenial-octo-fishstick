@@ -4,7 +4,6 @@ using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Inventory.Contracts.Command;
-using IdelPog.Inventory.Contracts.Error;
 using IdelPog.Inventory.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.Inventory
@@ -13,7 +12,7 @@ namespace IdelPog.Integration.Tests.Inventory
     public sealed class InventoryUpdateTest : ManagedTestBuffer
     {
         private ManagedResponseListener<InventoryUpdateResponse> _inventoryUpdateResponseListener;
-        private ManagedErrorListener<InventoryUpdateError> _inventoryUpdateErrorListener;
+        private ManagedErrorListener<BufferedError<InventoryUpdate>> _inventoryUpdateErrorListener;
 
         private InventoryUpdate _addStoneUpdate;
         private ItemInfo _stoneInfo;
@@ -44,7 +43,7 @@ namespace IdelPog.Integration.Tests.Inventory
         public void Setup()
         {
             _inventoryUpdateResponseListener = new ManagedResponseListener<InventoryUpdateResponse>();
-            _inventoryUpdateErrorListener = new ManagedErrorListener<InventoryUpdateError>();
+            _inventoryUpdateErrorListener = new ManagedErrorListener<BufferedError<InventoryUpdate>>();
             
             ManagedSubscribe(_inventoryUpdateResponseListener);
             ManagedSubscribe(_inventoryUpdateErrorListener);
@@ -79,12 +78,12 @@ namespace IdelPog.Integration.Tests.Inventory
             Assert.That(response.MutateType, Is.EqualTo(expectedMutateType));
             
             ItemInfo itemInfo = response.ItemInfo;
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(itemInfo.ItemID, Is.EqualTo(expectedItemInfo.ItemID));
                 Assert.That(itemInfo.Amount, Is.EqualTo(expectedItemInfo.Amount));
                 Assert.That(itemInfo.BaseSellPrice, Is.EqualTo(expectedItemInfo.BaseSellPrice));
-            });
+            }
         }
         
         private void AssertErrorListenerCalled(bool wasCalled)
@@ -94,19 +93,19 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private void AssertErrorLength(int length)
         {
-            Assert.That(_inventoryUpdateErrorListener.Error.InventoryUpdates, Has.Length.EqualTo(length));
+            Assert.That(_inventoryUpdateErrorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void AssertResponseError<TException>()
         {
-            InventoryUpdateError updateError = _inventoryUpdateErrorListener.Error;
+            BufferedError<InventoryUpdate> updateError = _inventoryUpdateErrorListener.Error;
             BaseError baseError = updateError.BaseError;
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(baseError.Exception.InnerException, Is.TypeOf<TException>());
                 Assert.That(baseError.Exception.Message, Is.Not.Null.And.Not.Empty);
-            });
+            }
         }
 
         [Test]

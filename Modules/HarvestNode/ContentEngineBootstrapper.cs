@@ -6,7 +6,6 @@ using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Logging;
 using IdelPog.Core.Logging.Writer;
 using IdelPog.Core.Messaging.Buffer.Manager;
-using IdelPog.Core.Messaging.Controller;
 using IdelPog.Core.Messaging.Dispatcher;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
@@ -22,7 +21,6 @@ using IdelPog.HarvestNode.Assertion;
 using IdelPog.HarvestNode.Assertion.Interface;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
-using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.HarvestNode.Factory;
 using IdelPog.HarvestNode.Factory.Interface;
@@ -120,13 +118,9 @@ namespace IdelPog.HarvestNode
             
             IDispatchMany<HarvestNodeUpdateResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUpdateResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             INodeUpdateService nodeUpdateService = new NodeUpdateService(harvestNodeRepository, levelService, experienceService, responseFactory, foundAssertion);
+            
             IBatchMediator<HarvestNodeUpdate> updateMediator = new NodeUpdateMediator(harvestNodeRepository, skillNodeAccessValidator, unlockChecker, nodeUpdateService, harvestNodeLootService, responseDispatcher, inventoryUpdateDispatcher, nodeUnlockedAssertion, collectionAssertion, foundAssertion);
-            IBatchController<HarvestNodeUpdate> nodeUpdateController = new ManagedBatchController<HarvestNodeUpdate>(updateMediator);
-
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<HarvestNodeUpdateError, IReadOnlyList<HarvestNodeUpdate>> harvestNodeErrorFactory = new HarvestNodeUpdateErrorFactory(baseErrorFactory);
-
-            batchRegister.RegisterBatch(nodeUpdateController, harvestNodeErrorFactory);
+            batchRegister.RegisterBatch(updateMediator);
         }
 
         /// <summary>
@@ -152,12 +146,7 @@ namespace IdelPog.HarvestNode
             IDispatchMany<HarvestNodeCreationResponse> nodeCreationResponseDispatcher = new ManagedDispatcher<HarvestNodeCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<HarvestNodeCreation> creationMediator = new NodeCreationMediator(harvestNodeRepository, skillNodeRepository, skillNodeEntityFactory, harvestNodeFactory, nodeCreationResponseFactory, nodeCreationResponseDispatcher, uniqueAssertion, collectionAssertion);
-            IBatchController<HarvestNodeCreation> creationController = new ManagedBatchController<HarvestNodeCreation>(creationMediator);
-
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<HarvestNodeCreationError, IReadOnlyList<HarvestNodeCreation>> errorFactory = new NodeCreationErrorFactory(baseErrorFactory);
-
-            batchRegister.RegisterBatch(creationController, errorFactory);
+            batchRegister.RegisterBatch(creationMediator);
         }
 
         /// <summary>
@@ -183,12 +172,7 @@ namespace IdelPog.HarvestNode
             IDispatchMany<HarvestNodeUnlockResponse> responseDispatcher = new ManagedDispatcher<HarvestNodeUnlockResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
             
             IBatchMediator<HarvestNodeUnlock> unlockMediator = new NodeUnlockMediator(entityUnlockerService, responseDispatcher, collectionAssertion);
-            IBatchController<HarvestNodeUnlock> unlockController = new ManagedBatchController<HarvestNodeUnlock>(unlockMediator);
-            
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<HarvestNodeUnlockError, IReadOnlyList<HarvestNodeUnlock>> errorFactory = new NodeUnlockErrorFactory(baseErrorFactory);
-            
-            batchRegister.RegisterBatch(unlockController, errorFactory);
+            batchRegister.RegisterBatch(unlockMediator);
         }
 
         /// <summary>
@@ -211,12 +195,7 @@ namespace IdelPog.HarvestNode
             IUnlockRequirementsEntityFactory entityFactory = new UnlockRequirementsEntityFactory();
                 
             IBatchMediator<HarvestNodeRequirementsCreation> creationMediator = new NodeRequirementsCreationMediator(entityRepository, entityFactory, responseDispatcher, collectionAssertion, uniqueAssertion);
-            IBatchController<HarvestNodeRequirementsCreation> creationController = new ManagedBatchController<HarvestNodeRequirementsCreation>(creationMediator);
-            
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            IErrorFactory<HarvestNodeRequirementsCreationError, IReadOnlyList<HarvestNodeRequirementsCreation>> errorFactory = new NodeRequirementsCreationErrorFactory(baseErrorFactory);
-            
-            batchRegister.RegisterBatch(creationController, errorFactory);
+            batchRegister.RegisterBatch(creationMediator);
         }
 
         /// <summary>
@@ -242,15 +221,10 @@ namespace IdelPog.HarvestNode
             
             IWeightedPolicyFactory weightedPolicyFactory = new WeightedPolicyFactory(weightAssertion);
             IGrantPolicyService<ResourceID> grantPolicyService = new GrantPolicyService<ResourceID>(resourceGrantPolicyRepository, weightedPolicyFactory, uniqueAssertion);
-
             IDispatchMany<ResourceLootCreationResponse> responseDispatcher = new ManagedDispatcher<ResourceLootCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
             IBatchMediator<ResourceLootCreation> creationMediator = new ResourceLootCreationMediator(lootTableService, grantPolicyService, responseDispatcher, collectionAssertion);
-            IBatchController<ResourceLootCreation> creationController = new ManagedBatchController<ResourceLootCreation>(creationMediator);
-            
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            NodeLootCreationErrorFactory errorFactory = new(baseErrorFactory);
-            
-            batchRegister.RegisterBatch(creationController, errorFactory);
+            batchRegister.RegisterBatch(creationMediator);
         }
         
         /// <summary>
@@ -276,15 +250,10 @@ namespace IdelPog.HarvestNode
             
             IWeightedPolicyFactory weightedPolicyFactory = new WeightedPolicyFactory(weightAssertion);
             IGrantPolicyService<LocationID> grantPolicyService = new GrantPolicyService<LocationID>(grantPolicyRepository, weightedPolicyFactory, uniqueAssertion);
-
             IDispatchMany<LocationLootCreationResponse> responseDispatcher = new ManagedDispatcher<LocationLootCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
             IBatchMediator<LocationLootCreation> creationMediator = new LocationLootCreationMediator(lootTableService, grantPolicyService, responseDispatcher, collectionAssertion);
-            IBatchController<LocationLootCreation> creationController = new ManagedBatchController<LocationLootCreation>(creationMediator);
-            
-            IBaseErrorFactory baseErrorFactory = new BaseErrorFactory();
-            LocationLootCreationErrorFactory errorFactory = new(baseErrorFactory);
-            
-            batchRegister.RegisterBatch(creationController, errorFactory);
+            batchRegister.RegisterBatch(creationMediator);
         }
     }
 }

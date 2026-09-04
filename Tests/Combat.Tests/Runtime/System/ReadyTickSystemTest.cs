@@ -3,10 +3,10 @@ using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System;
 using IdelPog.Combat.Ability.Service.Interface;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;
 using Moq;
 
@@ -103,7 +103,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
                     },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent
                     {
-                        CombatantStatType = CombatantStatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY
+                        StatType = StatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY
                     }
                 },
                 new()
@@ -115,7 +115,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
                     },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent
                     {
-                        CombatantStatType = CombatantStatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY
+                        StatType = StatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY
                     }
                 },
                 new()
@@ -127,7 +127,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
                     },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent
                     {
-                        CombatantStatType = CombatantStatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY
+                        StatType = StatType.HEALTH, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY
                     }
                 }
             ];

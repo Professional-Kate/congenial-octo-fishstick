@@ -1,12 +1,12 @@
 ﻿using IdelPog.Combat.Ability.Contracts;
 using IdelPog.Combat.Ability.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Integration.Tests.Combat.Tools;
 
 namespace IdelPog.Integration.Tests.Combat.Flows
@@ -123,7 +123,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             AbilityEquip abilityEquip = new()
             {
                 CombatantID = 0,
-                EquippedAbilities = [ new EquippedAbility { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0 }]}]
+                EquippedAbilities = [ new EquippedAbility { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, StatType = StatType.HEALTH, Priority = 0 }]}]
             };
             
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
@@ -148,7 +148,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
 
             StrategyCard lowHealthStrategyCard = new()
             {
-                TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0
+                TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, StatType = StatType.HEALTH, Priority = 0
             };
             
             AbilityEquip equipDeathTrigger = new()
@@ -219,7 +219,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             StrategyCard lowHealthCard = new()
             {
-                TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0
+                TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, StatType = StatType.HEALTH, Priority = 0
             };
 
             AbilityEquip equipTriggers = new()
@@ -249,7 +249,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             AbilityEquip triggerEquip = new()
             {
                 CombatantID = 0,
-                EquippedAbilities = [ new EquippedAbility { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.HEALTH, Priority = 0 }]}]
+                EquippedAbilities = [ new EquippedAbility { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingType = TargetingType.ENEMY, TargetingPreference = TargetingPreference.LOWEST, StatType = StatType.HEALTH, Priority = 0 }]}]
             };
             
             AbilityCreation multiStageAbility = new()
@@ -270,8 +270,8 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 [
                     new EquippedAbility { AbilityID = 1, StrategyCards = 
                         [
-                            new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 },
-                            new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 1 }
+                            new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 },
+                            new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 1 }
                         ]}
                 ]
             };
@@ -308,10 +308,10 @@ namespace IdelPog.Integration.Tests.Combat.Flows
 
             StrategyCard[] strategyCards =
             [
-                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.FRIENDLY, Priority = 2 },
-                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.INITIATIVE, TargetingType = TargetingType.ENEMY, Priority = 1 },
-                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 },
-                new() { TargetingPreference = TargetingPreference.LOWEST, CombatantStatType = CombatantStatType.SPEED, TargetingType = TargetingType.FRIENDLY, Priority = 3 }
+                new() { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.FRIENDLY, Priority = 2 },
+                new() { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.INITIATIVE, TargetingType = TargetingType.ENEMY, Priority = 1 },
+                new() { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 },
+                new() { TargetingPreference = TargetingPreference.LOWEST, StatType = StatType.SPEED, TargetingType = TargetingType.FRIENDLY, Priority = 3 }
             ];
             
             AbilityEquip abilityEquip = new()

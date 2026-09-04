@@ -6,7 +6,6 @@ using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.Inventory.Contracts;
 using IdelPog.Inventory.Contracts.Command;
-using IdelPog.Inventory.Contracts.Error;
 using IdelPog.Inventory.Contracts.Response;
 
 namespace IdelPog.Integration.Tests.Inventory
@@ -23,7 +22,7 @@ namespace IdelPog.Integration.Tests.Inventory
         private ItemDefinitionCreation _ironDefinition;
         
         private ManagedResponseListener<ItemCraftResponse> _itemCraftResponseListener;
-        private ManagedErrorListener<ItemCraftError> _itemCraftErrorListener;
+        private ManagedErrorListener<BufferedError<ItemCraft>> _itemCraftErrorListener;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -48,7 +47,7 @@ namespace IdelPog.Integration.Tests.Inventory
         public void Setup()
         {
             _itemCraftResponseListener = new  ManagedResponseListener<ItemCraftResponse>();
-            _itemCraftErrorListener = new  ManagedErrorListener<ItemCraftError>();
+            _itemCraftErrorListener = new  ManagedErrorListener<BufferedError<ItemCraft>>();
             
             ManagedSubscribe(_itemCraftResponseListener);
             ManagedSubscribe(_itemCraftErrorListener);
@@ -117,12 +116,12 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private static void AssertInventoryResponse(InventoryUpdateResponse response, InventoryUpdate update, MutateType mutateType)
         {
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response.ItemInfo.ItemID, Is.EqualTo(update.ItemID));
                 Assert.That(response.ItemInfo.Amount, Is.EqualTo(update.Amount));
                 Assert.That(response.MutateType, Is.EqualTo(mutateType));
-            });
+            }
         }
 
         private void AssertErrorListenerCalled(bool called)
@@ -132,18 +131,18 @@ namespace IdelPog.Integration.Tests.Inventory
 
         private void AssertErrorLength(int length)
         {
-            Assert.That(_itemCraftErrorListener.Error.ItemCrafts,  Has.Length.EqualTo(length));
+            Assert.That(_itemCraftErrorListener.Error.Commands,  Has.Length.EqualTo(length));
         }
 
         private void AssertError(Type exception, params ItemCraft[] itemCrafts)
         {
-            ItemCraftError error = _itemCraftErrorListener.Error;
-            Assert.Multiple(() =>
+            BufferedError<ItemCraft> error = _itemCraftErrorListener.Error;
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(error.ItemCrafts, Is.EqualTo(itemCrafts));
+                Assert.That(error.Commands, Is.EqualTo(itemCrafts));
                 Assert.That(error.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(error.BaseError.Exception.InnerException, Is.TypeOf(exception));
-            });
+            }
         }
 
         [Test] 

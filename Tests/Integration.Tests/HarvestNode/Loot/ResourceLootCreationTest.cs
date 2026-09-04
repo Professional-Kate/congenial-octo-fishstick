@@ -1,10 +1,10 @@
-﻿using IdelPog.Core.Contracts.Enum;
+﻿using IdelPog.Core.Contracts;
+using IdelPog.Core.Contracts.Enum;
 using IdelPog.Core.Messaging.Buffer;
 using IdelPog.Core.Messaging.Exceptions;
 using IdelPog.Core.Validation.Exceptions;
 using IdelPog.HarvestNode.Contracts;
 using IdelPog.HarvestNode.Contracts.Command;
-using IdelPog.HarvestNode.Contracts.Error;
 using IdelPog.HarvestNode.Contracts.Response;
 using IdelPog.Loot.Exceptions;
 
@@ -15,7 +15,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         private ResourceLootCreation _beeHiveLootCreation;
 
         private ManagedResponseListener<ResourceLootCreationResponse> _responseListener;
-        private ManagedErrorListener<ResourceLootCreationError> _errorListener;
+        private ManagedErrorListener<BufferedError<ResourceLootCreation>> _errorListener;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -32,7 +32,7 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         public void Setup()
         {
             _responseListener = new ManagedResponseListener<ResourceLootCreationResponse>();
-            _errorListener = new ManagedErrorListener<ResourceLootCreationError>();
+            _errorListener = new ManagedErrorListener<BufferedError<ResourceLootCreation>>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -64,17 +64,17 @@ namespace IdelPog.Integration.Tests.HarvestNode.Loot
         
         private void VerifyErrorLength(int length)
         {
-            Assert.That(_errorListener.Error.HarvestNodeLootCreations, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void VerifyError(Type exception, params ResourceLootCreation[] creations)
         {
-            ResourceLootCreationError error = _errorListener.Error;
+            BufferedError<ResourceLootCreation> error = _errorListener.Error;
             Assert.Multiple(() =>
             {
                 Assert.That(error.BaseError.Exception, Is.TypeOf<ControllerThrownException>());
                 Assert.That(error.BaseError.Exception.InnerException, Is.TypeOf(exception));
-                Assert.That(error.HarvestNodeLootCreations, Is.EqualTo(creations));
+                Assert.That(error.Commands, Is.EqualTo(creations));
             });
         }
         

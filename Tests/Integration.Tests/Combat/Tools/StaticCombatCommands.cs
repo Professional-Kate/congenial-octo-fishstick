@@ -5,6 +5,7 @@ using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Stat.Contracts.Enum;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {
@@ -91,7 +92,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
                 new EquippedAbility
                 {
                     AbilityID = abilityID, 
-                    StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]
+                    StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]
                 }
             ]
         };

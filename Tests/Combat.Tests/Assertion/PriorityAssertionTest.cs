@@ -1,9 +1,9 @@
 ﻿using IdelPog.Combat.Assertion;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Exceptions;
+using IdelPog.Combat.Stat.Contracts.Enum;
 
 namespace IdelPog.Combat.Tests.Assertion
 {
@@ -24,7 +24,7 @@ namespace IdelPog.Combat.Tests.Assertion
         
         private readonly StrategyCard _strategyCard = new()
         {
-            CombatantStatType = CombatantStatType.HEALTH, 
+            StatType = StatType.HEALTH, 
             TargetingPreference = TargetingPreference.HIGHEST, 
             TargetingType = TargetingType.ENEMY, 
             Priority = 0

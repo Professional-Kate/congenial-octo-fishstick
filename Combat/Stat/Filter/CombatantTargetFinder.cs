@@ -1,8 +1,8 @@
 ﻿using IdelPog.Combat.Assertion.Interface;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Stat.Filter.Interface;
 using IdelPog.Combat.Stat.Provider.Interface;
 using IdelPog.Core.Repository.Asset;
@@ -13,11 +13,11 @@ namespace IdelPog.Combat.Stat.Filter
     public sealed class CombatantTargetFinder : ICombatantTargetFinder
     {
         private readonly ICombatantFilters _combatantFilters;
-        private readonly IAssetRepository<CombatantStatType, IStatProvider> _statProviderRepository;
+        private readonly IAssetRepository<StatType, IStatProvider> _statProviderRepository;
         private readonly INumberAssertion _numberAssertion;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public CombatantTargetFinder(ICombatantFilters combatantFilters, IAssetRepository<CombatantStatType, IStatProvider> statProviderRepository, INumberAssertion numberAssertion, ICollectionAssertion collectionAssertion)
+        public CombatantTargetFinder(ICombatantFilters combatantFilters, IAssetRepository<StatType, IStatProvider> statProviderRepository, INumberAssertion numberAssertion, ICollectionAssertion collectionAssertion)
         {
             _combatantFilters = combatantFilters;
             _statProviderRepository = statProviderRepository;
@@ -25,11 +25,11 @@ namespace IdelPog.Combat.Stat.Filter
             _collectionAssertion = collectionAssertion;
         }
 
-        public IEnumerable<CombatantEntity> SelectPreferredTargets(TargetingPreference targetingPreference, CombatantStatType combatantStatType, TargetingType targetingType, TargetingType casterTargetingType, byte targetCount)
+        public IEnumerable<CombatantEntity> SelectPreferredTargets(TargetingPreference targetingPreference, StatType statType, TargetingType targetingType, TargetingType casterTargetingType, byte targetCount)
         {
             _numberAssertion.AssertNumberNotZero(targetCount, nameof(targetCount));
             
-            IStatProvider statProvider = _statProviderRepository.Get(combatantStatType);
+            IStatProvider statProvider = _statProviderRepository.Get(statType);
             IReadOnlyList<CombatantEntity> entities = _combatantFilters.GetCombatants(targetingType, casterTargetingType);
             _collectionAssertion.AssertHasElements(entities);
             

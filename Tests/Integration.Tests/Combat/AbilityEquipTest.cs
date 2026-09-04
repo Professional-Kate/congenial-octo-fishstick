@@ -1,13 +1,13 @@
 ﻿using IdelPog.Combat;
 using IdelPog.Combat.Ability.Contracts;
 using IdelPog.Combat.Ability.Contracts.Command;
-using IdelPog.Combat.Ability.Contracts.Error;
 using IdelPog.Combat.Ability.Contracts.Response;
-using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Exceptions;
+using IdelPog.Combat.Stat.Contracts.Enum;
+using IdelPog.Core.Contracts;
 using IdelPog.Core.Validation.Exceptions;
 
 namespace IdelPog.Integration.Tests.Combat
@@ -16,7 +16,7 @@ namespace IdelPog.Integration.Tests.Combat
     public sealed class AbilityEquipTest : ManagedTestBuffer
     {
         private ManagedResponseListener<AbilityEquipResponse> _responseListener;
-        private ManagedErrorListener<AbilityEquipError> _errorListener;
+        private ManagedErrorListener<BufferedError<AbilityEquip>> _errorListener;
 
         private EquippedAbility _equippedAbility;
         private AbilityCreation _basicAttackCreation; 
@@ -26,7 +26,7 @@ namespace IdelPog.Integration.Tests.Combat
         public void OneTimeSetup()
         {
             _equippedAbility = new EquippedAbility
-                { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+                { AbilityID = 0, StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
             
             _basicAttackCreation = new AbilityCreation
             {
@@ -46,7 +46,7 @@ namespace IdelPog.Integration.Tests.Combat
         public void Setup()
         {
             _responseListener = new ManagedResponseListener<AbilityEquipResponse>();
-            _errorListener = new ManagedErrorListener<AbilityEquipError>();
+            _errorListener = new ManagedErrorListener<BufferedError<AbilityEquip>>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
@@ -64,12 +64,12 @@ namespace IdelPog.Integration.Tests.Combat
 
         private void AssertErrorLength(int length)
         { 
-            Assert.That(_errorListener.Error.AbilityEquips, Has.Length.EqualTo(length));
+            Assert.That(_errorListener.Error.Commands, Has.Length.EqualTo(length));
         }
 
         private void AssertErrorCollection(params AbilityEquip[] combatantAbilityEquips)
         {
-            Assert.That(_errorListener.Error.AbilityEquips, Is.EqualTo(combatantAbilityEquips));
+            Assert.That(_errorListener.Error.Commands, Is.EqualTo(combatantAbilityEquips));
         }
 
         [Test]
@@ -152,11 +152,11 @@ namespace IdelPog.Integration.Tests.Combat
             
             StrategyCard[] strategyCards = 
             [
-                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 2 },
-                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 4 },
-                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 3 },
-                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 1 },
-                new() { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 5 }
+                new() { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 2 },
+                new() { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 4 },
+                new() { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 3 },
+                new() { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 1 },
+                new() { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 5 }
             ];
             
             AbilityEquip abilityEquip = new() { CombatantID = 0, EquippedAbilities = [_equippedAbility with { StrategyCards = strategyCards}] };
@@ -267,7 +267,7 @@ namespace IdelPog.Integration.Tests.Combat
 
             StrategyCard strategyCard = new()
             {
-                TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0
+                TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0
             };
 
             AbilityEquip tooManyCards = new()
@@ -320,7 +320,7 @@ namespace IdelPog.Integration.Tests.Combat
             
             StrategyCard strategyCard = new()
             {
-                TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 5
+                TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 5
             };
             
             AbilityEquip abilityEquip = new()
