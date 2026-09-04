@@ -1,6 +1,7 @@
-﻿using IdelPog.Combat.Ability.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts;
+﻿using IdelPog.Combat.Ability.Contracts;
+using IdelPog.Combat.Ability.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
@@ -12,28 +13,28 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         internal static readonly CombatantCreation HumanCreation = new()
         {
             CombatantType = CombatantType.HUMAN, 
-            StatCard = new StatCard { Health = 25 },
+            HealthCard = new HealthCard { Health = 25, BaseHealth = 30 },
             AgilityCard = new AgilityCard { Speed = 7, Initiative = 2 }
         };
         
         internal static readonly CombatantCreation GoblinCreation = new()
         {
             CombatantType = CombatantType.GOBLIN, 
-            StatCard = new StatCard { Health = 9 },
+            HealthCard = new HealthCard { Health = 9, BaseHealth = 9 },
             AgilityCard = new AgilityCard { Speed = 11, Initiative = 3 }
         };
         
         internal static readonly CombatantCreation BearCreation = new()
         {
             CombatantType = CombatantType.BEAR,
-            StatCard = new StatCard { Health = 20 },
+            HealthCard = new HealthCard { Health = 20, BaseHealth = 20 },
             AgilityCard = new AgilityCard { Speed = 15, Initiative = 4 }
         };
         
         internal static readonly CombatantCreation WolfCreation = new()
         {
             CombatantType = CombatantType.WOLF,
-            StatCard = new StatCard { Health = 11 },
+            HealthCard = new HealthCard { Health = 11, BaseHealth = 11 },
             AgilityCard = new AgilityCard { Speed = 17, Initiative = 1 }
         };
 

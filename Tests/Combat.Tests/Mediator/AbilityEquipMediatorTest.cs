@@ -1,11 +1,11 @@
-﻿using IdelPog.Combat.Ability.Model;
+﻿using IdelPog.Combat.Ability.Contracts;
+using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Ability.Contracts.Response;
+using IdelPog.Combat.Ability.Mediator;
+using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Service.Interface;
 using IdelPog.Combat.Assertion;
-using IdelPog.Combat.Combatant.Contracts;
-using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts.Response;
-using IdelPog.Combat.Combatant.Mediator;
-using IdelPog.Combat.Combatant.Model;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Service.Interface;

@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Assertion;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;

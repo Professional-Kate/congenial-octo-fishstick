@@ -15,13 +15,13 @@ namespace IdelPog.Combat.Assertion
 
         public void AssertCombatantCards(CombatantCreation combatantCreation)
         {
-            AssertStatCard(combatantCreation.StatCard);
+            AssertStatCard(combatantCreation.HealthCard);
             AssertAgilityCard(combatantCreation.AgilityCard);
         }
 
-        private void AssertStatCard(StatCard statCard)
+        private void AssertStatCard(HealthCard healthCard)
         {
-            _numberAssertion.AssertNumberNotZero(statCard.Health, nameof(statCard.Health));
+            _numberAssertion.AssertNumberNotZero(healthCard.Health, nameof(healthCard.Health));
         }
 
         private void AssertAgilityCard(AgilityCard agilityCard)

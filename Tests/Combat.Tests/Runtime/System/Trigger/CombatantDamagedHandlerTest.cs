@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
+using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event.Trigger.Contracts;
@@ -91,14 +92,14 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
             
             const byte capacity = 3;
             FriendlyCombatantEntity.AddComponent(new RetaliationComponent { Capacity = capacity });
-            Assert.That(FriendlyCombatantEntity.GetComponent<RetaliationComponent>().TryDequeue(out CombatantDamageComponent _), Is.False);
+            Assert.That(FriendlyCombatantEntity.GetComponent<RetaliationComponent>().TryDequeue(out CombatantDamaged _), Is.False);
             
             _combatantDamagedHandler.Handle(TICK, _friendlyDamagedData);
             
-            Assert.That(FriendlyCombatantEntity.GetComponent<RetaliationComponent>().TryDequeue(out CombatantDamageComponent component), Is.True);
+            Assert.That(FriendlyCombatantEntity.GetComponent<RetaliationComponent>().TryDequeue(out CombatantDamaged component), Is.True);
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(component.CombatantID, Is.EqualTo(_friendlyDamagedData.InitiatingCombatantID));
+                Assert.That(component.InstanceID, Is.EqualTo(_friendlyDamagedData.InitiatingCombatantID));
                 Assert.That(component.DamageValue, Is.EqualTo(_friendlyDamagedData.DamageValue));
             }
         }
@@ -114,11 +115,11 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
             
             const byte capacity = 3;
             FriendlyCombatantEntity.AddComponent(new RetaliationComponent { Capacity = capacity });
-            Assert.That(FriendlyCombatantEntity.GetComponent<RetaliationComponent>().TryDequeue(out CombatantDamageComponent _), Is.False);
+            Assert.That(FriendlyCombatantEntity.GetComponent<RetaliationComponent>().TryDequeue(out CombatantDamaged _), Is.False);
             
             _combatantDamagedHandler.Handle(TICK, combatantDamagedData);
             
-            Assert.That(FriendlyCombatantEntity.GetComponent<RetaliationComponent>().TryDequeue(out CombatantDamageComponent _), Is.False);
+            Assert.That(FriendlyCombatantEntity.GetComponent<RetaliationComponent>().TryDequeue(out CombatantDamaged _), Is.False);
         }
 
         [Test]

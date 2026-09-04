@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
-using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Ability.Contracts;
 
-namespace IdelPog.Combat.Combatant.Model
+namespace IdelPog.Combat.Ability.Model
 {
     public readonly record struct EquippedAbilityDefinition
     {

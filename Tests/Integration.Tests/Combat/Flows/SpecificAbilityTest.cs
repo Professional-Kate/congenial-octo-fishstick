@@ -1,6 +1,6 @@
-﻿using IdelPog.Combat.Ability.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts;
-using IdelPog.Combat.Combatant.Contracts.Command;
+﻿using IdelPog.Combat.Ability.Contracts;
+using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Enum;
@@ -77,7 +77,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [Test]
         public void SlashAttack_DamagesEnemy()
         {
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { StatCard = new StatCard { Health = 1 }});
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { HealthCard = new HealthCard { Health = 1, BaseHealth = 0 }});
             DispatchMessage(StaticCombatCommands.SlashAttackCreation);
             DispatchMessage(StaticCombatCommands.EquipSlashAttack(0));
             
@@ -89,7 +89,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [Test]
         public void StabAttack_DamagesEnemy()
         {
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { StatCard = new StatCard { Health = 1 }});
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { HealthCard = new HealthCard { Health = 1, BaseHealth = 0 }});
             DispatchMessage(StaticCombatCommands.StabAttackCreation);
             DispatchMessage(StaticCombatCommands.EquipStabAttack(0, 0));
             
@@ -101,7 +101,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [Test]
         public void StrikeAttack_DamagesEnemy()
         {
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { StatCard = new StatCard { Health = 1 }});
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { HealthCard = new HealthCard { Health = 1, BaseHealth = 0 }});
             DispatchMessage(StaticCombatCommands.StrikeAttackCreation);
             DispatchMessage(StaticCombatCommands.EquipStrikeAttack(0, 0));
             
@@ -163,7 +163,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 EquippedAbilities = [new EquippedAbility { AbilityID = 1, StrategyCards = [lowHealthStrategyCard] }]
             };
             
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.GoblinCreation with { StatCard = new StatCard { Health = 1 }});
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.GoblinCreation with { HealthCard = new HealthCard { Health = 1, BaseHealth = 0 }});
             DispatchMessage(triggerAbilityCreation, StaticCombatCommands.StabAttackCreation);
             DispatchMessage(equipDeathTrigger, equipStabAttack);
             
@@ -228,7 +228,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 EquippedAbilities = [ new EquippedAbility { AbilityID = 0, StrategyCards = [lowHealthCard]}, new EquippedAbility { AbilityID = 1, StrategyCards = [lowHealthCard]}]
             };
             
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.GoblinCreation with { StatCard = new StatCard { Health = 100 }}, StaticCombatCommands.BearCreation with { StatCard = new StatCard { Health = 100 }});
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation, StaticCombatCommands.GoblinCreation with { HealthCard = new HealthCard { Health = 100, BaseHealth = 0 }}, StaticCombatCommands.BearCreation with { HealthCard = new HealthCard { Health = 100, BaseHealth = 0 }});
             DispatchMessage(combatantDamagedTriggerCreation, combatantDiedTriggerCreation, StaticCombatCommands.StabAttackCreation);
             DispatchMessage(equipTriggers, StaticCombatCommands.EquipAbility(1, 2));
             
@@ -277,7 +277,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             };
             
             // Human will take 3 hits to kill, wolf will take 2. Wolf will attack twice in one ability, this should only let the human attack once back before he dies. 
-            DispatchMessage(StaticCombatCommands.HumanCreation with { StatCard = new StatCard { Health = 11 }}, StaticCombatCommands.WolfCreation with { StatCard = new StatCard { Health = 51 }});
+            DispatchMessage(StaticCombatCommands.HumanCreation with { HealthCard = new HealthCard { Health = 11, BaseHealth = 0 }}, StaticCombatCommands.WolfCreation with { HealthCard = new HealthCard { Health = 51, BaseHealth = 0 }});
             DispatchMessage(combatantDamagedCreation, multiStageAbility);
             DispatchMessage(triggerEquip, multiStageAbilityEquip);
             

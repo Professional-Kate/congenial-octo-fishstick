@@ -1,5 +1,5 @@
-﻿using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts.Error;
+﻿using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Ability.Contracts.Error;
 using IdelPog.Core.Factory.Interface;
 
 namespace IdelPog.Combat.Core.Factory

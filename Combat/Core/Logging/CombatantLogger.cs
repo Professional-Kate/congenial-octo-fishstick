@@ -120,7 +120,7 @@ namespace IdelPog.Combat.Core.Logging
             {
                 InstanceID = combatantEntity.InstanceID,
                 CombatantID = combatantEntity.CombatantID,
-                StatCard = CreateStatCard(combatantEntity.GetComponent<HealthComponent>()),
+                HealthCard = CreateStatCard(combatantEntity.GetComponent<HealthComponent>(), combatantEntity.GetComponent<BaseHealthComponent>()),
                 AgilityCard = CreateAgilityCard(combatantEntity.GetComponent<AgilityComponent>()),
                 TargetingType = combatantEntity.TargetingType,
                 IsAlive = combatantEntity.GetComponent<LifeStatusComponent>().IsAlive
@@ -138,10 +138,11 @@ namespace IdelPog.Combat.Core.Logging
             return [..combatants];
         }
         
-        private static StatCard CreateStatCard(HealthComponent healthComponent)
+        private static HealthCard CreateStatCard(HealthComponent healthComponent, BaseHealthComponent baseHealthComponent)
         {
-            return new StatCard
+            return new HealthCard
             {
+                BaseHealth = baseHealthComponent.Health,
                 Health = healthComponent.Health
             };
         }

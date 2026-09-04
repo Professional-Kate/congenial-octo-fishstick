@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
-using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Tests.TestFactory;
 
@@ -29,11 +29,11 @@ namespace IdelPog.Combat.Tests.Assertion
         [Test]
         public void Negative_AssertCombatantCards_BadStatCard_Throws()
         {
-            StatCard badStatCard = new() { Health = 0 };
+            HealthCard badHealthCard = new() { Health = 0, BaseHealth = 1 };
             
-            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _cardAsserter.AssertCombatantCards(_combatantCreation with { StatCard = badStatCard }));
+            NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _cardAsserter.AssertCombatantCards(_combatantCreation with { HealthCard = badHealthCard }));
             
-            Assert.That(exception.Source, Is.EqualTo(nameof(badStatCard.Health)));
+            Assert.That(exception.Source, Is.EqualTo(nameof(badHealthCard.Health)));
         }
 
         [Test]

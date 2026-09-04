@@ -1,8 +1,8 @@
 ﻿using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Contracts.Error;
 using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Core.Contracts.Card;
-using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Exceptions;
 
 namespace IdelPog.Integration.Tests.Combat
@@ -21,7 +21,7 @@ namespace IdelPog.Integration.Tests.Combat
             _humanCombatantCreation = new CombatantCreation
             {
                 CombatantType = CombatantType.HUMAN,
-                StatCard = new StatCard { Health = 20 },
+                HealthCard = new HealthCard { Health = 20, BaseHealth = 20 },
                 AgilityCard = new AgilityCard { Speed = 5, Initiative = 1 }
             };
         }
@@ -41,7 +41,7 @@ namespace IdelPog.Integration.Tests.Combat
             Assert.Multiple(() =>
             {
                 Assert.That(response.CombatantType, Is.EqualTo(source.CombatantType));
-                Assert.That(response.StatCard, Is.EqualTo(source.StatCard));
+                Assert.That(response.HealthCard, Is.EqualTo(source.HealthCard));
             });
         }
 
@@ -64,7 +64,7 @@ namespace IdelPog.Integration.Tests.Combat
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], _humanCombatantCreation);
-            Assert.That(_responseListener.Responses[0].CombatantID, Is.EqualTo(0));
+            Assert.That(_responseListener.Responses[0].CombatantID, Is.Zero);
         }
 
         [Test]
@@ -124,10 +124,24 @@ namespace IdelPog.Integration.Tests.Combat
         }
         
         [Test]
+        public void Positive_DispatchMessage_CombatantHasZeroBaseHealth_DispatchesResponse()
+        {
+            HealthCard zeroBaseHealthHealthCard = new() { Health = 1, BaseHealth = 0 };
+            CombatantCreation zeroHealthCombatant = _humanCombatantCreation with { HealthCard = zeroBaseHealthHealthCard };
+            
+            Assert.DoesNotThrow(() => DispatchMessage(zeroHealthCombatant));
+            
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
+            AssertResponse(_responseListener.Responses[0], zeroHealthCombatant);
+        }
+        
+        [Test]
         public void Negative_DispatchMessage_CombatantHasZeroHealth_DispatchesError()
         {
-            StatCard zeroHealthStatCard = new() { Health = 0 };
-            CombatantCreation zeroHealthCombatant = _humanCombatantCreation with { StatCard = zeroHealthStatCard };
+            HealthCard zeroHealthHealthCard = new() { Health = 0, BaseHealth = 20 };
+            CombatantCreation zeroHealthCombatant = _humanCombatantCreation with { HealthCard = zeroHealthHealthCard };
             
             Assert.DoesNotThrow(() => DispatchMessage(zeroHealthCombatant));
             

@@ -1,6 +1,7 @@
-﻿using IdelPog.Combat.Ability.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts;
+﻿using IdelPog.Combat.Ability.Contracts;
+using IdelPog.Combat.Ability.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Enum;
@@ -62,8 +63,8 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [TestCase(100u, true, TestName = "Friendlies win because the added AbilityDamage nukes the bear")]
         public void AbilityDamage_ShouldIncreaseDamage(uint abilityDamage, bool friendlyVictory)
         {
-            CombatantCreation slightlyFasterHuman = StaticCombatCommands.HumanCreation with { StatCard = new StatCard { Health = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 4 }};
-            CombatantCreation slightlySlowerBear = StaticCombatCommands.BearCreation with { StatCard = new StatCard { Health = 10 }, AgilityCard = new AgilityCard { Speed = 9, Initiative = 4 }};
+            CombatantCreation slightlyFasterHuman = StaticCombatCommands.HumanCreation with { HealthCard = new HealthCard { Health = 1, BaseHealth = 0 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 4 }};
+            CombatantCreation slightlySlowerBear = StaticCombatCommands.BearCreation with { HealthCard = new HealthCard { Health = 10, BaseHealth = 0 }, AgilityCard = new AgilityCard { Speed = 9, Initiative = 4 }};
             
             AbilityCreation slashAttackCreation = new()
             {
@@ -90,8 +91,8 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 StrategyCards = [ new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, CombatantStatType = CombatantStatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]
             };
             
-            CombatantCreation slightlyFasterHuman = StaticCombatCommands.HumanCreation with { StatCard = new StatCard { Health = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 10 }};
-            CombatantCreation slightlySlowerBear = StaticCombatCommands.BearCreation with { StatCard = new StatCard { Health = 10 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 9 }};
+            CombatantCreation slightlyFasterHuman = StaticCombatCommands.HumanCreation with { HealthCard = new HealthCard { Health = 1, BaseHealth = 0 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 10 }};
+            CombatantCreation slightlySlowerBear = StaticCombatCommands.BearCreation with { HealthCard = new HealthCard { Health = 10, BaseHealth = 0 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 9 }};
             AbilityEquip dualAbilityEquip = new() { CombatantID = 0, EquippedAbilities = [ equippedAbility, equippedAbility with { AbilityID = 1 } ] };
             
             DispatchMessage(slightlyFasterHuman, slightlySlowerBear);
@@ -127,8 +128,8 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                     ]}]
             };
             
-            CombatantCreation elementalMan = StaticCombatCommands.HumanCreation with { StatCard = new StatCard { Health = 1 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 4 }};
-            CombatantCreation unsuspectingGoblin = StaticCombatCommands.GoblinCreation with { StatCard = new StatCard { Health = 6 }, AgilityCard = new AgilityCard { Speed = 9, Initiative = 4 }};
+            CombatantCreation elementalMan = StaticCombatCommands.HumanCreation with { HealthCard = new HealthCard { Health = 1, BaseHealth = 0 }, AgilityCard = new AgilityCard { Speed = 10, Initiative = 4 }};
+            CombatantCreation unsuspectingGoblin = StaticCombatCommands.GoblinCreation with { HealthCard = new HealthCard { Health = 6, BaseHealth = 0 }, AgilityCard = new AgilityCard { Speed = 9, Initiative = 4 }};
             
             DispatchMessage(multipleStagesCreation);
             DispatchMessage(elementalMan, unsuspectingGoblin);
@@ -190,7 +191,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 ]
             };
 
-            DispatchMessage(StaticCombatCommands.GoblinCreation with { StatCard = new  StatCard { Health = 1 }}, StaticCombatCommands.HumanCreation);
+            DispatchMessage(StaticCombatCommands.GoblinCreation with { HealthCard = new  HealthCard { Health = 1, BaseHealth = 0 }}, StaticCombatCommands.HumanCreation);
             DispatchMessage(abilityWithCastTime, StaticCombatCommands.StabAttackCreation);
             DispatchMessage(equipCastTimeAbility, StaticCombatCommands.EquipAbility(1, 1));
             
@@ -231,7 +232,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
                 ]
             };
             
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.BearCreation);
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation with { HealthCard = new HealthCard { Health = 9, BaseHealth = 20 }}, StaticCombatCommands.BearCreation);
             DispatchMessage(StaticCombatCommands.SlashAttackCreation, StaticCombatCommands.StabAttackCreation, healingAbilityCreation);
             DispatchMessage( StaticCombatCommands.EquipSlashAttack(1), StaticCombatCommands.EquipStabAttack(2));
             

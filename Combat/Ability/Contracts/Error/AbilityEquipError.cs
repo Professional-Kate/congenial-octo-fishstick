@@ -1,7 +1,7 @@
-﻿using IdelPog.Combat.Combatant.Contracts.Command;
+﻿using IdelPog.Combat.Ability.Contracts.Command;
 using IdelPog.Core.Contracts;
 
-namespace IdelPog.Combat.Combatant.Contracts.Error
+namespace IdelPog.Combat.Ability.Contracts.Error
 {
     public readonly record struct AbilityEquipError
     {

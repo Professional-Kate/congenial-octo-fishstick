@@ -1,6 +1,8 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
+using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
@@ -56,7 +58,7 @@ namespace IdelPog.Combat.Tests.Event
             RetaliationComponent retaliationComponent = new() { Capacity = 3 };
             combatantEntity.AddComponent(retaliationComponent);
             
-            retaliationComponent.Enqueue(new CombatantDamageComponent { CombatantID = 2, DamageValue = 3 });
+            retaliationComponent.Enqueue(new CombatantDamaged { InstanceID = 2, DamageValue = 3 });
         }
 
         private void VerifyDamageApplied(CombatantEntity[] targetCombatants, AbilityStage abilityStage, double tick)
@@ -90,10 +92,10 @@ namespace IdelPog.Combat.Tests.Event
             SetupRepositoryGet(InitiatingCombatant, TargetCombatant);
             AddRetaliationComponent(InitiatingCombatant);
 
-            CombatantDamageComponent combatantDamageComponent = new() { CombatantID = InitiatingCombatant.InstanceID, DamageValue = 3 };            
+            CombatantDamaged combatantDamaged = new() { InstanceID = InitiatingCombatant.InstanceID, DamageValue = 3 };            
             RetaliationComponent retaliationComponent = InitiatingCombatant.GetComponent<RetaliationComponent>();
-            retaliationComponent.Enqueue(combatantDamageComponent);
-            retaliationComponent.Enqueue(combatantDamageComponent with { CombatantID = TargetCombatant.InstanceID });
+            retaliationComponent.Enqueue(combatantDamaged);
+            retaliationComponent.Enqueue(combatantDamaged with { InstanceID = TargetCombatant.InstanceID });
             
             Assert.DoesNotThrow(() => _retaliationAbilityEffectResolver.ResolveEffect(TICK, _retaliationAbility, GetCombatantAbilityStage(_retaliationAbility, 0)));
             
@@ -107,10 +109,10 @@ namespace IdelPog.Combat.Tests.Event
             SetupRepositoryGet(TargetCombatant, InitiatingCombatant);
             AddRetaliationComponent(InitiatingCombatant);
 
-            CombatantDamageComponent combatantDamageComponent = new() { CombatantID = TargetCombatant.InstanceID, DamageValue = 3 };            
+            CombatantDamaged combatantDamaged = new() { InstanceID = TargetCombatant.InstanceID, DamageValue = 3 };            
             RetaliationComponent retaliationComponent = InitiatingCombatant.GetComponent<RetaliationComponent>();
-            retaliationComponent.Enqueue(combatantDamageComponent);
-            retaliationComponent.Enqueue(combatantDamageComponent);
+            retaliationComponent.Enqueue(combatantDamaged);
+            retaliationComponent.Enqueue(combatantDamaged);
             
             Assert.DoesNotThrow(() => _retaliationAbilityEffectResolver.ResolveEffect(TICK, _retaliationAbility, GetCombatantAbilityStage(_retaliationAbility, 0)));
             VerifyDamageApplied([TargetCombatant], GetCombatantAbilityStage(_retaliationAbility, 0), TICK);

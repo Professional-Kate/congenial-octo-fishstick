@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Combat.Core.Contracts.Enum
+﻿namespace IdelPog.Combat.Combatant.Contracts.Enum
 {
     public enum CombatantType : byte
     {

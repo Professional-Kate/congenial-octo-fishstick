@@ -1,11 +1,10 @@
 ﻿using System.Collections.Immutable;
+using IdelPog.Combat.Ability.Contracts;
+using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Ability.Contracts.Response;
 using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Service.Interface;
 using IdelPog.Combat.Assertion.Interface;
-using IdelPog.Combat.Combatant.Contracts;
-using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts.Response;
-using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
@@ -13,7 +12,7 @@ using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Incremental;
 using IdelPog.Core.Validation.Assertion.Interface;
 
-namespace IdelPog.Combat.Combatant.Mediator
+namespace IdelPog.Combat.Ability.Mediator
 {
     public sealed class AbilityEquipMediator : IBatchMediator<AbilityEquip>
     {

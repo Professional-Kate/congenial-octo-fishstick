@@ -1,4 +1,4 @@
-﻿namespace IdelPog.Combat.Combatant.Contracts.Command
+﻿namespace IdelPog.Combat.Ability.Contracts.Command
 {
     public readonly record struct AbilityEquip
     {

@@ -1,6 +1,7 @@
-﻿using IdelPog.Combat.Ability.Model;
+﻿using IdelPog.Combat.Ability.Contracts;
+using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Service;
-using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;

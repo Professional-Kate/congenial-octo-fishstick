@@ -9,6 +9,7 @@ using IdelPog.Combat.Ability.Service.Interface;
 using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Assertion.Interface;
 using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Combatant.Mediator;
 using IdelPog.Combat.Combatant.Model;
@@ -17,7 +18,6 @@ using IdelPog.Combat.Combatant.Runtime.System;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Arena;
 using IdelPog.Combat.Core.Contracts.Command;
-using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Event.Resolver;
@@ -75,6 +75,7 @@ namespace IdelPog.Combat
             
             // TODO: move this out eventually 
             statProviderRepository.Add(CombatantStatType.HEALTH, new HealthProvider());
+            statProviderRepository.Add(CombatantStatType.BASE_HEALTH, new BaseHealthProvider());
             statProviderRepository.Add(CombatantStatType.SPEED, new SpeedProvider());
             statProviderRepository.Add(CombatantStatType.INITIATIVE, new InitiativeProvider());
             statProviderRepository.Add(CombatantStatType.ABILITY_DAMAGE, new AbilityDamageProvider(abilityEntityRepository));

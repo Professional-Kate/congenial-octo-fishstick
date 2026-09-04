@@ -1,4 +1,5 @@
 ﻿using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System;
@@ -13,7 +14,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
     {
         private CombatantRepository _combatantRepository;
 
-        private StatCard _wolfStatCard;
+        private HealthCard _wolfHealthCard;
         private CombatantCreation _wolfCreation;
         private CombatantEntity _enemyWolfEntity;
         private CombatantEntity _friendlyWolfEntity;
@@ -21,8 +22,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _wolfStatCard = new StatCard { Health = 3 };
-            _wolfCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, _wolfStatCard);
+            _wolfHealthCard = new HealthCard { Health = 3, BaseHealth = 3 };
+            _wolfCreation = TestCombatantCreationFactory.CreateCombatantCreation(CombatantType.WOLF, _wolfHealthCard);
         }
 
         [SetUp]

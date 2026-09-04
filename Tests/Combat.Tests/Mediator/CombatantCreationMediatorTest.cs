@@ -1,10 +1,10 @@
 ﻿using IdelPog.Combat.Assertion;
 using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Combatant.Mediator;
 using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Core.Contracts.Card;
-using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Exceptions;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
@@ -38,7 +38,7 @@ namespace IdelPog.Combat.Tests.Mediator
             {
                 CombatantID = 0,
                 AgilityCard = _combatantCreation.AgilityCard,
-                StatCard = _combatantCreation.StatCard,
+                HealthCard = _combatantCreation.HealthCard,
                 CombatantType = _combatantCreation.CombatantType
             };
         }
@@ -124,11 +124,11 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Negative_HandleMessages_CombatantHasZeroHealth_Throws()
         {
-            StatCard zeroHealthStatCard = _combatantCreation.StatCard with { Health = 0 };
-            CombatantCreation zeroHealthCombatant = _combatantCreation with { StatCard =  zeroHealthStatCard };
+            HealthCard zeroHealthHealthCard = _combatantCreation.HealthCard with { Health = 0 };
+            CombatantCreation zeroHealthCombatant = _combatantCreation with { HealthCard =  zeroHealthHealthCard };
 
             NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _mediator.HandleMessages([zeroHealthCombatant]));
-            Assert.That(exception.Source, Is.EqualTo(nameof(zeroHealthStatCard.Health)));
+            Assert.That(exception.Source, Is.EqualTo(nameof(zeroHealthHealthCard.Health)));
         }
     }
 }

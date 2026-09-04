@@ -1,6 +1,7 @@
 ﻿using IdelPog.Combat;
-using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Ability.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Command;
@@ -163,13 +164,13 @@ namespace IdelPog.Integration.Tests.Combat
         [Test]
         public void Positive_SimulateCombat_CombatantsAttackInOrder_OfInitiative()
         {
-            StatCard sharedStatCard = new() { Health = 100 };
+            HealthCard sharedHealthCard = new() { Health = 100, BaseHealth = 100 };
             AgilityCard sameSpeedCard = new() { Speed = 10, Initiative = 0 };
             
-            CombatantCreation humanCreation = StaticCombatCommands.HumanCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 1 }};
-            CombatantCreation bearCreation = StaticCombatCommands.BearCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 2 }};
-            CombatantCreation goblinCreation = StaticCombatCommands.GoblinCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 3 }};
-            CombatantCreation wolfCreation = StaticCombatCommands.WolfCreation with { StatCard = sharedStatCard, AgilityCard = sameSpeedCard with { Initiative = 4 }};
+            CombatantCreation humanCreation = StaticCombatCommands.HumanCreation with { HealthCard = sharedHealthCard, AgilityCard = sameSpeedCard with { Initiative = 1 }};
+            CombatantCreation bearCreation = StaticCombatCommands.BearCreation with { HealthCard = sharedHealthCard, AgilityCard = sameSpeedCard with { Initiative = 2 }};
+            CombatantCreation goblinCreation = StaticCombatCommands.GoblinCreation with { HealthCard = sharedHealthCard, AgilityCard = sameSpeedCard with { Initiative = 3 }};
+            CombatantCreation wolfCreation = StaticCombatCommands.WolfCreation with { HealthCard = sharedHealthCard, AgilityCard = sameSpeedCard with { Initiative = 4 }};
 
             DispatchMessage(humanCreation, bearCreation, goblinCreation, wolfCreation);
             DispatchMessage(StaticCombatCommands.SlashAttackCreation);

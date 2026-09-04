@@ -1,8 +1,9 @@
-﻿namespace IdelPog.Combat.Core.Contracts.Enum
+﻿namespace IdelPog.Combat.Combatant.Contracts.Enum
 {
     public enum CombatantStatType
     {
-        HEALTH, 
+        HEALTH,
+        BASE_HEALTH,
         SPEED,
         INITIATIVE,
         ABILITY_DAMAGE,

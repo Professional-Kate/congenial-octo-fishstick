@@ -1,6 +1,8 @@
-﻿using IdelPog.Combat.Ability.Runtime.Entities;
+﻿using IdelPog.Combat.Ability.Contracts;
+using IdelPog.Combat.Ability.Model;
+using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
-using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;

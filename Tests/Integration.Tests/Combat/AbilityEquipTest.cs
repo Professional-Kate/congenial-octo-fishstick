@@ -1,9 +1,9 @@
 ﻿using IdelPog.Combat;
+using IdelPog.Combat.Ability.Contracts;
 using IdelPog.Combat.Ability.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts;
-using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts.Error;
-using IdelPog.Combat.Combatant.Contracts.Response;
+using IdelPog.Combat.Ability.Contracts.Error;
+using IdelPog.Combat.Ability.Contracts.Response;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;

@@ -1,5 +1,6 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Entities;
+using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
@@ -37,18 +38,18 @@ namespace IdelPog.Combat.Core.Event.Resolver
             List<CombatantEntity> targetCombatants = [];
             for (int i = 0; i < abilityStage.AbilityStageCards.MaxTargets; i++)
             {
-                if (retaliationComponent.TryDequeue(out CombatantDamageComponent combatantDamageComponent) == false)
+                if (retaliationComponent.TryDequeue(out CombatantDamaged combatantDamageComponent) == false)
                 {
                     break;
                 }
                 
 
-                if (targetCombatantIDs.Add(combatantDamageComponent.CombatantID) == false)
+                if (targetCombatantIDs.Add(combatantDamageComponent.InstanceID) == false)
                 {
                     continue;
                 }
                 
-                targetCombatants.Add(GetCombatant(combatantDamageComponent.CombatantID));
+                targetCombatants.Add(GetCombatant(combatantDamageComponent.InstanceID));
             }
             
             _entityDamageSystem.ApplyDamage(targetCombatants, combatantEntity.InstanceID, abilityStage, tick);

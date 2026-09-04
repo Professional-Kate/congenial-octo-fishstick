@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Combatant.Model;
+﻿using IdelPog.Combat.Combatant.Contracts.Enum;
+using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Core.Arena;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Command;
@@ -31,7 +32,7 @@ namespace IdelPog.Combat.Tests.Mediator
         private readonly CombatantDefinition _combatantDefinition = new()
         {
             CombatantID = 1,
-            StatCard = new StatCard { Health = 10 },
+            HealthCard = new HealthCard { Health = 10, BaseHealth = 10 },
             AgilityCard = new AgilityCard { Speed = 3, Initiative = 1 },
             CombatantType = CombatantType.GOBLIN
         };
@@ -56,7 +57,7 @@ namespace IdelPog.Combat.Tests.Mediator
             {
                 InstanceID = 1,
                 CombatantID = _combatantDefinition.CombatantID,
-                StatCard = _combatantDefinition.StatCard,
+                HealthCard = _combatantDefinition.HealthCard,
                 AgilityCard = _combatantDefinition.AgilityCard,
                 TargetingType = TargetingType.FRIENDLY,
                 IsAlive = true

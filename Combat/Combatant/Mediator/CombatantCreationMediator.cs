@@ -38,7 +38,7 @@ namespace IdelPog.Combat.Combatant.Mediator
                 {
                     CombatantID = _combatantDefinitionRepository.GetID(),
                     CombatantType = combatantCreation.CombatantType,
-                    StatCard = combatantCreation.StatCard,
+                    HealthCard = combatantCreation.HealthCard,
                     AgilityCard = combatantCreation.AgilityCard
                 };
                 
@@ -55,7 +55,7 @@ namespace IdelPog.Combat.Combatant.Mediator
             return new CombatantCreationResponse
             {
                 CombatantType = combatantCreation.CombatantType,
-                StatCard = combatantCreation.StatCard,
+                HealthCard = combatantCreation.HealthCard,
                 AgilityCard = combatantCreation.AgilityCard,
                 CombatantID = combatantID
             };

@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Combatant.Runtime.Component;
+﻿using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.Combat.Combatant.Runtime.Component;
 
 namespace IdelPog.Combat.Tests.Runtime
 {
@@ -8,9 +9,9 @@ namespace IdelPog.Combat.Tests.Runtime
         private RetaliationComponent _retaliationComponent;
         
         private const byte CAPACITY = 3;
-        private readonly CombatantDamageComponent _combatantDamageComponent = new()
+        private readonly CombatantDamaged _combatantDamaged = new()
         {
-            CombatantID = 1,
+            InstanceID = 1,
             DamageValue = 10
         };
 
@@ -23,18 +24,18 @@ namespace IdelPog.Combat.Tests.Runtime
             };
         }
 
-        private static void AssertCombatantDamageComponent(CombatantDamageComponent combatantDamageComponent, CombatantDamageComponent expectedComponent)
+        private static void AssertCombatantDamageComponent(CombatantDamaged combatantDamaged, CombatantDamaged expectedComponent)
         {
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(combatantDamageComponent.CombatantID, Is.EqualTo(expectedComponent.CombatantID));
-                Assert.That(combatantDamageComponent.DamageValue, Is.EqualTo(expectedComponent.DamageValue));
+                Assert.That(combatantDamaged.InstanceID, Is.EqualTo(expectedComponent.InstanceID));
+                Assert.That(combatantDamaged.DamageValue, Is.EqualTo(expectedComponent.DamageValue));
             }
         }
         
-        private void AssertTryDequeue(CombatantDamageComponent expectedComponent, bool expectedSuccess)
+        private void AssertTryDequeue(CombatantDamaged expectedComponent, bool expectedSuccess)
         {
-            bool successful = _retaliationComponent.TryDequeue(out CombatantDamageComponent combatantDamageComponent);
+            bool successful = _retaliationComponent.TryDequeue(out CombatantDamaged combatantDamageComponent);
             
             Assert.That(successful, Is.EqualTo(expectedSuccess));
             AssertCombatantDamageComponent(combatantDamageComponent, expectedComponent);
@@ -43,26 +44,26 @@ namespace IdelPog.Combat.Tests.Runtime
         [Test]
         public void Positive_Enqueue_EnqueuesComponent()
         { 
-            _retaliationComponent.Enqueue(_combatantDamageComponent);
+            _retaliationComponent.Enqueue(_combatantDamaged);
             
-            AssertTryDequeue(_combatantDamageComponent, true);
+            AssertTryDequeue(_combatantDamaged, true);
         }
 
         [Test]
         public void Positive_Enqueue_CanEnqueueTillMax()
         {
-            _retaliationComponent.Enqueue(_combatantDamageComponent with { CombatantID = 2 });
-            _retaliationComponent.Enqueue(_combatantDamageComponent with { CombatantID = 3 });
-            _retaliationComponent.Enqueue(_combatantDamageComponent with { CombatantID = 4 });
-            _retaliationComponent.Enqueue(_combatantDamageComponent with { CombatantID = 5 });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 2 });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 3 });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 4 });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 5 });
             
-            AssertTryDequeue(_combatantDamageComponent with { CombatantID = 3 }, true);
+            AssertTryDequeue(_combatantDamaged with { InstanceID = 3 }, true);
         }
 
         [Test]
         public void Positive_TryDequeue_NoComponents_ReturnsFalse()
         {
-            bool successful = _retaliationComponent.TryDequeue(out CombatantDamageComponent combatantDamageComponent);
+            bool successful = _retaliationComponent.TryDequeue(out CombatantDamaged combatantDamageComponent);
             
             using (Assert.EnterMultipleScope())
             {
@@ -74,21 +75,21 @@ namespace IdelPog.Combat.Tests.Runtime
         [Test]
         public void Positive_TryDequeue_ReturnsAddedComponent()
         {
-            _retaliationComponent.Enqueue(_combatantDamageComponent);
+            _retaliationComponent.Enqueue(_combatantDamaged);
             
-            AssertTryDequeue(_combatantDamageComponent, true);
+            AssertTryDequeue(_combatantDamaged, true);
         }
 
         [Test]
         public void Positive_TryDequeue_DequeuesSeries()
         {
-            _retaliationComponent.Enqueue(_combatantDamageComponent with { CombatantID = 3 });
-            _retaliationComponent.Enqueue(_combatantDamageComponent with { CombatantID = 4 });
-            _retaliationComponent.Enqueue(_combatantDamageComponent with { CombatantID = 5 });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 3 });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 4 });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 5 });
 
-            AssertTryDequeue(_combatantDamageComponent with { CombatantID = 3 }, true);
-            AssertTryDequeue(_combatantDamageComponent with { CombatantID = 4 }, true);
-            AssertTryDequeue(_combatantDamageComponent with { CombatantID = 5 }, true);
+            AssertTryDequeue(_combatantDamaged with { InstanceID = 3 }, true);
+            AssertTryDequeue(_combatantDamaged with { InstanceID = 4 }, true);
+            AssertTryDequeue(_combatantDamaged with { InstanceID = 5 }, true);
         }
     }
 }

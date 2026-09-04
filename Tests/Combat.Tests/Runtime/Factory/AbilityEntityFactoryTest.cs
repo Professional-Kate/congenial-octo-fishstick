@@ -1,11 +1,11 @@
-﻿using IdelPog.Combat.Ability.Model;
+﻿using IdelPog.Combat.Ability.Contracts;
+using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
-using IdelPog.Combat.Combatant.Contracts;
-using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Combatant.Model;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;

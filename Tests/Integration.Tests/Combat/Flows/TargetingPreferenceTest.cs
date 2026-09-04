@@ -1,6 +1,7 @@
-﻿using IdelPog.Combat.Ability.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts;
+﻿using IdelPog.Combat.Ability.Contracts;
+using IdelPog.Combat.Ability.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Enum;
@@ -37,7 +38,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             DispatchMessage(StaticCombatCommands.EquipAbilityCards(1, mainEquippedAbility));
             
             RunCombat([1], [2, 0, 3]);
-            // CombatValidator.PrintCombatStages(_responseListener.Responses[0].CombatStages);
+            CombatValidator.PrintCombatStages(_responseListener.Responses[0].CombatStages);
             CombatValidator.AssertNextTargets(0);
         }
         
@@ -58,10 +59,13 @@ namespace IdelPog.Integration.Tests.Combat.Flows
 
         [TestCase(5000u, TargetingPreference.HIGHEST, CombatantStatType.HEALTH)]
         [TestCase(1u, TargetingPreference.LOWEST, CombatantStatType.HEALTH)]
-        public void CanTarget_StatCard_Stats(uint stat, TargetingPreference targetingPreference, CombatantStatType combatantStatType)
+        [TestCase(5000u, TargetingPreference.HIGHEST, CombatantStatType.BASE_HEALTH)]
+        [TestCase(1u, TargetingPreference.LOWEST, CombatantStatType.BASE_HEALTH)]
+        public void CanTarget_HealthCard_Stats(uint stat, TargetingPreference targetingPreference, CombatantStatType combatantStatType)
         {
-            StatCard statCard = new() { Health = stat };
-            CombatantCreation targetCreation = StaticCombatCommands.HumanCreation with { StatCard = statCard };
+            HealthCard healthCard = new() { Health = stat, BaseHealth = stat };
+            
+            CombatantCreation targetCreation = StaticCombatCommands.HumanCreation with { HealthCard = healthCard };
             
             SetupCombat(targetingPreference, combatantStatType, targetCreation);
         }
@@ -84,7 +88,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         [TestCase(TargetingPreference.LOWEST, AbilityEffectType.HEALING)]
         public void CanTarget_AbilityStats(TargetingPreference targetingPreference, AbilityEffectType abilityEffectType)
         {
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { StatCard = new StatCard { Health = 1 }}, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation);
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { HealthCard = new HealthCard { Health = 1, BaseHealth = 0 }}, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation);
 
             uint abilityDamage = targetingPreference == TargetingPreference.HIGHEST ? uint.MaxValue : uint.MinValue;
             AbilityCreation highDamageAbility = new()

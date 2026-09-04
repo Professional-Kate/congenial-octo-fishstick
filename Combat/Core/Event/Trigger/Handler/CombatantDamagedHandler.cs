@@ -2,6 +2,7 @@
 using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
+using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
@@ -27,7 +28,7 @@ namespace IdelPog.Combat.Core.Event.Trigger.Handler
             {
                 if (damagedCombatant.InstanceID == triggerData.InitiatingCombatantID == false)
                 {
-                    retaliationComponent.Enqueue(new CombatantDamageComponent { CombatantID = triggerData.InitiatingCombatantID, DamageValue = triggerData.DamageValue });
+                    retaliationComponent.Enqueue(new CombatantDamaged { InstanceID = triggerData.InitiatingCombatantID, DamageValue = triggerData.DamageValue });
                 }
             }
             

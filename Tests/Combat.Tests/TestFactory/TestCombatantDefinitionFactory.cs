@@ -1,6 +1,6 @@
-﻿using IdelPog.Combat.Combatant.Model;
+﻿using IdelPog.Combat.Combatant.Contracts.Enum;
+using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Core.Contracts.Card;
-using IdelPog.Combat.Core.Contracts.Enum;
 
 namespace IdelPog.Combat.Tests.TestFactory
 {
@@ -12,7 +12,7 @@ namespace IdelPog.Combat.Tests.TestFactory
             {
                 CombatantType = combatantType,
                 AgilityCard = new AgilityCard { Speed = 10, Initiative = 5 },
-                StatCard = new StatCard { Health = 10 },
+                HealthCard = new HealthCard { Health = 10, BaseHealth = 10 },
                 CombatantID = combatantID
             };
         }

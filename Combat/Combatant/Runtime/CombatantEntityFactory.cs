@@ -15,7 +15,7 @@ namespace IdelPog.Combat.Combatant.Runtime
             for (int i = 0; i < combatantDefinitions.Count; i++)
             {
                 CombatantDefinition combatantDefinition = combatantDefinitions[i];
-                combatantEntities[i] = new CombatantEntity(combatantDefinition.StatCard, combatantDefinition.AgilityCard)
+                combatantEntities[i] = new CombatantEntity(combatantDefinition.HealthCard, combatantDefinition.AgilityCard)
                 {
                     InstanceID = _instanceID,
                     CombatantID = combatantDefinition.CombatantID,

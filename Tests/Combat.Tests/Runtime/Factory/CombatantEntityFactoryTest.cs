@@ -1,4 +1,5 @@
-﻿using IdelPog.Combat.Combatant.Model;
+﻿using IdelPog.Combat.Combatant.Contracts.Enum;
+using IdelPog.Combat.Combatant.Model;
 using IdelPog.Combat.Combatant.Runtime;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
@@ -35,7 +36,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
                 Assert.That(combatantEntity.CombatantID, Is.EqualTo(combatantDefinition.CombatantID));
                 Assert.That(combatantEntity.CombatantType, Is.EqualTo(combatantDefinition.CombatantType));
                 Assert.That(combatantEntity.InstanceID, Is.EqualTo(instanceID));
-                Assert.That(combatantEntity.GetComponent<HealthComponent>().Health, Is.EqualTo(combatantDefinition.StatCard.Health));
+                Assert.That(combatantEntity.GetComponent<HealthComponent>().Health, Is.EqualTo(combatantDefinition.HealthCard.Health));
                 Assert.That(combatantEntity.GetComponent<AgilityComponent>().Initiative, Is.EqualTo(combatantDefinition.AgilityCard.Initiative));
                 Assert.That(combatantEntity.GetComponent<AgilityComponent>().Speed, Is.EqualTo(combatantDefinition.AgilityCard.Speed));
             }

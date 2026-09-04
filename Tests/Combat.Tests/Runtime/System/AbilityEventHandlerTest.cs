@@ -3,6 +3,7 @@ using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
+using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;

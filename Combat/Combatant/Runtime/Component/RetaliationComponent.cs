@@ -1,38 +1,39 @@
-﻿using IdelPog.ECS.Component;
+﻿using IdelPog.Combat.Combatant.Contracts;
+using IdelPog.ECS.Component;
 
 namespace IdelPog.Combat.Combatant.Runtime.Component
 {
     public readonly record struct RetaliationComponent : IComponent
     {
-        private readonly Queue<CombatantDamageComponent> _damageQueue;
+        private readonly Queue<CombatantDamaged> _damageQueue;
 
         public required byte Capacity { get; init; }
         public int Count => _damageQueue.Count;
 
         public RetaliationComponent()
         {
-            _damageQueue = new Queue<CombatantDamageComponent>(Capacity);
+            _damageQueue = new Queue<CombatantDamaged>(Capacity);
         }
 
-        public void Enqueue(CombatantDamageComponent combatantDamageComponent)
+        public void Enqueue(CombatantDamaged combatantDamaged)
         {
             if (_damageQueue.Count >= Capacity)
             {
                 _damageQueue.Dequeue();
             }
             
-            _damageQueue.Enqueue(combatantDamageComponent);
+            _damageQueue.Enqueue(combatantDamaged);
         }
 
-        public bool TryDequeue(out CombatantDamageComponent combatantDamageComponent)
+        public bool TryDequeue(out CombatantDamaged combatantDamaged)
         {
             if (_damageQueue.Count == 0)
             {
-                combatantDamageComponent = default;
+                combatantDamaged = default;
                 return false;
             }
             
-            combatantDamageComponent = _damageQueue.Dequeue();
+            combatantDamaged = _damageQueue.Dequeue();
             return true;
         }
     }
