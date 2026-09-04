@@ -16,7 +16,7 @@ namespace IdelPog.Combat.Combatant.Runtime.Entities
         public CombatantEntity(HealthCard healthCard, AgilityCard agilityCard)
             : base(requiredComponents:
             [
-                new BaseHealthComponent { Health = healthCard.BaseHealth }, new HealthComponent { Health = healthCard.Health},
+                new BaseHealthComponent { Health = healthCard.BaseHealth }, new HealthComponent { Health = healthCard.Health },
                 new AgilityComponent { Speed = agilityCard.Speed, Initiative = agilityCard.Initiative }, new LifeStatusComponent { IsAlive = true }
             ])
         { }

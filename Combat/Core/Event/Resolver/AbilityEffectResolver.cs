@@ -6,8 +6,8 @@ using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event.Resolver.Interface;
-using IdelPog.Combat.Core.Filter.Interface;
 using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Stat.Filter.Interface;
 
 namespace IdelPog.Combat.Core.Event.Resolver
 {

@@ -1,8 +1,8 @@
 ﻿using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
-using IdelPog.Combat.Core.Filter.Provider.Interface;
+using IdelPog.Combat.Stat.Provider.Interface;
 
-namespace IdelPog.Combat.Core.Filter.Provider
+namespace IdelPog.Combat.Stat.Provider
 {
     public sealed class HealthProvider : IStatProvider
     {

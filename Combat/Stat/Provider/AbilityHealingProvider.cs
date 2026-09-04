@@ -2,9 +2,9 @@
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
 using IdelPog.Combat.Combatant.Runtime.Entities;
-using IdelPog.Combat.Core.Filter.Provider.Interface;
+using IdelPog.Combat.Stat.Provider.Interface;
 
-namespace IdelPog.Combat.Core.Filter.Provider
+namespace IdelPog.Combat.Stat.Provider
 {
     public sealed class AbilityHealingProvider : IStatProvider
     {

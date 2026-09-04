@@ -1,6 +1,6 @@
 ﻿using IdelPog.Combat.Combatant.Runtime.Entities;
 
-namespace IdelPog.Combat.Core.Filter.Provider.Interface
+namespace IdelPog.Combat.Stat.Provider.Interface
 {
     public interface IStatProvider
     {

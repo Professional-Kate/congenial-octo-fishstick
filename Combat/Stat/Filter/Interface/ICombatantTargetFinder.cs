@@ -2,7 +2,7 @@
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Core.Contracts.Enum;
 
-namespace IdelPog.Combat.Core.Filter.Interface
+namespace IdelPog.Combat.Stat.Filter.Interface
 {
     public interface ICombatantTargetFinder
     {

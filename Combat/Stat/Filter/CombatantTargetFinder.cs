@@ -3,12 +3,12 @@ using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
-using IdelPog.Combat.Core.Filter.Interface;
-using IdelPog.Combat.Core.Filter.Provider.Interface;
+using IdelPog.Combat.Stat.Filter.Interface;
+using IdelPog.Combat.Stat.Provider.Interface;
 using IdelPog.Core.Repository.Asset;
 using IdelPog.Core.Validation.Assertion.Interface;
 
-namespace IdelPog.Combat.Core.Filter
+namespace IdelPog.Combat.Stat.Filter
 {
     public sealed class CombatantTargetFinder : ICombatantTargetFinder
     {
