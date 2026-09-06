@@ -7,6 +7,7 @@
         SPEED,
         INITIATIVE,
         ABILITY_DAMAGE,
-        ABILITY_HEALING
+        ABILITY_HEALING,
+        RETALIATION_DAMAGE
     }
 }

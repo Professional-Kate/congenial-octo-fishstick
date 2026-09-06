@@ -26,9 +26,12 @@ using IdelPog.Combat.Core.Logging;
 using IdelPog.Combat.Core.Mediator;
 using IdelPog.Combat.Core.Service;
 using IdelPog.Combat.Core.Service.Interface;
+using IdelPog.Combat.Stat.Contracts.Command;
 using IdelPog.Combat.Stat.Contracts.Enum;
+using IdelPog.Combat.Stat.Contracts.Response;
 using IdelPog.Combat.Stat.Filter;
 using IdelPog.Combat.Stat.Filter.Interface;
+using IdelPog.Combat.Stat.Mediator;
 using IdelPog.Combat.Stat.Provider;
 using IdelPog.Combat.Stat.Provider.Interface;
 using IdelPog.Core.Flows.Registry;
@@ -61,11 +64,11 @@ namespace IdelPog.Combat
             IIncrementalRepository<AbilityDefinition> abilityDefinitionRepository =  new IncrementalRepository<AbilityDefinition>(repositoryAsserter);
             IIncrementalRepository<CombatantDefinition> combatantDefinitionRepository = new IncrementalRepository<CombatantDefinition>(repositoryAsserter);
             Dictionary<byte, EquippedAbilityDefinition> equippedAbilityDefinitionRepository = new();
+            IIncrementalRepository<StatConversionCreation> statConversionRepository = new IncrementalRepository<StatConversionCreation>(repositoryAsserter);
             
             IAbilityEntityRepository abilityEntityRepository = new AbilityEntityRepository();
             IAssetRepository<StatType, IStatProvider> statProviderRepository = new AssetRepository<StatType, IStatProvider>(repositoryAsserter);
             IPrioritySorter prioritySorter = new PrioritySorter();
-            
             // TODO: move this out eventually 
             statProviderRepository.Add(StatType.HEALTH, new HealthProvider());
             statProviderRepository.Add(StatType.BASE_HEALTH, new BaseHealthProvider());
@@ -78,6 +81,7 @@ namespace IdelPog.Combat
             RegisterCombatantCreation(bufferManager, flowRegister, bufferLogger, combatantDefinitionRepository);
             RegisterAbilityCreation(bufferManager, flowRegister,  bufferLogger, abilityDefinitionRepository, prioritySorter);
             RegisterAbilityEquip(bufferManager, flowRegister, bufferLogger, abilityDefinitionRepository, combatOptions, equippedAbilityDefinitionRepository);
+            RegisterStatConversionCreation(bufferManager, flowRegister, bufferLogger, statConversionRepository);
         }
 
         private static void RegisterBasicEncounterDeck(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, CombatantRepository combatantRepository, IAbilityEntityRepository abilityEntityRepository, IAssetRepository<StatType, IStatProvider> statProviderRepository, uint maxIterations,  IIncrementalRepository<CombatantDefinition> combatantDefinitionRepository, Dictionary<byte, EquippedAbilityDefinition> equippedAbilityDefinitionRepository, IIncrementalRepository<AbilityDefinition> abilityDefinitionRepository, IPrioritySorter prioritySorter)
@@ -165,6 +169,18 @@ namespace IdelPog.Combat
             
             AbilityEquipMediator mediator = new(abilitySlotCalculator, new PrioritySorter(), abilityDefinitionRepository, equippedAbilityDefinitionRepository, responseDispatcher, collectionAssertion, abilityAssertion, new PriorityAssertion());
             flowRegister.RegisterBatch(mediator);
+        }
+
+        private static void RegisterStatConversionCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IIncrementalRepository<StatConversionCreation> statConversionRepository)
+        {
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            INumberAssertion numberAssertion = new NumberAssertion();
+            
+            IDispatchMany<StatConversionCreationResponse> responseDispatcher = new ManagedDispatcher<StatConversionCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
+            StatConversionCreationMediator statConversionCreationMediator = new(statConversionRepository,  responseDispatcher, collectionAssertion, numberAssertion);
+            flowRegister.RegisterBatch(statConversionCreationMediator);
         }
     }
 }

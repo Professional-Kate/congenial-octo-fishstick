@@ -3,12 +3,12 @@ using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
 using IdelPog.Combat.Ability.Service.Interface;
-using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Service.Interface;
+using IdelPog.Combat.Stat.Contracts.Enum;
 
 namespace IdelPog.Combat.Ability.Runtime.System
 {
@@ -33,17 +33,17 @@ namespace IdelPog.Combat.Ability.Runtime.System
         {
             AbilityEntity abilityEntity = _abilityEntityRepository.Get(initiatingCombatantID, abilityID);
             CombatantEntity combatantEntity = _combatantRepository.Get(initiatingCombatantID);
-            AgilityComponent agilityComponent = combatantEntity.GetComponent<AgilityComponent>();
+            uint combatantSpeed = combatantEntity.GetStat(StatType.SPEED);
             
             if (abilityStageIndex == 0)
             { 
-                _readyTickSystem.SetNextReadyTick(forTick, abilityEntity, agilityComponent.Speed);
+                _readyTickSystem.SetNextReadyTick(forTick, abilityEntity, combatantSpeed);
             }
            
             AbilityStage indexedStage = abilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages[abilityStageIndex];
             if (indexedStage.AbilityStageCards.CastTime != 0)
             {
-                EnqueueCastingEvent(abilityID, abilityStageIndex, initiatingCombatantID, combatantEntity.TargetingType, forTick, indexedStage.AbilityStageCards.CastTime, agilityComponent.Speed);
+                EnqueueCastingEvent(abilityID, abilityStageIndex, initiatingCombatantID, combatantEntity.TargetingType, forTick, indexedStage.AbilityStageCards.CastTime, combatantSpeed);
                 return;
             }
             

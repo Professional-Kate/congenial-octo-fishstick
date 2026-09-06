@@ -1,7 +1,8 @@
 ﻿using IdelPog.Combat.Ability.Model;
-using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
+using IdelPog.Combat.Stat.Contracts.Enum;
+using IdelPog.Combat.Stat.Runtime.Component;
 
 namespace IdelPog.Combat.Combatant.Runtime.System
 {
@@ -9,10 +10,8 @@ namespace IdelPog.Combat.Combatant.Runtime.System
     {
         public uint DealDamage(CombatantEntity targetCombatant, AbilityStage abilityStage)
         {
-            HealthComponent targetHealth = targetCombatant.GetComponent<HealthComponent>();
-            
-            uint newHealth = CalculateNewHealth(targetHealth.Health, GetCalculatedDamage(abilityStage));
-            targetCombatant.ReplaceComponent(new HealthComponent { Health = newHealth });
+            uint newHealth = CalculateNewHealth(targetCombatant.GetStat(StatType.HEALTH), GetCalculatedDamage(abilityStage));
+            targetCombatant.GetComponent<StatsComponent>().ReplaceStat(StatType.HEALTH, newHealth);
             
             return newHealth;
         }

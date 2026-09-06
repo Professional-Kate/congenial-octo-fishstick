@@ -2,6 +2,8 @@
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
+using IdelPog.Combat.Stat.Contracts.Enum;
+using IdelPog.Combat.Stat.Runtime.Component;
 
 namespace IdelPog.Combat.Combatant.Runtime
 {
@@ -15,7 +17,9 @@ namespace IdelPog.Combat.Combatant.Runtime
             for (int i = 0; i < combatantDefinitions.Count; i++)
             {
                 CombatantDefinition combatantDefinition = combatantDefinitions[i];
-                combatantEntities[i] = new CombatantEntity(combatantDefinition.HealthCard, combatantDefinition.AgilityCard)
+
+                StatsComponent statsComponent = new() { StatComponents = CreateStatComponents(combatantDefinition) };
+                combatantEntities[i] = new CombatantEntity(statsComponent)
                 {
                     InstanceID = _instanceID,
                     CombatantID = combatantDefinition.CombatantID,
@@ -30,6 +34,17 @@ namespace IdelPog.Combat.Combatant.Runtime
             }
             
             return combatantEntities;
+        }
+
+        private static StatComponent[] CreateStatComponents(CombatantDefinition combatantDefinition)
+        {
+            return
+            [
+                new StatComponent { StatType = StatType.BASE_HEALTH, Stat = combatantDefinition.HealthCard.BaseHealth },
+                new StatComponent { StatType = StatType.HEALTH, Stat = combatantDefinition.HealthCard.Health },
+                new StatComponent { StatType = StatType.SPEED, Stat = combatantDefinition.AgilityCard.Speed },
+                new StatComponent { StatType = StatType.INITIATIVE, Stat = combatantDefinition.AgilityCard.Initiative }
+            ];
         }
     }
 }

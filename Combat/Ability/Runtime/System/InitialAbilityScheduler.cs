@@ -1,11 +1,11 @@
 ﻿using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
-using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event.Trigger.Interface;
+using IdelPog.Combat.Stat.Contracts.Enum;
 
 namespace IdelPog.Combat.Ability.Runtime.System
 {
@@ -58,11 +58,6 @@ namespace IdelPog.Combat.Ability.Runtime.System
             }
         }
 
-        private static uint GetCombatantInitiative(CombatantEntity combatantEntity)
-        { 
-            AgilityComponent agilityComponent = combatantEntity.GetComponent<AgilityComponent>();
-
-            return agilityComponent.Initiative;
-        }
+        private static uint GetCombatantInitiative(CombatantEntity combatantEntity) => combatantEntity.GetStat(StatType.INITIATIVE);
     }   
 }

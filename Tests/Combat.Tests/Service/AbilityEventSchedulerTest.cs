@@ -4,7 +4,6 @@ using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
 using IdelPog.Combat.Ability.Service.Interface;
-using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Card;
@@ -108,7 +107,7 @@ namespace IdelPog.Combat.Tests.Service
             _readyTimeSystemMock.Verify(library => library.SetNextReadyTick(currentTick, abilityEntity, combatantSpeed), Times.Once);
         }
 
-        private static uint GetCombatantSpeed(CombatantEntity combatantEntity) => combatantEntity.GetComponent<AgilityComponent>().Speed;
+        private static uint GetCombatantSpeed(CombatantEntity combatantEntity) => combatantEntity.GetStat(StatType.SPEED);
  
         [Test]
         public void Positive_ScheduleEvent_HasCastTime_EnqueuesCastingEvent()
@@ -127,7 +126,7 @@ namespace IdelPog.Combat.Tests.Service
                 library => library.Enqueue(
                     It.Is<ScheduledCombatEvent>(combatEvent => combatEvent.AbilityID == expectedEvent.AbilityID && combatEvent.InstanceID == expectedEvent.InstanceID)), Times.Once);
 
-            VerifyGetNextTick(_combatantEntity.GetComponent<AgilityComponent>().Speed, castTime);
+            VerifyGetNextTick(_combatantEntity.GetStat(StatType.SPEED), castTime);
             VerifySetNewReadyTime(0, castTimeEntity, GetCombatantSpeed(_combatantEntity));
             VerifyMocks();
         }

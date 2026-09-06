@@ -16,6 +16,7 @@
     <ItemGroup>
       <Folder Include="Core\Contracts\Error\" />
       <Folder Include="Core\Factory\" />
+      <Folder Include="Stat\Runtime\System\" />
     </ItemGroup>
 
 </Project>

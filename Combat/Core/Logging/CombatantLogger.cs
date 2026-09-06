@@ -2,6 +2,7 @@
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion.Interface;
 
 namespace IdelPog.Combat.Core.Logging
@@ -120,8 +121,8 @@ namespace IdelPog.Combat.Core.Logging
             {
                 InstanceID = combatantEntity.InstanceID,
                 CombatantID = combatantEntity.CombatantID,
-                HealthCard = CreateStatCard(combatantEntity.GetComponent<HealthComponent>(), combatantEntity.GetComponent<BaseHealthComponent>()),
-                AgilityCard = CreateAgilityCard(combatantEntity.GetComponent<AgilityComponent>()),
+                HealthCard = CreateStatCard(combatantEntity.GetStat(StatType.HEALTH), combatantEntity.GetStat(StatType.BASE_HEALTH)),
+                AgilityCard = CreateAgilityCard(combatantEntity.GetStat(StatType.SPEED), combatantEntity.GetStat(StatType.INITIATIVE)),
                 TargetingType = combatantEntity.TargetingType,
                 IsAlive = combatantEntity.GetComponent<LifeStatusComponent>().IsAlive
             };
@@ -138,21 +139,21 @@ namespace IdelPog.Combat.Core.Logging
             return [..combatants];
         }
         
-        private static HealthCard CreateStatCard(HealthComponent healthComponent, BaseHealthComponent baseHealthComponent)
+        private static HealthCard CreateStatCard(uint health, uint baseHealth)
         {
             return new HealthCard
             {
-                BaseHealth = baseHealthComponent.Health,
-                Health = healthComponent.Health
+                BaseHealth = baseHealth,
+                Health = health
             };
         }
 
-        private static AgilityCard CreateAgilityCard(AgilityComponent agilityComponent)
+        private static AgilityCard CreateAgilityCard(uint speed, uint initiative)
         {
             return new AgilityCard
             {
-                Speed = agilityComponent.Speed,
-                Initiative = agilityComponent.Initiative
+                Speed = speed,
+                Initiative = initiative
             };
         }
      }

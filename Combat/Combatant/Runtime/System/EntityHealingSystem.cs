@@ -1,7 +1,8 @@
 ﻿using IdelPog.Combat.Ability.Model;
-using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
+using IdelPog.Combat.Stat.Contracts.Enum;
+using IdelPog.Combat.Stat.Runtime.Component;
 
 namespace IdelPog.Combat.Combatant.Runtime.System
 {
@@ -17,11 +18,10 @@ namespace IdelPog.Combat.Combatant.Runtime.System
 
         private static void UpdateHealth(CombatantEntity targetCombatant, uint healPower)
         {
-            BaseHealthComponent baseHealthComponent = targetCombatant.GetComponent<BaseHealthComponent>();
-            HealthComponent healthComponent = targetCombatant.GetComponent<HealthComponent>();
+            uint health = targetCombatant.GetStat(StatType.HEALTH);
             
-            uint healAmount = Math.Min(healPower, GetMissingHealth(baseHealthComponent.Health, healthComponent.Health));
-            targetCombatant.ReplaceComponent(new HealthComponent { Health = healthComponent.Health + healAmount});
+            uint healAmount = Math.Min(healPower, GetMissingHealth(targetCombatant.GetStat(StatType.BASE_HEALTH), health));
+            targetCombatant.GetComponent<StatsComponent>().ReplaceStat(StatType.HEALTH, health + healAmount);
         }
 
         private static uint GetMissingHealth(uint baseHealth, uint currentHealth)

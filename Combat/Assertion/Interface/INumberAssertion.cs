@@ -5,5 +5,7 @@
         public void AssertNumberNotZero(uint number, string source);
 
         public void AssertNumberNotZero(double number, string source);
+        
+        public void AssertNumberNotZeroOrNegative(double number, string source);
     }
 }

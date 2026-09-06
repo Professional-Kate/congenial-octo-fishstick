@@ -3,6 +3,8 @@ using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
+using IdelPog.Combat.Stat.Contracts.Enum;
+using IdelPog.Combat.Stat.Runtime.Component;
 
 namespace IdelPog.Combat.Tests.TestFactory
 {
@@ -29,7 +31,8 @@ namespace IdelPog.Combat.Tests.TestFactory
 
         internal static CombatantEntity Create(byte combatantID, TargetingType targetingType, CombatantCreation combatantCreation)
         {
-            CombatantEntity combatantEntity = new(combatantCreation.HealthCard, combatantCreation.AgilityCard)
+            StatsComponent statsComponent = new() { StatComponents =  CreateStatComponents(combatantCreation) };
+            CombatantEntity combatantEntity = new(statsComponent)
             {
                 CombatantID =  combatantID,
                 InstanceID = combatantID,
@@ -38,6 +41,17 @@ namespace IdelPog.Combat.Tests.TestFactory
             };
             
             return combatantEntity;
+        }
+        
+        private static StatComponent[] CreateStatComponents(CombatantCreation combatantCreation)
+        {
+            return
+            [
+                new StatComponent { StatType = StatType.BASE_HEALTH, Stat = combatantCreation.HealthCard.BaseHealth },
+                new StatComponent { StatType = StatType.HEALTH, Stat = combatantCreation.HealthCard.Health },
+                new StatComponent { StatType = StatType.SPEED, Stat = combatantCreation.AgilityCard.Speed },
+                new StatComponent { StatType = StatType.INITIATIVE, Stat = combatantCreation.AgilityCard.Initiative }
+            ];
         }
     }
 }

@@ -20,5 +20,16 @@ namespace IdelPog.Combat.Assertion
                 throw new NumberZeroException(source);
             }
         }
+
+        public void AssertNumberNotZeroOrNegative(double number, string source)
+        {
+            switch (number)
+            {
+                case 0:
+                    throw new NumberZeroException(source);
+                case < 0:
+                    throw new NegativeNumberException(source);
+            }
+        }
     }
 }
