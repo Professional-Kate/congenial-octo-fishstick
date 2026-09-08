@@ -4,6 +4,7 @@ using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Stat.Runtime.Component;
 using IdelPog.Core.Repository.Incremental;
 
 namespace IdelPog.Combat.Ability.Runtime.System
@@ -11,12 +12,12 @@ namespace IdelPog.Combat.Ability.Runtime.System
     public sealed class AbilityEntityFactory : IAbilityEntityFactory
     {
         private readonly IIncrementalRepository<AbilityDefinition> _abilityDefinitionRepository;
-        private readonly IAbilityEffectValueCalculator _abilityEffectValueCalculator;
+        private readonly IAbilityStatsFactory _abilityStatsFactory;
 
-        public AbilityEntityFactory(IIncrementalRepository<AbilityDefinition> abilityDefinitionRepository, IAbilityEffectValueCalculator abilityEffectValueCalculator)
+        public AbilityEntityFactory(IIncrementalRepository<AbilityDefinition> abilityDefinitionRepository, IAbilityStatsFactory abilityStatsFactory)
         {
             _abilityDefinitionRepository = abilityDefinitionRepository;
-            _abilityEffectValueCalculator = abilityEffectValueCalculator;
+            _abilityStatsFactory = abilityStatsFactory;
         }
 
         public AbilityEntity[] Create(EquippedAbilityDefinition equippedAbilityDefinition, byte instanceID)
@@ -27,8 +28,8 @@ namespace IdelPog.Combat.Ability.Runtime.System
                 AbilityDefinition abilityDefinition = _abilityDefinitionRepository.Get(equippedAbility.AbilityID);
 
                 AbilityStagesComponent abilityStagesComponent = new() { AbilityStages = [..ConvertAbilityStages(equippedAbility.StrategyCards, abilityDefinition)] };
-                AbilityEntity abilityEntity = AddBaseComponents(abilityDefinition, instanceID, equippedAbility.AbilityID, abilityStagesComponent);
-                _abilityEffectValueCalculator.Calculate(abilityEntity);
+                StatComponent[] statComponents = _abilityStatsFactory.CreateStats(abilityStagesComponent, abilityDefinition.AbilityCard);
+                AbilityEntity abilityEntity = AddBaseComponents(abilityDefinition, instanceID, equippedAbility.AbilityID, abilityStagesComponent, statComponents);
                 
                 combatantAbilityEntities.Add(abilityEntity);
             }
@@ -56,13 +57,11 @@ namespace IdelPog.Combat.Ability.Runtime.System
                 TargetingType = strategyCard.TargetingType
             };
                 
-            return new AbilityStage { AbilityStageCards = abilityStage, TargetingPreferenceComponent = targetingPreferenceComponent};
+            return new AbilityStage { AbilityStageCard = abilityStage, TargetingPreferenceComponent = targetingPreferenceComponent};
         }
         
-        private static AbilityEntity AddBaseComponents(AbilityDefinition abilityDefinition, byte instanceID, byte abilityID, AbilityStagesComponent abilityStagesComponent)
+        private static AbilityEntity AddBaseComponents(AbilityDefinition abilityDefinition, byte instanceID, byte abilityID, AbilityStagesComponent abilityStagesComponent, StatComponent[] statComponents)
         {
-            CooldownComponent cooldownComponent = new() { Cooldown = abilityDefinition.AbilityCard.Cooldown };
-            
             TriggerCard triggerCard = abilityDefinition.TriggerCard;
             TriggerComponent triggerComponent = new()
             {
@@ -71,12 +70,12 @@ namespace IdelPog.Combat.Ability.Runtime.System
                 MinTriggerValue =  triggerCard.MinTriggerValue, 
                 MaxTriggerValue = triggerCard.MaxTriggerValue
             };
-            
-            AbilityEntity abilityEntity = new(cooldownComponent, triggerComponent, abilityStagesComponent)
+
+            StatsComponent statsComponent = new() { StatComponents =  statComponents };
+            AbilityEntity abilityEntity = new(statsComponent, triggerComponent, abilityStagesComponent)
             {
                 InstanceID = instanceID,
-                AbilityID = abilityID,
-                AbilitySlots = abilityDefinition.AbilityCard.AbilitySlots
+                AbilityID = abilityID
             };
 
             return abilityEntity;

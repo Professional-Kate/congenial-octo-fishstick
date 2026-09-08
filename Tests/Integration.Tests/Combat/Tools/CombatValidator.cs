@@ -76,7 +76,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
             Assert.That(basicEncounterDeckResponse.FriendlyVictory, Is.EqualTo(friendlyVictory));
         }
         
-        internal static void AssertFirstDeadCombatant(byte expectedCombatantID)
+        internal static void AssertCombatantDiedFirst(byte expectedCombatantID)
         { 
             Assert.That(_firstDeadCombatant.CombatantID, Is.EqualTo(expectedCombatantID));
         }

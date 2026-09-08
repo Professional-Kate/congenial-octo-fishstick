@@ -129,9 +129,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         
         private void VerifyScheduleEvent(double currentTick, AbilityEntity abilityEntity, byte abilityStageIndex = 0)
         {
-            CooldownComponent cooldownComponent = abilityEntity.GetComponent<CooldownComponent>();
-            
-            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(currentTick + cooldownComponent.Cooldown, abilityEntity.AbilityID, abilityStageIndex, abilityEntity.InstanceID), Times.Once);
+            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(currentTick + abilityEntity.GetStat(StatType.COOLDOWN), abilityEntity.AbilityID, abilityStageIndex, abilityEntity.InstanceID), Times.Once);
         }
 
         private void VerifyCombatantCastingHandler(double currentTick, CombatantCastCompleteData combatantCastCompleteData)
@@ -177,12 +175,12 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 [
                     new()
                     {
-                        AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, CastTime = 3, MaxTargets = 1, Value = 2, Priority = 0 },
+                        AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, CastTime = 3, MaxTargets = 1, Value = 2, Priority = 0 },
                         TargetingPreferenceComponent = new TargetingPreferenceComponent { StatType = StatType.ABILITY_DAMAGE, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY }
                     },
                     new()
                     {
-                        AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 2, Priority = 1 },
+                        AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 2, Priority = 1 },
                         TargetingPreferenceComponent = new TargetingPreferenceComponent { StatType = StatType.ABILITY_DAMAGE, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY }
                     }
                 ];
@@ -206,17 +204,17 @@ namespace IdelPog.Combat.Tests.Runtime.System
             [
                 new()
                 {
-                    AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, CastTime = 3, MaxTargets = 1, Value = 2, Priority = 0 },
+                    AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, CastTime = 3, MaxTargets = 1, Value = 2, Priority = 0 },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent { StatType = StatType.ABILITY_DAMAGE, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY }
                 },
                 new()
                 {
-                    AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 2, Priority = 1 },
+                    AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = 2, Priority = 1 },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent { StatType = StatType.ABILITY_DAMAGE, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY }
                 },
                 new()
                 {
-                    AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.STAB, CastTime = 0, MaxTargets = 1, Value = 5, Priority = 1 },
+                    AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.STAB, CastTime = 0, MaxTargets = 1, Value = 5, Priority = 1 },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent { StatType = StatType.SPEED, TargetingPreference = TargetingPreference.HIGHEST, TargetingType = TargetingType.FRIENDLY }
                 }
             ];

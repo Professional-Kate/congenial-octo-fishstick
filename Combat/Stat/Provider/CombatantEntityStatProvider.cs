@@ -4,11 +4,11 @@ using IdelPog.Combat.Stat.Provider.Interface;
 
 namespace IdelPog.Combat.Stat.Provider
 {
-    public sealed class BaseHealthProvider : IStatProvider
+    public sealed class CombatantEntityStatProvider : IStatProvider
     {
-        public uint GetStat(CombatantEntity combatantEntity)
+        public uint GetStat(CombatantEntity combatantEntity, StatType statType)
         { 
-            return combatantEntity.GetStat(StatType.BASE_HEALTH);
+            return combatantEntity.GetStat(statType);
         }
     }
 }

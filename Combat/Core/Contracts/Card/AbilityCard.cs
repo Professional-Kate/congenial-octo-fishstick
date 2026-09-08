@@ -2,7 +2,7 @@
 {
     public readonly record struct AbilityCard
     { 
-        public required byte AbilitySlots { get; init; }
+        public required uint AbilitySlots { get; init; }
         public required uint Cooldown { get; init; }
     }
 }

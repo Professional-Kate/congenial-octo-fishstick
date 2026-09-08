@@ -22,14 +22,14 @@ namespace IdelPog.Combat.Ability.Runtime.System
             {
                 foreach (AbilityStage combatantAbilityStage in combatantAbilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages)
                 {
-                    if (combatantAbilityStage.AbilityStageCards.AbilityEffectType != AbilityEffectType.RETALIATION)
+                    if (combatantAbilityStage.AbilityStageCard.AbilityEffectType != AbilityEffectType.RETALIATION)
                     {
                         continue;
                     }
 
                     checked
                     {
-                        capacity += combatantAbilityStage.AbilityStageCards.MaxTargets;
+                        capacity += combatantAbilityStage.AbilityStageCard.MaxTargets;
                     }
                 }
             }

@@ -56,7 +56,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             // just returns the cast time, we don't need to mock the specific calculation
             foreach (AbilityStage combatantAbilityStage in combatantAbilityStages)
             {
-                uint castTime = combatantAbilityStage.AbilityStageCards.CastTime;
+                uint castTime = combatantAbilityStage.AbilityStageCard.CastTime;
                 _castingCalculatorMock.Setup(library => library.GetCastDuration(COMBATANT_SPEED, castTime)).Returns(castTime).Verifiable();
             }
         }
@@ -71,14 +71,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
             }
         }
         
-        private static CooldownComponent GetCooldownComponent(AbilityEntity abilityEntity) => abilityEntity.GetComponent<CooldownComponent>();
+        private static uint GetCooldownStat(AbilityEntity abilityEntity) => abilityEntity.GetStat(StatType.COOLDOWN);
 
         [Test]
         public void Positive_SetNewReadyTime_ChangesReadyTime()
         {
             Assert.DoesNotThrow(() => _readyTickSystem.SetNextReadyTick(CURRENT_TICK, _singleStageEntity, COMBATANT_SPEED));
 
-            AssertReadyTimeChanged(CURRENT_TICK + GetCooldownComponent(_singleStageEntity).Cooldown, _singleStageEntity);
+            AssertReadyTimeChanged(CURRENT_TICK + GetCooldownStat(_singleStageEntity), _singleStageEntity);
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             Assert.DoesNotThrow(() => _readyTickSystem.SetNextReadyTick(currentTick: 0, _singleStageEntity, COMBATANT_SPEED));
             
-            AssertReadyTimeChanged(GetCooldownComponent(_singleStageEntity).Cooldown, _singleStageEntity);
+            AssertReadyTimeChanged(GetCooldownStat(_singleStageEntity), _singleStageEntity);
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             [
                 new()
                 {
-                    AbilityStageCards = new AbilityStageCard
+                    AbilityStageCard = new AbilityStageCard
                     {
                         AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 10, MaxTargets = 1, Value = 3,
                         Priority = 0
@@ -108,7 +108,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 },
                 new()
                 {
-                    AbilityStageCards = new AbilityStageCard
+                    AbilityStageCard = new AbilityStageCard
                     {
                         AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 20, MaxTargets = 1, Value = 3,
                         Priority = 1
@@ -120,7 +120,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 },
                 new()
                 {
-                    AbilityStageCards = new AbilityStageCard
+                    AbilityStageCard = new AbilityStageCard
                     {
                         AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = 30, MaxTargets = 1, Value = 3,
                         Priority = 2
@@ -139,7 +139,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             Assert.DoesNotThrow(() => _readyTickSystem.SetNextReadyTick(currentTick: 0, abilityEntity, COMBATANT_SPEED));
             
-            AssertReadyTimeChanged(GetCooldownComponent(abilityEntity).Cooldown + 60, abilityEntity);
+            AssertReadyTimeChanged(GetCooldownStat(abilityEntity) + 60, abilityEntity);
         }
     }
 }

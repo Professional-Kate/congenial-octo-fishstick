@@ -69,13 +69,20 @@ namespace IdelPog.Combat
             IAbilityEntityRepository abilityEntityRepository = new AbilityEntityRepository();
             IAssetRepository<StatType, IStatProvider> statProviderRepository = new AssetRepository<StatType, IStatProvider>(repositoryAsserter);
             IPrioritySorter prioritySorter = new PrioritySorter();
+
             // TODO: move this out eventually 
-            statProviderRepository.Add(StatType.HEALTH, new HealthProvider());
-            statProviderRepository.Add(StatType.BASE_HEALTH, new BaseHealthProvider());
-            statProviderRepository.Add(StatType.SPEED, new SpeedProvider());
-            statProviderRepository.Add(StatType.INITIATIVE, new InitiativeProvider());
-            statProviderRepository.Add(StatType.ABILITY_DAMAGE, new AbilityDamageProvider(abilityEntityRepository));
-            statProviderRepository.Add(StatType.ABILITY_HEALING, new AbilityHealingProvider(abilityEntityRepository));
+            CombatantEntityStatProvider combatantEntityStatProvider = new();
+            AbilityEntityStatProvider abilityEntityStatProvider = new(abilityEntityRepository);
+            statProviderRepository.Add(StatType.HEALTH, combatantEntityStatProvider);
+            statProviderRepository.Add(StatType.BASE_HEALTH, combatantEntityStatProvider);
+            statProviderRepository.Add(StatType.SPEED, combatantEntityStatProvider);
+            statProviderRepository.Add(StatType.INITIATIVE, combatantEntityStatProvider);
+            statProviderRepository.Add(StatType.ABILITY_DAMAGE, abilityEntityStatProvider);
+            statProviderRepository.Add(StatType.ABILITY_HEALING, abilityEntityStatProvider);
+            statProviderRepository.Add(StatType.COOLDOWN, abilityEntityStatProvider);
+            statProviderRepository.Add(StatType.ABILITY_SLOTS, abilityEntityStatProvider);
+            statProviderRepository.Add(StatType.RETALIATION_DAMAGE, abilityEntityStatProvider);
+            statProviderRepository.Add(StatType.CAST_TIME, abilityEntityStatProvider);
             
             RegisterBasicEncounterDeck(bufferManager, flowRegister, bufferLogger, repositoryAsserter, combatantRepository, abilityEntityRepository, statProviderRepository, combatOptions.MaxIterations, combatantDefinitionRepository, equippedAbilityDefinitionRepository, abilityDefinitionRepository, prioritySorter);
             RegisterCombatantCreation(bufferManager, flowRegister, bufferLogger, combatantDefinitionRepository);
@@ -113,8 +120,8 @@ namespace IdelPog.Combat
             IEntityHealingSystem entityHealingSystem = new EntityHealingSystem();
             ICombatantTargetFinder targetFinder = new CombatantTargetFinder(combatantRepository, statProviderRepository, numberAssertion, collectionAssertion);
             ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory();
-            IAbilityEffectValueCalculator abilityEffectValueCalculator = new AbilityEffectValueCalculator();
-            IAbilityEntityFactory abilityEntityFactory = new AbilityEntityFactory(abilityDefinitionRepository, abilityEffectValueCalculator);
+            IAbilityStatsFactory abilityStatsFactory = new AbilityStatsFactory();
+            IAbilityEntityFactory abilityEntityFactory = new AbilityEntityFactory(abilityDefinitionRepository, abilityStatsFactory);
             
             // TODO: move this out eventually 
             DirectDamageAbilityEffectResolver directDamageAbilityEffectResolver = new(combatantRepository, targetFinder, combatantLogger, entityDamageSystem);

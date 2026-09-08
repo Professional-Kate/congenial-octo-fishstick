@@ -23,7 +23,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         
         private readonly AbilityStage _retaliationAbilityStage = new()
         {
-            AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.RETALIATION, AffinityType = AffinityType.STRIKE, CastTime = 10, MaxTargets = 1, Value = 3, Priority = 0 },
+            AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.RETALIATION, AffinityType = AffinityType.STRIKE, CastTime = 10, MaxTargets = 1, Value = 3, Priority = 0 },
             TargetingPreferenceComponent = new TargetingPreferenceComponent { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY }
         };
 
@@ -66,13 +66,13 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.DoesNotThrow(() => _abilityInitializer.InitializeAbilities(_combatantEntity, [_directDamageAbility, _retaliationAbility]));
             
             AssertContainsRetaliationComponent(_combatantEntity, true);
-            AssertRetaliationComponentCapacity(_combatantEntity, _retaliationAbilityStage.AbilityStageCards.MaxTargets);
+            AssertRetaliationComponentCapacity(_combatantEntity, _retaliationAbilityStage.AbilityStageCard.MaxTargets);
         }
 
         [Test]
         public void Negative_InitializeAbilities_CapacityOverflow_Throws()
         {
-            AbilityStage maxTargetsStage = _retaliationAbilityStage with { AbilityStageCards = _retaliationAbilityStage.AbilityStageCards with { MaxTargets = byte.MaxValue }};
+            AbilityStage maxTargetsStage = _retaliationAbilityStage with { AbilityStageCard = _retaliationAbilityStage.AbilityStageCard with { MaxTargets = byte.MaxValue }};
             AbilityEntity maxTargetsEntity = TestAbilityEntityFactory.Create(3, 3, maxTargetsStage);
             
             Assert.Throws<OverflowException>(() => _abilityInitializer.InitializeAbilities(_combatantEntity, [maxTargetsEntity, _retaliationAbility]));

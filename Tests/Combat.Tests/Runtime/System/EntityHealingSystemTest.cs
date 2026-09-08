@@ -20,7 +20,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         private CombatantEntity _friendlyTargetCombatant;
         private readonly AbilityStage _abilityStage = new()
         {
-            AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = 3, Priority = 0, CastTime = 0 },
+            AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = 3, Priority = 0, CastTime = 0 },
             TargetingPreferenceComponent = new TargetingPreferenceComponent { StatType = StatType.HEALTH, TargetingPreference = TargetingPreference.LOWEST, TargetingType = TargetingType.FRIENDLY }
         };
 
@@ -70,7 +70,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_ApplyHealing_HealsMoreThanMax_HealsToValue()
         {
-            AbilityStage beegHeal = _abilityStage with { AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = uint.MaxValue, Priority = 0, CastTime = 0}};
+            AbilityStage beegHeal = _abilityStage with { AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = uint.MaxValue, Priority = 0, CastTime = 0}};
             
             ChangeCombatantHealth(_friendlyTargetCombatant, 10);
             
@@ -93,7 +93,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_ApplyHealing_HealthStatIsReplaced()
         {
-            AbilityStage zeroHeal = _abilityStage with { AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = 0, Priority = 0, CastTime = 0 }};
+            AbilityStage zeroHeal = _abilityStage with { AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.COLD, MaxTargets = 1, Value = 0, Priority = 0, CastTime = 0 }};
             
             uint health = _friendlyTargetCombatant.GetStat(StatType.HEALTH);
             ChangeCombatantHealth(_friendlyTargetCombatant, 18);

@@ -67,7 +67,7 @@ namespace IdelPog.Combat.Tests.Event
 
         protected void VerifyCombatantLog(byte abilityID, double tick, CombatantEntity initiatingEntity, CombatantEntity[] targetCombatants, AbilityStage abilityStage)
         {
-            CombatantLoggerMock.Verify(library => library.LogCombatantChange(tick, initiatingEntity, targetCombatants, abilityStage.AbilityStageCards, abilityID));
+            CombatantLoggerMock.Verify(library => library.LogCombatantChange(tick, initiatingEntity, targetCombatants, abilityStage.AbilityStageCard, abilityID));
         }
     }
 }

@@ -16,6 +16,11 @@ namespace IdelPog.Integration.Tests.Combat.Flows
     {
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
 
+        private readonly AbilityStageCard _oneShotCard = new()
+        {
+            AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, MaxTargets = 1, Priority = 0, CastTime = 0, Value = 5000
+        };
+
         [SetUp]
         public void Setup()
         {
@@ -29,17 +34,42 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             CombatValidator.Reset();
         }
 
-        private void SetupCombat(TargetingPreference targetingPreference, StatType statType, CombatantCreation targetCreation)
+        private void SetupCombatantStatTargeting(TargetingPreference targetingPreference, StatType statType, CombatantCreation targetCreation)
         {
             EquippedAbility mainEquippedAbility = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { StatType = statType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
 
+            AbilityCreation abilityCreation = new()
+            {
+                AbilityCard = new AbilityCard { AbilitySlots = 2, Cooldown = 2 },
+                TriggerCard = new TriggerCard { TargetingType = TargetingType.SELF, TriggerEventType = TriggerEventType.ABILITY_READY, MaxTriggerValue = 0, MinTriggerValue = 0 }, 
+                AbilityStageCards = [_oneShotCard]
+            };
+
             DispatchMessage(targetCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.WolfCreation);
-            DispatchMessage(StaticCombatCommands.SlashAttackCreation);
+            DispatchMessage(abilityCreation);
             DispatchMessage(StaticCombatCommands.EquipAbilityCards(1, mainEquippedAbility));
             
             RunCombat([1], [2, 0, 3]);
-            CombatValidator.PrintCombatStages(_responseListener.Responses[0].CombatStages);
-            CombatValidator.AssertNextTargets(0);
+            CombatValidator.AssertCombatantDiedFirst(0);
+        }
+
+        private void SetupAbilityStatTargeting(TargetingPreference targetingPreference, StatType statType, AbilityCreation targetAbilityCreation)
+        {
+            EquippedAbility mainEquippedAbility = new() { AbilityID = 0, StrategyCards = [ new StrategyCard { StatType = statType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
+            
+            AbilityCreation abilityCreation = new()
+            {
+                AbilityCard = new AbilityCard { AbilitySlots = 2, Cooldown = 2 },
+                TriggerCard = new TriggerCard { TargetingType = TargetingType.ENEMY, TriggerEventType = TriggerEventType.COMBATANT_DEATH, MaxTriggerValue = 0, MinTriggerValue = 0 },
+                AbilityStageCards = [_oneShotCard]
+            };
+            
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation, StaticCombatCommands.WolfCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation, targetAbilityCreation, abilityCreation);
+            DispatchMessage(StaticCombatCommands.EquipAbilityCards(1, mainEquippedAbility), StaticCombatCommands.EquipAbility(0, 1), StaticCombatCommands.EquipAbility(2, 2), StaticCombatCommands.EquipAbility(3, 2));
+            
+            RunCombat([1], [2, 0, 3]);
+            CombatValidator.AssertCombatantDiedFirst(0);
         }
         
         private void RunCombat(byte[] friendlyCombatantIDs, byte[] enemyCombatantIDs)
@@ -67,7 +97,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             CombatantCreation targetCreation = StaticCombatCommands.HumanCreation with { HealthCard = healthCard };
             
-            SetupCombat(targetingPreference, statType, targetCreation);
+            SetupCombatantStatTargeting(targetingPreference, statType, targetCreation);
         }
 
         [TestCase(5000u, TargetingPreference.HIGHEST, StatType.SPEED)]
@@ -79,55 +109,70 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             AgilityCard agilityCard = statType == StatType.INITIATIVE ? new AgilityCard { Speed = 5, Initiative = stat } : new AgilityCard { Speed = stat, Initiative = 5 };
             CombatantCreation targetCreation = StaticCombatCommands.WolfCreation with { AgilityCard = agilityCard };
             
-            SetupCombat(targetingPreference, statType, targetCreation);
+            SetupCombatantStatTargeting(targetingPreference, statType, targetCreation);
+        }
+        
+        [TestCase(5000u, TargetingPreference.HIGHEST, StatType.COOLDOWN)]
+        [TestCase(1u, TargetingPreference.LOWEST, StatType.COOLDOWN)]
+        [TestCase(3u, TargetingPreference.HIGHEST, StatType.ABILITY_SLOTS)]
+        [TestCase(1u, TargetingPreference.LOWEST, StatType.ABILITY_SLOTS)]
+        public void CanTarget_AbilityCard_Stats(uint stat, TargetingPreference targetingPreference, StatType statType)
+        {
+            AbilityCard targetAbilityCard = statType == StatType.COOLDOWN
+                ? new AbilityCard { Cooldown = stat, AbilitySlots = 1 }
+                : new AbilityCard { Cooldown = 15, AbilitySlots = stat };
+            
+            AbilityCreation targetAbilityCreation = new()
+            {
+                AbilityCard = targetAbilityCard,
+                TriggerCard = new TriggerCard { TargetingType = TargetingType.ENEMY, TriggerEventType = TriggerEventType.COMBATANT_DEATH, MaxTriggerValue = 0, MinTriggerValue = 0 },
+                AbilityStageCards = StaticCombatCommands.SlashAttackCreation.AbilityStageCards
+            };
+
+            SetupAbilityStatTargeting(targetingPreference, statType, targetAbilityCreation);
         }
 
         [TestCase(TargetingPreference.HIGHEST, AbilityEffectType.DIRECT_DAMAGE)]
         [TestCase(TargetingPreference.LOWEST, AbilityEffectType.DIRECT_DAMAGE)]
         [TestCase(TargetingPreference.HIGHEST, AbilityEffectType.HEALING)]
         [TestCase(TargetingPreference.LOWEST, AbilityEffectType.HEALING)]
-        public void CanTarget_AbilityStats(TargetingPreference targetingPreference, AbilityEffectType abilityEffectType)
+        [TestCase(TargetingPreference.HIGHEST, AbilityEffectType.RETALIATION)]
+        [TestCase(TargetingPreference.LOWEST, AbilityEffectType.RETALIATION)]
+        public void CanTarget_AbilityEffectType_Stats(TargetingPreference targetingPreference, AbilityEffectType abilityEffectType)
         {
-            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation with { HealthCard = new HealthCard { Health = 1, BaseHealth = 0 }}, StaticCombatCommands.BearCreation, StaticCombatCommands.GoblinCreation);
+            // Using "1" here ensures this ability is preferred over combatants with a stat value of 0.
+            // See CombatantTargetFinder.GetPriority documentation for this behaviour.
+            uint targetAbilityValue = targetingPreference == TargetingPreference.HIGHEST ? uint.MaxValue : 1;
+            AbilityCreation targetAbilityCreation = new()
+            {
+                AbilityCard = new AbilityCard { AbilitySlots = 1, Cooldown = 5 },
+                TriggerCard = new TriggerCard { TargetingType = TargetingType.ENEMY, TriggerEventType = TriggerEventType.COMBATANT_DEATH, MaxTriggerValue = 0, MinTriggerValue = 0 },
+                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = abilityEffectType, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = targetAbilityValue, Priority = 0 }]
+            };
 
-            uint abilityDamage = targetingPreference == TargetingPreference.HIGHEST ? uint.MaxValue : uint.MinValue;
-            AbilityCreation highDamageAbility = new()
+            StatType statType = abilityEffectType switch
+            {
+                AbilityEffectType.DIRECT_DAMAGE => StatType.ABILITY_DAMAGE,
+                AbilityEffectType.HEALING => StatType.ABILITY_HEALING,
+                AbilityEffectType.RETALIATION => StatType.RETALIATION_DAMAGE,
+                _ => throw new ArgumentOutOfRangeException(nameof(abilityEffectType), abilityEffectType, null)
+            }; 
+            SetupAbilityStatTargeting(targetingPreference, statType, targetAbilityCreation);
+        }
+
+        [TestCase(TargetingPreference.HIGHEST)]
+        [TestCase(TargetingPreference.LOWEST)]
+        public void CanTarget_CastTime(TargetingPreference targetingPreference)
+        {
+            uint castTime = targetingPreference == TargetingPreference.HIGHEST ? uint.MaxValue : 1;
+            AbilityCreation targetAbilityCreation = new()
             {
                 AbilityCard = new AbilityCard { AbilitySlots = 1, Cooldown = 5 },
-                TriggerCard = StaticCombatCommands.AbilityReadyTrigger with { TriggerEventType = TriggerEventType.COMBATANT_CASTING_COMPLETE, TargetingType = TargetingType.ENEMY },
-                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = abilityEffectType, AffinityType = AffinityType.LIGHTNING, CastTime = 0, MaxTargets = 1, Value = abilityDamage, Priority = 0 }]
+                TriggerCard = new TriggerCard { TargetingType = TargetingType.ENEMY, TriggerEventType = TriggerEventType.COMBATANT_DEATH, MaxTriggerValue = 0, MinTriggerValue = 0 },
+                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.LIGHTNING, CastTime = castTime, MaxTargets = 1, Value = 1, Priority = 0 }]
             };
             
-            // Equipping enemy combatant with the high damage ability
-            DispatchMessage(highDamageAbility);
-            DispatchMessage(new AbilityEquip { CombatantID = 1, EquippedAbilities = [new EquippedAbility {AbilityID = 0, StrategyCards = [new StrategyCard
-            {
-                StatType = StatType.HEALTH,
-                TargetingPreference = TargetingPreference.HIGHEST,
-                TargetingType = TargetingType.ENEMY,
-                Priority = 0
-            }]}]});
-            
-            // Equipping our friendly combatant with the expected Strategy
-            StatType statType = abilityEffectType == AbilityEffectType.DIRECT_DAMAGE ? StatType.ABILITY_DAMAGE : StatType.ABILITY_HEALING;
-            
-            DispatchMessage(StaticCombatCommands.StabAttackCreation);
-            EquippedAbility highDamageTargeting = new() { AbilityID = 1, StrategyCards = [new StrategyCard { StatType = statType, TargetingPreference = targetingPreference, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
-            DispatchMessage(new AbilityEquip { CombatantID = 0, EquippedAbilities = [highDamageTargeting]});
-            
-            // Equipping other enemies with abilities to verify ability values
-            AbilityCreation healingAbilityCreation = new()
-            {
-                AbilityCard = new AbilityCard { AbilitySlots = 1, Cooldown = 5 },
-                TriggerCard = StaticCombatCommands.AbilityReadyTrigger,
-                AbilityStageCards = [new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.HOLY, CastTime = 0, MaxTargets = 1, Value = 3, Priority = 0 }]
-            };
-            
-            DispatchMessage(StaticCombatCommands.SlashAttackCreation, healingAbilityCreation);
-            DispatchMessage(StaticCombatCommands.EquipAbility(2, 2), StaticCombatCommands.EquipAbility(3, 3));
-            
-            RunCombat([0], [1, 2, 3]);
-            CombatValidator.AssertFirstDeadCombatant(1);
+            SetupAbilityStatTargeting(targetingPreference, StatType.CAST_TIME, targetAbilityCreation);
         }
     }
 }

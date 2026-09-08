@@ -29,20 +29,21 @@ namespace IdelPog.Combat.Stat.Filter
         {
             _numberAssertion.AssertNumberNotZero(targetCount, nameof(targetCount));
             
+            // TODO: update to use Ability/Entity to cut down on provider duplication
             IStatProvider statProvider = _statProviderRepository.Get(statType);
             IReadOnlyList<CombatantEntity> entities = _combatantFilters.GetCombatants(targetingType, casterTargetingType);
             _collectionAssertion.AssertHasElements(entities);
             
-            return GetTopEntities(targetingPreference, targetCount, entities, statProvider);
+            return GetTopEntities(targetingPreference, targetCount, entities, statProvider, statType);
         }
 
-        private static CombatantEntity[] GetTopEntities(TargetingPreference targetingPreference, byte targetCount, IReadOnlyList<CombatantEntity> combatantEntities, IStatProvider statProvider)
+        private static CombatantEntity[] GetTopEntities(TargetingPreference targetingPreference, byte targetCount, IReadOnlyList<CombatantEntity> combatantEntities, IStatProvider statProvider, StatType statType)
         {
             PriorityQueue<CombatantEntity, uint> combatantQueue = new();
 
             foreach (CombatantEntity combatantEntity in combatantEntities)
             {
-                uint currentEntityStat = statProvider.GetStat(combatantEntity);
+                uint currentEntityStat = statProvider.GetStat(combatantEntity, statType);
                 uint priority = GetPriority(currentEntityStat, targetingPreference);
                 
                 if (combatantQueue.Count < targetCount)
@@ -71,12 +72,23 @@ namespace IdelPog.Combat.Stat.Filter
             return orderedEntities;
         }
 
+        /// <summary>
+        /// Calculates the priority used for combatant target selection.
+        /// When <see cref="TargetingPreference.HIGHEST"/> is used, higher stat values have higher priority.
+        /// When <see cref="TargetingPreference.LOWEST"/> is used, lower non-zero stat values have higher priority.
+        /// A stat value of zero is treated as the lowest possible priority, while remaining a valid target.
+        /// </summary>
+        /// <param name="stat">The stat value of the combatant.</param>
+        /// <param name="targetingPreference">The preference used to determine target priority.</param>
+        /// <returns>The priority value</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="targetingPreference"/> is not a supported targeting preference.</exception>
         private static uint GetPriority(uint stat, TargetingPreference targetingPreference)
         {
             return targetingPreference switch
             {
+                // TODO: make a test for this
                 TargetingPreference.HIGHEST => stat,
-                TargetingPreference.LOWEST => uint.MaxValue - stat,
+                TargetingPreference.LOWEST => stat == 0 ? 0 : uint.MaxValue - stat + 1,
                 _ => throw new ArgumentOutOfRangeException(nameof(targetingPreference))
             };
         }

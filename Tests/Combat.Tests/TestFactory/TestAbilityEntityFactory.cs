@@ -5,6 +5,7 @@ using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Stat.Contracts.Enum;
+using IdelPog.Combat.Stat.Runtime.Component;
 
 namespace IdelPog.Combat.Tests.TestFactory
 {
@@ -14,7 +15,7 @@ namespace IdelPog.Combat.Tests.TestFactory
         {
             AbilityStage abilityStage = new()
             {
-                AbilityStageCards = new AbilityStageCard
+                AbilityStageCard = new AbilityStageCard
                 {
                     AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, 
                     AffinityType = AffinityType.SLASH, 
@@ -38,7 +39,7 @@ namespace IdelPog.Combat.Tests.TestFactory
         {
             AbilityStage abilityStage = new()
             {
-                AbilityStageCards = new AbilityStageCard
+                AbilityStageCard = new AbilityStageCard
                 {
                     AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, 
                     AffinityType = AffinityType.SLASH, 
@@ -69,12 +70,23 @@ namespace IdelPog.Combat.Tests.TestFactory
                 MinTriggerValue = 0,
                 MaxTriggerValue = 0
             };
-            
-            return new AbilityEntity(new CooldownComponent { Cooldown = 3 }, triggerComponent, new AbilityStagesComponent { AbilityStages = [..combatantAbilityStages] })
+
+            StatsComponent statsComponent = new()
+            {
+                StatComponents =
+                [
+                    new StatComponent { StatType = StatType.ABILITY_SLOTS, Stat = 1 },
+                    new StatComponent { StatType = StatType.COOLDOWN, Stat = 1 },
+                    new StatComponent { StatType = StatType.CAST_TIME, Stat = 1 },
+                    new StatComponent { StatType = StatType.ABILITY_DAMAGE, Stat = 1 },
+                    new StatComponent { StatType = StatType.RETALIATION_DAMAGE, Stat = 1 },
+                    new StatComponent { StatType = StatType.ABILITY_HEALING, Stat = 1 }
+                ]
+            };
+            return new AbilityEntity(statsComponent, triggerComponent, new AbilityStagesComponent { AbilityStages = [..combatantAbilityStages] })
             {
                 InstanceID = instanceID, 
                 AbilityID = abilityID,
-                AbilitySlots = 1
             };
         }
 

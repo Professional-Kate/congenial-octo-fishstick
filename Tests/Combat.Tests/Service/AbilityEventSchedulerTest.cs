@@ -152,12 +152,12 @@ namespace IdelPog.Combat.Tests.Service
             [
                 new()
                 {
-                    AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.HOLY, MaxTargets = 1, Priority = 0, CastTime = 10, Value = 0 },
+                    AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.HOLY, MaxTargets = 1, Priority = 0, CastTime = 10, Value = 0 },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY }
                 },
                 new()
                 {
-                    AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, MaxTargets = 1, Priority = 0, CastTime = 0, Value = 0 },
+                    AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.HEALING, AffinityType = AffinityType.FIRE, MaxTargets = 1, Priority = 0, CastTime = 0, Value = 0 },
                     TargetingPreferenceComponent = new TargetingPreferenceComponent { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY }
                 }
             ];

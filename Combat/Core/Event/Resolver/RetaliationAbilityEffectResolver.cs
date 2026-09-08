@@ -36,7 +36,7 @@ namespace IdelPog.Combat.Core.Event.Resolver
 
             HashSet<byte> targetCombatantIDs = [];
             List<CombatantEntity> targetCombatants = [];
-            for (int i = 0; i < abilityStage.AbilityStageCards.MaxTargets; i++)
+            for (int i = 0; i < abilityStage.AbilityStageCard.MaxTargets; i++)
             {
                 if (retaliationComponent.TryDequeue(out CombatantDamaged combatantDamageComponent) == false)
                 {

@@ -41,9 +41,9 @@ namespace IdelPog.Combat.Ability.Runtime.System
             }
            
             AbilityStage indexedStage = abilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages[abilityStageIndex];
-            if (indexedStage.AbilityStageCards.CastTime != 0)
+            if (indexedStage.AbilityStageCard.CastTime != 0)
             {
-                EnqueueCastingEvent(abilityID, abilityStageIndex, initiatingCombatantID, combatantEntity.TargetingType, forTick, indexedStage.AbilityStageCards.CastTime, combatantSpeed);
+                EnqueueCastingEvent(abilityID, abilityStageIndex, initiatingCombatantID, combatantEntity.TargetingType, forTick, indexedStage.AbilityStageCard.CastTime, combatantSpeed);
                 return;
             }
             

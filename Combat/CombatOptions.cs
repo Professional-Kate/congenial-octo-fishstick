@@ -3,6 +3,6 @@
     public readonly record struct CombatOptions
     {
         public required uint MaxIterations { get; init; }
-        public required byte MaxCombatantAbilitySlots { get; init; }
+        public required uint MaxCombatantAbilitySlots { get; init; }
     }
 }

@@ -3,6 +3,7 @@ using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
 using IdelPog.Combat.Ability.Service.Interface;
+using IdelPog.Combat.Stat.Contracts.Enum;
 
 namespace IdelPog.Combat.Ability.Runtime.System
 {
@@ -21,14 +22,13 @@ namespace IdelPog.Combat.Ability.Runtime.System
             
             foreach (AbilityStage combatantAbilityStage in abilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages)
             {
-                if (combatantAbilityStage.AbilityStageCards.CastTime != 0)
+                if (combatantAbilityStage.AbilityStageCard.CastTime != 0)
                 {
-                    readyTick += _castingCalculator.GetCastDuration(combatantSpeed, combatantAbilityStage.AbilityStageCards.CastTime);
+                    readyTick += _castingCalculator.GetCastDuration(combatantSpeed, combatantAbilityStage.AbilityStageCard.CastTime);
                 }
             }
             
-            CooldownComponent cooldownComponent = abilityEntity.GetComponent<CooldownComponent>();
-            readyTick += cooldownComponent.Cooldown;
+            readyTick += abilityEntity.GetStat(StatType.COOLDOWN);
             
             abilityEntity.ReplaceComponent(new ReadyTickComponent { ReadyTick = readyTick });
         }

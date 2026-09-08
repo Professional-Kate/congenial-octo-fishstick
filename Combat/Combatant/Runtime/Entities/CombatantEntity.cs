@@ -15,7 +15,8 @@ namespace IdelPog.Combat.Combatant.Runtime.Entities
         public required TargetingType TargetingType { get; init; }
 
         public CombatantEntity(StatsComponent statsComponent) : base(requiredComponents: [statsComponent, new LifeStatusComponent { IsAlive = true }])
-        { }
+        {
+        }
 
         public uint GetStat(StatType statType) => GetComponent<StatsComponent>().GetStat(statType);
     }

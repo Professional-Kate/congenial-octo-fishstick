@@ -5,9 +5,9 @@ namespace IdelPog.Combat.Assertion
 {
     public sealed class AbilityAssertion : IAbilityAssertion
     {
-        public required byte MaxAbilitiesSlots { get; init; }
+        public required uint MaxAbilitiesSlots { get; init; }
 
-        public void AssertAbilityCount(byte reservedAbilitySlots)
+        public void AssertAbilityCount(uint reservedAbilitySlots)
         {
             if (reservedAbilitySlots > MaxAbilitiesSlots)
             { 

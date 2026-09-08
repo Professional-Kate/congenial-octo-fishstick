@@ -14,9 +14,9 @@ namespace IdelPog.Combat.Ability.Service
             _abilityDefinitionRepository = abilityDefinitionRepository;
         }
 
-        public byte GetAbilitySlots(EquippedAbility[] abilityStages)
+        public uint GetAbilitySlots(EquippedAbility[] abilityStages)
         {
-            byte reservedAbilitySlots = 0;
+            uint reservedAbilitySlots = 0;
             foreach (EquippedAbility abilityCard in abilityStages)
             {
                 AbilityDefinition abilityEntity = _abilityDefinitionRepository.Get(abilityCard.AbilityID);

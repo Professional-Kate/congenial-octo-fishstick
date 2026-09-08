@@ -8,6 +8,9 @@
         INITIATIVE,
         ABILITY_DAMAGE,
         ABILITY_HEALING,
-        RETALIATION_DAMAGE
+        RETALIATION_DAMAGE,
+        CAST_TIME,
+        COOLDOWN,
+        ABILITY_SLOTS
     }
 }

@@ -37,7 +37,7 @@ namespace IdelPog.Combat.Tests.Event
         {
             AbilityStage abilityStage = new()
             {
-                AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.RETALIATION, AffinityType = AffinityType.HOLY, MaxTargets = 2, Priority = 0, CastTime = 3, Value = 4 },
+                AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.RETALIATION, AffinityType = AffinityType.HOLY, MaxTargets = 2, Priority = 0, CastTime = 3, Value = 4 },
                 TargetingPreferenceComponent = _targetingPreferenceComponent
             };
             

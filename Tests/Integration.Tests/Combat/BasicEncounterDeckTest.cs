@@ -1,7 +1,6 @@
 ﻿using IdelPog.Combat;
 using IdelPog.Combat.Ability.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
-using IdelPog.Combat.Combatant.Contracts.Response;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Enum;
@@ -20,18 +19,15 @@ namespace IdelPog.Integration.Tests.Combat
     {
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
         private ManagedErrorListener<BufferedError<BasicEncounterDeck>> _errorListener;
-        private ManagedResponseListener<CombatantCreationResponse> _combatantCreationResponseListener;
         
         [SetUp]
         public void Setup()
         {
             _responseListener = new ManagedResponseListener<BasicEncounterDeckResponse>();
             _errorListener = new ManagedErrorListener<BufferedError<BasicEncounterDeck>>();
-            _combatantCreationResponseListener = new ManagedResponseListener<CombatantCreationResponse>();
             
             ManagedSubscribe(_responseListener);
             ManagedSubscribe(_errorListener);
-            ManagedSubscribe(_combatantCreationResponseListener);
         }
         
         [TearDown]
@@ -132,7 +128,7 @@ namespace IdelPog.Integration.Tests.Combat
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
             
-            CombatValidator.AssertFirstDeadCombatant(3);
+            CombatValidator.AssertCombatantDiedFirst(3);
             CombatValidator.AssertNextInitiatingCombatant(1, 0);
             CombatValidator.AssertCombatantDidAttack(0, 1);
             CombatValidator.AssertCombatantDidNotAttack(2, 3);
@@ -155,7 +151,7 @@ namespace IdelPog.Integration.Tests.Combat
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], returnedDeck);
             
-            CombatValidator.AssertFirstDeadCombatant(1);
+            CombatValidator.AssertCombatantDiedFirst(1);
             CombatValidator.AssertNextInitiatingCombatant(1, 0);
             CombatValidator.AssertCombatantDidAttack(0, 1);
             CombatValidator.AssertCombatantDidNotAttack(2, 3);
@@ -203,7 +199,7 @@ namespace IdelPog.Integration.Tests.Combat
             foreach (BasicEncounterDeckResponse basicEncounterDeckResponse in _responseListener.Responses)
             { 
                 CombatValidator.RegisterCombatStages(basicEncounterDeckResponse.CombatStages);
-                CombatValidator.AssertFirstDeadCombatant(3);
+                CombatValidator.AssertCombatantDiedFirst(3);
                 CombatValidator.AssertNextInitiatingCombatant(2, 1, 0, 3);
             }
         }

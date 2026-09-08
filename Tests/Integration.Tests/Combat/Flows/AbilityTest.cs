@@ -239,7 +239,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             RunCombat([0, 1], [2]);
             
             CombatValidator.AssertVictory(_responseListener.Responses[0], false);
-            CombatValidator.AssertFirstDeadCombatant(0);
+            CombatValidator.AssertCombatantDiedFirst(0);
             CombatValidator.Reset();
             
             // after equipping the healing ability, the allies should win!
@@ -248,7 +248,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             RunCombat([0, 1], [2]);
             
             CombatValidator.AssertVictory(_responseListener.Responses[0], false);
-            CombatValidator.AssertFirstDeadCombatant(1);
+            CombatValidator.AssertCombatantDiedFirst(1);
         }
 
         [Test]
@@ -287,7 +287,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             RunCombat([0], [1]);
             
-            CombatValidator.AssertFirstDeadCombatant(1);
+            CombatValidator.AssertCombatantDiedFirst(1);
             
             // 0 - Human heals self (AbilityStage 1/2)
             // 1 - Wolf attacks (Human couldn't cast Retaliation)
@@ -324,7 +324,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
         }
 
         [Test]
-        public void RetaliationAbility_CannotHitSeLf()
+        public void RetaliationAbility_CannotHitSelf()
         {
             AbilityStageCard retaliationCard = new() { AbilityEffectType = AbilityEffectType.RETALIATION, AffinityType = AffinityType.FIRE, CastTime = 0,  MaxTargets = 5, Value = 3, Priority = 0 };
             
@@ -374,7 +374,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             RunCombat([0], [1]);
             
             CombatValidator.AssertAbilityNeverUsed(0);
-            CombatValidator.AssertFirstDeadCombatant(0);
+            CombatValidator.AssertCombatantDiedFirst(0);
         }
 
         [Test]

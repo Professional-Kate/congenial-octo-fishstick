@@ -24,7 +24,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _damageCalculator = new DamageCalculator();
             _abilityStage = new AbilityStage
             {
-                AbilityStageCards = new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, MaxTargets = 1, Value = 10, Priority = 0, CastTime = 0 },
+                AbilityStageCard = new AbilityStageCard { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, MaxTargets = 1, Value = 10, Priority = 0, CastTime = 0 },
                 TargetingPreferenceComponent = new TargetingPreferenceComponent { StatType = StatType.INITIATIVE, TargetingPreference = TargetingPreference.HIGHEST , TargetingType = TargetingType.ENEMY }
             };
         }
@@ -52,16 +52,16 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             uint newHealth = _damageCalculator.DealDamage(_targetEntity, _abilityStage);
             
-            AssertNewHealth(newHealth,originalHealth - _abilityStage.AbilityStageCards.Value);
+            AssertNewHealth(newHealth,originalHealth - _abilityStage.AbilityStageCard.Value);
             AssertEntityHealth(_targetEntity, newHealth);
         }
         
         [Test]
         public void Positive_DealDamage_DamagesEntity_MoreAttackThanHealth_ReturnsZero()
         {
-            AbilityStageCard strongStage = _abilityStage.AbilityStageCards with { Value = uint.MaxValue };
+            AbilityStageCard strongStage = _abilityStage.AbilityStageCard with { Value = uint.MaxValue };
             
-            uint newHealth = _damageCalculator.DealDamage(_targetEntity, _abilityStage with { AbilityStageCards = strongStage });
+            uint newHealth = _damageCalculator.DealDamage(_targetEntity, _abilityStage with { AbilityStageCard = strongStage });
             
             AssertNewHealth(newHealth, 0);
             AssertEntityHealth(_targetEntity, newHealth);
@@ -72,7 +72,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             uint calculatedDamage = _damageCalculator.GetCalculatedDamage(_abilityStage);
             
-            Assert.That(calculatedDamage, Is.EqualTo(_abilityStage.AbilityStageCards.Value));
+            Assert.That(calculatedDamage, Is.EqualTo(_abilityStage.AbilityStageCard.Value));
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             AbilityStage weakAbilityStage = new()
             {
-                AbilityStageCards = new AbilityStageCard
+                AbilityStageCard = new AbilityStageCard
                 {
                     AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, 
                     AffinityType = AffinityType.SLASH, 

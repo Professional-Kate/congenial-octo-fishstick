@@ -12,7 +12,7 @@ namespace IdelPog.Combat.Combatant.Runtime.System
         {
             foreach (CombatantEntity targetCombatant in targetCombatants)
             {
-                UpdateHealth(targetCombatant, abilityStage.AbilityStageCards.Value);
+                UpdateHealth(targetCombatant, abilityStage.AbilityStageCard.Value);
             }
         }
 

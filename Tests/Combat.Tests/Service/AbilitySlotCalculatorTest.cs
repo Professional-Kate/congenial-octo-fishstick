@@ -54,7 +54,7 @@ namespace IdelPog.Combat.Tests.Service
         {
             SetupRepositoryGet(_abilityDefinition);
             
-            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_equippedAbility]);
+            uint abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_equippedAbility]);
             
             Assert.That(abilitySlots, Is.EqualTo(1));
         }
@@ -64,7 +64,7 @@ namespace IdelPog.Combat.Tests.Service
         {
             SetupRepositoryGet(_abilityDefinition);
             
-            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_equippedAbility, _equippedAbility]);
+            uint abilitySlots = _abilitySlotCalculator.GetAbilitySlots([_equippedAbility, _equippedAbility]);
             
             Assert.That(abilitySlots, Is.EqualTo(2));
         }
@@ -72,7 +72,7 @@ namespace IdelPog.Combat.Tests.Service
         [Test]
         public void Positive_GetAbilitySlots_EmptyAbilityCards_ReturnsNothing()
         {
-            byte abilitySlots = _abilitySlotCalculator.GetAbilitySlots([]);
+            uint abilitySlots = _abilitySlotCalculator.GetAbilitySlots([]);
             
             Assert.That(abilitySlots, Is.Zero);
         }

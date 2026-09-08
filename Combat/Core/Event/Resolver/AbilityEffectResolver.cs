@@ -41,7 +41,7 @@ namespace IdelPog.Combat.Core.Event.Resolver
             BeforeEvent(tick, combatantEntity, abilityStage);
 
             IReadOnlyList<CombatantEntity> changedTargets = HandleEvent(tick, combatantEntity, abilityEntity, abilityStage);
-            _combatantLogger.LogCombatantChange(tick, combatantEntity, changedTargets, abilityStage.AbilityStageCards, abilityEntity.AbilityID);
+            _combatantLogger.LogCombatantChange(tick, combatantEntity, changedTargets, abilityStage.AbilityStageCard, abilityEntity.AbilityID);
             
             AfterEvent(tick, changedTargets, abilityStage);
         }
@@ -50,7 +50,7 @@ namespace IdelPog.Combat.Core.Event.Resolver
         {
             TargetingPreferenceComponent targetingPreferenceComponent = abilityStage.TargetingPreferenceComponent;
             
-            return _targetFinder.SelectPreferredTargets(targetingPreferenceComponent.TargetingPreference, targetingPreferenceComponent.StatType, targetingPreferenceComponent.TargetingType, targetingType, abilityStage.AbilityStageCards.MaxTargets).ToArray();
+            return _targetFinder.SelectPreferredTargets(targetingPreferenceComponent.TargetingPreference, targetingPreferenceComponent.StatType, targetingPreferenceComponent.TargetingType, targetingType, abilityStage.AbilityStageCard.MaxTargets).ToArray();
         }
         
         protected private CombatantEntity GetCombatant(byte combatantID) => _combatantRepository.Get(combatantID);

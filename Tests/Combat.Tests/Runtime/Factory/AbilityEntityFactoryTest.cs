@@ -9,6 +9,7 @@ using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Stat.Contracts.Enum;
+using IdelPog.Combat.Stat.Runtime.Component;
 using IdelPog.Core.Repository.Incremental;
 using IdelPog.Core.Validation.Exceptions;
 using Moq;
@@ -20,7 +21,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
     {
         private AbilityEntityFactory _abilityEntityFactory;
         private Mock<IIncrementalRepository<AbilityDefinition>> _repositoryMock;
-        private Mock<IAbilityEffectValueCalculator> _abilityEffectValueCalculatorMock;
+        private Mock<IAbilityStatsFactory> _abilityStatsCalculatorMock;
 
         private AbilityEquip _abilityEquip;
         private AbilityDefinition _abilityDefinition;
@@ -31,9 +32,9 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         public void OneTimeSetup()
         {
             _repositoryMock = new Mock<IIncrementalRepository<AbilityDefinition>>();
-            _abilityEffectValueCalculatorMock = new Mock<IAbilityEffectValueCalculator>();
+            _abilityStatsCalculatorMock = new Mock<IAbilityStatsFactory>();
             
-            _abilityEntityFactory = new AbilityEntityFactory(_repositoryMock.Object, _abilityEffectValueCalculatorMock.Object);
+            _abilityEntityFactory = new AbilityEntityFactory(_repositoryMock.Object, _abilityStatsCalculatorMock.Object);
 
             _equippedAbility = new EquippedAbility { AbilityID = 0, StrategyCards = [new StrategyCard { TargetingPreference = TargetingPreference.HIGHEST, StatType = StatType.HEALTH, TargetingType = TargetingType.ENEMY, Priority = 0 }]};
             _abilityEquip = new AbilityEquip { CombatantID = 1, EquippedAbilities = [_equippedAbility] };
@@ -55,7 +56,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         public void SetUp()
         {
             _repositoryMock.Reset();
-            _abilityEffectValueCalculatorMock.Reset();
+            _abilityStatsCalculatorMock.Reset();
         }
 
         [TearDown]
@@ -63,8 +64,8 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         {
             _repositoryMock.Verify();
             _repositoryMock.VerifyNoOtherCalls();
-            _abilityEffectValueCalculatorMock.Verify();
-            _abilityEffectValueCalculatorMock.VerifyNoOtherCalls();
+            _abilityStatsCalculatorMock.Verify();
+            _abilityStatsCalculatorMock.VerifyNoOtherCalls();
         }
 
         private void SetupRepositoryGet(AbilityDefinition abilityDefinition, byte abilityID)
@@ -72,11 +73,17 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             _repositoryMock.Setup(library => library.Get(abilityID)).Returns(abilityDefinition).Verifiable();
         }
 
-        private void VerifyCalculate(params AbilityDefinition[] abilityEntities)
+        private void SetupCreateStats(params AbilityDefinition[] abilityEntities)
         {
-            foreach (AbilityDefinition abilityEntity in abilityEntities)
-            { 
-                _abilityEffectValueCalculatorMock.Verify(library => library.Calculate(It.Is<AbilityEntity>(entity => entity.AbilitySlots == abilityEntity.AbilityCard.AbilitySlots)), Times.Once);
+            foreach (AbilityDefinition abilityDefinition in abilityEntities)
+            {
+                StatComponent[] statComponents =
+                [
+                    new() { StatType = StatType.COOLDOWN, Stat = abilityDefinition.AbilityCard.Cooldown },
+                    new() { StatType = StatType.ABILITY_SLOTS, Stat = abilityDefinition.AbilityCard.AbilitySlots }
+                ];
+                
+                _abilityStatsCalculatorMock.Setup(library => library.CreateStats(It.IsAny<AbilityStagesComponent>(), abilityDefinition.AbilityCard)).Returns(statComponents).Verifiable();
             }
         }
         
@@ -91,7 +98,8 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             {
                 Assert.That(abilityEntity.AbilityID, Is.EqualTo(abilityID));
                 Assert.That(abilityEntity.InstanceID, Is.EqualTo(combatantID));
-                Assert.That(abilityEntity.GetComponent<CooldownComponent>().Cooldown, Is.EqualTo(abilityDefinition.AbilityCard.Cooldown));
+                Assert.That(abilityEntity.GetStat(StatType.COOLDOWN), Is.EqualTo(abilityDefinition.AbilityCard.Cooldown));
+                Assert.That(abilityEntity.GetStat(StatType.ABILITY_SLOTS), Is.EqualTo(abilityDefinition.AbilityCard.AbilitySlots));
             }
         }
 
@@ -99,12 +107,12 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         public void Positive_Create_CreatesNewEntity_AddsExpectedComponents()
         {
             SetupRepositoryGet(_abilityDefinition, 0);
+            SetupCreateStats(_abilityDefinition);
             
             AbilityEntity[] combatantAbilityEntities = _abilityEntityFactory.Create(_equippedAbilityDefinition, _equippedAbilityDefinition.CombatantID);
             
             AssertCollectionCount(1,  combatantAbilityEntities);
             AssertCombatantAbility(combatantAbilityEntities[0], _abilityDefinition, _abilityEquip.CombatantID, 0);
-            VerifyCalculate(_abilityDefinition);
         }
         
         [Test]
@@ -116,13 +124,13 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             {
                 EquippedAbilities = [_equippedAbility, _equippedAbility]
             };
+            SetupCreateStats(_abilityDefinition);
             
             AbilityEntity[] combatantAbilityEntities = _abilityEntityFactory.Create(doubleEquipDefinition, _equippedAbilityDefinition.CombatantID);
             
             AssertCollectionCount(2,  combatantAbilityEntities);
             AssertCombatantAbility(combatantAbilityEntities[0], _abilityDefinition, doubleEquipDefinition.CombatantID, 0);
             AssertCombatantAbility(combatantAbilityEntities[1], _abilityDefinition, doubleEquipDefinition.CombatantID, 0);
-            _abilityEffectValueCalculatorMock.Verify(library => library.Calculate(It.Is<AbilityEntity>(entity => entity.AbilitySlots == _abilityDefinition.AbilityCard.AbilitySlots)), Times.Exactly(2));
         }
         
         [Test]
@@ -142,12 +150,12 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
         public void Positive_Create_CreatesEntity_WithCastTime()
         {
             SetupRepositoryGet(_abilityDefinition, 0);
+            SetupCreateStats(_abilityDefinition);
             
             AbilityEntity[] combatantAbilityEntities = _abilityEntityFactory.Create(_equippedAbilityDefinition, _equippedAbilityDefinition.CombatantID);
             
             AssertCollectionCount(1,  combatantAbilityEntities);
             AssertCombatantAbility(combatantAbilityEntities[0], _abilityDefinition, _abilityEquip.CombatantID, 0);
-            VerifyCalculate(_abilityDefinition);
         }
 
         [Test]
@@ -162,6 +170,7 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             };
 
             SetupRepositoryGet(_abilityDefinition, 0);
+            SetupCreateStats(_abilityDefinition);
             
             EquippedAbilityDefinition equippedAbilityDefinition = _equippedAbilityDefinition with
             {
@@ -175,7 +184,6 @@ namespace IdelPog.Combat.Tests.Runtime.Factory
             
             AssertCollectionCount(1,  combatantAbilityEntities);
             AssertCombatantAbility(combatantAbilityEntities[0], _abilityDefinition, equippedAbilityDefinition.CombatantID, 0);
-            VerifyCalculate(_abilityDefinition);
         }
 
         [Test]

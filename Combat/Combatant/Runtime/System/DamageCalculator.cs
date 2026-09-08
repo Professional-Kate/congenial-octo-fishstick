@@ -18,7 +18,7 @@ namespace IdelPog.Combat.Combatant.Runtime.System
 
         public uint GetCalculatedDamage(AbilityStage abilityStage)
         {
-            return abilityStage.AbilityStageCards.Value;
+            return abilityStage.AbilityStageCard.Value;
         }
 
         private static uint CalculateNewHealth(uint defenderHealth, uint calculatedDamage)

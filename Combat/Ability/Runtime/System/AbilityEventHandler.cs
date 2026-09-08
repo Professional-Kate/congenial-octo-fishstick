@@ -8,6 +8,7 @@ using IdelPog.Combat.Core.Event.Resolver.Interface;
 using IdelPog.Combat.Core.Event.Trigger.Contracts;
 using IdelPog.Combat.Core.Event.Trigger.Interface;
 using IdelPog.Combat.Core.Service.Interface;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Core.Repository.Asset;
 
 namespace IdelPog.Combat.Ability.Runtime.System
@@ -44,7 +45,7 @@ namespace IdelPog.Combat.Ability.Runtime.System
             AbilityStagesComponent abilityStagesComponent = abilityEntity.GetComponent<AbilityStagesComponent>();
             AbilityStage currentStage = abilityStagesComponent.AbilityStages[scheduledCombatEvent.AbilityStageIndex];
                 
-            IAbilityEffectResolver resolver = _resolverRepository.Get(currentStage.AbilityStageCards.AbilityEffectType);
+            IAbilityEffectResolver resolver = _resolverRepository.Get(currentStage.AbilityStageCard.AbilityEffectType);
             resolver.ResolveEffect(scheduledCombatEvent.Tick, abilityEntity, currentStage);
 
             bool isLastStage = scheduledCombatEvent.AbilityStageIndex == abilityStagesComponent.AbilityStages.Length - 1;
@@ -71,8 +72,7 @@ namespace IdelPog.Combat.Ability.Runtime.System
                 return;
             }
 
-            CooldownComponent cooldownComponent = abilityEntity.GetComponent<CooldownComponent>();
-            _abilityEventScheduler.ScheduleEvent(tick + cooldownComponent.Cooldown, abilityEntity.AbilityID, abilityStageIndex: 0, initiatingCombatantID: abilityEntity.InstanceID);
+            _abilityEventScheduler.ScheduleEvent(tick + abilityEntity.GetStat(StatType.COOLDOWN), abilityEntity.AbilityID, abilityStageIndex: 0, initiatingCombatantID: abilityEntity.InstanceID);
         }
     }
 }
