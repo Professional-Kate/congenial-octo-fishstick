@@ -2,13 +2,12 @@
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Stat.Contracts.Enum;
-using IdelPog.Combat.Stat.Runtime.Component;
 
 namespace IdelPog.Combat.Combatant.Runtime.System
 {
     public sealed class EntityHealingSystem : IEntityHealingSystem
     {
-        public void ApplyHealing(IEnumerable<CombatantEntity> targetCombatants, CombatantEntity healingCombatant, AbilityStage abilityStage, double tick)
+        public void ApplyHealing(IEnumerable<CombatantEntity> targetCombatants, AbilityStage abilityStage)
         {
             foreach (CombatantEntity targetCombatant in targetCombatants)
             {
@@ -21,7 +20,7 @@ namespace IdelPog.Combat.Combatant.Runtime.System
             uint health = targetCombatant.GetStat(StatType.HEALTH);
             
             uint healAmount = Math.Min(healPower, GetMissingHealth(targetCombatant.GetStat(StatType.BASE_HEALTH), health));
-            targetCombatant.GetComponent<StatsComponent>().ReplaceStat(StatType.HEALTH, health + healAmount);
+            targetCombatant.ReplaceStat(StatType.HEALTH, health + healAmount);
         }
 
         private static uint GetMissingHealth(uint baseHealth, uint currentHealth)

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace IdelPog.Combat.Core.Logging
+namespace IdelPog.Combat.Core.Logging.Contracts
 {
     public readonly record struct CombatantStateChange
     {

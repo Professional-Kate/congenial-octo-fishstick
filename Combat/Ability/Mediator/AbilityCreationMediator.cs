@@ -60,7 +60,6 @@ namespace IdelPog.Combat.Ability.Mediator
             //  could be something to add to the FlowRegister, CommandValidator
             foreach (AbilityCreation abilityCreation in messages)
             {
-                _numberAssertion.AssertNumberNotZero(abilityCreation.AbilityCard.Cooldown, abilityCreation.ToString());
                 _collectionAssertion.AssertHasElements(abilityCreation.AbilityStageCards);
                 _triggerAssertion.AssertTrigger(abilityCreation.TriggerCard);
                 

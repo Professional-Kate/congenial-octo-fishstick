@@ -1,10 +1,11 @@
 ﻿using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Entities;
+using IdelPog.Combat.Combatant.Runtime.Entities;
 
 namespace IdelPog.Combat.Core.Event.Resolver.Interface
 {
     public interface IAbilityEffectResolver
     {
-        public void ResolveEffect(double tick, AbilityEntity abilityEntity, AbilityStage abilityStage);
+        public void ResolveEffect(double tick, AbilityEntity abilityEntity, AbilityStage abilityStage, CombatantEntity initiatingCombatant);
     }
 }

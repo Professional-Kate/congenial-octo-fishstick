@@ -6,14 +6,14 @@ using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Core.Event;
-using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Logging.Contracts;
 using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Integration.Tests.Combat.Tools;
 
 namespace IdelPog.Integration.Tests.Combat.Flows
 {
     [TestFixture]
-    public sealed class AbilityTest : ManagedTestBuffer
+    public sealed class AbilityTest : ManagedCombatRunner
     {
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
         
@@ -43,7 +43,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             _responseListener.AssertWasCalled(true);
             _responseListener.AssertResponseLength(1);
-            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatStages);
+            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatArenaLog.CombatStages);
         }
 
         [Test]
@@ -318,7 +318,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             CombatValidator.AssertNextInitiatingCombatant(1, 5, 2, 3, 4, 0);
             
             // validating that all enemies die in one attack
-            CombatStage lastStageChange = _responseListener.Responses[0].CombatStages[^1];
+            CombatStage lastStageChange = _responseListener.Responses[0].CombatArenaLog.CombatStages[^1];
             Assert.That(lastStageChange.CombatantStateChanges, Has.Length.EqualTo(1));
             Assert.That(lastStageChange.CombatantStateChanges[0].TargetCombatants, Has.Length.EqualTo(5));
         }

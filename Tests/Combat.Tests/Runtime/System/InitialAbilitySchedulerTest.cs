@@ -101,9 +101,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatAbilityInitializerMock.Verify(library => library.InitializeAbilities(combatantEntity, combatantAbilityEntities), Times.Once);
         }
 
-        private void VerifyScheduleEventCalled(double currentTick, AbilityEntity abilityEntity, Times times)
+        private void VerifyScheduleEventCalled(double currentTick, AbilityEntity abilityEntity, CombatantEntity combatantEntity, Times times)
         {
-            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(currentTick, abilityEntity.AbilityID, 0, abilityEntity.InstanceID), times);
+            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(currentTick, abilityEntity, 0, combatantEntity), times);
         }
 
         private void VerifySubscribeAbility(params AbilityEntity[] combatantAbilityEntities)
@@ -136,7 +136,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.DoesNotThrow(() => _basicAttackScheduler.ScheduleRegisteredAbilities(1d));
 
             VerifyInitializeAbilities(_combatantEntity, [_abilityEntity]);
-            VerifyScheduleEventCalled(1d - _attackerAgility.Initiative * 0.05, _abilityEntity, Times.Once());
+            VerifyScheduleEventCalled(1d - _attackerAgility.Initiative * 0.05, _abilityEntity, _combatantEntity, Times.Once());
         }
         
         [Test]
@@ -154,7 +154,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
             VerifyInitializeAbilities(_combatantEntity, [_abilityEntity]);
             VerifyAbilityRepositoryContainsCalled(1, 2, 3, 4, 5);
-            VerifyScheduleEventCalled(1d - _attackerAgility.Initiative * 0.05, _abilityEntity, Times.Once());
+            VerifyScheduleEventCalled(1d - _attackerAgility.Initiative * 0.05, _abilityEntity,_combatantEntity, Times.Once());
         }
         
         [Test]
@@ -168,7 +168,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             VerifyInitializeAbilities(_combatantEntity, [_abilityEntity]);
             VerifyAbilityRepositoryContainsCalled(1);
-            VerifyScheduleEventCalled(0d - _attackerAgility.Initiative * 0.05, _abilityEntity, Times.Once());
+            VerifyScheduleEventCalled(0d - _attackerAgility.Initiative * 0.05, _abilityEntity,_combatantEntity, Times.Once());
         }
 
         [Test]
@@ -191,7 +191,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             Assert.DoesNotThrow(() => _basicAttackScheduler.ScheduleRegisteredAbilities(0d));
             
             VerifyAbilityRepositoryContainsCalled(1);
-            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(0d, _abilityEntity.AbilityID, 0, _abilityEntity.InstanceID), Times.Never);
+            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(0d, _abilityEntity, 0, _combatantEntity), Times.Never);
             VerifyInitializeAbilities(_combatantEntity, [_abilityEntity]);
             VerifySubscribeAbility(_abilityEntity);
         }
@@ -207,7 +207,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
 
             _abilityRepositoryMock.Verify(library => library.Contains(1), Times.Exactly(2));
             _combatAbilityInitializerMock.Verify(library => library.InitializeAbilities(_combatantEntity, new [] {_abilityEntity}), Times.Exactly(2));
-            VerifyScheduleEventCalled(1d - _attackerAgility.Initiative * 0.05, _abilityEntity, Times.Exactly(1));
+            VerifyScheduleEventCalled(1d - _attackerAgility.Initiative * 0.05, _abilityEntity,_combatantEntity, Times.Exactly(1));
         }
     }
 }

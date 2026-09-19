@@ -44,20 +44,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
         }
 
         [Test]
-        public void Positive_Get_ReturnsMatchingEntity()
-        {
-            _abilityEntityRepository.SeedAbilities([_abilityEntity, _anotherAbilityEntity]);
-            
-            AbilityEntity abilityEntity = _abilityEntityRepository.Get(_abilityEntity.InstanceID, _abilityEntity.AbilityID);
-
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(abilityEntity.AbilityID, Is.EqualTo(_abilityEntity.AbilityID));
-                Assert.That(abilityEntity.InstanceID, Is.EqualTo(_abilityEntity.InstanceID));
-            }
-        }
-
-        [Test]
         public void Positive_EnumerateAbilities_ReturnsAllAbilitiesForCombatant()
         {
             _abilityEntityRepository.SeedAbilities([_abilityEntity, _anotherAbilityEntity, _abilityEntity]);
@@ -91,14 +77,6 @@ namespace IdelPog.Combat.Tests.Runtime.System
         public void Positive_Clear_NoAbilities_ClearsAbilities()
         { 
             Assert.DoesNotThrow(() => _abilityEntityRepository.Clear());
-        }
-        
-        [Test]
-        public void Negative_Get_EntityFound_NoMatchingAbility_Throws()
-        {
-            _abilityEntityRepository.SeedAbilities([_abilityEntity]);
-            
-            Assert.Throws<KeyNotFoundException>(() => _abilityEntityRepository.Get(_anotherAbilityEntity.InstanceID, _anotherAbilityEntity.AbilityID));
         }
     }
 }

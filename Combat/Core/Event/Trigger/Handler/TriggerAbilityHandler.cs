@@ -32,13 +32,13 @@ namespace IdelPog.Combat.Core.Event.Trigger.Handler
             
             foreach (AbilityTrigger abilityTrigger in abilityTriggers)
             {
-                _abilityEventScheduler.ScheduleEvent(abilityTrigger.Tick, abilityTrigger.AbilityID, abilityStageIndex: 0, initiatingCombatantID: abilityTrigger.CombatantID);
+                _abilityEventScheduler.ScheduleEvent(abilityTrigger.Tick, abilityTrigger.AbilityEntity, abilityStageIndex: 0, abilityTrigger.CombatantEntity);
             }
         }
         
-        protected abstract IEnumerable<AbilityTrigger> Filter(ImmutableArray<AbilityEntity> combatantAbilityEntities, T triggerData, double tick);
+        protected abstract IEnumerable<AbilityTrigger> Filter(ImmutableArray<AbilityEntity> abilityEntities, T triggerData, double tick);
         
-        protected bool IsEligible(AbilityEntity abilityEntity, TargetingType combatantTargetingType, byte combatantID, TriggerComponent triggerComponent, double tick)
+        protected bool IsEligible(AbilityEntity abilityEntity, TargetingType combatantTargetingType, CombatantEntity combatantEntity, TriggerComponent triggerComponent, double tick)
         {
             ReadyTickComponent readyTickComponent = abilityEntity.GetComponent<ReadyTickComponent>();
             if (readyTickComponent.ReadyTick > tick)
@@ -46,7 +46,6 @@ namespace IdelPog.Combat.Core.Event.Trigger.Handler
                 return false;
             }
 
-            CombatantEntity combatantEntity = GetCombatantEntity(abilityEntity.InstanceID);
             LifeStatusComponent lifeStatusComponent = combatantEntity.GetComponent<LifeStatusComponent>();
             if (lifeStatusComponent.IsAlive == false)
             {
@@ -54,7 +53,7 @@ namespace IdelPog.Combat.Core.Event.Trigger.Handler
             }
 
             bool isFriendly = combatantEntity.TargetingType == combatantTargetingType;
-            if (DoesTargetingTypeMatch(triggerComponent.TargetingType, isFriendly, abilityEntity.InstanceID, combatantID) == false)
+            if (DoesTargetingTypeMatch(triggerComponent.TargetingType, isFriendly, abilityEntity.InstanceID, combatantEntity.InstanceID) == false)
             {
                 return false;
             }
@@ -64,7 +63,7 @@ namespace IdelPog.Combat.Core.Event.Trigger.Handler
 
         protected bool IsValueInRange(uint minValue, uint maxValue, uint actualValue) => actualValue >= minValue && actualValue <= maxValue;
         
-        protected CombatantEntity GetCombatantEntity(byte combatantID) => _combatantRepository.Get(combatantID);
+        protected CombatantEntity GetCombatantEntity(byte instanceID) => _combatantRepository.Get(instanceID);
 
         private static bool DoesTargetingTypeMatch(TargetingType triggerTargetingType, bool isFriendly, byte abilityCombatantID, byte combatantID)
         {

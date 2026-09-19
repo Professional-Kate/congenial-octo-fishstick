@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 using IdelPog.Combat.Core.Contracts.Response;
-using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Logging.Contracts;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {
@@ -73,7 +73,7 @@ namespace IdelPog.Integration.Tests.Combat.Tools
         
         internal static void AssertVictory(BasicEncounterDeckResponse basicEncounterDeckResponse, bool friendlyVictory)
         { 
-            Assert.That(basicEncounterDeckResponse.FriendlyVictory, Is.EqualTo(friendlyVictory));
+            Assert.That(basicEncounterDeckResponse.CombatArenaLog.FriendlyVictory, Is.EqualTo(friendlyVictory));
         }
         
         internal static void AssertCombatantDiedFirst(byte expectedCombatantID)

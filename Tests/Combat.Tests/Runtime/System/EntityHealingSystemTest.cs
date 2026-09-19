@@ -6,7 +6,6 @@ using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Stat.Contracts.Enum;
-using IdelPog.Combat.Stat.Runtime.Component;
 using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Runtime.System
@@ -38,11 +37,11 @@ namespace IdelPog.Combat.Tests.Runtime.System
         }
 
         private static void ChangeCombatantHealth(CombatantEntity combatantEntity, uint newHealth) =>
-            combatantEntity.GetComponent<StatsComponent>().ReplaceStat(StatType.HEALTH, newHealth);
+            combatantEntity.ReplaceStat(StatType.HEALTH, newHealth);
 
         private static void AssertCombatantHealth(CombatantEntity combatantEntity, uint expectedHealth)
         {
-            Assert.That(expectedHealth, Is.EqualTo(combatantEntity.GetStat(StatType.HEALTH)));
+            Assert.That(combatantEntity.GetStat(StatType.HEALTH), Is.EqualTo(expectedHealth));
         }
 
         [Test]
@@ -50,7 +49,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
         {
             ChangeCombatantHealth(_friendlyTargetCombatant, 10);
             
-            Assert.DoesNotThrow(() => _entityHealingSystem.ApplyHealing([_friendlyTargetCombatant], _healingCombatant, _abilityStage, 0));
+            Assert.DoesNotThrow(() => _entityHealingSystem.ApplyHealing([_friendlyTargetCombatant], _abilityStage));
             
             AssertCombatantHealth(_friendlyTargetCombatant, 13);
         }
@@ -61,7 +60,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             ChangeCombatantHealth(_friendlyTargetCombatant, 10);
             ChangeCombatantHealth(_healingCombatant, 10);
             
-            Assert.DoesNotThrow(() => _entityHealingSystem.ApplyHealing([_friendlyTargetCombatant, _friendlyTargetCombatant, _healingCombatant], _healingCombatant, _abilityStage, 0));
+            Assert.DoesNotThrow(() => _entityHealingSystem.ApplyHealing([_friendlyTargetCombatant, _friendlyTargetCombatant, _healingCombatant], _abilityStage));
             
             AssertCombatantHealth(_friendlyTargetCombatant, 16);
             AssertCombatantHealth(_healingCombatant, 13);
@@ -74,7 +73,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             
             ChangeCombatantHealth(_friendlyTargetCombatant, 10);
             
-            Assert.DoesNotThrow(() => _entityHealingSystem.ApplyHealing([_friendlyTargetCombatant], _healingCombatant, beegHeal, 0));
+            Assert.DoesNotThrow(() => _entityHealingSystem.ApplyHealing([_friendlyTargetCombatant], beegHeal));
             
             AssertCombatantHealth(_friendlyTargetCombatant, _friendlyTargetCombatant.GetStat(StatType.HEALTH));
         }
@@ -85,7 +84,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             uint overMaxHealth = _friendlyTargetCombatant.GetStat(StatType.HEALTH) + 1;
             ChangeCombatantHealth(_friendlyTargetCombatant, overMaxHealth);
             
-            Assert.DoesNotThrow(() => _entityHealingSystem.ApplyHealing([_friendlyTargetCombatant], _healingCombatant, _abilityStage, 0));
+            Assert.DoesNotThrow(() => _entityHealingSystem.ApplyHealing([_friendlyTargetCombatant], _abilityStage));
             
             AssertCombatantHealth(_friendlyTargetCombatant, overMaxHealth);
         }
@@ -98,7 +97,7 @@ namespace IdelPog.Combat.Tests.Runtime.System
             uint health = _friendlyTargetCombatant.GetStat(StatType.HEALTH);
             ChangeCombatantHealth(_friendlyTargetCombatant, 18);
             
-            Assert.DoesNotThrow(() => _entityHealingSystem.ApplyHealing([_friendlyTargetCombatant], _healingCombatant, zeroHeal, 0));
+            Assert.DoesNotThrow(() => _entityHealingSystem.ApplyHealing([_friendlyTargetCombatant], zeroHeal));
             
             Assert.That(health, Is.Not.EqualTo(_friendlyTargetCombatant.GetStat(StatType.HEALTH)));
         }

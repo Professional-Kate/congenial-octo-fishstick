@@ -2,8 +2,7 @@
 using IdelPog.Combat.Core.Arena;
 using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Response;
-using IdelPog.Combat.Core.Logging;
-using IdelPog.Combat.Core.Service.Interface;
+using IdelPog.Combat.Core.Logging.Contracts;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Messaging.Listener.Buffer;
 using IdelPog.Core.Repository.Incremental;
@@ -15,17 +14,13 @@ namespace IdelPog.Combat.Core.Mediator
     {
         private readonly IIncrementalRepository<CombatantDefinition> _combatantDefinitionRepository;
         private readonly ICombatArena _combatArena;
-        private readonly ICombatStateService _combatStateService;
-        private readonly ICombatantLogger _combatantLogger;
         private readonly IDispatchMany<BasicEncounterDeckResponse> _responseDispatcher;
         private readonly ICollectionAssertion _collectionAssertion;
 
-        public BasicEncounterDeckMediator(IIncrementalRepository<CombatantDefinition> combatantDefinitionRepository, ICombatArena combatArena, ICombatStateService combatStateService, ICombatantLogger combatantLogger, IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
+        public BasicEncounterDeckMediator(IIncrementalRepository<CombatantDefinition> combatantDefinitionRepository, ICombatArena combatArena, IDispatchMany<BasicEncounterDeckResponse> responseDispatcher, ICollectionAssertion collectionAssertion)
         {
             _combatantDefinitionRepository = combatantDefinitionRepository;
             _combatArena = combatArena;
-            _combatStateService = combatStateService;
-            _combatantLogger = combatantLogger;
             _responseDispatcher = responseDispatcher;
             _collectionAssertion = collectionAssertion;
         }
@@ -41,12 +36,13 @@ namespace IdelPog.Combat.Core.Mediator
                 _collectionAssertion.AssertHasElements(basicEncounterDeck.FriendlyCombatantIDs);
                 _collectionAssertion.AssertHasElements(basicEncounterDeck.EnemyCombatantIDs);
                 
-                _combatArena.RunCombatSimulation(GetCombatantDefinitions(basicEncounterDeck.FriendlyCombatantIDs), GetCombatantDefinitions(basicEncounterDeck.EnemyCombatantIDs));
-                
-                responses[i] = ConstructResponse(basicEncounterDeck);
-                
-                _combatantLogger.ClearStateChanges();
-                _combatStateService.Reset();
+                CombatArenaLog combatArenaLog = _combatArena.RunCombatSimulation(GetCombatantDefinitions(basicEncounterDeck.FriendlyCombatantIDs), GetCombatantDefinitions(basicEncounterDeck.EnemyCombatantIDs));
+
+                responses[i] = new BasicEncounterDeckResponse
+                {
+                    BasicEncounterDeck = basicEncounterDeck,
+                    CombatArenaLog = combatArenaLog
+                };
             }
 
             _responseDispatcher.Dispatch(responses);
@@ -62,16 +58,6 @@ namespace IdelPog.Combat.Core.Mediator
             }
             
             return combatantDefinitions;
-        }
-
-        private BasicEncounterDeckResponse ConstructResponse(BasicEncounterDeck basicEncounterDeck)
-        {
-            return new BasicEncounterDeckResponse
-            {
-                BasicEncounterDeck = basicEncounterDeck,
-                CombatStages = _combatantLogger.GetStateChanges().ToArray(),
-                FriendlyVictory = _combatStateService.FriendlyVictory
-            };
         }
     }
 }

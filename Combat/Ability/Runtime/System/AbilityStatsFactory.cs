@@ -3,6 +3,7 @@ using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Stat.Runtime.Component;
 
@@ -10,6 +11,13 @@ namespace IdelPog.Combat.Ability.Runtime.System
 {
     public sealed class AbilityStatsFactory : IAbilityStatsFactory
     {
+        private readonly IStatComponentFactory _statComponentFactory;
+
+        public AbilityStatsFactory(IStatComponentFactory statComponentFactory)
+        {
+            _statComponentFactory = statComponentFactory;
+        }
+
         public StatComponent[] CreateStats(AbilityStagesComponent abilityStagesComponent, AbilityCard abilityCard)
         {
             uint damageValue = 0;
@@ -40,12 +48,12 @@ namespace IdelPog.Combat.Ability.Runtime.System
 
             StatComponent[] statComponents =
             [
-                new() { StatType = StatType.COOLDOWN, Stat = abilityCard.Cooldown },
-                new() { StatType = StatType.CAST_TIME, Stat = castTime },
-                new() { StatType = StatType.ABILITY_DAMAGE, Stat = damageValue },
-                new() { StatType = StatType.RETALIATION_DAMAGE, Stat = retaliationValue },
-                new() { StatType = StatType.ABILITY_HEALING, Stat = healingValue },
-                new() { StatType = StatType.ABILITY_SLOTS, Stat = abilityCard.AbilitySlots }
+                _statComponentFactory.Create(StatType.ABILITY_SLOTS, abilityCard.AbilitySlots),
+                _statComponentFactory.Create(StatType.COOLDOWN, abilityCard.Cooldown),
+                _statComponentFactory.Create(StatType.CAST_TIME, castTime),
+                _statComponentFactory.Create(StatType.ABILITY_DAMAGE, damageValue),
+                _statComponentFactory.Create(StatType.ABILITY_HEALING, healingValue),
+                _statComponentFactory.Create(StatType.RETALIATION_DAMAGE, retaliationValue)
             ];
 
             return statComponents;

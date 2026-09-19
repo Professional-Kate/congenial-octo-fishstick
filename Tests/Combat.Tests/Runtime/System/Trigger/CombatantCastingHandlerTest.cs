@@ -15,7 +15,6 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
 
         private readonly CombatantCastCompleteData _friendlyCombatantCastCompleteData = new()
         {
-            CastingCombatantID = 12,
             CombatantTargetingType = TargetingType.FRIENDLY
         };
         
@@ -60,8 +59,8 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
             
             _combatantCastingHandler.Handle(TICK, _friendlyCombatantCastCompleteData);
             
-            VerifyScheduleEvent(_validAbilityEntity.InstanceID, _validAbilityEntity.AbilityID);
-            VerifyScheduleEvent(validAbility.InstanceID, validAbility.AbilityID);
+            VerifyScheduleEvent(FriendlyCombatantEntity, _validAbilityEntity);
+            VerifyScheduleEvent(EnemyCombatantEntity, validAbility);
         }
 
         [Test]

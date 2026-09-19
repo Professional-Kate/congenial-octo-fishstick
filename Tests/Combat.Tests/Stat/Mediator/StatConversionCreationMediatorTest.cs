@@ -24,8 +24,8 @@ namespace IdelPog.Combat.Tests.Stat.Mediator
             StatConversionID = 1,
             StatConversionCreation = new StatConversionCreation
             {
-                TargetStatType = StatType.HEALTH,
-                SourceStatType = StatType.BASE_HEALTH,
+                TargetStatID = (byte) StatType.HEALTH,
+                SourceStatID = (byte) StatType.BASE_HEALTH,
                 SourceStatInterval = 3,
                 StatOperation = StatOperation.ADDITIVE,
                 TargetStatModifier = 1
@@ -99,8 +99,8 @@ namespace IdelPog.Combat.Tests.Stat.Mediator
         {
             StatConversionCreation goodStatConversionCreation = new()
             {
-                TargetStatType = StatType.HEALTH,
-                SourceStatType = StatType.BASE_HEALTH,
+                TargetStatID = (byte )StatType.HEALTH,
+                SourceStatID = (byte) StatType.BASE_HEALTH,
                 SourceStatInterval = 3,
                 StatOperation = StatOperation.ADDITIVE,
                 TargetStatModifier = 0

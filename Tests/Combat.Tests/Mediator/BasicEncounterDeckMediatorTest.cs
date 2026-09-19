@@ -6,9 +6,9 @@ using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Core.Event;
-using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Logging.Contracts;
 using IdelPog.Combat.Core.Mediator;
-using IdelPog.Combat.Core.Service.Interface;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Core.Messaging.Dispatcher.Buffer;
 using IdelPog.Core.Repository.Incremental;
 using IdelPog.Core.Validation.Assertion;
@@ -23,8 +23,6 @@ namespace IdelPog.Combat.Tests.Mediator
         private BasicEncounterDeckMediator _basicEncounterDeckMediator;
         private Mock<IIncrementalRepository<CombatantDefinition>> _combatantDefinitionRepositoryMock;
         private Mock<ICombatArena> _combatArenaMock;
-        private Mock<ICombatStateService> _combatStateServiceMock;
-        private Mock<ICombatantLogger> _combatantLoggerMock;
         private Mock<IDispatchMany<BasicEncounterDeckResponse>> _responseDispatcherMock;
         
         private BasicEncounterDeck _basicEncounterDeck;
@@ -40,13 +38,11 @@ namespace IdelPog.Combat.Tests.Mediator
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _combatStateServiceMock = new Mock<ICombatStateService>();
-            _combatantLoggerMock = new Mock<ICombatantLogger>();
             _responseDispatcherMock = new Mock<IDispatchMany<BasicEncounterDeckResponse>>();
             _combatantDefinitionRepositoryMock = new Mock<IIncrementalRepository<CombatantDefinition>>();
             _combatArenaMock = new Mock<ICombatArena>();
             
-            _basicEncounterDeckMediator = new BasicEncounterDeckMediator(_combatantDefinitionRepositoryMock.Object, _combatArenaMock.Object, _combatStateServiceMock.Object, _combatantLoggerMock.Object, _responseDispatcherMock.Object, new CollectionAssertion());
+            _basicEncounterDeckMediator = new BasicEncounterDeckMediator(_combatantDefinitionRepositoryMock.Object, _combatArenaMock.Object, _responseDispatcherMock.Object, new CollectionAssertion());
             _basicEncounterDeck = new BasicEncounterDeck 
             {
                 FriendlyCombatantIDs = [1],
@@ -62,12 +58,17 @@ namespace IdelPog.Combat.Tests.Mediator
                 TargetingType = TargetingType.FRIENDLY,
                 IsAlive = true
             };
-            
+
             CombatantStateChange combatantStateChange = new()
             {
-                Tick = 10, 
-                ReadOnlyAbilityStage = new ReadOnlyAbilityStage { AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, Value = 10 },
-                TargetCombatants = [ readOnlyCombatant with { InstanceID = 2 }]
+                Tick = 10,
+                ReadOnlyAbilityStage = new ReadOnlyAbilityStage
+                {
+                    AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE, AffinityType = AffinityType.SLASH, Value = 10, CastTime = 1, MaxTargets = 1,
+                    ReadOnlyStrategy = new ReadOnlyStrategy
+                        { TargetingPreference = TargetingPreference.LOWEST, StatType = StatType.COOLDOWN, TargetingType = TargetingType.FRIENDLY }
+                },
+                TargetCombatants = [readOnlyCombatant with { InstanceID = 2 }]
             };
 
             _combatStage = new CombatStage
@@ -83,8 +84,6 @@ namespace IdelPog.Combat.Tests.Mediator
         {
             _combatantDefinitionRepositoryMock.Reset();
             _combatArenaMock.Reset();
-            _combatStateServiceMock.Reset();
-            _combatantLoggerMock.Reset();
             _responseDispatcherMock.Reset();
         }
 
@@ -95,17 +94,8 @@ namespace IdelPog.Combat.Tests.Mediator
             _combatantDefinitionRepositoryMock.VerifyNoOtherCalls();
             _combatArenaMock.Verify();
             _combatArenaMock.VerifyNoOtherCalls();
-            _combatStateServiceMock.Verify();
-            _combatStateServiceMock.VerifyNoOtherCalls();
-            _combatantLoggerMock.Verify();
-            _combatantLoggerMock.VerifyNoOtherCalls();
             _responseDispatcherMock.Verify();
             _responseDispatcherMock.VerifyNoOtherCalls();
-        }
-
-        private void SetupGetStateChanges(params CombatStage[] combatStages)
-        {
-            _combatantLoggerMock.Setup(library => library.GetStateChanges()).Returns(combatStages).Verifiable();
         }
 
         private void SetupGetCombatantDefinition(params CombatantDefinition[] combatantDefinitions)
@@ -121,13 +111,6 @@ namespace IdelPog.Combat.Tests.Mediator
             _combatArenaMock.Verify(library => library.RunCombatSimulation(friendlyDefinitions, enemyDefinitions), times);
         }
 
-        private void VerifyMockCalls(Times times)
-        {
-            _combatStateServiceMock.Verify(library => library.FriendlyVictory, times);
-            _combatStateServiceMock.Verify(library => library.Reset(), times);
-            _combatantLoggerMock.Verify(library => library.ClearStateChanges(), times);
-        }
-
         private void VerifyDispatchMessages(int count)
         {
             _responseDispatcherMock.Verify(library => library.Dispatch(It.Is<IReadOnlyList<BasicEncounterDeckResponse>>(collection => collection.Count == count)));
@@ -136,26 +119,22 @@ namespace IdelPog.Combat.Tests.Mediator
         [Test]
         public void Positive_HandleMessages_SimulatesCombat_InvokesServices()
         {
-            SetupGetStateChanges(_combatStage);
             SetupGetCombatantDefinition(_combatantDefinition, _combatantDefinition with { CombatantID = 2 });
             
             Assert.DoesNotThrow(() => _basicEncounterDeckMediator.HandleMessages([_basicEncounterDeck]));
 
             VerifyRunCombatSimulation([_combatantDefinition], [_combatantDefinition with { CombatantID = 2 }], Times.Once());
-            VerifyMockCalls(Times.Once());
             VerifyDispatchMessages(1);
         }
         
         [Test]
         public void Positive_HandleMessages_MultipleMessages_SimulatesCombat()
         {
-            SetupGetStateChanges(_combatStage);
             SetupGetCombatantDefinition(_combatantDefinition, _combatantDefinition with { CombatantID = 2 });
             
             Assert.DoesNotThrow(() => _basicEncounterDeckMediator.HandleMessages([_basicEncounterDeck, _basicEncounterDeck, _basicEncounterDeck]));
 
             VerifyRunCombatSimulation([_combatantDefinition], [_combatantDefinition with { CombatantID = 2 }], Times.Exactly(3));
-            VerifyMockCalls(Times.Exactly(3));
             VerifyDispatchMessages(3);
         }
 

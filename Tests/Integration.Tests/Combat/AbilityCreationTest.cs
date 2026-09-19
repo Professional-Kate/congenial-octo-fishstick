@@ -26,16 +26,6 @@ namespace IdelPog.Integration.Tests.Combat
             ManagedSubscribe(_errorListener);
         }
         
-        private void AssertResponseListenerCalled(bool wasCalled)
-        {
-            Assert.That(_responseListener.WasCalled, Is.EqualTo(wasCalled));
-        }
-
-        private void AssertResponseLength(int length)
-        {
-            Assert.That(_responseListener.Responses, Has.Length.EqualTo(length));
-        }
-
         private static void AssertResponse(AbilityCreationResponse abilityCreationResponse, AbilityCreation abilityCreationSource, byte id = 0)
         {
             using (Assert.EnterMultipleScope())
@@ -44,11 +34,6 @@ namespace IdelPog.Integration.Tests.Combat
                 Assert.That(abilityCreationResponse.AbilityCard, Is.EqualTo(abilityCreationSource.AbilityCard));
                 Assert.That(abilityCreationResponse.TriggerCard, Is.EqualTo(abilityCreationSource.TriggerCard));
             }
-        }
-        
-        private void AssertErrorListenerCalled(bool wasCalled)
-        {
-            Assert.That(_errorListener.WasCalled, Is.EqualTo(wasCalled));
         }
 
         private void AssertErrorLength(int length)
@@ -73,9 +58,9 @@ namespace IdelPog.Integration.Tests.Combat
         { 
             Assert.DoesNotThrow(() => DispatchMessage(StaticCombatCommands.SlashAttackCreation));
             
-            AssertResponseListenerCalled(true);
-            AssertErrorListenerCalled(false);
-            AssertResponseLength(1);
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], StaticCombatCommands.SlashAttackCreation);
         }
 
@@ -84,9 +69,9 @@ namespace IdelPog.Integration.Tests.Combat
         {
             Assert.DoesNotThrow(() => DispatchMessage(StaticCombatCommands.SlashAttackCreation, StaticCombatCommands.StabAttackCreation));
             
-            AssertResponseListenerCalled(true);
-            AssertErrorListenerCalled(false);
-            AssertResponseLength(2);
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(2);
             AssertResponse(_responseListener.Responses[0], StaticCombatCommands.SlashAttackCreation);
             AssertResponse(_responseListener.Responses[1], StaticCombatCommands.StabAttackCreation, 1);
         }
@@ -110,24 +95,24 @@ namespace IdelPog.Integration.Tests.Combat
             
             Assert.DoesNotThrow(() => DispatchMessage(maxAttackDamage, minAttackDamage));
             
-            AssertResponseListenerCalled(true);
-            AssertErrorListenerCalled(false);
-            AssertResponseLength(2);
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(2);
             AssertResponse(_responseListener.Responses[0], maxAttackDamage);
             AssertResponse(_responseListener.Responses[1], minAttackDamage, 1);
         }
 
         [Test]
-        public void Negative_ZeroCooldown_DispatchesError()
+        public void Positive_ZeroCooldown_DispatchesResponse()
         {
             AbilityCreation zeroCooldownAbility = StaticCombatCommands.SlashAttackCreation with { AbilityCard = new AbilityCard { Cooldown = 0, AbilitySlots = 1 }};
             
             Assert.DoesNotThrow(() => DispatchMessage(zeroCooldownAbility));
             
-            AssertResponseListenerCalled(false);
-            AssertErrorListenerCalled(true);
-            AssertErrorLength(1);
-            AssertError<NumberZeroException>(zeroCooldownAbility);
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
+            AssertResponse(_responseListener.Responses[0], zeroCooldownAbility);
         }
 
         private static IEnumerable<TriggerCard> BadAbilityReadyTriggers()
@@ -162,8 +147,8 @@ namespace IdelPog.Integration.Tests.Combat
             
             DispatchMessage(badTriggerCreation);
             
-            AssertResponseListenerCalled(false);
-            AssertErrorListenerCalled(true);
+            _responseListener.AssertWasCalled(false);
+            _errorListener.AssertWasCalled(true);
             AssertErrorLength(1);
             AssertError<AbilityReadyException>(badTriggerCreation);
         }

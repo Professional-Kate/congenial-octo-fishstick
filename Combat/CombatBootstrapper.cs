@@ -23,6 +23,7 @@ using IdelPog.Combat.Core.Event.Trigger.Contracts;
 using IdelPog.Combat.Core.Event.Trigger.Handler;
 using IdelPog.Combat.Core.Event.Trigger.Interface;
 using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Logging.Interface;
 using IdelPog.Combat.Core.Mediator;
 using IdelPog.Combat.Core.Service;
 using IdelPog.Combat.Core.Service.Interface;
@@ -34,6 +35,8 @@ using IdelPog.Combat.Stat.Filter.Interface;
 using IdelPog.Combat.Stat.Mediator;
 using IdelPog.Combat.Stat.Provider;
 using IdelPog.Combat.Stat.Provider.Interface;
+using IdelPog.Combat.Stat.Service;
+using IdelPog.Combat.Stat.Service.Interface;
 using IdelPog.Core.Flows.Registry;
 using IdelPog.Core.Logging;
 using IdelPog.Core.Logging.Writer;
@@ -65,12 +68,14 @@ namespace IdelPog.Combat
             IIncrementalRepository<CombatantDefinition> combatantDefinitionRepository = new IncrementalRepository<CombatantDefinition>(repositoryAsserter);
             Dictionary<byte, EquippedAbilityDefinition> equippedAbilityDefinitionRepository = new();
             IIncrementalRepository<StatConversionCreation> statConversionRepository = new IncrementalRepository<StatConversionCreation>(repositoryAsserter);
-            
+            IIncrementalRepository<StatCreation> statCreationRepository = new IncrementalRepository<StatCreation>(repositoryAsserter);
             IAbilityEntityRepository abilityEntityRepository = new AbilityEntityRepository();
-            IAssetRepository<StatType, IStatProvider> statProviderRepository = new AssetRepository<StatType, IStatProvider>(repositoryAsserter);
+            
             IPrioritySorter prioritySorter = new PrioritySorter();
-
+            StatConfigurationSystem statConfigurationSystem = new();
+            
             // TODO: move this out eventually 
+            IAssetRepository<StatType, IStatProvider> statProviderRepository = new AssetRepository<StatType, IStatProvider>(repositoryAsserter);
             CombatantEntityStatProvider combatantEntityStatProvider = new();
             AbilityEntityStatProvider abilityEntityStatProvider = new(abilityEntityRepository);
             statProviderRepository.Add(StatType.HEALTH, combatantEntityStatProvider);
@@ -84,14 +89,16 @@ namespace IdelPog.Combat
             statProviderRepository.Add(StatType.RETALIATION_DAMAGE, abilityEntityStatProvider);
             statProviderRepository.Add(StatType.CAST_TIME, abilityEntityStatProvider);
             
-            RegisterBasicEncounterDeck(bufferManager, flowRegister, bufferLogger, repositoryAsserter, combatantRepository, abilityEntityRepository, statProviderRepository, combatOptions.MaxIterations, combatantDefinitionRepository, equippedAbilityDefinitionRepository, abilityDefinitionRepository, prioritySorter);
+            RegisterBasicEncounterDeck(bufferManager, flowRegister, bufferLogger, repositoryAsserter, combatantRepository, abilityEntityRepository, statProviderRepository, combatOptions.MaxIterations, combatantDefinitionRepository, equippedAbilityDefinitionRepository, abilityDefinitionRepository, statConfigurationSystem, statCreationRepository);
             RegisterCombatantCreation(bufferManager, flowRegister, bufferLogger, combatantDefinitionRepository);
             RegisterAbilityCreation(bufferManager, flowRegister,  bufferLogger, abilityDefinitionRepository, prioritySorter);
             RegisterAbilityEquip(bufferManager, flowRegister, bufferLogger, abilityDefinitionRepository, combatOptions, equippedAbilityDefinitionRepository);
+            SetupStatCreation(bufferManager, flowRegister, bufferLogger, statCreationRepository);
+            SetupStatConfiguration(bufferManager, flowRegister, bufferLogger, statConfigurationSystem);
             RegisterStatConversionCreation(bufferManager, flowRegister, bufferLogger, statConversionRepository);
         }
 
-        private static void RegisterBasicEncounterDeck(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, CombatantRepository combatantRepository, IAbilityEntityRepository abilityEntityRepository, IAssetRepository<StatType, IStatProvider> statProviderRepository, uint maxIterations,  IIncrementalRepository<CombatantDefinition> combatantDefinitionRepository, Dictionary<byte, EquippedAbilityDefinition> equippedAbilityDefinitionRepository, IIncrementalRepository<AbilityDefinition> abilityDefinitionRepository, IPrioritySorter prioritySorter)
+        private static void RegisterBasicEncounterDeck(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IRepositoryAsserter repositoryAsserter, CombatantRepository combatantRepository, IAbilityEntityRepository abilityEntityRepository, IAssetRepository<StatType, IStatProvider> statProviderRepository, uint maxIterations,  IIncrementalRepository<CombatantDefinition> combatantDefinitionRepository, Dictionary<byte, EquippedAbilityDefinition> equippedAbilityDefinitionRepository, IIncrementalRepository<AbilityDefinition> abilityDefinitionRepository, IStatConfigurationGetter statConfigurationGetter, IIncrementalRepository<StatCreation> statCreationRepository)
         {
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
             ICollectionAssertion collectionAssertion = new CollectionAssertion();
@@ -102,11 +109,11 @@ namespace IdelPog.Combat
             TriggerSubscriber triggerSubscriber = new();
             ICastingCalculator castingCalculator = new CastingCalculator();
             IReadyTickSystem readyTickSystem = new ReadyTickSystem(castingCalculator);
-            IAbilityEventScheduler abilityEventScheduler = new AbilityEventScheduler(abilityEntityRepository, readyTickSystem, combatantRepository, castingCalculator, combatQueue);
+            IAbilityEventScheduler abilityEventScheduler = new AbilityEventScheduler(readyTickSystem, castingCalculator, combatQueue);
             ITriggerAbilityHandler<CombatantCastCompleteData> combatantCastingHandler = new CombatantCastingHandler(triggerSubscriber, abilityEventScheduler, combatantRepository);
             IAssetRepository<AbilityEffectType, IAbilityEffectResolver> resolverRepository = new AssetRepository<AbilityEffectType, IAbilityEffectResolver>(repositoryAsserter);
             ICombatStateService combatStateService = new CombatStateService(combatantRepository);
-            IAbilityEventHandler abilityEventHandler = new AbilityEventHandler(abilityEntityRepository, combatantCastingHandler, abilityEventScheduler, resolverRepository, combatStateService);
+            IAbilityEventHandler abilityEventHandler = new AbilityEventHandler(combatantCastingHandler, abilityEventScheduler, resolverRepository, combatStateService);
             IAbilityInitializer abilityInitializer = new AbilityInitializer();
             IInitialAbilityScheduler initialAbilityScheduler = new InitialAbilityScheduler(combatantRepository, abilityEntityRepository, abilityInitializer, abilityEventScheduler, triggerSubscriber);
             IDispatchMany<BasicEncounterDeckResponse> responseDispatcher = new ManagedDispatcher<BasicEncounterDeckResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
@@ -119,23 +126,26 @@ namespace IdelPog.Combat
             IEntityDamageSystem entityDamageSystem = new EntityDamageSystem(damageCalculator, combatantDamagedHandler, deathSystem, combatantDiedHandler);
             IEntityHealingSystem entityHealingSystem = new EntityHealingSystem();
             ICombatantTargetFinder targetFinder = new CombatantTargetFinder(combatantRepository, statProviderRepository, numberAssertion, collectionAssertion);
-            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory();
-            IAbilityStatsFactory abilityStatsFactory = new AbilityStatsFactory();
-            IAbilityEntityFactory abilityEntityFactory = new AbilityEntityFactory(abilityDefinitionRepository, abilityStatsFactory);
+            IStatComponentFactory statComponentFactory = new StatComponentFactory(statConfigurationGetter, statCreationRepository);
+            ICombatantEntityFactory combatantEntityFactory = new CombatantEntityFactory(statConfigurationGetter, statComponentFactory);
+            IAbilityStatsFactory abilityStatsFactory = new AbilityStatsFactory(statComponentFactory);
+            IAbilityEntityFactory abilityEntityFactory = new AbilityEntityFactory(abilityDefinitionRepository, abilityStatsFactory, statConfigurationGetter, statComponentFactory);
+            IReadOnlyCombatantFactory readOnlyCombatantFactory = new ReadOnlyCombatantFactory();
+            IReadOnlyAbilityFactory readOnlyAbilityFactory = new ReadOnlyAbilityFactory();
+            IInitialStateLogger initialStateLogger = new InitialStateLogger(readOnlyCombatantFactory, readOnlyAbilityFactory);
             
-            // TODO: move this out eventually 
-            DirectDamageAbilityEffectResolver directDamageAbilityEffectResolver = new(combatantRepository, targetFinder, combatantLogger, entityDamageSystem);
+            DirectDamageAbilityEffectResolver directDamageAbilityEffectResolver = new(targetFinder, combatantLogger, entityDamageSystem);
             resolverRepository.Add(AbilityEffectType.DIRECT_DAMAGE, directDamageAbilityEffectResolver);
 
-            HealingAbilityEffectResolver healingAbilityEffectResolver = new(combatantRepository, targetFinder, combatantLogger, entityHealingSystem);
+            HealingAbilityEffectResolver healingAbilityEffectResolver = new(targetFinder, combatantLogger, entityHealingSystem);
             resolverRepository.Add(AbilityEffectType.HEALING, healingAbilityEffectResolver);
 
-            RetaliationAbilityEffectResolver retaliationAbilityEffectResolver = new(combatantRepository, targetFinder, combatantLogger, entityDamageSystem);
+            RetaliationAbilityEffectResolver retaliationAbilityEffectResolver = new(targetFinder, combatantLogger, entityDamageSystem);
             resolverRepository.Add(AbilityEffectType.RETALIATION, retaliationAbilityEffectResolver);
 
-            CombatArena combatArena = new(combatantEntityFactory, combatantRepository, equippedAbilityDefinitionRepository, abilityEntityFactory, abilityEntityRepository, initialAbilityScheduler, combatQueueRunner);
+            CombatArena combatArena = new(combatantEntityFactory, combatantRepository, equippedAbilityDefinitionRepository, abilityEntityFactory, abilityEntityRepository, initialAbilityScheduler, combatQueueRunner, initialStateLogger, combatantLogger, combatStateService);
             
-            BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantDefinitionRepository, combatArena, combatStateService, combatantLogger, responseDispatcher, collectionAssertion);
+            BasicEncounterDeckMediator basicEncounterDeckMediator = new(combatantDefinitionRepository, combatArena, responseDispatcher, collectionAssertion);
             flowRegister.RegisterBatch(basicEncounterDeckMediator);
         }
 
@@ -178,6 +188,28 @@ namespace IdelPog.Combat
             flowRegister.RegisterBatch(mediator);
         }
 
+        private static void SetupStatCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IIncrementalRepository<StatCreation> statCreationRepository)
+        {
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+            
+            IDispatchMany<StatCreationResponse> responseDispatcher = new ManagedDispatcher<StatCreationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
+            StatCreationMediator statCreationMediator = new(statCreationRepository, responseDispatcher, collectionAssertion);
+            flowRegister.RegisterBatch(statCreationMediator);
+        }
+
+        private static void SetupStatConfiguration(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IStatConfigurationSetter statConfigurationSetter)
+        {
+            IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();
+            ICollectionAssertion collectionAssertion = new CollectionAssertion();
+
+            IDispatchMany<StatConfigurationResponse> responseDispatcher = new ManagedDispatcher<StatConfigurationResponse>(bufferManager, bufferLogger, objectNullAssertion, collectionAssertion);
+            
+            StatConfigurationMediator mediator = new(statConfigurationSetter, responseDispatcher, collectionAssertion);
+            flowRegister.RegisterBatch(mediator);
+        }
+        
         private static void RegisterStatConversionCreation(IBufferManager bufferManager, IBatchRegister flowRegister, IBufferLogger bufferLogger, IIncrementalRepository<StatConversionCreation> statConversionRepository)
         {
             IObjectNullAssertion objectNullAssertion = new ObjectNullAssertion();

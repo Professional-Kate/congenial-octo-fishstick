@@ -2,15 +2,26 @@
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
+using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Stat.Runtime.Component;
+using IdelPog.Combat.Stat.Service.Interface;
 
 namespace IdelPog.Combat.Combatant.Runtime
 {
     public sealed class CombatantEntityFactory : ICombatantEntityFactory
     {
-        private byte _instanceID;
+        private readonly IStatConfigurationGetter _statConfigurationGetter;
+        private readonly IStatComponentFactory _statComponentFactory;
         
+        private byte _instanceID;
+
+        public CombatantEntityFactory(IStatConfigurationGetter statConfigurationGetter, IStatComponentFactory statComponentFactory)
+        {
+            _statConfigurationGetter = statConfigurationGetter;
+            _statComponentFactory = statComponentFactory;
+        }
+
         public CombatantEntity[] Create(IReadOnlyList<CombatantDefinition> combatantDefinitions, TargetingType targetingType)
         {
             CombatantEntity[] combatantEntities = new CombatantEntity[combatantDefinitions.Count];
@@ -19,7 +30,7 @@ namespace IdelPog.Combat.Combatant.Runtime
                 CombatantDefinition combatantDefinition = combatantDefinitions[i];
 
                 StatsComponent statsComponent = new() { StatComponents = CreateStatComponents(combatantDefinition) };
-                combatantEntities[i] = new CombatantEntity(statsComponent)
+                combatantEntities[i] = new CombatantEntity(statsComponent, _statConfigurationGetter)
                 {
                     InstanceID = _instanceID,
                     CombatantID = combatantDefinition.CombatantID,
@@ -36,14 +47,14 @@ namespace IdelPog.Combat.Combatant.Runtime
             return combatantEntities;
         }
 
-        private static StatComponent[] CreateStatComponents(CombatantDefinition combatantDefinition)
+        private StatComponent[] CreateStatComponents(CombatantDefinition combatantDefinition)
         {
             return
             [
-                new StatComponent { StatType = StatType.BASE_HEALTH, Stat = combatantDefinition.HealthCard.BaseHealth },
-                new StatComponent { StatType = StatType.HEALTH, Stat = combatantDefinition.HealthCard.Health },
-                new StatComponent { StatType = StatType.SPEED, Stat = combatantDefinition.AgilityCard.Speed },
-                new StatComponent { StatType = StatType.INITIATIVE, Stat = combatantDefinition.AgilityCard.Initiative }
+                _statComponentFactory.Create(StatType.BASE_HEALTH, combatantDefinition.HealthCard.BaseHealth),
+                _statComponentFactory.Create(StatType.HEALTH, combatantDefinition.HealthCard.Health),
+                _statComponentFactory.Create(StatType.SPEED, combatantDefinition.AgilityCard.Speed),
+                _statComponentFactory.Create(StatType.INITIATIVE, combatantDefinition.AgilityCard.Initiative)
             ];
         }
     }

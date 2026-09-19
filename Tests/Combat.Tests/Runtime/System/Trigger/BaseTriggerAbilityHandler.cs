@@ -68,9 +68,9 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
             }
         }
 
-        protected void VerifyScheduleEvent(byte combatantID, byte abilityID)
+        protected void VerifyScheduleEvent(CombatantEntity combatantEntity, AbilityEntity abilityEntity)
         {
-            AbilityEventSchedulerMock.Verify(library => library.ScheduleEvent(TICK, abilityID, 0, combatantID), Times.Once);
+            AbilityEventSchedulerMock.Verify(library => library.ScheduleEvent(TICK, abilityEntity, 0, combatantEntity), Times.Once);
         }
 
     }

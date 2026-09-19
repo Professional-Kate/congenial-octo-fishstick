@@ -36,7 +36,7 @@ namespace IdelPog.Combat.Ability.Runtime.System
                     continue;
                 } 
                 
-                double readyTime = initialTick - GetCombatantInitiative(combatantEntity) * 0.05;
+                double readyTime = initialTick - combatantEntity.GetStat(StatType.INITIATIVE) * 0.05;
                 
                 IReadOnlyList<AbilityEntity> abilityEntities = _abilityEntityRepository.EnumerateAbilities(combatantEntity.InstanceID).ToArray();
                 _abilityInitializer.InitializeAbilities(combatantEntity, abilityEntities);
@@ -48,7 +48,7 @@ namespace IdelPog.Combat.Ability.Runtime.System
                     TriggerComponent triggerComponent = abilityEntity.GetComponent<TriggerComponent>();
                     if (triggerComponent.TriggerEventType == TriggerEventType.ABILITY_READY)
                     {
-                        _abilityEventScheduler.ScheduleEvent(readyTime, abilityEntity.AbilityID, abilityStageIndex: 0, abilityEntity.InstanceID);
+                        _abilityEventScheduler.ScheduleEvent(readyTime, abilityEntity, abilityStageIndex: 0, combatantEntity);
                     }
                     else
                     { 
@@ -57,7 +57,5 @@ namespace IdelPog.Combat.Ability.Runtime.System
                 }
             }
         }
-
-        private static uint GetCombatantInitiative(CombatantEntity combatantEntity) => combatantEntity.GetStat(StatType.INITIATIVE);
     }   
 }

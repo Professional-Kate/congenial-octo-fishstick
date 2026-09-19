@@ -21,32 +21,32 @@ namespace IdelPog.Combat.Core.Event.Trigger.Handler
 
         protected override TriggerEventType TriggerEventType => TriggerEventType.COMBATANT_DAMAGED;
         
-        protected override IEnumerable<AbilityTrigger> Filter(ImmutableArray<AbilityEntity> combatantAbilityEntities, CombatantDamagedData triggerData, double tick)
+        protected override IEnumerable<AbilityTrigger> Filter(ImmutableArray<AbilityEntity> abilityEntities, CombatantDamagedData triggerData, double tick)
         {
-            CombatantEntity damagedCombatant = GetCombatantEntity(triggerData.DamagedCombatantID);
-            if (damagedCombatant.TryGetComponent(out RetaliationComponent retaliationComponent))
+            if (triggerData.DamagedCombatant.TryGetComponent(out RetaliationComponent retaliationComponent))
             {
-                if (damagedCombatant.InstanceID == triggerData.InitiatingCombatantID == false)
+                if (triggerData.DamagedCombatant.InstanceID == triggerData.InitiatingCombatant.InstanceID == false)
                 {
-                    retaliationComponent.Enqueue(new CombatantDamaged { InstanceID = triggerData.InitiatingCombatantID, DamageValue = triggerData.DamageValue });
+                    retaliationComponent.Enqueue(new CombatantDamaged { InitiatingCombatant = triggerData.InitiatingCombatant, DamageValue = triggerData.DamageValue });
                 }
             }
             
             List<AbilityTrigger> abilityTriggers = [];
-            foreach (AbilityEntity combatantAbilityEntity in combatantAbilityEntities)
+            foreach (AbilityEntity abilityEntity in abilityEntities)
             {
-                TriggerComponent triggerComponent = combatantAbilityEntity.GetComponent<TriggerComponent>();
+                TriggerComponent triggerComponent = abilityEntity.GetComponent<TriggerComponent>();
                 if (IsValueInRange(triggerComponent.MinTriggerValue, triggerComponent.MaxTriggerValue, triggerData.DamageValue) == false)
                 {
                     continue;
                 }
 
-                if (IsEligible(combatantAbilityEntity, triggerData.DamagedCombatantTargetingType, triggerData.DamagedCombatantID, triggerComponent, tick) == false)
+                CombatantEntity combatantEntity = GetCombatantEntity(abilityEntity.InstanceID);
+                if (IsEligible(abilityEntity, triggerData.DamagedCombatant.TargetingType, combatantEntity, triggerComponent, tick) == false)
                 {
                     continue;
                 }
                 
-                abilityTriggers.Add(new AbilityTrigger { Tick = tick, CombatantID = combatantAbilityEntity.InstanceID, AbilityID = combatantAbilityEntity.AbilityID });
+                abilityTriggers.Add(new AbilityTrigger { Tick = tick, CombatantEntity = combatantEntity, AbilityEntity = abilityEntity });
             }
 
             return abilityTriggers;

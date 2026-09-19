@@ -5,6 +5,6 @@ namespace IdelPog.Combat.Combatant.Runtime.System.Interface
 {
     public interface IEntityHealingSystem
     {
-        public void ApplyHealing(IEnumerable<CombatantEntity> targetCombatants, CombatantEntity healingCombatant, AbilityStage abilityStage, double tick);
+        public void ApplyHealing(IEnumerable<CombatantEntity> targetCombatants, AbilityStage abilityStage);
     }
 }

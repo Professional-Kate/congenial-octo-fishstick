@@ -2,6 +2,7 @@
 using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
+using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Event.Resolver.Interface;
@@ -15,17 +16,14 @@ namespace IdelPog.Combat.Ability.Runtime.System
 {
     public sealed class AbilityEventHandler : IAbilityEventHandler
     {
-        private readonly IAbilityEntityRepository _abilityEntityRepository;
         private readonly ITriggerAbilityHandler<CombatantCastCompleteData> _combatantCastingHandler;
         private readonly IAbilityEventScheduler _abilityEventScheduler;
         private readonly IAssetRepository<AbilityEffectType, IAbilityEffectResolver> _resolverRepository;
         private readonly ICombatStateService _combatStateService;
 
-        public AbilityEventHandler(IAbilityEntityRepository abilityEntityRepository,
-            ITriggerAbilityHandler<CombatantCastCompleteData> combatantCastingHandler, IAbilityEventScheduler abilityEventScheduler,
+        public AbilityEventHandler(ITriggerAbilityHandler<CombatantCastCompleteData> combatantCastingHandler, IAbilityEventScheduler abilityEventScheduler,
             IAssetRepository<AbilityEffectType, IAbilityEffectResolver> resolverRepository, ICombatStateService combatStateService)
         {
-            _abilityEntityRepository = abilityEntityRepository;
             _combatantCastingHandler = combatantCastingHandler;
             _abilityEventScheduler = abilityEventScheduler;
             _resolverRepository = resolverRepository;
@@ -34,11 +32,13 @@ namespace IdelPog.Combat.Ability.Runtime.System
 
         public void Handle(ScheduledCombatEvent scheduledCombatEvent)
         {
-            AbilityEntity abilityEntity = _abilityEntityRepository.Get(scheduledCombatEvent.InstanceID, scheduledCombatEvent.AbilityID);
+            AbilityEntity abilityEntity = scheduledCombatEvent.AbilityEntity;
+            CombatantEntity combatantEntity = scheduledCombatEvent.CombatantEntity;
+            
             if (scheduledCombatEvent.CombatEventType == CombatEventType.ABILITY_CAST_COMPLETE)
             { 
-                _combatantCastingHandler.Handle(scheduledCombatEvent.Tick, new CombatantCastCompleteData { CastingCombatantID = scheduledCombatEvent.InstanceID, CombatantTargetingType = scheduledCombatEvent.TargetingType});
-                _abilityEventScheduler.EnqueueAbilityExecuteEvent(scheduledCombatEvent.Tick, abilityEntity.AbilityID, scheduledCombatEvent.AbilityStageIndex, abilityEntity.InstanceID);
+                _combatantCastingHandler.Handle(scheduledCombatEvent.Tick, new CombatantCastCompleteData { CombatantTargetingType = combatantEntity.TargetingType});
+                _abilityEventScheduler.EnqueueAbilityExecuteEvent(scheduledCombatEvent.Tick, abilityEntity, scheduledCombatEvent.AbilityStageIndex, combatantEntity);
                 return;
             }
 
@@ -46,20 +46,20 @@ namespace IdelPog.Combat.Ability.Runtime.System
             AbilityStage currentStage = abilityStagesComponent.AbilityStages[scheduledCombatEvent.AbilityStageIndex];
                 
             IAbilityEffectResolver resolver = _resolverRepository.Get(currentStage.AbilityStageCard.AbilityEffectType);
-            resolver.ResolveEffect(scheduledCombatEvent.Tick, abilityEntity, currentStage);
+            resolver.ResolveEffect(scheduledCombatEvent.Tick, abilityEntity, currentStage, combatantEntity);
 
             bool isLastStage = scheduledCombatEvent.AbilityStageIndex == abilityStagesComponent.AbilityStages.Length - 1;
             if (isLastStage)
             {
-                ScheduleNextActivation(scheduledCombatEvent.Tick, abilityEntity);
+                ScheduleNextActivation(scheduledCombatEvent.Tick, abilityEntity, combatantEntity);
                 return;
             }
 
             byte nextStageIndex = (byte) (scheduledCombatEvent.AbilityStageIndex + 1);
-            _abilityEventScheduler.ScheduleEvent(scheduledCombatEvent.Tick, abilityEntity.AbilityID, nextStageIndex, abilityEntity.InstanceID);
+            _abilityEventScheduler.ScheduleEvent(scheduledCombatEvent.Tick, abilityEntity, nextStageIndex, combatantEntity);
         }
 
-        private void ScheduleNextActivation(double tick, AbilityEntity abilityEntity)
+        private void ScheduleNextActivation(double tick, AbilityEntity abilityEntity, CombatantEntity combatantEntity)
         {
             if (_combatStateService.IsCombatOver)
             {
@@ -72,7 +72,7 @@ namespace IdelPog.Combat.Ability.Runtime.System
                 return;
             }
 
-            _abilityEventScheduler.ScheduleEvent(tick + abilityEntity.GetStat(StatType.COOLDOWN), abilityEntity.AbilityID, abilityStageIndex: 0, initiatingCombatantID: abilityEntity.InstanceID);
+            _abilityEventScheduler.ScheduleEvent(tick + abilityEntity.GetStat(StatType.COOLDOWN), abilityEntity, abilityStageIndex: 0, combatantEntity);
         }
     }
 }

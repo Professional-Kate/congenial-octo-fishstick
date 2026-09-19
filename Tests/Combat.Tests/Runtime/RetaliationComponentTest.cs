@@ -1,5 +1,8 @@
 ﻿using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Runtime.Component;
+using IdelPog.Combat.Combatant.Runtime.Entities;
+using IdelPog.Combat.Core.Contracts.Enum;
+using IdelPog.Combat.Tests.TestFactory;
 
 namespace IdelPog.Combat.Tests.Runtime
 {
@@ -11,9 +14,11 @@ namespace IdelPog.Combat.Tests.Runtime
         private const byte CAPACITY = 3;
         private readonly CombatantDamaged _combatantDamaged = new()
         {
-            InstanceID = 1,
+            InitiatingCombatant = TestCombatantEntityFactory.Create(1, TargetingType.FRIENDLY),
             DamageValue = 10
         };
+
+        private readonly CombatantEntity _damagedCombatant = TestCombatantEntityFactory.Create(1, TargetingType.FRIENDLY);
 
         [SetUp]
         public void Setup()
@@ -28,7 +33,7 @@ namespace IdelPog.Combat.Tests.Runtime
         {
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(combatantDamaged.InstanceID, Is.EqualTo(expectedComponent.InstanceID));
+                Assert.That(combatantDamaged.InitiatingCombatant, Is.EqualTo(expectedComponent.InitiatingCombatant));
                 Assert.That(combatantDamaged.DamageValue, Is.EqualTo(expectedComponent.DamageValue));
             }
         }
@@ -52,12 +57,12 @@ namespace IdelPog.Combat.Tests.Runtime
         [Test]
         public void Positive_Enqueue_CanEnqueueTillMax()
         {
-            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 2 });
-            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 3 });
-            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 4 });
-            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 5 });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 1 } });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 2 } });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 3 } });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 4 } });
             
-            AssertTryDequeue(_combatantDamaged with { InstanceID = 3 }, true);
+            AssertTryDequeue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 2 }}, true);
         }
 
         [Test]
@@ -83,13 +88,13 @@ namespace IdelPog.Combat.Tests.Runtime
         [Test]
         public void Positive_TryDequeue_DequeuesSeries()
         {
-            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 3 });
-            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 4 });
-            _retaliationComponent.Enqueue(_combatantDamaged with { InstanceID = 5 });
+            _retaliationComponent.Enqueue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 3 }});
+            _retaliationComponent.Enqueue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 4 }});
+            _retaliationComponent.Enqueue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 5 }});
 
-            AssertTryDequeue(_combatantDamaged with { InstanceID = 3 }, true);
-            AssertTryDequeue(_combatantDamaged with { InstanceID = 4 }, true);
-            AssertTryDequeue(_combatantDamaged with { InstanceID = 5 }, true);
+            AssertTryDequeue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 3 }}, true);
+            AssertTryDequeue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 4 }}, true);
+            AssertTryDequeue(_combatantDamaged with { InitiatingCombatant = _damagedCombatant with { InstanceID = 5 }}, true);
         }
     }
 }

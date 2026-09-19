@@ -4,6 +4,7 @@ using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Service;
 using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Combat.Exceptions;
+using IdelPog.Combat.Tests.TestFactory;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Service
@@ -28,12 +29,11 @@ namespace IdelPog.Combat.Tests.Service
             
             _abilityExecuteEvent = new ScheduledCombatEvent
             {
-                AbilityID = 1,
+                CombatantEntity = TestCombatantEntityFactory.Create(1, TargetingType.FRIENDLY),
+                AbilityEntity = TestAbilityEntityFactory.Create(1, 1),
                 Tick = 0, 
-                InstanceID = 1,
                 CombatEventType = CombatEventType.ABILITY_EXECUTE,
                 AbilityStageIndex = 0,
-                TargetingType = TargetingType.FRIENDLY
             };
             
             _combatQueueRunner = new CombatQueueRunner(_combatStateServiceMock.Object, _combatQueueMock.Object, _abilityTriggerHandlerMock.Object)

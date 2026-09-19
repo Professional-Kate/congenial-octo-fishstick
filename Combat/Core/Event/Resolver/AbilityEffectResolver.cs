@@ -3,45 +3,41 @@ using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
-using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event.Resolver.Interface;
-using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Logging.Interface;
 using IdelPog.Combat.Stat.Filter.Interface;
 
 namespace IdelPog.Combat.Core.Event.Resolver
 {
     public abstract class AbilityEffectResolver : IAbilityEffectResolver
     {
-        private readonly ICombatantRepository _combatantRepository;
         private readonly ICombatantTargetFinder _targetFinder;
         private readonly ICombatantLogger _combatantLogger;
 
-        protected private AbilityEffectResolver(ICombatantRepository combatantRepository, ICombatantTargetFinder targetFinder, ICombatantLogger combatantLogger)
+        protected private AbilityEffectResolver(ICombatantTargetFinder targetFinder, ICombatantLogger combatantLogger)
         {
-            _combatantRepository = combatantRepository;
             _targetFinder = targetFinder;
             _combatantLogger = combatantLogger;
         }
 
-        public void ResolveEffect(double tick, AbilityEntity abilityEntity, AbilityStage abilityStage)
+        public void ResolveEffect(double tick, AbilityEntity abilityEntity, AbilityStage abilityStage, CombatantEntity initiatingCombatant)
         {
-            CombatantEntity combatantEntity = _combatantRepository.Get(abilityEntity.InstanceID);
-            if (combatantEntity.GetComponent<LifeStatusComponent>().IsAlive == false)
+            if (initiatingCombatant.GetComponent<LifeStatusComponent>().IsAlive == false)
             {
                 // the Combatant could die before this ability stage can resolve
                 return;
             }
 
-            if (CanResolve(combatantEntity, abilityEntity) == false)
+            if (CanResolve(initiatingCombatant, abilityEntity) == false)
             {
                 return;
             }
             
-            BeforeEvent(tick, combatantEntity, abilityStage);
+            BeforeEvent(tick, initiatingCombatant, abilityStage);
 
-            IReadOnlyList<CombatantEntity> changedTargets = HandleEvent(tick, combatantEntity, abilityEntity, abilityStage);
-            _combatantLogger.LogCombatantChange(tick, combatantEntity, changedTargets, abilityStage.AbilityStageCard, abilityEntity.AbilityID);
+            IReadOnlyList<CombatantEntity> changedTargets = HandleEvent(tick, initiatingCombatant, abilityEntity, abilityStage);
+            _combatantLogger.LogCombatantChange(tick, initiatingCombatant, changedTargets, abilityStage, abilityEntity.AbilityID);
             
             AfterEvent(tick, changedTargets, abilityStage);
         }
@@ -52,8 +48,6 @@ namespace IdelPog.Combat.Core.Event.Resolver
             
             return _targetFinder.SelectPreferredTargets(targetingPreferenceComponent.TargetingPreference, targetingPreferenceComponent.StatType, targetingPreferenceComponent.TargetingType, targetingType, abilityStage.AbilityStageCard.MaxTargets).ToArray();
         }
-        
-        protected private CombatantEntity GetCombatant(byte combatantID) => _combatantRepository.Get(combatantID);
 
         protected private virtual bool CanResolve(CombatantEntity combatantEntity, AbilityEntity abilityEntity) => true;
 

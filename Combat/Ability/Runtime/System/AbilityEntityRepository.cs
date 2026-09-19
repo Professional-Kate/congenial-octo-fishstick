@@ -22,19 +22,6 @@ namespace IdelPog.Combat.Ability.Runtime.System
             return false;
         }
 
-        public AbilityEntity Get(byte instanceID, byte abilityID)
-        { 
-            foreach (AbilityEntity combatantAbilityEntity in EnumerateAbilities(instanceID))
-            { 
-                if (combatantAbilityEntity.AbilityID == abilityID)
-                {
-                    return combatantAbilityEntity;
-                }
-            }
-            
-            throw new KeyNotFoundException();
-        }
-
         public IEnumerable<AbilityEntity> EnumerateAbilities(byte instanceID)
         {
             foreach (AbilityEntity combatantAbilityEntity in _abilityEntities)

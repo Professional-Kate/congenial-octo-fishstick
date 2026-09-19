@@ -12,7 +12,7 @@ using IdelPog.Integration.Tests.Combat.Tools;
 namespace IdelPog.Integration.Tests.Combat.Flows
 {
     [TestFixture]
-    public sealed class TargetingPreferenceTest : ManagedTestBuffer
+    public sealed class TargetingPreferenceTest : ManagedCombatRunner
     {
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
 
@@ -84,7 +84,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             _responseListener.AssertWasCalled(true);
             _responseListener.AssertResponseLength(1);
-            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatStages);
+            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatArenaLog.CombatStages);
         }
 
         [TestCase(5000u, TargetingPreference.HIGHEST, StatType.HEALTH)]

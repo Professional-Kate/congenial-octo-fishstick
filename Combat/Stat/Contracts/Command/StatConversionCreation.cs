@@ -4,8 +4,9 @@ namespace IdelPog.Combat.Stat.Contracts.Command
 {
     public readonly record struct StatConversionCreation
     {
-        public required StatType TargetStatType { get; init; }
-        public required StatType SourceStatType { get; init; }
+        // TODO: need to apply these conversions
+        public required byte TargetStatID { get; init; }
+        public required byte SourceStatID { get; init; }
         public required int SourceStatInterval { get; init; }
         public required StatOperation StatOperation { get; init; }
         public required double TargetStatModifier { get; init; }

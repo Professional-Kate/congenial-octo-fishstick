@@ -7,6 +7,7 @@ using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Stat.Contracts.Enum;
+using IdelPog.Combat.Stat.Runtime.Component;
 using IdelPog.Combat.Tests.TestFactory;
 using Moq;
 
@@ -76,6 +77,8 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_SetNewReadyTime_ChangesReadyTime()
         {
+            _singleStageEntity.GetComponent<StatsComponent>().ReplaceStat(8, 1);
+            
             Assert.DoesNotThrow(() => _readyTickSystem.SetNextReadyTick(CURRENT_TICK, _singleStageEntity, COMBATANT_SPEED));
 
             AssertReadyTimeChanged(CURRENT_TICK + GetCooldownStat(_singleStageEntity), _singleStageEntity);

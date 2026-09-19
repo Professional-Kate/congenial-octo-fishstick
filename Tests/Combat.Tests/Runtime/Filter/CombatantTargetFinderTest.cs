@@ -165,6 +165,24 @@ namespace IdelPog.Combat.Tests.Runtime.Filter
         }
 
         [Test]
+        public void Positive_SelectPreferredTargets_SingleTarget_Lowest_ZeroNotIncluded()
+        {
+            CombatantEntity zeroHealthEntity = TestCombatantEntityFactory.Create(10, TargetingType.ENEMY);
+            zeroHealthEntity.ReplaceStat(StatType.HEALTH, 0);
+            
+            CombatantEntity oneHealthEntity = TestCombatantEntityFactory.Create(20, TargetingType.ENEMY);
+            oneHealthEntity.ReplaceStat(StatType.HEALTH, 1);
+            
+            SetupStatProviderRepository(StatType.HEALTH, _statProviderMock.Object);
+            SetupCombatantFilters(TargetingType.FRIENDLY, zeroHealthEntity, oneHealthEntity, _highInitiativeEntity);
+            SetupStatProvider(_statProviderMock, component => component.GetStat(StatType.HEALTH), StatType.HEALTH, zeroHealthEntity, oneHealthEntity, _highInitiativeEntity);
+                
+            CombatantEntity[] combatantEntities = _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, StatType.HEALTH, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 2).ToArray();
+
+            AssertCombatantEntities(combatantEntities, oneHealthEntity, _highInitiativeEntity);
+        }
+
+        [Test]
         public void Negative_SelectPreferredTargets_ZeroTargetCount_Throws()
         {
             NumberZeroException exception = Assert.Throws<NumberZeroException>(() => _combatantTargetFinder.SelectPreferredTargets(TargetingPreference.LOWEST, StatType.SPEED, TargetingType.FRIENDLY, TargetingType.FRIENDLY, 0));

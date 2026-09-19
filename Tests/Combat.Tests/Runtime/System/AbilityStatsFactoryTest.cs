@@ -4,8 +4,10 @@ using IdelPog.Combat.Ability.Runtime.System;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Core.Service.Interface;
 using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Stat.Runtime.Component;
+using Moq;
 
 namespace IdelPog.Combat.Tests.Runtime.System
 {
@@ -13,7 +15,18 @@ namespace IdelPog.Combat.Tests.Runtime.System
     public sealed class AbilityStatsFactoryTest
     {
         private AbilityStatsFactory _abilityStatsFactory;
+        private Mock<IStatComponentFactory> _statComponentFactoryMock;
 
+        private readonly (StatType StatType, uint LinkedStatValue)[] _linkedStats =
+        [
+            (StatType.ABILITY_SLOTS, 1),
+            (StatType.COOLDOWN, 2),
+            (StatType.CAST_TIME, 6),
+            (StatType.ABILITY_DAMAGE, 10),
+            (StatType.ABILITY_HEALING, 5),
+            (StatType.RETALIATION_DAMAGE, 15)
+        ];
+        
         private readonly AbilityStagesComponent _abilityStagesComponent = new()
         {
             AbilityStages =
@@ -59,29 +72,53 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _abilityStatsFactory = new AbilityStatsFactory();
+            _statComponentFactoryMock = new Mock<IStatComponentFactory>();
+            _abilityStatsFactory = new AbilityStatsFactory(_statComponentFactoryMock.Object);
         }
 
-        private static void AssertStats(StatComponent[] statComponents)
+        [SetUp]
+        public void Setup()
+        {
+            _statComponentFactoryMock.Reset();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _statComponentFactoryMock.Verify();
+            _statComponentFactoryMock.VerifyNoOtherCalls();
+        }
+
+        private void SetupCreate()
+        {
+            for (byte i = 0; i < _linkedStats.Length; i++)
+            {
+                (StatType statType, uint linkedStatValue) linkedStat = _linkedStats[i];
+
+                StatComponent statComponent = new() { StatID = i, Value = linkedStat.linkedStatValue };
+                _statComponentFactoryMock.Setup(library => library.Create(linkedStat.statType, It.IsAny<uint>())).Returns(statComponent).Verifiable();
+            }
+        }
+
+        private void AssertStats(StatComponent[] statComponents)
         {
             Assert.That(statComponents, Is.Not.Null);
-            Assert.That(statComponents, Has.Length.EqualTo(6));
+            Assert.That(statComponents, Has.Length.EqualTo(_linkedStats.Length));
             
             StatsComponent statsComponent = new() { StatComponents = statComponents };
-            using (Assert.EnterMultipleScope())
+            for (byte i = 0; i < _linkedStats.Length; i++)
             {
-                Assert.That(statsComponent.GetStat(StatType.ABILITY_SLOTS), Is.EqualTo(1));
-                Assert.That(statsComponent.GetStat(StatType.COOLDOWN), Is.EqualTo(2));
-                Assert.That(statsComponent.GetStat(StatType.CAST_TIME), Is.EqualTo(6));
-                Assert.That(statsComponent.GetStat(StatType.ABILITY_DAMAGE), Is.EqualTo(10));
-                Assert.That(statsComponent.GetStat(StatType.ABILITY_HEALING), Is.EqualTo(5));
-                Assert.That(statsComponent.GetStat(StatType.RETALIATION_DAMAGE), Is.EqualTo(15));
+                (StatType statType, uint linkedStatValue) linkedStat = _linkedStats[i];
+                
+                Assert.That(statsComponent.GetStat(i), Is.EqualTo(linkedStat.linkedStatValue));
             }
         }
 
         [Test]
         public void Positive_CreateStats_ConvertsArguments_IntoStatComponents()
         {
+            SetupCreate();
+            
             StatComponent[] statComponents = _abilityStatsFactory.CreateStats(_abilityStagesComponent, _abilityCard);
             
             AssertStats(statComponents);

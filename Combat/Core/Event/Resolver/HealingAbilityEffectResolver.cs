@@ -2,7 +2,7 @@
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
-using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Logging.Interface;
 using IdelPog.Combat.Stat.Filter.Interface;
 
 namespace IdelPog.Combat.Core.Event.Resolver
@@ -11,8 +11,8 @@ namespace IdelPog.Combat.Core.Event.Resolver
     {
         private readonly IEntityHealingSystem _entityHealingSystem;
 
-        public HealingAbilityEffectResolver(ICombatantRepository combatantRepository, ICombatantTargetFinder targetFinder, ICombatantLogger combatantLogger, IEntityHealingSystem entityHealingSystem) 
-            : base(combatantRepository, targetFinder, combatantLogger)
+        public HealingAbilityEffectResolver(ICombatantTargetFinder targetFinder, ICombatantLogger combatantLogger, IEntityHealingSystem entityHealingSystem) 
+            : base(targetFinder, combatantLogger)
         {
             _entityHealingSystem = entityHealingSystem;
         }
@@ -20,7 +20,7 @@ namespace IdelPog.Combat.Core.Event.Resolver
         protected private override IReadOnlyList<CombatantEntity> HandleEvent(double tick, CombatantEntity combatantEntity, AbilityEntity abilityEntity, AbilityStage abilityStage)
         {
             IReadOnlyList<CombatantEntity> targetCombatants = GetTargetCombatants(abilityStage, combatantEntity.TargetingType);
-            _entityHealingSystem.ApplyHealing(targetCombatants, combatantEntity, abilityStage, tick);
+            _entityHealingSystem.ApplyHealing(targetCombatants, abilityStage);
 
             return targetCombatants;
         }

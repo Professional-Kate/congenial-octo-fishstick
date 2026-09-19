@@ -2,9 +2,8 @@
 using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.Entities;
-using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
-using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Logging.Interface;
 using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Stat.Filter.Interface;
 using IdelPog.Combat.Tests.TestFactory;
@@ -17,7 +16,6 @@ namespace IdelPog.Combat.Tests.Event
         protected const double TICK = 10D;
         
         protected readonly Mock<ICombatantTargetFinder> TargetFinderMock = new();
-        protected readonly Mock<ICombatantRepository> CombatantRepositoryMock = new();
         protected readonly Mock<ICombatantLogger> CombatantLoggerMock = new();
 
         protected CombatantEntity InitiatingCombatant { get; private set; }
@@ -29,7 +27,6 @@ namespace IdelPog.Combat.Tests.Event
         protected void BaseSetup()
         {
             TargetFinderMock.Reset();
-            CombatantRepositoryMock.Reset();
             CombatantLoggerMock.Reset();
 
             InitiatingCombatant = TestCombatantEntityFactory.Create(combatantID: 1, TargetingType.FRIENDLY);
@@ -44,8 +41,6 @@ namespace IdelPog.Combat.Tests.Event
         {
             TargetFinderMock.Verify();
             TargetFinderMock.VerifyNoOtherCalls();
-            CombatantRepositoryMock.Verify();
-            CombatantRepositoryMock.VerifyNoOtherCalls();
             CombatantLoggerMock.Verify();
             CombatantLoggerMock.VerifyNoOtherCalls();
         }
@@ -57,17 +52,9 @@ namespace IdelPog.Combat.Tests.Event
             TargetFinderMock.Setup(library => library.SelectPreferredTargets(targetingPreference, statType, targetingType, It.IsAny<TargetingType>(), targetCount)).Returns([target]).Verifiable();
         }
 
-        protected void SetupRepositoryGet(params CombatantEntity[] combatantEntities)
-        {
-            foreach (CombatantEntity combatantEntity in combatantEntities)
-            {
-                CombatantRepositoryMock.Setup(library => library.Get(combatantEntity.InstanceID)).Returns(combatantEntity).Verifiable();
-            }
-        }
-
         protected void VerifyCombatantLog(byte abilityID, double tick, CombatantEntity initiatingEntity, CombatantEntity[] targetCombatants, AbilityStage abilityStage)
         {
-            CombatantLoggerMock.Verify(library => library.LogCombatantChange(tick, initiatingEntity, targetCombatants, abilityStage.AbilityStageCard, abilityID));
+            CombatantLoggerMock.Verify(library => library.LogCombatantChange(tick, initiatingEntity, targetCombatants, abilityStage, abilityID));
         }
     }
 }

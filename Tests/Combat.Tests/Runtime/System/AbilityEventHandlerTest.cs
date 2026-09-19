@@ -3,6 +3,7 @@ using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
+using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
@@ -21,95 +22,79 @@ namespace IdelPog.Combat.Tests.Runtime.System
     public sealed class AbilityEventHandlerTest
     {
         private AbilityEventHandler _abilityEventHandler;
-        private Mock<IAbilityEntityRepository> _combatantAbilityEntityRepositoryMock;
         private Mock<IAbilityEventScheduler> _abilityEventSchedulerMock;
         private Mock<IAssetRepository<AbilityEffectType, IAbilityEffectResolver>> _resolverRepositoryMock;
         private Mock<ICombatStateService> _combatStateServiceMock;
         private Mock<IAbilityEffectResolver> _abilityEffectResolverMock;
         private Mock<ITriggerAbilityHandler<CombatantCastCompleteData>> _combatantCastingTriggerMock;
-        private Mock<IReadyTickSystem> _readyTickSystemMock;
 
         private const double READY_TIME = 100d;
-        
-        private readonly ScheduledCombatEvent _executeEvent = new()
-        {
-            AbilityID = 1,
-            InstanceID = 1,
-            CombatEventType = CombatEventType.ABILITY_EXECUTE,
-            Tick = 2,
-            AbilityStageIndex = 0,
-            TargetingType = TargetingType.FRIENDLY
-        };
-        
-        private readonly ScheduledCombatEvent _castCompleteEvent = new()
-        {
-            AbilityID = 1,
-            InstanceID = 1,
-            CombatEventType = CombatEventType.ABILITY_CAST_COMPLETE,
-            Tick = 1,
-            AbilityStageIndex = 0,
-            TargetingType = TargetingType.FRIENDLY
-        };
 
+        private ScheduledCombatEvent _executeEvent;
+        private ScheduledCombatEvent _castCompleteEvent;
         private readonly CombatantCastCompleteData _friendlyCastCompleteData = new()
         {
-            CastingCombatantID = 1, 
             CombatantTargetingType = TargetingType.FRIENDLY
         };
         
         private AbilityEntity _abilityEntity;
+        private CombatantEntity _combatantEntity;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _combatantAbilityEntityRepositoryMock = new Mock<IAbilityEntityRepository>();
             _abilityEventSchedulerMock = new Mock<IAbilityEventScheduler>();
             _resolverRepositoryMock = new Mock<IAssetRepository<AbilityEffectType, IAbilityEffectResolver>>();
             _combatStateServiceMock = new Mock<ICombatStateService>();
             _abilityEffectResolverMock = new Mock<IAbilityEffectResolver>();
             _combatantCastingTriggerMock =  new Mock<ITriggerAbilityHandler<CombatantCastCompleteData>>();
-            _readyTickSystemMock = new Mock<IReadyTickSystem>();
 
-            _abilityEventHandler = new AbilityEventHandler(_combatantAbilityEntityRepositoryMock.Object, _combatantCastingTriggerMock.Object, _abilityEventSchedulerMock.Object, _resolverRepositoryMock.Object, _combatStateServiceMock.Object);
+            _abilityEventHandler = new AbilityEventHandler(_combatantCastingTriggerMock.Object, _abilityEventSchedulerMock.Object, _resolverRepositoryMock.Object, _combatStateServiceMock.Object);
         }
 
         [SetUp]
         public void Setup()
         {
-            _abilityEntity = TestAbilityEntityFactory.Create(_executeEvent.InstanceID, _executeEvent.AbilityID);
+            _abilityEntity = TestAbilityEntityFactory.Create(1, 1);
             _abilityEntity.AddComponent(new ReadyTickComponent { ReadyTick = READY_TIME });
 
-            _combatantAbilityEntityRepositoryMock.Reset();
+            _combatantEntity = TestCombatantEntityFactory.Create(1, TargetingType.FRIENDLY);
+            
+            _executeEvent = new ScheduledCombatEvent
+            {
+                AbilityEntity = _abilityEntity,
+                CombatantEntity = _combatantEntity,
+                CombatEventType = CombatEventType.ABILITY_EXECUTE,
+                Tick = 2,
+                AbilityStageIndex = 0
+            };
+            
+            _castCompleteEvent = new ScheduledCombatEvent
+            {
+                AbilityEntity = _abilityEntity,
+                CombatantEntity = _combatantEntity,
+                CombatEventType = CombatEventType.ABILITY_CAST_COMPLETE,
+                Tick = 1,
+                AbilityStageIndex = 0
+            };
+
             _abilityEventSchedulerMock.Reset();
             _resolverRepositoryMock.Reset();
             _combatStateServiceMock.Reset();
-            _abilityEffectResolverMock.Reset();
             _combatantCastingTriggerMock.Reset();
-            _readyTickSystemMock.Reset();
         }
 
         [TearDown]
         public void TearDown()
         {
-            _combatantAbilityEntityRepositoryMock.Verify();
-            _combatantAbilityEntityRepositoryMock.VerifyNoOtherCalls();
             _abilityEventSchedulerMock.Verify();
             _abilityEventSchedulerMock.VerifyNoOtherCalls();
             _resolverRepositoryMock.Verify();
             _resolverRepositoryMock.VerifyNoOtherCalls();
             _combatStateServiceMock.Verify();
             _combatStateServiceMock.VerifyNoOtherCalls();
-            _abilityEffectResolverMock.Verify();
-            _abilityEffectResolverMock.VerifyNoOtherCalls();
             _combatantCastingTriggerMock.Verify();
             _combatantCastingTriggerMock.VerifyNoOtherCalls();
-            _readyTickSystemMock.Verify();
-            _readyTickSystemMock.VerifyNoOtherCalls();
-        }
-
-        private void SetupCombatantAbilityEntityGet(AbilityEntity abilityEntity)
-        {
-            _combatantAbilityEntityRepositoryMock.Setup(library => library.Get(abilityEntity.InstanceID, abilityEntity.AbilityID)).Returns(abilityEntity).Verifiable();
         }
 
         private void SetupResolverRepositoryGet(Mock<IAbilityEffectResolver> abilityEffectResolverMock, AbilityEffectType abilityEffectType)
@@ -122,14 +107,14 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatStateServiceMock.Setup(library => library.IsCombatOver).Returns(isCombatOver).Verifiable();
         }
         
-        private void VerifyEnqueueAbilityEvent(double currentTick, AbilityEntity abilityEntity, byte abilityStageIndex = 0)
+        private void VerifyEnqueueAbilityEvent(double currentTick, AbilityEntity abilityEntity, CombatantEntity combatantEntity, byte abilityStageIndex = 0)
         {
-            _abilityEventSchedulerMock.Verify(library => library.EnqueueAbilityExecuteEvent(currentTick, abilityEntity.AbilityID, abilityStageIndex, abilityEntity.InstanceID), Times.Once);
+            _abilityEventSchedulerMock.Verify(library => library.EnqueueAbilityExecuteEvent(currentTick, abilityEntity, abilityStageIndex, combatantEntity), Times.Once);
         }
         
-        private void VerifyScheduleEvent(double currentTick, AbilityEntity abilityEntity, byte abilityStageIndex = 0)
+        private void VerifyScheduleEvent(double currentTick, AbilityEntity abilityEntity, CombatantEntity combatantEntity, byte abilityStageIndex = 0)
         {
-            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(currentTick + abilityEntity.GetStat(StatType.COOLDOWN), abilityEntity.AbilityID, abilityStageIndex, abilityEntity.InstanceID), Times.Once);
+            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(currentTick + abilityEntity.GetStat(StatType.COOLDOWN), abilityEntity, abilityStageIndex, combatantEntity), Times.Once);
         }
 
         private void VerifyCombatantCastingHandler(double currentTick, CombatantCastCompleteData combatantCastCompleteData)
@@ -137,9 +122,9 @@ namespace IdelPog.Combat.Tests.Runtime.System
             _combatantCastingTriggerMock.Verify(library => library.Handle(currentTick, combatantCastCompleteData), Times.Once);
         }
         
-        private static void VerifyResolveEffect(Mock<IAbilityEffectResolver> abilityEffectResolverMock, double tick, AbilityEntity abilityEntity, AbilityStage abilityStage)
+        private static void VerifyResolveEffect(Mock<IAbilityEffectResolver> abilityEffectResolverMock, double tick, AbilityEntity abilityEntity, AbilityStage abilityStage, CombatantEntity initiatingCombatant)
         {
-            abilityEffectResolverMock.Verify(library => library.ResolveEffect(tick, abilityEntity, abilityStage), Times.Once);
+            abilityEffectResolverMock.Verify(library => library.ResolveEffect(tick, abilityEntity, abilityStage, initiatingCombatant), Times.Once);
         }
 
         private static AbilityStage GetAbilityStage(AbilityEntity abilityEntity, int stage) => abilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages[stage];
@@ -147,25 +132,22 @@ namespace IdelPog.Combat.Tests.Runtime.System
         [Test]
         public void Positive_Handle_CastComplete_EnqueuesNewEvent()
         {
-            SetupCombatantAbilityEntityGet(_abilityEntity);
-            
             Assert.DoesNotThrow(() => _abilityEventHandler.Handle(_castCompleteEvent));
             
             VerifyCombatantCastingHandler(_castCompleteEvent.Tick, _friendlyCastCompleteData);
-            VerifyEnqueueAbilityEvent(_castCompleteEvent.Tick, _abilityEntity);
+            VerifyEnqueueAbilityEvent(_castCompleteEvent.Tick, _abilityEntity, _combatantEntity);
         }
 
         [Test]
         public void Positive_Handle_AbilityExecute_ResolvesAbility()
         {
-            SetupCombatantAbilityEntityGet(_abilityEntity);
             SetupResolverRepositoryGet(_abilityEffectResolverMock, AbilityEffectType.DIRECT_DAMAGE);
             SetupIsCombatOver(false);
             
             Assert.DoesNotThrow(() => _abilityEventHandler.Handle(_executeEvent));
 
-            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, _abilityEntity, GetAbilityStage(_abilityEntity, 0));
-            VerifyScheduleEvent(_executeEvent.Tick, _abilityEntity);
+            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, _abilityEntity, GetAbilityStage(_abilityEntity, 0), _combatantEntity);
+            VerifyScheduleEvent(_executeEvent.Tick, _abilityEntity, _combatantEntity);
         }
 
         [Test]
@@ -185,16 +167,16 @@ namespace IdelPog.Combat.Tests.Runtime.System
                     }
                 ];
 
-            AbilityEntity abilityEntity = TestAbilityEntityFactory.Create(_executeEvent.InstanceID, _executeEvent.AbilityID, combatantStages);
+            AbilityEntity abilityEntity = TestAbilityEntityFactory.Create(1, 1, combatantStages);
             
-            SetupCombatantAbilityEntityGet(abilityEntity);
             SetupResolverRepositoryGet(_abilityEffectResolverMock, AbilityEffectType.HEALING);
             SetupIsCombatOver(false);
             
-            Assert.DoesNotThrow(() => _abilityEventHandler.Handle(_executeEvent with { AbilityStageIndex = 1 }));
+            ScheduledCombatEvent scheduledCombatEvent = _executeEvent with { AbilityEntity = abilityEntity };
+            Assert.DoesNotThrow(() => _abilityEventHandler.Handle(scheduledCombatEvent with { AbilityStageIndex = 1 }));
 
-            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, abilityEntity, GetAbilityStage(abilityEntity, 1));
-            VerifyScheduleEvent(_executeEvent.Tick, abilityEntity);
+            VerifyResolveEffect(_abilityEffectResolverMock, scheduledCombatEvent.Tick, abilityEntity, GetAbilityStage(abilityEntity, 1), _combatantEntity);
+            VerifyScheduleEvent(scheduledCombatEvent.Tick, abilityEntity, _combatantEntity);
         }
         
         [Test]
@@ -219,15 +201,15 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 }
             ];
 
-            AbilityEntity abilityEntity = TestAbilityEntityFactory.Create(_executeEvent.InstanceID, _executeEvent.AbilityID, combatantStages);
+            AbilityEntity abilityEntity = TestAbilityEntityFactory.Create(1, 1, combatantStages);
             
-            SetupCombatantAbilityEntityGet(abilityEntity);
             SetupResolverRepositoryGet(_abilityEffectResolverMock, AbilityEffectType.DIRECT_DAMAGE);
             
-            Assert.DoesNotThrow(() => _abilityEventHandler.Handle(_executeEvent with { AbilityStageIndex = 1 }));
+            ScheduledCombatEvent scheduledCombatEvent = _executeEvent with { AbilityEntity = abilityEntity };
+            Assert.DoesNotThrow(() => _abilityEventHandler.Handle(scheduledCombatEvent with { AbilityStageIndex = 1 }));
 
-            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, abilityEntity, GetAbilityStage(abilityEntity, 1));
-            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(_executeEvent.Tick, abilityEntity.AbilityID, 2, abilityEntity.InstanceID), Times.Once);
+            VerifyResolveEffect(_abilityEffectResolverMock, scheduledCombatEvent.Tick, abilityEntity, GetAbilityStage(abilityEntity, 1), _combatantEntity);
+            _abilityEventSchedulerMock.Verify(library => library.ScheduleEvent(scheduledCombatEvent.Tick, abilityEntity, 2, _combatantEntity), Times.Once);
         }
 
         [Test]
@@ -243,13 +225,12 @@ namespace IdelPog.Combat.Tests.Runtime.System
                 
             _abilityEntity.ReplaceComponent(triggerComponent);
             
-            SetupCombatantAbilityEntityGet(_abilityEntity);
             SetupResolverRepositoryGet(_abilityEffectResolverMock, AbilityEffectType.DIRECT_DAMAGE);
             SetupIsCombatOver(false);
             
             Assert.DoesNotThrow(() => _abilityEventHandler.Handle(_executeEvent));
 
-            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, _abilityEntity, GetAbilityStage(_abilityEntity, 0));
+            VerifyResolveEffect(_abilityEffectResolverMock, _executeEvent.Tick, _abilityEntity, GetAbilityStage(_abilityEntity, 0), _combatantEntity);
         }
     }
 }

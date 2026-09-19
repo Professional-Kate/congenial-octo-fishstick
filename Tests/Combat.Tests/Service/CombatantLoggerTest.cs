@@ -1,9 +1,13 @@
 ﻿using System.Collections.Immutable;
+using IdelPog.Combat.Ability.Model;
+using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Logging.Contracts;
+using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;
 using IdelPog.Core.Validation.Assertion;
 using IdelPog.Core.Validation.Exceptions;
@@ -19,21 +23,30 @@ namespace IdelPog.Combat.Tests.Service
         private const byte ABILITY_ID = 1;
         private CombatantEntity _initiatingCombatant;
         private CombatantEntity _targetCombatant;
-        private AbilityStageCard _directDamageStage;
+        private AbilityStage _directDamageStage;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _combatantLogger = new CombatantLogger(new ObjectNullAssertion(), new CollectionAssertion());
 
-            _directDamageStage = new AbilityStageCard
+            _directDamageStage = new AbilityStage
             {
-                AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE,
-                AffinityType = AffinityType.LIGHTNING,
-                MaxTargets = 1,
-                Value = 3,
-                Priority = 0,
-                CastTime = 0
+                AbilityStageCard = new AbilityStageCard
+                {
+                    AbilityEffectType = AbilityEffectType.DIRECT_DAMAGE,
+                    AffinityType = AffinityType.LIGHTNING,
+                    MaxTargets = 1,
+                    Value = 3,
+                    Priority = 0,
+                    CastTime = 0
+                },
+                TargetingPreferenceComponent = new TargetingPreferenceComponent
+                {
+                    TargetingPreference = TargetingPreference.LOWEST, 
+                    StatType = StatType.HEALTH, 
+                    TargetingType = TargetingType.ENEMY
+                }
             };
         }
 
@@ -44,12 +57,6 @@ namespace IdelPog.Combat.Tests.Service
             _targetCombatant = TestCombatantEntityFactory.Create(combatantID: 2, TargetingType.ENEMY);
         }
         
-        [TearDown]
-        public void TearDown()
-        { 
-            _combatantLogger.ClearStateChanges();
-        }
-
         private static void AssertCombatStageLength(IReadOnlyList<CombatStage> stateChanges, int expectedLength)
         {
             Assert.That(stateChanges, Has.Count.EqualTo(expectedLength));
@@ -60,16 +67,16 @@ namespace IdelPog.Combat.Tests.Service
             Assert.That(combatantStateChanges, Has.Length.EqualTo(expectedLength));
         }
 
-        private static void AssertStateChange(CombatStage combatStage, CombatantStateChange combatantStateChange, CombatantEntity initiatingCombatant, CombatantEntity[] targetCombatants, AbilityStageCard abilityStage)
+        private static void AssertStateChange(CombatStage combatStage, CombatantStateChange combatantStateChange, CombatantEntity initiatingCombatant, CombatantEntity[] targetCombatants, AbilityStage abilityStage)
         {
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(combatStage.AbilityID, Is.EqualTo(ABILITY_ID));
                 Assert.That(combatStage.InitiatingCombatant.InstanceID, Is.EqualTo(initiatingCombatant.InstanceID));
                 Assert.That(combatStage.InitiatingCombatant.TargetingType, Is.EqualTo(initiatingCombatant.TargetingType));
-                Assert.That(combatantStateChange.ReadOnlyAbilityStage.AbilityEffectType, Is.EqualTo(abilityStage.AbilityEffectType));
-                Assert.That(combatantStateChange.ReadOnlyAbilityStage.AffinityType, Is.EqualTo(abilityStage.AffinityType));
-                Assert.That(combatantStateChange.ReadOnlyAbilityStage.Value, Is.EqualTo(abilityStage.Value));
+                Assert.That(combatantStateChange.ReadOnlyAbilityStage.AbilityEffectType, Is.EqualTo(abilityStage.AbilityStageCard.AbilityEffectType));
+                Assert.That(combatantStateChange.ReadOnlyAbilityStage.AffinityType, Is.EqualTo(abilityStage.AbilityStageCard.AffinityType));
+                Assert.That(combatantStateChange.ReadOnlyAbilityStage.Value, Is.EqualTo(abilityStage.AbilityStageCard.Value));
 
                 for (int i = 0; i < combatantStateChange.TargetCombatants.Length; i++)
                 {
@@ -111,13 +118,13 @@ namespace IdelPog.Combat.Tests.Service
         public void Positive_LogCombatantChange_MultipleLogs_SameCombatStage()
         {
             Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(TICK, _initiatingCombatant, [_targetCombatant], _directDamageStage, ABILITY_ID));
-            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(TICK, _initiatingCombatant, [_targetCombatant], _directDamageStage with { AbilityEffectType = AbilityEffectType.HEALING }, ABILITY_ID));
+            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(TICK, _initiatingCombatant, [_targetCombatant], _directDamageStage, ABILITY_ID));
             
             IReadOnlyList<CombatStage> stateChanges = _combatantLogger.GetStateChanges();
             
             AssertCombatStageLength(stateChanges, 1);
             AssertStateChange(stateChanges[0], stateChanges[0].CombatantStateChanges[0], _initiatingCombatant, [_targetCombatant], _directDamageStage);
-            AssertStateChange(stateChanges[0], stateChanges[0].CombatantStateChanges[1], _initiatingCombatant, [_targetCombatant], _directDamageStage with { AbilityEffectType = AbilityEffectType.HEALING });
+            AssertStateChange(stateChanges[0], stateChanges[0].CombatantStateChanges[1], _initiatingCombatant, [_targetCombatant], _directDamageStage);
         }
 
         [Test]
@@ -149,27 +156,6 @@ namespace IdelPog.Combat.Tests.Service
             
             AssertCombatStageLength(stateChanges, 1);
             Assert.That(_combatantLogger.GetStateChanges(), Is.Empty);
-        }
-
-        [Test]
-        public void Positive_ClearStateChanges_ClearsStates()
-        {
-            Assert.DoesNotThrow(() => _combatantLogger.LogCombatantChange(TICK, _initiatingCombatant, [_targetCombatant], _directDamageStage, ABILITY_ID));
-            AssertCombatStageLength(_combatantLogger.GetStateChanges(), 1);
-            
-            Assert.DoesNotThrow(() => _combatantLogger.ClearStateChanges());
-            AssertCombatStageLength( _combatantLogger.GetStateChanges(), 0);
-        }
-
-        [Test]
-        public void Positive_ClearStateChanges_NoChanges_DoesNothing()
-        {
-            Assert.DoesNotThrow(() => _combatantLogger.ClearStateChanges());
-            Assert.DoesNotThrow(() => _combatantLogger.ClearStateChanges());
-            
-            IReadOnlyList<CombatStage> stateChanges = _combatantLogger.GetStateChanges();
-            
-            AssertCombatStageLength(stateChanges, 0);
         }
 
         [Test]

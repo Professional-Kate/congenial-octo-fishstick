@@ -6,7 +6,6 @@ using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event.Resolver;
 using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Tests.TestFactory;
-using IdelPog.Core.Validation.Exceptions;
 using Moq;
 
 namespace IdelPog.Combat.Tests.Event
@@ -22,7 +21,7 @@ namespace IdelPog.Combat.Tests.Event
         {
             _damageServiceMock = new Mock<IEntityDamageSystem>();
             
-            _directDamageAbilityEffectResolver = new DirectDamageAbilityEffectResolver(CombatantRepositoryMock.Object, TargetFinderMock.Object, CombatantLoggerMock.Object, _damageServiceMock.Object);
+            _directDamageAbilityEffectResolver = new DirectDamageAbilityEffectResolver(TargetFinderMock.Object, CombatantLoggerMock.Object, _damageServiceMock.Object);
         }
 
         [SetUp]
@@ -38,20 +37,19 @@ namespace IdelPog.Combat.Tests.Event
             _damageServiceMock.VerifyNoOtherCalls();
         }
 
-        private void VerifyDamageApplied(CombatantEntity[] targetCombatants, AbilityStage abilityStage, double tick)
+        private void VerifyDamageApplied(CombatantEntity[] targetCombatants, AbilityStage abilityStage, double tick, CombatantEntity initiatingCombatant)
         {
-            _damageServiceMock.Verify(library => library.ApplyDamage(targetCombatants, 1, abilityStage, tick), Times.Once);
+            _damageServiceMock.Verify(library => library.ApplyDamage(targetCombatants, initiatingCombatant, abilityStage, tick), Times.Once);
         }
 
         [Test]
         public void Positive_ResolveEvent_AppliesDamage()
         {
             SetupTargetFinder(TargetCombatant, TargetingPreference.HIGHEST, StatType.HEALTH, 1, TargetingType.ENEMY);
-            SetupRepositoryGet(InitiatingCombatant);
             
-            Assert.DoesNotThrow(() => _directDamageAbilityEffectResolver.ResolveEffect(TICK, InitiatingAbility, FirstAbilityStage));
+            Assert.DoesNotThrow(() => _directDamageAbilityEffectResolver.ResolveEffect(TICK, InitiatingAbility, FirstAbilityStage, InitiatingCombatant));
 
-            VerifyDamageApplied([TargetCombatant], FirstAbilityStage, TICK);
+            VerifyDamageApplied([TargetCombatant], FirstAbilityStage, TICK, InitiatingCombatant);
             VerifyCombatantLog(InitiatingAbility.AbilityID, TICK, InitiatingCombatant, [TargetCombatant], FirstAbilityStage);
         }
 
@@ -61,20 +59,7 @@ namespace IdelPog.Combat.Tests.Event
             CombatantEntity deadEntity = TestCombatantEntityFactory.Create(3, TargetingType.FRIENDLY);
             deadEntity.ReplaceComponent(new LifeStatusComponent { IsAlive = false });
             
-            SetupRepositoryGet(deadEntity);
-            
-            Assert.DoesNotThrow(() => _directDamageAbilityEffectResolver.ResolveEffect(TICK, InitiatingAbility with { InstanceID = deadEntity.InstanceID }, FirstAbilityStage));
-        }
-
-        [Test]
-        public void Negative_ResolveEvent_CombatantNotFound_Throws()
-        {
-            CombatantRepositoryMock.Setup(library => library.Get(InitiatingCombatant.InstanceID))
-                .Throws(new NotFoundException<byte>(InitiatingCombatant.InstanceID));
-            
-            Assert.Throws<NotFoundException<byte>>(() => _directDamageAbilityEffectResolver.ResolveEffect(TICK, InitiatingAbility, FirstAbilityStage));
-            
-            CombatantRepositoryMock.Verify(library => library.Get(InitiatingCombatant.InstanceID), Times.Once);
+            Assert.DoesNotThrow(() => _directDamageAbilityEffectResolver.ResolveEffect(TICK, InitiatingAbility with { InstanceID = deadEntity.InstanceID }, FirstAbilityStage, deadEntity));
         }
     }
 }

@@ -33,7 +33,7 @@ namespace IdelPog.Integration.Tests
         }
 
         [SetUp]
-        protected void BaseSetUp()
+        protected virtual void BaseSetUp()
         {
             Setup();
             Register(new CombatOptions { MaxIterations = 10000, MaxCombatantAbilitySlots = 3 });
@@ -60,6 +60,7 @@ namespace IdelPog.Integration.Tests
             FlowBootstrapper.SubscribeFlows(flowRegister, _bufferMessenger);
         }
 
+        // TODO: change CombatOptions to be a buffered command instead of construct param
         protected void RegisterWithOptions(CombatOptions combatOptions)
         {
             Setup();

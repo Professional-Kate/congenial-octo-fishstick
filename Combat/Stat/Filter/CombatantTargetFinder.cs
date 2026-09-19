@@ -29,7 +29,6 @@ namespace IdelPog.Combat.Stat.Filter
         {
             _numberAssertion.AssertNumberNotZero(targetCount, nameof(targetCount));
             
-            // TODO: update to use Ability/Entity to cut down on provider duplication
             IStatProvider statProvider = _statProviderRepository.Get(statType);
             IReadOnlyList<CombatantEntity> entities = _combatantFilters.GetCombatants(targetingType, casterTargetingType);
             _collectionAssertion.AssertHasElements(entities);
@@ -86,7 +85,6 @@ namespace IdelPog.Combat.Stat.Filter
         {
             return targetingPreference switch
             {
-                // TODO: make a test for this
                 TargetingPreference.HIGHEST => stat,
                 TargetingPreference.LOWEST => stat == 0 ? 0 : uint.MaxValue - stat + 1,
                 _ => throw new ArgumentOutOfRangeException(nameof(targetingPreference))

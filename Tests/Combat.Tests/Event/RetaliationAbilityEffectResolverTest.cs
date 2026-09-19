@@ -29,7 +29,7 @@ namespace IdelPog.Combat.Tests.Event
         {
             _damageServiceMock = new Mock<IEntityDamageSystem>();
             
-            _retaliationAbilityEffectResolver = new RetaliationAbilityEffectResolver(CombatantRepositoryMock.Object, TargetFinderMock.Object, CombatantLoggerMock.Object, _damageServiceMock.Object);
+            _retaliationAbilityEffectResolver = new RetaliationAbilityEffectResolver(TargetFinderMock.Object, CombatantLoggerMock.Object, _damageServiceMock.Object);
         }
 
         [SetUp]
@@ -53,69 +53,64 @@ namespace IdelPog.Combat.Tests.Event
             _damageServiceMock.VerifyNoOtherCalls();
         }
 
-        private static void AddRetaliationComponent(CombatantEntity combatantEntity)
+        private static void AddRetaliationComponent(CombatantEntity damagedCombatant, CombatantEntity initiatingCombatant)
         {
             RetaliationComponent retaliationComponent = new() { Capacity = 3 };
-            combatantEntity.AddComponent(retaliationComponent);
+            damagedCombatant.AddComponent(retaliationComponent);
             
-            retaliationComponent.Enqueue(new CombatantDamaged { InstanceID = 2, DamageValue = 3 });
+            retaliationComponent.Enqueue(new CombatantDamaged { InitiatingCombatant = initiatingCombatant, DamageValue = 3 });
         }
 
-        private void VerifyDamageApplied(CombatantEntity[] targetCombatants, AbilityStage abilityStage, double tick)
+        private void VerifyDamageApplied(CombatantEntity[] targetCombatants, AbilityStage abilityStage, double tick, CombatantEntity initiatingCombatant)
         {
-            _damageServiceMock.Verify(library => library.ApplyDamage(targetCombatants, 1, abilityStage, tick), Times.Once);
+            _damageServiceMock.Verify(library => library.ApplyDamage(targetCombatants, initiatingCombatant, abilityStage, tick), Times.Once);
         }
 
         [Test]
         public void Positive_ResolveEvent_NoRetaliationComponent_NoAction()
         {
-            SetupRepositoryGet(InitiatingCombatant);
-            
-            Assert.DoesNotThrow(() => _retaliationAbilityEffectResolver.ResolveEffect(TICK, _retaliationAbility, GetCombatantAbilityStage(_retaliationAbility, 0)));
+            Assert.DoesNotThrow(() => _retaliationAbilityEffectResolver.ResolveEffect(TICK, _retaliationAbility, GetCombatantAbilityStage(_retaliationAbility, 0), InitiatingCombatant));
         }
 
         [Test]
         public void Positive_ResolveEvent_ContainsComponent_ReturnsOneDamageComponent()
         {
-            SetupRepositoryGet(InitiatingCombatant, TargetCombatant);
-            AddRetaliationComponent(InitiatingCombatant);
+            AddRetaliationComponent(InitiatingCombatant, TargetCombatant);
             
-            Assert.DoesNotThrow(() => _retaliationAbilityEffectResolver.ResolveEffect(TICK, _retaliationAbility, GetCombatantAbilityStage(_retaliationAbility, 0)));
+            Assert.DoesNotThrow(() => _retaliationAbilityEffectResolver.ResolveEffect(TICK, _retaliationAbility, GetCombatantAbilityStage(_retaliationAbility, 0), InitiatingCombatant));
             
-            VerifyDamageApplied([TargetCombatant], GetCombatantAbilityStage(_retaliationAbility, 0), TICK);
+            VerifyDamageApplied([TargetCombatant], GetCombatantAbilityStage(_retaliationAbility, 0), TICK, InitiatingCombatant);
             VerifyCombatantLog(_retaliationAbility.AbilityID, TICK, InitiatingCombatant, [TargetCombatant], GetCombatantAbilityStage(_retaliationAbility, 0));
         }
 
         [Test]
         public void Positive_ResolveEvent_DealsDamageTillMaxTargets()
         {
-            SetupRepositoryGet(InitiatingCombatant, TargetCombatant);
-            AddRetaliationComponent(InitiatingCombatant);
+            AddRetaliationComponent(InitiatingCombatant, TargetCombatant);
 
-            CombatantDamaged combatantDamaged = new() { InstanceID = InitiatingCombatant.InstanceID, DamageValue = 3 };            
+            CombatantDamaged combatantDamaged = new() { InitiatingCombatant = InitiatingCombatant, DamageValue = 3 };            
             RetaliationComponent retaliationComponent = InitiatingCombatant.GetComponent<RetaliationComponent>();
             retaliationComponent.Enqueue(combatantDamaged);
-            retaliationComponent.Enqueue(combatantDamaged with { InstanceID = TargetCombatant.InstanceID });
+            retaliationComponent.Enqueue(combatantDamaged with { InitiatingCombatant = TargetCombatant });
             
-            Assert.DoesNotThrow(() => _retaliationAbilityEffectResolver.ResolveEffect(TICK, _retaliationAbility, GetCombatantAbilityStage(_retaliationAbility, 0)));
+            Assert.DoesNotThrow(() => _retaliationAbilityEffectResolver.ResolveEffect(TICK, _retaliationAbility, GetCombatantAbilityStage(_retaliationAbility, 0), InitiatingCombatant));
             
-            VerifyDamageApplied([TargetCombatant, InitiatingCombatant], GetCombatantAbilityStage(_retaliationAbility, 0), TICK);
+            VerifyDamageApplied([TargetCombatant, InitiatingCombatant], GetCombatantAbilityStage(_retaliationAbility, 0), TICK, InitiatingCombatant);
             VerifyCombatantLog(_retaliationAbility.AbilityID, TICK, InitiatingCombatant, [TargetCombatant, InitiatingCombatant], GetCombatantAbilityStage(_retaliationAbility, 0));
         }
 
         [Test]
         public void Positive_ResolveEvent_DuplicateID_Filters()
         {
-            SetupRepositoryGet(TargetCombatant, InitiatingCombatant);
-            AddRetaliationComponent(InitiatingCombatant);
+            AddRetaliationComponent(InitiatingCombatant, TargetCombatant);
 
-            CombatantDamaged combatantDamaged = new() { InstanceID = TargetCombatant.InstanceID, DamageValue = 3 };            
+            CombatantDamaged combatantDamaged = new() { InitiatingCombatant = TargetCombatant, DamageValue = 3 };            
             RetaliationComponent retaliationComponent = InitiatingCombatant.GetComponent<RetaliationComponent>();
             retaliationComponent.Enqueue(combatantDamaged);
             retaliationComponent.Enqueue(combatantDamaged);
             
-            Assert.DoesNotThrow(() => _retaliationAbilityEffectResolver.ResolveEffect(TICK, _retaliationAbility, GetCombatantAbilityStage(_retaliationAbility, 0)));
-            VerifyDamageApplied([TargetCombatant], GetCombatantAbilityStage(_retaliationAbility, 0), TICK);
+            Assert.DoesNotThrow(() => _retaliationAbilityEffectResolver.ResolveEffect(TICK, _retaliationAbility, GetCombatantAbilityStage(_retaliationAbility, 0), InitiatingCombatant));
+            VerifyDamageApplied([TargetCombatant], GetCombatantAbilityStage(_retaliationAbility, 0), TICK, InitiatingCombatant);
             VerifyCombatantLog(_retaliationAbility.AbilityID, TICK, InitiatingCombatant, [TargetCombatant], GetCombatantAbilityStage(_retaliationAbility, 0));
         }
     }

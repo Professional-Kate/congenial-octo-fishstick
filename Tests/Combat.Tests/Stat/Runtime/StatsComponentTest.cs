@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Stat.Runtime.Component;
 
 namespace IdelPog.Combat.Tests.Stat.Runtime
@@ -9,9 +8,9 @@ namespace IdelPog.Combat.Tests.Stat.Runtime
     {
         private StatsComponent _statsComponent;
 
-        private readonly StatComponent _healthStat = new() { StatType = StatType.HEALTH, Stat = 12 };
-        private readonly StatComponent _speedStat = new() { StatType = StatType.SPEED, Stat = 25 };
-        private readonly StatComponent _abilityDamageStat = new() { StatType = StatType.ABILITY_DAMAGE, Stat = 94 };
+        private readonly StatComponent _healthStat = new() { StatID = 0, Value = 12 };
+        private readonly StatComponent _speedStat = new() { StatID = 1, Value = 25 };
+        private readonly StatComponent _abilityDamageStat = new() { StatID = 2, Value = 94 };
 
         [SetUp]
         public void Setup()
@@ -19,59 +18,59 @@ namespace IdelPog.Combat.Tests.Stat.Runtime
             _statsComponent = new StatsComponent { StatComponents = [_healthStat, _speedStat, _abilityDamageStat] };
         }
 
-        private static void AssertStat(uint stat, uint expectedStat)
+        private static void AssertStat(uint stat, uint expectedStatValue)
         {
-            Assert.That(stat, Is.EqualTo(expectedStat));
+            Assert.That(stat, Is.EqualTo(expectedStatValue));
         }
 
         [Test]
         public void Positive_GetStat_ReturnsCorrectStat()
         {
-            uint health = _statsComponent.GetStat(StatType.HEALTH);
+            uint health = _statsComponent.GetStat(_healthStat.StatID);
             
-            AssertStat(health, _healthStat.Stat);
+            AssertStat(health, _healthStat.Value);
         }
         
         [Test]
         public void Positive_GetStat_DuplicateStat_OnlyReturnsFirstFound()
         {
-            StatsComponent oopsOnlySpeed = new() { StatComponents = [_speedStat, _speedStat with { Stat = uint.MaxValue }] };
+            StatsComponent oopsOnlySpeed = new() { StatComponents = [_speedStat, _speedStat with { Value = uint.MaxValue }] };
             
-            uint speed = oopsOnlySpeed.GetStat(StatType.SPEED);
+            uint speed = oopsOnlySpeed.GetStat(_speedStat.StatID);
             
-            AssertStat(speed, _speedStat.Stat);
+            AssertStat(speed, _speedStat.Value);
         }
 
         [Test]
         public void Negative_GetStat_StatNotFound_Throws()
         { 
-            Assert.Throws<KeyNotFoundException>(() => _statsComponent.GetStat(StatType.INITIATIVE));
+            Assert.Throws<KeyNotFoundException>(() => _statsComponent.GetStat(3));
         }
 
         [Test]
         public void Positive_ReplaceStat_ReplacesStat()
         {
-            AssertStat(_statsComponent.GetStat(StatType.SPEED), _speedStat.Stat);
+            AssertStat(_statsComponent.GetStat(_speedStat.StatID), _speedStat.Value);
             
-            _statsComponent.ReplaceStat(_speedStat.StatType, 100);
+            _statsComponent.ReplaceStat(_speedStat.StatID, 100);
 
-            AssertStat(_statsComponent.GetStat(StatType.SPEED), 100);
+            AssertStat(_statsComponent.GetStat(_speedStat.StatID), 100);
         }
 
         [Test]
         public void Positive_ReplaceStat_DuplicateStat_OnlyChangesFirstFound()
         {
-            StatsComponent oopsOnlyHealth = new() { StatComponents = [_healthStat, _healthStat with { Stat = uint.MaxValue }] }; 
+            StatsComponent oopsOnlyHealth = new() { StatComponents = [_healthStat, _healthStat with { Value = uint.MaxValue }] }; 
             
-            oopsOnlyHealth.ReplaceStat(StatType.HEALTH, uint.MinValue);
+            oopsOnlyHealth.ReplaceStat(_healthStat.StatID, uint.MinValue);
             
-            AssertStat(oopsOnlyHealth.GetStat(StatType.HEALTH), uint.MinValue);
+            AssertStat(oopsOnlyHealth.GetStat(_healthStat.StatID), uint.MinValue);
         }
 
         [Test]
         public void Negative_ReplaceStat_StatNotFound_Throws()
         { 
-            Assert.Throws<KeyNotFoundException>(() => _statsComponent.ReplaceStat(StatType.INITIATIVE, 1));
+            Assert.Throws<KeyNotFoundException>(() => _statsComponent.ReplaceStat(3, 1));
         }
 
         [Test]
@@ -85,11 +84,11 @@ namespace IdelPog.Combat.Tests.Stat.Runtime
         [Test]
         public void Positive_GetAllStats_ReturnsDuplicates()
         {
-            StatsComponent oopsOnlyAbilityDamage = new() { StatComponents = [_abilityDamageStat, _abilityDamageStat with { Stat = uint.MaxValue }] };
+            StatsComponent oopsOnlyAbilityDamage = new() { StatComponents = [_abilityDamageStat, _abilityDamageStat with { Value = uint.MaxValue }] };
             
             ImmutableArray<StatComponent> allStats = oopsOnlyAbilityDamage.GetAllStats();
             
-            Assert.That(allStats, Is.EqualTo([_abilityDamageStat, _abilityDamageStat with { Stat = uint.MaxValue }]));
+            Assert.That(allStats, Is.EqualTo([_abilityDamageStat, _abilityDamageStat with { Value = uint.MaxValue }]));
         }
 
         [Test]
@@ -114,20 +113,20 @@ namespace IdelPog.Combat.Tests.Stat.Runtime
         public void Positive_GetAllStats_ReturnsNewCollection()
         {
             ImmutableArray<StatComponent> allStats = _statsComponent.GetAllStats();
-            Assert.That(allStats[0], Is.EqualTo(_healthStat));
+            Assert.That(allStats[_healthStat.StatID], Is.EqualTo(_healthStat));
             
-            _statsComponent.ReplaceStat(StatType.HEALTH, uint.MaxValue);
-            Assert.That(allStats[0], Is.EqualTo(_healthStat));
+            _statsComponent.ReplaceStat(_healthStat.StatID, uint.MaxValue);
+            Assert.That(allStats[_healthStat.StatID], Is.EqualTo(_healthStat));
         }
 
         [Test]
         public void Positive_GetAllStats_ReplaceStat_ThenGetAll_ReturnsNewState()
         {
-            _statsComponent.ReplaceStat(StatType.HEALTH, uint.MaxValue);
+            _statsComponent.ReplaceStat(_healthStat.StatID, uint.MaxValue);
             
             ImmutableArray<StatComponent> allStats = _statsComponent.GetAllStats();
             
-            Assert.That(allStats[0], Is.EqualTo(_healthStat with { Stat = uint.MaxValue }));
+            Assert.That(allStats[_healthStat.StatID], Is.EqualTo(_healthStat with { Value = uint.MaxValue }));
         }
     }
 }

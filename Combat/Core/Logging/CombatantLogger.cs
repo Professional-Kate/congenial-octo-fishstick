@@ -1,7 +1,10 @@
 ﻿using System.Collections.Immutable;
+using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Core.Contracts.Card;
+using IdelPog.Combat.Core.Logging.Contracts;
+using IdelPog.Combat.Core.Logging.Interface;
 using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Core.Validation.Assertion.Interface;
 
@@ -22,8 +25,7 @@ namespace IdelPog.Combat.Core.Logging
 
         private AbilityStageLog _currentLog;
 
-        public void LogCombatantChange(double tick, CombatantEntity initiatingCombatant, IReadOnlyList<CombatantEntity> targetCombatants,
-            AbilityStageCard abilityStage, byte abilityID)
+        public void LogCombatantChange(double tick, CombatantEntity initiatingCombatant, IReadOnlyList<CombatantEntity> targetCombatants, AbilityStage abilityStage, byte abilityID)
         {
             _objectNullAssertion.AssertNotNull(initiatingCombatant, nameof(initiatingCombatant));
             _collectionAssertion.AssertHasElements(targetCombatants);
@@ -33,11 +35,20 @@ namespace IdelPog.Combat.Core.Logging
                 _currentLog = CreateAbilityStageLog(initiatingCombatant, abilityID, tick);
             }
 
+            // TODO: change this to use the factory
             ReadOnlyAbilityStage readOnlyAbilityStage = new()
             {
-                AbilityEffectType = abilityStage.AbilityEffectType,
-                AffinityType = abilityStage.AffinityType,
-                Value = abilityStage.Value
+                AbilityEffectType = abilityStage.AbilityStageCard.AbilityEffectType,
+                AffinityType = abilityStage.AbilityStageCard.AffinityType,
+                CastTime = abilityStage.AbilityStageCard.CastTime,
+                Value = abilityStage.AbilityStageCard.Value,
+                MaxTargets = abilityStage.AbilityStageCard.MaxTargets,
+                ReadOnlyStrategy = new ReadOnlyStrategy
+                {
+                    TargetingPreference = abilityStage.TargetingPreferenceComponent.TargetingPreference,
+                    StatType = abilityStage.TargetingPreferenceComponent.StatType,
+                    TargetingType = abilityStage.TargetingPreferenceComponent.TargetingType
+                }
             };
             
             CombatantStateChange combatantStateChange = new()
@@ -57,7 +68,7 @@ namespace IdelPog.Combat.Core.Logging
             _combatantStateChanges.Add(combatantStateChange);
         }
 
-        public IReadOnlyList<CombatStage> GetStateChanges()
+        public CombatStage[] GetStateChanges()
         {
             FinalizeCurrentLog();
             
@@ -77,7 +88,7 @@ namespace IdelPog.Combat.Core.Logging
             return finalCombatStages;
         }
 
-        public void ClearStateChanges()
+        private void ClearStateChanges()
         {
             _combatantStateChanges.Clear();
             _combatantLog.Clear();
@@ -117,6 +128,7 @@ namespace IdelPog.Combat.Core.Logging
         
         private static ReadOnlyCombatant CreateReadOnlyCombatant(CombatantEntity combatantEntity)
         {
+            // TODO: change this to use the factory
             return new ReadOnlyCombatant
             {
                 InstanceID = combatantEntity.InstanceID,

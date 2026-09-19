@@ -1,7 +1,7 @@
 ﻿using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 
-namespace IdelPog.Combat.Core.Logging
+namespace IdelPog.Combat.Core.Logging.Contracts
 {
     public readonly record struct ReadOnlyCombatant
     {

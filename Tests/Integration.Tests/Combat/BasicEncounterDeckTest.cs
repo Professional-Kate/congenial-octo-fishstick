@@ -15,7 +15,7 @@ using IdelPog.Integration.Tests.Combat.Tools;
 namespace IdelPog.Integration.Tests.Combat
 {
     [TestFixture]
-    public sealed class BasicEncounterDeckTest : ManagedTestBuffer
+    public sealed class BasicEncounterDeckTest : ManagedCombatRunner
     {
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
         private ManagedErrorListener<BufferedError<BasicEncounterDeck>> _errorListener;
@@ -48,7 +48,7 @@ namespace IdelPog.Integration.Tests.Combat
             
             _responseListener.AssertWasCalled(true);
             _responseListener.AssertResponseLength(1);
-            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatStages);
+            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatArenaLog.CombatStages);
             
             return basicEncounterDeck;
         }
@@ -198,7 +198,7 @@ namespace IdelPog.Integration.Tests.Combat
             
             foreach (BasicEncounterDeckResponse basicEncounterDeckResponse in _responseListener.Responses)
             { 
-                CombatValidator.RegisterCombatStages(basicEncounterDeckResponse.CombatStages);
+                CombatValidator.RegisterCombatStages(basicEncounterDeckResponse.CombatArenaLog.CombatStages);
                 CombatValidator.AssertCombatantDiedFirst(3);
                 CombatValidator.AssertNextInitiatingCombatant(2, 1, 0, 3);
             }
@@ -226,7 +226,7 @@ namespace IdelPog.Integration.Tests.Combat
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
              
-            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatStages);
+            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatArenaLog.CombatStages);
             CombatValidator.AssertCombatantDidNotAttack(2);
         }
 
@@ -245,6 +245,25 @@ namespace IdelPog.Integration.Tests.Combat
             AssertResponse(_responseListener.Responses[0], returnedDeck);
             
             CombatValidator.AssertNextInitiatingInstanceID(0, 3, 1, 2);
+        }
+
+        [Test]
+        public void Positive_SimulateCombat_ZeroCooldownAbility_SomeoneSaveTheEnemy()
+        {
+            AbilityCard zeroCooldownCard = new() { Cooldown = 0, AbilitySlots = 0 };
+            
+            DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.WolfCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation with { AbilityCard = zeroCooldownCard }, StaticCombatCommands.StabAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0), StaticCombatCommands.EquipStabAttack(1));
+            
+            BasicEncounterDeck returnedDeck = RunCombat([0], [1]);
+            
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
+            AssertResponse(_responseListener.Responses[0], returnedDeck);
+            
+            CombatValidator.AssertAbilityNeverUsed(1);
         }
         
         // Exception Tests
@@ -277,9 +296,61 @@ namespace IdelPog.Integration.Tests.Combat
         }
 
         [Test]
+        public void Negative_StatsNotConfigured_Throws()
+        {
+            RegisterWithOptions(new CombatOptions { MaxIterations = 10, MaxCombatantAbilitySlots = 10 });
+            ManagedSubscribe(_responseListener);
+            ManagedSubscribe(_errorListener);
+
+            DispatchMessage(StaticCombatCommands.StatCreations);
+            DispatchMessage(StaticCombatCommands.HumanCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0));
+            
+            BasicEncounterDeck basicEncounterDeck = new()
+            {
+                FriendlyCombatantIDs = [0],
+                EnemyCombatantIDs = [0]
+            };
+            
+            DispatchMessage(basicEncounterDeck);
+            
+            _responseListener.AssertWasCalled(false);
+            _errorListener.AssertWasCalled(true);
+            AssertErrorLength(1);
+            AssertError<KeyNotFoundException>(basicEncounterDeck);
+        }
+        
+        [Test]
+        public void Negative_StatsConfigured_But_CombatantStatsNotCreated_Throws()
+        {
+            RegisterWithOptions(new CombatOptions { MaxIterations = 10, MaxCombatantAbilitySlots = 10 });
+            ManagedSubscribe(_responseListener);
+            ManagedSubscribe(_errorListener);
+
+            DispatchMessage(StaticCombatCommands.StatConfiguration);
+            DispatchMessage(StaticCombatCommands.HumanCreation);
+            DispatchMessage(StaticCombatCommands.SlashAttackCreation);
+            DispatchMessage(StaticCombatCommands.EquipSlashAttack(0));
+            
+            BasicEncounterDeck basicEncounterDeck = new()
+            {
+                FriendlyCombatantIDs = [0],
+                EnemyCombatantIDs = [0]
+            };
+            
+            DispatchMessage(basicEncounterDeck);
+            
+            _responseListener.AssertWasCalled(false);
+            _errorListener.AssertWasCalled(true);
+            AssertErrorLength(1);
+            AssertError<NotFoundException<byte>>(basicEncounterDeck);
+        }
+
+        [Test]
         public void Negative_LowDamage_HighHealth_ReachesMaxIterations_DispatchesError()
         {
-            const uint maxIterations = 1;
+            const uint maxIterations = 10;
             const byte maxCombatantAbilities = 3;
             
             RegisterWithOptions(new CombatOptions { MaxIterations = maxIterations, MaxCombatantAbilitySlots = maxCombatantAbilities });
@@ -292,6 +363,8 @@ namespace IdelPog.Integration.Tests.Combat
                 EnemyCombatantIDs = [1]
             };
             
+            DispatchMessage(StaticCombatCommands.StatConfiguration);
+            DispatchMessage(StaticCombatCommands.StatCreations);
             DispatchMessage(StaticCombatCommands.HumanCreation, StaticCombatCommands.GoblinCreation);
             DispatchMessage(StaticCombatCommands.SlashAttackCreation);
             DispatchMessage(StaticCombatCommands.EquipSlashAttack(0), StaticCombatCommands.EquipSlashAttack(0) with { CombatantID = 1 });

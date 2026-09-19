@@ -1,11 +1,15 @@
-﻿using IdelPog.Combat.Ability.Model;
+﻿using IdelPog.Combat.Ability.Contracts;
+using IdelPog.Combat.Ability.Model;
 using IdelPog.Combat.Ability.Runtime.Component;
 using IdelPog.Combat.Ability.Runtime.Entities;
+using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Stat.Contracts.Command;
 using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Stat.Runtime.Component;
+using IdelPog.Combat.Stat.Service;
 
 namespace IdelPog.Combat.Tests.TestFactory
 {
@@ -63,6 +67,29 @@ namespace IdelPog.Combat.Tests.TestFactory
         
         internal static AbilityEntity Create(byte instanceID, byte abilityID, params AbilityStage[] combatantAbilityStages)
         {
+            StatConfiguration statConfiguration = new()
+            {
+                CombatantStatLinks = new CombatantStatLinks
+                {
+                    BaseHealthID = 0,
+                    HealthID = 1,
+                    SpeedID = 2,
+                    InitiativeID = 3
+                },
+                AbilityStatLinks = new AbilityStatLinks
+                {
+                    AbilityDamageID = 4,
+                    AbilityHealingID = 5,
+                    RetaliationDamageID = 6,
+                    CastTimeID = 7,
+                    CooldownID = 8,
+                    AbilitySlotsID = 9
+                }
+            };
+            
+            StatConfigurationSystem statConfigurationSystem = new();
+            statConfigurationSystem.SetStatConfiguration(statConfiguration);
+
             TriggerComponent triggerComponent = new()
             {
                 TargetingType = TargetingType.SELF,
@@ -75,18 +102,18 @@ namespace IdelPog.Combat.Tests.TestFactory
             {
                 StatComponents =
                 [
-                    new StatComponent { StatType = StatType.ABILITY_SLOTS, Stat = 1 },
-                    new StatComponent { StatType = StatType.COOLDOWN, Stat = 1 },
-                    new StatComponent { StatType = StatType.CAST_TIME, Stat = 1 },
-                    new StatComponent { StatType = StatType.ABILITY_DAMAGE, Stat = 1 },
-                    new StatComponent { StatType = StatType.RETALIATION_DAMAGE, Stat = 1 },
-                    new StatComponent { StatType = StatType.ABILITY_HEALING, Stat = 1 }
+                    new StatComponent { StatID = 4, Value = 0 },
+                    new StatComponent { StatID = 5, Value = 0 },
+                    new StatComponent { StatID = 6, Value = 0 },
+                    new StatComponent { StatID = 7, Value = 0 },
+                    new StatComponent { StatID = 8, Value = 0 },
+                    new StatComponent { StatID = 9, Value = 0 }
                 ]
             };
-            return new AbilityEntity(statsComponent, triggerComponent, new AbilityStagesComponent { AbilityStages = [..combatantAbilityStages] })
+            return new AbilityEntity(statConfigurationSystem, statsComponent, triggerComponent, new AbilityStagesComponent { AbilityStages = [..combatantAbilityStages] })
             {
                 InstanceID = instanceID, 
-                AbilityID = abilityID,
+                AbilityID = abilityID
             };
         }
 

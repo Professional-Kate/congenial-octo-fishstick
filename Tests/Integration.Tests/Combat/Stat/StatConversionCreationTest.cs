@@ -4,7 +4,7 @@ using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Combat.Stat.Contracts.Response;
 using IdelPog.Core.Contracts;
 
-namespace IdelPog.Integration.Tests.Combat
+namespace IdelPog.Integration.Tests.Combat.Stat
 {
     public sealed class StatConversionCreationTest : ManagedTestBuffer
     {
@@ -13,8 +13,8 @@ namespace IdelPog.Integration.Tests.Combat
 
         private readonly StatConversionCreation _goodStatConversion = new()
         {
-            TargetStatType = StatType.HEALTH,
-            SourceStatType = StatType.BASE_HEALTH,
+            TargetStatID = (byte) StatType.HEALTH,
+            SourceStatID = (byte) StatType.BASE_HEALTH,
             SourceStatInterval = 10,
             StatOperation = StatOperation.ADDITIVE,
             TargetStatModifier = 1
@@ -86,6 +86,17 @@ namespace IdelPog.Integration.Tests.Combat
             _errorListener.AssertWasCalled(false);
             _responseListener.AssertResponseLength(1);
             AssertResponse(_responseListener.Responses[0], _goodStatConversion with { TargetStatModifier = -10 }, expectedID: 0);
+        }
+
+        [Test]
+        public void Positive_DispatchMessage_RandomIDs_DispatchesResponse()
+        {
+            DispatchMessage(_goodStatConversion with { TargetStatID = 243, SourceStatID = 132 });
+            
+            _responseListener.AssertWasCalled(true);
+            _errorListener.AssertWasCalled(false);
+            _responseListener.AssertResponseLength(1);
+            AssertResponse(_responseListener.Responses[0], _goodStatConversion with { TargetStatID = 243, SourceStatID = 132 }, expectedID: 0);
         }
 
         [Test]

@@ -4,7 +4,7 @@ using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Runtime.Component;
 using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Combatant.Runtime.System.Interface;
-using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Logging.Interface;
 using IdelPog.Combat.Stat.Filter.Interface;
 
 namespace IdelPog.Combat.Core.Event.Resolver
@@ -13,15 +13,14 @@ namespace IdelPog.Combat.Core.Event.Resolver
     {
         private readonly IEntityDamageSystem _entityDamageSystem;
         
-        public RetaliationAbilityEffectResolver(ICombatantRepository combatantRepository, ICombatantTargetFinder targetFinder, ICombatantLogger combatantLogger, IEntityDamageSystem entityDamageSystem) 
-            : base(combatantRepository, targetFinder, combatantLogger)
+        public RetaliationAbilityEffectResolver(ICombatantTargetFinder targetFinder, ICombatantLogger combatantLogger, IEntityDamageSystem entityDamageSystem) 
+            : base(targetFinder, combatantLogger)
         {
             _entityDamageSystem = entityDamageSystem;
         }
 
         protected private override bool CanResolve(CombatantEntity combatantEntity, AbilityEntity abilityEntity)
         {
-                Console.WriteLine(combatantEntity.InstanceID);
             if (combatantEntity.TryGetComponent(out RetaliationComponent retaliationComponent) == false)
             {
                 return false;
@@ -42,17 +41,16 @@ namespace IdelPog.Combat.Core.Event.Resolver
                 {
                     break;
                 }
-                
 
-                if (targetCombatantIDs.Add(combatantDamageComponent.InstanceID) == false)
+                if (targetCombatantIDs.Add(combatantDamageComponent.InitiatingCombatant.InstanceID) == false)
                 {
                     continue;
                 }
                 
-                targetCombatants.Add(GetCombatant(combatantDamageComponent.InstanceID));
+                targetCombatants.Add(combatantDamageComponent.InitiatingCombatant);
             }
             
-            _entityDamageSystem.ApplyDamage(targetCombatants, combatantEntity.InstanceID, abilityStage, tick);
+            _entityDamageSystem.ApplyDamage(targetCombatants, combatantEntity, abilityStage, tick);
 
             return targetCombatants;
         }

@@ -4,7 +4,6 @@ using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Ability.Runtime.System.Interface;
 using IdelPog.Combat.Ability.Service.Interface;
 using IdelPog.Combat.Combatant.Runtime.Entities;
-using IdelPog.Combat.Combatant.Runtime.System.Interface;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
 using IdelPog.Combat.Core.Service.Interface;
@@ -14,27 +13,20 @@ namespace IdelPog.Combat.Ability.Runtime.System
 {
     public sealed class AbilityEventScheduler : IAbilityEventScheduler
     {
-        private readonly IAbilityEntityRepository _abilityEntityRepository;
         private readonly IReadyTickSystem _readyTickSystem;
-        private readonly ICombatantRepository _combatantRepository;
         private readonly ICastingCalculator _castingCalculator;
         private readonly ICombatQueue _combatQueue;
 
-        public AbilityEventScheduler(IAbilityEntityRepository abilityEntityRepository, IReadyTickSystem readyTickSystem, ICombatantRepository combatantRepository, ICastingCalculator castingCalculator, ICombatQueue combatQueue)
+        public AbilityEventScheduler(IReadyTickSystem readyTickSystem, ICastingCalculator castingCalculator, ICombatQueue combatQueue)
         {
-            _abilityEntityRepository = abilityEntityRepository;
             _readyTickSystem = readyTickSystem;
-            _combatantRepository = combatantRepository;
             _castingCalculator = castingCalculator;
             _combatQueue = combatQueue;
         }
 
-        public void ScheduleEvent(double forTick, byte abilityID, byte abilityStageIndex, byte initiatingCombatantID)
+        public void ScheduleEvent(double forTick, AbilityEntity abilityEntity, byte abilityStageIndex, CombatantEntity combatantEntity)
         {
-            AbilityEntity abilityEntity = _abilityEntityRepository.Get(initiatingCombatantID, abilityID);
-            CombatantEntity combatantEntity = _combatantRepository.Get(initiatingCombatantID);
             uint combatantSpeed = combatantEntity.GetStat(StatType.SPEED);
-            
             if (abilityStageIndex == 0)
             { 
                 _readyTickSystem.SetNextReadyTick(forTick, abilityEntity, combatantSpeed);
@@ -43,37 +35,37 @@ namespace IdelPog.Combat.Ability.Runtime.System
             AbilityStage indexedStage = abilityEntity.GetComponent<AbilityStagesComponent>().AbilityStages[abilityStageIndex];
             if (indexedStage.AbilityStageCard.CastTime != 0)
             {
-                EnqueueCastingEvent(abilityID, abilityStageIndex, initiatingCombatantID, combatantEntity.TargetingType, forTick, indexedStage.AbilityStageCard.CastTime, combatantSpeed);
+                EnqueueCastingEvent(abilityEntity, abilityStageIndex, combatantEntity, forTick, indexedStage.AbilityStageCard.CastTime, combatantSpeed);
                 return;
             }
             
-            _combatQueue.Enqueue(CreateCombatEvent(CombatEventType.ABILITY_EXECUTE, abilityID, abilityStageIndex, initiatingCombatantID, combatantEntity.TargetingType, forTick));
+            _combatQueue.Enqueue(CreateCombatEvent(CombatEventType.ABILITY_EXECUTE, abilityEntity, abilityStageIndex, combatantEntity, forTick));
         }
         
-        public void EnqueueAbilityExecuteEvent(double forTick, byte abilityID, byte abilityStageIndex, byte initiatingCombatantID)
+        public void EnqueueAbilityExecuteEvent(double forTick, AbilityEntity abilityEntity, byte abilityStageIndex, CombatantEntity combatantEntity)
         {
-            CombatantEntity combatantEntity = _combatantRepository.Get(initiatingCombatantID);
-            ScheduledCombatEvent scheduledCombatEvent = CreateCombatEvent(CombatEventType.ABILITY_EXECUTE, abilityID, abilityStageIndex, initiatingCombatantID, combatantEntity.TargetingType, forTick);
+            ScheduledCombatEvent scheduledCombatEvent = CreateCombatEvent(CombatEventType.ABILITY_EXECUTE, abilityEntity, abilityStageIndex, combatantEntity, forTick);
             
             _combatQueue.Enqueue(scheduledCombatEvent);
         }
 
-        private void EnqueueCastingEvent(byte abilityID, byte abilityStageIndex, byte combatantID, TargetingType targetingType, double forTick, uint castTime, uint combatantSpeed)
+        private void EnqueueCastingEvent(AbilityEntity abilityEntity, byte abilityStageIndex, CombatantEntity combatantEntity, double forTick, uint castTime, uint combatantSpeed)
         {
             double castDuration = _castingCalculator.GetCastDuration(combatantSpeed, castTime);
             
-            _combatQueue.Enqueue(CreateCombatEvent(CombatEventType.ABILITY_CAST_COMPLETE, abilityID, abilityStageIndex, combatantID, targetingType, forTick + castDuration));
+            _combatQueue.Enqueue(CreateCombatEvent(CombatEventType.ABILITY_CAST_COMPLETE, abilityEntity, abilityStageIndex, combatantEntity, forTick + castDuration));
         }
-        
-        private static ScheduledCombatEvent CreateCombatEvent(CombatEventType combatEventType, byte abilityID, byte abilityStageIndex, byte initiatingCombatantID, TargetingType targetingType, double forTick) 
-            => new()
+
+        private static ScheduledCombatEvent CreateCombatEvent(CombatEventType combatEventType, AbilityEntity abilityEntity, byte abilityStageIndex, CombatantEntity combatantEntity, double forTick)
+        {
+            return new ScheduledCombatEvent
             {
-                CombatEventType = combatEventType, 
-                AbilityID = abilityID, 
-                AbilityStageIndex = abilityStageIndex, 
-                InstanceID = initiatingCombatantID, 
-                TargetingType = targetingType,
+                CombatEventType = combatEventType,
+                AbilityEntity = abilityEntity,
+                AbilityStageIndex = abilityStageIndex,
+                CombatantEntity = combatantEntity,
                 Tick = forTick
             };
+        }
     } 
 }

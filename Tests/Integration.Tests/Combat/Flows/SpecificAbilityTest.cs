@@ -5,14 +5,14 @@ using IdelPog.Combat.Core.Contracts.Command;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Response;
 using IdelPog.Combat.Core.Event;
-using IdelPog.Combat.Core.Logging;
+using IdelPog.Combat.Core.Logging.Contracts;
 using IdelPog.Combat.Stat.Contracts.Enum;
 using IdelPog.Integration.Tests.Combat.Tools;
 
 namespace IdelPog.Integration.Tests.Combat.Flows
 {
     [TestFixture]
-    public sealed class SpecificAbilityTest : ManagedTestBuffer
+    public sealed class SpecificAbilityTest : ManagedCombatRunner
     {
         private ManagedResponseListener<BasicEncounterDeckResponse> _responseListener;
         
@@ -42,7 +42,7 @@ namespace IdelPog.Integration.Tests.Combat.Flows
             
             _responseListener.AssertWasCalled(true);
             _responseListener.AssertResponseLength(1);
-            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatStages);
+            CombatValidator.RegisterCombatStages(_responseListener.Responses[0].CombatArenaLog.CombatStages);
         }
 
         private static uint GetExpectedDamage(AbilityCreation abilityCreation)

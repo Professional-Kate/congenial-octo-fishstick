@@ -2,8 +2,8 @@
 {
     public enum StatType : byte
     {
-        HEALTH,
         BASE_HEALTH,
+        HEALTH,
         SPEED,
         INITIATIVE,
         ABILITY_DAMAGE,

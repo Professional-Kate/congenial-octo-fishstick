@@ -2,6 +2,7 @@
 using IdelPog.Combat.Ability.Runtime.Entities;
 using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Runtime.Component;
+using IdelPog.Combat.Combatant.Runtime.Entities;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event.Trigger.Contracts;
 using IdelPog.Combat.Core.Event.Trigger.Handler;
@@ -15,16 +16,11 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
     {
         private CombatantDamagedHandler _combatantDamagedHandler;
 
-        private readonly CombatantDamagedData _friendlyDamagedData = new()
-        {
-            DamagedCombatantID = 12,
-            DamagedCombatantTargetingType = TargetingType.FRIENDLY,
-            DamageValue = 4,
-            InitiatingCombatantID = 4
-        };
+        private CombatantDamagedData _friendlyDamagedData;
         
         private AbilityEntity _validAbilityEntity;
         private AbilityEntity _enemyTriggerEntity;
+        private CombatantEntity _initiatingCombatant;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -42,13 +38,19 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
             _enemyTriggerEntity = TestAbilityEntityFactory.Create(EnemyCombatantEntity.InstanceID, 94);
             _enemyTriggerEntity.ReplaceComponent(new TriggerComponent { TriggerEventType = TriggerEventType.COMBATANT_DAMAGED, TargetingType = TargetingType.ENEMY, MinTriggerValue = 1, MaxTriggerValue = 5 });
             _enemyTriggerEntity.AddComponent(new ReadyTickComponent { ReadyTick = TICK });
+
+            _initiatingCombatant = TestCombatantEntityFactory.Create(1, TargetingType.ENEMY);
+            _friendlyDamagedData = new CombatantDamagedData
+            {
+                DamagedCombatant = FriendlyCombatantEntity,
+                DamageValue = 4,
+                InitiatingCombatant = _initiatingCombatant
+            };
         }
 
         [Test]
         public void Positive_Handle_FiltersEntities_NothingToSchedule()
         {
-            SetupGetCombatantEntity(FriendlyCombatantEntity);
-            
             SelfTargetingEntity.ReplaceComponent(SelfTargetingEntity.GetComponent<TriggerComponent>() with { MinTriggerValue = _friendlyDamagedData.DamageValue + 1 });   
             
             SetupTriggerReader(TriggerEventType.COMBATANT_DAMAGED, [SelfTargetingEntity, NotReadyEntity]);
@@ -59,34 +61,34 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
         [Test]
         public void Positive_Handle_SelfTargetingEntity_MatchesDamagedCombatant_SchedulesAbility()
         {
-            SetupGetCombatantEntity(FriendlyCombatantEntity with { InstanceID = SelfTargetingEntity.InstanceID });
+            CombatantEntity combatantEntity = FriendlyCombatantEntity with { InstanceID = SelfTargetingEntity.InstanceID };
+            
+            SetupGetCombatantEntity(combatantEntity);
             SetupTriggerReader(TriggerEventType.COMBATANT_DAMAGED, [SelfTargetingEntity, NotReadyEntity]);
             
             // TargetingType does not matter for SELF targeting
-            _combatantDamagedHandler.Handle(TICK, _friendlyDamagedData with { DamagedCombatantID = SelfTargetingEntity.InstanceID });
-            _combatantDamagedHandler.Handle(TICK, _friendlyDamagedData with { DamagedCombatantID =  SelfTargetingEntity.InstanceID, DamagedCombatantTargetingType = TargetingType.ENEMY });
-            _combatantDamagedHandler.Handle(TICK, _friendlyDamagedData with { DamagedCombatantID =  SelfTargetingEntity.InstanceID, DamagedCombatantTargetingType = TargetingType.SELF });
+            _combatantDamagedHandler.Handle(TICK, _friendlyDamagedData with { DamagedCombatant = combatantEntity });
+            _combatantDamagedHandler.Handle(TICK, _friendlyDamagedData with { DamagedCombatant = combatantEntity });
+            _combatantDamagedHandler.Handle(TICK, _friendlyDamagedData with { DamagedCombatant = combatantEntity });
             
-            AbilityEventSchedulerMock.Verify(library => library.ScheduleEvent(TICK, SelfTargetingEntity.AbilityID, 0, SelfTargetingEntity.InstanceID), Times.Exactly(3));
+            AbilityEventSchedulerMock.Verify(library => library.ScheduleEvent(TICK, SelfTargetingEntity, 0, combatantEntity), Times.Exactly(3));
         }
 
         [Test]
         public void Positive_Handle_SelfTargetingEntity_DoesNotSkipOtherValidation()
         {
+            FriendlyCombatantEntity.ReplaceComponent(new LifeStatusComponent { IsAlive = false });
             SetupGetCombatantEntity(FriendlyCombatantEntity with { InstanceID = SelfTargetingEntity.InstanceID });
-            SetupGetCombatantEntity(FriendlyCombatantEntity with { InstanceID = 23 });
             SetupTriggerReader(TriggerEventType.COMBATANT_DAMAGED, [SelfTargetingEntity, NotReadyEntity]);
             
-            _combatantDamagedHandler.Handle(TICK, _friendlyDamagedData with { DamagedCombatantID = 23 });
+            _combatantDamagedHandler.Handle(TICK, _friendlyDamagedData);
             
-            AbilityEventSchedulerMock.Verify(library => library.ScheduleEvent(TICK, SelfTargetingEntity.AbilityID, 0, SelfTargetingEntity.InstanceID), Times.Never);
+            AbilityEventSchedulerMock.Verify(library => library.ScheduleEvent(TICK, SelfTargetingEntity, 0, FriendlyCombatantEntity), Times.Never);
         }
 
         [Test]
         public void Positive_Handle_ContainsRetaliationComponent_EnqueuesOnComponent()
         {
-            SetupGetCombatantEntity(FriendlyCombatantEntity);
-            
             SelfTargetingEntity.ReplaceComponent(SelfTargetingEntity.GetComponent<TriggerComponent>() with { MinTriggerValue = _friendlyDamagedData.DamageValue + 1 });
             SetupTriggerReader(TriggerEventType.COMBATANT_DAMAGED, [SelfTargetingEntity, NotReadyEntity]);
             
@@ -99,7 +101,7 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
             Assert.That(FriendlyCombatantEntity.GetComponent<RetaliationComponent>().TryDequeue(out CombatantDamaged component), Is.True);
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(component.InstanceID, Is.EqualTo(_friendlyDamagedData.InitiatingCombatantID));
+                Assert.That(component.InitiatingCombatant, Is.EqualTo(_initiatingCombatant));
                 Assert.That(component.DamageValue, Is.EqualTo(_friendlyDamagedData.DamageValue));
             }
         }
@@ -107,9 +109,7 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
         [Test]
         public void Positive_Handle_ContainsRetaliationComponent_ButInitiatingCombatant_IsSameAsDamagedCombatant_DoesNotAddComponent()
         {
-            CombatantDamagedData combatantDamagedData = _friendlyDamagedData with { InitiatingCombatantID = FriendlyCombatantEntity.InstanceID };
-            SetupGetCombatantEntity(FriendlyCombatantEntity);
-            
+            CombatantDamagedData combatantDamagedData = _friendlyDamagedData with { InitiatingCombatant = FriendlyCombatantEntity };
             SelfTargetingEntity.ReplaceComponent(SelfTargetingEntity.GetComponent<TriggerComponent>() with { MinTriggerValue = combatantDamagedData.DamageValue + 1 });
             SetupTriggerReader(TriggerEventType.COMBATANT_DAMAGED, [SelfTargetingEntity, NotReadyEntity]);
             
@@ -134,8 +134,8 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
             
             _combatantDamagedHandler.Handle(TICK, _friendlyDamagedData);
             
-            VerifyScheduleEvent(_validAbilityEntity.InstanceID, _validAbilityEntity.AbilityID);
-            VerifyScheduleEvent(validAbility.InstanceID, validAbility.AbilityID);
+            VerifyScheduleEvent(FriendlyCombatantEntity, _validAbilityEntity);
+            VerifyScheduleEvent(EnemyCombatantEntity, validAbility);
         }
 
         [Test]

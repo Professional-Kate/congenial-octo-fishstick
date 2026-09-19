@@ -12,7 +12,7 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
     {
         private CombatantDeathHandler _combatantDeathHandler;
 
-        private readonly CombatantDeathData _friendlyDeathData = new() { CombatantTargetingType = TargetingType.FRIENDLY, DeadCombatantID = 12 };
+        private readonly CombatantDeathData _friendlyDeathData = new() { CombatantTargetingType = TargetingType.FRIENDLY };
 
         private AbilityEntity _validAbilityEntity;
         private AbilityEntity _enemyTriggerEntity;
@@ -55,8 +55,8 @@ namespace IdelPog.Combat.Tests.Runtime.System.Trigger
             
             _combatantDeathHandler.Handle(TICK, _friendlyDeathData);
             
-            VerifyScheduleEvent(_validAbilityEntity.InstanceID, _validAbilityEntity.AbilityID);
-            VerifyScheduleEvent(validAbility.InstanceID, validAbility.AbilityID);
+            VerifyScheduleEvent(FriendlyCombatantEntity, _validAbilityEntity);
+            VerifyScheduleEvent(EnemyCombatantEntity, validAbility);
         }
 
         [Test]

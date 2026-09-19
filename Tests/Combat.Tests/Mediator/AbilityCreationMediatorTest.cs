@@ -110,6 +110,19 @@ namespace IdelPog.Combat.Tests.Mediator
             VerifyAbilityDefinitionAdd(_abilityDefinition with { AbilityCard = abilityCard });
             VerifyDispatcherCalled(2);
         }
+        
+        [Test]
+        public void Positive_HandleMessages_ZeroCooldown_Allowed()
+        { 
+            AbilityCard abilityCard = _abilityCreation.AbilityCard with { Cooldown = 0 };
+            AbilityCreation abilityCreation = _abilityCreation with { AbilityCard = abilityCard };
+            SetupSort(abilityCreation.AbilityStageCards);
+            
+            Assert.DoesNotThrow(() => { _abilityCreationMediator.HandleMessages([abilityCreation]); });
+            
+            VerifyAbilityDefinitionAdd(_abilityDefinition with { AbilityCard = abilityCard });
+            VerifyDispatcherCalled(1);
+        }
 
         [Test]
         public void Negative_HandleMessages_EmptyCollection_Throws()
@@ -121,13 +134,6 @@ namespace IdelPog.Combat.Tests.Mediator
         public void Negative_HandleMessages_NullCollection_Throws()
         { 
             Assert.Throws<ArgumentNullException>(() => _abilityCreationMediator.HandleMessages(null!));
-        }
-
-        [Test]
-        public void Negative_HandleMessages_ZeroCooldown_Throws()
-        { 
-            AbilityCard abilityCard = _abilityCreation.AbilityCard with { Cooldown = 0 };
-            Assert.Throws<NumberZeroException>(() => _abilityCreationMediator.HandleMessages([_abilityCreation with { AbilityCard = abilityCard }]));
         }
 
         [Test]

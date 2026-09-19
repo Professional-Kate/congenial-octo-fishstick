@@ -1,16 +1,52 @@
 ﻿using IdelPog.Combat.Ability.Contracts;
 using IdelPog.Combat.Ability.Contracts.Command;
+using IdelPog.Combat.Combatant.Contracts;
 using IdelPog.Combat.Combatant.Contracts.Command;
 using IdelPog.Combat.Combatant.Contracts.Enum;
 using IdelPog.Combat.Core.Contracts.Card;
 using IdelPog.Combat.Core.Contracts.Enum;
 using IdelPog.Combat.Core.Event;
+using IdelPog.Combat.Stat.Contracts.Command;
 using IdelPog.Combat.Stat.Contracts.Enum;
 
 namespace IdelPog.Integration.Tests.Combat.Tools
 {
     internal static class StaticCombatCommands
     {
+        internal static readonly StatConfiguration StatConfiguration = new()
+        {
+            CombatantStatLinks = new CombatantStatLinks
+            {
+                BaseHealthID = 0,
+                HealthID = 1,
+                SpeedID = 2,
+                InitiativeID = 3
+            },
+            AbilityStatLinks = new AbilityStatLinks
+            {
+                AbilityDamageID = 4,
+                AbilityHealingID = 5,
+                RetaliationDamageID = 6,
+                CastTimeID = 7,
+                CooldownID = 8,
+                AbilitySlotsID = 9
+            }
+        };
+        
+        internal static readonly StatCreation[] StatCreations =
+        [
+            new() { InitialValue = 0 },
+            new() { InitialValue = 0 },
+            new() { InitialValue = 0 },
+            new() { InitialValue = 0 },
+            new() { InitialValue = 0 },
+            new() { InitialValue = 0 },
+            new() { InitialValue = 0 },
+            new() { InitialValue = 0 },
+            new() { InitialValue = 0 },
+            new() { InitialValue = 0 }
+        ];
+        
         internal static readonly CombatantCreation HumanCreation = new()
         {
             CombatantType = CombatantType.HUMAN, 
